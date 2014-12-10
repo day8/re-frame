@@ -28,8 +28,8 @@ and his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
 Second, because paradigm is worth 80 points of IQ, we think you'll only 
 really "get" Reagent once you view it as an [FRP] library, and not simply a 
 ReactJS wrapper. To put that another way, we think that Reagent is closer in 
-nature to [Hoplon] or [Elm] than it is [OM]. This wasn't obvious to us initially -   
-we knew we liked reagent, but it took a while for the penny to drop as to why. 
+nature to [Hoplon] or [Elm] than it is [OM]. This wasn't obvious to us initially - we
+knew we liked reagent, but it took a while for the penny to drop as to why.
 
 Finally, we believe in one way data flow.  We don't like `cursors` which 
 allow for the two way flow of data. 
@@ -72,16 +72,18 @@ It will contain structured data (perhaps with a formal [Prismatic Schema] defini
 You will need to query that data. You will perform CRUD 
 and other transformations on it.  
 You'll often want to transact on this database atomically, etc.  So "in-memory database" 
-seems a more useful paradigm than plain old atom. In our code, we actually call ratom `db`.
+seems a more useful paradigm than plain old atom. In our implementation, we actually
+use the name `db` to drive home the point.
 
-Finally, `db` doesn't actually have to be a ratom containing a map. re-frame 
-imposes no requirement here.  It could be a [datascript] database.  Its just a datastore.
+Finally, `ratom` doesn't actually have to be a ratom containing a map. re-frame
+imposes no requirement here.  It could be a [datascript] database.  Its just a datastore
+of some description.
 
 ##### Magic Ratoms
 
-ratoms have a key feature: they act like normal clojurescript atoms, PLUS they allow
+ratoms have a key feature.  They act like normal clojurescript atoms, **plus** they allow
 you to create reactive functions similar to `lift` in [Elm] or `defc=` in [hoplon].
-You create these reactive functions via the macro `reaction` (or `run!`)
+You create these reactive functions via the reagent macros `reaction` or `run!`.
 
 ```clojure
 (ns example1
@@ -118,7 +120,8 @@ Extending the diagram a bit, we introduce the beginnings of one way data flow:
 ```
 ratom -->  components --> hiccup
 ```
-When using reagent, you write one or more `components`.   The `[hiccup]` they produce is DOM represented as ClojureScript data structures.
+When using reagent, you write one or more `components`.   The `[hiccup]` they
+produce is DOM represented as ClojureScript data structures.
 
 Think about `components` as `pure functions` - data in, hiccup out. 
 
