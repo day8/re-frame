@@ -41,6 +41,7 @@ allow for the two way flow of data.
 re-frame implements the two way flow of data into and 
 out of views by using two, one-way flows. 
 
+---------------------------------
 ## The Parts
 
 To explain re-frame, we'll now incrementally 
@@ -74,23 +75,24 @@ From here on, we'll assume that this part of the framework looks like this:
 (def ratom  (reagent/atom {}))    ;; a reagent atom, containing a map
 ```
 
-It is useful to actively imagine our ratom as an (in memory) database. 
-It will contain structured data (perhaps with a formal [Prismatic Schema] definition). 
+It is useful to actively imagine this ratom as an (in memory) database.
+It will contain structured data (perhaps with a formal [Prismatic Schema] spec).
 You will need to query that data. You will perform CRUD 
 and other transformations on it. You'll often want to transact on this
 database atomically, etc.  So "in-memory database"
 seems a more useful paradigm than plain old atom. In our implementation, we actually
 use the name `db` to drive home the point.
 
-Finally, `ratom` doesn't actually have to be a ratom containing a map. re-frame
-imposes no requirement here.  It could be a [datascript] database.  Its just a datastore
+Finally, `ratom` doesn't actually have to be a ratom containing a map. In theory, re-frame
+imposes no requirement here.  It could be a [datascript] database.  Its just a reactive datastore
 of some description.
 
+------------------------
 ##### Magic Ratoms
 
-ratoms have a key feature.  They act like normal clojurescript atoms, **plus** they allow
+ratoms have a key feature.  They act like normal ClojureScript atoms, **plus** they allow
 you to create reactive functions similar to `lift` in [Elm] or `defc=` in [hoplon].
-You create these reactive functions via the reagent macros `reaction` or `run!`.
+You create these reactive functions via the reagent macro `reaction` (or `run!`).
 
 ```clojure
 (ns example1
@@ -151,6 +153,7 @@ and automatically, new hiccup is produced.
 This is not a tutorial on how to write reagent components, but let's
 talk briefly about the "data in" bit. Turns out there are two ways
 data flows into components:
+
 1. the data is supplied as component parameters, typically from a parent
    component.  There tends to be a
    hierarchy of components and data often flows from parent to child
