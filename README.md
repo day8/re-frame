@@ -1,8 +1,8 @@
 ## re-frame
 
-re-frame is a lightweight [reagent] framework for writing  [SPAs] using ClojureScript.
+re-frame is a tiny [reagent] framework for writing  [SPAs] using ClojureScript.
 
-It proposes a pattern for structuring an app, and provides a tiny library
+It proposes a pattern for structuring an app, and provides a small library
 implementing one version of this pattern.
 
 In another context, re-frame might be called an MVC framework, except
@@ -13,10 +13,10 @@ it is instead a functional RACES framework - Reactive-Atom Component Event Subsc
 
 Nothing about re-frame is the slightest bit original or clever. 
 You'll find no ingenious use of functional zippers, transducers or core.async. 
-This is a good thing (although, for the record, one day I'd love to develop
+I claim is a good thing (although, for the record, one day I'd love to develop
 something original and clever).
 
-Using re-frame, you can break your application code into distinct pieces. 
+Using re-frame, you WILL be able to break your application code into distinct pieces. 
 Each of these pieces can be easily described, understood and tested independently. 
 These pieces will (mostly) be pure functions.
 
@@ -26,10 +26,10 @@ squint a little to see the benefit.
 
 ## Shaping Beliefs
 
-Above all we believe in the one true [Dan Holmsand] (creator of reagent), 
+First, above all we believe in the one true [Dan Holmsand] (creator of reagent), 
 and his divine instrument the `ratom`.  We genuflect towards Sweden once a day. 
 
-Second, because paradigm is worth 80 points of IQ, we think you'll only 
+Second, because paradigm is worth 80 points of IQ, you'll only 
 really "get" Reagent once you view it as an [FRP] library, and not simply a 
 ReactJS wrapper. To put that another way, we think that Reagent is closer in 
 nature to [Hoplon] or [Elm] than it is [OM]. This wasn't obvious to us initially - we
@@ -51,15 +51,15 @@ develop a diagram.  We'll explain each part as it is added in.
 
 Our re-frame diagram starts with the "well formed data at rest" bit: 
 ```
-ratom
+app-db
 ```
 
-So, re-frame says that you should put your data into one, dirty great
-big atom. Structure the  data in that  atom, of course, but put it
-all in the one place.
+So, re-frame says that you should put your data into one place (probably one dirty great
+big atom) which we'll call `app-db`. Structure the data in that place, of course. 
 
-Now, its not the slightest bit controversial to use databases, right? And they
-encourage you to put your well formed data all in one place.  But if you have
+Now, this advice is not the slightest bit controversial for 'real' databases, right? 
+You'd happily put all your well formed data into Postgres or mysql. But within an app (in memory), 
+it is different. If you have
 background in OO, this data-in-one-place is a hard one to swallow.  You've
 spent your life breaking systems into pieces, organised around behaviour and trying
 to hide the data.  I still wake up in a sweat some nights thinking about all
@@ -67,29 +67,34 @@ that clojure data lying around exposed and passive.
 
 But, as @Fogus says, data is the easy bit. 
 
-From here on, we'll assume that ratom is as easy as this: 
+From here on, we'll assume `app-db` looks like this: 
 ```
-(def ratom  (reagent/atom {}))    ;; a reagent atom, containing a map
+(def app-db  (reagent/atom {}))    ;; a reagent atom, containing a map
 ```
 
-It is useful to actively imagine this ratom as an (in memory) database.
+Although it is an atom, I'd encourage you to actively think about it as an (in-memory) database. 
 It will contain structured data (perhaps with a formal [Prismatic Schema] spec).
 You will need to query that data. You will perform CRUD 
 and other transformations on it. You'll often want to transact on this
 database atomically, etc.  So "in-memory database"
-seems a more useful paradigm than plain old atom. In our implementation, we actually
-use the name `db` to drive home the point.
+seems a more useful paradigm than plain old atom.
 
-Finally, a clarification:  `ratom` doesn't actually have to be a ratom containing
+Finally, a clarification:  `app-db` doesn't actually have to be a ratom containing
 a map. In theory, re-frame
-imposes no requirement here.  It could be a [datascript] database.  Its just a reactive datastore
-of some description.
+imposes no requirement here.  It could be a [datascript] database.  But as you'll see it
+would have to be a "reactive datastore" of some description (an 
+"observable" datastore -- one that can tell you when it has changed).
 
 ##### Magic Ratoms
 
-ratoms have a key feature.  They act like normal ClojureScript atoms, **plus** they allow
-you to create reactive functions similar to `lift` in [Elm] or `defc=` in [hoplon].
-You create these reactive functions via the reagent macro `reaction` (or `run!`).
+Reagent provides a `ratom` and a `reaction`. These are the two key building blocks.
+
+`ratoms` are like normal ClojureScript atoms. You can swap! and reset! them, watch them, etc. 
+
+`reactions` act a bit like functions. Its a macro which wraps some "computation" (forms?) and returns 
+a ratom containing the result of that computation.  
+
+The magic bit is that `reaction` will automatically rerun the computation whenever the "inputs" change, and it will reset! the ratom to the new value. 
 
 ```clojure
 (ns example1
@@ -97,16 +102,18 @@ You create these reactive functions via the reagent macro `reaction` (or `run!`)
   (:require
     [reagent.core   :as    r]))
     
-(def ratom  (r/atom {:a 1}))                    ;; our ratom 
+(def db-app  (r/atom {:a 1}))                  ;; our base ratom -- think of it like our app-db
 
-(def ratom2  (reaction {:b (:a @ratom)}))      ;; notice use of "reaction"
-(def ratom3  (reaction (cond = (:a @ratom)     ;; notice use of "reaction"
+(def ratom2  (reaction {:b (:a @db-app)}))      ;; notice use of "reaction" which wraps some computation
+(def ratom3  (reaction (cond = (:a @db-app)     ;; notice use of "reaction" which wraps some computation
                              0 "World"
                              1 "Hello")))         
 
-(println @ratom2)    ;; ==>  {:b 1}
-(println @ratom3)    ;; ==> "Hello"
-(reset!  ratom  {:a 0})                ;; this data change "flows" to ratom2 and ratom3, via the reactions above.
+(println @ratom2)    ;; ==>  {:b 1}             ;; contains a computed result. Based on values in 'db-app'
+(println @ratom3)    ;; ==> "Hello"             ;; contains a computed result. Based on values in 'db-app'
+
+(reset!  db-app  {:a 0})               ;; this change "flows" (triggers) reactive computations for ratom2 and ratom3
+
 (println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is  {:b (:a @ratom)}
 (println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated too.
     
@@ -115,23 +122,61 @@ You create these reactive functions via the reagent macro `reaction` (or `run!`)
 (dispose ratom3)
 ```
 
-`reaction` is a macro which turns returns a ratom. It takes one or more forms, 
-turns them into the body of a reactive
-function. This function will be rerun each
-time one of the ratoms referenced in the forms changes,
-and the ratom returned atom will be reset! with the new result.
-Over time, ratom2 and ratom3 are auto-updated each
-time ratom1 changes. This enables [FRP] (its similar in affect to `lift` in Elm).
+So `reaction` wraps a computation (acts like a function), and it returns a `ratom` which will then be `reset!` whenever its "inputs" change. 
+
+The "inputs" are any ratoms which are dereferenced within the computation. So, it "watches" (observes) an ratom which is dereferenced in the body of the computation, and if any of those ratoms change, it reruns the computation. 
+
+Using the combination of these two building blocks you can create reactive functions 
+similar to `lift` in [Elm] or `defc=` in [hoplon].  This enables [FRP].
 
 ### The Components
 
 Extending the diagram a bit, we introduce the beginnings of one way data flow:
 ```
-ratom -->  components --> hiccup
+db-app -->  components --> hiccup
 ```
 When using reagent, you write one or more `components`.  Think about
 `components` as `pure functions` - data in, hiccup out.  [`hiccup`] is
 ClojureScript data structures which represent DOM.
+
+Here's a trivial component:
+```
+(defn greet
+   []
+   [:div "Hello ratoms and recactions"])
+
+(greet n)                ;; returns  [:div "Hello ratoms and recactions"] 
+```
+
+You'll notice that its a normal clojure function, nothing special. It takes no inputs (no `db-app` involved) but it does produce `hiccup` (a vector data strcutre in this case). 
+
+Here is a slightly interesting one:
+```
+(defn greet
+   [name]                       ;; name is a ratom
+   [:div "Hello "  @name])      ;; dereference name here, to get out the value it contains 
+   
+(def n (reagent/atom "re-frame"))  ;; create a ratom, containing a string
+
+(greet n)                    ;; ==>  [:div "Hello " "re-frame"] 
+```
+
+So far, so good?  Let's add a `reaction`. 
+```
+(defn greet
+   [name]                       ;; name is a ratom
+   [:div "Hello "  @name])      ;; dereference name here, to get out the value it contains 
+   
+(def n (reagent/atom "re-frame"))
+
+(def hiccup-ratom  (reaction (greet n)))     ;; reactive computation, result stored in hiccup-ratom
+
+(println @hiccup-ratom)      ;;    [:div "Hello " "re-frame"] 
+(reset! n "blah")            ;;    change n to a new value
+(println @hiccup-ratom)      ;;    [:div "Hello " "blah"] 
+```
+The computation `(greet n)` produces hiccup which is stored into `hiccup-ratom`. 
+This computation involves dereferencing a ratom (passed as `n`to greet). Whenever that ratom changes, the computation will be rerun and hiccup-ratom will be reset to this new value. 
 
 These components are a bit like the templates you'd find in frameworks
 like Django or Rails or Mustache, except for two massive differences: 

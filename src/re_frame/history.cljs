@@ -9,8 +9,7 @@
      ))
 
 
- ;; -- History -----------------------------------------------------------
- ;; https://day8.slack.com/files/mikhug/F03238WLX/historian.md
+ ;; -- data  --------------------------------------------------------------------------------------
 
  (historian/record! db :db)
  (def undo-list (r/atom []))
@@ -23,6 +22,9 @@
    []
    (historian/clear-history!)
    (historian/trigger-record!))
+
+
+ ;; -- subscriptions  -----------------------------------------------------------------------------
 
  (register-subscription
    :undos?
@@ -38,7 +40,7 @@
      "answer true is anything is stored in the redo list"
      (reaction (> (count @redo-list) 0))))
 
- ;; -------------------------- HANDLERS ----------------------------------------
+ ;; -- event handlers  ----------------------------------------------------------------------------
 
  (register-handler
    :undo
