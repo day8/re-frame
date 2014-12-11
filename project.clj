@@ -4,7 +4,8 @@
 
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2322"]
-                 [reagent "0.4.3"]]
+                 [reagent "0.4.3"]
+                 [historian "1.0.7"]]
 
   :profiles     {:debug {:debug true}
                  :dev {:dependencies [[spellhouse/clairvoyant "0.0-48-gf5e59d3"]]
@@ -24,7 +25,7 @@
   :jar-exclusions [#"(?:^|\/)re-frame-demo\/"]
 
   :cljsbuild    {:builds [{:id "demo"
-                           :source-paths   ["src/demo" "src/re_frame"]
+                           :source-paths   ["src" "src/re_frame"]
                            :compiler       {:output-to     "run/compiled/demo.js"
                                             :source-map    "run/compiled/demo.js.map"
                                             :output-dir    "run/compiled/demo"

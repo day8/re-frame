@@ -1,4 +1,5 @@
- (ns model.handlers)
+ (ns re-frame.handlers
+   (:require [re-frame.db :refer [db]]))
 
 
  ;; -- helpers ------------------------------------------------------------------------------------
@@ -25,14 +26,12 @@
                validation-fn))))
 
 
-;; -- application data ---------------------------------------------------------------------------
-;;
-;; The entire state of the application is stored in this one atom.
-;; It is useful to think of this atom as a database, hence its name.
-;; For example, when it is mutated, we want it done in "a transaction", so it never appears in
-;; an inconsistent state. Atomic operations, etc.
-;;
-(def ^:private db                (atom nil))
+ (defn get-in-db
+   "Direct lookup of arbitrary path in state/db without subscription/reaction.
+    NOTE: While it is convenient to not have to pass values through function chains,
+          by definition this also incourages non pure functional style, so resist."
+   [path-v]
+   (get-in @db path-v))
 
 
 ;; -- Event Handlers ------------------------------------------------------------------------------
@@ -84,12 +83,12 @@
 
 
 ;; reagent components call this function when they want to "send" an event.
-(defn dispatch                     ;; TODO: call it  (dispatch-event [])
+(defn dispatch
  [event-v]                         ;;  something like  [:delete-item  42]
  (let [event-id    (first-in-vector event-v)
        handler-fn  (get @event-id->handler-fn event-id)]
    (assert (not (nil? handler-fn)) (str "No event handler registered for event: " event-id ))
-   (handler-fn @db event-v)))
+   (handler-fn db event-v)))
 
 
 
@@ -119,19 +118,20 @@
 (def ^:private subscription-key->handler-fn (atom {}))
 
 
- (defn register-subscription
-   [key-v handler-fn]
-   (if (contains? @subscription-key->handler-fn key-v)
-     (println "Warning: overwritting a subscription-handler: " key-v))     ;; TODO: more generic logging
-   (swap! subscription-key->handler-fn assoc key-v handler-fn))
+(defn register-subscription
+  [key-v handler-fn]
+  (if (contains? @subscription-key->handler-fn key-v)
+    (println "Warning: overwritting a subscription-handler: " key-v))     ;; TODO: more generic logging
+  (swap! subscription-key->handler-fn assoc key-v handler-fn))
 
 
- (defn subscribe
-   "returns a reagent/reaction which observes a part of the "
-   [v]
-   (let [key-v       (first-in-vector v)
-         handler-fn  (get @subscription-key->handler-fn key-v)]
-     (assert (not (nil? handler-fn)) (str "No subscription handler registered for key: " key-v))
-     (handler-fn @db v)))
+(defn subscribe
+  "returns a reagent/reaction which observes a part of the "
+  [v]
+  (let [key-v       (first-in-vector v)
+        handler-fn  (get @subscription-key->handler-fn key-v)]
+    (assert (not (nil? handler-fn)) (str "No subscription handler registered for key: " key-v))
+    (handler-fn db v)))
+
 
 
