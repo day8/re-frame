@@ -87,7 +87,6 @@ Finally, `ratom` doesn't actually have to be a ratom containing a map. In theory
 imposes no requirement here.  It could be a [datascript] database.  Its just a reactive datastore
 of some description.
 
-------------------------
 ##### Magic Ratoms
 
 ratoms have a key feature.  They act like normal ClojureScript atoms, **plus** they allow
@@ -170,18 +169,16 @@ Subscriptions are a significant part of re-frame ... more on them soon.
 
 ### ReactJS
 
-
-So let's complete the data flow from data to DOM:
+The complete data flow from data to DOM is:
 
 ```
 ratom  -->  components --> Hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
 ```
 
-
 Best to imagine this process as a pipeline of 3 functions.  Each
 function takes data from the
 previous step, and produces data for the next step.  In the next
-diagram, the three functions are marked. Unmarked nodes are data,
+diagram, the three functions are marked. The unmarked nodes are data,
 produced by one step, becoming the input to the next step.  hiccup,
 VDOM and DOM are all various forms of HTML markup (in our world that's data).
 
@@ -196,24 +193,29 @@ One way data flow:
 ```
 ratom  -->  P  --> DOM
 ```
-We only need to design and write the `ratom` and `components`, and reagent,
-which wraps ReactJS, manages the rest.
+
+This arrangement is:
+1.  Easy to test.  We put data into the ratom, allow the DOM to be rendered, and check that the right divs are in place.  This would typically be done via phantomjs. 
+2.  Easily understood.  Generally, components can be understood in isolation.  In almost all cases, a component is genuinely a pure fucntion, or is conceptually a pure function. 
+ 
+The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the components.  Reagent/ReactJS looks after the rest. XXXX
+
+If the ratom changes, the DOM changes.  The DOM is a function of the ratom (state of the app).  XXXX
 
 
 ### Event Flow
 
-So now we need to consider the flow in the opposite direction.
+The previous data flow is the first half of the story. So now we need to consider the data flow in the opposite direction.
 
 In response to user interaction, a DOM will generate
 events like "the user clicked the delete button on item 42" or
 "the user unticked the checkbox for 'send me spam'".
 
-These events have to "handled".  The code which does the handling might
- mutate the ratom, or kick-off some async I/O, etc.
+These events have to "handled".  The code doing this handling might
+ mutate the ratom, or requrest more data from thet server, or POST somewhere, etc. 
 
-An app will have many, many such handlers, and collectively
+An app will have many handlers, and collectively
 they represent the **control layer of the application**.
-
 
 The backward data flow happens in one (conveyor belt) hop:
 
@@ -221,45 +223,73 @@ The backward data flow happens in one (conveyor belt) hop:
 ratom  -->  components --> Hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
   ^                                                                        |
   |                                                                        v
-  handlers <------------  [events]  ---------------------------------------
-                           a conveyor belt takes
+  handlers <---------------  events  ---------------------------------------
+                           a "conveyor belt" takes
                            events from the DOM to
                            the handlers.
 ```
 
 
-Generally, the user manipulates the GUI so as to change the state of the
-application.  That almost always means the ratom will be changed.
-After all the ratom **is** the state.  The DOM presented is a function of that state.
-The GUI never changes until the ratom changes.
+Generally, the user manipulates the GUI because they want to change the state of the
+application.  They don't think that way, of course.  They think in terms of "deleting this blah" 
+or "swapping to foo".  But all these actions invariably mean the ratom will be changed.
+After all the ratom **is** the state.  The DOM presented to the user is a function of that state.
+The GUI doesn't change until the ratom changes.
 
 So handlers are the part of the system which does ratom mutation. You
 could almost imagine them as a "stored procedure" in a
-database. Kinda, almost. Stretching it?  We do like our in-memory
+database. Almost. Stretching it?  We do like our in-memory
 database analogies.
 
 ### What are events?
 
 Events are data. You choose the format.
 
-Our implementation copies from [Pedestal App] and
-packages events as vectors. For example:
+Our implementation chooses to represent events as vectors. For example:
 
     [:delete-item 42]
 
-Here, the first item in the vector identifies the event which occurred and
-and the rest of the vector are the parameters -- the id of the item to delete
-in this case.
+The first item in the vector identifies the event and
+the rest of the vector is the optional parameters -- in this cse, the id (42) of the item to delete.
 
-Here are some other events:
+Here are some other example events:
+```clojure
+    [:set-spam-wanted false]
+    [[:complicated :multi :part :key] "a parameter" "another one"  45.6]
+```
 
-      [:set-spam-wanted false]
-      [[:complicated :multi :part :key] "a parameter" "another one"  45.6]
+### Back To The DOM
+
+Events start in the DOM.  They are `dispatched`. 
+
+For example, a button component might look like this: 
+```clojure
+    (defn yes-button
+        []
+        [:div  {:class "button-class"
+                :on-click  #(dispatch [:yes-button-clicked])}
+                "Yes"])
+```
+
+Notice the `on-click` handler:
+```clojure
+    #(dispatch [:yes-button-clicked])
+```
+
+With re-frame, we try to keep the DOM as passive as possible.  It is simply a rendering of the data. 
+
+It is Event Handlers which interpret the events and respond.  `dispatch` is how the DOM passes off events to handlers. And, just to be clear, there is a signle `dsipatch` fucntion.  Not one dispatch functions for each event. 
+
+### Routing
+
+Once they are dispatched, events have to be routed to their eventual handler. 
+
+`dispatch` can be implemtned in There's a bunch of ways to implement "dispatch events".  You could push the events into a core.asyc channel. Or you could call a `dispatch` multimethod, and find the right event handler by inspection of `first` on the event vectory. 
+
+We use a technique in which the 
 
 
-### The DOM
 
-We say the DOM "dispatches" events.
 
 Events are then routed to the right handler via a conveyor belt. Remember,
 an event is just data.  And it is flowing in the opposite direction
@@ -272,13 +302,13 @@ to the data which causes the DOm to be rendered in the first place.
 
 So here's what a
 
+When an event reaches the end of the conveyor belt, it has to be routed to the right handler -- the one which handles this kind of event.  
+
+So something has to look at `first` in event vector cand know how to call the right handler.
+
+The conveyor belt could easily be done via core.async, but we do it the simplest possible way. 
 
 
-
-
-### Events
-
-Once we've displayed a GUi to a user, and they start to interact with it. 
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
 [reagent]:http://reagent-project.github.io/
