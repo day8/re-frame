@@ -2,7 +2,7 @@
 
 re-frame is a lightweight [reagent] framework for writing  [SPAs] using ClojureScript.
 
-It proposes a pattern for structuring an app, and provides a small library
+It proposes a pattern for structuring an app, and provides a tiny library
 implementing one version of this pattern.
 
 In another context, re-frame might be called an MVC framework, except
@@ -36,12 +36,9 @@ nature to [Hoplon] or [Elm] than it is [OM]. This wasn't obvious to us initially
 knew we liked reagent, but it took a while for the penny to drop as to why.
 
 Finally, we believe in one way data flow.  We don't like read/write `cursors` which
-allow for the two way flow of data. 
+allow for the two way flow of data. re-frame does implement two data way flow, but it 
+ues two, one-way flows to do it.
 
-re-frame implements the two way flow of data into and 
-out of views by using two, one-way flows. 
-
----------------------------------
 ## The Parts
 
 To explain re-frame, we'll now incrementally 
@@ -70,7 +67,7 @@ that clojure data lying around exposed and passive.
 
 But, as @Fogus says, data is the easy bit. 
 
-From here on, we'll assume that this part of the framework looks like this:
+From here on, we'll assume that ratom is as easy as this: 
 ```
 (def ratom  (reagent/atom {}))    ;; a reagent atom, containing a map
 ```
@@ -83,7 +80,8 @@ database atomically, etc.  So "in-memory database"
 seems a more useful paradigm than plain old atom. In our implementation, we actually
 use the name `db` to drive home the point.
 
-Finally, `ratom` doesn't actually have to be a ratom containing a map. In theory, re-frame
+Finally, a clarification:  `ratom` doesn't actually have to be a ratom containing
+a map. In theory, re-frame
 imposes no requirement here.  It could be a [datascript] database.  Its just a reactive datastore
 of some description.
 
@@ -99,29 +97,29 @@ You create these reactive functions via the reagent macro `reaction` (or `run!`)
   (:require
     [reagent.core   :as    r]))
     
-(def ratom1  (r/atom {:a 1}))
+(def ratom  (r/atom {:a 1}))                    ;; our ratom 
 
-(def ratom2  (reaction {:b (:a @ratom1)}))           ;; notice use of "reaction"
-(def ratom3  (reaction (cond = (:a @ratom1)          ;; notice use of "reaction"
+(def ratom2  (reaction {:b (:a @ratom)}))      ;; notice use of "reaction"
+(def ratom3  (reaction (cond = (:a @ratom)     ;; notice use of "reaction"
                              0 "World"
                              1 "Hello")))         
 
 (println @ratom2)    ;; ==>  {:b 1}
 (println @ratom3)    ;; ==> "Hello"
-(reset!  ratom1  {:a 0})
-(println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is automatically updated.
-(println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated.
+(reset!  ratom  {:a 0})                ;; this data change "flows" to ratom2 and ratom3, via the reactions above.
+(println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is  {:b (:a @ratom)}
+(println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated too.
     
 ;; cleanup 
 (dispose ratom2)
 (dispose ratom3)
 ```
 
-`reaction` is a macro which turns returns a ratom. It takes the
-the forms supplied and turns them into the body of a reactive
+`reaction` is a macro which turns returns a ratom. It takes one or more forms, 
+turns them into the body of a reactive
 function. This function will be rerun each
 time one of the ratoms referenced in the forms changes,
-and the returned atom will be reset! with the new result.
+and the ratom returned atom will be reset! with the new result.
 Over time, ratom2 and ratom3 are auto-updated each
 time ratom1 changes. This enables [FRP] (its similar in affect to `lift` in Elm).
 
@@ -308,6 +306,19 @@ So something has to look at `first` in event vector cand know how to call the ri
 
 The conveyor belt could easily be done via core.async, but we do it the simplest possible way. 
 
+
+### Event Handlers 
+
+Collectively, event handlers provide the control logic in the applications. 
+
+The job of *many* event handlers is to change the ratom in some way. Add an item here.  Delete this one.  So often CRUD.  
+Even though they appear to be about mutation, event handlers are implemented as pure fucntions. 
+```
+   (ratom-state, event) -> ratom-state
+```   
+It is re-frame which feeds the current state in ratom into the handler (along with the event), and the job of a handler to to return a modified version of the data in ratom (whcih re-frame will then put back into the ratom -- ensuring an undo/redo is available).  
+
+But I repeat, the handlers themselves are written as pure functions, and this makes it nice and easy to test and understand them. 
 
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
