@@ -131,17 +131,17 @@ Extending the diagram a bit, we introduce the beginnings of one way data flow:
 ratom -->  components --> hiccup
 ```
 When using reagent, you write one or more `components`.  Think about
-`components` as `pure functions` - data in, hiccup out.  `[hiccup]` is
+`components` as `pure functions` - data in, hiccup out.  [`hiccup`] is
 ClojureScript data structures which represent DOM.
 
 These components are a bit like the templates you'd find in frameworks
 like Django or Rails or Mustache, except for two massive differences: 
 
 - you have available the full power of ClojureScript.
-   (The tradeoff is that these are not "designer friendly" HTML templates)
+   The downside tradeoff is that these are not "designer friendly" HTML templates.
 - these components are reactive.  When their inputs change, they
-  are automatically rerun, producing new hiccup. reagent hides the
-  details from you, but `components` (functions you write) are wrapped by
+  are automatically rerun, producing new hiccup. reagent adroitly shields you from
+  the details, but `components` (functions you write) are wrapped by
   `reaction` in such a way that they re-run when the ratoms they
   dereference change. This is FRP. This is why reagent feels slightly magic.
 
@@ -150,9 +150,11 @@ and automatically, new hiccup is produced.
 
 This is not a tutorial on how to write reagent components, but let's
 talk briefly about the "data in" bit. Turns out there are two ways
-data components get data in:
-1. the data is supplied as component parameters, typically from a parent component.  There tends to be a 
-   hierarchy of components and data often flows from parent to child via parameters. 
+data flows into components:
+1. the data is supplied as component parameters, typically from a parent
+   component.  There tends to be a
+   hierarchy of components and data often flows from parent to child
+   via function parameters.
 
 2. a component can 'subscribe' to some aspect of the data.  As a result, it becomes an 
    observer of that state, and it gets an stream of data updates as that part
@@ -161,24 +163,56 @@ data components get data in:
 Either way, when the "data in" changes, the component function is rerun,
 and it produces new hiccup, which is then stitched into the DOM.
 
-Subscriptions are a significant part of re-frame ... more on them soon. 
+Subscriptions are a significant part of re-frame ... more on them soon.
+
+### ReactJS
+
+
+So let's complete the data flow from data to DOM:
+
+```
+ratom  -->  components --> Hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
+```
+
+
+Best to imagine this process as a pipeline of 3 functions.  Each
+function takes data from the
+previous step, and produces data for the next step.  In the next
+diagram, the three functions are marked. Unmarked nodes are data,
+produced by one step, becoming the input to the next step.  hiccup,
+VDOM and DOM are all various forms of HTML markup (in our world that's data).
+
+```
+ratom  -->  components --> hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
+               f1                      f2                     f3
+```
+
+The combined three-function pipeline should be seen as a pure
+function `P` which takes a ratom as input, and produces DOM.
+One way data flow:
+```
+ratom  -->  P  --> DOM
+```
+We only need to design and write the `ratom` and `components`, and reagent,
+which wraps ReactJS, manages the rest.
+
 
 ### Event Flow
 
-In response to user interaction, a view will generate
+So now we need to consider the flow in the opposite direction.
+
+In response to user interaction, a DOM will generate
 events like "the user clicked the delete button on item 42" or
 "the user unticked the checkbox for 'send me spam'".
 
 These events have to "handled".  The code which does the handling might
-do things like mutate the ratom, or kick-off some async I/O.
+ mutate the ratom, or kick-off some async I/O, etc.
+
+An app will have many, many such handlers, and collectively
+they represent the **control layer of the application**.
 
 
-An app will have many such handlers, and collectively they represent the
-**control layer of the application**.
-
-
-
-So let's complete the second data flow:
+The backward data flow happens in one (conveyor belt) hop:
 
 ```
 ratom  -->  components --> Hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
@@ -196,9 +230,10 @@ application.  That almost always means the ratom will be changed.
 After all the ratom **is** the state.  The DOM presented is a function of that state.
 The GUI never changes until the ratom changes.
 
-So handlers are the part of the system which does ratom mutation.
-
-You could almost imagine them as a "stored procedure" in a database. Almost. Stretching it?
+So handlers are the part of the system which does ratom mutation. You
+could almost imagine them as a "stored procedure" in a
+database. Kinda, almost. Stretching it?  We do like our in-memory
+database analogies.
 
 ### What are events?
 
@@ -237,33 +272,6 @@ So here's what a
 
 
 
-This is strictly one way. 
-
-Best to imagine this process as a pipeline of 3 functions.  Each
-function takes data from the
-previous step, and produces data for the next step.  In the next
-diagram, the three functions are marked. Unmarked nodes are data,
-produced by one step, becoming the input to the next step.  hiccup,
-VDOM and DOM are all various forms of HTML markup (in our world that's data).
-
-```
-ratom  -->  components --> hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
-               f1                      f2                     f3                                    
-```
-
-The combined three-function pipeline should be seen as a pure
-function `P` which takes a ratom as input, and produces DOM.
-One way data flow:
-```
-ratom  -->  P  --> DOM
-```
-We only concern ourselves with `ratom` and `components`, and reagent,
-which wraps ReactJS, manages the rest.
-
-Reactive function:  If the atom changes the DOM changes.  The same data will trigger
-the same DOM to be rendered again. 
-
-We only have to worry ourselves with the `atom` and `components` bit. 
 
 ### Events
 
