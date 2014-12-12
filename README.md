@@ -203,7 +203,7 @@ So, as `n` changes value, `hiccup-ratom` changes value. In fact, we could view a
 
 If you understand the **concept** of re-computation, then we're there.
 
-Truth injection time.  I haven't been completely straight with you, so we could just focus on the **concepts**.  Here's the reality -- reagent runs `reactions` (re-computations) via requestAnnimationFrame, which is, say, 16ms in the future, or after the current thread of processing finishes, which ever is the greater. So if you were to actually run the lines of code above one after the other,  you might not see the re-computation done after `n` gets reset!, unless the animation frame has run. Not that this bit of annoying truth really matters much.  All you need is the concept.  
+Truth injection time.  I haven't been completely straight with you, so we could just focus on the **concepts**.  Here's the reality -- reagent runs `reactions` (re-computations) via requestAnnimationFrame, which is, say, 16ms in the future, or after the current thread of processing finishes, which ever is the greater. So if you were to actually run the lines of code above one after the other,  you might not see the re-computation done immediately after `n` gets reset!, unless the animation frame has run. Not that this bit of annoying truth really matters much.  All you need is the concept.  
 
 On with my lies and distortions ...
 
@@ -221,7 +221,7 @@ Summary: when the stream of data flowing into a `component` changes, the `compon
 The complete data flow from data to DOM is:
 
 ```
-ratom  -->  components --> Hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
+app-db  -->  components --> Hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
 ```
 
 Best to imagine this process as a pipeline of 3 functions.  Each
@@ -232,15 +232,15 @@ produced by one step, becoming the input to the next step.  hiccup,
 VDOM and DOM are all various forms of HTML markup (in our world that's data).
 
 ```
-ratom  -->  components --> hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
+app-db  -->  components --> hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
                f1                      f2                     f3
 ```
 
 The combined three-function pipeline should be seen as a pure
-function `P` which takes a ratom as input, and produces DOM.
+function `P` which `app-db` as input, and produces DOM.
 One way data flow:
 ```
-ratom  -->  P  --> DOM
+app-db  -->  P  --> DOM
 ```
 
 This arrangement is:
@@ -249,29 +249,27 @@ This arrangement is:
  
 The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the components.  Reagent/ReactJS looks after the rest. 
 
-If the ratom changes, the DOM changes.  The DOM is a function of the ratom (state of the app). 
+If the `app-db` changes, the DOM changes.  The DOM is a function of the ratom (state of the app). 
 
 But wait ... we do have to do some work to kick off the flow correctly ...
 
 ### Subscriptions
 
-Bback to the first part of our diagram:
+Back to the first part of our diagram:
 ```
 app-db -->  components --> hiccup
 ```
 
 How does the flow begin. How does data flow from the `app-db` to the components?  
 
-We want our say that components `subscribe` to changes in `app-db`. 
+We want our components to `subscribe` to changes in `app-db`. 
 
-XXX Talk about subscribe 
+XXX Talk about    (subscribe  some-id)
 XXX Talk about registration of subscription handlers. 
-
-(subscribe [:pods] 
 
 components tend to be organised into a heirarchy and often data is flowing from parent to child compoentns. 
 
-But at certain points, for example at the root compoentns, something has to 'subscribe' to `app-db` 
+But at certain points, for example at the root components, something has to 'subscribe' to `app-db` 
 
 
 ### Event Flow
@@ -279,16 +277,16 @@ But at certain points, for example at the root compoentns, something has to 'sub
 The data flow from `app-db` to the DOM is the first half of the story. We now need to consider the 2nd part of the story: the data flow in the opposite direction.
 
 In response to user interaction, a DOM will generate
-events like "the user clicked the delete button on item 42" or
-"the user unticked the checkbox for 'send me spam'".
+events like "clicked delete button on item 42" or
+"unticked the checkbox for 'send me spam'".
 
 These events have to "handled".  The code doing this handling might
- mutate the ratom, or requrest more data from thet server, or POST somewhere, etc. 
+ mutate the `app-db`, or requrest more data from thet server, or POST somewhere, etc. 
 
 An app will have many handlers, and collectively
 they represent the **control layer of the application**.
 
-The backward data flow happens in one (conveyor belt) hop:
+The backward data flow of events happens via a conveyor belt:
 
 ```
 app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DOM
@@ -301,9 +299,9 @@ app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DO
 
 
 Generally, when the user manipulates the GUI, the state of the application changes. In our case, 
-that means the `app-db` will change.  It **is** the state.  And the DOM presented to the user is a function of that state. So that's the cycle.  GUI events cause `app-db` change, which then causes a rerender, and the users sees something different.
+that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to the user is a function of that state. So that's the cycle.  GUI events cause `app-db` change, which then causes a rerender, and the users sees something different.
 
-So handlers which look after events, are the part of the system which does `app-db` mutation. You
+So handlers, which look after events, are the part of the system which does `app-db` mutation. You
 could almost imagine them as a "stored procedure" in a
 database. Almost. Stretching it?  We do like our in-memory
 database analogies.
@@ -312,7 +310,7 @@ database analogies.
 
 Events are data. You choose the format.
 
-Our implementation chooses to represent events as vectors. For example:
+Our implementation chooses a vector format. For example:
 
     [:delete-item 42]
 
@@ -325,7 +323,7 @@ Here are some other example events:
     [[:complicated :multi :part :key] "a parameter" "another one"  45.6]
 ```
 
-### Back To The DOM
+### Dispatching Events
 
 Events start in the DOM.  They are `dispatched`. 
 
@@ -343,11 +341,11 @@ Notice the `on-click` handler:
     #(dispatch [:yes-button-clicked])
 ```
 
-With re-frame, we try to keep the DOM as passive as possible.  It is simply a rendering of the data.  So that "on-click" is a simple as we can make it. 
+With re-frame, we try to keep the DOM as passive as possible.  It is simply a rendering of `app-db`.  So that "on-click" is a simple as we can make it. 
 
 There is a signle `dispatch` function in the entire app, and it takes only one paramter, the event.
 
-Let's update our diagram:
+Let's update our diagram to show dispatch:
 ```
 app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DOM
   ^                                                                            |
@@ -357,30 +355,43 @@ app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DO
                            from the DOM to the handlers
 ```
 
+### Event Handlers 
+
+Collectively, event handlers provide the control logic in the applications. 
+
+The job of many event handlers is to change the `app-db` in some way. Add an item here, or delete that one there. So often CRUD but sometimes much more.
+
+Even though handlers appear to be about `app0db` mutation, re-frame requires them to be pure fucntions. 
+```
+   (state-in-app-db, event) -> ratom-state
+```   
+re-frame which pass in the current state of `app-db` plus the event, and the job of a handler to to return a modified version of the the `app-db` value (whcih re-frame will then put back into the `app-db` -- ensuring an undo/redo is available).
+
+But I repeat, the handlers themselves are written as pure functions, which  makes it nice and easy to test and understand them. They never directly access `app-db`. But they do get the value in `app-db` and they do get a chance to return a modified verions of it. 
+
+```
+(defn handle-delete
+    [state [_ item-id]]          ;; notice how event vector is destructured -- 2nd parameter
+    (dissoc-in state [:some :path item-id]))     ;; return a modified version of 'state'
+```
+
 ### Routing
 
-Once they are dispatched, events have to be routed to a handler. 
+Once they are dispatched, events have to be routed to the right handler. 
 
-In re-frame, handlers have to be registered. 
+First realise that event handlers must be 'registered':
+```
 
+```
+
+
+----------  The End
 
 `dispatch` can be implemtned in There's a bunch of ways to implement "dispatch events".  You could push the events into a core.asyc channel. Or you could call a `dispatch` multimethod, and find the right event handler by inspection of `first` on the event vectory. 
-
-We use a technique in which the 
-
-
-
 
 Events are then routed to the right handler via a conveyor belt. Remember,
 an event is just data.  And it is flowing in the opposite direction
 to the data which causes the DOm to be rendered in the first place.
-
-
- and routed to the right handler.
-
-
-
-So here's what a
 
 When an event reaches the end of the conveyor belt, it has to be routed to the right handler -- the one which handles this kind of event.  
 
@@ -389,18 +400,6 @@ So something has to look at `first` in event vector cand know how to call the ri
 The conveyor belt could easily be done via core.async, but we do it the simplest possible way. 
 
 
-### Event Handlers 
-
-Collectively, event handlers provide the control logic in the applications. 
-
-The job of *many* event handlers is to change the ratom in some way. Add an item here.  Delete this one.  So often CRUD.  
-Even though they appear to be about mutation, event handlers are implemented as pure fucntions. 
-```
-   (ratom-state, event) -> ratom-state
-```   
-It is re-frame which feeds the current state in ratom into the handler (along with the event), and the job of a handler to to return a modified version of the data in ratom (whcih re-frame will then put back into the ratom -- ensuring an undo/redo is available).  
-
-But I repeat, the handlers themselves are written as pure functions, and this makes it nice and easy to test and understand them. 
 
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
