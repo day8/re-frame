@@ -1,3 +1,7 @@
+## Status 
+
+Alpha. Incomplete. 
+
 ## re-frame
 
 re-frame is a tiny [reagent] framework for writing  [SPAs] using ClojureScript.
@@ -56,7 +60,7 @@ Our re-frame diagram starts with the "well formed data at rest" bit:
 app-db
 ```
 
-So, re-frame recomends that you put your data into one place (probably one dirty great
+re-frame recomends that you put your data into one place (probably one dirty great
 big atom) which we'll call `app-db`. Structure the data in that place, of course. 
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right? 
@@ -185,7 +189,7 @@ Good, let's introduce a `reaction`:
 (def n (reagent/atom "re-frame"))
 
 ;; The computation '(greet n)' produces hiccup which is stored into 'hiccup-ratom'
-(def hiccup-ratom  (reaction (greet n)))    ;; notice the used of reaction
+(def hiccup-ratom  (reaction (greet n)))    ;; notice the use of reaction
 
 ;; what is the result of the initial computation ?
 (println @hiccup-ratom)
@@ -237,7 +241,7 @@ app-db  -->  components --> hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
 ```
 
 The combined three-function pipeline should be seen as a pure
-function `P` takes  `app-db` as a parameter, and returns DOM.
+function `P` which takes  `app-db` as a parameter, and returns DOM.
 ```
 app-db  -->  P  --> DOM
 ```
@@ -247,9 +251,9 @@ This arrangement is:
 1.  Easy to test.  We put data into the ratom, allow the DOM to be rendered, and check that the right divs are in place.  This would typically be done via phantomjs. 
 2.  Easily understood.  Generally, components can be understood in isolation.  In almost all cases, a component is genuinely a pure fucntion, or is conceptually a pure function. 
  
-The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the `components`.  Reagent/ReactJS looks after the rest. 
+The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the `components`.  Reagent/ReactJS looks after the rest of the pipeline.
 
-If the `app-db` changes, the DOM changes.  The DOM is a function of the ratom (state of the app). 
+If the `app-db` changes, the DOM changes.  The DOM is a function of app-db (the state of the app). 
 
 But wait ... we do have to do some work to kick off the flow correctly ...
 
@@ -264,8 +268,10 @@ How does the flow begin. How does data flow from the `app-db` to the components?
 
 We want our components to `subscribe` to changes in `app-db`. 
 
-XXX Talk about    (subscribe  some-id)
+XXX A subscription is a `reaction` ....  (reaction  (get-in [:some :path] @app-db))
+XXX needs `identical?` check for efficiency ... only propogate when value has changed
 XXX Talk about registration of subscription handlers. 
+XXX need to invoke  (dispose XXXX)
 
 components tend to be organised into a heirarchy and often data is flowing from parent to child compoentns. 
 
@@ -382,16 +388,13 @@ XXXX handlers have to be registered
 
 ----------  The End
 
-`dispatch` can be implemtned in There's a bunch of ways to implement "dispatch events".  You could push the events into a core.asyc channel. Or you could call a `dispatch` multimethod, and find the right event handler by inspection of `first` on the event vectory. 
+In our implementation `dispatch` and `router` are merged. 
 
- Remember, an event is just data.  And it is flowing in the opposite direction
-to the data which causes the DOm to be rendered in the first place.
+`dispatch` is the conveyor belt, and it could be implemtned in many ways:
+- it could push events into a core.asyc channel. 
 
-When an event reaches the end of the conveyor belt, it has to be routed to the right handler -- the one which handles this kind of event.  
-
-So something has to look at `first` in event vector cand know how to call the right handler.
-
-The conveyor belt could easily be done via core.async, but we do it the simplest possible way. 
+`router` could be implemented as:
+- a multimethod, and find the right event handler by inspection of `first` on the event vectory. 
 
 
 
