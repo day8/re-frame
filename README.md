@@ -29,19 +29,17 @@ squint a little to see the benefit.
 First, above all we believe in the one true [Dan Holmsand] (creator of reagent), 
 and his divine instrument the `ratom`.  We genuflect towards Sweden once a day. 
 
-Second, we believe that [FRP] is a honking great idea.  You'll only 
-really "get" Reagent once you view it as an [FRP] library, and not simply a 
+Second, we believe that [FRP] is a honking great idea.  We think you only really 
+"get" Reagent once you view it as an [FRP] library, and not simply a 
 ReactJS wrapper. To put that another way, we think that Reagent at its best is closer in 
 nature to [Hoplon] or [Elm] than it is [OM]. This wasn't obvious to us initially - we
 knew we liked reagent, but it took a while for the penny to drop as to why.
 
 Finally, we believe in one way data flow.  We don't like read/write `cursors` which
 allow for the two way flow of data. re-frame does implement two data way flow, but it 
-ues two, one-way flows to do it.
+uses two, one-way flows to do it.
 
-## FRP
-
-If you aren't familiar with FRP, or even if you think you are, I'd recomend reading [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754). 
+If you aren't familiar with FRP, or even if you think you are, I'd recomend reading [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754 before you go any further.
 
 ## The Parts
 
@@ -58,7 +56,7 @@ Our re-frame diagram starts with the "well formed data at rest" bit:
 app-db
 ```
 
-So, re-frame says that you should put your data into one place (probably one dirty great
+So, re-frame recomends that you put your data into one place (probably one dirty great
 big atom) which we'll call `app-db`. Structure the data in that place, of course. 
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right? 
@@ -70,7 +68,7 @@ that clojure data lying around exposed and passive.
 
 But, as @Fogus said above, data is the easy bit. 
 
-From here on, we'll assume `app-db` looks like this: 
+From here on, we'll assume `app-db` is one of these: 
 ```
 (def app-db  (reagent/atom {}))    ;; a reagent atom, containing a map
 ```
@@ -89,7 +87,7 @@ imposes no requirement here.  It could be a [datascript] database.  But, as you'
 would have to be a "reactive datastore" of some description (an 
 "observable" datastore -- one that can tell you when it has changed).
 
-##### Magic Ratoms
+##### The Magic Bit
 
 Reagent provides a `ratom` (reagent atom) and a `reaction`. These are the two key building blocks.
 
@@ -99,7 +97,7 @@ Reagent provides a `ratom` (reagent atom) and a `reaction`. These are the two ke
 
 The magic bit is that `reaction` will automatically rerun the `computation` whenever the computation's "inputs" change, and it will `reset!` the originally returned `ratom` to the newly conputed value. 
 
-Okay, enough words ... 
+Go on, re-read that paragraph again, then look at this ...
 
 ```clojure
 (ns example1
@@ -114,14 +112,15 @@ Okay, enough words ...
                              1 "Hello")))
 
 ;; notice that both the computations above involve dereferencing db-app
+;; notice also that both reactions above return a ratom. 
 
-(println @ratom2)    ;; ==>  {:b 1}           ;; a computed result. Based on values in 'db-app'
-(println @ratom3)    ;; ==> "Hello"           ;; a computed result. Based on values in 'db-app'
+(println @ratom2)    ;; ==>  {:b 1}       ;; a computed result, involving @db-app
+(println @ratom3)    ;; ==> "Hello"       ;; a computed result, involving @db-app
 
-(reset!  db-app  {:a 0})        ;; this change "flows" (triggers) reactive computations 
-                                ;; both ratom2 and ratom3 will change.
+(reset!  db-app  {:a 0})        ;; this change to db-app, triggers recomputation 
+                                ;; both ratom2 and ratom3 will get new values.
 
-(println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is  {:b (:a @ratom)}
+(println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is result of {:b (:a @db-app)}
 (println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated too.
     
 ;; cleanup 
@@ -129,27 +128,24 @@ Okay, enough words ...
 (dispose ratom3)
 ```
 
-So, `reaction` wraps a computation, and returns a `ratom`.  Whenever the "inputs" to the computation change, the computation is rerun and the returned ratom is `reset!` with the new value. The "inputs" to the computation are any ratoms which are dereferenced duration execution of the computation.
+So, `reaction` wraps a computation, and returns a `ratom`.  Whenever the "inputs" to the computation change, the computation is rerun and the returned ratom is `reset!` to the new value. The "inputs" to the computation are any ratoms which are dereferenced duration execution of the computation.
 
-While the mechanics are different, this is similar in intent to `lift' in [Elm].
+While the mechanics are different, this is similar in intent to `lift' in [Elm] and `defc=` in [hoplon].
 
 So, in FRP terms, a `reaction` will produce a "stream" of values, accessible via the ratom it returns. 
 
-I'm going to repeat that, because it is important.  A `reaction` wraps a computaion and returns a `ratom`. Any `ratom` can produce a stream of changes (they are observable). The is effectively a "stream" 
+The way that reagent harnesses these two building blocks is a delight. 
 
-So, ratom and reaction are the building blocks which can be combined to create reactive functions 
-similar to `lift` in [Elm] or `defc=` in [hoplon].  This enables [FRP].
-
-The way that reagent harnesses these two building blocks is delightfully easy. 
+Okay, that was all important background information.  Let's get back with the diagram.
 
 ### The Components
 
-Extending the diagram a bit, we introduce the beginnings of one way (reactive) data flow:
+Extending the diagram a bit, we introduce `components`:
 ```
-db-app -->  components --> hiccup
+db-app  -->  components  --> hiccup
 ```
 When using reagent, you write one or more `components`.  Think about
-`components` as `pure functions` - data in, hiccup out.  [`hiccup`] is
+`components` as `pure functions` - data in, hiccup out.  `hiccup` is
 ClojureScript data structures which represent DOM.
 
 Here's a trivial component:
@@ -162,7 +158,7 @@ Here's a trivial component:
 ;; ==>  [:div "Hello ratoms and recactions"] 
 ```
 
-You'll notice that our component is a regular clojure function, nothing special. In this case, it takes no inputs and it does produce `hiccup` (a vector of stuff in this case). 
+You'll notice that our component is a regular clojure function, nothing special. In this case, it takes no paramters and it returns a vector (hiccup). 
 
 Here is a slightly more interesting component: 
 ```
@@ -173,7 +169,7 @@ Here is a slightly more interesting component:
 ;; create a ratom, containing a string
 (def n (reagent/atom "re-frame"))  
 
-;; call our component
+;; call our `component` function
 (greet n)                   
 ;; ==>  [:div "Hello " "re-frame"] 
 ```
@@ -189,7 +185,7 @@ Good, let's introduce a `reaction`:
 (def n (reagent/atom "re-frame"))
 
 ;; The computation '(greet n)' produces hiccup which is stored into 'hiccup-ratom'
-(def hiccup-ratom  (reaction (greet n)))    
+(def hiccup-ratom  (reaction (greet n)))    ;; notice the used of reaction
 
 ;; what is the result of the initial computation ?
 (println @hiccup-ratom)
@@ -198,25 +194,30 @@ Good, let's introduce a `reaction`:
 ;; now change the ratom which is dereferenced in the computation
 (reset! n "blah")            ;;    change n to a new value
 
-;; the computaton will have been rerun, and 'hiccup-ratom' now has an updated value
+;; the computaton '(greet n)'  will have been rerun, and 'hiccup-ratom' now has an updated value
 (println @hiccup-ratom)
 ;; ==>   [:div "Hello " "blah"] 
 ```
-Still with us?  Good.  If you understand the **concept** of re-computation, then we're there.
+Still with us?  Good.  
+
+So, as `n` changes value, `hiccup-ratom` changes value. In fact, we can view the series of changes to `n` as producing a "stream" of changes to `hiccup-ratom` (over time). 
+
+If you understand the **concept** of re-computation, then we're there.
 
 Truth injection time.  I haven't been completely straight with you, so we could just focus on the **concepts**.  Here's the inconvienient reality -- reagent runs `reactions` (re-computations) via requestAnnimationFrame, which is, say, 16ms in the future, or after the current thread of processing finishes, which ever is the greater. So if you were to actually run the lines of code above one after the other,  you might not see the re-computation done after `n` gets reset!, unless the animation frame has run. Not that this bit of annoying truth really matters much.  All you need is the concept.  
 
 On with my lies and distortions ...
 
 A `component` like `greet` is a bit like the templates you'd find in frameworks
-like Django or Rails or Mustache, except for two massive differences: 
+like Django or Rails or Mustache -- it maps data to HTML -- except for two massive differences: 
 - you have available the full power of ClojureScript (you are just generating a clojure datastructure). The downside tradeoff is that these are not "designer friendly" HTML templates.
 - these components are reactive.  When their "inputs" change, they
   are automatically rerun, producing new hiccup. reagent adroitly shields you from
-  the details, but `components` are wrapped by a
-  `reaction`.
+  the details, but `components` are wrapped by a `reaction`.
 
-Summary: when the stream of data flowing into a `component` changes, the `component` is re-computed, producing a "stream" of output hiccup.  Below, we'll see that this hiccup is turned into DOM and stitched into the GUI. 
+Summary: when the stream of data flowing into a `component` changes, the `component` is re-computed, producing a "stream" of output hiccup, which, as we'll see below, is turned into DOM and stitched into the GUI. Reagent largely looks after this part of the "flow" for us. 
+
+But we have to do some work to kick it off correctly ...
 
 ### Subscriptions
 
@@ -224,6 +225,9 @@ So let's get back to our diagram.
 ```
 app-db -->  components --> hiccup
 ```
+
+We want our `components` to recieve a stream of updates from the `app-db`. 
+
 Subscriptions enable the reactive flow of data from `app-db` to the components.
 
 (subscribe [:pods] 
