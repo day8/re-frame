@@ -194,17 +194,16 @@ Good, let's introduce a `reaction`:
 ;; now change the ratom which is dereferenced in the computation
 (reset! n "blah")            ;;    change n to a new value
 
-;; the computaton '(greet n)'  will have been rerun, and 'hiccup-ratom' now has an updated value
+;; the computaton '(greet n)'  has been rerun, and 'hiccup-ratom' has an updated value
 (println @hiccup-ratom)
 ;; ==>   [:div "Hello " "blah"] 
 ```
-Still with us?  Good.  
 
-So, as `n` changes value, `hiccup-ratom` changes value. In fact, we can view the series of changes to `n` as producing a "stream" of changes to `hiccup-ratom` (over time). 
+So, as `n` changes value, `hiccup-ratom` changes value. In fact, we could view a series of changes to `n` as producing a "stream" of changes to `hiccup-ratom` (over time). 
 
 If you understand the **concept** of re-computation, then we're there.
 
-Truth injection time.  I haven't been completely straight with you, so we could just focus on the **concepts**.  Here's the inconvienient reality -- reagent runs `reactions` (re-computations) via requestAnnimationFrame, which is, say, 16ms in the future, or after the current thread of processing finishes, which ever is the greater. So if you were to actually run the lines of code above one after the other,  you might not see the re-computation done after `n` gets reset!, unless the animation frame has run. Not that this bit of annoying truth really matters much.  All you need is the concept.  
+Truth injection time.  I haven't been completely straight with you, so we could just focus on the **concepts**.  Here's the reality -- reagent runs `reactions` (re-computations) via requestAnnimationFrame, which is, say, 16ms in the future, or after the current thread of processing finishes, which ever is the greater. So if you were to actually run the lines of code above one after the other,  you might not see the re-computation done after `n` gets reset!, unless the animation frame has run. Not that this bit of annoying truth really matters much.  All you need is the concept.  
 
 On with my lies and distortions ...
 
@@ -216,35 +215,6 @@ like Django or Rails or Mustache -- it maps data to HTML -- except for two massi
   the details, but `components` are wrapped by a `reaction`.
 
 Summary: when the stream of data flowing into a `component` changes, the `component` is re-computed, producing a "stream" of output hiccup, which, as we'll see below, is turned into DOM and stitched into the GUI. Reagent largely looks after this part of the "flow" for us. 
-
-But we have to do some work to kick it off correctly ...
-
-### Subscriptions
-
-So let's get back to our diagram. 
-```
-app-db -->  components --> hiccup
-```
-
-We want our `components` to recieve a stream of updates from the `app-db`. 
-
-Subscriptions enable the reactive flow of data from `app-db` to the components.
-
-(subscribe [:pods] 
-
-Data "flows" from the db-app into our components, and they produce hiccup. 
-
-The compoents are reactive functions. But now we need to understand
-
-components tend to be organised into a heirarchy and most of the time data is flowing from parents to child compoentns. 
-
-But at certain points, for example at the root compoentns, something has to 'subscribe' to 
-
-XXX ask for a 
-(def-component
-    subscriptions: [blah   (subscribe :pods)
-                    such   (subscript XXX)]
-     [
 
 ### ReactJS
 
@@ -277,14 +247,36 @@ This arrangement is:
 1.  Easy to test.  We put data into the ratom, allow the DOM to be rendered, and check that the right divs are in place.  This would typically be done via phantomjs. 
 2.  Easily understood.  Generally, components can be understood in isolation.  In almost all cases, a component is genuinely a pure fucntion, or is conceptually a pure function. 
  
-The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the components.  Reagent/ReactJS looks after the rest. XXXX
+The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the components.  Reagent/ReactJS looks after the rest. 
 
-If the ratom changes, the DOM changes.  The DOM is a function of the ratom (state of the app).  XXXX
+If the ratom changes, the DOM changes.  The DOM is a function of the ratom (state of the app). 
+
+But wait ... we do have to do some work to kick off the flow correctly ...
+
+### Subscriptions
+
+Bback to the first part of our diagram:
+```
+app-db -->  components --> hiccup
+```
+
+How does the flow begin. How does data flow from the `app-db` to the components?  
+
+We want our say that components `subscribe` to changes in `app-db`. 
+
+XXX Talk about subscribe 
+XXX Talk about registration of subscription handlers. 
+
+(subscribe [:pods] 
+
+components tend to be organised into a heirarchy and often data is flowing from parent to child compoentns. 
+
+But at certain points, for example at the root compoentns, something has to 'subscribe' to `app-db` 
 
 
 ### Event Flow
 
-The previous data flow is the first half of the story. So now we need to consider the data flow in the opposite direction.
+The data flow from `app-db` to the DOM is the first half of the story. We now need to consider the 2nd part of the story: the data flow in the opposite direction.
 
 In response to user interaction, a DOM will generate
 events like "the user clicked the delete button on item 42" or
@@ -299,23 +291,19 @@ they represent the **control layer of the application**.
 The backward data flow happens in one (conveyor belt) hop:
 
 ```
-ratom  -->  components --> Hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
-  ^                                                                        |
-  |                                                                        v
-  handlers <---------------  events  ---------------------------------------
-                           a "conveyor belt" takes
-                           events from the DOM to
-                           the handlers.
+app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DOM
+  ^                                                                            |
+  |                                                                            v
+  handlers <-------------------  events  ---------------------------------------
+                           a "conveyor belt" takes events
+                           from the DOM to the handlers
 ```
 
 
-Generally, the user manipulates the GUI because they want to change the state of the
-application.  They don't think that way, of course.  They think in terms of "deleting this blah" 
-or "swapping to foo".  But all these actions invariably mean the ratom will be changed.
-After all the ratom **is** the state.  The DOM presented to the user is a function of that state.
-The GUI doesn't change until the ratom changes.
+Generally, when the user manipulates the GUI, the state of the application changes. In our case, 
+that means the `app-db` will change.  It **is** the state.  And the DOM presented to the user is a function of that state. So that's the cycle.  GUI events cause `app-db` change, which then causes a rerender, and the users sees something different.
 
-So handlers are the part of the system which does ratom mutation. You
+So handlers which look after events, are the part of the system which does `app-db` mutation. You
 could almost imagine them as a "stored procedure" in a
 database. Almost. Stretching it?  We do like our in-memory
 database analogies.
@@ -355,13 +343,26 @@ Notice the `on-click` handler:
     #(dispatch [:yes-button-clicked])
 ```
 
-With re-frame, we try to keep the DOM as passive as possible.  It is simply a rendering of the data. 
+With re-frame, we try to keep the DOM as passive as possible.  It is simply a rendering of the data.  So that "on-click" is a simple as we can make it. 
 
-It is Event Handlers which interpret the events and respond.  `dispatch` is how the DOM passes off events to handlers. And, just to be clear, there is a signle `dsipatch` fucntion.  Not one dispatch functions for each event. 
+There is a signle `dispatch` function in the entire app, and it takes only one paramter, the event.
+
+Let's update our diagram:
+```
+app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DOM
+  ^                                                                            |
+  |                                                                            v
+  handlers <------------------------------------------------------  (dispatch [event-id  other stuff])
+                           a "conveyor belt" takes events
+                           from the DOM to the handlers
+```
 
 ### Routing
 
-Once they are dispatched, events have to be routed to their eventual handler. 
+Once they are dispatched, events have to be routed to a handler. 
+
+In re-frame, handlers have to be registered. 
+
 
 `dispatch` can be implemtned in There's a bunch of ways to implement "dispatch events".  You could push the events into a core.asyc channel. Or you could call a `dispatch` multimethod, and find the right event handler by inspection of `first` on the event vectory. 
 
