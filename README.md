@@ -237,17 +237,17 @@ app-db  -->  components --> hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
 ```
 
 The combined three-function pipeline should be seen as a pure
-function `P` which `app-db` as input, and produces DOM.
-One way data flow:
+function `P` takes  `app-db` as a parameter, and returns DOM.
 ```
 app-db  -->  P  --> DOM
 ```
 
 This arrangement is:
+
 1.  Easy to test.  We put data into the ratom, allow the DOM to be rendered, and check that the right divs are in place.  This would typically be done via phantomjs. 
 2.  Easily understood.  Generally, components can be understood in isolation.  In almost all cases, a component is genuinely a pure fucntion, or is conceptually a pure function. 
  
-The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the components.  Reagent/ReactJS looks after the rest. 
+The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the `components`.  Reagent/ReactJS looks after the rest. 
 
 If the `app-db` changes, the DOM changes.  The DOM is a function of the ratom (state of the app). 
 
@@ -350,9 +350,7 @@ Let's update our diagram to show dispatch:
 app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DOM
   ^                                                                            |
   |                                                                            v
-  handlers <------------------------------------------------------  (dispatch [event-id  other stuff])
-                           a "conveyor belt" takes events
-                           from the DOM to the handlers
+  handlers <-------------------------------------  (dispatch [event-id  other stuff])
 ```
 
 ### Event Handlers 
@@ -361,13 +359,12 @@ Collectively, event handlers provide the control logic in the applications.
 
 The job of many event handlers is to change the `app-db` in some way. Add an item here, or delete that one there. So often CRUD but sometimes much more.
 
-Even though handlers appear to be about `app0db` mutation, re-frame requires them to be pure fucntions. 
+Even though handlers appear to be about `app-db` mutation, re-frame requires them to be pure fucntions. 
 ```
-   (state-in-app-db, event) -> ratom-state
+   (state-in-app-db, event-vector) -> new-state
 ```   
-re-frame which pass in the current state of `app-db` plus the event, and the job of a handler to to return a modified version of the the `app-db` value (whcih re-frame will then put back into the `app-db` -- ensuring an undo/redo is available).
+re-frame passes to an event handler two paramters: the current state of `app-db` plus the event, and the job of a handler to to return a modified version of the state  (which re-frame will then put back into the `app-db`).
 
-But I repeat, the handlers themselves are written as pure functions, which  makes it nice and easy to test and understand them. They never directly access `app-db`. But they do get the value in `app-db` and they do get a chance to return a modified verions of it. 
 
 ```
 (defn handle-delete
@@ -375,22 +372,19 @@ But I repeat, the handlers themselves are written as pure functions, which  make
     (dissoc-in state [:some :path item-id]))     ;; return a modified version of 'state'
 ```
 
+Because handlers are pure functions, and because they generally only have to handle one situation, they tend to be easy to test and understand.  
+
 ### Routing
 
-Once they are dispatched, events have to be routed to the right handler. 
+`dispatch` has to call the right handler. 
 
-First realise that event handlers must be 'registered':
-```
-
-```
-
+XXXX handlers have to be registered 
 
 ----------  The End
 
 `dispatch` can be implemtned in There's a bunch of ways to implement "dispatch events".  You could push the events into a core.asyc channel. Or you could call a `dispatch` multimethod, and find the right event handler by inspection of `first` on the event vectory. 
 
-Events are then routed to the right handler via a conveyor belt. Remember,
-an event is just data.  And it is flowing in the opposite direction
+ Remember, an event is just data.  And it is flowing in the opposite direction
 to the data which causes the DOm to be rendered in the first place.
 
 When an event reaches the end of the conveyor belt, it has to be routed to the right handler -- the one which handles this kind of event.  
