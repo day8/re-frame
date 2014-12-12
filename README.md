@@ -1,6 +1,8 @@
 ## Status 
 
-Alpha. Incomplete. 
+Alpha. Incomplete. But getting close.  
+
+How to do subscriptions?  Macro which hides the `reaction`? How to dispose of the reaction.
 
 ## re-frame
 
