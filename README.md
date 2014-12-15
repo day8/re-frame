@@ -40,9 +40,9 @@ knew we liked reagent, but it took a while for the penny to drop as to why.
 
 Finally, we believe in one way data flow.  We don't like read/write `cursors` which
 promote two way flow of data. re-frame does implement two data way flow, but it 
-uses two, seperate, one-way flows to do it.
+uses two, seperate, one-way flows to achieve it.
 
-If you are curious about FRP, I'd recomend [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754 before you go any further.
+If you are curious about FRP, I'd recomend [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) before you go any further.
 
 ### At A High Level
 
@@ -58,7 +58,7 @@ You'll also be designing a data structure to represent the app state.
 To explain re-frame, we'll now incrementally 
 develop a diagram.  We'll explain each part as it is added.
 
-Along the way, I'll deal with [reagent] at an intermediate to advanced level. This is not an intro to reagent tutorial.
+Along the way, I'll deal with [reagent] at an intermediate to advanced level. This is not an intro to reagent tutorial, so you need to have done one of those before getting here.
 
 <blockquote class="twitter-tweet" lang="en"><p>Well-formed Data at rest is as close to perfection in programming as it gets. All the crap that had to happen to put it there however...</p>&mdash; Fogus (@fogus) <a href="https://twitter.com/fogus/status/454582953067438080">April 11, 2014</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -73,8 +73,8 @@ app-db
 re-frame recomends that you put your data into one place which we'll call `app-db`. Structure the data in that place, of course.
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right? 
-You'd happily put all your well formed data into Postgres or mysql. But within a running application (in memory), it is different. If you have
-background in OO, this data-in-one-place is a hard one to swallow.  You've
+You'd happily put all your well formed data into Postgres or mysql. But within a running application (in memory), it is different. If you have a background in OO, this data-in-one-place is a 
+hard one to swallow.  You've
 spent your life breaking systems into pieces, organised around behaviour and trying
 to hide the data.  I still wake up in a sweat some nights thinking about all
 that clojure data lying around exposed and passive.
@@ -96,7 +96,7 @@ seems a more useful paradigm than plain old atom.
 Finally, a clarification:  `app-db` doesn't actually have to be a reagent/atom containing
 a map. In theory, re-frame
 imposes no requirement here.  It could be a [datascript] database (untested).  But, as you'll see, it
-does have to be a "reactive datastore" (one that can tell you when it has changed).  In truth, `app-db` doesn't really have to be a single atom -- the pattern allows for as many as you like,  although our implementation assumes one.
+does have to be a "reactive datastore" (one that can tell you when it has changed).  In truth, `app-db` doesn't have to be a single atom either -- the pattern allows for as many as you like,  although our implementation assumes one.
 
 ##### The Bit Of Magic
 
@@ -180,11 +180,11 @@ Here is a slightly more interesting (parameterised) component :
 ;; ==>  [:div "Hello " "re-frame"]    returns a vector 
 ```
 
-So components are easy - they are functions which turns data into hiccup. 
+So components are easy - they are functions which turn data into hiccup. 
 
-Now, we're now going to introduce `reaction` into the mix.  On the one hand I'm complicating things by doing this, because reagent invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens.  
+Now, we're now going to introduce `reaction` into this mix.  On the one hand, I'm complicating things by doing this, because reagent invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens.  
 
-On the other hand, it is useful to understand how it all works.  AND, in a minute, when we get to subscriptions, we'll be the ones actively using `reaction`. So, we might as well bite the bullet here ... and, anyway, its easy ... 
+On the other hand, it is useful to understand how it all works.  AND, in a minute, when we get to subscriptions, we'll be the ones actively using `reaction`. So, we might as well bite the bullet here ... and, anyway, it is easy ... 
 ```
 (defn greet
    [name]                       ;; name is a ratom
@@ -205,7 +205,7 @@ On the other hand, it is useful to understand how it all works.  AND, in a minut
 ;; the computaton '(greet n)' will be rerun automatically 
 ;; and 'hiccup-ratom' will be reset! to the new value
 (println @hiccup-ratom)
-;; ==>   [:div "Hello " "blah"] 
+;; ==>   [:div "Hello " "blah"]    ;; yep, there's teh new value
 ```
 
 So, as `n` changes value, the output of the computation `(greet n)` changes, and so too the value in `hiccup-ratom` changes. One way data flow. With our FRP glasses on, we would see a series of changes to `n` as producing a "stream" of changes in `hiccup-ratom` (over time).
@@ -213,7 +213,7 @@ So, as `n` changes value, the output of the computation `(greet n)` changes, and
 Note: `n` is an "input" to the computation because it is a ratom which is dereferenced within the computation.
 
 Truth time.  I haven't been entirely straight with you:  
-1. reagent re-runs `reactions` (re-computations) via requestAnnimationFrame. That means a re-computation happens about 16ms after the need for it is detected or after the current thread of processing finishes, whichever is the greater. So if you were to actually run the lines of code above one after the other too  quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the annimationFrame hasn't run (yet).  You could add a `(reagent.core/flush)` after the reset! that would force the re-computation to happen straight away. 
+1. reagent re-runs `reactions` (re-computations) via requestAnnimationFrame. That means a re-computation happens about 16ms after the need for it is detected, or after the current thread of processing finishes, whichever is the greater. So if you were to actually run the lines of code above one after the other too  quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the annimationFrame hasn't run (yet).  You could add a `(reagent.core/flush)` after the reset! that would force the re-computation to happen straight away. 
 2. `reaction` doesn't actually return a `ratom`.  But it returns something that has ratom-nature, so we'll happily continue believing it is a ratom and no harm will come to us.
 
 On with the rest of my lies and distortions ...
@@ -225,7 +225,7 @@ like Django or Rails or Mustache -- it maps data to HTML -- except for two massi
   are automatically rerun, producing new hiccup. reagent adroitly shields you from
   the details, but `components` are wrapped by a `reaction`.
 
-### React
+### React Etc
 
 So where do these data streams flow?  
 
@@ -311,7 +311,30 @@ We write and register the query functions. It is our job to make the queries rea
     name-query)       ;; the query function
 ```
 
-`components` tend to be organised into a heirarchy, with data flowing from parent to child via paramters. So not every component needs a subscription. In fact, very few do, although the root component will certainly have one. 
+`components` tend to be organised into a heirarchy, with data flowing from parent to child via paramters. So not every component needs a subscription. In fact, few do, although the root component will certainly have one. 
+
+### Complex Queries
+
+Imagine our app-db contains a list of items.  And that we need a component to display them. 
+
+```
+;; register our subscription for use by components
+(register-subscription 
+  :items-query       ;; the id  
+  (fn [db]        ;; query functions are given the database (ratom) as a parameter
+    (reaction (get-in @db [:some :path :items]))))   
+```
+
+```
+(defn items-list         ;; outer, setup function, called once
+   []
+   (let [items  (subscribe [:items-query])
+         num    (reaction (count @items)]    ;; reaction based on the subscription
+      (fn []
+        [:div  
+            (str "there's " num " of them)
+            (into [:div ] (map item-render @items)))))    ;; assume item-render exists
+```
 
 ### Event Flow
 
