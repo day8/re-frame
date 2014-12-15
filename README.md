@@ -322,7 +322,7 @@ These events have to "handled".  The code doing this handling might
  mutate the `app-db`, or requrest more data from the server, or POST somewhere, etc. 
 
 An app will have many handlers, and collectively
-they represent the **control layer of the application**. A critical part of their function is "state transition".
+they represent the **control layer of the application**. 
 
 The backward data flow of events happens via a conveyor belt:
 
@@ -413,6 +413,11 @@ Because handlers are pure functions, and because they generally only have to han
 
 ### State Transition 
 
+Above, I commented that collectievly handler represent the control layer of the application.
+
+A big part of what they do is to manage state transitions. The application is in state X, and event Y arrives, so the handler for Y was to move the app to state Z. 
+
+Although I've done nothing to try and implement it, this is obviously fertile territory for using [statechars](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782).
 
 ### Routing
 
@@ -420,6 +425,13 @@ Because handlers are pure functions, and because they generally only have to han
 
 XXXX handlers have to be registered 
 
+### In Summary
+
+To use re-frame, you'll have to:
+  - design your app's data structure
+  - write (and register) subscription functions (query layer)
+  - write component functions  (view layer)
+  - write (and register0 event handlers functions   (control layer and/or state tranistion layer)
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
 [reagent]:http://reagent-project.github.io/
