@@ -15,7 +15,7 @@ In another context, re-frame might be called an MVC framework, except
 it is instead a functional RACES framework - Reactive-Atom Component Event Subscription
 (I love the smell of acronym in the morning).
 
-## Claims
+### Claims
 
 Nothing about re-frame is the slightest bit original or clever. 
 You'll find no ingenious use of functional zippers, transducers or core.async. 
@@ -30,7 +30,7 @@ At small scale, any framework seems like pesky overhead. The
 explanatory examples in here are small scale, so you'll need to
 squint a little to see the benefit.
 
-## Core Beliefs
+### Core Beliefs
 
 First, above all we believe in the one true [Dan Holmsand] (creator of reagent), 
 and his divine instrument the `ratom`.  We genuflect towards Sweden once a day. 
@@ -45,6 +45,15 @@ promote two way flow of data. re-frame does implement two data way flow, but it
 uses two, seperate, one-way flows to do it.
 
 If you aren't familiar with FRP, I'd recomend [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754 before you go any further.
+
+### At A High Level
+
+When you use re-frame, you'll be writting three kinds of functions:
+  - subscriptions - which move data into components
+  - components - which turn data into DOM
+  - event handlers - which provide the state transition (control) layer
+
+You'll also be choosing a certain data structure to represent the app state. XXX
 
 ## The Parts
 
@@ -142,11 +151,11 @@ Extending the diagram a bit, we introduce `components`:
 ```
 app-db  -->  components  --> hiccup
 ```
-When using reagent, you write one or more `components`.  Think about
-`components` as `pure functions` - data in, hiccup out.  `hiccup` is
-ClojureScript data structures which represent DOM.
+When using reagent, your primary job is to write one or more `components`.  
 
-Here's a trivial component:
+Think about
+`components` as `pure functions` - data in, hiccup out.  `hiccup` is
+ClojureScript data structures which represent DOM. Here's a trivial component:
 ```
 (defn greet
    []
@@ -159,7 +168,7 @@ Here's a trivial component:
 
 You'll notice that our component is a regular clojure function, nothing special. In this case, it takes no paramters and it returns a clojurescript vector (hiccup). 
 
-Here is a slightly more interesting component: 
+Here is a slightly more interesting (parameterised) component : 
 ```
 (defn greet                     ;; this greet has a parameter
    [name]                       ;; 'name' is a ratom, and contains a string
@@ -175,7 +184,7 @@ Here is a slightly more interesting component:
 
 There's more to components, but that's the basics.  A component is a function which turns data into hiccup. 
 
-Now, we're now going to introduce `reaction` into the mix.  On the one hand I'm complicating things by doing this, because reagent invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens if you want to be. On the other hand, it is nice to understand how it all works.  AND, in a minute, when we get to subscriptions, we'll be the onse actively using `reaction`. So, I decided to bite the bullet here ... and anyway, its easy ... 
+Now, we're now going to introduce `reaction` into the mix.  On the one hand I'm complicating things by doing this, because reagent invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens if you want to be. On the other hand, it is nice to understand how it all works.  AND, in a minute, when we get to subscriptions, we'll be the ones actively using `reaction`. So, we might as well bite the bullet here ... and anyway, its easy ... 
 ```
 (defn greet
    [name]                       ;; name is a ratom
@@ -184,7 +193,7 @@ Now, we're now going to introduce `reaction` into the mix.  On the one hand I'm 
 (def n (reagent/atom "re-frame"))
 
 ;; The computation '(greet n)' returns hiccup which is stored into 'hiccup-ratom'
-(def hiccup-ratom  (reaction (greet n)))    ;; notice the use of reaction
+(def hiccup-ratom  (reaction (greet n)))    ;; <---- notice the use of reaction
 
 ;; what is the result of the initial computation ?
 (println @hiccup-ratom)
@@ -201,15 +210,17 @@ Now, we're now going to introduce `reaction` into the mix.  On the one hand I'm 
 
 So, as `n` changes value, the output of the computation (greet n) changes, and so the value in `hiccup-ratom` changes. One way data flow. With our FRP glasses on, we would see a series of changes to `n` as producing a "stream" of changes in `hiccup-ratom` (over time).
 
-Truth injection time.  I haven't been entirely straight with you.  
-1. reagent re-runs `reactions` (re-computations) via requestAnnimationFrame, which is, the re-computation happens about 16ms after the need for it is detected or after the current thread of processing finishes, whichever is the greater. So if you were to actually run the lines of code above one after the other quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the annimationFrame hasn't run (yet). Althought if you added (reagent.core/flush) after the reset! that would force the re-computation to happen.
+Note: `n` is an "input" to the computation because it is a ratom which is dereferenced within the computation.
+
+Truth time.  I haven't been entirely straight with you.  
+1. reagent re-runs `reactions` (re-computations) via requestAnnimationFrame. That means a re-computation happens about 16ms after the need for it is detected or after the current thread of processing finishes, whichever is the greater. So if you were to actually run the lines of code above one after the other quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the annimationFrame hasn't run (yet).  You could add a (reagent.core/flush) after the reset! that would force the re-computation to happen straight away. 
 2. `reaction` doesn't actually return a `ratom`.  But it returns something that has ratom-nature, so we'll happily ignore this. 
 
 On with the rest of my lies and distortions ...
 
 A `component` like `greet` is a bit like the templates you'd find in frameworks
 like Django or Rails or Mustache -- it maps data to HTML -- except for two massive differences: 
-- you have available the full power of ClojureScript (you are just generating a clojure datastructure). The downside tradeoff is that these are not "designer friendly" HTML templates.
+- you have  the full power of ClojureScript available to you (generating a clojure datastructure). The downside is that these are not "designer friendly" HTML templates.
 - these components are reactive.  When their "inputs" change, they
   are automatically rerun, producing new hiccup. reagent adroitly shields you from
   the details, but `components` are wrapped by a `reaction`.
@@ -236,7 +247,7 @@ app-db  -->  components --> hiccup --> Reagent --> VDOM  -->  React  --> DOM
                 f1                       f2                    f3
 ```
 
-In abstract terms, you could envisage the process via the thread first macro: 
+In abstract terms, you could squint and imagine the process as: 
 ```
 (-> app-db 
     components    ;; produces Hiccup
@@ -250,7 +261,7 @@ But, just to be clear,  we don't have to bother ourselves with most of the pipel
 
 ### Subscribe
 
-So now we're going to focus on how we get data to flow into our components. 
+So now we're going to focus on how we kickstart this data flow:
 
 The first part of our diagram is:
 ```
@@ -265,6 +276,34 @@ Our dream situation is for `components` to:
 
 re-frame tries to achieve the dream via `subscriptions`.
 
+You write and register subscriptions. components then use these subsciptions.
+
+Here's a component which uses a subscription:
+```
+(defn greet         ;; outer, setup function
+   []
+   (let [name-ratom  (subscribe  :name-query)]             ;; pass in a query id. Get back a ratom.
+      (fn []        ;; the inner, render function, potentially called many times. 
+          [:div "Hello" @name-ratom])))
+```
+
+First thing to note is that this is 2nd form of `component` (there are 3 forms).  Perviously, we've used simplest, form 1 components (no setup was required). In this 2nd form, you see there's a function returning a function.  
+
+The returned function is the render fucntion and it is potentially called many times -- once each time the component is rendered. This returned function is what reagent is goign to wrap in `reaction` for us. 
+
+The outer function is a setup function which is called once to initialise the component.
+
+In the setup (outer function) above, notice that we call 'subscribe' and we pass in the 'id' (`:name-query`) of the query for which we'd like to obtain data. The signature of subscribe is:
+
+    (subscribe id  optional parms of the query)
+
+subscribe returns a ratom, which  will be `reset!` if the data underlying the query changes. As a result, a subscription gives you a stream of updates, via this returned ratom. 
+
+And remember that your render function will be wrapped in a `reaction` by reagent. So when you derefernce the subscription ratom (`@name-ratom`) we are making it 
+    
+
+
+XXX there is only one subscribe 
 XXX A subscription is a `reaction` ....  (reaction  (get-in [:some :path] @app-db))
 XXX needs `identical?` check for efficiency ... only propogate when value has changed
 XXX Talk about registration of subscription handlers. 
