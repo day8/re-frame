@@ -2,8 +2,6 @@
 
 Alpha. Incomplete. But getting close.  
 
-How to do subscriptions?  Macro which hides the `reaction`? How to dispose of the reaction.
-
 ## re-frame
 
 re-frame is a tiny [reagent] framework for writing  [SPAs] using ClojureScript.
@@ -80,15 +78,14 @@ spent your life breaking systems into pieces, organised around behaviour and try
 to hide the data.  I still wake up in a sweat some nights thinking about all
 that clojure data lying around exposed and passive.
 
-But, as @fogus said above, data is the easy bit. 
+But, as @fogus tell us, data is the easy bit. 
 
 From here on, we'll assume `app-db` is one of these: 
 ```
 (def app-db  (reagent/atom {}))    ;; a reagent atom, containing a map
 ```
 
-Although it is a reagent atom (ratom), I'd encourage you to actively think about
-it as an (in-memory) database. 
+Although it is a reagent atom (ratom), I'd encourage you to think of it as an (in-memory) database. 
 It will contain structured data (perhaps with a formal [Prismatic Schema] spec).
 You will need to query that data. You will perform CRUD 
 and other transformations on it. You'll often want to transact on this
@@ -98,18 +95,17 @@ seems a more useful paradigm than plain old atom.
 Finally, a clarification:  `app-db` doesn't actually have to be a reagent/atom containing
 a map. In theory, re-frame
 imposes no requirement here.  It could be a [datascript] database.  But, as you'll see, it
-would have to be a "reactive datastore" of some description (an 
-"observable" datastore -- one that can tell you when it has changed).  In truth, `app-db` doesn't really have to be a single atom -- the pattern allows for more than one, although our implementation is assumes one.
+does have to be a "reactive datastore" (one that can tell you when it has changed).  In truth, `app-db` doesn't really have to be a single atom -- the pattern allows for as many as you like,  although our implementation assumes one.
 
-##### The Magic Bit
+##### The Bit Of Magic
 
 Reagent provides a `ratom` (reagent atom) and a `reaction`. These are two key building blocks.
 
 `ratoms` are like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc. 
 
-`reaction` act a bit like a function. Its a macro which wraps some `computation` (some forms?) and returns a `ratom` containing the result of that `computation`.  
+`reaction` acts a bit like a function. Its a macro which wraps some `computation` (some forms?) and returns a `ratom` containing the result of that `computation`.  
 
-The magic bit is that `reaction` will automatically rerun the `computation` whenever the computation's "inputs" change, and `reset!` the originally returned `ratom` to the newly conputed value. 
+The magic bit is that `reaction` will automatically rerun the `computation` whenever the computation's "inputs" change, and then `reset!` the originally returned `ratom` to the newly conputed value. 
 
 Perhaps some code will help: 
 
@@ -160,8 +156,9 @@ ClojureScript data structures which represent DOM. Here's a trivial component:
 (defn greet
    []
    [:div "Hello ratoms and recactions"])
-
-;; call it
+```
+And if we call it:
+```
 (greet)                
 ;; ==>  [:div "Hello ratoms and recactions"] 
 ```
@@ -172,7 +169,7 @@ Here is a slightly more interesting (parameterised) component :
 ```
 (defn greet                     ;; this greet has a parameter
    [name]                       ;; 'name' is a ratom, and contains a string
-   [:div "Hello "  @name])      ;; dereference name here to get out the value it contains 
+   [:div "Hello "  @name])      ;; dereference name here to extract the value it contains 
    
 ;; create a ratom, containing a string
 (def n (reagent/atom "re-frame"))  
@@ -182,9 +179,9 @@ Here is a slightly more interesting (parameterised) component :
 ;; ==>  [:div "Hello " "re-frame"]    returns a vector 
 ```
 
-There's more to components, but that's the basics.  A component is a function which turns data into hiccup. 
+So components are simple - a function which turns data into hiccup. 
 
-Now, we're now going to introduce `reaction` into the mix.  On the one hand I'm complicating things by doing this, because reagent invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens if you want to be. On the other hand, it is nice to understand how it all works.  AND, in a minute, when we get to subscriptions, we'll be the ones actively using `reaction`. So, we might as well bite the bullet here ... and anyway, its easy ... 
+Now, we're now going to introduce `reaction` into the mix.  On the one hand I'm complicating things by doing this, because reagent invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens.  On the other hand, it is nice to understand how it all works.  AND, in a minute, when we get to subscriptions, we'll be the ones actively using `reaction`. So, we might as well bite the bullet here ... and, anyway, its easy ... 
 ```
 (defn greet
    [name]                       ;; name is a ratom
@@ -202,8 +199,8 @@ Now, we're now going to introduce `reaction` into the mix.  On the one hand I'm 
 ;; now change an "input" to the computation
 (reset! n "blah")            ;;    change n to a new value
 
-;; the computaton '(greet n)'  has been rerun
-;; and 'hiccup-ratom' has reset! to the new value
+;; the computaton '(greet n)' will be rerun automatically 
+;; and 'hiccup-ratom' will be reset! to the new value
 (println @hiccup-ratom)
 ;; ==>   [:div "Hello " "blah"] 
 ```
@@ -214,7 +211,7 @@ Note: `n` is an "input" to the computation because it is a ratom which is derefe
 
 Truth time.  I haven't been entirely straight with you.  
 1. reagent re-runs `reactions` (re-computations) via requestAnnimationFrame. That means a re-computation happens about 16ms after the need for it is detected or after the current thread of processing finishes, whichever is the greater. So if you were to actually run the lines of code above one after the other quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the annimationFrame hasn't run (yet).  You could add a (reagent.core/flush) after the reset! that would force the re-computation to happen straight away. 
-2. `reaction` doesn't actually return a `ratom`.  But it returns something that has ratom-nature, so we'll happily ignore this. 
+2. `reaction` doesn't actually return a `ratom`.  But it returns something that has ratom-nature, so we'll happily continue believing it is a ratom and no halm will come to us.
 
 On with the rest of my lies and distortions ...
 
@@ -239,7 +236,7 @@ Best to imagine this process as a pipeline of 3 functions.  Each
 function takes data from the
 previous step, and produces data for the next step.  In the next
 diagram, the three functions are marked. The unmarked nodes are data,
-produced by one step, becoming the input to the next step.  hiccup,
+produced by one step, which become input to the next step.  hiccup,
 VDOM and DOM are all various forms of HTML markup (in our world that's data).
 
 ```
@@ -255,78 +252,77 @@ In abstract terms, you could squint and imagine the process as:
     React)        ;; produces HTML (which magically and efficently appears on the page).
 ```
 
-Via the magic of `ratom` and `reaction`, changes to `app-db` are pushed into the pipeline, causing new HTML to pop out the other end and onto our page.  One way data flow, FRP in nature.
+Via `ratom` and `reaction`, changes to `app-db` are pushed into the pipeline, causing new HTML to pop out the other end, and then onto our page.  One way data flow, FRP in nature.
 
 But, just to be clear,  we don't have to bother ourselves with most of the pipeline. We just write the `components` part (pure functions!) and Reagent/React looks after the rest. 
 
 ### Subscribe
 
-So now we're going to focus on how we kickstart this data flow:
+The data flow is kickstarted by subscriptions. 
 
-The first part of our diagram is:
 ```
 app-db -->  components --> hiccup
 ```
 
 Our dream situation is for `components` to:
-   * obtain data from `app-db`  (their job is to turn data into hiccup)
+   * obtain data from `app-db`  (their job is to turn this data into hiccup)
    * obtain this data via a (possibly parameterised) query over `app-db`  (think database query)
-   * automatically recompute their hiccup output, over time, in response to changes in the underlying data in `app-db`. 
-   * the query process should be as declarative as possible. We want the components knowing as little as possible about the data structure in `app-db`.
+   * automatically recompute their hiccup output, as the data returned by the query changes, over time. 
+   * the query should be as declarative as possible. We want components knowing as little as possible about the data structure in `app-db`.
 
-re-frame tries to achieve the dream via `subscriptions`.
+`subscriptions` are a modest and incomplete attempt at living the dream.
 
-You write and register subscriptions. components then use these subsciptions.
+You write and register subscriptions.  `components` use subsciptions to sourcce data. 
+`components` never talk directly to `app-db`.
 
 Here's a component which uses a subscription:
 ```
-(defn greet         ;; outer, setup function
+(defn greet         ;; outer, setup function, called once
    []
-   (let [name-ratom  (subscribe  :name-query)]             ;; pass in a query id. Get back a ratom.
+   (let [name-ratom  (subscribe [:name-query])]    ;; pass in a query id as first in vector
       (fn []        ;; the inner, render function, potentially called many times. 
           [:div "Hello" @name-ratom])))
 ```
 
-First thing to note is that this is 2nd form of `component` (there are 3 forms).  Perviously, we've used simplest, form 1 components (no setup was required). In this 2nd form, you see there's a function returning a function.  
+First, note this is a form-2 `component` (there are 3 forms).  Perviously, we've used the simplest, form-1 components (no setup was required). With form-2, there's a function returning a function:
+- the returned function is the render fucntion. Behind the scenes, reagent will wrap this render fucntion in a `reaction` to make it produce new hiccup when its inputs change.  In our case, that means it will rerun every time `name-ratom` changes. 
+- the outer function is a setup function, called once to initialise the component. Notice the use of 'subscribe' with the a parameter `:name-query`. That creates a stream through which new values are supplied over time.
 
-The returned function is the render fucntion and it is potentially called many times -- once each time the component is rendered. This returned function is what reagent is goign to wrap in `reaction` for us. 
+`subscribe` is called like this: 
+```
+    (subscribe  [query-id  some optional query parameters])
+```
+The first element in the vector identifies the query and the other elements are optional, additional query parameters. Over time, as data in `app-db` changes, this ratom will be `reset!` with the latest results from the query.  As a result, a subscription represents a stream of updates.  But only new values are propogated. If the new value is `identical?` to the old value, it won't be trigger a re-run of the render.
 
-The outer function is a setup function which is called once to initialise the component.
+We write and register the query functions. It is our job to make the queries reactions.
 
-In the setup (outer function) above, notice that we call 'subscribe' and we pass in the 'id' (`:name-query`) of the query for which we'd like to obtain data. The signature of subscribe is:
-
-    (subscribe id  optional parms of the query)
-
-subscribe returns a ratom, which  will be `reset!` if the data underlying the query changes. As a result, a subscription gives you a stream of updates, via this returned ratom. 
-
-And remember that your render function will be wrapped in a `reaction` by reagent. So when you derefernce the subscription ratom (`@name-ratom`) we are making it 
+```
+;; simple query: get name out of the db. 
+(defn name-query
+    [db]        ;; query functions are given the database (ratom) as a parameter
+    (reaction (get-in @db [:some :path :name])))    ;; each time db changes, will rerun
     
+;; register our subscription for use by components
+(register-subscription 
+    :name-query       ;; the id  
+    name-query)       ;; the query function
+```
 
-
-XXX there is only one subscribe 
-XXX A subscription is a `reaction` ....  (reaction  (get-in [:some :path] @app-db))
-XXX needs `identical?` check for efficiency ... only propogate when value has changed
-XXX Talk about registration of subscription handlers. 
-XXX need to invoke  (dispose XXXX)
-
-components tend to be organised into a heirarchy and often data is flowing from parent to child compoentns. 
-
-But at certain points, for example at the root components, something has to 'subscribe' to `app-db` 
-
+`components` tend to be organised into a heirarchy, with data flowing from parent to child via paramters. So not every component needs a subscription. In fact, very few do. The root component will certainly have a subscription, but apart from that not many.
 
 ### Event Flow
 
-The data flow from `app-db` to the DOM is the first half of the story. We now need to consider the 2nd part of the story: the data flow in the opposite direction.
+The data flow from `app-db` to the DOM is the first half of the story. We now need to consider the 2nd part of the story: the flow in the opposite direction.
 
 In response to user interaction, a DOM will generate
 events like "clicked delete button on item 42" or
 "unticked the checkbox for 'send me spam'".
 
 These events have to "handled".  The code doing this handling might
- mutate the `app-db`, or requrest more data from thet server, or POST somewhere, etc. 
+ mutate the `app-db`, or requrest more data from the server, or POST somewhere, etc. 
 
 An app will have many handlers, and collectively
-they represent the **control layer of the application**.
+they represent the **control layer of the application**. A critical part of their function is "state transition".
 
 The backward data flow of events happens via a conveyor belt:
 
@@ -341,7 +337,7 @@ app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  React  --> DOM
 
 
 Generally, when the user manipulates the GUI, the state of the application changes. In our case, 
-that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to the user is a function of that state. So that's the cycle.  GUI events cause `app-db` change, which then causes a rerender, and the users sees something different.
+that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to the user is a function of that state. So that tends to be the cycle.  GUI events cause `app-db` changes, which then causes a rerender, and the users sees something different.
 
 So handlers, which look after events, are the part of the system which does `app-db` mutation. You
 could almost imagine them as a "stored procedure" in a
@@ -385,14 +381,14 @@ Notice the `on-click` handler:
 
 With re-frame, we try to keep the DOM as passive as possible.  It is simply a rendering of `app-db`.  So that "on-click" is a simple as we can make it. 
 
-There is a signle `dispatch` function in the entire app, and it takes only one paramter, the event.
+There is a single  `dispatch` function in the entire app, and it takes only one paramter, the event vector.
 
 Let's update our diagram to show dispatch:
 ```
 app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  React  --> DOM
   ^                                                                          |
   |                                                                          v
-  handlers <-------------------------------------  (dispatch [event-id  other stuff])
+  handlers <-------------------------------------  (dispatch [event-id  other params])
 ```
 
 ### Event Handlers 
@@ -401,12 +397,11 @@ Collectively, event handlers provide the control logic in the applications.
 
 The job of many event handlers is to change the `app-db` in some way. Add an item here, or delete that one there. So often CRUD but sometimes much more.
 
-Even though handlers appear to be about `app-db` mutation, re-frame requires them to be pure fucntions. 
+Even though handlers appear to be about `app-db` mutation, re-frame requires them to be pure fucntions with a signature: 
 ```
    (state-in-app-db, event-vector) -> new-state
 ```   
 re-frame passes to an event handler two paramters: the current state of `app-db` plus the event, and the job of a handler to to return a modified version of the state  (which re-frame will then put back into the `app-db`).
-
 
 ```
 (defn handle-delete
@@ -416,23 +411,14 @@ re-frame passes to an event handler two paramters: the current state of `app-db`
 
 Because handlers are pure functions, and because they generally only have to handle one situation, they tend to be easy to test and understand.  
 
+### State Transition 
+
+
 ### Routing
 
 `dispatch` has to call the right handler. 
 
 XXXX handlers have to be registered 
-
-----------  The End
-
-In our implementation `dispatch` and `router` are merged. 
-
-`dispatch` is the conveyor belt, and it could be implemtned in many ways:
-- it could push events into a core.asyc channel. 
-
-`router` could be implemented as:
-- a multimethod, and find the right event handler by inspection of `first` on the event vectory. 
-
-
 
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
