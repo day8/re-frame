@@ -22,9 +22,9 @@ You'll find no ingenious use of functional zippers, transducers or core.async.
 This is a good thing (although, for the record, one day I'd love to develop
 something original and clever).
 
-Using re-frame, you will be able to break your application code into distinct pieces. 
-Each of these pieces can be easily described, understood and tested independently. 
-These pieces will (mostly) be pure functions.
+Using re-frame, you will be able to break your application code into distinct 
+pieces, and those distinct pieces will be  be pure functions. 
+Each can be easily described, understood and tested independently. 
 
 At small scale, any framework seems like pesky overhead. The 
 explanatory examples in here are small scale, so you'll need to
@@ -35,17 +35,16 @@ squint a little to see the benefit.
 First, above all we believe in the one true [Dan Holmsand] (creator of reagent), 
 and his divine instrument the `ratom`.  We genuflect towards Sweden once a day. 
 
-Second, we believe that [FRP] is a honking great idea.  We think you only really 
-"get" Reagent once you view it as an [FRP] library, and not simply a 
-ReactJS wrapper. To put that another way, we think that Reagent at its best is closer in 
+Second, we believe that [FRP] is a honking great idea.  When you start with reagent, you 
+might be tempted to see it as simply another of the React warappers (a sibling to OM and [quiescent](https://github.com/levand/quiescent)). But I think you only really "get" Reagent when you view it as an [FRP] library. To put that another way, we think that Reagent, at its best, is closer in 
 nature to [Hoplon] or [Elm] than it is [OM]. This wasn't obvious to us initially - we
 knew we liked reagent, but it took a while for the penny to drop as to why.
 
 Finally, we believe in one way data flow.  We don't like read/write `cursors` which
 allow for the two way flow of data. re-frame does implement two data way flow, but it 
-uses two, one-way flows to do it.
+uses two, seperate, one-way flows to do it.
 
-If you aren't familiar with FRP, or even if you think you are, I'd recomend reading [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754 before you go any further.
+If you aren't familiar with FRP, I'd recomend that you read [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754 before you go any further.
 
 ## The Parts
 
@@ -91,42 +90,41 @@ Finally, a clarification:  `app-db` doesn't actually have to be a reagent/atom c
 a map. In theory, re-frame
 imposes no requirement here.  It could be a [datascript] database.  But, as you'll see, it
 would have to be a "reactive datastore" of some description (an 
-"observable" datastore -- one that can tell you when it has changed).
+"observable" datastore -- one that can tell you when it has changed).  In truth, `app-db` doesn't really have to be a single atom -- the pattern allows for more than one, although our implementation is assumes one.
 
 ##### The Magic Bit
 
-Reagent provides a `ratom` (reagent atom) and a `reaction`. These are the two key building blocks.
+Reagent provides a `ratom` (reagent atom) and a `reaction`. These are two key building blocks.
 
 `ratoms` are like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc. 
 
-`reactions` act a bit like functions. Its a macro which wraps some `computation` (some forms?) and returns a `ratom` containing the result of that` computation`.  
+`reaction` act a bit like a function. Its a macro which wraps some `computation` (some forms?) and returns a `ratom` containing the result of that `computation`.  
 
 The magic bit is that `reaction` will automatically rerun the `computation` whenever the computation's "inputs" change, and it will `reset!` the originally returned `ratom` to the newly conputed value. 
 
-Go on, re-read that paragraph again, then look at this ...
+Perhaps some code will help: 
 
 ```clojure
 (ns example1
-  (:require-macros [reagent.ratom :refer [reaction]])
-  (:require [reagent.core   :as    r]))
+  (:require-macros [reagent.ratom :refer [reaction]])  ;; reaction is a macro
+  (:require [reagent.core   :as    reagent]))
     
-(def db-app  (r/atom {:a 1}))                 ;; our base ratom
+(def app-db  (reagent/atom {:a 1}))           ;; our base ratom
 
-(def ratom2  (reaction {:b (:a @db-app)}))    ;; reaction wraps a computation 
-(def ratom3  (reaction (cond = (:a @db-app)   ;; reaction wraps another computation
+(def ratom2  (reaction {:b (:a @app-db)}))    ;; reaction wraps a computation 
+(def ratom3  (reaction (cond = (:a @app-db)   ;; reaction wraps another computation
                              0 "World"
                              1 "Hello")))
 
-;; notice that both the computations above involve dereferencing db-app
-;; notice also that both reactions above return a ratom. 
+;; notice that both the computations above involve dereferencing 'app-db'
 
-(println @ratom2)    ;; ==>  {:b 1}       ;; a computed result, involving @db-app
-(println @ratom3)    ;; ==> "Hello"       ;; a computed result, involving @db-app
+(println @ratom2)    ;; ==>  {:b 1}       ;; a computed result, involving @app-db
+(println @ratom3)    ;; ==> "Hello"       ;; a computed result, involving @app-db
 
-(reset!  db-app  {:a 0})        ;; this change to db-app, triggers recomputation 
+(reset!  app-db  {:a 0})        ;; this change to app-db, triggers recomputation 
                                 ;; both ratom2 and ratom3 will get new values.
 
-(println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is result of {:b (:a @db-app)}
+(println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is result of {:b (:a @app-db)}
 (println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated too.
     
 ;; cleanup 
@@ -134,11 +132,11 @@ Go on, re-read that paragraph again, then look at this ...
 (dispose ratom3)
 ```
 
-So, `reaction` wraps a computation, and returns a `ratom`.  Whenever the "inputs" to the computation change, the computation is rerun and the returned ratom is `reset!` to the new value. The "inputs" to the computation are any ratoms which are dereferenced duration execution of the computation.
+So, `reaction` wraps a computation, and returns a `ratom`.  Whenever the "inputs" to the computation change, the computation is rerun to calculate a new value, which is then `reset!` into the `ratom`.  The "inputs" to the computation are any ratoms which are dereferenced during execution of the computation.
 
 While the mechanics are different, this is similar in intent to `lift' in [Elm] and `defc=` in [hoplon].
 
-So, in FRP terms, a `reaction` will produce a "stream" of values, accessible via the ratom it returns. 
+So, in FRP terms, a `reaction` will produce a "stream" of values, accessible via the ratom it returns. The returned ratom is a `computed observable`. 
 
 The way that reagent harnesses these two building blocks is a delight. 
 
@@ -148,7 +146,7 @@ Okay, that was all important background information.  Let's get back with the di
 
 Extending the diagram a bit, we introduce `components`:
 ```
-db-app  -->  components  --> hiccup
+app-db  -->  components  --> hiccup
 ```
 When using reagent, you write one or more `components`.  Think about
 `components` as `pure functions` - data in, hiccup out.  `hiccup` is
@@ -190,14 +188,14 @@ Good, let's introduce a `reaction`:
    
 (def n (reagent/atom "re-frame"))
 
-;; The computation '(greet n)' produces hiccup which is stored into 'hiccup-ratom'
+;; The computation '(greet n)' returns hiccup which is stored into 'hiccup-ratom'
 (def hiccup-ratom  (reaction (greet n)))    ;; notice the use of reaction
 
 ;; what is the result of the initial computation ?
 (println @hiccup-ratom)
 ;; ==>  [:div "Hello " "re-frame"] 
 
-;; now change the ratom which is dereferenced in the computation
+;; now change an "input" to the computation
 (reset! n "blah")            ;;    change n to a new value
 
 ;; the computaton '(greet n)'  has been rerun, and 'hiccup-ratom' has an updated value
@@ -205,13 +203,15 @@ Good, let's introduce a `reaction`:
 ;; ==>   [:div "Hello " "blah"] 
 ```
 
-So, as `n` changes value, `hiccup-ratom` changes value. In fact, we could view a series of changes to `n` as producing a "stream" of changes to `hiccup-ratom` (over time). 
+So, as `n` changes value, `hiccup-ratom` changes value. In fact, we could view a series of changes to `n` as producing a "stream" of changes in `hiccup-ratom` (over time).
 
-If you understand the **concept** of re-computation, then we're there.
+If you understand the **concept** of re-computation producing a stream of values over time, then we're there.
 
-Truth injection time.  I haven't been completely straight with you, so we could just focus on the **concepts**.  Here's the reality -- reagent runs `reactions` (re-computations) via requestAnnimationFrame, which is, say, 16ms in the future, or after the current thread of processing finishes, which ever is the greater. So if you were to actually run the lines of code above one after the other,  you might not see the re-computation done immediately after `n` gets reset!, unless the animation frame has run. Not that this bit of annoying truth really matters much.  All you need is the concept.  
+Truth injection time.  I haven't been entirely straight with you.  
+1. reagent re-runs `reactions` (re-computations) via requestAnnimationFrame, which is, the re-computation happens about 16ms after the need for it is detected or after the current thread of processing finishes, whichever is the greater. So if you were to actually run the lines of code above one after the other quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the annimationFrame hasn't run (yet). Althought if you added (reagent.core/flush) after the reset! that would force the re-computation to happen.
+2. `reaction` doesn't actually return a `ratom`.  But it returns something that acts so close to ratom, that we'll happily ignore the difference. 
 
-On with my lies and distortions ...
+On with the rest of my lies and distortions ...
 
 A `component` like `greet` is a bit like the templates you'd find in frameworks
 like Django or Rails or Mustache -- it maps data to HTML -- except for two massive differences: 
@@ -222,12 +222,12 @@ like Django or Rails or Mustache -- it maps data to HTML -- except for two massi
 
 Summary: when the stream of data flowing into a `component` changes, the `component` is re-computed, producing a "stream" of output hiccup, which, as we'll see below, is turned into DOM and stitched into the GUI. Reagent largely looks after this part of the "flow" for us. 
 
-### ReactJS
+### React
 
-The complete data flow from data to DOM is:
+The complete (one way) data flow from `data` to `DOM` is:
 
 ```
-app-db  -->  components --> Hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
+app-db  -->  components --> Hiccup --> Reagent --> VDOM  -->  React  --> DOM
 ```
 
 Best to imagine this process as a pipeline of 3 functions.  Each
@@ -238,34 +238,71 @@ produced by one step, becoming the input to the next step.  hiccup,
 VDOM and DOM are all various forms of HTML markup (in our world that's data).
 
 ```
-app-db  -->  components --> hiccup --> Reagent --> VDOM  -->  ReactJS  --> DOM
-               f1                      f2                     f3
+app-db  -->  components --> hiccup --> Reagent --> VDOM  -->  React  --> DOM
+                f1                       f2                    f3
 ```
 
-The combined three-function pipeline should be seen as a pure
-function `P` which takes  `app-db` as a parameter, and returns DOM.
+In abstract clojure terms, you could envisage the process via the thread first macro: 
 ```
-app-db  -->  P  --> DOM
+(-> app-db 
+    components    ;; produces Hiccup
+    reagent       ;; produces VDOM
+    React)        ;; produces HTML (which magically and efficently appears on the page).
 ```
 
-This arrangement is:
+Via the magic of `ratom` and `reaction`, changes to `app-db` are pushed into the pipeline, causing new HTML to pop out the other end and onto our page.  One way data flow, FRP in nature.
 
-1.  Easy to test.  We put data into the ratom, allow the DOM to be rendered, and check that the right divs are in place.  This would typically be done via phantomjs. 
-2.  Easily understood.  Generally, components can be understood in isolation.  In almost all cases, a component is genuinely a pure fucntion, or is conceptually a pure function. 
- 
-The whole thing might be a multistep process, but we only have to bother ourselves with the writing of the `components`.  Reagent/ReactJS looks after the rest of the pipeline.
+But, just to be clear,  we don't have to bother ourselves with most of the pipeline. We just write the `components` part (pure functions!) and Reagent/React looks after the rest. 
 
-If the `app-db` changes, the DOM changes.  The DOM is a function of app-db (the state of the app). 
+### Subscribe
 
-But wait ... we do have to do some work to kick off the flow correctly ...
+But we do need to get the data to flow into our components. 
 
-### Subscriptions
-
-Back to the first part of our diagram:
+The first part of our diagram is:
 ```
 app-db -->  components --> hiccup
 ```
 
+We want `components` to:
+   * get data from `app-db`  (after all their job is render data)
+   * by this we mean get data via a 'query' on the `app-db`
+   * this query should be supplied in reactive way. When the data in `app-db` changes, new data should be "pushed" into the components, causing them to rerender the new state. 
+   * the query process should be as declarative as possible. We don't want the components becoming dependent on the data structure in `app-db`. 
+
+Reagent wraps our components in a raction, so if we derefernece `app-db` with our compoent, then any change to `app-db` will trigger the component to be rerendered. 
+
+So we could just do this:
+```
+(defn item-component      ;; for a single item 
+   [item]  
+   [:div (str item)])  
+
+(defn item-list-component    ;; for a list of items
+  []
+  (let [item-list (get-in  [:path :to :items] @app-db))]     ;; we dereference app-db here
+     (into [:div] (map item-component item-list)))           ;; 
+```
+
+Because `app-db` is dereferenced within `item-list-component` any change to `app-db` will cause this component to be re-computed (new hiccup generated). 
+
+Because we want to view this from an FRP point of view, we'd view `app-db` as a stream of value updates. And XXXXX
+
+But we don't want components accessing `app-db` directly. It means we have to hard code paths into the components.  
+
+(defn item-list-component    ;; for a list of items
+  []
+  (let [item-list (get-items @app-db))]     ;; we dereference app-db here
+     (into [:div] (map item-component item-list)))           ;; 
+     
+```
+(defn a-component
+  []
+  (let  [item-list   (reaction (get-in  [:path :to :items] @app-db))]
+    (fn renderer
+      []
+      (into [:div] XXXX))))
+         
+```
 How does the flow begin. How does data flow from the `app-db` to the components?  
 
 We want our components to `subscribe` to changes in `app-db`. 
@@ -297,7 +334,7 @@ they represent the **control layer of the application**.
 The backward data flow of events happens via a conveyor belt:
 
 ```
-app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DOM
+app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  React  --> DOM
   ^                                                                            |
   |                                                                            v
   handlers <-------------------  events  ---------------------------------------
@@ -355,9 +392,9 @@ There is a signle `dispatch` function in the entire app, and it takes only one p
 
 Let's update our diagram to show dispatch:
 ```
-app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  ReactJS  --> DOM
-  ^                                                                            |
-  |                                                                            v
+app-db  -->  components  --> Hiccup  --> Reagent  --> VDOM  -->  React  --> DOM
+  ^                                                                          |
+  |                                                                          v
   handlers <-------------------------------------  (dispatch [event-id  other stuff])
 ```
 
