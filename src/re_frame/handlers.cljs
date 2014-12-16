@@ -7,7 +7,8 @@
 
 ;; Why do we need this?
 ;; If we do need it, use peak-db so as to avoid reactive redraws.
-#_(defn get-in-db
+;; TODO: Still under design dicussion with MT. Reinstated to get things working for now
+(defn get-in-db
   "Direct lookup of arbitrary path in state/db without subscription/reaction.
     NOTE: While it is convenient to not have to pass values through function chains,
           by definition this also incourages non pure functional style, so resist."
