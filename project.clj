@@ -10,7 +10,7 @@
   :profiles     {:debug {:debug true}
                  :dev {:dependencies [[spellhouse/clairvoyant "0.0-48-gf5e59d3"]]
 
-                       :plugins      [[lein-cljsbuild "1.0.4-SNAPSHOT"]
+                       :plugins      [[lein-cljsbuild "1.0.3"]
                                       [com.cemerick/clojurescript.test "0.3.1"]]}}
 
   :resource-paths ["run/resources"]
