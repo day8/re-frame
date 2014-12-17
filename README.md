@@ -57,7 +57,7 @@ When you use re-frame, you'll create your app by writing three kinds of function
   - components - which turn data into hiccup (DOM)
   - event handlers - which provide the state transition (control) layer
 
-You'll also be designing a data structure to represent the app state, and probably writing a [herbet schema](https://github.com/miner/herbert) for it.
+You'll also be designing a data structure to represent the app state, and probably writing a [herbert schema](https://github.com/miner/herbert) for it.
 
 ## The Parts
 
@@ -96,7 +96,7 @@ From here on, we'll assume `app-db` is one of these:
 ```
 
 Although it is a reagent atom (ratom), I'd encourage you to think of it as an in-memory database. 
-It will contain structured data (perhaps with a formal [Herbet Schema] spec).
+It will contain structured data (perhaps with a formal [Herbert Schema] spec).
 You will need to query that data. You will perform CRUD 
 and other transformations on it. You'll often want to transact on this
 database atomically, etc.  So "in-memory database"
@@ -130,7 +130,7 @@ So, the ratom returned by a `reaction` is itself a Signal. Its value will change
 
 So values can 'flow' into computations and out again, and then into other computations, etc. The result is some sort of signal graph. But our graph will be without cycles, because cycles are bad! 
 
-While the mechanics are different, `reaction` has the intent of `lift' in [Elm] and `defc=` in [hoplon].
+While the mechanics are different, `reaction` has the intent of `lift' in [Elm] and `defc=` in [Hoplon].
 
 Some code to clarify: 
 
@@ -540,7 +540,7 @@ Above, I commented that collectively handler represent the control layer of the 
 
 A big part of what they do is to manage state transitions. The application is in state X, and event Y arrives, so the handler for Y was to move the app to state Z. 
 
-Although I've done nothing to try and implement it, this is obviously fertile territory for using [statechars](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782).
+Although I've done nothing to try and implement it, this is obviously fertile territory for using [statecharts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782).
 
 ### Talking To The Server
 
@@ -564,7 +564,7 @@ To build an app using re-frame, you'll have to:
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
 [reagent]:http://reagent-project.github.io/
-[Dan Holmsand]:https://github.com/holmsand
+[Dan Holmsand]:https://twitter.com/holmsand
 [Hiccup]:https://github.com/weavejester/hiccup
 [FRP]:https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
 [Elm]:http://elm-lang.org/
@@ -573,4 +573,4 @@ To build an app using re-frame, you'll have to:
 [datascript]:https://github.com/tonsky/datascript
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
-[Herbet Schema]:https://github.com/miner/herbert
+[Herbert Schema]:https://github.com/miner/herbert
