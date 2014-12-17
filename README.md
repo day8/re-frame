@@ -6,7 +6,7 @@ There will be typos. The code examples will contain mistakes. Some claims in thi
 
 ## re-frame
 
-re-frame is a tiny [reagent] framework for writing  [SPAs] using ClojureScript.
+re-frame is a tiny [Reagent] framework for writing  [SPAs] using ClojureScript.
 
 It proposes a pattern for structuring an app, and provides a small library
 implementing one version of this pattern.
@@ -34,16 +34,16 @@ We write larger, complicated SPAs and we've found it a delight to use so far.
 
 ### Core Beliefs
 
-First, above all we believe in the one true [Dan Holmsand] (creator of reagent), 
+First, above all we believe in the one true [Dan Holmsand], the creator of Reagent, 
 and his divine instrument the `ratom`.  We genuflect towards Sweden once a day. 
 
 Second, we believe that [FRP] is a honking great idea.  You might be tempted to see 
-reagent as simply another of the React wrappers (a sibling to [OM] and [quiescent](https://github.com/levand/quiescent)). But I think you only really "get" 
+Reagent as simply another of the React wrappers (a sibling to [OM] and [quiescent](https://github.com/levand/quiescent)). But I think you only really "get" 
 Reagent when you view it as an [FRP] library. To put that another way, we think 
 that Reagent, at its best, is closer in 
 nature to [Hoplon] or [Elm] than it is [OM]
 
-Finally, we believe in one way data flow.  We don't like read/write `cursors` which
+Finally, we believe in one-way data flow.  We don't like read/write `cursors` which
 promote two way flow of data. re-frame does implement two data way flow, but it 
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
@@ -53,9 +53,9 @@ If you are curious about FRP, I'd recommend [this FRP backgrounder](https://gist
 ### High Level Tasks
 
 When you use re-frame, you'll create your app by writing three kinds of functions:
-  - subscriptions - which query over application state and create signals (move data into components)
-  - components - which turn data into hiccup (DOM)
-  - event handlers - which provide the state transition (control) layer
+  - subscriptions - which query over application state and create signals (move data into components).
+  - components - which turn data into Hiccup (DOM).
+  - event handlers - which provide the state transition (control) layer.
 
 You'll also be designing a data structure to represent the app state, and probably writing a [herbert schema](https://github.com/miner/herbert) for it.
 
@@ -63,7 +63,7 @@ You'll also be designing a data structure to represent the app state, and probab
 
 To teach re-frame, I'll now incrementally develop a diagram, explaining each part as it is added.
 
-Along the way, I'll be using [reagent] at an intermediate to advanced level. This is not an introduction to reagent tutorial, so you need to have done one of those before getting here. Try
+Along the way, I'll be using [Reagent] at an intermediate to advanced level. This is not an introduction to Reagent tutorial, so you need to have done one of those before getting here. Try
 [the official intro](http://reagent-project.github.io/) or 
 [this](https://github.com/jonase/reagent-tutorial) or 
 [this](http://yogthos.net/posts/2014-07-15-Building-Single-Page-Apps-with-Reagent.html).
@@ -93,10 +93,10 @@ But, as @fogus tells us, data is the easy bit.
 From here on, we'll assume `app-db` is one of these: 
 
 ```Clojure
-(def app-db  (reagent/atom {}))    ;; a reagent atom, containing a map
+(def app-db  (reagent/atom {}))    ;; a Reagent atom, containing a map
 ```
 
-Although it is a reagent atom (`ratom`), I'd encourage you to think of it as an in-memory database. 
+Although it is a Reagent atom (`ratom`), I'd encourage you to think of it as an in-memory database. 
 It will contain structured data (perhaps with a formal [Herbert Schema] spec).
 You will need to query that data. You will perform CRUD 
 and other transformations on it. You'll often want to transact on this
@@ -173,12 +173,12 @@ Okay, so that was all important background information for what is to follow. Ba
 Extending the diagram a bit, we introduce `components`:
 
 ```
-app-db  -->  components  -->  hiccup
+app-db  -->  components  -->  Hiccup
 ```
 
-When using reagent, your primary job is to write one or more `components`.  
+When using Reagent, your primary job is to write one or more `components`.  
 
-Think about `components` as `pure functions` - data in, hiccup out.  `hiccup` is
+Think about `components` as `pure functions` - data in, Hiccup out.  `Hiccup` is
 ClojureScript data structures which represent DOM. Here's a trivial component:
 
 ```Clojure
@@ -194,7 +194,7 @@ And if we call it:
 ;; ==>  [:div "Hello ratoms and reactions"] 
 ```
 
-You'll notice that our component is a regular Clojure function, nothing special. In this case, it takes no parameters and it returns a ClojureScript vector (hiccup).
+You'll notice that our component is a regular Clojure function, nothing special. In this case, it takes no parameters and it returns a ClojureScript vector (Hiccup).
 
 Here is a slightly more interesting (parameterised) component (function): 
 
@@ -211,9 +211,9 @@ Here is a slightly more interesting (parameterised) component (function):
 ;; ==>  [:div "Hello " "re-frame"]    returns a vector 
 ```
 
-So components are easy - they are functions which turn data into hiccup (which will later become DOM). 
+So components are easy - they are functions which turn data into Hiccup (which will later become DOM). 
 
-Now, we're now going to introduce `reaction` into this mix.  On the one hand, I'm complicating things by doing this, because reagent allows you to be ignorant of the mechanics I'm about to show you.  It invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens.  
+Now, we're now going to introduce `reaction` into this mix.  On the one hand, I'm complicating things by doing this, because Reagent allows you to be ignorant of the mechanics I'm about to show you.  It invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens.  
 
 On the other hand, it is useful to understand exactly how the Signal graph is wired.  AND, in a minute, when we get to subscriptions, we ourselves will be actively using `reaction`, so we might as well bite the bullet here and now ... and, anyway, it is easy...
  
@@ -224,7 +224,7 @@ On the other hand, it is useful to understand exactly how the Signal graph is wi
    
 (def n (reagent/atom "re-frame"))
 
-;; The computation '(greet n)' returns hiccup which is stored into 'hiccup-ratom'
+;; The computation '(greet n)' returns Hiccup which is stored into 'hiccup-ratom'
 (def hiccup-ratom  (reaction (greet n)))    ;; <-- notice the use of reaction
 
 ;; what is the result of the initial computation ?
@@ -245,12 +245,12 @@ On the other hand, it is useful to understand exactly how the Signal graph is wi
 
 So, as `n` changes value over time (it is a Signal), the output of the computation `(greet n)` changes, and so too the value in `hiccup-ratom` changes (it is a Signal). 
 
-This is one way data flow, with FRP-nature.
+This is one-way data flow, with FRP-nature.
 
 ### Truth Interlude
 
 I haven't been entirely straight with you:  
-1. reagent re-runs `reactions` (re-computations) via requestAnimationFrame. So a recomputation happens about 16ms after the need for it is detected, or after the current thread of processing finishes, whichever is the greater. So if you are in a bREPL and you run the lines of code above one after the other too quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the animationFrame hasn't run (yet).  You could add a `(reagent.core/flush)` after the reset! to force re-computation to happen straight away. 
+1. Reagent re-runs `reactions` (re-computations) via requestAnimationFrame. So a recomputation happens about 16ms after the need for it is detected, or after the current thread of processing finishes, whichever is the greater. So if you are in a bREPL and you run the lines of code above one after the other too quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the animationFrame hasn't run (yet).  You could add a `(reagent.core/flush)` after the reset! to force re-computation to happen straight away. 
 2. `reaction` doesn't actually return a `ratom`.  But it returns something that has ratom-nature, so we'll happily continue believing it is a `ratom` and no harm will come to us.
 
 On with the rest of my lies and distortions...
@@ -261,12 +261,16 @@ A `component` like `greet` is a bit like the templates you'd find in frameworks
 like Django or Rails or Mustache -- it maps data to HTML -- except for two massive differences: 
 - you have  the full power of ClojureScript available to you (generating a Clojure data structure). The downside is that these are not "designer friendly" HTML templates.
 - these components are reactive.  When their input Signals change, they
-  are automatically rerun, producing new hiccup (fresh DOM!). reagent adroitly shields you from
+  are automatically rerun, producing new Hiccup (fresh DOM!). Reagent adroitly shields you from
   the details, but `components` are wrapped by a `reaction`.
 
 ### React etc.
 
-Okay, so we have some one way FRP data flow happening here. Q: To which ocean does this river flow?  A: The DOM ocean.
+Okay, so we have some one-way FRP data flow happening here.
+
+Question: To which ocean does this river flow?
+  
+Answer: The DOM ocean.
 
 ```
 app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  --> DOM
@@ -276,11 +280,11 @@ Best to imagine this process as a pipeline of 3 functions.  Each
 function takes data from the
 previous step, and produces data for the next step.  In the next
 diagram, the three functions are marked. The unmarked nodes are data,
-produced by one step, which become input to the next step.  hiccup,
+produced by one step, which become input to the next step.  Hiccup,
 VDOM and DOM are all various forms of HTML markup (in our world that's data).
 
 ```
-app-db  -->  components  -->  hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
+app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
                 f1                           f2                      f3
 ```
 
@@ -289,7 +293,7 @@ In abstract, Clojure syntax terms, you could squint and imagine the process as:
 ```Clojure
 (-> app-db 
     components    ;; produces Hiccup
-    reagent       ;; produces VDOM  (virtual DOM)
+    Reagent       ;; produces VDOM  (virtual DOM)
     React)        ;; produces HTML (which magically and efficiently appears on the page).
 ```
 
@@ -306,10 +310,10 @@ app-db  -->  components
 ```
 
 So let's pause to consider **our dream solution** for this part of the flow. `components` would:
-   * obtain data from `app-db`  (their job is to turn this data into hiccup)
+   * obtain data from `app-db`  (their job is to turn this data into Hiccup).
    * obtain this data via a (possibly parameterised) query over `app-db`. Think database kinda query.
-   * automatically recompute their hiccup output, as the data returned by the query changes, over time. 
-   * use declarative queries.  components should know as little as possible about the data structure in `app-db`. SQL?  Datalog?
+   * automatically recompute their Hiccup output, as the data returned by the query changes, over time. 
+   * use declarative queries. Components should know as little as possible about the data structure in `app-db`. SQL?  Datalog?
 
 re-frame's `subscriptions` are an attempt to live this dream. As you'll see, they fall short on a couple of points, but they're not too bad.
 
@@ -330,7 +334,7 @@ Here's a component using a subscription:
 ```
 
 First, note this is a form-2 `component` (there are 3 forms).  Previously above, we've used the simplest, form-1 components (no setup was required, just render). With form-2, there's a function returning a function:
-- the returned function is the render function. Behind the scenes, reagent will wrap this render function in a `reaction` to make it produce new hiccup when its inputs change.  In our case, that means it will rerun every time `name-ratom` changes. 
+- the returned function is the render function. Behind the scenes, Reagent will wrap this render function in a `reaction` to make it produce new Hiccup when its inputs change.  In our case, that means it will rerun every time `name-ratom` changes. 
 - the outer function is a setup function, called once to initialise the component. Notice the use of 'subscribe' with the parameter `:name-query`. That creates a Signal through which new values are supplied over time.
 
 `subscribe` is called like this: 
@@ -344,7 +348,7 @@ There is only one subscribe function. We must register our `handlers` with it.
 The first element in the vector (`query-id`) identifies the query and the other elements are optional, query parameters. With a traditional database a query might be:
 
 ```
-select from customers where name="blah"
+select * from customers where name="blah"
 ```
 
 In re-frame land, that would be done as follows:
@@ -380,16 +384,16 @@ Of course, for this to work, we must write and register a handler for `:customer
 
 Getting more complicated...
 
-Imagine our `app-db` contains some `items` (a vector of maps). And imagine that we must display these items sorted by one of their attributes attribute. We could write this query-handler: 
+Imagine our `app-db` contains some `items` (a vector of maps). And imagine that we must display these items sorted by one of their attributes. We could write this query-handler: 
 
 ```Clojure
 (register
-  :sorted-items       ;; the query id  
-  (fn [db [_ sort-kw]        ;; sort-kw is a ratom, contains a keyword. 
+  :sorted-items              ;; the query id  
+  (fn [db [_ sort-kw]]       ;; sort-kw is a ratom, contains a keyword. 
     (assert (keyword? @sort-kw))
     (reaction
        (let [items (get-in @db [:some :path :items])]    ;; get the items
-           (sort-by @sort-kw items)))))                 ;; return  them sorted
+           (sort-by @sort-kw items)))))                  ;; return  them sorted
 ```
 
 First, notice that this reaction involves 2 input Signals:  db and sort-kw. 
@@ -402,11 +406,11 @@ We'd use it like this:
    []
    (let [by-this (reagent/atom :name)    ;; sort by :name attribute, GUI might reset! somehow
          items   (subscribe [:sorted-items by-this])
-         num     (reaction (count @items)]    ;; Woh! a reaction based on the subscription
+         num     (reaction (count @items))]    ;; Woh! a reaction based on the subscription
       (fn []
         [:div  
-            (str "there's " @num " of these suckers")    ;; rookie mistake to leave off the @
-            (into [:div ] (map item-render @items)))))    ;; item-render is another component
+            (str "there's " @num " of these suckers")     ;; rookie mistake to leave off the @
+            (into [:div ] (map item-render @items))])))   ;; item-render is another component
 ```
 
 There's a bit going on in that `let`, most of it highly contrived, just so I can show off chained reactions. Okay, okay. All I wanted was an excuse to use the phrase chained reactions. 
@@ -417,20 +421,20 @@ We can fix that up:
  
 ```Clojure
 (register
-  :sorted-items       ;; the query id  
-  (fn [db [_ sort-kw]        ;; sort-kw is a ratom containing the attribute to sort on
+  :sorted-items               ;; the query id  
+  (fn [db [_ sort-kw]]        ;; sort-kw is a ratom containing the attribute to sort on
     (assert (keyword? @sort-kw))
     (let [items (reaction (get-in @db [:some :path :items]))]    ;; reaction #1
-        (reaction (sort-by @sort-kw @items)))))      ;; reaction #2
+        (reaction (sort-by @sort-kw @items)))))                  ;; reaction #2
 ```
 
 Be aware that the second reaction will only be triggered if `items` does not test `identical?` to the previous value. **Yes, that sort of optimisation is built into chain `reactions`.**  Which means the component render function (which is wrapped in another reaction) won't rerun if `app-db` changes, unless items changes. Now we're very efficient.
 
-If I were doing this for real (rather than just demoing possibilities), I'd probably create a simple subscription for items (unsorted), and then do the sort in the component itself (as a reaction, similar to how 'num' is done in the example above). After all, it is the component which needs to show sorted. It can contain the sorting, which might involve the 
+If I were doing this for real (rather than just demoing possibilities), I'd probably create a simple subscription for items (unsorted), and then do the sort in the component itself (as a reaction, similar to how 'num' is done in the example above). After all, it is the component which needs to show sorted. It can contain the sorting, which might involve the... **[TODO: UNFINISHED SENTENCE!]**
 
 Summary:
-  - you can chain reactions 
-  - reagent will eliminate unnecessary Signal propagation via `identical?` checks (not equality checks!). This is the nice by product of working with immutable data structures.
+  - you can chain reactions.
+  - Reagent will eliminate unnecessary Signal propagation via `identical?` checks (not equality checks!). This is the nice by-product of working with immutable data structures.
 
 
 ### The 2nd Flow
@@ -449,7 +453,7 @@ In response to user interaction, a DOM will generate
 events like "clicked delete button on item 42" or
 "unticked the checkbox for 'send me spam'".
 
-These events have to "handled".  The code doing this handling might
+These events have to be "handled".  The code doing this handling might
  mutate app state (in `app-db`), or request more data from the server, or POST somewhere and wait for a response, etc. In fact, all these actions will ultimately result in changes to the `app-db`.
 
 An application will have many handlers, and collectively
@@ -459,17 +463,17 @@ In re-frame, the backward data flow of events happens via a conveyor belt:
 
 ```
 app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
-  ^                                                                                |
-  |                                                                                v
-  handlers <-------------------  events  -------------------------------------------
+  ^                                                                              |
+  |                                                                              v
+  handlers <-------------------  events  -----------------------------------------
                            a "conveyor belt" takes events
                            from the DOM to the handlers
 ```
 
 Generally, when the user manipulates the GUI, the state of the application changes. In our case, 
-that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to the user is a function of that state. So that tends to be the cycle:  DOM events dispatch, handler mange them, which  cause `app-db` changes, which then cause a re-render, and the users sees something different. That's our water cycle.
+that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to the user is a function of that state. So that tends to be the cycle:  DOM events dispatch, handlers mange them, which  cause `app-db` changes, which then cause a re-render, and the users sees something different. That's our water cycle.
 
-So handlers, which look after events, are the part of the system which does `app-db` mutation. You
+So handlers, which look after events, are the part of the system which do `app-db` mutation. You
 could almost imagine them as a "stored procedure" in a
 database. Almost. Stretching it?  We do like our in-memory
 database analogies.
@@ -522,8 +526,8 @@ Let's update our diagram to show dispatch:
 
 ```
 app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
-  ^                                                                             |
-  |                                                                             v
+  ^                                                                              |
+  |                                                                              v
   handlers <----------------------------------------  (dispatch [event-id  other params])
 ```
 
@@ -540,7 +544,7 @@ Even though handlers appear to be about `app-db` mutation, re-frame requires the
 ```
    (state-of-app-db, event-vector) -> new-state
 ```   
-re-frame passes to an event handler two parameters: the current state of `app-db` plus the event, and the job of a handler to return a modified version of the state  (which re-frame will then put back into the `app-db`).   XXX currently not true but it will be shortly. 
+re-frame passes to an event handler two parameters: the current state of `app-db` plus the event, and the job of a handler to return a modified version of the state  (which re-frame will then put back into the `app-db`).   XXX currently not true but it will be shortly. **[TODO: You have XXX here???]**
 
 ```Clojure
 (defn handle-delete
@@ -562,7 +566,7 @@ Because handlers are pure functions, and because they generally only have to han
 
 ### State Transition 
 
-Above, I commented that collectively handler represent the control layer of the application.
+Above, I commented that collectively, handlers represent the control layer of the application.
 
 A big part of what they do is to manage state transitions. The application is in state X, and event Y arrives, so the handler for Y was to move the app to state Z. 
 
@@ -578,18 +582,18 @@ But also, note that you can't dispatch while inside of a handler, unless it is a
 
 **Rule**: 
   - all events are handled via a call to `dispatch`. GUI events, async HTTP events, everything. 
-  - a handler can't dispatch. (unless the 2nd one happens is anyc, which means it doesn't really  happen within the original). XXX with a little bit of work, this rule could be relaxed, but only if the nested dispatch is regarded as happening async. But is it a good idea or necessary?
+  - a handler can't dispatch. (unless the 2nd one happens is anyc, which means it doesn't really  happen within the original). XXX with a little bit of work, this rule could be relaxed, but only if the nested dispatch is regarded as happening async. But is it a good idea or necessary? **[TODO: REWORK THIS POINT]**
 
 ### In Summary
 
 To build an app using re-frame, you'll have to:
-  - design your app's data structure
-  - write and register subscription functions (query layer)
-  - write component functions  (view layer)
-  - write and register event handler functions  (control layer and/or state transition layer)
+  - design your app's data structure.
+  - write and register subscription functions (query layer).
+  - write component functions  (view layer).
+  - write and register event handler functions  (control layer and/or state transition layer).
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
-[reagent]:http://reagent-project.github.io/
+[Reagent]:http://reagent-project.github.io/
 [Dan Holmsand]:https://twitter.com/holmsand
 [Hiccup]:https://github.com/weavejester/hiccup
 [FRP]:https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
