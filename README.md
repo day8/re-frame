@@ -471,7 +471,7 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  
 ```
 
 Generally, when the user manipulates the GUI, the state of the application changes. In our case, 
-that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to the user is a function of that state. So that tends to be the cycle:  DOM events dispatch, handlers mange them, which  cause `app-db` changes, which then cause a re-render, and the users sees something different. That's our water cycle.
+that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to the user is a function of that state. So that tends to be the cycle:  DOM events dispatch, handlers manage them, which  cause `app-db` changes, which then cause a re-render, and the users sees something different. That's our water cycle.
 
 So handlers, which look after events, are the part of the system which do `app-db` mutation. You
 could almost imagine them as a "stored procedure" in a
