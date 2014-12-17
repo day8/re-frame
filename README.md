@@ -78,7 +78,7 @@ Our re-frame diagram starts with the "well formed data at rest" bit:
 app-db
 ```
 
-re-frame recomends that you put your data into one place which we'll call `app-db`. Structure the data in that place, of course.
+re-frame recomends that you put your data into one place which we'll call `app-db`. Structure the data in that place, of course. And [give it a schema](https://github.com/miner/herbert).
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right? 
 You'd happily put all your well formed data into Postgres or mysql. But within a running application (in memory), it is different. If you have a background in OO, this data-in-one-place is a 
@@ -114,22 +114,24 @@ I'm going to quote verbatum from Elm's website:
 
 2. Save and Undo become quite easy. Many applications would benefit from the ability to save all application state and send it off to the server so it can be reloaded at some later date. This is extremely difficult when your application state is spread all over the place and potentially tied to objects that cannot be serialized. With a central store, this becomes very simple. Many applications would also benefit from the ability to easily undo user's actions. For example, a painting app is better with Undo. Since everything is immutable in Elm, this is also very easy. Saving past states is trivial, and you will automatically get pretty good sharing guarantees to keep the size of the snapshots down.
 
-##### The Bit Of Magic
+##### Background Magic
 
 Reagent provides a `ratom` (reagent atom) and a `reaction`. These are **two key building blocks**.
 
-`ratoms` are like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.  To put it another way, a ratom is a value that changes over time. A ratom is an FRP [Signal](http://elm-lang.org/learn/What-is-FRP.elm).
+Mechanically, `ratoms` are like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc. Mechanically, it holds mutable data.  **Conceptually**, though we'll tweak that paragigm ever so slightly.  **We view a ratom is a value that changes over time.** This means we'll view it as an FRP [Signal](http://elm-lang.org/learn/What-is-FRP.elm).
 
 `reaction` acts a bit like a function. Its a macro which wraps some `computation` (some block of code) and returns a `ratom` containing the result of that `computation`.
 
 The computation performed by a `reaction` may involve dereferencing one or more ratoms. 
 
 A `reaction` will automatically rerun its `computation` whenever any of these dereferenced ratoms change.  
-So, the ratom returned by a `reaction` is itself a Signal. Its value will change over time as its input Signals (ratoms) change. You end up with a Signal graph. (Our graph will be without cycles). 
+So, the ratom returned by a `reaction` is itself a Signal. Its value will change over time as its input Signals (the derefenced ratoms) change. 
 
-While the mechanics are different, `reaction` has identical intent to `lift' in [Elm] and `defc=` in [hoplon].
+So values can 'flow' into computations and out again, and then into other computations, etc. The result is some sort of signal graph. But our graph will be without cycles, because cycles are bad! 
 
-Some code will clarify: 
+While the mechanics are different, `reaction` has the intent of `lift' in [Elm] and `defc=` in [hoplon].
+
+Some code to clarify: 
 
 ```clojure
 (ns example1
@@ -162,7 +164,7 @@ Some code will clarify:
 
 So, in FRP terms, a `reaction` will produce a "stream" of values (it is a Signal), accessible via the ratom it returns.
 
-Okay, so that was all important background information.  Back to the diagram ...
+Okay, so that was all important background information for what is to follow. Back to the diagram ...
 
 ### The Components
 
