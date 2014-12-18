@@ -2,8 +2,6 @@
 
 Still Alpha. But getting closer.  
 
-There will be typos. The code examples will contain mistakes. Some claims in this document do not yet match the library. 
-
 ## re-frame
 
 re-frame is a tiny [Reagent] framework for writing  [SPAs] using ClojureScript.
@@ -15,33 +13,44 @@ In another context, re-frame might be called an MVC framework, except
 it is instead a functional RACES framework - Reactive-Atom Component Event Subscription
 (I love the smell of acronym in the morning).
 
-### Claims
+### TL;DR
+
+The re-frme pattern is simple. To prove that, the reference implementaton in this repo is just a couple hundred lines of code.
+
+Despite its simplicity, re-frame is fully buzzword compliant:  it has FRP-nature, pristinely pure functions, conveyor belts, and hammocks.
+
+To build an app using re-frame, you'll:
+  - design your app's data structure. Optionally, provide a schema.
+  - write and register subscription functions (query layer)
+  - write component functions  (view layer)
+  - write and register event handler functions  (control layer and/or state transition layer)
+
+All the functions you write are pure. So the distinct pieces of your app can be 
+described, understood and tested independently. And yet they combine to build the whole.
+
+### Further
+
+We write larger, more complicated SPAs which have limited interaction with a server. re-frame's design reflects our needs. So there's nothing in re-frame about, say, routing to server-side services etc, etc. Its just about writing the client side.
 
 Nothing about re-frame is the slightest bit original or clever.  You'll find 
 no ingenious use of functional zippers, transducers or core.async. 
 This is a good thing (although, for the record, one day I'd love to develop
 something original and clever).
 
-Using re-frame, you will be able to break your application code into distinct 
-pieces, and those distinct pieces will be pure functions. 
-Each can be easily described, understood and tested independently.
-
 At small scale, any framework seems like pesky overhead. The 
 explanatory examples in here are necessarily small scale, so you'll need to
 squint a little to see the benefit.
 
-We write larger, complicated SPAs and we've found it a delight to use so far.
-
-### Core Beliefs
+### Guiding Philosophy
 
 First, above all we believe in the one true [Dan Holmsand], the creator of Reagent, 
 and his divine instrument the `ratom`.  We genuflect towards Sweden once a day. 
 
 Second, we believe that [FRP] is a honking great idea.  You might be tempted to see 
 Reagent as simply another of the React wrappers (a sibling to [OM] and [quiescent](https://github.com/levand/quiescent)). But I think you only really "get" 
-Reagent when you view it as an [FRP] library. To put that another way, we think 
+Reagent when you view it as an FRP library. To put that another way, we think 
 that Reagent, at its best, is closer in 
-nature to [Hoplon] or [Elm] than it is [OM]
+nature to [Hoplon] or [Elm] than it is OM.
 
 Finally, we believe in one-way data flow.  We don't like read/write `cursors` which
 promote two way flow of data. re-frame does implement two data way flow, but it 
@@ -50,20 +59,11 @@ are different in nature.
 
 If you are curious about FRP, I'd recommend [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) before you go any further.
 
-### High Level Tasks
-
-When you use re-frame, you'll create your app by writing three kinds of functions:
-  - subscriptions - which query over application state and create signals (move data into components).
-  - components - which turn data into Hiccup (DOM).
-  - event handlers - which provide the state transition (control) layer.
-
-You'll also be designing a data structure to represent the app state, and probably writing a [herbert schema](https://github.com/miner/herbert) for it.
-
 ## The Parts
 
 To teach re-frame, I'll now incrementally develop a diagram, explaining each part as it is added.
 
-Along the way, I'll be using [Reagent] at an intermediate to advanced level. This is not an introduction to Reagent tutorial, so you need to have done one of those before getting here. Try
+Along the way, I'll be using [Reagent] at an intermediate to advanced level. So, this is not a Reagent tutorial and you will need to have done one of those before continuing here. Try
 [the official intro](http://reagent-project.github.io/) or 
 [this](https://github.com/jonase/reagent-tutorial) or 
 [this](http://yogthos.net/posts/2014-07-15-Building-Single-Page-Apps-with-Reagent.html).
@@ -430,7 +430,7 @@ We can fix that up:
 
 Be aware that the second reaction will only be triggered if `items` does not test `identical?` to the previous value. **Yes, that sort of optimisation is built into chain `reactions`.**  Which means the component render function (which is wrapped in another reaction) won't rerun if `app-db` changes, unless items changes. Now we're very efficient.
 
-If I were doing this for real (rather than just demoing possibilities), I'd probably create a simple subscription for items (unsorted), and then do the sort in the component itself (as a reaction, similar to how 'num' is done in the example above). After all, it is the component which needs to show sorted. It can contain the sorting, which might involve the... **[TODO: UNFINISHED SENTENCE!]**
+If I were doing this for real (rather than just demoing possibilities), I'd probably create a simple subscription for items (unsorted), and then do the sort in the component itself (as a reaction, similar to how 'num' is done in the example above). After all, it is the component which needs to show sorted, so it should do that work. 
 
 Summary:
   - you can chain reactions.
@@ -443,9 +443,9 @@ At the top, I said that re-frame had two data flows.
 
 The data flow from `app-db` to the DOM is the first half of the story. We now need to consider the 2nd part of the story: the flow in the opposite direction.
 
-While the first flow has FRP-nature.  The 2nd flow does not (although some feel it should). 
+While the first flow has FRP-nature, the 2nd flow does not.
 
-When I think about these two flows, I imagine [one of those school diagrams](http://thumbnails-visually.netdna-ssl.com/water-cycle_521f29b8b6271_w1500.png) showing the water cycle. Rivers taking water down to the oceans, and evaporation/clouds taking water back over the mountains to fall again as rain. And repeat.
+When I think about these two flows, I imagine [one of those school diagrams](http://thumbnails-visually.netdna-ssl.com/water-cycle_521f29b8b6271_w1500.png) showing the water cycle. Rivers taking water down to the oceans, and evaporation/clouds taking water back over the mountains to fall again as rain. Repeat.
 
 ### Event Flow
 
@@ -560,15 +560,15 @@ Because handlers are pure functions, and because they generally only have to han
 
 ```Clojure
 (register
-   :delete-item
-   handle-delete)
+   :delete-item         ;; the event id
+   handle-delete)       ;; the handler function for that event
 ```
 
 ### State Transition 
 
 Above, I commented that collectively, handlers represent the control layer of the application.
 
-A big part of what they do is to manage state transitions. The application is in state X, and event Y arrives, so the handler for Y was to move the app to state Z. 
+Most of what they do is to manage state transitions. The application is in state X, and event Y arrives, so the handler moves the app to state Z. 
 
 Although I've done nothing to try and implement it, this is obviously fertile territory for using [statecharts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782).
 
@@ -580,10 +580,13 @@ The event handlers should organise that the `on-success` or `on-fail` handlers f
 
 But also, note that you can't dispatch while inside of a handler, unless it is async. Why?  Because handlers are given a snapshot of the `app-db`. 
 
-**Rule**: 
+**Notes**: 
   - all events are handled via a call to `dispatch`. GUI events, async HTTP events, everything. 
-  - a handler can't dispatch. (unless the 2nd one happens is anyc, which means it doesn't really  happen within the original). XXX with a little bit of work, this rule could be relaxed, but only if the nested dispatch is regarded as happening async. But is it a good idea or necessary? **[TODO: REWORK THIS POINT]**
+  - because of the name `dispatch`, you might mistkenly think this is somehow async. In our implementation, it isn't.  Its just a function call.  
+  - If the handler does a lot of work and hogs the thread, this will freeze the GUI.  XXX Nice Solution needed. 
+  - a handler istelf can't dispatch synchronously. It can kick off an HTTP request and organise for the on-success handler to dispatch, but that is async. (With a bit of work this rule could be relaxed, if it was found to be necessary). 
 
+  
 ### In Summary
 
 To build an app using re-frame, you'll have to:
