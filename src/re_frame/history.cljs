@@ -27,7 +27,7 @@
 (defn off-the-record!
   "evaluate db mutation-fn without creating a history record"
   [db mutation-fn]
-  (off-the-record (reset! db (mutation-fn db))))
+  (off-the-record (reset! db (mutation-fn @db))))
 
 
 ;; -- subscriptions  -----------------------------------------------------------------------------
