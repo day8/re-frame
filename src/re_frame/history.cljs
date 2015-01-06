@@ -24,6 +24,11 @@
   (historian/clear-history!)
   (historian/trigger-record!))
 
+(defn off-the-record!
+  "evaluate db mutation-fn without creating a history record"
+  [db mutation-fn]
+  (off-the-record (reset! db (mutation-fn db))))
+
 
 ;; -- subscriptions  -----------------------------------------------------------------------------
 
@@ -55,11 +60,3 @@
   (fn
     [_ _]
     (historian/redo!))) ;; (dispatch [:undo])
-
-
-(handlers/register
-  :no-history-while
-  (fn
-    [db [_ mutation-fn]]
-    (off-the-record
-      (reset! db (mutation-fn @app-db)))))
