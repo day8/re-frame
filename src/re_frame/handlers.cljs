@@ -31,16 +31,21 @@
   (assert (some? event-v))         ;; nil would close the channel
   (put! dispatch-chan event-v))
 
+(defn dispatch-sync
+  "sync version of above that actually does the dispatch"
+  [event-v]
+  (let [event-id    (first-in-vector event-v)
+        handler-fn  (get @id->fn event-id)]
+    (assert (not (nil? handler-fn)) (str "No event handler registered for event: " event-id ))
+    (handler-fn app-db event-v)))
+
 
 (defn- router
   "route an event, arriving on the dispatch channel, to the right handler"
   []
   (go-loop []
-      (let [event-v     (<! dispatch-chan)
-            event-id    (first-in-vector event-v)
-            handler-fn  (get @id->fn event-id)]
-        (assert (not (nil? handler-fn)) (str "No event handler registered for event: " event-id ))
-        (handler-fn app-db event-v)
+      (let [event-v     (<! dispatch-chan)]
+        (dispatch-sync event-v)
         (recur))))
 
 (router)  ;; run the router loop it
