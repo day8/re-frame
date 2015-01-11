@@ -15,7 +15,7 @@ re-frame isn't an MVC framework. Instead, it is a functional RACES framework - R
 
 ### Overview
 
-The re-frme pattern is simple. So simple, in fact, that the reference implementaton in this repo is barely 100 lines of code.
+The re-frame pattern is simple. So simple, in fact, that the reference implementation in this repo is barely 100 lines of code.
 
 To build an app using re-frame, you:
   - design your app's data structure (data layer)
@@ -30,15 +30,19 @@ Despite its simplicity, re-frame is impressively buzzword compliant:  it has FRP
 
 ### Client Side Bias
 
-We write larger, more complicated SPAs which have a Parisian's indifference for servers. re-frame's design reflects our needs. So there's nothing in re-frame about, say, routing to server-side services, etc.  It is just about writing client side apps. That doesn't mean it wouldn't work well when a server is heavily involved, its just that we haven't tweaked it in that direction.
+We write larger, more complicated SPAs which have a Parisian's indifference for servers.
+
+Unsurprising, re-frame's design reflects our needs. So there's nothing in re-frame about, say, routing to server-side services, etc.  It is just about writing client side apps. That doesn't mean it wouldn't work well when a server is heavily involved, its just that we haven't tweaked it in that direction.
+
+Remember, re-frame is more of a pattern than an implementation, so you can easily tweak in the direction you need. 
 
 At small scale, any framework seems like pesky overhead. The 
 explanatory examples in here are necessarily small scale, so you'll need to
-squint a little to see the benefit.
+squint a little to see the benefits that accrues at larger scale.
 
-### Nothng New
+### Nothing New
 
-Nothing about re-frame is the slightest bit original or clever. You'll find 
+Nothing about re-frame is particularly original or clever. You'll find 
 no ingenious use of functional zippers, transducers or core.async. 
 
 This is a good thing (although, for the record, one day I'd love to develop
@@ -48,14 +52,15 @@ something original and clever).
 
 First, above all we believe in the one true [Dan Holmsand], the creator of Reagent, and his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
 
-Second, we believe that [FRP] is a honking great idea.  You might be tempted to see 
+Second, we believe in ClojureScript, and the process of building a system out of pure functions. 
+
+Third, we believe that [FRP] is a honking great idea.  You might be tempted to see 
 Reagent as simply another of the React wrappers (a sibling to [OM] and [quiescent](https://github.com/levand/quiescent)). But you'll only really "get" 
 Reagent when you view it as an FRP library. To put that another way, we think 
 that Reagent, at its best, is closer in 
 nature to [Hoplon] or [Elm] than it is OM.
 
-Finally, we believe in one-way data flow. No cycles.  We don't like read/write `cursors` which
-promote two way flow of data. re-frame does implement two data way flow, but it 
+Finally, we believe in one-way data flow. No cycles.  We don't like read/write `cursors` which promote two way flow of data. re-frame does implement two data way flow, but it 
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
 
@@ -124,7 +129,7 @@ Reagent provides a `ratom` and a `reaction`. These are **two key building blocks
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.  
 
-From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as being a value that changes over time.**  Subtle distinction, I know. But the re-frame perspective means meanns we're viewing a `ratom` as an FRP Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
+From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as being a value that changes over time.**  Subtle distinction, I know. But the re-frame perspective means means we're viewing a `ratom` as an FRP Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
 
 `reaction` acts a bit like a function. It's a macro which wraps some `computation` (some block of code) and returns a `ratom` containing the result of that `computation`.
 
@@ -132,7 +137,7 @@ The magic thing about a `reaction` is that the `computation` it wraps will be re
 
 Wait, what, how?
 
-Well, when a `computation` (block of code) dereferences one or more `ratoms`, it will be automatically re-run (recomputing a new retturn value) whenever any of these dereferenced `ratoms` change.  
+Well, when a `computation` (block of code) dereferences one or more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any of these dereferenced `ratoms` change.  
 
 To put it another way, a `reaction` 'notices' what `ratoms` are involved in the `computation` and will watch these `ratoms` and perform a re-computation whenever one of them changes. 
 
@@ -442,7 +447,7 @@ We can fix that up by slightly changing our subscription function:
         (reaction (sort-by @sort-kw @items)))))                  ;; reaction #2
 ```
 
-So now there's one reaction which uses the output of the another reaction. 
+So now there's one reaction which uses the output of another reaction. 
 
 Be aware that the second reaction will only be triggered if `@items` does not test `identical?` to the previous value. **Yes, that sort of optimisation is built into chain `reactions`.**  Which means the component render function (which is wrapped in another reaction) won't rerun if `app-db` changes, unless items changes. Now we're very efficient.
 
@@ -551,7 +556,7 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  
   handlers <----------------------------------------  (dispatch [event-id  other params])
 ```
 
-**Rule**:  `components` are as passive as possible when it comes to handling events. They shoud do the minimum in this regard. On the other hand, `components` can be as complex as needed when it comes to creating the visuals. 
+**Rule**:  `components` are as passive as possible when it comes to handling events. They should do the minimum in this regard. On the other hand, `components` can be as complex as needed when it comes to creating the visuals. 
 
 ### Event Handlers 
 
@@ -600,10 +605,10 @@ The initiating event handlers should organise that the `on-success` or `on-fail`
 
 **Notes**: 
   - all events are handled via a call to `dispatch`. GUI events, async HTTP events, everything. 
-  - `dispatch` will cause a handler functon to be called. But the process is async. The call is queued.
+  - `dispatch` will cause a handler function to be called. But the process is async. The call is queued.
   - if you (further) dispatch in handler, then that will be async too. The associated handler is queued for calling later.  Why?  Partially because handlers are given a snapshot of the `app-db` and can't be nested.
   - if you kick off an HTTP request in a handler, then organise for the on-success or on-fail handlers to dispatch their outcome.  All events are handled via dispatch.
-  - if a handler does a lot of work and hogs the thread, this will freeze the GUI because browsers only give us one execution thrrad .  **XXX Nice Solution needed. **
+  - if a handler does a lot of work and hogs the thread, this will freeze the GUI because browsers only give us one execution thread .  **XXX Nice Solution needed. **
 
   
 ### In Summary
@@ -629,3 +634,5 @@ All the parts are lovely and simple.  And they plug together nicely.
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
 [Herbert Schema]:https://github.com/miner/herbert
+
+
