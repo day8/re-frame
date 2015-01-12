@@ -3,7 +3,7 @@
 Still Alpha. But getting closer.  
 
 Todo:
-  - allow for pure event handlers.  I suspect a macro will be needed.
+  - implement pure event handlers.  I suspect a macro will be needed.
 
 ## re-frame
 
@@ -23,7 +23,7 @@ To build an app using **re-frame**, you:
   - write Reagent component functions  (view layer)
   - write and register event handler functions  (control layer and/or state transition layer)
 
-All the functions you write are pure, so the distinct pieces of your app can be 
+All the functions you write are pure, so the pieces of your app can be 
 described, understood and tested independently.
 
 Despite its simplicity, **re-frame** is impressively buzzword compliant:  it has FRP-nature, unidirectional data flow, pristinely pure functions, uses conveyor belts, statecharts and claims a hammock conception.
@@ -38,14 +38,12 @@ Remember, **re-frame** is more of a pattern than an implementation, so you can e
 
 At small scale, any framework seems like pesky overhead. The 
 explanatory examples in here are necessarily small scale, so you'll need to
-squint a little to see the benefits that accrues at larger scale.
+squint a little to see the benefits that accrue at larger scale.
 
 ### Nothing New
 
 Nothing about **re-frame** is particularly original or clever. You'll find
-no ingenious use of functional zippers, transducers or `core.async`.
-
-This is a good thing (although, for the record, one day I'd love to develop
+no ingenious use of functional zippers, transducers or `core.async`. And this is a good thing (although, for the record, one day I'd love to develop
 something original and clever).
 
 ### Guiding Philosophy
@@ -55,12 +53,12 @@ First, above all we believe in the one true [Dan Holmsand], the creator of Reage
 Second, we believe in ClojureScript, and the process of building a system out of pure functions. 
 
 Third, we believe that [FRP] is a honking great idea.  You might be tempted to see 
-Reagent as simply another of the React wrappers (a sibling to [OM] and [quiescent](https://github.com/levand/quiescent)). But you'll only really "get" 
+Reagent as simply another of the React wrappers - a sibling to [OM] and [quiescent](https://github.com/levand/quiescent). But you'll only really "get" 
 Reagent when you view it as an FRP library. To put that another way, we think 
 that Reagent, at its best, is closer in 
 nature to [Hoplon] or [Elm] than it is OM.
 
-Finally, we believe in one-way data flow. No cycles.  We don't like read/write `cursors` which promote two way flow of data. **re-frame** does implement two data way flow, but it
+Finally, we believe in one-way data flow. No cycles!  We don't like read/write `cursors` which promote two way flow of data. **re-frame** does implement two data way flow, but it
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
 
@@ -71,7 +69,7 @@ If you are curious about FRP, I'd recommend [this FRP backgrounder](https://gist
 To explain **re-frame**, I'll incrementally develop a diagram, explaining each part as it is added.
 
 Along the way, I'll be using [reagent] at an intermediate to advanced level.  But this is no introductory reagent tutorial and you will need to have done one of those before continuing here. Try
-[the official intro](http://reagent-project.github.io/) or 
+[Introductory Tutorial](http://reagent-project.github.io/) or 
 [this Reagent tutorial](https://github.com/jonase/reagent-tutorial) or
 [Building Single Page Apps with Reagent](http://yogthos.net/posts/2014-07-15-Building-Single-Page-Apps-with-Reagent.html).
 
@@ -82,7 +80,7 @@ Along the way, I'll be using [reagent] at an intermediate to advanced level.  Bu
 
 ##### The Big Ratom 
 
-Our **re-frame** diagram starts (very modestly) with the "well-formed data at rest" bit:
+Our **re-frame** diagram starts (very modestly) with  Fogus' "well-formed data at rest" bit:
 
 ```
 app-db
@@ -96,7 +94,7 @@ spent your life breaking systems into pieces, organised around behaviour and try
 to hide the data.  I still wake up in a sweat some nights thinking about all
 that Clojure data lying around exposed and passive.
 
-But, as @fogus tells us, data at rest is the easy bit. 
+But, as Fogus tells us, data at rest is the easy bit. 
 
 From here on in this document, we'll assume `app-db` is one of these: 
 
@@ -123,27 +121,27 @@ I'm going to quote verbatim from Elm's website:
 
 2. Save and Undo become quite easy. Many applications would benefit from the ability to save all application state and send it off to the server so it can be reloaded at some later date. This is extremely difficult when your application state is spread all over the place and potentially tied to objects that cannot be serialized. With a central store, this becomes very simple. Many applications would also benefit from the ability to easily undo user's actions. For example, a painting app is better with Undo. Since everything is immutable in Elm, this is also very easy. Saving past states is trivial, and you will automatically get pretty good sharing guarantees to keep the size of the snapshots down.
 
-##### Some Background Magic
+##### The Background Magic
 
 Reagent provides a `ratom` and a `reaction`. These are **two key building blocks** for **re-frame**, so let's make sure we understand them.
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.  
 
-From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From an **re-frame** perspective, we'll tweak that paradigm ever so slightly and **view an `ratom` as being a value that changes over time.**  Subtle distinction, I know. But the **re-frame** perspective means means we're viewing an `ratom` as an FRP Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
+From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From an **re-frame** perspective, we'll tweak that paradigm ever so slightly and **view an `ratom` as being a value that changes over time.**  Seems like a subtle distinction, I know, but because of it re-frame sees an `ratom` as an FRP Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
 
 `reaction` acts a bit like a function. It's a macro which wraps some `computation` (some block of code) and returns an `ratom` containing the result of that `computation`.
 
-The magic thing about a `reaction` is that the `computation` it wraps will be re-run automatically whenever 'its inputs' change, producing a new output (return) value.
+The magic thing about a `reaction` is that the `computation` it wraps will be automatically re-run  whenever 'its inputs' change, producing a new output (return) value.
 
 Wait, what, how?
 
-Well, when a `computation` (block of code) dereferences one or more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any of these dereferenced `ratoms` change.  
+Well, when a `computation` (block of code) dereferences one or more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any of these dereferenced `ratoms` change.
 
-To put it another way, a `reaction` 'notices' what `ratoms` are involved in the `computation` and will watch these `ratoms` and perform a re-computation whenever one of them changes. 
+To put that another way, a `reaction` works out the input Signals (aka `ratoms`) for a computation, and will then automatically re-run its computation whenever one of them changes, and will `reset!` the new resulting value into the `ratom` originally returned. 
 
 So, the `ratom` returned by a `reaction` is itself an FRP Signal. Its value will change over time as the input Signals (the dereferenced `ratoms` in the computation) change.
 
-So, via `ratoms`,  values can 'flow' into computations and out again, and then into other computations, etc. The result is the data flows through the Signal graph. But our graph will be without cycles, because cycles are bad! We want unidirectional data flow.
+So, via `ratoms` and `reactions`,  values 'flow' into computations and out again, and then into other computations, etc.  Data flows through the Signal graph. But our graph will be without cycles, because cycles are bad! We want unidirectional data flow.
 
 While the mechanics are different, `reaction` has the intent of `lift` in [Elm] and `defc=` in [Hoplon].
 
@@ -225,11 +223,11 @@ Here is a slightly more interesting (parameterised) component (function):
 ;; ==>  [:div "Hello " "re-frame"]    returns a vector 
 ```
 
-So components are easy - they are functions which turn data into Hiccup (which will later become DOM). 
+So components are easy - at core they are a render functions which turn data into Hiccup (which will later become DOM). 
 
-Now, let's going to introduce `reaction` into this mix.  On the one hand, I'm complicating things by doing this, because Reagent allows you to be ignorant of the mechanics I'm about to show you. (It invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens.)
+Now, let's introduce `reaction` into this mix.  On the one hand, I'm complicating things by doing this, because Reagent allows you to be ignorant of the mechanics I'm about to show you. (It invisibly wraps your components in a `reaction` allowing you to be blissfully ignorant of how the magic happens.)
 
-On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired.  AND, in a minute, when we get to subscriptions, we'll be directly using `reaction`, so we might as well bite the bullet here and now ... and, anyway, it is easy...
+On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired, because in a minute, when we get to subscriptions, we'll be directly using `reaction`, so we might as well bite the bullet here and now ... and, anyway, it is pretty easy...
  
 ```Clojure
 (defn greet                 ;; a component - data in, Hiccup out.
@@ -259,7 +257,7 @@ On the other hand, it is useful to understand exactly how the Reagent Signal gra
 ;; ==>   [:div "Hello " "blah"]    ;; yep, there's the new value
 ```
 
-So, as `n` changes value over time (via `reset!`), the output of the computation `(greet n)` changes, which in turn means that the value in `hiccup-ratom` changes. Both `n` and `hiccup-ratom` are FRP Signals.
+So, as `n` changes value over time (`reset!`), the output of the computation `(greet n)` changes, which in turn means that the value in `hiccup-ratom` changes. Both `n` and `hiccup-ratom` are FRP Signals. The Signal graph we created causes data to flow from `n` into `hiccup-ratom`.
 
 This is one-way data flow, with FRP-nature.
 
@@ -324,6 +322,10 @@ In the beginning was the word, and the word was data.  Then, all of a sudden, co
 app-db  -->  components 
 ```
 
+`components` draw the app's GUI. They draw the state of the app for the user to see -- in effect, they render based on what's in `app-db` becaue it **is** the state of the app.
+
+So components (view layer) need to query aspects of `app-db` (data layer).
+
 So let's pause to consider **our dream solution** for this part of the flow. `components` would:
    * obtain data from `app-db`  (their job is to turn this data into hiccup).
    * obtain this data via a (possibly parameterised) query over `app-db`. Think database kinda query.
@@ -332,7 +334,7 @@ So let's pause to consider **our dream solution** for this part of the flow. `co
 
 **re-frame**'s `subscriptions` are an attempt to live this dream. As you'll see, they fall short on a couple of points, but they're not too bad.
 
-As a **re-frame** app developer, your job is to write and register one or more "subscription handlers" (functions that do a named query).  Your subscription functions must return a value that changes over time (a Signal). I.e. they'll be returning a reaction (`ratom`).
+As a **re-frame** app developer, your job is to write and register one or more "subscription handlers" (functions that do a named query).  Your subscription functions must return a value that changes over time (a Signal). I.e. they'll be returning a reaction or, at least, the `ratom` produced by a `reaction`.
 
 Rules:
   - `components` never source data directly from `app-db`, and instead, they use a subscription.
