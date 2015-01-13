@@ -7,17 +7,17 @@ Todo:
 
 ## re-frame
 
-**re-frame** is a tiny [Reagent] framework for writing [SPAs] using ClojureScript.
+re-frame is a tiny [Reagent] framework for writing [SPAs] using ClojureScript.
 
 This document proposes a **pattern** for structuring an SPA using ClojureScript and Reagent, and the repo provides a **reference implementation** for one version of this pattern.
 
-**re-frame** isn't an MVC framework. Instead, it is a functional RACES framework - Reactive-Atom Component Event Subscription (I love the smell of acronym in the morning).
+re-frame isn't an MVC framework. Instead, it is a functional RACES framework - Reactive-Atom Component Event Subscription (I love the smell of acronym in the morning).
 
 ### Overview
 
-The **re-frame** pattern is simple. So simple, in fact, that the reference implementation in this repo is barely 100 lines of code.
+The re-frame pattern is simple. So simple, in fact, that the reference implementation in this repo is barely 100 lines of code.
 
-To build an app using **re-frame**, you:
+To build an app using re-frame, you:
   - design your app's data structure (data layer)
   - write and register subscription functions (query layer)
   - write Reagent component functions  (view layer)
@@ -26,15 +26,15 @@ To build an app using **re-frame**, you:
 All the functions you write are pure, so the pieces of your app can be 
 described, understood and tested independently.
 
-Despite its simplicity, **re-frame** is impressively buzzword compliant:  it has FRP-nature, unidirectional data flow, pristinely pure functions, uses conveyor belts, statecharts and claims a hammock conception.
+Despite its simplicity, re-frame is impressively buzzword compliant:  it has FRP-nature, unidirectional data flow, pristinely pure functions, uses conveyor belts, statecharts and claims a hammock conception.
 
 ### Client Side Bias
 
 We write larger, more complicated SPAs which have a Parisian's indifference for servers.
 
-Unsurprising, **re-frame**'s design reflects our needs. So there's nothing in **re-frame** about, say, routing to server-side services, etc.  It is just about writing client side apps. That doesn't mean it wouldn't work well when a server is heavily involved, its just that we haven't tweaked it in that direction.
+Unsurprising, re-frame's design reflects our needs. So there's nothing in re-frame about, say, routing to server-side services, etc.  It is just about writing client side apps. That doesn't mean it wouldn't work well when a server is heavily involved, its just that we haven't tweaked it in that direction.
 
-Remember, **re-frame** is more of a pattern than an implementation, so you can easily tweak in the direction you need.
+Remember, re-frame is more of a pattern than an implementation, so you can easily tweak in the direction you need.
 
 At small scale, any framework seems like pesky overhead. The 
 explanatory examples in here are necessarily small scale, so you'll need to
@@ -42,7 +42,7 @@ squint a little to see the benefits that accrue at larger scale.
 
 ### Nothing New
 
-Nothing about **re-frame** is particularly original or clever. You'll find
+Nothing about re-frame is particularly original or clever. You'll find
 no ingenious use of functional zippers, transducers or `core.async`. And this is a good thing (although, for the record, one day I'd love to develop
 something original and clever).
 
@@ -58,7 +58,7 @@ Reagent when you view it as an FRP library. To put that another way, we think
 that Reagent, at its best, is closer in 
 nature to [Hoplon] or [Elm] than it is OM.
 
-Finally, we believe in one-way data flow. No cycles!  We don't like read/write `cursors` which promote two way flow of data. **re-frame** does implement two data way flow, but it
+Finally, we believe in one-way data flow. No cycles!  We don't like read/write `cursors` which promote two way flow of data. re-frame does implement two data way flow, but it
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
 
@@ -66,7 +66,7 @@ If you are curious about FRP, I'd recommend [this FRP backgrounder](https://gist
 
 ## The Parts
 
-To explain **re-frame**, I'll incrementally develop a diagram, explaining each part as it is added.
+To explain re-frame, I'll incrementally develop a diagram, explaining each part as it is added.
 
 Along the way, I'll be using [reagent] at an intermediate to advanced level.  But this is no introductory reagent tutorial and you will need to have done one of those before continuing here. Try
 [Introductory Tutorial](http://reagent-project.github.io/) or 
@@ -80,13 +80,13 @@ Along the way, I'll be using [reagent] at an intermediate to advanced level.  Bu
 
 ##### The Big Ratom 
 
-Our **re-frame** diagram starts (very modestly) with  Fogus' "well-formed data at rest" bit:
+Our re-frame diagram starts (very modestly) with  Fogus' "well-formed data at rest" bit:
 
 ```
 app-db
 ```
 
-**re-frame** says that you put your data into one place which we'll call `app-db`. Structure the data in that place, of course. And [give it a schema](https://github.com/miner/herbert).
+re-frame says that you put your data into one place which we'll call `app-db`. Structure the data in that place, of course. And [give it a schema](https://github.com/miner/herbert).
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right? 
 You'd happily put all your well-formed data into PostgreSQL or MySQL. But within a running application (in memory), it is different. If you have a background in OO, this data-in-one-place business is a hard one to swallow.  You've
@@ -109,7 +109,7 @@ database atomically, etc.  So "in-memory database"
 seems a more useful paradigm than plain old atom.
 
 Finally, a clarification:  `app-db` doesn't actually have to be a reagent/atom containing
-a map. In theory, **re-frame**
+a map. In theory, re-frame
 imposes no requirement here.  It could be a [datascript] database (approach untested).  But, as you'll see, it
 does have to be a "reactive datastore" (one that can tell you when it has changed).  In fact, `app-db` doesn't have to be a single atom either -- the pattern allows for as many as you like,  although our implementation assumes one.
 
@@ -123,13 +123,13 @@ I'm going to quote verbatim from Elm's website:
 
 ##### The Background Magic
 
-Reagent provides a `ratom` and a `reaction`. These are **two key building blocks** for **re-frame**, so let's make sure we understand them.
+Reagent provides a `ratom` and a `reaction`. These are **two key building blocks** for re-frame, so let's make sure we understand them.
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.  
 
-From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From an **re-frame** perspective, we'll tweak that paradigm ever so slightly and **view an `ratom` as being a value that changes over time.**  Seems like a subtle distinction, I know, but because of it re-frame sees an `ratom` as an FRP Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
+From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From an re-frame perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as being a value that changes over time.**  Seems like a subtle distinction, I know, but because of it re-frame sees a `ratom` as an FRP Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
 
-`reaction` acts a bit like a function. It's a macro which wraps some `computation` (some block of code) and returns an `ratom` containing the result of that `computation`.
+`reaction` acts a bit like a function. It's a macro which wraps some `computation` (some block of code) and returns a `ratom` containing the result of that `computation`.
 
 The magic thing about a `reaction` is that the `computation` it wraps will be automatically re-run  whenever 'its inputs' change, producing a new output (return) value.
 
@@ -159,10 +159,10 @@ Right, so that was a lot of words. Some code to clarify:
                              0 "World"
                              1 "Hello")))
 
-;; Notice that both computations above involve de-referencing an ratom:
+;; Notice that both computations above involve de-referencing a ratom:
 ;;   - app-db in one case
 ;;   - ratom1 in the other
-;; Notice that both reactions above return an ratom.
+;; Notice that both reactions above return a ratom.
 ;; Those returned ratoms hold the (time varying) value of the computations.
 
 (println @ratom2)    ;; ==>  {:b 1}       ;; a computed result, involving @app-db
@@ -215,10 +215,10 @@ Here is a slightly more interesting (parameterised) component (function):
    [name]                       ;; 'name' is a ratom  holding a string
    [:div "Hello "  @name])      ;; dereference 'name' to extract the contained value 
 
-;; create an ratom, containing a string
+;; create a ratom, containing a string
 (def n (reagent/atom "re-frame")) 
 
-;; call our `component` function, passing in an ratom
+;; call our `component` function, passing in a ratom
 (greet n)                   
 ;; ==>  [:div "Hello " "re-frame"]    returns a vector 
 ```
@@ -265,7 +265,7 @@ This is one-way data flow, with FRP-nature.
 
 I haven't been entirely straight with you:  
 1. Reagent re-runs `reactions` (re-computations) via requestAnimationFrame. So a re-computation happens about 16ms after the need for it is detected, or after the current thread of processing finishes, whichever is the greater. So if you are in a bREPL and you run the lines of code above one after the other too quickly,  you might not see the re-computation done immediately after `n` gets reset!, because the next animationFrame hasn't run (yet).  But you could add a `(reagent.core/flush)` after the reset! to force re-computation to happen straight away.
-2. `reaction` doesn't actually return an `ratom`.  But it returns something that has ratom-nature, so we'll happily continue believing it is an `ratom` and no harm will come to us.
+2. `reaction` doesn't actually return a `ratom`.  But it returns something that has ratom-nature, so we'll happily continue believing it is a `ratom` and no harm will come to us.
 
 On with the rest of my lies and distortions...
 
@@ -332,9 +332,9 @@ So let's pause to consider **our dream solution** for this part of the flow. `co
    * automatically recompute their hiccup output, as the data returned by the query changes, over time. 
    * use declarative queries. Components should know as little as possible about the data structure in `app-db`. SQL?  Datalog?
 
-**re-frame**'s `subscriptions` are an attempt to live this dream. As you'll see, they fall short on a couple of points, but they're not too bad.
+re-frame's `subscriptions` are an attempt to live this dream. As you'll see, they fall short on a couple of points, but they're not too bad.
 
-As a **re-frame** app developer, your job is to write and register one or more "subscription handlers" (functions that do a named query).  Your subscription functions must return a value that changes over time (a Signal). I.e. they'll be returning a reaction or, at least, the `ratom` produced by a `reaction`.
+As a re-frame app developer, your job is to write and register one or more "subscription handlers" (functions that do a named query).  Your subscription functions must return a value that changes over time (a Signal). I.e. they'll be returning a reaction or, at least, the `ratom` produced by a `reaction`.
 
 Rules:
   - `components` never source data directly from `app-db`, and instead, they use a subscription.
@@ -370,7 +370,7 @@ The first element in the vector (`query-id`) identifies the query and the other 
 select * from customers where name="blah"
 ```
 
-In **re-frame** land, that would be done as follows:
+In re-frame land, that would be done as follows:
     (subscribe  [:customer-query "blah"])
 which would return a `ratom` holding the customer state (a value which might change over time!). 
 
@@ -462,7 +462,7 @@ Summary:
 
 ### The 2nd Flow
 
-At the top, I said that **re-frame** had two data flows.
+At the top, I said that re-frame had two data flows.
 
 The data flow from `app-db` to the DOM is the first half of the story. We now need to consider the 2nd part of the story: the flow in the opposite direction.
 
@@ -484,7 +484,7 @@ These events have to be "handled".  The code doing this handling might
 An application will have many handlers, and collectively
 they represent the **control layer of the application**. 
 
-In **re-frame**, the backward data flow of events happens via a conveyor belt:
+In re-frame, the backward data flow of events happens via a conveyor belt:
 
 ```
 app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
@@ -546,7 +546,7 @@ Notice the `on-click` handler:
     #(dispatch [:yes-button-clicked])
 ```
 
-With **re-frame**, we try to keep the DOM as passive as possible.  It is simply a rendering of `app-db`.  So that "on-click" is a simple as we can make it.
+With re-frame, we try to keep the DOM as passive as possible.  It is simply a rendering of `app-db`.  So that "on-click" is a simple as we can make it.
 
 There is a single  `dispatch` function in the entire framework, and it takes only one parameter, the event vector.
 
@@ -563,16 +563,16 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  
 
 ### Event Handlers 
 
-Collectively, event handlers provide the control logic in a **re-frame** application.
+Collectively, event handlers provide the control logic in a re-frame application.
 
 Almost all event handlers mutate `app-db` in some way. Adding an item here, or deleting that one there. So, often CRUD, but sometimes much more, and sometimes with async results.
 
-Even though handlers appear to be about `app-db` mutation, **re-frame** requires them to be pure functions with a signature of:
+Even though handlers appear to be about `app-db` mutation, re-frame requires them to be pure functions with a signature of:
  
 ```
    (state-of-app-db, event-vector) -> new-state
 ```   
-**re-frame** passes to an event handler two parameters: the current state of `app-db` plus the event, and the job of a handler to return a modified version of the state  (which **re-frame** will then put back into the `app-db`).   **XXX currently not true but it will be shortly.**
+re-frame passes to an event handler two parameters: the current state of `app-db` plus the event, and the job of a handler to return a modified version of the state  (which re-frame will then put back into the `app-db`).   **XXX currently not true but it will be shortly.**
 
 ```Clojure
 (defn handle-delete
@@ -616,7 +616,7 @@ The initiating event handlers should organise that the `on-success` or `on-fail`
   
 ### In Summary
 
-To build an app using **re-frame**, you'll have to:
+To build an app using re-frame, you'll have to:
   - design your app's data structure.
   - write and register subscription functions (query layer).
   - write component functions  (view layer).
@@ -637,5 +637,6 @@ All the parts are lovely and simple.  And they plug together nicely.
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
 [Herbert Schema]:https://github.com/miner/herbert
+
 
 
