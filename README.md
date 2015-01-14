@@ -34,7 +34,7 @@ We write larger, more complicated SPAs which have a Parisian's indifference for 
 
 Unsurprising, re-frame's design reflects our needs. So there's nothing in re-frame about, say, routes, or sessions or accessing server-side services, etc.  It is just about writing browser-based apps which are almost unaware they are in a browser. That doesn't mean re-frame wouldn't work well when a server is heavily involved, its just that we haven't tweaked it in that direction.
 
-Remember, re-frame is more of a pattern than an implementation, so you can easily fork it whatever direction you need.
+Remember, re-frame is more of a pattern than an implementation, so you can easily fork it in  whatever direction you need.
 
 At small scale, any framework seems like pesky overhead. The 
 explanatory examples in here are necessarily small scale, so you'll need to
@@ -125,18 +125,21 @@ I'm going to quote verbatim from Elm's website:
 
 2. Save and Undo become quite easy. Many applications would benefit from the ability to save all application state and send it off to the server so it can be reloaded at some later date. This is extremely difficult when your application state is spread all over the place and potentially tied to objects that cannot be serialized. With a central store, this becomes very simple. Many applications would also benefit from the ability to easily undo user's actions. For example, a painting app is better with Undo. Since everything is immutable in Elm, this is also very easy. Saving past states is trivial, and you will automatically get pretty good sharing guarantees to keep the size of the snapshots down.
 
-##### The Background Magic
+##### Important Quote
 
+From what I've seen, it is currently obligatory to include the following  quote whenver talking about FRP.  This rule may be relaxed in the future, I guess. But I'm not confident enough to break it. 
 
 > "Everything flows, nothing stands still". 
 
-Heraclitus (500 BC)  
+[Heraclitus](http://en.wikiquote.org/wiki/Heraclitus)
 
-Reagent provides a `ratom` and a `reaction`. These are **two key building blocks** for re-frame, so let's make sure we understand them.
+##### How FRP Happens In Reagent
+
+To implement FRP, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these building blocks, so let's make sure we understand them before going further.
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.  
 
-From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From an re-frame perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as being a value that changes over time.**  Seems like a subtle distinction, I know, but because of it re-frame sees a `ratom` as an FRP Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
+From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From an re-frame perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as being a value that changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a `ratom` as an FRP Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
 
 `reaction` acts a bit like a function. It's a macro which wraps some `computation` (some block of code) and returns a `ratom` containing the result of that `computation`.
 
@@ -146,11 +149,13 @@ Wait, what, how?
 
 Well, when a `computation` (block of code) dereferences one or more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any of these dereferenced `ratoms` change.
 
-To put that another way, a `reaction` works out the input Signals (aka `ratoms`) for a computation, and will then automatically re-run its computation whenever one of them changes, and will `reset!` the new resulting value into the `ratom` originally returned. 
+To put that yet another way, a `reaction` works out the input Signals (aka `ratoms`) for a computation, and will then automatically re-run its computation whenever one of them changes, and will `reset!` the new resulting value into the `ratom` originally returned. 
 
 So, the `ratom` returned by a `reaction` is itself an FRP Signal. Its value will change over time as the input Signals (the dereferenced `ratoms` in the computation) change.
 
-So, via `ratoms` and `reactions`,  values 'flow' into computations and out again, and then into other computations, etc.  Data flows through the Signal graph. But our graph will be without cycles, because cycles are bad! We want unidirectional data flow.
+So, via the interplay between `ratoms` and `reactions`,  values 'flow' into computations and out again, and then into other computations, etc.  Data flows through the Signal graph. 
+
+But this Signal graph will be without cycles, because cycles cause mayhem!  We want unidirectional data flow.
 
 While the mechanics are different, `reaction` has the intent of `lift` in [Elm] and `defc=` in [Hoplon].
 
@@ -185,7 +190,7 @@ Right, so that was a lot of words. Some code to clarify:
 (println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated too.
 ```
 
-So, in FRP terms, a `reaction` will produce a "stream" of values (it is a Signal), accessible via the `ratom` it returns.
+So, in FRP terms, a `reaction` will produce a "stream" of values over time (it is a Signal), accessible via the `ratom` it returns.
 
 Okay, that was all important background information for what is to follow. Back to the diagram...
 
@@ -281,7 +286,7 @@ On with the rest of my lies and distortions...
 ### Components Like Templates?
 
 A `component` like `greet` is like the templates you'd find in
-Django, Rails, Express or Mustache -- it maps data to HTML -- except for two massive differences:
+Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
 - you have the full power of ClojureScript available to you (generating a Clojure data structure). The downside is that these are not "designer friendly" HTML templates.
 - these components are reactive.  When their input Signals change, they
   are automatically rerun, producing new Hiccup (fresh DOM!). Reagent adroitly shields you from the details, but `components` are wrapped by a `reaction`.
@@ -325,17 +330,17 @@ But we don't have to bother ourselves with most of the pipeline. We just write t
 
 ### Subscribe
 
-In the beginning was the word, and the word was data.  Then, all of a sudden, components happened...
+Interesting to get the big picture, but the first part of the flow is critical: 
 
 ```
 app-db  -->  components 
 ```
 
-`components` draw the app's GUI. They draw the state of the app for the user to see -- in effect, they render based on what's in `app-db` becaue it **is** the state of the app.
+`components` render the app's GUI. They render the state of the app. They render `app-db` because it **is** the state of the app.
 
-So components (view layer) need to query aspects of `app-db` (data layer).
+So, `components` (view layer) need to query aspects of `app-db` (data layer).
 
-So let's pause to consider **our dream solution** for this part of the flow. `components` would:
+Let's pause to consider **our dream solution** for this part of the flow. `components` would:
    * obtain data from `app-db`  (their job is to turn this data into hiccup).
    * obtain this data via a (possibly parameterised) query over `app-db`. Think database kinda query.
    * automatically recompute their hiccup output, as the data returned by the query changes, over time. 
