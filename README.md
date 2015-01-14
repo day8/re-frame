@@ -9,13 +9,13 @@ Todo:
 
 re-frame is a tiny [Reagent] framework for writing [SPAs] using ClojureScript.
 
-This document proposes a **pattern** for structuring an SPA using ClojureScript and Reagent, and the repo provides a **reference implementation** for one version of this pattern.
+This document proposes a **pattern** for structuring an SPA using ClojureScript and Reagent, and the repo provides a **reference implementation**.
 
 re-frame isn't an MVC framework. Instead, it is a functional RACES framework - Reactive-Atom Component Event Subscription (I love the smell of acronym in the morning).
 
 ### Overview
 
-The re-frame pattern is simple. So simple, in fact, that the reference implementation in this repo is barely 100 lines of code.
+The re-frame pattern is simple. So simple, in fact, that the reference implementation in this repo is barely 100 lines of code.  Compare that to Ember or Angular which weigh in at 10,000s lines of code (I'm cheating ... to be fair, I should include the few hundred lines in Reagent too, but you get the idea)
 
 To build an app using re-frame, you:
   - design your app's data structure (data layer)
@@ -32,9 +32,9 @@ Despite its simplicity, re-frame is impressively buzzword compliant:  it has FRP
 
 We write larger, more complicated SPAs which have a Parisian's indifference for servers.
 
-Unsurprising, re-frame's design reflects our needs. So there's nothing in re-frame about, say, routing to server-side services, etc.  It is just about writing client side apps. That doesn't mean it wouldn't work well when a server is heavily involved, its just that we haven't tweaked it in that direction.
+Unsurprising, re-frame's design reflects our needs. So there's nothing in re-frame about, say, routes, or sessions or accessing server-side services, etc.  It is just about writing browser-based apps which are almost unaware they are in a browser. That doesn't mean re-frame wouldn't work well when a server is heavily involved, its just that we haven't tweaked it in that direction.
 
-Remember, re-frame is more of a pattern than an implementation, so you can easily tweak in the direction you need.
+Remember, re-frame is more of a pattern than an implementation, so you can easily fork it whatever direction you need.
 
 At small scale, any framework seems like pesky overhead. The 
 explanatory examples in here are necessarily small scale, so you'll need to
@@ -62,7 +62,11 @@ Finally, we believe in one-way data flow. No cycles!  We don't like read/write `
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
 
-If you are curious about FRP, I'd recommend [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) before you go any further.
+If you are new to FRP, I'd recommend both of these resources before going further:
+- [this excellent video](http://www.infoq.com/presentations/ClojureScript-Javelin) by Alan Dopert 
+- [this FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) 
+
+
 
 ## The Parts
 
@@ -122,6 +126,11 @@ I'm going to quote verbatim from Elm's website:
 2. Save and Undo become quite easy. Many applications would benefit from the ability to save all application state and send it off to the server so it can be reloaded at some later date. This is extremely difficult when your application state is spread all over the place and potentially tied to objects that cannot be serialized. With a central store, this becomes very simple. Many applications would also benefit from the ability to easily undo user's actions. For example, a painting app is better with Undo. Since everything is immutable in Elm, this is also very easy. Saving past states is trivial, and you will automatically get pretty good sharing guarantees to keep the size of the snapshots down.
 
 ##### The Background Magic
+
+
+> "Everything flows, nothing stands still". 
+
+Heraclitus (500 BC)  
 
 Reagent provides a `ratom` and a `reaction`. These are **two key building blocks** for re-frame, so let's make sure we understand them.
 
@@ -559,13 +568,13 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  
   handlers <----------------------------------------  (dispatch [event-id  other params])
 ```
 
-**Rule**:  `components` are as passive as possible when it comes to handling events. They should do the minimum in this regard. On the other hand, `components` can be as complex as needed when it comes to creating the visuals. 
+**Rule**:  `components` are as passive and minimal as possible when it comes to handling events. They `dispatch` and nothing more.
 
 ### Event Handlers 
 
 Collectively, event handlers provide the control logic in a re-frame application.
 
-Almost all event handlers mutate `app-db` in some way. Adding an item here, or deleting that one there. So, often CRUD, but sometimes much more, and sometimes with async results.
+Almost all event handlers mutate `app-db` in some way: adding an item here, or deleting that one there. So, often CRUD, but sometimes much more, and sometimes with async results.
 
 Even though handlers appear to be about `app-db` mutation, re-frame requires them to be pure functions with a signature of:
  
@@ -594,7 +603,7 @@ Because handlers are pure functions, and because they generally only have to han
 
 ### State Transition 
 
-Above, I commented that collectively handlers represent the control layer of the application.
+Above, I commented that collectively handlers represent the "control layer" of the application.
 
 Most of what they do is to manage state transitions. Eg: the application is in state X, and event E arrives, so the handler moves the app to state Y. 
 
