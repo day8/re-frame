@@ -58,7 +58,7 @@ Reagent when you view it as an FRP library. To put that another way, we think
 that Reagent, at its best, is closer in 
 nature to [Hoplon] or [Elm] than it is OM.
 
-Finally, we believe in one-way data flow. No cycles!  We don't like read/write `cursors` which promote two way flow of data. re-frame does implement two data way flow, but it
+Finally, we believe in one-way data flow. No cycles!  We don't like read/write `cursors` which promote two way flow of data. re-frame does implement two way data flow, but it
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
 
@@ -161,7 +161,7 @@ Right, so that was a lot of words. Some code to clarify:
 
 ;; Notice that both computations above involve de-referencing a ratom:
 ;;   - app-db in one case
-;;   - ratom1 in the other
+;;   - ratom2 in the other
 ;; Notice that both reactions above return a ratom.
 ;; Those returned ratoms hold the (time varying) value of the computations.
 
