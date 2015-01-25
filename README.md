@@ -3,7 +3,7 @@
 Still Alpha. But getting closer.  
 
 Todo:
-  - implement pure event handlers.  I suspect a macro will be needed.
+  - implement pure event handlers.  A macro will be needed.
 
 ## re-frame
 
@@ -11,11 +11,11 @@ re-frame is a tiny [Reagent] framework for writing [SPAs] using ClojureScript.
 
 This repo has documents which propose a **pattern** for structuring an SPA using ClojureScript and Reagent. The repo also contains a **reference implementation**.
 
-re-frame isn't an MVC framework. Instead, it is a functional RACES framework - Reactive-Atom Component Event Subscription framework (I love the smell of acronym in the morning).
+re-frame is not MVC. There are no objects, just data and pure functions. It is a RACES framework - Reactive-Atom Component Event Subscription framework (I love the smell of acronym in the morning).
 
 ### Overview
 
-The re-frame pattern is simple. So simple, in fact, that the reference implementation in this repo is barely 100 lines of code.  That compares to 10s of thousands in Angular or Ember. (And, yes, I'm cheating ... to be fair, I should include the few hundred lines in Reagent too, but you get the idea.)
+The re-frame pattern is delightfully simple. So simple, in fact, that the reference implementation in this repo is barely 100 lines of code.  That compares to 10s of thousands in Angular or Ember. (And, yes, I'm cheating ... to be fair, I should include the few hundred lines in Reagent too, but you get the idea.)
 
 To build an app using re-frame, you:
   - design your app's data structure (data layer)
@@ -26,7 +26,7 @@ To build an app using re-frame, you:
 All the functions you write are pure, so the pieces of your app can be 
 described, understood and tested independently.
 
-Despite its simplicity, re-frame is impressively buzzword compliant:  it has FRP-nature, unidirectional data flow, pristinely pure functions, conveyor belts, statecharts and claims an immaculate hammock conception.
+Despite its simplicity, re-frame is impressively buzzword compliant:  it has FRP-nature, unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness and claims an immaculate hammock conception.
 
 ### Client Side Bias
 
@@ -43,12 +43,14 @@ squint a little to see the benefits that accrue at larger scale.
 ### Nothing New
 
 Nothing about re-frame is particularly original or clever. You'll find
-no ingenious use of functional zippers, transducers or `core.async`. And this is a good thing (although, for the record, one day I'd love to develop
+no ingenious use of functional zippers, transducers or `core.async`. 
+
+And this is a good thing (although, for the record, one day I'd love to develop
 something original and clever).
 
 ### Guiding Philosophy
 
-First, above all we believe in the one true [Dan Holmsand], the creator of Reagent, and his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
+First, above all we believe in the one true [Dan Holmsand], creator of Reagent, and his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
 
 Second, we believe in ClojureScript, immutable data and the process of building a system out of pure functions.
 
@@ -62,14 +64,14 @@ Finally, we believe in one-way data flow. No cycles!  We don't like read/write `
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
 
-### FRP Clarity
+### FRP Clarifications
 
-In this document, when I talk about FRP, I'm being a bit loose with my terms. I should talk about re-frame using "discrete, asynchronous, push FRP" without "glitch free" guarantees.  
+Terminology in the FRP space seems to get people hot under the collar, especially those who believe in continuous-time semantics who'd object to me describing re-frame as having FRP-nature. They'd claim that it does something quite different from pure FRP, which is true, and then they'd testily point out that they'd invented the term. Harrumph.
 
-Terminology the FRP space can get people hot under the collar, especially those who believe in continuous-time semantics. They'd dismissively claim that re-frame is only doing reactive, asynchronous, data flow programming, not true FRP.  We sympathetically note their purist concerns, quip "close enough" and move on.
+But, these days, despite the originating purists,  FRP seems to have become a "big tent" (a broad church?). Broad enough perhaps that re-frame can be in the far, top, left paddock of the tent, via a string of qualifications like: re-frame has "discrete, asynchronous, push FRP-ish-nature" without "glitch free" guarantees.  (Surprisingly, "glitch" has specific meaning in FRP).
 
-If you are new to FRP, I'd recommend browsing these resources before going further:
-- [light FRP backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) 
+If you are new to FRP, or reactive programming  generally, I'd recommend browsing these resources before going further (certainly the first):
+- [reactive programming backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) 
 - [presentation (video)](http://www.infoq.com/presentations/ClojureScript-Javelin) by Alan Dipert (co-author of Hoplon)
 - [2012 taxonomy and survey](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf)
 - [serious pants thesis](https://www.seas.harvard.edu/sites/default/files/files/archived/Czaplicki.pdf)
@@ -133,17 +135,25 @@ I'm going to quote verbatim from Elm's website:
 
 [Hoplon] takes the same approach via what they called `stem cells`, whch is a root source of data.
 
-##### Argument From Authority
+##### Arguments From Authority
 
-Currently, it seems obligatory to include the following quote whenever talking about FRP.  This rule may be relaxed in the future, I guess. But I'm neither confident enough or senior enough to break it. And whoever got fired quoting Greek philosophers, right?   I'm ticking the box:
+> Everything flows, nothing stands still.   (Panta rhei)
 
-> "Everything flows, nothing stands still"
+> No man ever steps in the same river twice for it's not the same river and he's not the same man.
 
-[Heraclitus](http://en.wikiquote.org/wiki/Heraclitus).  
+[Heraclitus 500 BC](http://en.wikiquote.org/wiki/Heraclitus). Who, being Greek, never saw a frozen river. [alt version](http://farm6.static.flickr.com/5213/5477602206_ecb78559ed.jpg).
 
-##### How FRP Happens In Reagent
+> This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course, sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the metalwork, a little refreshing of the ornamentation . . . but is this not the nine hundred-year-old axe of my family? And because it has changed gently over time, it is still a pretty good axe, y'know. Pretty good.
 
-To implement FRP, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these building blocks, so let's now make sure we understand them before going further.
+Terry Pratchett, The Fifth Elephant
+
+> Think of an experience from your childhood. Something you remember clearly, something you can see, feel, maybe even smell, as if you were really there. After all you really were there at the time, weren’t you? How else could you remember it? But here is the bombshell: you weren’t there. Not a single atom that is in your body today was there when that event took place .... Matter flows from place to place and momentarily comes together to be you. Whatever you are, therefore, you are not the stuff of which you are made. If that does not make the hair stand up on the back of your neck, read it again until it does, because it is important.
+
+Richard Dawkins
+
+##### How Flow Happens In Reagent
+
+To implement FRP-ish-ness, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these building blocks, so let's now make sure we understand them before going further.
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.
 
@@ -155,11 +165,11 @@ The magic thing about a `reaction` is that the `computation` it wraps will be au
 
 Eh, how?
 
-Well, when a `computation` (block of code) dereferences one or more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any of these dereferenced `ratoms` change.
+Well, the `computation` is just a block of code (some forms), and if that code dereferences one or more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any of these dereferenced `ratoms` change.
 
-To put that yet another way, a `reaction` detects a `computations` input Signals (aka input `ratoms`) and will automatically re-run that computation whenever one of them changes, and it will `reset!` the new return value into the `ratom` originally returned. 
+To put that yet another way, a `reaction` detects a `computation's` input Signals (aka input `ratoms`) and it will `watch` them, and when, later, it detects a change in one of them,  it will re-run that computation, and it will `reset!` the new result of that computation into the `ratom` originally returned. 
 
-The `ratom` returned by a `reaction` is itself a Signal. Its value will change over time as the `computation's` input Signals change.
+So, the `ratom` returned by a `reaction` is itself a Signal. Its value will change over time when the `computation` is re-run.
 
 So, via the interplay between `ratoms` and `reactions`,  values 'flow' into computations and out again, and then into other computations, etc.  "Values" flow (propagate) through the Signal graph. 
 
@@ -298,15 +308,16 @@ On with the rest of my lies and distortions...
 A `component` like `greet` is like the templates you'd find in
 Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
 - you have the full power of ClojureScript available to you (generating a Clojure data structure). The downside is that these are not "designer friendly" HTML templates.
-- these components are reactive.  When their input Signals change, they
-  are automatically rerun, producing new Hiccup (fresh DOM!). Reagent adroitly shields you from the details, but the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs" to that render change, the render is rerun.
+- these templates are reactive.  When their input Signals change, they
+  are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs" to that render change, the render is rerun.
 
 ### React etc.
 
-Okay, so we have some one-way, reactive, async, discrete FRP-ish data flow happening here.
+Okay, so we have some unidirectional, reactive, async, discrete FRP-ish data flow happening here.
 
-Question: To which ocean does this river flow?  Answer: The DOM ocean.
+Question: To which ocean does this river flow?  Answer: The DOM ocean.  
 
+Here's the flow in full: 
 ```
 app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  --> DOM
 ```
@@ -334,7 +345,7 @@ In abstract ClojureScript syntax terms, you could squint and imagine the process
 
 Via the interplay between `ratom` and `reaction`, changes to `app-db` are pushed into the pipeline, causing new DOM to pop out the other end, and be displayed on our page. 
 
-But we don't have to bother ourselves with most of the pipeline. We just write the `components` and Reagent/React will look after the rest.
+But we don't have to bother ourselves with most of the pipeline. We just write the `components` part and Reagent/React will look after the rest.
 
 ### Subscribe
 
@@ -354,7 +365,7 @@ Let's pause to consider **our dream solution** for this part of the flow. `compo
    * automatically recompute their hiccup output, as the data returned by the query changes, over time. 
    * use declarative queries. Components should know as little as possible about the structure of `app-db`. SQL?  Datalog?
 
-re-frame's `subscriptions` are an attempt to live this dream. As you'll see, they fall short on a couple of points, but they're not too bad.
+re-frame's `subscriptions` are an attempt to live this dream. They fall short on the declarative query part, but they are close to the dream solution. 
 
 As a re-frame app developer, your job will be to write and register one or more "subscription handlers" - functions that do a named query.  Your subscription functions must return a value that changes over time (a Signal). I.e. they'll be returning a reaction or, at least, the `ratom` produced by a `reaction`.
 
@@ -417,11 +428,11 @@ For this to work, we must write and register a subscription handler for `:custom
 ```Clojure
 (defn greet         ;; a Form-1 component - no inner render function
    []
-   (let [name-ratom  (subscribe [:name-query])]    ;; Eek! subscription in render part
+   (let [name-ratom  (subscribe [:name-query])]    ;; Eek! subscription in renderer
         [:div "Hello" @name-ratom]))
 ```
 
-Why is this wrong?  Well, this component would get re-rendered every time `db-app` changed, even if the value in `name-ratom` (query result) stayed the same. Use a `Form-2` component instead.
+Why is this wrong?  Well, this component would get re-rendered every time `db-app` changed, even if the value in `name-ratom` (query result) stayed the same. Use a `Form-2` component instead, and put the subscription in the outer functions. 
 
 ### The Signal Graph
 
@@ -711,3 +722,5 @@ All the parts are lovely and simple.  And they plug together nicely.
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
 [Herbert Schema]:https://github.com/miner/herbert
+
+
