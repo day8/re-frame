@@ -4,6 +4,7 @@ Still Alpha. But getting closer.
 
 Todo:
   - implement pure event handlers.  A macro will be needed.
+  - ensure no [memory leaks](https://github.com/reagent-project/reagent/issues/81#issuecomment-71940515)  
 
 ## re-frame
 
@@ -137,8 +138,8 @@ I'm going to quote verbatim from Elm's website:
 
 [Hoplon] takes the same approach via what they called `stem cells`, whch is a root source of data.
 
-##### Arguments From Authority
-
+#### Flow
+Arguments From Authority
 > Everything flows, nothing stands still.   (Panta rhei)
 
 > No man ever steps in the same river twice for it's not the same river and he's not the same man.
@@ -153,7 +154,7 @@ Terry Pratchett, The Fifth Elephant
 
 Richard Dawkins
 
-##### How Flow Happens In Reagent
+#### How Flow Happens In Reagent
 
 To implement FRP-ish-ness, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these building blocks, so let's now make sure we understand them before going further.
 
