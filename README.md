@@ -4,21 +4,19 @@ Still Alpha. But getting closer.
 
 Todo:
   - implement pure event handlers.  A macro will be needed.
-  - ensure no [memory leaks](https://github.com/reagent-project/reagent/issues/81#issuecomment-71940515)  
+  - <s>ensure no [memory leaks](https://github.com/reagent-project/reagent/issues/81#issuecomment-71940515)</s>  
 
 ## re-frame
 
 re-frame is a tiny [Reagent] framework for writing [SPAs] using ClojureScript.
 
-This document proposes a **pattern** for structuring an SPA using ClojureScript and Reagent. The repo also contains a **reference implementation**.
+This document proposes a **pattern** for structuring an SPA using ClojureScript and Reagent. This repo also contains a **reference implementation**.
 
 re-frame is not MVC. There are no objects, just data and pure functions. It is a RACES framework - Reactive-Atom Component Event Subscription framework (I love the smell of acronym in the morning).
 
 ### Overview
 
 The re-frame pattern is delightfully simple, yet powerful. 
-
-Its is so simple, in fact, that the reference implementation in this repo is barely 100 lines of code. That number compares to 10s of thousands in Angular or Ember. And, yes, I'm cheating ... to be fair, I should include the few hundred lines in Reagent too, plue the 1000s in Reactjs itself, but you get the idea - you can deeply understand re-frame in an afternoon.
 
 To build an app using re-frame, you:
   - design your app's data structure (data layer)
@@ -725,3 +723,5 @@ All the parts are lovely and simple.  And they plug together nicely.
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
 [Herbert Schema]:https://github.com/miner/herbert
+
+
