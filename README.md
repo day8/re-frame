@@ -3,8 +3,7 @@
 Still Alpha. But getting closer.  
 
 Todo:
-  - implement pure event handlers.  A macro will be needed.
-  - <s>ensure no [memory leaks](https://github.com/reagent-project/reagent/issues/81#issuecomment-71940515)</s>  
+  - implement pure event handlers.  A macro will be needed.  
 
 ## re-frame
 
@@ -29,6 +28,13 @@ described, understood and tested independently.
 
 Despite its simplicity, re-frame is impressively buzzword compliant:  it has FRP-nature, unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness and claims an immaculate hammock conception.
 
+### What Problem Does It Solve?
+
+We wanted to buld apps with ClojureScript and Reagent.  But, for all their briallance,  Reagent & React.js only deliver the 'V' part of a traditional MVC framework. But an app involves more than than that. Where does the control logic go? How is state stored and manipulated (remembering that shared, mutable state is the root of all evil).
+
+We wondered: what's the rest of the architecture look like? re-frame is our answer. 
+
+
 ### Client Side Bias
 
 We write larger, more complicated SPAs which have a Parisian's indifference for servers.
@@ -44,10 +50,10 @@ squint a little to see the benefits that accrue at larger scale.
 ### Nothing New
 
 Nothing about re-frame is particularly original or clever. You'll find
-no ingenious use of functional zippers, transducers or `core.async`. 
+no ingenious use of functional zippers, transducers or `core.async`.
 
-And this is a good thing (although, for the record, one day I'd love to develop
-something original and clever).
+And this is a good thing because that makes it very easy to understand  (although, for the record, 
+one day I'd love to develop something original and intimidatingly clever).
 
 ### Guiding Philosophy
 
@@ -55,19 +61,19 @@ First, above all we believe in the one true [Dan Holmsand], creator of Reagent, 
 
 Second, we believe in ClojureScript, immutable data and the process of building a system out of pure functions.
 
-Third, we believe that [FRP] is a honking great idea.  You might be tempted to see 
+Third, we believe that [FRP] is one honking great idea.  You might be tempted to see 
 Reagent as simply another of the React wrappers - a sibling to [OM] and [quiescent](https://github.com/levand/quiescent). But you'll only really "get" 
 Reagent when you view it as an FRP-ish library. To put that another way, we think 
 that Reagent, at its best, is closer in 
 nature to [Hoplon] or [Elm] than it is OM.
 
-Finally, we believe in one-way data flow. No cycles!  We don't like read/write `cursors` which promote two way flow of data. re-frame does implement two way data flow, but it
+Finally, we believe in one-way data flow. No cycles!  We don't like read/write `cursors` which promote two way flow of data. We've found that they push control logic into all the wrong places. re-frame does implement two way data flow, but it
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
 
 ### FRP Clarifications
 
-Terminology in the FRP space seems to get people hot under the collar, especially those who believe in continuous-time semantics who'd object to me describing re-frame as having FRP-nature. They'd claim that it does something quite different from pure FRP, which is true, and then they'd testily point out that they'd invented the term. Harrumph.
+Terminology in the FRP space seems to get people hot under the collar. Those who believe in continuous-time semantics would object to me describing re-frame as having FRP-nature. They'd claim that it does something quite different from pure FRP, which is true, and then they'd pull rank and testily point out that they'd invented the term. Harrumph. Well played, Sir.
 
 But, these days, despite the originating purists,  FRP seems to have become a "big tent" (a broad church?). Broad enough perhaps that re-frame can be in the far, top, left paddock of the tent, via a string of qualifications like: re-frame has "discrete, asynchronous, push FRP-ish-nature" without "glitch free" guarantees.  (Surprisingly, "glitch" has specific meaning in FRP).
 
@@ -76,6 +82,8 @@ If you are new to FRP, or reactive programming  generally, I'd recommend browsin
 - [presentation (video)](http://www.infoq.com/presentations/ClojureScript-Javelin) by Alan Dipert (co-author of Hoplon)
 - [2012 taxonomy and survey](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf)
 - [serious pants thesis](https://www.seas.harvard.edu/sites/default/files/files/archived/Czaplicki.pdf)
+
+And for the love of all that is good, please watch this [StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0). Watch what happens when you re-imagine a database as a stream!! Forget Turtles, I want re-frame to be `Materialised Views` all the way down. And it is.
 
 ## Explaining re-frame
 
@@ -122,11 +130,9 @@ database atomically, etc.  So "in-memory database"
 seems a more useful paradigm than plain old map-in-atom.
 
 Finally, a clarification:  `app-db` doesn't actually have to be a reagent/atom containing
-a map. In theory, re-frame
-imposes no requirement here.  It could be a [datascript] database (approach untested).  But, as you'll see, it
-does have to be a "reactive datastore" (one that can tell you when it has changed).  In fact, `app-db` doesn't have to be a single atom either -- the pattern allows for as many as you like,  although our implementation assumes one.
+a map.  It could be a [datascript] database.  In fact, any database which is reactive (can tell you when it changes) would probably do. As you'll soon see, we'll be building layers of  "Materialised views" atop this database. And they will need to be reactively updated.
 
-##### Benefits Arising From This Approach
+##### Benefits Arising From Data-In-The-One-Place
 
 I'm going to quote verbatim from Elm's website:
 
@@ -151,6 +157,8 @@ Terry Pratchett, The Fifth Elephant
 > Think of an experience from your childhood. Something you remember clearly, something you can see, feel, maybe even smell, as if you were really there. After all you really were there at the time, weren’t you? How else could you remember it? But here is the bombshell: you weren’t there. Not a single atom that is in your body today was there when that event took place .... Matter flows from place to place and momentarily comes together to be you. Whatever you are, therefore, you are not the stuff of which you are made. If that does not make the hair stand up on the back of your neck, read it again until it does, because it is important.
 
 Richard Dawkins
+
+Have you watched that [StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) yet?  The one I recomended earlier.  The one that reimagines a database as a stream?  Architecture should be viewed as layer upon layer of Materialised Views.
 
 #### How Flow Happens In Reagent
 
@@ -675,16 +683,38 @@ Above, I commented that event handlers collectively represent the "control layer
 
 Our `delete-handler` example above is trivial, but as an application grows more features, the logic in many handlers will become more complicated, and they will have to query BOTH the current state of the app AND the arriving event vector to determine what action to take. 
 
-At that point, we're implementing a [Finite State Machine](http://en.wikipedia.org/wiki/Finite-state_machine):
+If the app is in logical State A, and event X arrives, then the handler will move the app to logical state B (by changing values in `app-db`). 
+
+Sound like anything you learned in those [Theory Of Computation](https://www.youtube.com/watch?v=Pt6GBVIifZA) lectures? 
+
+That's right - as an app becomes more complex, the handlers are liekly to be  collectively implementing a [Finite State Machine](http://en.wikipedia.org/wiki/Finite-state_machine):
    - your app is in a certain logical state (defined by the current values in `app-db`)
    - the arriving event vector represents a `trigger`.
-   - the event handler implements "a transition" subject to BOTH the current logical state and the arriving trigger. 
+   - the event handler implements "a transition", subject to BOTH the current logical state and the arriving trigger. 
    - after the handler has run, the transition may have moved the app into a new logical state. 
    - Repeat.
 
-Not every GUI has lots of logical `states`, but many do, and if you are implementing one of them, then formally recognising it and using a technque like [statecharts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782) will help greatly in getting a clean design.
+Not every app has lots of logical `states`, but many do, and if you are implementing one of them, then formally recognising it and using a technque like [statecharts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782) will help greatly in getting a clean design and a nice datamodel. 
 
-The beauty of re-frame from a FSM point of view is that re-frame stores all its data in one place - unlike OO systems where the data is distributed (and synchronized) across many objects. So implementing your control logic as a FSM is possible and natural in re-frame, whereas it is often difficult and contrived to do so in other kinds of architecture.
+The beauty of re-frame from a FSM point of view is that all the data is in one place - unlike OO systems where the data is distributed (and synchronized) across many objects. So implementing your control logic as a FSM is possible and natural in re-frame, whereas it is often difficult and contrived to do so in other kinds of architecture.
+
+### As A reduce
+
+So here's another way of thinking about what re-frame does - another mental model.
+
+For a moment, imagine all the events ever dispatched by a certain running  app as being in a collection. When the app stated, the user clicked on button X so the first item in the collection is the event generated by that button, and then the user moved the slider, so the associated event is the next item in the collection, and so on and so on.
+
+At any point in time, the value in `app-db` is the result of performing a `reduce` over the initial app state and the entire `collection` of events dispatched in the app up until that time. The combining function for this reduce is the set of handlers. 
+
+Its almost like `app-db` is the place where this `reduce` puts the running total. 
+
+### Everything Is A Materialised View
+
+Have you watched that StrangeLoop presentation yet?  I hope so. Database as a stream, right?
+
+It is almost as if `app-db` is a materiased view, produced by some initial state and a stream of incoming events. Like a "replica node" being sent change after change by the "leader" in a database cluster. Syncing itself with this mysterious leader, and indoing so being 
+
+Except of course, this `app-db` is itself regarded as  entire "view" flow from `app-db` to components, etc, reaseries accepting a stream of events
 
 ### Talking To A Server
 
@@ -723,5 +753,3 @@ All the parts are lovely and simple.  And they plug together nicely.
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
 [Herbert Schema]:https://github.com/miner/herbert
-
-
