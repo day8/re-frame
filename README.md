@@ -427,7 +427,7 @@ produced by one step, to be input to the following step.  Hiccup,
 VDOM and DOM are all various forms of HTML markup (in our world that's data).
 
 ```
-app-db  &rArr;  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
+app-db  ⇨  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
                 f1                           f2                      f3
 ```
 
@@ -846,3 +846,4 @@ All the parts are lovely and simple.  And they plug together nicely.
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
 [Herbert Schema]:https://github.com/miner/herbert
+
