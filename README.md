@@ -32,7 +32,7 @@ described, understood and tested independently.
 
 Despite its simplicity, re-frame is impressively buzzword compliant:  it has FRP-nature, unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness and claims an immaculate hammock conception.
 
-## What Problem Does It Solve?
+### What Problem Does It Solve?
 
 We wanted to build apps with ClojureScript and Reagent.  But, for all their brilliance,  Reagent & React.js
 only deliver the 'V' part of a traditional MVC framework. But an app involves more than than that. Where
@@ -122,12 +122,12 @@ reagent tutorial and you will need to have done one of those before continuing h
 [this one](https://github.com/jonase/reagent-tutorial) or
 [Building Single Page Apps with Reagent](http://yogthos.net/posts/2014-07-15-Building-Single-Page-Apps-with-Reagent.html).
 
-##### On Data
+### On Data
 
 <blockquote class="twitter-tweet" lang="en"><p>Well-formed Data at rest is as close to perfection in programming as it gets. All the crap that had to happen to put it there however...</p>&mdash; Fogus (@fogus) <a href="https://twitter.com/fogus/status/454582953067438080">April 11, 2014</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-##### The Big Ratom 
+### The Big Ratom
 
 Our re-frame diagram starts (very modestly) with  Fogus' ***well-formed data at rest*** bit:
 
@@ -164,7 +164,7 @@ Finally, a clarification:  `app-db` doesn't actually have to be a reagent/atom c
 a map.  It could for example be a [datascript] database.  In fact, any database which is reactive
 (can tell you when it changes) would probably do. As you'll soon see, we'll be building layers of  "Materialised views" atop this database. And they will need to be reactively updated.
 
-##### Benefits Arising From Data-In-The-One-Place
+### Benefits Arising From Data-In-The-One-Place
 
 I'm going to quote verbatim from Elm's website:
 
@@ -186,7 +186,7 @@ good sharing guarantees to keep the size of the snapshots down.
 
 [Hoplon] takes the same approach via what they called `stem cells`, which is a root source of data.
 
-#### Flow
+### Flow
 
 Arguments From Authority
 > Everything flows, nothing stands still.   (Panta rhei)
@@ -217,7 +217,7 @@ Have you watched that [StrangeLoop presentation ](https://www.youtube.com/watch?
 The one I recommended earlier.  The one that re-imagines a database as a stream?  Architecture should
 be viewed as layer upon layer of Materialised Views.
 
-#### How Flow Happens In Reagent
+## How Flow Happens In Reagent
 
 To implement FRP-ish-ness, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these
 building blocks, so let's now make sure we understand them before going further.
@@ -291,12 +291,12 @@ So, in FRP-ish terms, a `reaction` will produce a "stream" of values over time (
 
 Okay, that was all important background information for what is to follow. Back to the diagram ...
 
-### Components
+## Components
 
 Extending the diagram, we introduce `components`:
 
 ```
-app-db  -->  components  -->  Hiccup
+app-db  ->  components  ->  Hiccup
 ```
 
 When using Reagent, your primary job is to write one or more `components`.
@@ -427,7 +427,7 @@ produced by one step, to be input to the following step.  Hiccup,
 VDOM and DOM are all various forms of HTML markup (in our world that's data).
 
 ```
-app-db  ⇨  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
+app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
                 f1                           f2                      f3
 ```
 
