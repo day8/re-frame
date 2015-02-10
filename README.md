@@ -5,7 +5,7 @@ metalwork, a little refreshing of the ornamentation . . . but is this not the ni
 axe of my family? And because it has changed gently over time, it is still a pretty good axe,
 y'know. Pretty good.
 
-Terry Pratchett, The Fifth Elephant, obviously referring to the flow of derived values in reactive programming.
+-- Terry Pratchett, The Fifth Elephant, obviously alluding to the flow of derived values in reactive programming.
 
 ## Status
 
