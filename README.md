@@ -14,10 +14,10 @@ re-frame is still Alpha. But getting closer.
 Todo:
   - implement pure event handlers.  A macro will be needed.
 
-
+<!--
 <img src="http://leiningen.org/img/leiningen.jpg"
  alt="Leiningen logo" title="The man himself" align="right" />
-
+-->
 
 ## re-frame
 
