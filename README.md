@@ -1,47 +1,83 @@
-## Status 
 
-Still Alpha. But getting closer.  
+> This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
+sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the
+metalwork, a little refreshing of the ornamentation . . . but is this not the nine hundred-year-old
+axe of my family? And because it has changed gently over time, it is still a pretty good axe,
+y'know. Pretty good.
+
+Terry Pratchett, The Fifth Elephant, obviously referring to the flow of derived values in reactive programming.
+
+## Status
+
+re-frame is still Alpha. But getting closer.
 
 Todo:
-  - implement pure event handlers.  A macro will be needed.  
+  - implement pure event handlers.  A macro will be needed.
+
+
+<img src="http://leiningen.org/img/leiningen.jpg"
+ alt="Leiningen logo" title="The man himself" align="right" />
+
 
 ## re-frame
 
-re-frame is a tiny [Reagent] framework for writing [SPAs] using ClojureScript.
 
-This document proposes a **pattern** for structuring an SPA using ClojureScript and Reagent. This
-repo also contains a **reference implementation**.
+re-frame is a **pattern** for writing [SPAs] in ClojureScript, using [Reagent].
 
-re-frame is not MVC. There are no objects, just data and pure functions. Instead, it is a RACES framework -
-Reactive-Atom Component Event Subscription framework (I love the smell of acronym in the morning).
+This repo contains both a description of this pattern and a **reference implementation**.
 
-No wait. Maybe it is an MVE framework - Materialized Views Everywhere  (you'll understand why in a while).
-
-## Overview
-
-The re-frame pattern is delightfully simple, yet powerful. 
-
-To build an app using re-frame, you:
+To build a re-frame app, you:
   - design your app's data structure (data layer)
   - write and register subscription functions (query layer)
   - write Reagent component functions  (view layer)
   - write and register event handler functions  (control layer and/or state transition layer)
 
-All the functions you write are pure, so the pieces of your app can be 
+Most of the functions you write are pure, so the computational pieces of your app can be
 described, understood and tested independently.
 
-Despite its simplicity, re-frame is impressively buzzword compliant:  it has FRP-nature, unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness and claims an immaculate hammock conception.
+Composition of these parts happens via reactive data flows from one computation
+to another, via a dynamic, unidirectional Signal graph.
+
+So, re-frame is certainly not MVC.  It is more of a RACES framework - Reactive-Atom Component Event
+Subscription framework (I love the smell of acronym in the morning).
+
+Or maybe DDATWD - Derived Data All The Way Down (more on this soon).
+
+But it is simple: our reference implementation is little more than 100 lines of code.  Yes, that simple!
+
+In summary, re-frame is impressively buzzword compliant:  it has FRP-nature,
+unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness
+and claims an immaculate hammock conception.  It also has a charming xkcd reference (wait for it)
+and a hilarious insiders-joke T-shirt, ideal for conferences.
+
+*TODO:* get acronym down to 3 chars! Get an image of stacked Turtles for DDATWD T-Shirt.
 
 ### What Problem Does It Solve?
 
-We wanted to build apps with ClojureScript and Reagent.  But, for all their brilliance,  Reagent & React.js
-only deliver the 'V' part of a traditional MVC framework. But an app involves more than than that. Where
+We first decided to build apps with ClojureScript, then we choose Reagent, then we had a problem.
+
+For all its considerable brilliance,  Reagent (+ React)
+only delivers the 'V' part of a traditional MVC framework.
+
+But apps involve a lot more than V. Where
 does the control logic go? How is state stored and manipulated (remembering that shared, mutable state
-is the root of all evil).
+is the root of all evil). And how does the V bit source data?
 
-We wondered: what should the rest of the architecture look like?  re-frame is
-our answer.  We're really pleased with the way it has turned out.
+We wondered: what should the rest of the architecture look like?  So we read up on Flux, Pedestal,
+Hoplon, OM, Elm, etc and slowly re-frame emerged.  Frankly, we're delighted with how nicely
+it has fallen out.  There are good reasons why (Functional) Reactive Programming is going to be the
+next big thing.
 
+## Nothing New
+
+Nothing about re-frame is original or clever. You'll find
+no ingenious use of functional zippers, transducers or `core.async`.
+
+Its simply a mashup of existing ideas. We're releasing this not because it is brilliant,
+but because we wished we'd found this sort of an explanation and implementation when we started.
+
+(For the record,
+one day I'd love to develop something original and clever).
 
 ### Client Side Bias
 
@@ -52,19 +88,13 @@ routes, or sessions or syncing client state with server state, etc.  It is just 
 browser-based apps which are desktop-like. That doesn't mean re-frame wouldn't work well when
 servers are more centrally involved, its just that we haven't tweaked it in that direction.
 
-Remember, re-frame is more of a pattern than an implementation, so you can easily fork it in whatever direction you need.
+Remember, re-frame is more of a pattern than an implementation, so you can easily fork it
+in whatever direction (GraphQL?) you need.  Did I mention it is only about 100 lines of code.
 
-At small scale, any framework seems like pesky overhead. The 
+At small scale, any framework or architecture seems like pesky overhead. The
 explanatory examples in here are necessarily small scale, so you'll need to
 squint a little to see the benefits that accrue at larger scale.
 
-## Nothing New
-
-Nothing about re-frame is particularly original or clever. You'll find
-no ingenious use of functional zippers, transducers or `core.async`.
-
-And this is a good thing (although, for the record,
-one day I'd love to develop something original and intimidatingly clever).
 
 ## Guiding Philosophy
 
@@ -73,33 +103,33 @@ his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
 
 Second, we believe in ClojureScript, immutable data and the process of building a system out of pure functions.
 
-Third, we believe that [FRP] is one honking great idea.  You might be tempted to see 
+Third, we believe that [FRP] is one honking great idea. You might be tempted to see
 Reagent as simply another of the React wrappers - a sibling to [OM] and [quiescent](https://github.com/levand/quiescent).
 But you'll only really "get"
 Reagent when you view it as an FRP-ish library. To put that another way, we think 
-that Reagent, at its best, is closer in 
-nature to [Hoplon] or [Elm] than it is OM.
+that Reagent, at its best, is closer in nature to [Hoplon] or [Elm] than it is OM.
 
 Finally, we believe in one-way data flow. No cycles!  We don't like read/write `cursors` which
-promote two way flow of data. We've found that they push control logic into all the wrong places.
+promote the two way flow of data. As programs get bigger, we've found that their use seems to
+encourage control logic into all the wrong places.
+
 re-frame does implement two way data flow, but it
 uses two, separate, one-way flows to achieve it, and those two flows 
 are different in nature.
 
 ### FRP Clarifications
 
-Terminology in the FRP space seems to get people hot under the collar. Those who believe in continuous-time
+Terminology in the FRP world seems to get people hot under the collar. Those who believe in continuous-time
 semantics would object to me describing re-frame as having FRP-nature. They'd claim that it does something
-quite different from pure FRP, which is true, and then they'd pull rank and testily point out that
-they'd invented the term. Harrumph.
+quite different from pure FRP, which is true.
 
-But, these days, despite the originating purists,  FRP seems to have become a "big tent" (a broad church?).
+But, these days, FRP seems to have become a "big tent" (a broad church?).
 Broad enough perhaps that re-frame can be in the far, top, left paddock of the tent, via a string of
 qualifications like: re-frame has "discrete, asynchronous, push FRP-ish-nature" without "glitch free" guarantees.
 (Surprisingly, "glitch" has specific meaning in FRP).
 
-If you are new to FRP, or reactive programming  generally, I'd recommend browsing these resources before
-going further (certainly the first):
+**If you are new to FRP, or reactive programming generally**, browse these resources before
+going further (certainly read the first):
 - [reactive programming backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) 
 - [presentation (video)](http://www.infoq.com/presentations/ClojureScript-Javelin) by Alan Dipert (co-author of Hoplon)
 - [2012 taxonomy and survey](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf)
@@ -107,10 +137,10 @@ going further (certainly the first):
 
 And for the love of all that is good, please watch this lovely simple
 [StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). Watch what happens
-when you re-imagine a database as a stream!!
+when you re-imagine a database as a stream!!  Think about that: shared mutable state (the root of all evil),
+re-imagined as a stream!!
 
-Forget Turtles, re-frame tries to be `Materialised Views`
-all the way down. Derived Data everywhere, flowing.
+re-frame tries to be `Derived Data everywhere, flowing`. Or perhaps, "Derived Data All The Way Down".
 
 ## Explaining re-frame
 
@@ -139,7 +169,9 @@ re-frame says that you put your data into one place which we'll call `app-db`. S
 the data in that place, of course, and [give it a schema](https://github.com/Prismatic/schema).
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right? 
-You'd happily put all your well-formed data into PostgreSQL or MySQL. But within a running
+You'd happily put all your well-formed data into PostgreSQL or MySQL.
+
+But within a running
 application (in memory), it is different. If you have a background in OO, this data-in-one-place
 business is a hard one to swallow.  You've
 spent your life breaking systems into pieces, organised around behaviour and trying
@@ -160,9 +192,11 @@ and other transformations on it. You'll often want to transact on this
 database atomically, etc.  So "in-memory database"
 seems a more useful paradigm than plain old map-in-atom.
 
-Finally, a clarification:  `app-db` doesn't actually have to be a reagent/atom containing
-a map.  It could for example be a [datascript] database.  In fact, any database which is reactive
-(can tell you when it changes) would probably do. As you'll soon see, we'll be building layers of  "Materialised views" atop this database. And they will need to be reactively updated.
+A clarification:  `app-db` doesn't actually have to be a reagent/atom containing
+a map.  It could, for example, be a [datascript] database.  In fact, any database which is reactive
+(can tell you when it changes) would do.  (We'd love! to be using [datascript] - so cool - but we had too much
+data in our app. If you were to use it, you'd have to tweak the implementation a bit).
+
 
 ### Benefits Arising From Data-In-The-One-Place
 
@@ -186,22 +220,16 @@ good sharing guarantees to keep the size of the snapshots down.
 
 [Hoplon] takes the same approach via what they called `stem cells`, which is a root source of data.
 
-### Flow
+## Flow
 
-Arguments From Authority
+Arguments From Authority ...
+
 > Everything flows, nothing stands still.   (Panta rhei)
 
 > No man ever steps in the same river twice for it's not the same river and he's not the same man.
 
 [Heraclitus 500 BC](http://en.wikiquote.org/wiki/Heraclitus). Who, being Greek, never saw a frozen river. [alt version](http://farm6.static.flickr.com/5213/5477602206_ecb78559ed.jpg).
 
-> This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
-sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the
-metalwork, a little refreshing of the ornamentation . . . but is this not the nine hundred-year-old
-axe of my family? And because it has changed gently over time, it is still a pretty good axe,
-y'know. Pretty good.
-
-Terry Pratchett, The Fifth Elephant
 
 > Think of an experience from your childhood. Something you remember clearly, something you can see,
 feel, maybe even smell, as if you were really there. After all you really were there at the time,
@@ -213,18 +241,15 @@ your neck, read it again until it does, because it is important.
 
 Richard Dawkins
 
-Have you watched that [StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) yet?
-The one I recommended earlier.  The one that re-imagines a database as a stream?  Architecture should
-be viewed as layer upon layer of Materialised Views.
 
-## How Flow Happens In Reagent
+### How Flow Happens In Reagent
 
 To implement FRP-ish-ness, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these
 building blocks, so let's now make sure we understand them before going further.
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.
 
-From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From an re-frame
+From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame
 perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as being a value that
 changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
 `ratom` as a Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
@@ -237,7 +262,7 @@ re-run  whenever 'its inputs' change, producing a new output (return) value.
 
 Eh, how?
 
-Well, the `computation` is just a block of code (some forms), and if that code dereferences one or
+Well, the `computation` is just a block of code, and if that code dereferences one or
 more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any
 of these dereferenced `ratoms` change.
 
@@ -289,6 +314,7 @@ Right, so that was a lot of words. Some code to clarify:
 
 So, in FRP-ish terms, a `reaction` will produce a "stream" of values over time (it is a Signal), accessible via the `ratom` it returns.
 
+
 Okay, that was all important background information for what is to follow. Back to the diagram ...
 
 ## Components
@@ -296,7 +322,7 @@ Okay, that was all important background information for what is to follow. Back 
 Extending the diagram, we introduce `components`:
 
 ```
-app-db  ->  components  ->  Hiccup
+app-db  -->  components  -->  Hiccup
 ```
 
 When using Reagent, your primary job is to write one or more `components`.
@@ -381,7 +407,8 @@ changes, which in turn means that the value in `hiccup-ratom` changes. Both `n` 
 `hiccup-ratom` are FRP Signals. The Signal graph we created causes data to flow from
 `n` into `hiccup-ratom`.
 
-This is one-way data flow, with FRP-nature.
+Derived Data, flowing.
+
 
 ### Truth Interlude
 
@@ -404,15 +431,17 @@ On with the rest of my lies and distortions...
 
 A `component` like `greet` is like the templates you'd find in
 Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
-- you have the full power of ClojureScript available to you (generating a Clojure data structure). The downside is that these are not "designer friendly" HTML templates.
+- you have the full power of ClojureScript available to you (generating a Clojure data structure). The
+  downside is that these are not "designer friendly" HTML templates.
 - these templates are reactive.  When their input Signals change, they
-  are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs" to that render change, the render is rerun.
+  are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
+  the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs" to that render change, the render is rerun.
 
 ### React etc.
 
 Okay, so we have some unidirectional, reactive, async, discrete FRP-ish data flow happening here.
 
-Question: To which ocean does this river flow?  Answer: The DOM ocean.  
+Question: To which ocean does this river of data flow?  Answer: The DOM ocean.
 
 Here's the flow in full: 
 ```
@@ -421,8 +450,8 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  --> D
 
 Best to imagine this process as a pipeline of 3 functions.  Each
 function takes data from the
-previous step, and produces data for the next step.  In the next
-diagram, the three functions are marked (f1, f2, f3). The unmarked nodes are data,
+previous step, and produces (derived!) data for the next step.  In the next
+diagram, the three functions are marked (f1, f2, f3). The unmarked nodes are derived data,
 produced by one step, to be input to the following step.  Hiccup,
 VDOM and DOM are all various forms of HTML markup (in our world that's data).
 
@@ -436,40 +465,47 @@ In abstract ClojureScript syntax terms, you could squint and imagine the process
 ```Clojure
 (-> app-db 
     components    ;; produces Hiccup
-    Reagent       ;; produces VDOM  (virtual DOM that React understands)
-    React)        ;; produces HTML (which magically and efficiently appears on the page).
+    Reagent       ;; produces VDOM   (virtual DOM that React understands)
+    React         ;; produces HTML   (which magically and efficiently appears on the page).
+    Browser       ;; produces pixels
+    Monitor)      ;; produces photons?
 ```
 
-Via the interplay between `ratom` and `reaction`, changes to `app-db` are pushed into the pipeline,
-causing new DOM to pop out the other end, and be displayed on our page.
 
-But we don't have to bother ourselves with most of the pipeline. We just write the `components`
+Via the interplay between `ratom` and `reaction`, changes to `app-db` stream into the pipeline, where it
+undergoes successive transformations, until pixels colour the monitor you to see.
+
+Derived Data, flowing.  Every step is acting like a pure function and turning data into new data.
+
+But, we don't have to bother ourselves with most of the pipeline. We just write the `components`
 part and Reagent/React will look after the rest.
 
 
 ### Subscribe
 
-Whilst it is interesting to get the big picture, most of it happens "for free".  We don't have
-to do much other than to kick start it correctly. That means understanding `subscribe`.
+`components` render the app's state as hiccup.
 
 ```
 app-db  -->  components 
 ```
 
-`components` render the app's GUI. They render the state of the app. They render `app-db` because
-it **is** the state of the app.
 
-So, `components` (view layer) need to query aspects of `app-db` (data layer).
+`components` (view layer) need to query aspects of `app-db` (data layer).
 
 Let's pause to consider **our dream solution** for this part of the flow. `components` would:
    * obtain data from `app-db`  (their job is to turn this data into hiccup).
-   * obtain this data via a (possibly parameterised) query over `app-db`. Think database kinda query.
-   * automatically recompute their hiccup output, as the data returned by the query changes, over time. 
+   * obtain this data via a (possibly parameterised) query over `app-db`. Think database find of  query.
+   * automatically recompute their hiccup output, as the data returned by the query changes, over time
    * use declarative queries. Components should know as little as possible about the structure of `app-db`. SQL?  Datalog?
 
-re-frame's `subscriptions` are an attempt to live this dream. They fall short on the declarative query part, but they are close to the dream solution. 
+re-frame's `subscriptions` are an attempt to live this dream. As you'll see, they fall short on the declarative
+query part, but they comfortably meet the other requirements.
 
-As a re-frame app developer, your job will be to write and register one or more "subscription handlers" - functions that do a named query.  Your subscription functions must return a value that changes over time (a Signal). I.e. they'll be returning a reaction or, at least, the `ratom` produced by a `reaction`.
+As a re-frame app developer, your job will be to write and register one or more "subscription handlers" - functions
+that do a named query.
+
+Your subscription functions must return a value that changes over time (a Signal). I.e. they'll
+be returning a reaction or, at least, the `ratom` produced by a `reaction`.
 
 Rules:
   - `components` never source data directly from `app-db`, and instead, they use a subscription.
@@ -485,31 +521,38 @@ Here's a component using a subscription:
           [:div "Hello" @name-ratom])))
 ```
 
-First, note this is a [Form-2](https://github.com/reagent-project/reagent/wiki/Creating-Components#form-2--a-function-returning-a-function) `component` ([there are 3 forms](https://github.com/reagent-project/reagent/wiki/Creating-Components)).
+First, note this is a [Form-2](https://github.com/reagent-project/reagent/wiki/Creating-Components#form-2--a-function-returning-a-function)
+`component` ([there are 3 forms](https://github.com/reagent-project/reagent/wiki/Creating-Components)).
 
-Previously in this document, we've used the simplest, Form-1 components (no setup was required, just render). With Form-2 components, there's a function returning a function:
-- the returned function is the render function. Behind the scenes, Reagent will wrap this render function in a `reaction` to make it produce new Hiccup when its input Signals change.  In our example above, that means it will rerun every time `name-ratom` changes. 
-- the outer function is a setup function, called once to initialise the component. Notice the use of 'subscribe' with the parameter `:name-query`. That creates a Signal through which new values are supplied over time.
+Previously in this document, we've used the simplest, `Form-1` components (no setup was required, just render).
+With `Form-2` components, there's a function returning a function:
+- the returned function is the render function. Behind the scenes, Reagent will wrap this render function
+  in a `reaction` to make it produce new Hiccup when its input Signals change.  In our example above, that
+  means it will rerun every time `name-ratom` changes.
+- the outer function is a setup function, called once to initialise the component. Notice the use of
+  'subscribe' with the parameter `:name-query`. That creates a Signal through which new values are supplied
+  over time.
 
-`subscribe` is called like this: 
+`subscribe` is always called like this:
 
 ```Clojure
     (subscribe  [query-id some optional query parameters])
 ```
 
-There is only one `subscribe` function and it takes one parameter, assumed to be a vector. 
+There is only one (global) `subscribe` function and it takes one parameter, assumed to be a vector.
 
-The first element in the vector (shown as `query-id`) identifies/names the query and the other elements are optional, query parameters. With a traditional database a query might be:
+The first element in the vector (shown as `query-id`) identifies/names the query and the other elements are optional
+query parameters. With a traditional database a query might be:
 
 ```
 select * from customers where name="blah"
 ```
 
-In re-frame land, that would be done as follows:
+In re-frame, that would be done as follows:
     (subscribe  [:customer-query "blah"])
 which would return a `ratom` holding the customer state (a value which might change over time!). 
 
-For this to work, we must write and register a subscription handler for `:customer-query`
+So let's now look at how to write and register the subscription handler for `:customer-query`
 
 ```Clojure
 (defn customer-query     ;; a query over 'app-db' which returns a customer
@@ -523,9 +566,16 @@ For this to work, we must write and register a subscription handler for `:custom
     customer-query)       ;; the function which will perform the query
 ```
 
-**Note**: `components` tend to be organised into a hierarchy, often with data flowing from parent to child via parameters. So not every component needs a subscription. Very often the values passed in from a parent component are sufficient.
+Notice how the handler is registered to handle `:customer-query` subscriptions.
 
-**Rule**: subscriptions can only be used in `Form-2` components and the subscription must be in the outer setup function and not in the inner render function.  So the following is **wrong** (compare to the correct version above)
+**Rules and Notes**:
+  - you'll be writing one or more handlers, and you will need to register each one.
+  - handlers are functions which take two parameters:  the db atom, and the vector given to subscribe.
+  - `components` tend to be organised into a hierarchy, often with data flowing from parent to child via
+parameters. So not every component needs a subscription. Very often the values passed in from a parent component
+are sufficient.
+  - subscriptions can only be used in `Form-2` components and the subscription must be in the outer setup
+function and not in the inner render function.  So the following is **wrong** (compare to the correct version above)
 
 ```Clojure
 (defn greet         ;; a Form-1 component - no inner render function
@@ -534,91 +584,127 @@ For this to work, we must write and register a subscription handler for `:custom
         [:div "Hello" @name-ratom]))
 ```
 
-Why is this wrong?  Well, this component would get re-rendered every time `db-app` changed, even if the value in `name-ratom` (query result) stayed the same. Use a `Form-2` component instead, and put the subscription in the outer functions. 
+Why is this wrong?  Well, this component would be re-rendered every time `db-app` changed, even if the value
+in `name-ratom` (the result of the query) stayed the same. If you were to use a `Form-2` component instead, and put the
+subscription in the outer functions, then there'll be no re-render unless the value queried (ie, `name-ratom`) changed.
+
+
+### Just A Read-Only Cursor?
+
+Subscriptions are more than read-only cursors.
+
+Yes, `subscriptions` abstract away (hide) the data source, like a Cursor, but they also allow for computation.  They can create
+derived data (a Materialised View of `app-db`).
+
+Imagine that our `app-db` contained some `items` - a vector of maps. And imagine that we must display these items
+sorted by one of their attributes.  And that we only want to display the top 20 items.
+
+This is the sort of "derived data" which a subscription can deliver.
+
 
 ### The Signal Graph
 
-A bigger example ...
+Let's sketch out the situation described above ...
 
-Imagine that our `app-db` contains some `items` - a vector of maps. And imagine that we must display these items sorted by one of their attributes. 
 
-Think of it like this:
+Think of `app-db` a bit like this (`items` is a vector of maps):
 ```Clojure
-(def i-list  [{:name "a" :val 23 :} 
-              {:name "b" :val 81
-              {:name "c" :val 23}])
-(def  db-app (reagent/atom  {:items i-list})
-``
+(def L  [{:name "a" :val 23 :flag "y"}
+         {:name "b" :val 81 :flag "n"}
+         {:name "c" :val 23 :f;ag "y"}])
 
-We could write this query-handler:
+(def  db-app (reagent/atom  {:items L
+                             :sort-by :name})
+```
+
+We could write this subscription-handler:
 
 ```Clojure
 (register
-  :sorted-items              ;; the query id  
-  (fn [db [_ sort-kw]]       ;; sort-kw is a ratom, contains a keyword. 
-    (assert (keyword? @sort-kw))
+  :sorted-items      ;; the query id
+  (fn [db [_]]       ;;
     (reaction
-       (let [items (get-in @db [:some :path :items])]  ;; extract items from db
-           (sort-by @sort-kw items)))))                ;; return them sorted
+       (let [items      (get-in @db [:items])     ;; extract items from db
+             sort-attr  (get-in @db [:sort-by])]  ;; extract sort key from db
+           (sort-by @sort-attr @items)))))        ;; return them sorted
 ```
 
 
 Subscription handlers are given two parameters:
-1. `app-db` - that's a reagent/atom which holds ALL the app's state. This is the "database" on which we perform the "query". 
+1. `app-db` - that's a reagent/atom which holds ALL the app's state. This is the "database"
+   on which we perform the "query".
 2. the vector originally supplied to `subscribe`.
 
-In the example above, notice that the reaction wraps 2 input Signals:  `db` and `sort-kw`. 
-If either changes, the query is re-run.
+In the example above, notice that the reaction depends on the input Signal:  `db`.
+If `db` changes, the query is re-run.
 
 In a component, we could use this query via `subscribe`:
 
 ```Clojure
 (defn items-list         ;; Form-2 component - outer, setup function, called once
    []
-   (let [by-this (reagent/atom :name)    ;; sort by :name attribute, GUI might reset! this somehow
-         items   (subscribe [:sorted-items by-this])   ;; <--   subscribe called here
-         num     (reaction (count @items))]    ;; Woh! a reaction based on the subscription
+   (let [items   (subscribe [:sorted-items])   ;; <--   subscribe called here
+         num     (reaction (count @items))     ;; Woh! a reaction based on the subscription
+         top-20  (reaction (subvec @items 0 20))]  ;; Another dependent reaction
       (fn []
         [:div  
-            (str "there's " @num " of these suckers")     ;; rookie mistake to leave off the @
-            (into [:div ] (map item-render @items))])))   ;; item-render is another component
+            (str "there's " @num " of these suckers. Here's top 20")     ;; rookie mistake to leave off the @
+            (into [:div ] (map item-render @top-20))])))   ;; item-render is another component
 ```
 
-There's a bit going on in that `let`, most of it highly contrived, just so I can show off chained reactions. Okay, okay. All I wanted really was an excuse to use the phrase "chained reactions". 
+There's a bit going on in that `let`, most of it tortuously contrived, just so I can show off chained
+reactions. Okay, okay. All I wanted really was an excuse to use the phrase "chained reactions".
 
-The calculation of `num` is done by a `reaction` which has `items` as a an input Signal. And, as we saw, `items` is itself a reaction over two other signals (one of them the `app-db`).
+The calculation of `num` is done by a `reaction` which has `items` as a an input Signal. And,
+as we saw, `items` is itself a reaction over two other signals (one of them the `app-db`).
 
-In reality, the approach taken above is inefficient. Every time `app-db` changes, the `:sorted-items` query is going to be re-run and it's going to re-sort items.  But items might not have changed. Some other part of `app-db` may have changed. We don't want to re-sort items each time something unrelated changes.
+But there's a problem. The approach above is inefficient. Every time `app-db` changes, the `:sorted-items` query is
+going to be re-run and it's going to re-sort items.  But items might not have changed. Some other
+part of `app-db` may have changed. We don't want to perform an computationally expensive re-sort
+each time something unrelated changes.
 
-We can fix that up by slightly changing our subscription function:
+Luckily, we can easily fix that up by slightly changing our subscription function:
  
 ```Clojure
 (register
-  :sorted-items               ;; the query id  
-  (fn [db [_ sort-kw]]        ;; sort-kw is a ratom containing the attribute to sort on
-    (assert (keyword? @sort-kw))
-    (let [items (reaction (get-in @db [:some :path :items]))]    ;; reaction #1
-        (reaction (sort-by @sort-kw @items)))))                  ;; reaction #2
+  :sorted-items             ;; the query id
+  (fn [db [_]]
+    (let [items      (reaction (get-in @db [:some :path :to :items]))]  ;; reaction #1
+          sort-attr  (reaction (get-in @db [:sort-by]))]                ;; reaction #2
+        (reaction (sort-by @sort-attr @items)))))                       ;; reaction #3
 ```
 
-So now there's one reaction which uses the result of another reaction. The 1st reaction just extracts `items`. The 2nd one does the CPU-expensive sort.
+The original version had only one reaction which would be re-run completely each time `app-db` changed.
+The new version, has chained reactions.
+The 1st and 2nd reactions just extract from `db`.  The 3rd one does the expensive computation usign the result from the first two.
 
-That 2nd, expensive reaction will only be triggered if `@items` does not test `identical?` to the previous value. **Yes, that sort of optimisation is built into chain `reactions`.**  Which, in turn, means the component render function (which is wrapped in yet another reaction) won't rerun unless `items` itself changes. Now we're very efficient. Thank you immutable data structures.
+That 3rd, expensive reaction should be re-run when everone of its two input Signals change, right?  Not quite.
+`reaction` will only re-run the computation when one of the inputs has changed value.
 
-If I were doing this for real (rather than just showing possibilities), I'd probably create a simple subscription for items (unsorted), and then do the sort in the component itself (as a reaction, similar to the way `num` was done in the example above). After all, it is the component which needs the sorting, so it should explicitly do that work. 
+The old Signal value is compared with the new Signal value via `identical?`. Because we're using immutable data structures
+(thank you ClojureScript), `reaction` can perform near instant checks for change on even deeply nested and complex
+input Signals. And `reaction` will then stop unneeded propagation of `identical?` values through the
+Signal graph.
+
+In the example above, reaction #3 won't re-run until `:items` or `:sort-by` are different (do not test `identical?`
+to their previous value), even though `app-db` itself has changed (presumably somewhere else).
+
+Hideously contrived example, but I hope you get the idea. All screamingly efficient.
 
 Summary:
   - you can chain reactions.
-  - Reagent will eliminate unnecessary Signal propagation via highly efficient `identical?` checks (not equality checks!). This is the beautiful by-product of working with immutable data structures
+  - Reagent will eliminate unnecessary Signal propagation via highly efficient `identical?` checks
+    (not equality checks!).
 
 
 ### The 2nd Flow
 
 At the top, I said that re-frame had two data flows.
 
-The data flow from `app-db` to the DOM is the first half of the story. We now need to consider the 2nd part of the story: the flow in the opposite direction.
+The data flow from `app-db` to the DOM is the first half of the story. We now need to consider the 2nd part of the
+story: the flow in the opposite direction.
 
-While the first flow has FRP-nature, the 2nd flow does not.
+While the first flow has FRP-nature, the 2nd flow does not.  Well, not at first glance anyway.
 
 When I think about these two flows, I imagine [one of those school diagrams](http://thumbnails-visually.netdna-ssl.com/water-cycle_521f29b8b6271_w1500.png) showing the water cycle. Rivers taking water down to the oceans, and evaporation/clouds/wind taking water back over the mountains to fall again as rain or snow. Repeat.
 
@@ -633,7 +719,7 @@ events like "clicked delete button on item 42" or
 "unticked the checkbox for 'send me spam'".
 
 These events have to be "handled".  The code doing this handling might
- mutate app state (in `app-db`), or request more data from the server, or POST somewhere and wait for a response, etc. 
+mutate app state (in `app-db`), or request more data from the server, or POST somewhere and wait for a response, etc.
  
 In fact, all these actions ultimately result in changes to the `app-db`.
 
@@ -654,7 +740,15 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  
 Generally, when the user manipulates the GUI, the state of the application changes. In our case, 
 that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to the user is a function of that state. 
 
-So that tends to be the cycle:  DOM events dispatch, handlers manage them, which  cause `app-db` changes, which then cause a re-render, and the users sees something different. That's our water cycle.
+So that tends to be the cycle:
+  1. the user clicks something which causes DOM events to be dispatched,
+  2. handlers manage the events
+  3. and cause `app-db` changes
+  4. which then cause a re-render
+  5. the users sees something different.
+  6. goto #1
+
+That's our water cycle.
 
 Because handlers are that part of the system which does `app-db` mutation, you
 could almost imagine them as a "stored procedures" on a
@@ -684,7 +778,7 @@ Here are some other example events:
 
 ### Dispatching Events
 
-Events start in the DOM.  They are `dispatched`.
+Events tend to start in the DOM in response to user actions.  They are `dispatched`.
 
 For example, a button component might be like this:
  
@@ -704,7 +798,8 @@ Notice the `on-click` DOM handler:
 
 With re-frame, we try to keep the DOM as passive as possible. So that "on-click" is a simple as we can make it.
 
-There's a single `dispatch` function in the entire framework, and it takes one parameter: the event to be dispatched (which is pure simple, lovely data).
+There's a single `dispatch` function in the entire framework, and it takes one parameter: the event to be
+dispatched (which is pure simple, lovely data).
 
 Let's update our diagram to show `dispatch`:
 
@@ -722,7 +817,7 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  
 Collectively, event handlers provide the control logic in a re-frame application.
 
 An event handler is a pure function of two parameters  (*** not true in reference impl, yet ***):
-  1. current value in `app-db` 
+  1. current value in `app-db`.  Note: the map **in** `app-db`, not the atom itself.
   2  an event (represented as a vector)
 
 It returns the new value which should be reset! into `app-db`. 
@@ -734,9 +829,12 @@ An example handler:
     (dissoc-in app-state [:some :path item-id]))     ;; return a modified version of 'app-state'
 ```
 
-Handling an event invariably involves mutating the value in `app-db` (which is provided as the first parameter).  An item is added here, or one is deleted there.  So, often simple CRUD, but sometimes much more, and sometimes with async results.
+Handling an event invariably involves mutating the value in `app-db` (which is provided as the first parameter).
+An item is added here, or one is deleted there.  So, often simple CRUD, but sometimes much more,
+and sometimes with async results.
 
-But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!). That leaves your event handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
+But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!). That leaves your event
+handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
 
 ### Routing
 
@@ -754,7 +852,7 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  
 
 The `router` will:
 1. inspect the 1st element of the arriving vector
-2. look in its registry for the handler which looks after this kind of event
+2. look in its registry for the handler which is registered for this kind of event
 3. call that handler with two parameters: (1) the current value in `app-db` and (2) the event vector
 4. reset! the returned value back into `app-db`.
 
@@ -772,40 +870,64 @@ Any arriving event vector which has `:delete-item` as the first element will now
 
 ### Control Via FSM 
 
-Above, I commented that event handlers collectively represent the "control layer" of the application.  They contain logic which interprets arriving events and they "step" the application "forward" via mutations to `app-db`.
+Above, I commented that event handlers collectively represent the "control layer" of the application.  They contain
+logic which interprets arriving events and they "step" the application "forward" via mutations to `app-db`.
 
-Our `delete-handler` example above is trivial, but as an application grows more features, the logic in many handlers will become more complicated, and they will have to query BOTH the current state of the app AND the arriving event vector to determine what action to take. 
+Our `delete-handler` example above is trivial, but as an application grows more features, the logic in many
+handlers will become more complicated, and they will have to query BOTH the current state of the app
+AND the arriving event vector to determine what action to take.
 
-If the app is in logical State A, and event X arrives, then the handler will move the app to logical state B (by changing values in `app-db`). 
+If the app is in logical State A, and event X arrives, then the handler will move the app to logical state B
+(by changing values in `app-db`).
 
 Sound like anything you learned in those [Theory Of Computation](https://www.youtube.com/watch?v=Pt6GBVIifZA) lectures? 
 
-That's right - as an app becomes more complex, the handlers are liekly to be  collectively implementing a [Finite State Machine](http://en.wikipedia.org/wiki/Finite-state_machine):
+That's right - as an app becomes more complex, the handlers are likely to be  collectively implementing a
+[Finite State Machine](http://en.wikipedia.org/wiki/Finite-state_machine):
    - your app is in a certain logical state (defined by the current values in `app-db`)
    - the arriving event vector represents a `trigger`.
    - the event handler implements "a transition", subject to BOTH the current logical state and the arriving trigger. 
    - after the handler has run, the transition may have moved the app into a new logical state. 
    - Repeat.
 
-Not every app has lots of logical `states`, but many do, and if you are implementing one of them, then formally recognising it and using a technque like [statecharts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782) will help greatly in getting a clean design and a nice datamodel. 
+Not every app has lots of logical `states`, but many do, and if you are implementing one of them, then formally
+recognising it and using a technique like
+[statecharts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782) will help
+greatly in getting a clean design and a nice datamodel.
 
-The beauty of re-frame from a FSM point of view is that all the data is in one place - unlike OO systems where the data is distributed (and synchronized) across many objects. So implementing your control logic as a FSM is possible and natural in re-frame, whereas it is often difficult and contrived to do so in other kinds of architecture.
+The beauty of re-frame from a FSM point of view is that all the data is in one place - unlike OO systems where
+the data is distributed (and synchronized) across many objects. So implementing your control logic as a FSM is
+possible and natural in re-frame, whereas it is often difficult and contrived to do so in other
+kinds of architecture.
 
 ### As A reduce
 
-So here's another way of thinking about what re-frame does - another mental model.
+So here's another way of thinking about what's happening with this data flow - another mental model.
 
-For a moment, imagine all the events ever dispatched by a certain running  app as being in a collection. When the app stated, the user clicked on button X so the first item in the collection is the event generated by that button, and then the user moved the slider, so the associated event is the next item in the collection, and so on and so on.
+First, imagine that all the events ever dispatched by a certain running  app were stored in a collection.
+When the app stated, the user clicked on button X so the first item in the collection is the event generated
+by that button, and then the user moved the slider, so the associated event is the next item in the collection,
+and so on and so on.
 
-At any point in time, the value in `app-db` is the result of performing a `reduce` over the initial app state and the entire `collection` of events dispatched in the app up until that time. The combining function for this reduce is the set of handlers. 
+Second, remind yourself that the `combining function` of a `reduce` takes two parameters: (1) the current state of
+the reduction and (2) the next collection member to fold in.
 
-Its almost like `app-db` is the place where this `reduce` puts the running total. 
+Then notice that  handlers take two parameters too:  (1) the current state (2) the next item to fold in. Same
+as a `combining function`.
 
-### Everything Is A Materialised View
+So, at any point in time, the value in `app-db` can be viewed as the result of performing a `reduce` over
+the entire `collection` of events dispatched in the app up until that time. The combining function
+for this reduce is the set of handlers.
+
+`app-db` is the place where this imagined `reduce` stores its running total.
+
+### Everything Is Derived Data
 
 Have you watched that StrangeLoop presentation yet?  I hope so. Database as a stream, right?
 
-It is almost as if `app-db` is a materiased view, produced by some initial state and a stream of incoming events. Like a "replica node" being sent change after change by the "leader" in a database cluster. Syncing itself with this mysterious leader, and indoing so being 
+It is almost as if `app-db` is a materialised view, produced from some initial state and a stream of
+incoming events. Like a "replica node" in  database cluster being sent change after change by the
+"cluster leader".  It had an initial state, and then it updates in response to a flow of updates.
 
 Except of course, this `app-db` is itself regarded as  entire "view" flow from `app-db` to components, etc, reaseries accepting a stream of events
 
@@ -813,14 +935,19 @@ Except of course, this `app-db` is itself regarded as  entire "view" flow from `
 
 Some events handlers will need to initiate an async server connection (e.g. GET or POST something). 
 
-The initiating event handlers should organise that the `on-success` or `on-fail` handlers for these HTTP requests themselves simply dispatch an event.  
+The initiating event handlers should organise that the `on-success` or `on-fail` handlers for
+ these HTTP requests themselves simply dispatch an event.
 
 **Notes**: 
   - all events are handled via a call to `dispatch`. GUI events, async HTTP events, everything. 
   - `dispatch` will cause a handler function to be called. But the process is async. The call is queued.
-  - if you (further) dispatch in a handler, then that will be async too. The associated handler is queued for calling later.  Why?  Partially because handlers are given a snapshot of the `app-db` and can't be nested.
-  - if you kick off an HTTP request in a handler, then organise for the on-success or on-fail handlers to dispatch their outcome.  All events are handled via dispatch.
-  - if a handler does a lot of work and hogs the thread, this will freeze the GUI because browsers only give us one execution thread .  **XXX Nice Solution needed. **
+  - if you (further) dispatch in a handler, then that will be async too. The associated handler is
+    queued for later processing.  Why?  Partially because handlers are given a snapshot of
+    the `app-db` and can't be nested.
+  - if you kick off an HTTP request in a handler, then organise for the on-success or on-fail handlers
+    to dispatch their outcome.  All events are handled via dispatch.
+  - if a handler does a lot of work and hogs the thread, this will freeze the GUI because browsers
+    only give us one execution thread .  **XXX Nice Solution needed. **
 
   
 ### In Summary
