@@ -906,31 +906,42 @@ kinds of architecture.
 So here's another way of thinking about what's happening with this data flow - another mental model.
 
 First, imagine that all the events ever dispatched by a certain running  app were stored in a collection.
-When the app stated, the user clicked on button X so the first item in the collection is the event generated
-by that button, and then the user moved the slider, so the associated event is the next item in the collection,
+So, if when the app stated, the user clicked on button X the first item in this collection would be the event generated
+by that button, and then, if the user moved a slider, the associated event would be the next item in the collection,
 and so on and so on.
 
 Second, remind yourself that the `combining function` of a `reduce` takes two parameters: (1) the current state of
 the reduction and (2) the next collection member to fold in.
 
 Then notice that  handlers take two parameters too:  (1) the current state (2) the next item to fold in. Same
-as a `combining function`.
+as a `combining function` in a `reduce`.
 
-So, at any point in time, the value in `app-db` can be viewed as the result of performing a `reduce` over
+So now we can introduce the new mental model:  at any point in time, the value in `app-db` is the result of
+performing a `reduce` over
 the entire `collection` of events dispatched in the app up until that time. The combining function
 for this reduce is the set of handlers.
 
 `app-db` is the place where this imagined `reduce` stores its running total.
 
-### Everything Is Derived Data
+### Derived Data, Everywhere, flowing
 
 Have you watched that StrangeLoop presentation yet?  I hope so. Database as a stream, right?
 
-It is almost as if `app-db` is a materialised view, produced from some initial state and a stream of
-incoming events. Like a "replica node" in  database cluster being sent change after change by the
-"cluster leader".  It had an initial state, and then it updates in response to a flow of updates.
+If you have then you might twig to the idea that `app-db` is really a derived value (of the reduce mentioned above).
 
-Except of course, this `app-db` is itself regarded as  entire "view" flow from `app-db` to components, etc, reaseries accepting a stream of events
+And yet, it acts as the authoritative source of state in the app. And yet, it isn't, it is simply a piece of derived state.  And
+yet it is the source. Its a loop.  Derived data is flowing around the loop, reactivity, through pure functions.
+
+Derived values, all the way down, forever.  Your insiders T-shirt will be arriving soon - it will feature turtles
+and [xkcd](http://xkcd.com/1416/). We're just working on the hilarious caption bit. Open a repo issue, with a suggestion.
+
+Back to the pragmatic world ...
+
+### Logging User Actions
+
+All you need to do is log the sent events.  That tells you everything about what the user is doing.  When they get an
+error, just 
+
 
 ### Talking To A Server
 
