@@ -10,7 +10,9 @@ y'know. Pretty good.
 
 ## Status
 
-re-frame is still Alpha. But getting closer. Make sure you are using v0.5.0 of reagent.
+re-frame is still Alpha. But getting closer.
+
+Be sure you use v0.5.0 of reagent.
 
 Todo:
   - implement pure event handlers.  A macro will be needed.
@@ -43,26 +45,6 @@ But it is simple: our reference implementation is little more than 100 lines of 
 
 But don't be fooled, it is also delightfully powerful, and created to handle more complex applications.
 
-## Correct Acronym?
-
-re-frame isn't MVC.  Or MVVM. Or MVP. Or any of those.
-
-But, "Mike", you say, "I've read the document and there's clearly a 'V' bit and
-there's a layer which is
-'C' related, and definitely an 'M'.  How can it not be MVC?"
-
-Yeah, but none of these bits are objects, they are pure functions, and
-and they are all wired together via reactive data flows.  It is just such a different
-paradigm from
-traditional MVC (Trust me, I've programmed MVC in Smalltalk, and a lot of pale imitations since).
-
-Calling it MVC would just be confusing. We need something else.
-
-Perhaps it is a RACES framework - Reactive-Atom Component Event
-Subscription framework (I love the smell of acronym in the morning).
-
-Or, if we distill the essence, DDATWD - Derived Data All The Way Down.
-
 
 ## Buzzword Compliance
 
@@ -89,6 +71,28 @@ is the root of all evil). And how does the V bit source data?
 
 We wondered: what should the rest of the architecture look like?  So we read up on [Flux], [Pedestal App],
 [Hoplon], [OM], [Elm], etc and slowly re-frame emerged.
+
+
+## Correct Acronym?
+
+So, re-frame really isn't MVC.  Or MVVM. Or MVP. Or any of those.
+
+But, "Mike", you say, "I've read the document once and there's clearly a 'V' bit and
+there's a layer which is
+'C' related, and definitely an 'M'.  How can it not be MVC?"
+
+Yeah, but none of these bits are objects, they are pure functions, and
+and they are all wired together via reactive data flows.  It is just such a different
+paradigm from
+traditional MVC (Trust me, I've programmed MVC in Smalltalk, and a lot of pale imitations since).
+
+Calling it MVC would just be confusing. We need an alternative.
+
+Perhaps it is a RACES framework - Reactive-Atom Component Event
+Subscription framework (I love the smell of acronym in the morning).
+
+Or, if we distill to a pure essence, DDATWD - Derived Data All The Way Down.
+
 
 ## Nothing New
 
@@ -150,7 +154,7 @@ Terminology in the FRP world seems to get people hot under the collar. Those who
 semantics would object to me describing re-frame as having FRP-nature. They'd claim that it does something
 quite different from pure FRP, which is true.
 
-But, these days, FRP seems to have become a "big tent" (a broad church?).
+But, these days, FRP seems to have become a ["big tent" (a broad church?)](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf).
 Broad enough perhaps that re-frame can be in the far, top, left paddock of the tent, via a string of
 qualifications like: re-frame has "discrete, asynchronous, push FRP-ish-nature" without "glitch free" guarantees.
 (Surprisingly, "glitch" has specific meaning in FRP).
@@ -159,8 +163,7 @@ qualifications like: re-frame has "discrete, asynchronous, push FRP-ish-nature" 
 going further (certainly read the first):
 - [reactive programming backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) 
 - [presentation (video)](http://www.infoq.com/presentations/ClojureScript-Javelin) by Alan Dipert (co-author of Hoplon)
-- [2012 taxonomy and survey](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf)
-- [serious pants thesis](https://www.seas.harvard.edu/sites/default/files/files/archived/Czaplicki.pdf)
+- [serious pants Elm thesis](https://www.seas.harvard.edu/sites/default/files/files/archived/Czaplicki.pdf)
 
 And for the love of all that is good, please watch this lovely simple
 [StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). Watch what happens
