@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [re-frame.db :refer [app-db]]
             [re-frame.utils :refer [first-in-vector]]
-            [cljs.core.async :refer [chan put! <!]]))
+            [cljs.core.async :refer [chan put! <! timeout]]))
 
 
 ;; -- register of handlers ------------------------------------------------------------------------
@@ -24,7 +24,7 @@
 (def ^:private dispatch-chan  (chan))
 
 (defn dispatch
-  "reagent components send events by calling this function.
+  "components send events by calling this function.
   Usage example:
      (dispatch [:delete-item 42])"
   [event-v]
@@ -36,7 +36,7 @@
   [event-v]
   (let [event-id    (first-in-vector event-v)
         handler-fn  (get @id->fn event-id)]
-    (assert (not (nil? handler-fn)) (str "No event handler registered for event: " event-id ))
+    (assert (some? handler-fn) (str "No event handler registered for event: " event-id ))
     (handler-fn app-db event-v)))
 
 
@@ -46,6 +46,7 @@
   (go-loop []
       (let [event-v     (<! dispatch-chan)]
         (dispatch-sync event-v)
+        (<! (timeout 0))     ;; just in case we are handling one dispatch after an other, give the GU a chance to do its stuff.
         (recur))))
 
 (router)  ;; run the router loop it
