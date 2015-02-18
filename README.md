@@ -155,8 +155,8 @@ semantics would object to me describing re-frame as having FRP-nature. They'd cl
 quite different from pure FRP, which is true.
 
 But, these days, FRP seems to have become a ["big tent" (a broad church?)](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf).
-Broad enough perhaps that re-frame can be in the far, top, left paddock of the tent, via a string of
-qualifications like: re-frame has "discrete, asynchronous, push FRP-ish-nature" without "glitch free" guarantees.
+Broad enough perhaps that re-frame can be in the far, top, left paddock of the tent, via a series of
+qualifications: re-frame has "discrete, asynchronous, push FRP-ish-nature" without "glitch free" guarantees.
 (Surprisingly, "glitch" has specific meaning in FRP).
 
 **If you are new to FRP, or reactive programming generally**, browse these resources before
@@ -948,65 +948,80 @@ kinds of architecture (in my experience).
 
 ### As A reduce
 
-So here's another way of thinking about what's happening with this data flow - another mental model.
+So here's another way of thinking about what's happening with this data flow - another useful mental model.
 
 First, imagine that all the events ever dispatched by a certain running  app were stored in a collection.
-So, if when the app stated, the user clicked on button X the first item in this collection would be the event generated
-by that button, and then, if the user moved a slider, the associated event would be the next item in the collection,
-and so on and so on.
+So, if when the app stated, the user clicked on button X then the first item in this collection
+would be the event generated
+by that button, and then, if next the user moved a slider, the associated event would be the
+next item in the collection, and so on and so on. We'd end up with a collection of event vectors.
 
-Second, remind yourself that the `combining function` of a `reduce` takes two parameters: (1) the current state of
-the reduction and (2) the next collection member to fold in.
 
-Then notice that  handlers take two parameters too:  (1) the current state (2) the next item to fold in. Same
-as a `combining function` in a `reduce`.
+Second, remind yourself that the `combining function` of a `reduce` takes two parameters:
+
+1. the current state of the reduction and
+2. the next collection member to fold in.
+
+Then notice that  handlers take two parameters too:
+1. the current state of `app-db`
+2. the next item to fold in.
+
+Which is the same as a `combining function` in a `reduce`!!
 
 So now we can introduce the new mental model:  at any point in time, the value in `app-db` is the result of
 performing a `reduce` over
 the entire `collection` of events dispatched in the app up until that time. The combining function
 for this reduce is the set of handlers.
 
-`app-db` is the place where this imagined `reduce` stores its running total.
+It is almost like `app-db` is the temporary place where this imagined `perpetual reduce` stores
+its on-going reduction.
 
 ### Derived Data, Everywhere, flowing
 
-Have you watched that StrangeLoop presentation yet?  I hope so. Database as a stream, right?
+Have you watched that
+[StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) yet?
+I hope so. Database as a stream, right?
 
 If you have then, given the explanation above, you might twig to the idea that `app-db` is
-really a derived value
-(of the `reduce`).
+really a derived value (of the `perpetual reduce`).
 
 And yet, it acts as the authoritative source of state in the app. And yet, it isn't, it is simply
 a piece of derived state.  And
-yet, it is the source. Hmm. This is an infinite loop of sorts. **Derived data is flowing around the
-loop, reactivity, through pure functions.**
+yet, it is the source.
 
-Derived values, all the way down, forever.  Your insiders T-shirt will be arriving soon - it
+Hmm. This is an infinite loop of sorts. **Derived data is flowing around the
+loop, reactivity, through pure functions.**  There is a pause in the loop while ever we wait
+for a new event, but the moment we get it, its another iteration of the loop.
+
+Derived values, all the way down, forever.
+
+Good news.  If you've read this far,
+your insiders T-shirt will be arriving soon - it
 will feature turtles
-and [xkcd](http://xkcd.com/1416/). We're just working on the hilarious caption bit. Open a
+and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption bit. Open a
 repo issue, with a suggestion.
 
 Back to the more pragmatic world ...
 
 ### Logging And Debugging
 
-How did that exception happen, you wonder?  What did the user do immediately prior
-to the exception which caused it.
+How did that exception happen, you wonder, shaking your head?  What did the user do immediately prior
+to the exception which caused it. What state was the app in that this action was so disastrous.
 
 To debug it, you need to know this information:
-  1. what state the app was in immediately before the exception
-  2. What final event then caused it to fall over.
+  1. the state the app immediately before the exception
+  2. What final event then caused it to then fall over.
 
 Well, with re-frame you need to record (have available):
-  1. A recent checkpoint of the app state (perhaps the initial state)
+  1. A recent checkpoint of the app state in `app-db` (perhaps the initial state)
   2. all the events `dispatch`ed since the last checkpoint, up to the point where the exception occurred.
 
 Note: that's all just data. **Pure loggable data.**
 
 If you have that data, then you can reproduce the exception.
 
-re-frame allows you to time travel. Install the "checkpoint" state and then "play forward" through the
-collection dispatched events.
+re-frame allows you to time travel. Install the "checkpoint" state into `app-db`
+and then "play forward" through the collection dispatched events.
 
 The only way the system "moves forwards" is via events. "Replaying events" moves you
 step by step towards the exception causing problem.
@@ -1016,13 +1031,13 @@ a checkpoint, and the events since then.
 
 ### Talking To A Server
 
-Some events handlers will need to initiate an async server connection (e.g. GET or POST something). 
+Some events handlers will need to initiate an async server connection (e.g. GET or POST something).
 
 The initiating event handlers should organise that the `on-success` or `on-fail` handlers for
  these HTTP requests themselves simply dispatch an event.
 
-**Notes**: 
-  - all events are handled via a call to `dispatch`. GUI events, async HTTP events, everything. 
+**Notes**:
+  - all events are handled via a call to `dispatch`. GUI events, async HTTP events, everything.
   - `dispatch` will cause a handler function to be called. But the process is async. The call is queued.
   - if you (further) dispatch in a handler, then that will be async too. The associated handler is
     queued for later processing.  Why?  Partially because handlers are given a snapshot of
@@ -1032,7 +1047,7 @@ The initiating event handlers should organise that the `on-success` or `on-fail`
   - if a handler does a lot of work and hogs the thread, this will freeze the GUI because browsers
     only give us one execution thread .  **XXX Nice Solution needed. **
 
-  
+
 ### In Summary
 
 To build an app using re-frame, you'll have to:
@@ -1041,7 +1056,7 @@ To build an app using re-frame, you'll have to:
   - write component functions  (view layer).
   - write and register event handler functions  (control layer and/or state transition layer).
  
-All the parts are lovely and simple.  And yet they plug together in a lovely reactive loop which
+All the parts are lovely and simple.  And yet they compose in a lovely reactive loop which
 is a delight to understand, program and debug.
  
 
@@ -1057,5 +1072,4 @@ is a delight to understand, program and debug.
 [datascript]:https://github.com/tonsky/datascript
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
-[Herbert Schema]:https://github.com/miner/herbert
 
