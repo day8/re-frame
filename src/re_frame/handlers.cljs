@@ -7,81 +7,88 @@
             [cljs.core.async :refer [chan put! <! timeout]]))
 
 
-;; -- special handlers ----------------------------------------------------------------------------
-
-;; if true then pause the dispatch loop, generally to give the GUI a chance to sync
-(def wait-one-annimation-frame (atom false))
-
-(defn flush-reagent-handler
-  "Will force reagent to render any pending changes.
-  Useful when a handler is about to hog the CPU for a while and
-  there are pending GUI changes telling the user about progress.
-  Flushes any GUI changes through into the DOM."
-  [_ _]
-  (flush)
-  (reset! wait-one-annimation-frame true))
-
-(def special-handlers {
-     :flush-reagent flush-reagent-handler})
+(defn warn
+  [& args]
+  (.warn js/console (apply str args)))
 
 
 ;; -- register of handlers ------------------------------------------------------------------------
 
-
-(def ^:private id->fn  (atom special-handlers))
-
+(def ^:private id->fn  (atom {}))
 
 (defn register
   "register a handler for an event"
   [event-id handler-fn]
-  (if (contains? @id->fn event-id)
-    (println "Warning: overwritting an event-handler" event-id))     ;; TODO: more generic logging
-  (swap! id->fn
-         assoc event-id handler-fn))
+  (when (contains? @id->fn event-id)
+    (warn "Overwriting an event-handler" event-id))   ;; allow it, but warn.
+  (swap! id->fn assoc event-id handler-fn))
 
 
-;; -- dispatching and routing ---------------------------------------------------------------------
+;; -- The Event Conveyor Belt  --------------------------------------------------------------------
+;; A channel which moves events from dispatch to handlers.
+;;
+;; 1. "dispatch" puts events onto this chan, and
+;; 2. "router" reads from the chan, and calls associated handlers
+;; This enables async handling of events -- which is a good thing.
+(def ^:private event-chan (chan))
 
-(def ^:private dispatch-chan  (chan))
 
-(defn dispatch
-  "components send events by calling this function.
-  Usage example:
-     (dispatch [:delete-item 42])"
-  [event-v]
-  (assert (some? event-v))         ;; nil would close the channel
-  (put! dispatch-chan event-v))
+;; -- router --------------------------------------------------------------------------------------
 
-(defn dispatch-sync
-  "sync version of above that actually does the dispatch"
+(defn- handle
+  "Look up the handler for the given event, then call it, passing in 2 parameters."
   [event-v]
   (let [event-id    (first-in-vector event-v)
         handler-fn  (get @id->fn event-id)]
-    (assert (some? handler-fn) (str "No event handler registered for event: " event-id ))
-    (handler-fn app-db event-v)))
+    (if (nil? handler-fn)
+      (warn "No event handler registered for event: " event-id )
+      (handler-fn app-db event-v))))
 
 
-(defn- router
-  "route an event, arriving on the dispatch channel, to the right handler"
-  []
-  (go-loop []
-      (let [         ;; if a small pause is required   (dispatch [:flush-reagent])
-            _        (if @wait-one-annimation-frame
-                       (do
-                         (reset! wait-one-annimation-frame false)
-                         (<! (timeout 16)))  ;; Wait one annimation frame, which will make sure any pending GUI work is done.
-                       (<! (timeout 0)))   ;; just in case we are handling one dispatch after an other, give the GUI a chance to do its stuff.
-            event-v  (<! dispatch-chan)]
-        (dispatch-sync event-v)
-        (recur))))
-
-;; run the router loop - sending event after event to the handlers
-(router)
+;; In a loop, read events from the dispatch channel, and then call the
+;; right handler.
+;;
+;; Because handlers occupy the CPU, before each event is handled, hand
+;; back control to the GUI render process, via a (<! (timeout 0)) call.
+;;
+;; In odd cases, we need to pause for an entire annimationFrame, to ensure that
+;; the DOM is fully flushed, before calling a handler known to hog the CPU
+;; for an extended period.  In that case the event should have metadata
+;; Example:
+;;   (dispatch ^:flush-dom  [:event-id other params])
+;;
+;; router loop
+(go-loop []
+   (let [event-v  (<! event-chan)                   ;; wait for an event
+         _        (if (:flush-dom (meta event-v))
+                    (do (flush) (<! (timeout 20)))  ;; wait just over one annimation frame (16ms), to rensure all pending GUI work is done.
+                    (<! (timeout 0)))]              ;; just in case we are handling one dispatch after an other, give the GUI a chance to do its stuff.
+     (handle event-v)
+     (recur)))
 
 
 ;; -- helper --------------------------------------------------------------------------------------
 
-;; TODO: this has to go.
+(defn dispatch
+  "reagent components use this function to send events.
+  Usage example:
+     (dispatch [:delete-item 42])"
+  [event-v]
+  (if (nil? event-v)
+    (warn "dispatch is ignoring a nil event.")     ;; nil would close the channel
+    (put! event-chan event-v)))
+
+
+;; TODO: remove sync handling.  I don't like it, even for testing.
+(defn dispatch-sync
+  "sync version of above that actually does the dispatch"
+  [event-v]
+  (handle event-v))
+
+
+;; -- helper --------------------------------------------------------------------------------------
+
+;; TODO: Yuck. this has to go.
 (defn transaction!
   "A helper fucntion to be used when writting event handlers.
   Allows a handler to perform an atomic modification of the atom.
