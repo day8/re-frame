@@ -1,13 +1,34 @@
 (ns re-frame.handlers
-  (:require-macros [cljs.core.async.macros :refer [go-loop]])
-  (:require [re-frame.db :refer [app-db]]
+  (:refer-clojure :exclude [flush])
+  (:require-macros [cljs.core.async.macros :refer [go-loop go]])
+  (:require [reagent.core :refer [flush]]
+            [re-frame.db :refer [app-db]]
             [re-frame.utils :refer [first-in-vector]]
             [cljs.core.async :refer [chan put! <! timeout]]))
 
 
+;; -- special handlers ----------------------------------------------------------------------------
+
+;; if true then pause the dispatch loop, generally to give the GUI a chance to sync
+(def wait-one-annimation-frame (atom false))
+
+(defn flush-reagent-handler
+  "Will force reagent to render any pending changes.
+  Useful when a handler is about to hog the CPU for a while and
+  there are pending GUI changes telling the user about progress.
+  Flushes any GUI changes through into the DOM."
+  [_ _]
+  (flush)
+  (reset! wait-one-annimation-frame true))
+
+(def special-handlers {
+     :flush-reagent flush-reagent-handler})
+
+
 ;; -- register of handlers ------------------------------------------------------------------------
 
-(def ^:private id->fn  (atom {}))
+
+(def ^:private id->fn  (atom special-handlers))
 
 
 (defn register
@@ -44,12 +65,18 @@
   "route an event, arriving on the dispatch channel, to the right handler"
   []
   (go-loop []
-      (let [event-v     (<! dispatch-chan)]
+      (let [         ;; if a small pause is required   (dispatch [:flush-reagent])
+            _        (if @wait-one-annimation-frame
+                       (do
+                         (reset! wait-one-annimation-frame false)
+                         (<! (timeout 16)))  ;; Wait one annimation frame, which will make sure any pending GUI work is done.
+                       (<! (timeout 0)))   ;; just in case we are handling one dispatch after an other, give the GUI a chance to do its stuff.
+            event-v  (<! dispatch-chan)]
         (dispatch-sync event-v)
-        (<! (timeout 0))     ;; just in case we are handling one dispatch after an other, give the GU a chance to do its stuff.
         (recur))))
 
-(router)  ;; run the router loop it
+;; run the router loop - sending event after event to the handlers
+(router)
 
 
 ;; -- helper --------------------------------------------------------------------------------------
