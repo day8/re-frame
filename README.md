@@ -22,15 +22,16 @@ Todo:
 alt="Leiningen logo" title="The man himself" align="right" />
 -->
 
-## Why Should You Care?
+## Why Should You Care About re-frame?
 
 Either:
 
-1.  You need to develop an app in ClojureScript, and you are looking for a framework.
-2.  You don't program in ClojureScript, but you have heard something about how "reactive programming"
-   combined with "functional programming"
-   principals and "immutable data" **is going to change everything**,
-   and you are curious to get some insight into the claim.
+1.  You want to develop an app in ClojureScript, and you are looking for a framework; or
+2.  You believe that ReactJS decisively won the javascript framework wars in early 2015 and
+    you are wondering how the combination of
+    "reactive programming", "functional programming" and "immutable data" could
+    **change everything**.  Could this be a case of:
+    "The future is already here - it's just not very evenly distributed".
 
 
 ## re-frame
@@ -47,42 +48,45 @@ To build a re-frame app, you:
 
 Features:
 
-1. Nearly all the functions you write are pure, so the computational pieces of your app can
-  be described, understood and tested independently.
-2. Composition of these computational parts happens via reactive data flows - a dynamic,
-  unidirectional Signal graph.
-3. The resulting architecture involves "derived data" flowing in a two-stage, reactive loop (cycle),
-  through pure functions.  To put it another way, time is explicitly modeled.
-4. The jarring thing about re-frame is how simple it all is. Beautifully simple! Our reference
-  implementation is little more than 100 lines of code.
-5. But it scales up so nicely to more complex apps.  Frameworks are just pesky overhead at small
-  scale - its how they help you to tame complexity that defines them.
+1. The functions you write are pure, so the computational pieces of your app can
+   be described, understood and tested independently.
+   You just won't need a sophisticated Dependency Injection system to test. So much
+   incidental complexity evaporates.
+2. These computational parts are composed via reactive data flows - a dynamic,
+   unidirectional Signal graph.
+3. The resulting architecture involves "derived data" flowing in a two-stage, reactive loop.
+   Without realising it, you will be explicitly modeling time.
+4. It is fast, straight out of the box. You won't have to go thought [this sort of pain](http://blog.scalyr.com/2013/10/angularjs-1200ms-to-35ms/).
+5. The surprising thing about re-frame is how simple it is. Beautifully simple! Our reference
+   implementation is little more than 100 lines of (clojurescript) code. Learn it in an afternoon.
+6. But it scales up so nicely to more complex apps.  Frameworks are just pesky overhead at small
+   scale - its how they help you to tame complexity that defines them.
 7. Re-frame is impressively buzzword compliant: it has FRP-nature,
-  unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness (FSM)
-  and claims an immaculate hammock conception.
-  It also has a charming xkcd reference (soon)
-  and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
+   unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness (FSM)
+   and claims an immaculate hammock conception.
+   It also has a charming xkcd reference (soon)
+   and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
 
-**WARNING**:  this document is long. That was the summary.
+__Warning__:  this is a long document. That was the summary.
 
 ## What Problem Does It Solve?
 
-We first decided to build apps with ClojureScript, then we choose [Reagent], then we had a problem.
+First we decided to build apps with ClojureScript, then we choose [Reagent], then we had a problem.
 
-For all its considerable brilliance,  Reagent (+ React)
-only delivers the 'V' part of a traditional MVC framework.
+For all its considerable brilliance,  Reagent (+ ReactJS)
+delivers only the 'V' part of a traditional MVC framework.
 
-But apps involve a lot more than V. Where
+But apps involve much more than V. Where
 does the control logic go? How is state stored and manipulated (remembering that shared, mutable state
-is the root of all evil). And how does the V bit source data?
+is the root of all evil). How does the V bit source data? Etc.
 
-We wondered: what should the rest of the architecture look like?  So we read up on [Flux], [Pedestal App],
+We wondered: what should the rest of the architecture look like?  So we read about [Flux], [Pedestal App],
 [Hoplon], [OM], [Elm], etc and, slowly but surely, re-frame emerged.
 
 
 ## Correct Acronym?
 
-Is re-frame MVC?  Or MVVM, or MVP? Or any of those?
+Is re-frame MVC or MVP or M*P? Any of those?
 
 Hmm, I'd say "no".
 
@@ -90,30 +94,36 @@ Your brow furrows.  "But, Mike", you protest, "I've read the document once alrea
 and there's clearly a 'V' bit and there's a layer which is
 'C' related, and definitely an 'M'.  How can it not be MVC?"
 
-Look, I have sympathy for your position. But if McCoy were here he'd say "It's MVC, Jim,
-but not as we know it". In re-frame none of the M, V, or C bits are objects, they
+Yes, that's true.  But to quote McCoy: "It's MVC, Jim,
+but not as we know it".
+
+In re-frame none of the M, V, or C bits are objects, they
 are pure functions (or pure data), and
-and they are all wired together via reactive data flows.  It is just such a different
-paradigm from traditional (smalltalk) MVC. Calling it MVC would just be confusing.  I'd
+and they are all wired together via reactive data flows.  It is just such a sufficiently different
+version of (traditional, smalltalk) MVC that calling it MVC would likely just be confusing.  I'd
 love an alternative.
 
 Perhaps it is a RACES framework - Reactive-Atom Component Event
 Subscription framework (I love the smell of acronym in the morning).
 
-Or, if we distill to pure essence, DDATWD - Derived Data All The Way Down.
+Or, if we distill to pure essence, `DDATWD` - Derived Data All The Way Down.
 
-*TODO:* get acronym down to 3 chars! Get an image of stacked Turtles for DDATWD
+*TODO:* get acronym down to 3 chars! Get an image of stacked Turtles for `DDATWD`
 insider's joke, conference T-Shirt.
 
 
-## A Mashup
+## Mostly A Mashup
 
 Not much about re-frame is original or clever. You'll find
-no ingenious use of functional zippers, transducers or `core.async`.
+no ingenious use of functional zippers, transducers or core.async.
 
-It does involve using Reagent's features in a slightly novel and advanced way. But
-apart from that minor point, which is really a credit to Reagent, not me,
-re-frame is a mashup of emerging ideas.
+Re-frame does use Reagent's features in a novel way.
+And we did actively reject
+the current ClojureScript fashion of using Cursors (which turned
+out to be a terrific decision).
+
+But apart from that, for the most part, re-frame is a mashup of
+emerging ideas.
 
 (For the record,
 one day I'd love to develop something original and clever).
@@ -140,34 +150,32 @@ squint a little to see the benefits that accrue at larger scale.
 
 ## Guiding Philosophy
 
-First, above all we believe in the one true [Dan Holmsand], creator of Reagent, and
+__First__, above all we believe in the one true [Dan Holmsand], creator of Reagent, and
 his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
 
-Second, we believe in ClojureScript, immutable data and the process of building
+__Second__, we believe in ClojureScript, immutable data and the process of building
 a system out of pure functions.
 
-Third, we believe that [FRP] is one honking great idea. You might be tempted to see
+__Third__, we believe that [FRP] is one honking great idea. You might be tempted to see
 Reagent as simply another of the React wrappers - a sibling to [OM] and
 [quiescent](https://github.com/levand/quiescent).
 But you'll only really "get"
 Reagent when you view it as an FRP-ish library. To put that another way, we think
 that Reagent, at its best, is closer in nature to [Hoplon] or [Elm] than it is OM.
 
-Finally, we believe in one-way data flow. No two way data binding. We don't like read/write `cursors` which
+__Finally__, we believe in one-way data flow. No two way data binding. We don't like read/write `cursors` which
 promote the two way flow of data. As programs get bigger, we've found that their use seems to
 encourage control logic into all the wrong places.
-
-re-frame does implement two way data flow (a loop of flow!), but it
-uses two, separate, one-way flows to achieve it, and those two flows
-are different in nature.
 
 ## FRP Clarifications
 
 Terminology in the FRP world seems to get people hot under the collar. Those who believe in continuous-time
-semantics would object to me describing re-frame as having FRP-nature. They'd claim that it does something
+semantics might object to me describing re-frame as having FRP-nature. They'd claim that it does something
 different from pure FRP, which is true.
 
-But, these days, FRP seems to have become a ["big tent" (a broad church?)](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf).
+But, these days, FRP seems to have become a
+["big tent"](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf)
+(a broad church?).
 Broad enough perhaps that re-frame can be in the far, top, left paddock of the tent, via a series of
 qualifications: re-frame has "discrete, dynamic, asynchronous, push FRP-ish-nature" without "glitch free" guarantees.
 (Surprisingly, "glitch" has specific meaning in FRP).
@@ -179,17 +187,19 @@ going further (certainly read the first two):
 - [presentation (video)](http://www.infoq.com/presentations/ClojureScript-Javelin) by Alan Dipert (co-author of Hoplon)
 - [serious pants Elm thesis](https://www.seas.harvard.edu/sites/default/files/files/archived/Czaplicki.pdf)
 
-And for the love of all that is good, please watch this wonderful
+And for the love of all that is good, please watch this terrific
 [StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). Watch what happens
-when you re-imagine a database as a stream!! Look at all the problems that are solved.  Think about that: shared mutable state (the root of all evil),
+when you re-imagine a database as a stream!! Look at all the problems that are solved.
+Think about that: shared mutable state (the root of all evil),
 re-imagined as a stream!!  Blew my socks off.
 
 re-frame tries to be `Derived Data everywhere, flowing`. Or perhaps,
-"Derived Data All The Way Down" (an infinite loop of Derived Data). More explanation on all these claims soon.
+`Derived Data All The Way Down` (an infinite loop of Derived Data).
+More explanation on all these claims soon.
 
 ## Explaining re-frame
 
-To explain re-frame, I'll incrementally develop a diagram, explaining each part as it is added.
+To explain re-frame, I'll incrementally develop a diagram, describing each part as it is added.
 
 Initially, I'll be using [Reagent] at an intermediate to advanced level.  But this is no introductory
 reagent tutorial and you will need to have done one of those before continuing here. Try
@@ -241,8 +251,8 @@ A clarification:  `app-db` doesn't actually have to be a reagent/atom containing
 a map.  It could, for example, be a [datascript] database.  In fact, any database which is reactive
 (can tell you when it changes) would do.  (We'd love! to be using [datascript] - so damn cool -
 but we had too much
-data in our apps. If you were to use it, you'd have to
-[tweak the reference implementation a bit](https://gist.github.com/allgress/11348685)).
+data in our apps. If you were to use it, you'd have to tweak the reference implementation a bit
+[using this inspiration](https://gist.github.com/allgress/11348685)).
 
 
 ### Benefits Arising From Data-In-The-One-Place
@@ -266,8 +276,8 @@ this is also very easy. Saving past states is trivial, and you will automaticall
 good sharing guarantees to keep the size of the snapshots down.
 
 
-To this list of benefits I would add two:  the ability to genuinely model control via FSMs
-and the ability to do time travel debugging, even in production systems. More on both soon.
+To this list of benefits, I would briefly add two:  the ability to genuinely model control via FSMs
+and the ability to do time travel debugging, even in a production setting. More on both soon.
 
 [Hoplon] takes the same approach via what they called `stem cells`, which is a root source of data.
 
@@ -295,7 +305,7 @@ Richard Dawkins
 
 ### How Flow Happens In Reagent
 
-To implement FRP-ish-ness, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these
+To implement FRP, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these
 building blocks, so let's now make sure we understand them before going further.
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.
@@ -325,9 +335,9 @@ So, the `ratom` returned by a `reaction` is itself a Signal. Its value will chan
 the `computation` is re-run.
 
 So, via the interplay between `ratoms` and `reactions`,  values 'flow' into computations and out
-again, and then into other computations, etc.  "Values" flow (propagate) through the Signal graph.
+again, and then into further computations, etc.  "Values" flow (propagate) through the Signal graph.
 
-But this Signal graph will be one without cycles, because cycles cause mayhem!  re-frame achieves
+But this Signal graph must be without cycles, because cycles cause mayhem!  re-frame achieves
 a unidirectional flow.
 
 While the mechanics are different, `reaction` has the intent of `lift` in [Elm] and `defc=` in [Hoplon].
@@ -363,7 +373,8 @@ Right, so that was a lot of words. Some code to clarify:
 (println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated too.
 ```
 
-So, in FRP-ish terms, a `reaction` will produce a "stream" of values over time (it is a Signal), accessible via the `ratom` it returns.
+So, in FRP-ish terms, a `reaction` will produce a "stream" of values over time (it is a Signal),
+accessible via the `ratom` it returns.
 
 
 Okay, that was all important background information for what is to follow. Back to the diagram ...
@@ -481,14 +492,16 @@ On with the rest of my lies and distortions...
 
 ### Components Like Templates?
 
-A `component` like `greet` is like the templates you'd find in
+A `component` such as `greet` is like the templates you'd find in
 Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
-- you have the full power of ClojureScript available to you (generating a Clojure data structure). The
+
+1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
  downside is that these are not "designer friendly" HTML templates.
-- these templates are reactive.  When their input Signals change, they
+2. these templates are reactive.  When their input Signals change, they
  are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
  the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs"
- to that render change, the render is rerun.
+ to that render change, the render is rerun.  In this sense, components are more like
+ [Meteor views](https://www.meteor.com/try/2).
 
 ### React etc.
 
@@ -496,7 +509,7 @@ Okay, so we have some unidirectional, dynamic, async, discrete FRP-ish data flow
 
 Question: To which ocean does this river of data flow?  Answer: The DOM ocean.
 
-Let's see the full picture:
+The full picture:
 ```
 app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  --> DOM
 ```
@@ -530,8 +543,9 @@ undergoes successive transformations, until pixels colour the monitor you to see
 
 Derived Data, flowing.  Every step is acting like a pure function and turning data into new data.
 
-But, we don't have to bother ourselves with most of the pipeline. We just write the `components`
-part and Reagent/React will look after the rest.  Back to the small picture ...
+All well and good, and nice to know, but we don't have to bother ourselves with most of the pipeline.
+We just write the `components`
+part and Reagent/React will look after the rest.  So back we go to that part of the picture ...
 
 
 ## Subscribe
