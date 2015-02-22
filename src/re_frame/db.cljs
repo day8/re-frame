@@ -2,7 +2,8 @@
   (:require [reagent.core :as r]))
 
 ;; The application state
-;; Should not be accessed directly by application code (neither handlers or subscriptions)
+;; Should never be accessed directly by application code
+;; Access is mediated via handlers and subscriptions
 (def  app-db (r/atom {}))
 
 

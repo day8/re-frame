@@ -3,16 +3,11 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop go]])
   (:require [reagent.core :refer [flush]]
             [re-frame.db :refer [app-db]]
-            [re-frame.utils :refer [first-in-vector]]
+            [re-frame.utils :refer [first-in-vector warn]]
             [cljs.core.async :refer [chan put! <! timeout]]))
 
 
-(defn warn
-  [& args]
-  (.warn js/console (apply str args)))
-
-
-;; -- register of handlers ------------------------------------------------------------------------
+;; -- register of event handlers ------------------------------------------------------------------------
 
 (def ^:private id->fn  (atom {}))
 
@@ -20,20 +15,18 @@
   "register a handler for an event"
   [event-id handler-fn]
   (when (contains? @id->fn event-id)
-    (warn "Overwriting an event-handler" event-id))   ;; allow it, but warn.
+    (warn "re-frame: overwriting an event-handler" event-id))   ;; allow it, but warn.
   (swap! id->fn assoc event-id handler-fn))
 
 
 ;; -- The Event Conveyor Belt  --------------------------------------------------------------------
-;; A channel which moves events from dispatch to handlers.
 ;;
-;; 1. "dispatch" puts events onto this chan, and
-;; 2. "router" reads from the chan, and calls associated handlers
-;; This enables async handling of events -- which is a good thing.
-(def ^:private event-chan (chan))
+;; Moves events from "dispatch" to the router loop.
+;; Key architecutal purpose is to cause aysnc handling of events.
+(def ^:private event-chan (chan))    ;; TODO: how big should we make the buffer?
 
 
-;; -- router --------------------------------------------------------------------------------------
+;; -- lookup and call -----------------------------------------------------------------------------
 
 (defn- handle
   "Look up the handler for the given event, then call it, passing in 2 parameters."
@@ -41,20 +34,22 @@
   (let [event-id    (first-in-vector event-v)
         handler-fn  (get @id->fn event-id)]
     (if (nil? handler-fn)
-      (warn "No event handler registered for event: " event-id )
+      (warn "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")   ;; TODO: make exception
       (handler-fn app-db event-v))))
 
 
-;; In a loop, read events from the dispatch channel, and then call the
-;; right handler.
+;; -- router loop ---------------------------------------------------------------------------------
+;;
+;; In a loop, read events from the dispatch channel, and route them
+;; to the right handler.
 ;;
 ;; Because handlers occupy the CPU, before each event is handled, hand
-;; back control to the GUI render process, via a (<! (timeout 0)) call.
+;; back control to the browser, via a (<! (timeout 0)) call.
 ;;
 ;; In odd cases, we need to pause for an entire annimationFrame, to ensure that
-;; the DOM is fully flushed, before calling a handler known to hog the CPU
-;; for an extended period.  In that case the event should have metadata
-;; Example:
+;; the DOM is fully flushed, before thencalling a handler known to hog the CPU
+;; for an extended period.  In such a case, the event should have metadata
+;; Example usage:
 ;;   (dispatch ^:flush-dom  [:event-id other params])
 ;;
 ;; router loop
@@ -67,7 +62,7 @@
      (recur)))
 
 
-;; -- helper --------------------------------------------------------------------------------------
+;; -- dispatch ------------------------------------------------------------------------------------
 
 (defn dispatch
   "reagent components use this function to send events.
@@ -75,13 +70,13 @@
      (dispatch [:delete-item 42])"
   [event-v]
   (if (nil? event-v)
-    (warn "dispatch is ignoring a nil event.")     ;; nil would close the channel
+    (warn "re-frame: \"dispatch\" is ignoring a nil event.")     ;; nil would close the channel
     (put! event-chan event-v)))
 
 
 ;; TODO: remove sync handling.  I don't like it, even for testing.
 (defn dispatch-sync
-  "sync version of above that actually does the dispatch"
+  "Invoke the event handler sycronously, avoiding the async-inducing use of core.async/chan"
   [event-v]
   (handle event-v))
 

@@ -15,6 +15,7 @@ re-frame is still Alpha. But getting closer.
 Be sure you use v0.5.0 of reagent.
 
 Todo:
+ - provide a hook for logging and exception handling
  - implement pure event handlers.  A macro will be needed.
 
 <!--
@@ -27,11 +28,13 @@ alt="Leiningen logo" title="The man himself" align="right" />
 Either:
 
 1.  You want to develop an app in ClojureScript, and you are looking for a framework; or
-2.  You believe that ReactJS decisively won the javascript framework wars in early 2015 and
-    you are wondering how the combination of
-    "reactive programming", "functional programming" and "immutable data" could
-    **change everything**.  Could this be a case of:
-    "The future is already here - it's just not very evenly distributed".
+2.  You believe that by early 2015 ReactJS had effectively won the javascript framework wars and
+    you are curious about the bigger implications. Could it be that the combination of
+    `reactive programming`, `functional programming` and `immutable data`
+    **will completely change everything**?  If so, what does that look like in a language
+    that naturally embodies those paradigms?
+
+> The future is already here - it's just not very evenly distributed.
 
 
 ## re-frame
@@ -60,7 +63,7 @@ Features:
 5. The surprising thing about re-frame is how simple it is. Beautifully simple! Our reference
    implementation is little more than 100 lines of (clojurescript) code. Learn it in an afternoon.
 6. But it scales up so nicely to more complex apps.  Frameworks are just pesky overhead at small
-   scale - its how they help you to tame complexity that defines them.
+   scale - its how they help you to tame the complexity of bigger apps that measure them.
 7. Re-frame is impressively buzzword compliant: it has FRP-nature,
    unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness (FSM)
    and claims an immaculate hammock conception.
@@ -71,7 +74,8 @@ __Warning__:  this is a long document. That was the summary.
 
 ## What Problem Does It Solve?
 
-First we decided to build apps with ClojureScript, then we choose [Reagent], then we had a problem.
+First we decided to build our SPA apps with ClojureScript, then we
+choose [Reagent], then we had a problem.
 
 For all its considerable brilliance,  Reagent (+ ReactJS)
 delivers only the 'V' part of a traditional MVC framework.
@@ -97,10 +101,10 @@ and there's clearly a 'V' bit and there's a layer which is
 Yes, that's true.  But to quote McCoy: "It's MVC, Jim,
 but not as we know it".
 
-In re-frame none of the M, V, or C bits are objects, they
+In re-frame, none of the M, V, or C bits are objects, they
 are pure functions (or pure data), and
-and they are all wired together via reactive data flows.  It is just such a sufficiently different
-version of (traditional, smalltalk) MVC that calling it MVC would likely just be confusing.  I'd
+and they are all wired together via reactive data flows.  It is sufficiently different in nature
+from (traditional, smalltalk) MVC that calling it MVC would likely just be confusing.  I'd
 love an alternative.
 
 Perhaps it is a RACES framework - Reactive-Atom Component Event
@@ -117,12 +121,9 @@ insider's joke, conference T-Shirt.
 Not much about re-frame is original or clever. You'll find
 no ingenious use of functional zippers, transducers or core.async.
 
-Re-frame does use Reagent's features in a novel way.
-And we did actively reject
-the current ClojureScript fashion of using Cursors (which turned
-out to be a terrific decision).
-
-But apart from that, for the most part, re-frame is a mashup of
+Re-frame does use Reagent's features in a slightly novel way.
+And we did actively reject the current ClojureScript fashion of using Cursors.
+But, for the most part, re-frame is just a mashup of
 emerging ideas.
 
 (For the record,
@@ -147,7 +148,6 @@ At small scale, any framework or architecture seems like pesky overhead. The
 explanatory examples in here are necessarily small scale, so you'll need to
 squint a little to see the benefits that accrue at larger scale.
 
-
 ## Guiding Philosophy
 
 __First__, above all we believe in the one true [Dan Holmsand], creator of Reagent, and
@@ -163,9 +163,10 @@ But you'll only really "get"
 Reagent when you view it as an FRP-ish library. To put that another way, we think
 that Reagent, at its best, is closer in nature to [Hoplon] or [Elm] than it is OM.
 
-__Finally__, we believe in one-way data flow. No two way data binding. We don't like read/write `cursors` which
-promote the two way flow of data. As programs get bigger, we've found that their use seems to
-encourage control logic into all the wrong places.
+__Finally__, we believe in one-way data flow. No two way data binding. We don't
+like read/write `cursors` which
+promote the two way flow of data. As programs get bigger, we've found that their
+use seems to encourage control logic into all the wrong places.
 
 ## FRP Clarifications
 
@@ -276,7 +277,7 @@ this is also very easy. Saving past states is trivial, and you will automaticall
 good sharing guarantees to keep the size of the snapshots down.
 
 
-To this list of benefits, I would briefly add two:  the ability to genuinely model control via FSMs
+To this list, I would briefly add two:  the ability to genuinely model control via FSMs
 and the ability to do time travel debugging, even in a production setting. More on both soon.
 
 [Hoplon] takes the same approach via what they called `stem cells`, which is a root source of data.
@@ -305,13 +306,14 @@ Richard Dawkins
 
 ### How Flow Happens In Reagent
 
-To implement FRP, Reagent provides a `ratom` and a `reaction`. re-frame uses both of these
-building blocks, so let's now make sure we understand them before going further.
+To implement FRP, Reagent provides a `ratom` and a `reaction`.
+re-frame uses both of these
+building blocks, so let's now make sure we understand them.
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.
 
 From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame
-perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as being a value that
+perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as having a value that
 changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
 `ratom` as a Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
 
@@ -755,8 +757,8 @@ that it chains `reactions`:
 ```
 
 The original version had only one `reaction` which would be re-run completely each time `app-db` changed.
-The new version, has chained reactions.
-The 1st and 2nd reactions just extract from `db`.  They will fire each time `db-app` changes.
+This new version, has chained reactions.
+The 1st and 2nd reactions just extract from `db`.  They will run each time `db-app` changes.
 But they are cheap. The 3rd one does the expensive
 computation using the result from the first two.
 
@@ -910,6 +912,7 @@ They `dispatch` pure data and nothing more.
 Collectively, event handlers provide the control logic in a re-frame application.
 
 An event handler is a pure function of two parameters:
+
  1. current value in `app-db`.  Note: that's the map **in** `app-db`, not the atom itself.
  2  an event (represented as a vector)
 
@@ -946,6 +949,7 @@ app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  
 ```
 
 The `router` will:
+
 1. inspect the 1st element of the arriving vector
 2. look in its registry for the handler which is registered for this kind of event
 3. call that handler with two parameters: (1) the current value in `app-db` and (2) the event vector
@@ -1102,7 +1106,7 @@ modify `app-db` themselves.  That is always done in a handler.
 
 ## The CPU Hog Problem
 
-Sometime a handler has a lot of CPU intensive work to do, and it takes a while to get through.
+Sometimes a handler has a lot of CPU intensive work to do, and getting through it will take a while.
 
 When a handler hogs the CPU, nothing else can happen. Browsers only give us one thread of
 execution and that CPU-hogging handler owns it, and it isn't giving it up. The UI will be

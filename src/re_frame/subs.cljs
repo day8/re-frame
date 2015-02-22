@@ -1,18 +1,18 @@
 (ns re-frame.subs
  (:require
   [re-frame.db :refer [app-db]]
-  [re-frame.utils :refer [first-in-vector]]))
+  [re-frame.utils :refer [first-in-vector warn]]))
 
 
-;; mappings from handler-id to handler-fn
+;; maps from handler-id to handler-fn
 (def ^:private key->fn (atom {}))
 
 
 (defn register
-  "register a function for a handler id"
+  "register a hander function for an id"
   [key-v handler-fn]
   (if (contains? @key->fn key-v)
-   (println "Warning: overwritting a subscription-handler: " key-v))     ;; TODO: more generic logging
+   (warn "re-frame: overwriting subscription-handler for: " key-v))   ;; allow it, but warn.
   (swap! key->fn assoc key-v handler-fn))
 
 
@@ -21,5 +21,6 @@
   [v]
   (let [key-v       (first-in-vector v)
        handler-fn  (get @key->fn key-v)]
-    (assert (not (nil? handler-fn)) (str "No subscription handler registered for key: " key-v))
-    (handler-fn app-db v)))
+    (if (nil? handler-fn)
+      (warn "re-frame: no subscription handler registered for: \"" key-v "\".  Returning nil.")
+      (handler-fn app-db v))))

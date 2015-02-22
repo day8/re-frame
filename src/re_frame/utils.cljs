@@ -1,7 +1,13 @@
  (ns re-frame.utils)
 
 
+ (defn warn
+   [& args]
+   (.warn js/console (apply str args)))
+
+
  (defn first-in-vector
   [v]
-  (assert (vector? v) (str "Expected a vector event, but got: " v))
-  (first v))
+  (if (vector? v)
+    (first v)
+    (warn "re-frame: expected a vector event, but got: " v)))
