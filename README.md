@@ -28,7 +28,7 @@ alt="Leiningen logo" title="The man himself" align="right" />
 Either:
 
 1.  You want to develop an app in ClojureScript, and you are looking for a framework; or
-2.  You believe that by early 2015 ReactJS had effectively won the javascript framework wars and
+2.  You believe that by early 2015 ReactJS had effectively won the JavaScript framework wars and
     you are curious about the bigger implications. Could it be that the combination of
     `reactive programming`, `functional programming` and `immutable data`
     **will completely change everything**?  If so, what does that look like in a language
@@ -58,14 +58,14 @@ Features:
 2. These computational parts are composed via reactive data flows - a dynamic,
    unidirectional Signal graph.
 3. The resulting architecture involves "derived data" flowing in a two-stage, reactive loop.
-   Without realising it, you will be explicitly modeling time.
-4. It is fast, straight out of the box. You won't have to go thought [this sort of pain](http://blog.scalyr.com/2013/10/angularjs-1200ms-to-35ms/).
+   Without realising it, you will be explicitly modelling time.
+4. It is fast, straight out of the box. You won't have to go through [this sort of pain](http://blog.scalyr.com/2013/10/angularjs-1200ms-to-35ms/).
 5. The surprising thing about re-frame is how simple it is. Beautifully simple! Our reference
-   implementation is little more than 100 lines of (clojurescript) code. Learn it in an afternoon.
+   implementation is little more than 100 lines of (ClojureScript) code. Learn it in an afternoon.
 6. But it scales up so nicely to more complex apps.  Frameworks are just pesky overhead at small
    scale - its how they help you to tame the complexity of bigger apps that measure them.
 7. Re-frame is impressively buzzword compliant: it has FRP-nature,
-   unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness (FSM)
+   unidirectional data flow, pristinely pure functions, conveyor belts, state-chart-friendliness (FSM)
    and claims an immaculate hammock conception.
    It also has a charming xkcd reference (soon)
    and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
@@ -82,10 +82,10 @@ delivers only the 'V' part of a traditional MVC framework.
 
 But apps involve much more than V. Where
 does the control logic go? How is state stored and manipulated (remembering that shared, mutable state
-is the root of all evil). How does the V bit source data? Etc.
+is the root of all evil). How does the V bit source data? etc.
 
 We wondered: what should the rest of the architecture look like?  So we read about [Flux], [Pedestal App],
-[Hoplon], [OM], [Elm], etc and, slowly but surely, re-frame emerged.
+[Hoplon], [OM], [Elm], etc. and, slowly but surely, re-frame emerged.
 
 
 ## Correct Acronym?
@@ -102,15 +102,15 @@ Yes, that's true.  But to quote McCoy: "It's MVC, Jim,
 but not as we know it".
 
 In re-frame, none of the M, V, or C bits are objects, they
-are pure functions (or pure data), and
+are pure functions (or pure data),
 and they are all wired together via reactive data flows.  It is sufficiently different in nature
-from (traditional, smalltalk) MVC that calling it MVC would likely just be confusing.  I'd
+from (traditional, Smalltalk) MVC that calling it MVC would likely just be confusing.  I'd
 love an alternative.
 
 Perhaps it is a RACES framework - Reactive-Atom Component Event
 Subscription framework (I love the smell of acronym in the morning).
 
-Or, if we distill to pure essence, `DDATWD` - Derived Data All The Way Down.
+Or, if we distil to pure essence, `DDATWD` - Derived Data All The Way Down.
 
 *TODO:* get acronym down to 3 chars! Get an image of stacked Turtles for `DDATWD`
 insider's joke, conference T-Shirt.
@@ -139,7 +139,7 @@ routes, or sessions or syncing client state with server state, etc.  It is just 
 browser-based apps which are desktop-like.
 
 That doesn't mean re-frame wouldn't work well when
-servers are more centrally involved, its just that we haven't tweaked it in that direction.
+servers are more centrally involved, it's just that we haven't tweaked it in that direction.
 
 Remember, re-frame is more of a pattern than an implementation, so you can easily fork it
 in whatever direction (GraphQL?) you need.  Did I mention it is only about 100 lines of code?
@@ -657,7 +657,7 @@ function and not in the inner render function.  So the following is **wrong** (c
 
 Why is this wrong?  Well, this component would be re-rendered every time `db-app` changed, even if the value
 in `name-ratom` (the result of the query) stayed the same. If you were to use a `Form-2` component instead, and put the
-subscription in the outer functions, then there'll be no re-render unless the value queried (ie, `name-ratom`) changed.
+subscription in the outer functions, then there'll be no re-render unless the value queried (i.e. `name-ratom`) changed.
 
 
 ## Just A Read-Only Cursor?
@@ -995,7 +995,7 @@ That's right - as an app becomes more complex, the handlers are likely to be  co
 
 Not every app has lots of logical `states`, but many do, and if you are implementing one of them, then formally
 recognising it and using a technique like
-[statecharts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782) will help
+[state charts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782) will help
 greatly in getting a clean design and a nice datamodel.
 
 The beauty of re-frame from a FSM point of view is that all the data is in one place - unlike OO systems where
@@ -1048,7 +1048,7 @@ yet, it is the source.
 
 Hmm. This is an infinite loop of sorts. **Derived data is flowing around the
 loop, reactivity, through pure functions.**  There is a pause in the loop while ever we wait
-for a new event, but the moment we get it, its another iteration of the "derived data" FRP loop.
+for a new event, but the moment we get it, it's another iteration of the "derived data" FRP loop.
 
 Derived values, all the way down, forever.
 
@@ -1111,7 +1111,7 @@ Sometimes a handler has a lot of CPU intensive work to do, and getting through i
 When a handler hogs the CPU, nothing else can happen. Browsers only give us one thread of
 execution and that CPU-hogging handler owns it, and it isn't giving it up. The UI will be
 frozen and there will be
-no processing of any other handlers (eg: on-success of POSTs), etc, etc. Nothing.
+no processing of any other handlers (e.g. on-success of POSTs), etc., etc. Nothing.
 
 And a frozen UI is a problem.  GUI repaints are not happening. And user interactions are not being processed.
 
