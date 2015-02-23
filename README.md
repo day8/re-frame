@@ -34,8 +34,6 @@ Either:
     **will completely change everything**?  If so, what does that look like in a language
     that naturally embodies those paradigms?
 
-> The future is already here - it's just not very evenly distributed.
-
 
 ## re-frame
 
@@ -53,7 +51,7 @@ Features:
 
 1. The functions you write are pure, so the computational pieces of your app can
    be described, understood and tested independently.
-   You just won't need a sophisticated Dependency Injection system to test. So much
+   You won't need sophisticated Dependency Injection to test. So much
    incidental complexity evaporates.
 2. These computational parts are composed via reactive data flows - a dynamic,
    unidirectional Signal graph.
@@ -62,10 +60,10 @@ Features:
 4. It is fast, straight out of the box. You won't have to go through [this sort of pain](http://blog.scalyr.com/2013/10/angularjs-1200ms-to-35ms/).
 5. The surprising thing about re-frame is how simple it is. Beautifully simple! Our reference
    implementation is little more than 100 lines of (ClojureScript) code. Learn it in an afternoon.
-6. But it scales up so nicely to more complex apps.  Frameworks are just pesky overhead at small
-   scale - its how they help you to tame the complexity of bigger apps that measure them.
+6. But it scales up nicely to more complex apps.  Frameworks are just pesky overhead at small
+   scale - it's how they help you tame the complexity of bigger apps that measure them.
 7. Re-frame is impressively buzzword compliant: it has FRP-nature,
-   unidirectional data flow, pristinely pure functions, conveyor belts, state-chart-friendliness (FSM)
+   unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness (FSM)
    and claims an immaculate hammock conception.
    It also has a charming xkcd reference (soon)
    and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
@@ -74,7 +72,7 @@ __Warning__:  this is a long document. That was the summary.
 
 ## What Problem Does It Solve?
 
-First we decided to build our SPA apps with ClojureScript, then we
+First, we decided to build our SPA apps with ClojureScript, then we
 choose [Reagent], then we had a problem.
 
 For all its considerable brilliance,  Reagent (+ ReactJS)
@@ -90,7 +88,7 @@ We wondered: what should the rest of the architecture look like?  So we read abo
 
 ## Correct Acronym?
 
-Is re-frame MVC or MVP or M*P? Any of those?
+Is re-frame MVC, MVP or MVVC?  Any of those?
 
 Hmm, I'd say "no".
 
@@ -110,7 +108,7 @@ love an alternative.
 Perhaps it is a RACES framework - Reactive-Atom Component Event
 Subscription framework (I love the smell of acronym in the morning).
 
-Or, if we distil to pure essence, `DDATWD` - Derived Data All The Way Down.
+Or, if we distill to pure essence, `DDATWD` - Derived Data All The Way Down.
 
 *TODO:* get acronym down to 3 chars! Get an image of stacked Turtles for `DDATWD`
 insider's joke, conference T-Shirt.
@@ -256,7 +254,7 @@ data in our apps. If you were to use it, you'd have to tweak the reference imple
 [using this inspiration](https://gist.github.com/allgress/11348685)).
 
 
-### Benefits Arising From Data-In-The-One-Place
+### The Benefits Of Data-In-The-One-Place
 
 I'm going to quote verbatim from Elm's website:
 
@@ -660,7 +658,7 @@ in `name-ratom` (the result of the query) stayed the same. If you were to use a 
 subscription in the outer functions, then there'll be no re-render unless the value queried (i.e. `name-ratom`) changed.
 
 
-## Just A Read-Only Cursor?
+### Just A Read-Only Cursor?
 
 Subscriptions are different to read-only cursors.
 
@@ -790,8 +788,7 @@ Summary:
 At the top, I said that re-frame had two data flows.
 
 The data flow from `app-db` to the DOM is the first half of the story. We now need to consider
-the 2nd part of the
-story: the flow in the opposite direction.
+the 2nd part of the story: the flow in the opposite direction.
 
 While the first flow has FRP-nature, the 2nd flow does not.  Well, not at first glance anyway.
 
