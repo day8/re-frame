@@ -62,12 +62,13 @@ Features:
 5. The surprising thing about re-frame is how simple it is. Beautifully simple! Our reference
    implementation is little more than 100 lines of (ClojureScript) code. Learn it in an afternoon.
 6. But it scales up nicely to more complex apps.  Frameworks are just pesky overhead at small
-   scale - it's how they help you tame the complexity of bigger apps that measure them.
+   scale - measure them instead by how they help you tame the complexity of bigger apps.
 7. Re-frame is impressively buzzword compliant: it has FRP-nature,
    unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness (FSM)
    and claims an immaculate hammock conception.
    It also has a charming xkcd reference (soon)
    and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
+   What could possibly go wrong?
 
 __Warning__:  this is a long document. That was the summary.
 
@@ -121,7 +122,7 @@ Not much about re-frame is original or clever. You'll find
 no ingenious use of functional zippers, transducers or core.async.
 
 Re-frame does use Reagent's features in a slightly novel way.
-And we did actively reject the current ClojureScript fashion of using Cursors.
+And I did actively reject the current ClojureScript fashion of using Cursors.
 But, for the most part, re-frame is just a mashup of
 emerging ideas.
 
@@ -159,7 +160,7 @@ __Third__, we believe that [FRP] is one honking great idea. You might be tempted
 Reagent as simply another of the React wrappers - a sibling to [OM] and
 [quiescent](https://github.com/levand/quiescent).
 But you'll only really "get"
-Reagent when you view it as an FRP-ish library. To put that another way, we think
+Reagent when you view it as an FRP-ish library. To put that another way, I think
 that Reagent, at its best, is closer in nature to [Hoplon] or [Elm] than it is OM.
 
 __Finally__, we believe in one-way data flow. No two way data binding. We don't
@@ -251,8 +252,8 @@ A clarification:  `app-db` doesn't actually have to be a reagent/atom containing
 a map.  It could, for example, be a [datascript] database.  In fact, any database which is reactive
 (can tell you when it changes) would do.  (We'd love! to be using [datascript] - so damn cool -
 but we had too much
-data in our apps. If you were to use it, you'd have to tweak the reference implementation a bit
-[using this inspiration](https://gist.github.com/allgress/11348685)).
+data in our apps. If you were to use it, you'd have to tweak the reference implementation a bit,
+[perhaps using this inspiration](https://gist.github.com/allgress/11348685)).
 
 
 ### The Benefits Of Data-In-The-One-Place
@@ -724,7 +725,7 @@ In a component, we could use this query via `subscribe`:
 ```
 
 There's a bit going on in that `let`, most of it tortuously contrived, just so I can show off chained
-reactions. Okay, okay. All I wanted really was an excuse to use the phrase "chained reactions".
+reactions. Okay, okay, all I wanted really was an excuse to use the phrase "chained reactions".
 
 The calculation of `num` is done by a `reaction` which has `items` as an input Signal. And,
 as we saw, `items` is itself a reaction over two other signals (one of them the `app-db`).
@@ -829,11 +830,11 @@ the user is a function of that state.
 
 So that tends to be the cycle:
 
-1. the user clicks something which cause events to be dispatched
-2. handlers manage the events
-3. and cause `app-db` changes
-4. which then cause a re-render
-5. the users sees something different.
+1. the user clicks something which causes an event to be dispatched
+2. a handler manages the event
+3. and causes `app-db` to change   (mutation happens here!)
+4. which then causes a re-render
+5. the user sees something different
 6. goto #1
 
 That's our water cycle.
