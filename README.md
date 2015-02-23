@@ -10,7 +10,7 @@ y'know. Pretty good.
 
 ## Status
 
-re-frame is still Alpha. But getting closer.
+re-frame is still Alpha, not published to clojars [and its use may involve pain](https://github.com/Day8/re-frame/issues/4). But it is close to Beta.
 
 Be sure you use v0.5.0 of reagent.
 
