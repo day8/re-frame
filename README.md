@@ -17,6 +17,7 @@ Be sure you use v0.5.0 of reagent.
 Todo:
  - provide a hook for logging and exception handling
  - implement pure event handlers.  A macro will be needed.
+ - continue to use Historian? Or roll our own undo. Only 20 lines of code.
 
 <!--
 <img src="http://leiningen.org/img/leiningen.jpg"
@@ -495,13 +496,12 @@ On with the rest of my lies and distortions...
 A `component` such as `greet` is like the templates you'd find in
 Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
 
-1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
- downside is that these are not "designer friendly" HTML templates.
-2. these templates are reactive.  When their input Signals change, they
- are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
- the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs"
- to that render change, the render is rerun.  In this sense, components are more like
- [Meteor views](https://www.meteor.com/try/2).
+  1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
+     downside is that these are not "designer friendly" HTML templates.
+  2. these templates are reactive.  When their input Signals change, they
+     are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
+     the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs"
+     to that render change, the render is rerun.
 
 ### React etc.
 
@@ -702,9 +702,9 @@ The subscription-handler might be written:
 
 Subscription handlers are given two parameters:
 
-1. `app-db` - that's a reagent/atom which holds ALL the app's state. This is the "database"
-  on which we perform the "query".
-2. the vector originally supplied to `subscribe`.  In our case, we ignore it.
+  1. `app-db` - that's a reagent/atom which holds ALL the app's state. This is the "database"
+     on which we perform the "query".
+  2. the vector originally supplied to `subscribe`.  In our case, we ignore it.
 
 In the example above, notice that the `reaction` depends on the input Signal:  `db`.
 If `db` changes, the query is re-run.
