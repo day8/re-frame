@@ -1125,16 +1125,11 @@ Luckily, [re-frame has a solution](https://github.com/Day8/re-frame/wiki/The-CPU
 
 ### In Summary
 
-**The key to the FRP paradigm is that it allows you to explicitly model time.**
-
 re-frame has two distinct flows, and I claim they are BOTH FRP in nature.  The first is clearly FRP.
 The second one is conceptually FRP, but you do have to squint.
 
-Pure derived data flows in a perpetual loop, through pure functions. The parts are easy to
-understand. Debugging the whole is a delight. It works like a charm.
-
-All the parts are lovely and simple.  And yet they compose in a lovely reactive loop which
-is a delight to understand, program and debug.
+All the parts are simple. The parts are easy to understand in isolation. The parts are composed so that
+derived data flows in a perpetual reactive loop, through pure functions.
 
 
 To build an app using re-frame, you'll have to:
@@ -1142,8 +1137,6 @@ To build an app using re-frame, you'll have to:
  - write and register subscription functions (query layer).
  - write component functions  (view layer).
  - write and register event handler functions  (control layer and/or state transition layer).
-
-
 
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
