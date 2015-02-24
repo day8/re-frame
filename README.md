@@ -734,7 +734,7 @@ So this is a Signal Graph. Data is flowing through computation into renderer, wh
 
 ## A More Efficient Signal Graph
 
-But there is a small problem. The approach above might get inefficient, if items gets long.
+But there is a small problem. The approach above might get inefficient, if `:items` gets long.
 
 Every time `app-db` changes, the `:sorted-items` query is
 going to be re-run and it's going to re-sort `:items`.  But `:items` might not have changed. Some other
