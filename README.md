@@ -1006,7 +1006,7 @@ kinds of architecture (in my experience).
 So here's another way of thinking about what's happening with this data flow - another useful mental model.
 
 First, imagine that all the events ever dispatched by a certain running  app were stored in a collection.
-So, if when the app stated, the user clicked on button X then the first item in this collection
+So, if when the app started, the user clicked on button X then the first item in this collection
 would be the event generated
 by that button, and then, if next the user moved a slider, the associated event would be the
 next item in the collection, and so on and so on. We'd end up with a collection of event vectors.
