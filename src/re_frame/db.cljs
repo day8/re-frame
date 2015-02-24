@@ -8,5 +8,3 @@
 ;; Access is mediated via handlers and subscriptions
 (def  app-db (reagent/atom {}))
 
-
-

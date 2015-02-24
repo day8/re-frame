@@ -1,11 +1,12 @@
-(defproject re-frame "0.1.4"
+(defproject re-frame "0.1.5"
   :description  "A reagent framework"
   :url          "https://github.com/Day8/re-frame.git"
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2760" :scope "provided"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha" :scope "provided"]
-                 [reagent "0.5.0-alpha3" :scope "provided"]]
+
+                 [org.clojure/clojurescript "0.0-2760"]
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [reagent "0.5.0-alpha3"]]
 
   :profiles     {:debug {:debug true}
                  :dev   {:dependencies [[spellhouse/clairvoyant "0.0-48-gf5e59d3"]]
@@ -16,7 +17,7 @@
                   "run/compiled/demo"]
 
   :resource-paths ["run/resources"]
-  :jvm-opts         ["-Xmx1g" "-XX:+UseConcMarkSweepGC"] ;;
+  :jvm-opts       ["-Xmx1g" "-XX:+UseConcMarkSweepGC"] ;;
   :source-paths ["src"]
   :test-paths   ["test"]
 

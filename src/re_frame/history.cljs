@@ -39,16 +39,16 @@
 
 (subs/register
   :undos?
-  (fn
+  (fn handler
+    ; "return true is anything is stored in the undo list, otherwise false"
     [_ _]
-    "return true is anything is stored in the undo list, otherwise false"
     (reaction (> (count @undo-list) 1))))
 
 (subs/register
   :redos?
-  (fn
+  (fn handler
+    ; "return true is anything is stored in the redo list, otherwise false"
     [_ _]
-    "return true is anything is stored in the redo list, otherwise false"
     (reaction (> (count @redo-list) 0))))
 
 
