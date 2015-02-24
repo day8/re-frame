@@ -1,33 +1,38 @@
 (ns re-frame.history
-  (:require-macros [reagent.ratom  :refer [reaction]]
-                   [historian.core :refer [off-the-record]])
+  (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
     [reagent.core      :as     r]
-    [re-frame.db       :refer [app-db]]
+    [re-frame.db       :refer  [app-db]]
     [re-frame.handlers :as     handlers ]
-    [re-frame.subs     :as     subs ]
-    [historian.core    :as     historian]
-    ))
+    [re-frame.subs     :as     subs ]))
 
 
-;; -- data  --------------------------------------------------------------------------------------
+;; -- History -------------------------------------------------------------------------------------
+;;
+;;
+(def ^:private max-undos (atom 50))     ;; maximum number of undo states maintained
+(defn set-max-undos
+  [n]
+  (reset! max-undos n))
 
-(historian/record! app-db :db)
-(def undo-list (r/atom []))
-(def redo-list (r/atom []))
-(historian/replace-library!  undo-list)
-(historian/replace-prophecy! redo-list)
+;;
+(def ^:private undo-list (r/atom []))   ;; a list of history states
+(def ^:private redo-list (r/atom []))   ;; a list of future states, caused by undoing
 
-(defn reset-history!
-  "privileged protocol: should not be used by client code"
+
+(defn clear-history!
   []
-  (historian/clear-history!)
-  (historian/trigger-record!))
+  (reset! undo-list [])
+  (reset! undo-list []))
 
-(defn off-the-record!
-  "evaluate db mutation-fn without creating a history record"
-  [db mutation-fn]
-  (off-the-record (reset! db (mutation-fn @db))))
+
+(defn store-now!
+  "stores the current state"
+  [state]
+  (reset! redo-list [])           ;; clear and redo state created by previous undos
+  (reset! undo-list (vec (take
+                           @max-undos
+                           (conj @undo-list state)))))
 
 
 ;; -- subscriptions  -----------------------------------------------------------------------------
@@ -36,27 +41,36 @@
   :undos?
   (fn
     [_ _]
-    "answer true is anything is stored in the undo list"
+    "return true is anything is stored in the undo list, otherwise false"
     (reaction (> (count @undo-list) 1))))
 
 (subs/register
   :redos?
   (fn
     [_ _]
-    "answer true is anything is stored in the redo list"
+    "return true is anything is stored in the redo list, otherwise false"
     (reaction (> (count @redo-list) 0))))
+
 
 ;; -- event handlers  ----------------------------------------------------------------------------
 
-(handlers/register
-  :undo
-  (fn
+;; XXX get these right
+
+(handlers/register     ;; not pure
+  :undo                ;; usage:  (dispatch [:undo])
+  (fn handler
     [_ _]
-    (historian/undo!))) ;; (dispatch [:undo])
+    (when (> (count @undo-list) 0)
+      (reset! app-db (last @undo-list))
+      (reset! redo-list (cons @app-db @redo-list))
+      (reset! undo-list (pop @undo-list)))))
 
 
-(handlers/register
-  :redo
-  (fn
+(handlers/register     ;; not pure
+  :redo                ;; usage:  (dispatch [:redo])
+  (fn handler
     [_ _]
-    (historian/redo!))) ;; (dispatch [:undo])
+    (when (> (count @redo-list) 0)
+      (reset! app-db (first @redo-list))
+      (reset! redo-list (rest @redo-list))
+      (reset! undo-list (conj @undo-list @app-db)))))

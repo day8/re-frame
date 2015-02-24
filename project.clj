@@ -5,12 +5,10 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2760" :scope "provided"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha" :scope "provided"]
-                 [reagent "0.5.0-alpha3" :scope "provided"]
-                 [historian "1.0.7"]]
+                 [reagent "0.5.0-alpha3" :scope "provided"]]
 
   :profiles     {:debug {:debug true}
                  :dev   {:dependencies [[spellhouse/clairvoyant "0.0-48-gf5e59d3"]]
-
                          :plugins      [[lein-cljsbuild "1.0.4"]]}}
 
 
