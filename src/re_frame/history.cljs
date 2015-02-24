@@ -1,7 +1,7 @@
 (ns re-frame.history
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
-    [reagent.core      :as     r]
+    [reagent.core      :as     reagent]
     [re-frame.db       :refer  [app-db]]
     [re-frame.handlers :as     handlers ]
     [re-frame.subs     :as     subs ]))
@@ -16,8 +16,8 @@
   (reset! max-undos n))
 
 ;;
-(def ^:private undo-list (r/atom []))   ;; a list of history states
-(def ^:private redo-list (r/atom []))   ;; a list of future states, caused by undoing
+(def ^:private undo-list (reagent/atom []))   ;; a list of history states
+(def ^:private redo-list (reagent/atom []))   ;; a list of future states, caused by undoing
 
 
 (defn clear-history!
@@ -27,12 +27,12 @@
 
 
 (defn store-now!
-  "stores the current state"
-  [state]
+  "stores the value currently in app-db, so the user can later undo"
+  []
   (reset! redo-list [])           ;; clear and redo state created by previous undos
   (reset! undo-list (vec (take
                            @max-undos
-                           (conj @undo-list state)))))
+                           (conj @undo-list @app-db)))))
 
 
 ;; -- subscriptions  -----------------------------------------------------------------------------
@@ -53,8 +53,6 @@
 
 
 ;; -- event handlers  ----------------------------------------------------------------------------
-
-;; XXX get these right
 
 (handlers/register     ;; not pure
   :undo                ;; usage:  (dispatch [:undo])
