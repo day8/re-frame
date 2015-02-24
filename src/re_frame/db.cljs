@@ -1,9 +1,12 @@
 (ns re-frame.db
-  (:require [reagent.core :as r]))
+  (:require [reagent.core :as reagent]))
 
-;; The application state
-;; Should never be accessed directly by application code
+
+;; -- Application State  --------------------------------------------------------------------------
+;;
+;; Should not be accessed directly by application code
 ;; Access is mediated via handlers and subscriptions
-(def  app-db (r/atom {}))
+(def  app-db (reagent/atom {}))
+
 
 
