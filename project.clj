@@ -16,7 +16,7 @@
                   "run/compiled/demo"]
 
   :resource-paths ["run/resources"]
-
+  :jvm-opts         ["-Xmx1g" "-XX:+UseConcMarkSweepGC"] ;;
   :source-paths ["src"]
   :test-paths   ["test"]
 
