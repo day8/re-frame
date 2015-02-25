@@ -8,32 +8,16 @@ y'know. Pretty good.
 
 > -- Terry Pratchett, The Fifth Elephant
 
-## Status
-
-re-frame is still Alpha, not published to clojars [and its use may involve pain](https://github.com/Day8/re-frame/issues/4). But it is close to Beta.
-
-Be sure you use v0.5.0 of reagent.
-
-Todo:
- - provide a hook for logging and exception handling
- - implement pure event handlers.  A macro will be needed.
- - continue to use Historian? Or roll our own undo. Only 20 lines of code.
-
-<!--
-<img src="http://leiningen.org/img/leiningen.jpg"
-alt="Leiningen logo" title="The man himself" align="right" />
--->
-
 ## Why Should You Care About re-frame?
 
 Either:
 
 1.  You want to develop an app in ClojureScript, and you are looking for a framework; or
-2.  You believe that by early 2015 ReactJS had effectively won the JavaScript framework wars and
-    you are curious about the bigger implications. Could it be that the combination of
+2.  You believe that, by early 2015, ReactJS had won the JavaScript framework wars and
+    you are curious about the bigger implications. Could the combination of
     `reactive programming`, `functional programming` and `immutable data`
-    **will completely change everything**?  If so, what does that look like in a language
-    that naturally embodies those paradigms?
+    **completely change everything**?  If so, what would that look like in a language
+    that embraces those paradigms?
 
 
 ## re-frame
@@ -631,7 +615,7 @@ So let's now look at how to write and register the subscription handler for `:cu
    (reaction (get-in @db [:path :to :a :map cid])))    ;; re-runs each time db changes
   
 ;; register our query handler
-(register
+(register-subs
    :customer-query       ;; the id (the name of the query()
    customer-query)       ;; the function which will perform the query
 ```
@@ -691,7 +675,7 @@ Let's sketch out the situation described above ...
 The subscription-handler might be written:
 
 ```Clojure
-(register
+(register-subs
  :sorted-items      ;; the query id  (the name of the query)
  (fn [db [_]]       ;; the handler for the subscription
    (reaction
@@ -747,7 +731,7 @@ Luckily, we can easily fix that up by tweaking our subscription function so
 that it chains `reactions`:
 
 ```Clojure
-(register
+(register-subs
  :sorted-items             ;; the query id
  (fn [db [_]]
    (let [items      (reaction (get-in @db [:some :path :to :items]))]  ;; reaction #1
@@ -959,7 +943,7 @@ then to register those handlers with the router.
 Here's how we would register our event handler:
 
 ```Clojure
-(register
+(register-pure-handler
   :delete-item         ;; the event id (name)
   handle-delete)       ;; the handler function for that event
 ```
