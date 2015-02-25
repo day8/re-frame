@@ -1,9 +1,9 @@
 
-(defproject simple-reagent "0.5.0-alpha3"
+(defproject simple-re-frame "0.5.0-alpha3"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2816"]
                  [reagent "0.5.0-alpha3"]
-                 [re-frame "0.1.5"]
+                 [re-frame "0.1.7"]
                  [figwheel "0.2.3-SNAPSHOT"]]
 
   :plugins [[lein-cljsbuild "1.0.4"]
