@@ -2,9 +2,7 @@
   (:refer-clojure :exclude [flush])
   (:require-macros [cljs.core.async.macros :refer [go-loop go]])
   (:require [reagent.core     :refer [flush]]
-            ;[reagent.ratom    :refer [IReactiveAtom]]
             [re-frame.db      :refer [app-db]]
-            ; [re-frame.history :refer [store-now!]]
             [re-frame.utils   :refer [first-in-vector warn]]
             [cljs.core.async  :refer [chan put! <! timeout]]))
 
@@ -15,11 +13,24 @@
 
 (defn register
   "register a handler for an event"
-  [event-id handler-fn]
-  (when (contains? @id->fn event-id)
-    (warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
-  (swap! id->fn assoc event-id handler-fn))
+  ([event-id handler-fn]
+    (when (contains? @id->fn event-id)
+      (warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
+    (swap! id->fn assoc event-id handler-fn))
 
+  ([event-id middleware handler-fn]
+    (register event-id (middleware handler-fn))))
+
+
+(defn register
+  "register a handler for an event"
+  ([event-id handler-fn]
+    (when (contains? @id->fn event-id)
+      (warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
+    (swap! id->fn assoc event-id handler-fn))
+
+  ([event-id middleware handler-fn]
+    (register event-id (middleware handler-fn))))
 
 ;; -- The Event Conveyor Belt  --------------------------------------------------------------------
 ;;

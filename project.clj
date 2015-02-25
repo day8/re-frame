@@ -1,4 +1,4 @@
-(defproject re-frame "0.1.5"
+(defproject re-frame "0.1.6"
   :description  "A reagent framework"
   :url          "https://github.com/Day8/re-frame.git"
 

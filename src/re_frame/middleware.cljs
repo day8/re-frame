@@ -1,6 +1,7 @@
 (ns re-frame.middleware
-  (:require [reagent.ratom    :refer [IReactiveAtom]]
-            [re-frame.history :refer [store-now!]]))
+  (:require
+    [reagent.ratom :refer [IReactiveAtom]]
+    [re-frame.undo :refer [store-now!]]))
 
 ;; -- Middleware Factories -------------------------------------------------------------------------
 ;;
@@ -11,7 +12,7 @@
 ;;
 ;;  Use "comp" to compose middelware, like this:
 ;;
-;;      (def midware  (comp undoable make-pure (validate some-fn)))   ;; midware is a function
+;;      (def midware  (comp undoable pure (validate some-fn)))   ;; midware is a function
 ;;
 ;;  then imagine that we have a pure handler:
 ;;
@@ -23,7 +24,7 @@
 ;;
 ;;      (def h    (midware my-handler))    ;;  h is "my-handler"  wrapped in middleware
 ;;
-;;  now call h:
+;;  I could call h like this:
 ;;      (h app-db [:some-key 23])       <----  h is a handler, just pass in 'db' and 'v'
 ;;
 ;;  Which means, you could just register 'h'
@@ -47,7 +48,7 @@
     (next-handler app-db event-vec)))
 
 
-(defn make-pure
+(defn pure
   "Middleware which allows you to write a pure handler.
   1. on the way through it extracts the value in the atom
   2. resets the atom with the returned value after calling the handler"

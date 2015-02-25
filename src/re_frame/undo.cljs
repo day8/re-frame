@@ -1,4 +1,4 @@
-(ns re-frame.history
+(ns re-frame.undo
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
     [reagent.core      :as     reagent]
