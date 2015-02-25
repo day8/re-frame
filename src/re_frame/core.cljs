@@ -1,8 +1,8 @@
 (ns re-frame.core
   (:require
-            [re-frame.handlers   :as handlers]
-            [re-frame.subs       :as subs]
-            [re-frame.middleware :as  middleware]))
+    [re-frame.handlers   :as handlers]
+    [re-frame.subs       :as subs]
+    [re-frame.middleware :as  middleware]))
 
 
 ;; --  API  -------
