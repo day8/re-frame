@@ -5,38 +5,7 @@
 
 ;; -- Middleware Factories -------------------------------------------------------------------------
 ;;
-;;  Middleware wraps handlers, providing a composable pipeline.  We use middleware so the handlers
-;;  themselves are kept as simple as possible.  In particualr, the handlers can be kept as pure functions.
-;;
-;;  My attempt to explain, by skirting around the hard bits is as follows ...
-;;
-;;  Use "comp" to compose middelware, like this:
-;;
-;;      (def midware  (comp undoable pure (validate some-fn)))   ;; midware is a function
-;;
-;;  then imagine that we have a pure handler:
-;;
-;;       (defn my-handler
-;;          [db v]
-;;          (assoc db :some-key 42))
-;;
-;;  then apply the composed middleare to my-handler:
-;;
-;;      (def h    (midware my-handler))    ;;  h is "my-handler"  wrapped in middleware
-;;
-;;  I could call h like this:
-;;      (h app-db [:some-key 23])       <----  h is a handler, just pass in 'db' and 'v'
-;;
-;;  Which means, you could just register 'h'
-;;
-;;  (register
-;;      :some-id
-;;      h)
-;;
-;;  Middleware factories do your head in initially, because they involve a function, returning a function,
-;;  returning a function.  So I'd suggest you might want to read this explanation
-;;  (go to "Handlers and Middleware"):
-;;     http://www.flyingmachinestudios.com/programming/boot-clj/
+;; Read this:  https://github.com/Day8/re-frame/wiki/Middleware
 ;;
 
 (defn undoable
@@ -63,7 +32,7 @@
 #_(defn check-schema
 "Middleware for checking that a handlers mutations leave the state in a schema-matching way"
 [a-prismatic-schema]
-(fn middlewear
+(fn middleware
   [next-handler]
   (fn handler
     [db v]
@@ -79,7 +48,7 @@
 The validation function f, might assoc warnings and errors to the new state, created by the handler.
 By validation, I mean validation of what the user has entered, or the state they have taken the app too"
   [f]
-  (fn middlewear
+  (fn middleware
     [next-handler]
     (fn handler
       [db v]

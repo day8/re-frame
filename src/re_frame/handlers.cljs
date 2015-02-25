@@ -22,16 +22,6 @@
     (register event-id (middleware handler-fn))))
 
 
-(defn register
-  "register a handler for an event"
-  ([event-id handler-fn]
-    (when (contains? @id->fn event-id)
-      (warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
-    (swap! id->fn assoc event-id handler-fn))
-
-  ([event-id middleware handler-fn]
-    (register event-id (middleware handler-fn))))
-
 ;; -- The Event Conveyor Belt  --------------------------------------------------------------------
 ;;
 ;; Moves events from "dispatch" to the router loop.
