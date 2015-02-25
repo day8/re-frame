@@ -1123,6 +1123,12 @@ To build an app using re-frame, you'll have to:
  - write and register event handler functions  (control layer and/or state transition layer).
 
 
+### Licence
+
+Copyright © 2015 Michael Thompson
+
+Distributed under The MIT License (MIT) - See LICENSE.txt
+
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
 [Reagent]:http://reagent-project.github.io/
 [Dan Holmsand]:https://twitter.com/holmsand

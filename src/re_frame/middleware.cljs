@@ -45,8 +45,8 @@
 ;; warning: untested
 (defn path
   "Supplies a sub-tree of `app-db` to the handler.
-  Assumes pure is
-  Grafts the result back into."
+  Assumes pure is in the middleware pipeline prior.
+  Grafts the result back into app-db."
   [p]
   (fn middleware
     [handler]
