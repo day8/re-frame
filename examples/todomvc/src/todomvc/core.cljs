@@ -14,6 +14,13 @@
   :initialize
   (fn 
     [db _]
+    (dispatch [:add-todo "Rename Cloact to Reagent"])
+    (dispatch [:add-todo "Add undo demo"])
+    (dispatch [:add-todo "Make all rendering async"])
+    (dispatch [:add-todo "Allow any arguments to component functions"])
+    (dispatch [:add-todo "Use re-frame in the todomvc example"])
+    (dispatch [:complete-all true])
+    ;; as the dispatches are async the next line is executed first
     (merge db initial-db)))
 
 (register-pure-handler
@@ -98,15 +105,9 @@
     (reaction (- (count @(subscribe [:items]))
                  @(subscribe [:done])))))
 
-(dispatch [:initialize])
 
-(defonce init (do
-                (dispatch [:add-todo "Rename Cloact to Reagent"])
-                (dispatch [:add-todo "Add undo demo"])
-                (dispatch [:add-todo "Make all rendering async"])
-                (dispatch [:add-todo "Allow any arguments to component functions"])
-                (dispatch [:add-todo "Use re-frame in the todomvc example"])
-                (dispatch [:complete-all true])))
+
+(defonce init (dispatch [:initialize]))
 
 (defn todo-input [{:keys [title on-save on-stop]}]
   (let [val (atom title)
