@@ -30,16 +30,12 @@
 
 
 
-;; warning: untested
-(defn apply-event
-  "Middleware which removes the first bit of v, and \"expands\" other parameters.
-  Normally handlers get two paramters:  db and v.
-  With this middleware, if v was [:id 1 2], the handler would be called with db, 1, 2.
-  Use the middleware in the very last place -- right-most in  comp"
+(defn trim-v
+  "Middleware which removes the first element of v. Asthetically improves your handlers"
   [handler]
   (fn new-handler
     [db v]
-    (apply handler (cons db (rest v)))))
+    (handler db (rest v))))
 
 
 ;; warning: untested
