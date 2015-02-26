@@ -11,7 +11,7 @@
 (def dispatch         handlers/dispatch)
 (def dispatch-sync    handlers/dispatch-sync)
 
-(def register-subs subs/register)
+(def register-sub subs/register)
 (def subscribe     subs/subscribe)
 
 
@@ -32,4 +32,4 @@
   ([id handler]
     (register-handler id pure handler))
   ([id middleware handler]
-    (register-handler id (comp pure middleware) handler)))
+    (register-handler id (comp middleware pure) handler)))
