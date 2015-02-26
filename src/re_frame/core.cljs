@@ -21,7 +21,7 @@
 (def path        middleware/path)
 (def validate    middleware/validate)
 (def log-events  middleware/log-events)
-(def apply-event middleware/apply-event)
+(def trim-v      middleware/trim-v)
 
 
 
@@ -32,4 +32,4 @@
   ([id handler]
     (register-handler id pure handler))
   ([id middleware handler]
-    (register-handler id (comp pure middleware) handler)))
+    (register-handler id [pure middleware] handler)))

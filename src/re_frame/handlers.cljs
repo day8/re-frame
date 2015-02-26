@@ -19,7 +19,11 @@
     (swap! id->fn assoc event-id handler-fn))
 
   ([event-id middleware handler-fn]
-    (register event-id (middleware handler-fn))))
+    (let  [mware  (if (vector? middleware)
+                    (apply comp middleware)   ;; compose the vector of middleware
+                    middleware)
+           hander-fn (mware handler-fn)]
+      (register event-id hander-fn))))
 
 
 ;; -- The Event Conveyor Belt  --------------------------------------------------------------------
