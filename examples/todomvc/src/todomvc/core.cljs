@@ -93,16 +93,18 @@
   :done
   (fn 
     [db _]
-    (reaction (->> @(subscribe [:items]) 
-                   (filter :done) 
-                   count))))
+    (let [items (subscribe [:items])]
+      (reaction (->> @items 
+                     (filter :done) 
+                     count)))))
 
 (register-sub
   :active
   (fn 
     [db _]
-    (reaction (- (count @(subscribe [:items]))
-                 @(subscribe [:done])))))
+    (let [items (subscribe [:items])
+          done (subscribe [:done])] 
+      (reaction (- (count @items) @done)))))
 
 
 
