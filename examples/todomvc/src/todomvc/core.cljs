@@ -2,9 +2,10 @@
   (:require-macros [reagent.ratom :refer [reaction]])  
   (:require [reagent.core :as reagent :refer [atom]]
             [re-frame.core :refer [register-pure-handler
-                                   register-subs
+                                   register-sub
                                    subscribe
-                                   dispatch]]))
+                                   dispatch
+                                   path]]))
 
 (defonce initial-db 
   {:todos (sorted-map)
@@ -37,60 +38,58 @@
 
 (register-pure-handler
   :complete-all
+  (path [:todos]) 
   (fn
-    [db [_ v]]
-    (let [todos (:todos db)
-          removed-todos (mmap todos map #(assoc-in % [1 :done] v))]
-      (assoc db :todos removed-todos))))
+    [todos [_ v]]
+    (mmap todos map #(assoc-in % [1 :done] v))))
 
 (register-pure-handler
   :toggle
+  (path [:todos])
   (fn
-    [db [_ id]]
-    (let [todos (:todos db)]
-      (assoc db :todos (update-in todos [id :done] not)))))
+    [todos [_ id]]
+    (update-in todos [id :done] not)))
 
 (register-pure-handler
   :save
+  (path [:todos])
   (fn
-    [db [_ id title]]
-    (let [todos (:todos db)]
-      (assoc db :todos (assoc-in todos [id :title] title)))))
+    [todos [_ id title]]
+    (assoc-in todos [id :title] title)))
 
 (register-pure-handler
   :delete
+  (path [:todos])
   (fn
-    [db [_ id]]
-    (let [todos (:todos db)]
-      (assoc db :todos (dissoc todos id)))))
+    [todos [_ id]]
+    (dissoc todos id)))
 
 (register-pure-handler
   :clear-done
+  (path [:todos])
   (fn
-    [db [_ v]]
-    (let [todos (:todos db)
-          done-todos (mmap todos remove #(get-in % [1 :done]))]
-      (assoc db :todos done-todos))))
+    [todos [_ v]]
+    (mmap todos remove #(get-in % [1 :done]))))
 
-(register-subs
+(register-sub
   :counter
   (fn 
     [db _]
     (reaction (:counter @db))))
 
-(register-subs
+(register-sub
   :todos
   (fn 
     [db _]
     (reaction (:todos @db))))
 
-(register-subs
+(register-sub
   :items
   (fn 
     [db _]
     (reaction (vals (:todos @db)))))
 
-(register-subs
+(register-sub
   :done
   (fn 
     [db _]
@@ -98,7 +97,7 @@
                    (filter :done) 
                    count))))
 
-(register-subs
+(register-sub
   :active
   (fn 
     [db _]

@@ -4,7 +4,7 @@
             [re-frame.core :refer [register-handler 
                                    register-pure-handler
                                    pure
-                                   register-subs 
+                                   register-sub 
                                    dispatch 
                                    subscribe]]))
 
@@ -57,14 +57,14 @@
     (swap! db assoc :timer value)))
 
 ;; add subscriptions to :timer and :time-color
-(register-subs
+(register-sub
   :timer
   (fn 
     [db _]
     ;; you need to wrap your subscription code in a reaction
     (reaction (:timer @db))))
 
-(register-subs
+(register-sub
   :time-color
   (fn 
     [db _]
