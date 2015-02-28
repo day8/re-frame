@@ -338,7 +338,7 @@ Right, so that was a lot of words. Some code to clarify:
 (def app-db  (reagent/atom {:a 1}))           ;; our root ratom  (signal)
 
 (def ratom2  (reaction {:b (:a @app-db)}))    ;; reaction wraps a computation, returns a signal
-(def ratom3  (reaction (cond = (:b @ratom2)   ;; reaction wraps another computation
+(def ratom3  (reaction (condp = (:b @ratom2)   ;; reaction wraps another computation
                             0 "World"
                             1 "Hello")))
 
