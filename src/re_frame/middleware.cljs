@@ -51,7 +51,7 @@
       (if (satisfies? IReactiveAtom db)
         (str "re-frame: \"path\" used in middleware, without prior \"pure\"."))
       (if-not (vector? p)
-        (warn  "re-frame: \"path\" expected a vector, got: " v))
+        (warn  "re-frame: \"path\" expected a vector, got: " p))
       (assoc-in db p (handler (get-in db p) v)))))
 
 
