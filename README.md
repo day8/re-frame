@@ -44,7 +44,7 @@ Features:
    Without realising it, you will be explicitly modelling time.
 4. It is fast, straight out of the box. You won't have to go through [this sort of pain](http://blog.scalyr.com/2013/10/angularjs-1200ms-to-35ms/).
 5. The surprising thing about re-frame is how simple it is. Beautifully simple! Our reference
-   implementation is little more than 100 lines of (ClojureScript) code. Learn it in an afternoon.
+   implementation is little more than 200 lines of (ClojureScript) code. Learn it in an afternoon.
 6. But it scales up nicely to more complex apps.  Frameworks are just pesky overhead at small
    scale - measure them instead by how they help you tame the complexity of bigger apps.
 7. Re-frame is impressively buzzword compliant: it has FRP-nature,
@@ -126,7 +126,7 @@ That doesn't mean re-frame wouldn't work well when
 servers are more centrally involved, it's just that we haven't tweaked it in that direction.
 
 Remember, re-frame is more of a pattern than an implementation, so you can easily fork it
-in whatever direction (GraphQL?) you need.  Did I mention it is only about 100 lines of code?
+in whatever direction (GraphQL?) you need.  Did I mention it is only about 200 lines of code?
 
 At small scale, any framework or architecture seems like pesky overhead. The
 explanatory examples in here are necessarily small scale, so you'll need to
@@ -297,7 +297,7 @@ building blocks, so let's now make sure we understand them.
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.
 
 From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame
-perspective, we'll tweak that paradigm ever so slightly and **view a `ratom` as having a value that
+perspective, we'll tweak that paradigm slightly and **view a `ratom` as having a value that
 changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
 `ratom` as a Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
 
@@ -338,9 +338,9 @@ Right, so that was a lot of words. Some code to clarify:
 (def app-db  (reagent/atom {:a 1}))           ;; our root ratom  (signal)
 
 (def ratom2  (reaction {:b (:a @app-db)}))    ;; reaction wraps a computation, returns a signal
-(def ratom3  (reaction (cond = (:b @ratom2)   ;; reaction wraps another computation
-                            0 "World"
-                            1 "Hello")))
+(def ratom3  (reaction (condp = (:b @ratom2)  ;; reaction wraps another computation
+                             0 "World"
+                             1 "Hello")))
 
 ;; Notice that both computations above involve de-referencing a ratom:
 ;;   - app-db in one case
@@ -351,7 +351,7 @@ Right, so that was a lot of words. Some code to clarify:
 (println @ratom2)    ;; ==>  {:b 1}       ;; a computed result, involving @app-db
 (println @ratom3)    ;; ==> "Hello"       ;; a computed result, involving @ratom2
 
-(reset!  app-db  {:a 0})        ;; this change to app-db, triggers re-computation
+(reset!  app-db  {:a 0})       ;; this change to app-db, triggers re-computation
                                ;; of ratom2
                                ;; which, in turn, causes a re-computation of ratom3
 
