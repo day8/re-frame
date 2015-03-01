@@ -12,10 +12,10 @@ y'know. Pretty good.
 
 Either:
 
-1.  You want to develop an app in ClojureScript, and you are looking for a framework; or
+1.  You want to develop an SPA in ClojureScript, and you are looking for a framework; or
 2.  You believe that, by early 2015, ReactJS had won the JavaScript framework wars and
-    you are curious about the bigger implications. Could the combination of
-    `reactive programming`, `functional programming` and `immutable data`
+    you are curious about the bigger implications. Is the combination of
+    `reactive programming`, `functional programming` and `immutable data` going to
     **completely change everything**?  If so, what would that look like in a language
     that embraces those paradigms?
 
@@ -575,8 +575,8 @@ Here's a component using a subscription:
          [:div "Hello" @name-ratom])))
 ```
 
-First, note this is a [Form-2](https://github.com/reagent-project/reagent/wiki/Creating-Components#form-2--a-function-returning-a-function)
-`component` ([there are 3 forms](https://github.com/reagent-project/reagent/wiki/Creating-Components)).
+First, note this is a [Form-2](https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components#form-2--a-function-returning-a-function)
+`component` ([there are 3 forms](https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components)).
 
 Previously in this document, we've used the simplest, `Form-1` components (no setup was required, just render).
 With `Form-2` components, there's a function returning a function:
