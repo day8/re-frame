@@ -5,7 +5,7 @@
                                    register-sub
                                    subscribe
                                    dispatch
-                                   path trim-v undoable]]))
+                                   path trim-v debug]]))
 
 ;; TODOs
 ;; add .gitignore
@@ -17,16 +17,15 @@
 ;; change example.html to todo.html
 ;; add middleware to save to local storage - beware using
 ;; check that (path )  does an identity test before swaping back in
-;; add apply-vector middleware
 
 ;; -- Helpers -------------
+(enable-console-print!)
 
 (defn next-id
   [todos]
   (if (empty? todos)
     0
     (inc (apply max (keys todos)))))  ;; hillariously inefficient, but yeah
-
 
 ;; -- Middleware -------------
 ;;
@@ -51,7 +50,7 @@
 ;;
 ;; Middleware means our handlers are pure and simple.
 ;;
-(def todo-middleware (comp undoable (path [:todos]) trim-v))
+(def todo-middleware (comp (path [:todos]) trim-v))
 
 
 ;; -- Handlers -------------
@@ -62,12 +61,11 @@
   (fn 
     [_ _]
     {:todos   (sorted-map)
-     :showing :all}
-    #_(merge db initial-db)))
+     :showing :all}))
 
 (register-pure-handler
   :set-showing
-  (comp undoable trim-v)     ;; middleware
+  trim-v
   (fn
     [db [filter-kw]]
     (assoc db :showing filter-kw)))
@@ -124,12 +122,21 @@
 
 ;; -- Subscriptions ---------
 
+
+(register-sub
+  :initialised?
+  (fn
+    [db _]
+    (reaction (not= {} @db))))
+
 (register-sub
   :visible-todos
   (fn
     [db _]
+
     (let [todos     (reaction (:todos @db))
           showing   (reaction (:showing @db))
+          _         (println @showing)
           filter-fn (case @showing
                       :active (complement :done)
                       :done :done
@@ -181,7 +188,7 @@
                  {:component-did-mount #(.focus (reagent/dom-node %))}))
 
 (defn stats-footer []
-  (let [footer-stats (subscribe :footer-stats)]
+  (let [footer-stats (subscribe [:footer-stats])]
     (fn []
       (let [[active done filter] @footer-stats
             props-for (fn [filter-kw]
@@ -245,7 +252,17 @@
        [:footer#info
         [:p "Double-click to edit a todo"]]])))
 
-(defn ^:export run
+(defn main-panel
+  []
+  (let [initialised? (subscribe  [:initialised?])]
+    (fn []
+      (if @initialised?
+        [todo-app]
+        [:div "Loading ...."]))))
+
+(defn ^:export main
   []
   (dispatch [:initialise-db])
-  (reagent/render [todo-app] (js/document.getElementById "app")))
+  (reagent/render [main-panel] (js/document.getElementById "app")))
+
+                 ;; you must always return the db
