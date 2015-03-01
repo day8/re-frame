@@ -35,9 +35,10 @@
     [db v]
     (if (satisfies? IReactiveAtom db)
       (str "re-frame: \"debug\" middleware used without prior \"pure\"."))
-    (warn "handler: " v)    ;; XXX don't use warn
-    (let [new-db  (handler db v)]
-      (warn "handler: " (data/diff db new-db))   ;; XXX don't use warn
+    (warn "event: " v)    ;; XXX don't use warn
+    (let [new-db  (handler db v)
+          diff    (data/diff db new-db)]
+      (warn "it was: "  (first diff)  "\nis now: " (second diff))    ;; XXX don't use warn
       new-db)))
 
 
