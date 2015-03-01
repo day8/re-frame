@@ -2,7 +2,7 @@
   (:require
     [re-frame.handlers   :as handlers]
     [re-frame.subs       :as subs]
-    [re-frame.middleware :as  middleware]))
+    [re-frame.middleware :as middleware]))
 
 
 ;; --  API  -------
@@ -17,15 +17,16 @@
 
 
 (def pure        middleware/pure)
+(def debug       middleware/debug)
 (def undoable    middleware/undoable)
 (def path        middleware/path)
 (def validate    middleware/validate)
-(def log-events  middleware/log-events)
 (def trim-v      middleware/trim-v)
+; (def log-events  middleware/log-events)
 
 
 
-;; --  Convienience API  -------
+;; --  Convienience  -------
 
 ;; virtually ever handler will be pure, make it easy
 (defn register-pure-handler
