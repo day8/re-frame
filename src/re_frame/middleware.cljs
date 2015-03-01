@@ -2,21 +2,43 @@
   (:require
     [reagent.ratom  :refer [IReactiveAtom]]
     [re-frame.undo  :refer [store-now!]]
-    [re-frame.utils :refer [warn]]))
+    [re-frame.utils :refer [warn]]
+    [clojure.data   :as data]))
 
 
-;; Read this:  https://github.com/Day8/re-frame/wiki/Middleware
-
+;; See docs in the Wiki: https://github.com/Day8/re-frame/wiki
 
 (defn pure
-  "Middleware which adapts a pure handler to the non-pure standard calling convention"
+  "Middleware which means a handler takes a value in the first parameter, not an atom.
+  If you strip away the error/efficiency checks, it is doing this:
+     (reset! app-db (handler @app-db event-vec))"
   [handler]
   (fn new-handler
     [app-db event-vec]
     (assert (satisfies? IReactiveAtom app-db)
-            (str "re-frame: pure not given a Ratom" (if (map? app-db) ". Perhaps \"pure\" is used twice.")))
-    (reset! app-db (handler @app-db event-vec))))
+            (str "re-frame: pure not given a Ratom."
+                 (if (map? app-db)
+                   " Looks like \"pure\" is in the middleware pipeline twice."
+                   (str " Got: " app-db))))
+    (let [orig-db @app-db
+          new-db  (handler orig-db event-vec)]
+      (if (nil? new-db)
+        (warn "re-frame: your pure handler returned nil. It should return the new db.")
+        (if-not (identical? orig-db new-db)
+           (reset! app-db new-db))))))
 
+
+(defn debug
+  "Middleware which dispays each event (to console) along with a diff on the db, before vs after"
+  [handler]
+  (fn new-handler
+    [db v]
+    (if (satisfies? IReactiveAtom db)
+      (str "re-frame: \"debug\" middleware used without prior \"pure\"."))
+    (warn "handler: " v)    ;; XXX don't use warn
+    (let [new-db  (handler db v)]
+      (warn "handler: " (data/diff db new-db))   ;; XXX don't use warn
+      new-db)))
 
 
 ;; warning: untested
@@ -31,14 +53,14 @@
 
 
 (defn trim-v
-  "Middleware which removes the first element of v. Asthetically improves your handlers"
+  "Middleware which removes the first element of v. It means you can write
+  more asthetically pleasing handlers"
   [handler]
   (fn new-handler
     [db v]
-    (handler db (rest v))))
+    (handler db (vec (rest v)))))
 
 
-;; warning: untested
 (defn path
   "Supplies a sub-tree of `app-db` to the handler.
   Assumes pure is in the middleware pipeline prior.
@@ -55,7 +77,6 @@
       (assoc-in db p (handler (get-in db p) v)))))
 
 
-;; warning: untested
 (defn validate
   "Middleware that applies a validation function to the db after the handler is finished.
 The validation function f, might assoc warnings and errors to the new state, created by the handler.
@@ -69,7 +90,7 @@ By validation, I mean validation of what the user has entered, or the state they
 
 
 ;; warning: untested
-(defn log-events
+#_(defn log-events
   "Middleware that logs events (vec) using to the given logger fucntion"
   [logger]
   (fn middleware
