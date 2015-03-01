@@ -2,16 +2,19 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Example</title>
+    <title>Reframe Todomvc</title>
     <link rel="stylesheet" href="todos.css">
   </head>
   <body>
     <div id="app">
-      <h1>Reagent example app – see README.md</h1>
+      <h1>Re-frame example app</h1>
     </div>
     <script src="target/client.js"></script>
     <script>
-      todomvc.core.run();
+        window.onload = function () {
+            // Notice that "-" gets turned into "_" when in javscript-land
+            todomvc.dev.start();
+        }
     </script>
   </body>
 </html>
