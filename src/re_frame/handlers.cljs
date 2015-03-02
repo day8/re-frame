@@ -31,23 +31,25 @@
 ;; Moves events from "dispatch" to the router loop.
 ;; Allows for the aysnc handling of events.
 ;;
-(def ^:private event-chan (chan))    ;; TODO: how big should we make the buffer?
+(def ^:private event-chan (chan))    ;; TODO: set buffer size?
 
 
 ;; -- lookup and call -----------------------------------------------------------------------------
+(defn lookup-handler
+  [event-id]
+  (get @id->fn event-id))
 
-(defn- handle
+(defn handle
   "Given an event vector, look up the right handler, then call it.
   By default, handlers are not assumed to be pure. They are called with
   two paramters:
   - the `app-db` atom and
   - the event vector
   The handler is assumed to side-effect on the atom, the return value is ignored.
-   To write handlers that are pure functions, use the \"pure\" middleware at handler
-   registration time."
+  To write pure handlers, use the \"pure\" middleware when registering the handler."
   [event-v]
   (let [event-id    (first-in-vector event-v)
-        handler-fn  (get @id->fn event-id)]
+        handler-fn  (lookup-handler event-id)]
     (if (nil? handler-fn)
       (warn "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")   ;; TODO: make exception
       (handler-fn app-db event-v))))
@@ -80,9 +82,11 @@
 ;; -- dispatch ------------------------------------------------------------------------------------
 
 (defn dispatch
-  "reagent components use this function to send events.
+  "Send an event to be processed by the registered handler.
+
   Usage example:
-     (dispatch [:delete-item 42])"
+     (dispatch [:delete-item 42])
+  "
   [event-v]
   (if (nil? event-v)
     (warn "re-frame: \"dispatch\" is ignoring a nil event.")     ;; nil would close the channel
