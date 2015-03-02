@@ -1,9 +1,9 @@
-(defproject todomvc-re-frame "0.1.8"
+(defproject todomvc-re-frame "0.2.0"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2816"]
                  [reagent "0.5.0-alpha3"]
                  [figwheel "0.2.3-SNAPSHOT"]
-                 [re-frame "0.1.8"]]
+                 [re-frame "0.2.0"]]
 
   :plugins [[lein-cljsbuild "1.0.4"]
             [lein-figwheel "0.2.3-SNAPSHOT"]]
