@@ -32,11 +32,12 @@
       (if (nil? new-db)
         (warn "re-frame: your pure handler returned nil. It should return the new db.")
         (if-not (identical? orig-db new-db)
-           (reset! app-db new-db))))))
+          (reset! app-db new-db))))))
 
 
 (defn debug
-  "Middleware which dispays each event (to console) along with a diff on the db, before vs after"
+  "Middleware which logs (console) debug information for each event.
+  Includes a clojure.data/diff of the db, before vs after, showing changes."
   [handler]
   (fn new-handler
     [db v]
@@ -45,8 +46,8 @@
     (group "event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
-      (log  "before: " (first diff))
-      (log " after: " (second diff))
+      (log "only before: " (first diff))
+      (log " only after: " (second diff))
       (groupEnd)
       new-db)))
 
@@ -86,9 +87,10 @@
 
 
 (defn validate
-  "Middleware that applies a validation function to the db after the handler is finished.
-The validation function f, might assoc warnings and errors to the new state, created by the handler.
-By validation, I mean validation of what the user has entered, or the state they have taken the app too"
+  "Middleware factory which applies a given validation function \"f\" to db
+  after the handler is finished.
+  This validation function f, might further change db, by perhaps
+   assoc-ing warnings and errors into db. "
   [f]
   (fn middleware
     [handler]
