@@ -37,19 +37,4 @@
     (register-handler id [pure middleware] handler)))
 
 
-(defn comp-middleware
-  "Given a vector of middleware, filter out any nils, and use comp to compose.
-  v can  be vectors of vectors and will be flattended before use.
-  For convienience, if v turns out to already be a function, just return it."
-  [v]
-  (if (ifn? v)     ;; noop if v is a fucntion
-    v
-    (do
-      (assert  (or (vector? v) (list v))
-               (str "re-frame:  compose expects a vector, got: " v))
-      (let [v (remove nil? (flatten v))]
-        (cond
-          (empty? v)       noop
-          (= 1 (count v))  (first v)
-          :else            (apply comp v))))))
 
