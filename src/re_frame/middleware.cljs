@@ -2,15 +2,22 @@
   (:require
     [reagent.ratom  :refer [IReactiveAtom]]
     [re-frame.undo  :refer [store-now!]]
-    [re-frame.utils :refer [warn]]
+    [re-frame.utils :refer [warn log dbg group groupEnd]]
     [clojure.data   :as data]))
 
 
 ;; See docs in the Wiki: https://github.com/Day8/re-frame/wiki
 
+(defn noop
+  "Middleware which does nothing"
+  [handler]
+  handler)
+
 (defn pure
-  "Middleware which means a handler takes a value in the first parameter, not an atom.
-  If you strip away the error/efficiency checks, it is doing this:
+  "Acts as an adaptor, allowing handlers to be writen as pure functions.
+  The re-frame router will pass in an atom as the first parameter. This middleware
+  adapts that to the value within the atom.
+  If you strip away the error/efficiency checks, this middleware does this:
      (reset! app-db (handler @app-db event-vec))"
   [handler]
   (fn new-handler
@@ -35,22 +42,22 @@
     [db v]
     (if (satisfies? IReactiveAtom db)
       (str "re-frame: \"debug\" middleware used without prior \"pure\"."))
-    (warn "event: " v)    ;; XXX don't use warn
+    (group "event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
-      (warn "it was: "  (first diff)  "\nis now: " (second diff))    ;; XXX don't use warn
+      (log  "before: " (first diff))
+      (log " after: " (second diff))
+      (groupEnd)
       new-db)))
 
 
-;; warning: untested
 (defn undoable
-  "Middleware which stores an undo checkpoint, prior to handler being called."
+  "Middleware which stores an undo checkpoint."
   [handler]
   (fn new-handler
     [app-db event-vec]
     (store-now!)
     (handler app-db event-vec)))
-
 
 
 (defn trim-v
@@ -64,7 +71,7 @@
 
 (defn path
   "Supplies a sub-tree of `app-db` to the handler.
-  Assumes pure is in the middleware pipeline prior.
+  Assumes \"pure\" is in the middleware pipeline prior.
   Grafts the result back into app-db."
   [p]
   (fn middleware
@@ -100,8 +107,6 @@ By validation, I mean validation of what the user has entered, or the state they
       [db v]
       (logger v)
       (handler db v))))
-
-
 
 
 ;; warning: untested
