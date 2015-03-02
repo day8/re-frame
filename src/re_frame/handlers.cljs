@@ -20,11 +20,11 @@
   "
   [v]
   (cond
-    (fn? v)        v  ;; assumed to be existing middleware
+    (fn? v)       v  ;; assumed to be existing middleware
     (vector? v)   (let [v (remove nil? (flatten v))]
                     (cond
                       (empty? v)       (fn [h] h)   ;; noop middleware
-                      (= 1 (count v))  (first v)
+                      (= 1 (count v))  (first v)    ;; only one middleware, no composing needed
                       :else            (apply comp v)))
     :else         (assert  (vector? v)
                            (str "re-frame:  compose expects a vector, got: " v))))
