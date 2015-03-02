@@ -16,8 +16,8 @@
   (reset! max-undos n))
 
 ;;
-(def ^:private undo-list (reagent/atom []))   ;; a list of history states
-(def ^:private redo-list (reagent/atom []))   ;; a list of future states, caused by undoing
+(def ^:private undo-list (atom []))   ;; a list of history states
+(def ^:private redo-list (atom []))   ;; a list of future states, caused by undoing
 
 
 (defn clear-history!
