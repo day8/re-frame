@@ -27,6 +27,19 @@
     0
     (inc (apply max (keys todos)))))  ;; hillariously inefficient, but yeah
 
+
+(defn filter-fn-for
+  [showing-kw]
+  (case showing-kw
+    :active (complement :done)
+    :done   :done
+    :all    identity))
+
+
+(defn completed-count
+  [todos]
+  (count (filter :done todos)))
+
 ;; -- Middleware -------------
 ;;
 ;; Handlers can be wrapped in middleware.
@@ -50,8 +63,9 @@
 ;;
 ;; Middleware means our handlers are pure and simple.
 ;;
-(def todo-middleware (comp (path [:todos]) trim-v))
-
+(def todo-middleware (comp (path [:todos])
+                           debug
+                           trim-v ))
 
 ;; -- Handlers -------------
 
@@ -65,7 +79,7 @@
 
 (register-pure-handler
   :set-showing
-  trim-v
+  (comp debug trim-v)
   (fn
     [db [filter-kw]]
     (assoc db :showing filter-kw)))
@@ -113,12 +127,10 @@
   todo-middleware
   (fn
     [todos _]
-    (let [completed-ids (->> (vals todos)     ;; use a transducer XXX
-                             (remove :done)
-                             (map :id))]
-      (reduce #(dissoc %1 %2)
-              todos
-              completed-ids))))
+    (->> (vals todos)
+         (remove :done)
+         (map :id)
+         (reduce dissoc todos))))
 
 ;; -- Subscriptions ---------
 
@@ -133,34 +145,41 @@
   :visible-todos
   (fn
     [db _]
-
     (let [todos     (reaction (:todos @db))
-          showing   (reaction (:showing @db))
-          _         (println @showing)
-          filter-fn (case @showing
-                      :active (complement :done)
-                      :done :done
-                      :all identity)]
-    (reaction (filter filter-fn (vals @todos))))))
+          showing   (reaction (:showing @db))]
+    (reaction (filter (filter-fn-for @showing)
+                      (vals @todos))))))
 
 
 (register-sub
   :completed-count
   (fn
     [db _]
-    (reaction (->> (:todos @db)
-                   (filter :done)
-                   count))))
+    (reaction (completed-count (:todos @db)))))
 
-(register-sub
+
+#_(register-sub
   :footer-stats
   (fn
     [db _]
     (let [todos (reaction (:todos @db))
           completed-count (subscribe [:completed-count])
-          active-count    (reaction (- (count @todos) @completed-count))
+          active-count    (reaction (- (count (vals @todos)) @completed-count))
           showing         (reaction (:showing @db))]
-      (reaction [@active-count @completed-count @showing]))))  ;; tuple
+      (reaction
+        [@active-count @completed-count @showing]))))  ;; tuple
+
+(register-sub
+  :footer-stats
+  (fn
+    [db _]
+    (reaction
+      (let [todos (:todos @db)
+            completed-count (completed-count todos)
+            active-count    (- (count todos) completed-count)
+            showing         (:showing db)]
+        [active-count completed-count showing]))))  ;; tuple
+
 
 
 ;; -- Components ---------
@@ -187,13 +206,15 @@
 (def todo-edit (with-meta todo-input
                  {:component-did-mount #(.focus (reagent/dom-node %))}))
 
-(defn stats-footer []
+(defn stats-footer
+  []
   (let [footer-stats (subscribe [:footer-stats])]
     (fn []
       (let [[active done filter] @footer-stats
             props-for (fn [filter-kw]
                         {:class (if (= filter-kw filter) "selected")
                          :on-click #(dispatch [:set-showing filter-kw])})]
+        (println active done filter)
         [:footer#footer
          [:div
           [:span#todo-count
@@ -206,7 +227,8 @@
             [:button#clear-completed {:on-click #(dispatch [:clear-completed])}
              "Clear completed " done])]]))))
 
-(defn todo-item []
+(defn todo-item
+  []
   (let [editing (atom false)]
     (fn [{:keys [id done title]}]
       [:li {:class (str (if done "completed ")
@@ -228,7 +250,8 @@
      ^{:key (:id todo)} [todo-item todo])])
 
 
-(defn todo-app []
+(defn todo-app
+  []
   (let [visible-todos   (subscribe [:visible-todos])
         completed-count (subscribe [:completed-count])]
     (fn []
@@ -245,7 +268,7 @@
             [:input#toggle-all
              {:type "checkbox"
               :checked (pos? @completed-count)
-              :on-change #(dispatch [:complete-all (zero? @completed-count)])}]
+              :on-change #(dispatch [:complete-all (pos? @completed-count)])}]
             [:label {:for "toggle-all"} "Mark all as complete"]
             [todo-list visible-todos]]
            [stats-footer]])]
