@@ -43,7 +43,7 @@
     [db v]
     (if (satisfies? IReactiveAtom db)
       (str "re-frame: \"debug\" middleware used without prior \"pure\"."))
-    (group "event: " v)
+    (group "re-frame event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
       (log "only before: " (first diff))
