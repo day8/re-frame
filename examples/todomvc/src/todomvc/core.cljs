@@ -8,17 +8,15 @@
                                    path trim-v debug]]))
 
 ;; TODOs
-;; add .gitignore
 ;; Get preoject.cljs up to speed  `lein run`  lein debug`
 ;; split into files  view, handlers, subs, middleware
 ;; load todos off localstorage via merge ... and write back
 ;; Show off debugging capabiliteis
 ;; Add Prismatic schema - modules called state
-;; change example.html to todo.html
-;; add middleware to save to local storage - beware using
-;; check that (path )  does an identity test before swaping back in
+;; add middleware to save to local storage
 
 ;; -- Helpers -------------
+
 (enable-console-print!)
 
 (defn next-id
@@ -37,8 +35,9 @@
 
 
 (defn completed-count
+  "return the count of todos which have a :done of true"
   [todos]
-  (count (filter :done todos)))
+  (count (filter :done (vals todos))))
 
 ;; -- Middleware -------------
 ;;
@@ -63,23 +62,22 @@
 ;;
 ;; Middleware means our handlers are pure and simple.
 ;;
-(def todo-middleware (comp (path [:todos])
-                           debug
-                           trim-v ))
+(def todo-middleware [(path [:todos])  debug trim-v])
 
 ;; -- Handlers -------------
 
 ;; we dispatch this event on program startup - responsible for initialising-db
 (register-pure-handler
   :initialise-db
-  (fn 
+  [debug]     ;; middleware
+  (fn
     [_ _]
     {:todos   (sorted-map)
      :showing :all}))
 
 (register-pure-handler
   :set-showing
-  (comp debug trim-v)
+  [debug trim-v]     ;; middleware
   (fn
     [db [filter-kw]]
     (assoc db :showing filter-kw)))
@@ -93,13 +91,16 @@
       (assoc todos id {:id id :title text :done false}))))
 
 (register-pure-handler
-  :complete-all
+  :complete-all-toggle
   todo-middleware
   (fn
-    [todos [val]]
-    (reduce #(assoc-in %1 [%2 :done] val)
-            todos
-            (keys todos))))
+    [todos []]
+    (let [val (every? (comp true? :done) (vals todos))]
+      (println "todos " todos)
+      (println "val " val)
+      (reduce #(assoc-in %1 [%2 :done] val)
+              todos
+              (keys todos)))))
 
 (register-pure-handler
   :toggle-done
@@ -128,12 +129,11 @@
   (fn
     [todos _]
     (->> (vals todos)
-         (remove :done)
+         (filter :done)
          (map :id)
          (reduce dissoc todos))))
 
 ;; -- Subscriptions ---------
-
 
 (register-sub
   :initialised?
@@ -145,11 +145,8 @@
   :visible-todos
   (fn
     [db _]
-    (let [todos     (reaction (:todos @db))
-          showing   (reaction (:showing @db))]
-    (reaction (filter (filter-fn-for @showing)
-                      (vals @todos))))))
-
+    (reaction (filter (filter-fn-for (:showing @db))
+                      (vals (:todos @db))))))
 
 (register-sub
   :completed-count
@@ -181,7 +178,6 @@
         [active-count completed-count showing]))))  ;; tuple
 
 
-
 ;; -- Components ---------
 
 
@@ -190,8 +186,8 @@
         stop #(do (reset! val "")
                   (if on-stop (on-stop)))
         save #(let [v (-> @val str clojure.string/trim)]
-                (if-not (empty? v) (on-save v))
-                (stop))]
+               (if-not (empty? v) (on-save v))
+               (stop))]
     (fn [props]
       [:input (merge props
                      {:type "text"
@@ -199,12 +195,12 @@
                       :on-blur save
                       :on-change #(reset! val (-> % .-target .-value))
                       :on-key-down #(case (.-which %)
-                                      13 (save)
-                                      27 (stop)
-                                      nil)})])))
+                                     13 (save)
+                                     27 (stop)
+                                     nil)})])))
 
 (def todo-edit (with-meta todo-input
-                 {:component-did-mount #(.focus (reagent/dom-node %))}))
+                          {:component-did-mount #(.focus (reagent/dom-node %))}))
 
 (defn stats-footer
   []
@@ -268,7 +264,7 @@
             [:input#toggle-all
              {:type "checkbox"
               :checked (pos? @completed-count)
-              :on-change #(dispatch [:complete-all (pos? @completed-count)])}]
+              :on-change #(dispatch [:complete-all-toggle])}]
             [:label {:for "toggle-all"} "Mark all as complete"]
             [todo-list visible-todos]]
            [stats-footer]])]
@@ -288,4 +284,4 @@
   (dispatch [:initialise-db])
   (reagent/render [main-panel] (js/document.getElementById "app")))
 
-                 ;; you must always return the db
+;; you must always return the db
