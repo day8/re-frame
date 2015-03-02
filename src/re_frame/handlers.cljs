@@ -1,11 +1,11 @@
 (ns re-frame.handlers
   (:refer-clojure :exclude [flush])
   (:require-macros [cljs.core.async.macros :refer [go-loop go]])
-  (:require [reagent.core     :refer [flush]]
-            [re-frame.db      :refer [app-db]]
-            [re-frame.utils   :refer [first-in-vector warn]]
-            [cljs.core.async  :refer [chan put! <! timeout]]))
-
+  (:require [reagent.core        :refer [flush]]
+            [re-frame.db         :refer [app-db]]
+           ; [re-frame.middleware :refer [noop]]
+            [re-frame.utils      :refer [first-in-vector warn]]
+            [cljs.core.async     :refer [chan put! <! timeout]]))
 
 
 ;; -- composing middleware  -----------------------------------------------------------------------
@@ -14,21 +14,29 @@
   "Given a vector of middleware, filter out any nils, and use \"comp\" to compose them.
   v can have nested vectors, and will be flattended before \"comp\" is applied.
   For convienience, if v turns out to already be a function (assumed to be
-  middleware), just return it."
+  middleware), just return it.
+  Filtering out nils allows us to create Middlewhere conditionally like this:
+     (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil
+  "
   [v]
   (cond
-    (ifn? v)      v  ;; assumed to be existing middleware
+    (fn? v)        v  ;; assumed to be existing middleware
     (vector? v)   (let [v (remove nil? (flatten v))]
                     (cond
-                      (empty? v)       noop
+                      (empty? v)       (fn [h] h)   ;; noop middleware
                       (= 1 (count v))  (first v)
                       :else            (apply comp v)))
     :else         (assert  (vector? v)
                            (str "re-frame:  compose expects a vector, got: " v))))
 
+
 ;; -- the register of event handlers --------------------------------------------------------------
 
 (def ^:private id->fn  (atom {}))
+
+(defn lookup-handler
+  [event-id]
+  (get @id->fn event-id))
 
 (defn register
   "register a handler for an event"
@@ -38,8 +46,8 @@
     (swap! id->fn assoc event-id handler-fn))
 
   ([event-id middleware handler-fn]
-    (let  [mware     (comp-middleware middleware)
-           hander-fn (mware handler-fn)]
+    (let  [mid-ware  (comp-middleware middleware)
+           hander-fn (mid-ware handler-fn)]
       (register event-id hander-fn))))
 
 
@@ -52,9 +60,6 @@
 
 
 ;; -- lookup and call -----------------------------------------------------------------------------
-(defn lookup-handler
-  [event-id]
-  (get @id->fn event-id))
 
 (defn handle
   "Given an event vector, look up the right handler, then call it.

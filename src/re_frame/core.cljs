@@ -16,7 +16,6 @@
 
 
 
-(def noop        middleware/noop)
 (def pure        middleware/pure)
 (def debug       middleware/debug)
 (def undoable    middleware/undoable)
@@ -27,9 +26,9 @@
 
 
 
-;; --  Convienience  -------
+;; --  Convenience API -------
 
-;; virtually ever handler will be pure, make it easy
+;; virtually every handler will be pure, ao make it easy
 (defn register-pure-handler
   ([id handler]
     (register-handler id pure handler))
