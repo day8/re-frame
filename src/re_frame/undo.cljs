@@ -3,7 +3,7 @@
   (:require
     [reagent.core      :as     reagent]
     [re-frame.db       :refer  [app-db]]
-    [re-frame.handlers :as     handlers ]
+    [re-frame.handlers :as     handlers]
     [re-frame.subs     :as     subs ]))
 
 
@@ -16,14 +16,14 @@
   (reset! max-undos n))
 
 ;;
-(def ^:private undo-list (atom []))   ;; a list of history states
-(def ^:private redo-list (atom []))   ;; a list of future states, caused by undoing
+(def ^:private undo-list (reagent/atom []))   ;; a list of history states
+(def ^:private redo-list (reagent/atom []))   ;; a list of future states, caused by undoing
 
 
 (defn clear-history!
   []
   (reset! undo-list [])
-  (reset! undo-list []))
+  (reset! redo-list []))
 
 
 (defn store-now!
@@ -34,22 +34,30 @@
                            @max-undos
                            (conj @undo-list @app-db)))))
 
+(defn undos?
+  []
+  (>= (count @undo-list) 1))
+
+(defn redos?
+  []
+  (> (count @redo-list) 0))
+
 
 ;; -- subscriptions  -----------------------------------------------------------------------------
 
 (subs/register
   :undos?
   (fn handler
-    ; "return true is anything is stored in the undo list, otherwise false"
+    ; "return true if anything is stored in the undo list, otherwise false"
     [_ _]
-    (reaction (> (count @undo-list) 1))))
+    (reaction (undos?))))
 
 (subs/register
   :redos?
   (fn handler
-    ; "return true is anything is stored in the redo list, otherwise false"
+    ; "return true if anything is stored in the redo list, otherwise false"
     [_ _]
-    (reaction (> (count @redo-list) 0))))
+    (reaction (redos?))))
 
 
 ;; -- event handlers  ----------------------------------------------------------------------------
