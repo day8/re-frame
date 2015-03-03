@@ -36,11 +36,11 @@
 
 (defn undos?
   []
-  (>= (count @undo-list) 1))
+  (pos? (count @undo-list)))
 
 (defn redos?
   []
-  (> (count @redo-list) 0))
+  (pos? (count @redo-list)))
 
 
 ;; -- subscriptions  -----------------------------------------------------------------------------
@@ -66,9 +66,9 @@
   :undo                ;; usage:  (dispatch [:undo])
   (fn handler
     [_ _]
-    (when (> (count @undo-list) 0)
-      (reset! app-db (last @undo-list))
+    (when (undos?)
       (reset! redo-list (cons @app-db @redo-list))
+      (reset! app-db (last @undo-list))
       (reset! undo-list (pop @undo-list)))))
 
 
@@ -76,7 +76,7 @@
   :redo                ;; usage:  (dispatch [:redo])
   (fn handler
     [_ _]
-    (when (> (count @redo-list) 0)
+    (when (redos?)
       (reset! app-db (first @redo-list))
       (reset! redo-list (rest @redo-list))
       (reset! undo-list (conj @undo-list @app-db)))))
