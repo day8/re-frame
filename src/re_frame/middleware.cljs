@@ -17,7 +17,7 @@
   "Acts as an adaptor, allowing handlers to be writen as pure functions.
   The re-frame router will pass in an atom as the first parameter. This middleware
   adapts that to the value within the atom.
-  If you strip away the error/efficiency checks, this middleware does this:
+  If you strip away the error/efficiency checks, this middleware is just:
      (reset! app-db (handler @app-db event-vec))"
   [handler]
   (fn new-handler
@@ -36,7 +36,7 @@
 
 
 (defn debug
-  "Middleware which logs (console) debug information for each event.
+  "Middleware which logs debug information to js/console for each event.
   Includes a clojure.data/diff of the db, before vs after, showing changes."
   [handler]
   (fn new-handler
@@ -62,8 +62,13 @@
 
 
 (defn trim-v
-  "Middleware which removes the first element of v. It means you can write
-  more asthetically pleasing handlers"
+  "Middleware which removes the first element of v. Its use means you can write
+  more asthetically pleasing handlers.
+  Your handlers will look like this:
+      (defn my-handler
+        [db [x y z]]    ;; <-- instead of [_ x y z]
+        ....)
+  "
   [handler]
   (fn new-handler
     [db v]
@@ -71,9 +76,9 @@
 
 
 (defn path
-  "Supplies a sub-tree of `app-db` to the handler.
+  "Supplies a sub-tree of `db` to the handler. A narrowed view.
   Assumes \"pure\" is in the middleware pipeline prior.
-  Grafts the result back into app-db."
+  Grafts the result back into db."
   [p]
   (fn middleware
     [handler]
