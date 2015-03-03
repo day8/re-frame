@@ -1,9 +1,50 @@
-# Reagent example app
+# TodoMVC done with re-frame
 
-Run "`lein figwheel`" in a terminal to compile the app, and then open example.html.
 
-Any changes to ClojureScript source files (in `src`) will be reflected in the running page immediately (while "`lein figwheel`" is running).
 
-Run "`lein clean; lein with-profile prod compile`" to compile an optimized version.
 
-Original reagent example code found at https://github.com/reagent-project/reagent
+## Setup And Run
+
+This demo is delivered as part of re-frame.
+
+Before you start, ensure you have lein XXX
+
+1. Get the re-frame repo
+   ```
+   git clone https://github.com/Day8/re-frame.git
+   ```
+
+2. go to the right example directory
+   ```
+   cd re-frame/examples/todomvc
+   ```
+
+3. build
+   ```
+   lein cljsbuild once
+   ```
+
+4. run
+   ```
+   open todo.html
+   ```
+
+## Exploring The Code
+
+From the re-frame readme:
+```
+To build a re-frame app, you:
+  - design your app's data structure (data layer)
+  - write and register subscription functions (query layer)
+  - write Reagent component functions (view layer)
+  - write and register event handler functions (control layer and/or state transition layer)
+```
+
+Each of these
+
+
+## Notes
+
+
+1. A modified version of [the offical reagent example](https://github.com/reagent-project/reagent/tree/master/examples/todomvc)
+
