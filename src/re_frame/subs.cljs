@@ -17,7 +17,7 @@
 
 
 (defn subscribe
-  "returns a reagent/reaction which observes a part of the "
+  "returns a reagent/reaction which observes a part of app-db"
   [v]
   (let [key-v       (first-in-vector v)
         handler-fn  (get @key->fn key-v)]
