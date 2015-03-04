@@ -615,7 +615,7 @@ So let's now look at how to write and register the subscription handler for `:cu
    (reaction (get-in @db [:path :to :a :map cid])))    ;; re-runs each time db changes
   
 ;; register our query handler
-(register-subs
+(register-sub
    :customer-query       ;; the id (the name of the query()
    customer-query)       ;; the function which will perform the query
 ```
@@ -675,7 +675,7 @@ Let's sketch out the situation described above ...
 The subscription-handler might be written:
 
 ```Clojure
-(register-subs
+(register-sub
  :sorted-items      ;; the query id  (the name of the query)
  (fn [db [_]]       ;; the handler for the subscription
    (reaction
@@ -731,7 +731,7 @@ Luckily, we can easily fix that up by tweaking our subscription function so
 that it chains `reactions`:
 
 ```Clojure
-(register-subs
+(register-sub
  :sorted-items             ;; the query id
  (fn [db [_]]
    (let [items      (reaction (get-in @db [:some :path :to :items]))]  ;; reaction #1
