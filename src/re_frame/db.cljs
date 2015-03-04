@@ -5,6 +5,7 @@
 ;; -- Application State  --------------------------------------------------------------------------
 ;;
 ;; Should not be accessed directly by application code
-;; Access is mediated via handlers and subscriptions
+;; Read access goes through subscriptions.
+;; Updates via event handlers.
 (def  app-db (reagent/atom {}))
 
