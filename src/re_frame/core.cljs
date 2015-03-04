@@ -2,14 +2,15 @@
   (:require
     [re-frame.handlers   :as handlers]
     [re-frame.subs       :as subs]
+    [re-frame.router     :as router]
     [re-frame.middleware :as middleware]))
 
 
 ;; --  API  -------
 
 (def register-handler handlers/register)
-(def dispatch         handlers/dispatch)
-(def dispatch-sync    handlers/dispatch-sync)
+(def dispatch         router/dispatch)
+(def dispatch-sync    router/dispatch-sync)
 
 (def register-sub  subs/register)
 (def subscribe     subs/subscribe)
@@ -22,6 +23,7 @@
 (def path        middleware/path)
 (def validate    middleware/validate)
 (def trim-v      middleware/trim-v)
+(def after       middleware/after)
 ; (def log-events  middleware/log-events)
 
 
