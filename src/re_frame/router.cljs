@@ -33,8 +33,8 @@
                           (do (flush) (<! (timeout 20)))  ;; wait just over one annimation frame (16ms), to rensure all pending GUI work is flushed to the DOM.
                           (<! (timeout 0)))]              ;; just in case we are handling one dispatch after an other, give the browser back control to do its stuff
            (try
-             (handle event-v)
-             (catch js/Object e  (.error js/console e)))  ;; exceptions are a special kind of rubbish you are in a goloop. So catch it here and print.
+             (handle event-v)                             ;; XXX There should be a plugable place to write exceptions and wanrs
+             (catch js/Object e  (.error js/console e)))  ;; exceptions are a special kind of rubbish when you are in a goloop. So catch it here and print.
            (recur)))
 
 
@@ -53,7 +53,6 @@
   nil)   ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Returning-False
 
 
-;; TODO: remove sync handling.  I don't like it much, even for testing.
 (defn dispatch-sync
   "Invoke the event handler sycronously, avoiding the async-inducing use of core.async/chan"
   [event-v]
