@@ -2,6 +2,7 @@
   (:require
     [schema.core :as s :include-macros true]))
 
+
 ;; -- Schema ------------------------------------------------------------------
 ;;
 ;; A Primatic Schema for the contents of `app-db`. At any time we can validate
@@ -16,7 +17,7 @@
 (def schema
   {:todos   (s/both (s/pred map?) (s/pred sorted?))
    :showing (s/enum :all :done :active)
-   :blah (s/enum :all :done :active)   ;; add this bogus schema item in, then watch the console
+   :mistake (s/enum :one :two)   ;; add this bogus schema item in, then watch the console
    })
 
 
@@ -24,8 +25,7 @@
   [db]
   (let [res (s/check schema db)]
     (if (some? res)
-      (.error js/console res))
-    db))  ;; so it can be used in middleare
+      (.error js/console (str "schema problem: " res)))))
 
 
 ;; -- Default Value  ----------------------------------------------------------
@@ -37,6 +37,20 @@
 
 
 
+;; -- Local Storage  ----------------------------------------------------------
+;;
+;;  Set and Get
+
+(def local-storage-key "re-frame-todomvc")
+
+(defn get-local-storage
+  []
+  (let [data (.getItem js/localStorage local-storage-key)]
+    (when-not (nil? data)
+      (-> data (js/JSON.parse) (js->clj :keywordize-keys true)))))
 
 
-
+(defn set-local-storage!
+  [db]
+  (let [data (-> db (clj->js) (js/JSON.stringify))]
+    (.setItem js/localStorage local-storage-key data)))
