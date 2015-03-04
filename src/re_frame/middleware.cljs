@@ -8,10 +8,6 @@
 
 ;; See docs in the Wiki: https://github.com/Day8/re-frame/wiki
 
-(defn noop
-  "Middleware which does nothing"
-  [handler]
-  handler)
 
 (defn pure
   "Acts as an adaptor, allowing handlers to be writen as pure functions.
@@ -37,7 +33,8 @@
 
 (defn debug
   "Middleware which logs debug information to js/console for each event.
-  Includes a clojure.data/diff of the db, before vs after, showing changes."
+  Includes a clojure.data/diff of the db, before vs after, showing the changes
+  caused by the event."
   [handler]
   (fn new-handler
     [db v]
@@ -62,8 +59,8 @@
 
 
 (defn trim-v
-  "Middleware which removes the first element of v. Its use means you can write
-  more asthetically pleasing handlers.
+  "Middleware which removes the first element of v which allows you to write
+  more asthetically pleasing handlers. No leading underscore on the event-v!
   Your handlers will look like this:
       (defn my-handler
         [db [x y z]]    ;; <-- instead of [_ x y z]
@@ -79,7 +76,8 @@
   "Supplies a sub-tree of `db` to the handler. A narrowed view.
   Assumes \"pure\" is in the middleware pipeline prior.
   Grafts the result back into db.
-  If a get-in of the path results in a nil, then \"default-fn\" will be called to supply a value."
+  If a get-in of the path results in a nil, then \"default-fn\" will be called to supply a value.
+  XXX very like update-in. Should the name be more indicative of that closeness? "
   ([p]
     (path p hash-map))
   ([p default-fn]
@@ -97,16 +95,47 @@
 
 
 (defn validate
-  "Middleware factory which applies a given validation function \"f\" to db
-  after the handler is finished.
-  This validation function f, might further change db, by perhaps
-   assoc-ing warnings and errors into db. "
+  "Middleware factory which runs a given function \"f\" in the after position.
+  \"f\" is given the new db value and is expected to perform certain kinds of
+  \"overall\" checks on this new state, adding to it (or removing) necessary
+  errors and warnings.
+  This need is such a common pattern!! There are invariably a category of
+  checks that require \"overall knowledge\".
+  For example, imagine that todomvc had to do duplicate detection - if any
+  two todos had the same text, highlight them, and put a warning down the
+  bottom.
+  That requires access to all todos, plus the ability to assoc in one or
+  more duplicate reports. Perhaps make the background of these todos pink
+  as a sign of the problem.
+  And that's just one kind of check, there may be a few that need to run
+  on every change.
+  \"f\" would need to be both adding and removing the duplicate warnings.
+  We don't want to pollute each handler with calls to \"f\", so we
+  simply add it to the middleware for each handler, and presto the checks are
+  always run.
+  This is a genuine part of the Derived Data, flowing thing."
   [f]
   (fn middleware
     [handler]
     (fn new-handler
       [db v]
       (f (handler db v)))))
+
+
+
+(defn after
+  "Middleware factory which runs a function \"f\" in the \"after handler\"
+  position presumably for side effects.
+  \"f\" is given the value of \"db\". It's return value is ignored.
+  Examples: \"f\" can run schema validation. Or write current state to localstorage. etc."
+  [f]
+  (fn middleware
+    [handler]
+    (fn new-handler
+      [db v]
+      (let [new-db (handler db v)]
+        (f new-db)   ;; call f for side effects
+        new-db))))
 
 
 ;; warning: untested
@@ -120,18 +149,3 @@
       (logger v)
       (handler db v))))
 
-
-;; warning: untested
-;; check the state of db AFTER the handler has run, using a prismatic Schema.
-#_(defn check-schema
-"Middleware for checking that a handlers mutations leave the state in a schema-matching way"
-[a-prismatic-schema]
-(fn middleware
-  [next-handler]
-  (fn handler
-    [db v]
-    (let [val    (next-handler db v)
-          valid? true]   ;; XXXXX  replace true by code which checks the schema using original parameter
-      (if (not valid?)
-        (warn "re-frame: schema not valid after:" v))
-      val))))
