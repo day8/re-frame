@@ -1,3 +1,5 @@
+[img https://travis-ci.org/Day8/re-frame.svg]
+
 ## On Derived Values
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
