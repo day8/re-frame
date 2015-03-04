@@ -1,14 +1,17 @@
 (ns todomvc.handlers
-  (:require [re-frame.core :refer [register-pure-handler
-                                   path
-                                   trim-v
-                                   debug]]))
+  (:require
+    [todomvc.db    :refer [default-value valid-schema?]]
+    [re-frame.core :refer [register-pure-handler
+                           path after
+                           trim-v
+                           debug validate]]))
 
 
 ;; -- Middleware --------------------------------------------------------------
 ;; To be used for handlers operating solely on todos
 ;;
-(def todo-middleware [(path [:todos])  debug trim-v])
+(def check-schema (after valid-schema?))
+(def todo-middleware [check-schema (path [:todos])  debug  trim-v])
 
 
 ;; -- Helpers -----------------------------------------------------------------
@@ -22,15 +25,16 @@
 
 ;; -- Handlers ----------------------------------------------------------------
 
-(register-pure-handler            ;; disptached to on program startup
+(register-pure-handler            ;; disptached to on app startup
   :initialise-db                  ;; event id being handled
+  check-schema                    ;; middleware
   (fn  [_ _]                      ;; the handler
-    default-initial-state))       ;; all hail the new state
+    default-value))               ;; all hail the new state
 
 
-(register-pure-handler            ;; disptached to when
+(register-pure-handler            ;; disptached to when user changes the bottom filter
   :set-showing                    ;; event-id
-  [debug trim-v]                  ;; middleware  (wraps the handler)
+  [check-schema debug trim-v]     ;; middleware  (wraps the handler)
   (fn                             ;; handler
     [db [filter-kw]]
     (assoc db :showing filter-kw)))

@@ -16,12 +16,16 @@
 (def schema
   {:todos   (s/both (s/pred map?) (s/pred sorted?))
    :showing (s/enum :all :done :active)
+   :blah (s/enum :all :done :active)   ;; add this bogus schema item in, then watch the console
    })
 
 
 (defn valid-schema?
   [db]
-  (s/validate schema db))
+  (let [res (s/check schema db)]
+    (if (some? res)
+      (.error js/console res))
+    db))  ;; so it can be used in middleare
 
 
 ;; -- Default Value  ----------------------------------------------------------

@@ -7,10 +7,7 @@
 
 ;; TODOs
 ;; Get preoject.cljs up to speed  `lein run`  lein debug`
-;; split into files  view, handlers, subs, middleware
-;; load todos off localstorage via merge ... and write back
-;; Add Prismatic schema - modules called state
-;; add middleware to save to local storage
+;; load todos off localstorage via merge ... and write back via middleware
 
 (enable-console-print!)
 

@@ -3,6 +3,11 @@
             [re-frame.core :refer [subscribe dispatch]]))
 
 
+;; -- Reagent Components ------------------------------------------------------
+;;
+;; The 'V' part of the app
+;;
+
 (defn todo-input [{:keys [title on-save on-stop]}]
   (let [val (atom title)
         stop #(do (reset! val "")
@@ -32,7 +37,6 @@
             props-for (fn [filter-kw]
                         {:class (if (= filter-kw filter) "selected")
                          :on-click #(dispatch [:set-showing filter-kw])})]
-        (println active done filter)
         [:footer#footer
          [:div
           [:span#todo-count
@@ -53,7 +57,8 @@
       [:li {:class (str (if done "completed ")
                         (if @editing "editing"))}
        [:div.view
-        [:input.toggle {:type "checkbox" :checked done
+        [:input.toggle {:type "checkbox"
+                        :checked done
                         :on-change #(dispatch [:toggle-done id])}]
         [:label {:on-double-click #(reset! editing true)} title]
         [:button.destroy {:on-click #(dispatch [:delete-todo id])}]]
@@ -81,7 +86,7 @@
          [:h1 "todos"]
          [todo-input {:id "new-todo"
                       :placeholder "What needs to be done?"
-                      :on-save #(dispatch [:add-todo %])}]]
+                      :on-save #(dispatch [:add-todo %1])}]]
         (when-not (empty? @visible-todos)
           [:div
            [:section#main
