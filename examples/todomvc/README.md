@@ -1,30 +1,28 @@
 # TodoMVC done with re-frame
 
-
+A re-frame implementation of [TodoMVC](http://todomvc.com/).
 
 
 ## Setup And Run
 
-This demo is delivered as part of re-frame.
-
-Before you start, ensure you have lein XXX
+1. Install Lien
 
 1. Get the re-frame repo
    ```
    git clone https://github.com/Day8/re-frame.git
    ```
 
-2. go to the right example directory
+1. go to the right example directory
    ```
    cd re-frame/examples/todomvc
    ```
 
-3. build
+1. build
    ```
    lein cljsbuild once
    ```
 
-4. run
+1. run
    ```
    open todo.html
    ```
@@ -40,11 +38,10 @@ To build a re-frame app, you:
   - write and register event handler functions (control layer and/or state transition layer)
 ```
 
-Each of these
+Each part has its own cljs namespace.
 
 
 ## Notes
 
-
-1. A modified version of [the offical reagent example](https://github.com/reagent-project/reagent/tree/master/examples/todomvc)
+This is a modified version of the [the offical reagent example](https://github.com/reagent-project/reagent/tree/master/examples/todomvc)
 
