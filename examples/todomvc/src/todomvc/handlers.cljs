@@ -1,6 +1,6 @@
 (ns todomvc.handlers
   (:require
-    [todomvc.db    :refer [default-value valid-schema?]]
+    [todomvc.db    :refer [default-value valid-schema? get-local-storage]]
     [re-frame.core :refer [register-pure-handler
                            path after
                            trim-v
@@ -8,9 +8,11 @@
 
 
 ;; -- Middleware --------------------------------------------------------------
-;; To be used for handlers operating solely on todos
 ;;
+;; checks that the structure in app-db matches the schema
 (def check-schema (after valid-schema?))
+
+;; middleware for any handler which manipulates todos.
 (def todo-middleware [check-schema (path [:todos])  debug  trim-v])
 
 
@@ -29,10 +31,11 @@
   :initialise-db                  ;; event id being handled
   check-schema                    ;; middleware
   (fn  [_ _]                      ;; the handler
-    default-value))               ;; all hail the new state
+    (merge default-value
+           (get-local-storage))))    ;; all hail the new state
 
 
-(register-pure-handler            ;; disptached to when user changes the bottom filter
+(register-pure-handler            ;; handlers changes the footer filter
   :set-showing                    ;; event-id
   [check-schema debug trim-v]     ;; middleware  (wraps the handler)
   (fn                             ;; handler
@@ -40,10 +43,10 @@
     (assoc db :showing filter-kw)))
 
 
-(register-pure-handler             ;; given only the text, create a new todo
+(register-pure-handler             ;; given the text, create a new todo
   :add-todo
-  todo-middleware                  ;; only 'todo' part of db provided
-  (fn [todos [text]]
+  todo-middleware
+  (fn [todos [text]]               ;; "path" middlware means we are given :todo
     (let [id  (next-id todos)]
       (assoc todos id {:id id :title text :done false}))))
 
@@ -52,7 +55,7 @@
   :complete-all-toggle
   todo-middleware
   (fn [todos]
-    (let [val (not-every? :done (vals todos))]
+    (let [val (not-every? :done (vals todos))]   ;; toggle true or false?
       (reduce #(assoc-in %1 [%2 :done] val)
               todos
               (keys todos)))))
