@@ -17,7 +17,7 @@
 (def schema
   {:todos   (s/both (s/pred map?) (s/pred sorted?))
    :showing (s/enum :all :done :active)
-   :mistake (s/enum :one :two)   ;; add this bogus schema item in, then watch the console
+   ;; :mistake (s/enum :one :two)   ;; add this bogus schema item, then watch the errors in the console
    })
 
 
