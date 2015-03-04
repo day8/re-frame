@@ -33,8 +33,9 @@
                           (do (flush) (<! (timeout 20)))  ;; wait just over one annimation frame (16ms), to rensure all pending GUI work is flushed to the DOM.
                           (<! (timeout 0)))]              ;; just in case we are handling one dispatch after an other, give the browser back control to do its stuff
            (try
-             (handle event-v)                             ;; XXX There should be a plugable place to write exceptions and wanrs
-             (catch js/Object e  (.error js/console e)))  ;; exceptions are a special kind of rubbish when you are in a goloop. So catch it here and print.
+             (handle event-v)                             ;; XXX There should be a plugable place to write exceptions and warns
+             (catch js/Object e
+               (.error js/console e)))  ;; exceptions are a special kind of rubbish when you are in a goloop. So catch it here and print.
            (recur)))
 
 
