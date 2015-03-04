@@ -78,17 +78,22 @@
 (defn path
   "Supplies a sub-tree of `db` to the handler. A narrowed view.
   Assumes \"pure\" is in the middleware pipeline prior.
-  Grafts the result back into db."
-  [p]
-  (fn middleware
-    [handler]
-    (fn new-handler
-      [db v]
-      (if (satisfies? IReactiveAtom db)
-        (str "re-frame: \"path\" used in middleware, without prior \"pure\"."))
-      (if-not (vector? p)
-        (warn  "re-frame: \"path\" expected a vector, got: " p))
-      (assoc-in db p (handler (get-in db p) v)))))
+  Grafts the result back into db.
+  If a get-in of the path results in a nil, then \"default-fn\" will be called to supply a value."
+  ([p]
+    (path p hash-map))
+  ([p default-fn]
+    (fn middleware
+      [handler]
+      (fn new-handler
+        [db v]
+        (if (satisfies? IReactiveAtom db)
+          (str "re-frame: \"path\" used in middleware, without prior \"pure\"."))
+        (if-not (vector? p)
+          (warn  "re-frame: \"path\" expected a vector, got: " p))
+        (let [val (get-in db p)
+              val (if (nil? val) (default-fn) val)]
+          (assoc-in db p (handler val v)))))))
 
 
 (defn validate
