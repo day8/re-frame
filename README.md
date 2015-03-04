@@ -1029,7 +1029,7 @@ a piece of derived state.  And
 yet, it is the source.
 
 Hmm. This is an infinite loop of sorts. **Derived data is flowing around the
-loop, reactivity, through pure functions.**  There is a pause in the loop while ever we wait
+loop, reactively, through pure functions.**  There is a pause in the loop whenever we wait
 for a new event, but the moment we get it, it's another iteration of the "derived data" FRP loop.
 
 Derived values, all the way down, forever.
