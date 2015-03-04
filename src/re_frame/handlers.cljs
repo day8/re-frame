@@ -20,7 +20,7 @@
                       (empty? v)       identity     ;; noop middleware
                       (= 1 (count v))  (first v)    ;; only one middleware, no composing needed
                       :else            (apply comp v)))
-    :else         (warn "re-frame:  compose expects a vector, got: " v)))
+    :else         (warn "re-frame: comp-middleware expects a vector, got: " v)))
 
 
 ;; -- the register of event handlers --------------------------------------------------------------
@@ -33,8 +33,10 @@
   (get @id->fn event-id))
 
 
-(defn register
-  "register a handler for an event"
+(defn register-base
+  "register a handler for an event.
+  This is low level and it is expected that \"register-handler\" would
+  generally be used, see re-frame.core."
   ([event-id handler-fn]
     (when (contains? @id->fn event-id)
       (warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
@@ -43,7 +45,7 @@
   ([event-id middleware handler-fn]
     (let  [mid-ware  (comp-middleware middleware)   ;; compose the middleware
            hander-fn (mid-ware handler-fn)]         ;; wrap the handler in the middleware
-      (register event-id hander-fn))))
+      (register-base event-id hander-fn))))
 
 
 
@@ -51,12 +53,12 @@
 ;; -- lookup and call -----------------------------------------------------------------------------
 
 (defn handle
-  "Given an event vector, look up the right handler, then call it.
+  "Given an event vector, look up the handler, then call it.
   By default, handlers are not assumed to be pure. They are called with
   two paramters:
-  - the `app-db` atom and
-  - the event vector
-  The handler is assumed to side-effect on the atom, the return value is ignored.
+    - the `app-db` atom and
+    - the event vector
+  The handler is assumed to side-effect on the given atom, the return value is ignored.
   To write pure handlers, use the \"pure\" middleware when registering the handler."
   [event-v]
   (let [event-id    (first-in-vector event-v)

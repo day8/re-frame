@@ -8,7 +8,6 @@
 
 ;; --  API  -------
 
-(def register-handler handlers/register)
 (def dispatch         router/dispatch)
 (def dispatch-sync    router/dispatch-sync)
 
@@ -21,7 +20,7 @@
 (def debug       middleware/debug)
 (def undoable    middleware/undoable)
 (def path        middleware/path)
-(def validate    middleware/validate)
+(def derive      middleware/derive)
 (def trim-v      middleware/trim-v)
 (def after       middleware/after)
 ; (def log-events  middleware/log-events)
@@ -30,12 +29,13 @@
 
 ;; --  Convenience API -------
 
-;; virtually every handler will be pure, ao make it easy
-(defn register-pure-handler
+;; Almost 100% of handlers will be pure, so make that easy by
+;; registering with "pure" middleware in the correct position.
+(defn register-handler
   ([id handler]
-    (register-handler id pure handler))
+    (handlers/register-base id pure handler))
   ([id middleware handler]
-    (register-handler id [pure middleware] handler)))
+    (handlers/register-base id [pure middleware] handler)))
 
 
 
