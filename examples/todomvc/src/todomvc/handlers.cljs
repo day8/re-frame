@@ -1,16 +1,18 @@
 (ns todomvc.handlers
   (:require
-    [todomvc.db    :refer [default-value valid-schema? get-local-storage]]
+    [todomvc.db    :refer [default-value valid-schema?
+                           get-local-storage set-local-storage!]]
     [re-frame.core :refer [register-pure-handler
                            path after
-                           trim-v
-                           debug validate]]))
+                           trim-v debug]]))
 
 
 ;; -- Middleware --------------------------------------------------------------
 ;;
 ;; checks that the structure in app-db matches the schema
 (def check-schema (after valid-schema?))
+
+(def write-ls (after set-local-storage!))
 
 ;; middleware for any handler which manipulates todos.
 (def todo-middleware [check-schema (path [:todos])  debug  trim-v])
@@ -22,7 +24,7 @@
   [todos]
   (if (empty? todos)
     0
-    (inc (apply max (keys todos)))))  ;; hillariously inefficient, but yeah
+    (inc (last (keys todos)))))
 
 
 ;; -- Handlers ----------------------------------------------------------------
@@ -37,7 +39,7 @@
 
 (register-pure-handler            ;; handlers changes the footer filter
   :set-showing                    ;; event-id
-  [check-schema debug trim-v]     ;; middleware  (wraps the handler)
+  [write-ls check-schema debug trim-v]     ;; middleware  (wraps the handler)
   (fn                             ;; handler
     [db [filter-kw]]
     (assoc db :showing filter-kw)))
