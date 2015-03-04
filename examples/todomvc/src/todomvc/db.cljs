@@ -1,6 +1,6 @@
 (ns todomvc.db
   (:require
-    [schema.core :as s :include-macros true]))
+    [schema.core :as s]))
 
 
 ;; -- Schema ------------------------------------------------------------------
