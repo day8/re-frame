@@ -94,26 +94,30 @@
           (assoc-in db p (handler val v)))))))
 
 
-(defn validate
+(defn derive
   "Middleware factory which runs a given function \"f\" in the after position.
-  \"f\" is given the new db value and is expected to perform certain kinds of
-  \"overall\" checks on this new state, adding to it (or removing) necessary
-  errors and warnings.
-  This need is such a common pattern!! There are invariably a category of
-  checks that require \"overall knowledge\".
+  \"f\" is (db) -> db
+  Different from \"after\" because f is expecteed to produce new derived data.
+  re-frame is about derived data flowing,and this middleware allows you to
+  derive new data each time a handler is called.
+  A usecase: f can perform certain kinds of \"overall\" validation checks
+  on the newly minted state, adding or removing error and warning flags.
+  This  is such a common pattern!!
+  There are invariably a category of checks that require \"overall knowledge\".
   For example, imagine that todomvc had to do duplicate detection - if any
   two todos had the same text, highlight them, and put a warning down the
   bottom.
-  That requires access to all todos, plus the ability to assoc in one or
-  more duplicate reports. Perhaps make the background of these todos pink
-  as a sign of the problem.
-  And that's just one kind of check, there may be a few that need to run
+  Almost any action (edit text, add new todo, remove a todo) requires that
+  that new error/warning data be derived from the new state.
+  And to perform this derivation, requires access to all todos, plus the ability to:
+     - set (or remove) duplicate flags on individual todos (so they are
+       rendered with a pink background?)
+     - add (or remove) warnings at a more global level
+  And that's just one kind of check, there may be a few that are need to run
   on every change.
   \"f\" would need to be both adding and removing the duplicate warnings.
-  We don't want to pollute each handler with calls to \"f\", so we
-  simply add it to the middleware for each handler, and presto the checks are
-  always run.
-  This is a genuine part of the Derived Data, flowing thing."
+  We could add a call to f in each handler but it is convienient to use
+  middleware instead. "
   [f]
   (fn middleware
     [handler]
@@ -127,7 +131,8 @@
   "Middleware factory which runs a function \"f\" in the \"after handler\"
   position presumably for side effects.
   \"f\" is given the value of \"db\". It's return value is ignored.
-  Examples: \"f\" can run schema validation. Or write current state to localstorage. etc."
+  Examples: \"f\" can run schema validation. Or write current state to localstorage. etc.
+  In effect, \"f\" is meant to sideeffect. It gets no chance to change db. See \"derive\" (if you need that.)"
   [f]
   (fn middleware
     [handler]
