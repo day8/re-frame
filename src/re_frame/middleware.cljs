@@ -16,7 +16,7 @@
   If you strip away the error/efficiency checks, this middleware is just:
      (reset! app-db (handler @app-db event-vec))"
   [handler]
-  (fn new-handler
+  (fn pure-handler
     [app-db event-vec]
     (assert (satisfies? IReactiveAtom app-db)
             (str "re-frame: pure not given a Ratom."
@@ -36,7 +36,7 @@
   Includes a clojure.data/diff of the db, before vs after, showing the changes
   caused by the event."
   [handler]
-  (fn new-handler
+  (fn debug-handler
     [db v]
     (if (satisfies? IReactiveAtom db)
       (str "re-frame: \"debug\" middleware used without prior \"pure\"."))
@@ -52,7 +52,7 @@
 (defn undoable
   "Middleware which stores an undo checkpoint."
   [handler]
-  (fn new-handler
+  (fn undoable-handler
     [app-db event-vec]
     (store-now!)
     (handler app-db event-vec)))
@@ -83,7 +83,7 @@
   ([p default-fn]
     (fn middleware
       [handler]
-      (fn new-handler
+      (fn path-handler
         [db v]
         (if (satisfies? IReactiveAtom db)
           (str "re-frame: \"path\" used in middleware, without prior \"pure\"."))
@@ -117,7 +117,7 @@
   [f]
   (fn middleware
     [handler]
-    (fn new-handler
+    (fn validate-handler
       [db v]
       (f (handler db v)))))
 
@@ -131,7 +131,7 @@
   [f]
   (fn middleware
     [handler]
-    (fn new-handler
+    (fn after-handler
       [db v]
       (let [new-db (handler db v)]
         (f new-db)   ;; call f for side effects
