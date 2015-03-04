@@ -6,8 +6,9 @@
             [todomvc.views]))
 
 ;; TODOs
-;; Get preoject.cljs up to speed  `lein run`  lein debug`
+;; A bug:  footer disppears and never comes back
 ;; load todos off localstorage via merge ... and write back via middleware
+;; history
 
 (enable-console-print!)
 
