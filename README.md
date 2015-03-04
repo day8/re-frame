@@ -1,4 +1,4 @@
-[img https://travis-ci.org/Day8/re-frame.svg]
+# re-frame [![Build Status](https://travis-ci.org/Day8/re-frame.png?branch=master)](https://travis-ci.org/Day8/reframe)
 
 ## On Derived Values
 
