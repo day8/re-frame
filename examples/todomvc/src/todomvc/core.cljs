@@ -15,6 +15,6 @@
 
 (defn ^:export main
   []
-  (dispatch [:initialise-db])
+  (dispatch [:initialise-db])       ;; remember this is async
   (reagent/render [todomvc.views/top-panel]
                   (.getElementById js/document "app")))
