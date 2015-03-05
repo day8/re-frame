@@ -20,7 +20,7 @@
 (def debug       middleware/debug)
 (def undoable    middleware/undoable)
 (def path        middleware/path)
-(def derive      middleware/derive)
+(def enrich      middleware/enrich)
 (def trim-v      middleware/trim-v)
 (def after       middleware/after)
 ; (def log-events  middleware/log-events)
@@ -29,8 +29,8 @@
 
 ;; --  Convenience API -------
 
-;; Almost 100% of handlers will be pure, so make that easy by
-;; registering with "pure" middleware in the correct position.
+;; Almost 100% of handlers will be pure, so make it easy to
+;; register with "pure" middleware in the correct position.
 (defn register-handler
   ([id handler]
     (handlers/register-base id pure handler))
