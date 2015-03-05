@@ -2,7 +2,7 @@
   (:require
     [todomvc.db    :refer [default-value valid-schema?
                            get-local-storage set-local-storage!]]
-    [re-frame.core :refer [register-pure-handler
+    [re-frame.core :refer [register-handler
                            path after
                            trim-v debug]]))
 
@@ -29,7 +29,7 @@
 
 ;; -- Handlers ----------------------------------------------------------------
 
-(register-pure-handler            ;; disptached to on app startup
+(register-handler                 ;; disptached to on app startup
   :initialise-db                  ;; event id being handled
   check-schema                    ;; middleware
   (fn  [_ _]                      ;; the handler
@@ -37,7 +37,7 @@
            (get-local-storage))))    ;; all hail the new state
 
 
-(register-pure-handler            ;; handlers changes the footer filter
+(register-handler                 ;; handlers changes the footer filter
   :set-showing                    ;; event-id
   [write-ls check-schema debug trim-v]     ;; middleware  (wraps the handler)
   (fn                             ;; handler
@@ -45,7 +45,7 @@
     (assoc db :showing filter-kw)))
 
 
-(register-pure-handler             ;; given the text, create a new todo
+(register-handler                  ;; given the text, create a new todo
   :add-todo
   todo-middleware
   (fn [todos [text]]               ;; "path" middlware means we are given :todo
@@ -53,7 +53,7 @@
       (assoc todos id {:id id :title text :done false}))))
 
 
-(register-pure-handler
+(register-handler
   :complete-all-toggle
   todo-middleware
   (fn [todos]
@@ -63,28 +63,28 @@
               (keys todos)))))
 
 
-(register-pure-handler
+(register-handler
   :toggle-done
   todo-middleware
   (fn [todos [id]]
     (update-in todos [id :done] not)))
 
 
-(register-pure-handler
+(register-handler
   :save
   todo-middleware
   (fn [todos [id title]]
     (assoc-in todos [id :title] title)))
 
 
-(register-pure-handler
+(register-handler
   :delete-todo
   todo-middleware
   (fn [todos [id]]
     (dissoc todos id)))
 
 
-(register-pure-handler
+(register-handler
   :clear-completed
   todo-middleware
   (fn [todos _]

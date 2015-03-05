@@ -97,7 +97,7 @@
 (defn enrich
   "Middleware factory which runs a given function \"f\" in the after position.
   \"f\" is (db) -> db
-  Unlike \"after\" which is about side effects, enrich expects f to process and alter
+  Unlike \"after\" which is about side effects, \"enrich\" expects f to process and alter
   db in some useful way, contributing to the derived data, flowing vibe.
   Imagine that todomvc needed to do duplicate detection - if any two todos had
   the same text, then highlight their background, and report them in a warning
@@ -117,7 +117,7 @@
     [handler]
     (fn validate-handler
       [db v]
-      (f (handler db v)))))
+      (f (handler db v)))))    ;;  (comp f handler)
 
 
 

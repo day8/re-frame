@@ -945,7 +945,7 @@ then to register those handlers with the router.
 Here's how we would register our event handler:
 
 ```Clojure
-(register-pure-handler
+(register-handler
   :delete-item         ;; the event id (name)
   handle-delete)       ;; the handler function for that event
 ```
