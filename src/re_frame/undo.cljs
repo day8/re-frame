@@ -62,8 +62,8 @@
 
 ;; -- event handlers  ----------------------------------------------------------------------------
 
-(handlers/register     ;; not pure
-  :undo                ;; usage:  (dispatch [:undo])
+(handlers/register-base     ;; not a pure handler
+  :undo                     ;; usage:  (dispatch [:undo])
   (fn handler
     [_ _]
     (when (undos?)
@@ -72,8 +72,8 @@
       (reset! undo-list (pop @undo-list)))))
 
 
-(handlers/register     ;; not pure
-  :redo                ;; usage:  (dispatch [:redo])
+(handlers/register-base     ;; not a pure handler
+  :redo                     ;; usage:  (dispatch [:redo])
   (fn handler
     [_ _]
     (when (redos?)
