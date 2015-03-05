@@ -18,17 +18,18 @@
   [handler]
   (fn pure-handler
     [app-db event-vec]
-    (assert (satisfies? IReactiveAtom app-db)
-            (str "re-frame: pure not given a Ratom."
-                 (if (map? app-db)
-                   " Looks like \"pure\" is in the middleware pipeline twice."
-                   (str " Got: " app-db))))
-    (let [orig-db @app-db
-          new-db  (handler orig-db event-vec)]
-      (if (nil? new-db)
-        (warn "re-frame: your pure handler returned nil. It should return the new db.")
-        (if-not (identical? orig-db new-db)
-          (reset! app-db new-db))))))
+    (if (not (satisfies? IReactiveAtom app-db))
+      (do
+        (if (map? app-db)
+          (warn "re-frame: Looks like \"pure\" is in the middleware pipeline twice. Ignoring.")
+          (warn "re-frame: \"pure\" middleware not given a Ratom.  Got: " app-db))
+        handler)    ;; turn this into a noop handler
+      (let [orig-db @app-db
+            new-db  (handler orig-db event-vec)]
+        (if (nil? new-db)
+          (warn "re-frame: your pure handler returned nil. It should return the new db state.")
+          (if-not (identical? orig-db new-db)
+            (reset! app-db new-db)))))))
 
 
 (defn debug
@@ -38,13 +39,11 @@
   [handler]
   (fn debug-handler
     [db v]
-    (if (satisfies? IReactiveAtom db)
-      (str "re-frame: \"debug\" middleware used without prior \"pure\"."))
     (group "re-frame event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
       (log "only before: " (first diff))
-      (log " only after: " (second diff))
+      (log "only after : " (second diff))
       (groupEnd)
       new-db)))
 
@@ -79,14 +78,12 @@
   If a get-in of the path results in a nil, then \"default-fn\" will be called to supply a value.
   XXX very like update-in. Should the name be more indicative of that closeness? "
   ([p]
-    (path p hash-map))
+    (path p #(nil)))
   ([p default-fn]
     (fn middleware
       [handler]
       (fn path-handler
         [db v]
-        (if (satisfies? IReactiveAtom db)
-          (str "re-frame: \"path\" used in middleware, without prior \"pure\"."))
         (if-not (vector? p)
           (warn  "re-frame: \"path\" expected a vector, got: " p))
         (let [val (get-in db p)
@@ -126,7 +123,8 @@
   position presumably for side effects.
   \"f\" is given the value of \"db\". It's return value is ignored.
   Examples: \"f\" can run schema validation. Or write current state to localstorage. etc.
-  In effect, \"f\" is meant to sideeffect. It gets no chance to change db. See \"derive\" (if you need that.)"
+  In effect, \"f\" is meant to sideeffect. It gets no chance to change db. See \"enrich\"
+  (if you need that.)"
   [f]
   (fn middleware
     [handler]
