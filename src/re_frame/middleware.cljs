@@ -94,30 +94,24 @@
           (assoc-in db p (handler val v)))))))
 
 
-(defn derive
+(defn enrich
   "Middleware factory which runs a given function \"f\" in the after position.
   \"f\" is (db) -> db
-  Different from \"after\" because f is expecteed to produce new derived data.
-  re-frame is about derived data flowing,and this middleware allows you to
-  derive new data each time a handler is called.
-  A usecase: f can perform certain kinds of \"overall\" validation checks
-  on the newly minted state, adding or removing error and warning flags.
-  This  is such a common pattern!!
-  There are invariably a category of checks that require \"overall knowledge\".
-  For example, imagine that todomvc had to do duplicate detection - if any
-  two todos had the same text, highlight them, and put a warning down the
-  bottom.
-  Almost any action (edit text, add new todo, remove a todo) requires that
-  that new error/warning data be derived from the new state.
-  And to perform this derivation, requires access to all todos, plus the ability to:
-     - set (or remove) duplicate flags on individual todos (so they are
-       rendered with a pink background?)
-     - add (or remove) warnings at a more global level
-  And that's just one kind of check, there may be a few that are need to run
-  on every change.
+  Unlike \"after\" which is about side effects, enrich expects f to process and alter
+  db in some useful way, contributing to the derived data, flowing vibe.
+  Imagine that todomvc needed to do duplicate detection - if any two todos had
+  the same text, then highlight their background, and report them in a warning
+  down the bottom.
+  Almost any action (edit text, add new todo, remove a todo) requires a
+  complete reassesment of duplication errors and wanrings. Eg: that edit
+  update might have introduced a new duplicate or removed one. Same with a
+  todo removal.
+  And to perform this enrichment, a function has inspect all the todos,
+  possibly set flags on each, and set some overall list of duplicates.
+  And this duplicates checking might be just one check amoung a number.
   \"f\" would need to be both adding and removing the duplicate warnings.
-  We could add a call to f in each handler but it is convienient to use
-  middleware instead. "
+  By applying \"f\" in middleware, we keep the handlers simple and yet we
+  ensure this important step is not missed. "
   [f]
   (fn middleware
     [handler]
