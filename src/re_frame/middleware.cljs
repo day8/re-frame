@@ -11,10 +11,14 @@
 
 (defn pure
   "Acts as an adaptor, allowing handlers to be writen as pure functions.
-  The re-frame router will pass in an atom as the first parameter. This middleware
-  adapts that to the value within the atom.
-  If you strip away the error/efficiency checks, this middleware is just:
-     (reset! app-db (handler @app-db event-vec))"
+  The re-frame router will pass in an atom as the first parameter. This
+  middleware adapts that atom to be the value within the atom.
+  If you strip away the error/efficiency checks, this middleware is just doing:
+     (reset! app-db (handler @app-db event-vec))
+  You don't have to use this middleare directly. Is supplied by default
+  when you use register-handler.
+  The only way to by-pass use of pure is to use the low level registration function
+  re-frame.handlers/register-handler-base"
   [handler]
   (fn pure-handler
     [app-db event-vec]
@@ -48,14 +52,6 @@
       new-db)))
 
 
-(defn undoable
-  "Middleware which stores an undo checkpoint."
-  [handler]
-  (fn undoable-handler
-    [app-db event-vec]
-    (store-now!)
-    (handler app-db event-vec)))
-
 
 (defn trim-v
   "Middleware which removes the first element of v which allows you to write
@@ -72,7 +68,8 @@
 
 
 (defn path
-  "Supplies a sub-tree of `db` to the handler. A narrowed view.
+  "A middleware factory which supplies a sub-tree of `db` to the handler.
+  Supplies a narrowed view.
   Assumes \"pure\" is in the middleware pipeline prior.
   Grafts the result back into db.
   If a get-in of the path results in a nil, then \"default-fn\" will be called to supply a value.
@@ -89,6 +86,26 @@
         (let [val (get-in db p)
               val (if (nil? val) (default-fn) val)]
           (assoc-in db p (handler val v)))))))
+
+
+(defn undoable
+  "A Middleware factory which stores an undo checkpoint.
+  \"explanation\" can be either a string or a function. If it is a
+  function then it must be:  (db event-vec) -> string.
+  \"explanation\" can be nil. in which case no
+  "
+  [explanation]
+  (fn middleware
+    [handler]
+    (fn undoable-handler
+      [db event-vec]
+      (let [explanation (cond
+                          (fn? explanation)     (explanation db event-vec)
+                          (string? explanation) explanation
+                          (nil? explanation)    ""
+                          :else (warn "re-frame: undoable given bad parameter. Got: " explanation))]
+      (store-now! explanation)
+      (handler db event-vec)))))
 
 
 (defn enrich
