@@ -2,20 +2,17 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2816"]
                  [reagent "0.5.0-alpha3"]
-                 [figwheel "0.2.3-SNAPSHOT"]
                  [re-frame "0.2.0"]
-                 [prismatic/schema "0.3.7"]
                  [secretary "1.2.1"]]
 
-  :plugins [[lein-cljsbuild "1.0.4"]
-            [lein-figwheel "0.2.3-SNAPSHOT"]]
+  :plugins [[lein-cljsbuild "1.0.4"]]
 
   :hooks [leiningen.cljsbuild]
 
   :profiles {:dev {:cljsbuild
-                   {:builds {:client {:source-paths ["devsrc"]
+                   {:builds {:client {
                                       :compiler
-                                      {:main todomvc.dev
+                                      {:main todomvc.core
                                        :optimizations :none
                                        :source-map true
                                        :source-map-timestamp true}}}}}
@@ -25,8 +22,6 @@
                                        {:optimizations :advanced
                                         :elide-asserts true
                                         :pretty-print false}}}}}}
-
-  :figwheel {:repl false}
 
   :cljsbuild {:builds {:client {:source-paths ["src"]
                                 :compiler

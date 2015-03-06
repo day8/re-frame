@@ -1,12 +1,7 @@
 (ns todomvc.views
-  (:require [reagent.core :as reagent :refer [atom]]
+  (:require [reagent.core  :as reagent :refer [atom]]
             [re-frame.core :refer [subscribe dispatch]]))
 
-
-;; -- Reagent Components ------------------------------------------------------
-;;
-;; The 'V' part of the app
-;;
 
 (defn todo-input [{:keys [title on-save on-stop]}]
   (let [val (atom title)
@@ -35,7 +30,8 @@
     (fn []
       (let [[active done filter] @footer-stats
             props-for (fn [filter-kw txt]
-                        [:a {:href (str "#/" (name filter-kw))} txt])]
+                        [:a {:class (if (= filter-kw filter) "selected")
+                             :href (str "#/" (name filter-kw))} txt])]
         [:footer#footer
          [:div
           [:span#todo-count
@@ -47,7 +43,6 @@
           (when (pos? done)
             [:button#clear-completed {:on-click #(dispatch [:clear-completed])}
              "Clear completed " done])]]))))
-
 
 (defn todo-item
   []
@@ -72,7 +67,6 @@
   [:ul#todo-list
    (for [todo  @visible-todos]
      ^{:key (:id todo)} [todo-item todo])])
-
 
 (defn todo-app
   []
@@ -99,13 +93,4 @@
            [stats-footer]])]
        [:footer#info
         [:p "Double-click to edit a todo"]]])))
-
-
-(defn top-panel
-  []
-  (let [initialised? (subscribe [:initialised?])]
-    (fn []
-      (if @initialised?
-        [todo-app]
-        [:div "Loading ...."]))))
 
