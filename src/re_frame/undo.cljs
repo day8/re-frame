@@ -27,7 +27,7 @@
 ;; Seems really ugly to have mirrored vectors, but ...
 ;; the code kinda falls out when you do. I'm feeling lazy.
 (def ^:private app-explain (reagent/atom ""))         ;; mirrors app-db
-(def ^:private undo-explain-list (reagent/atom []))   ;; mirrors undo-liat
+(def ^:private undo-explain-list (reagent/atom []))   ;; mirrors undo-list
 (def ^:private redo-explain-list (reagent/atom []))   ;; mirrors redo-list
 
 
@@ -43,7 +43,7 @@
   "stores the value currently in app-db, so the user can later undo"
   [explanation]
   (reset! redo-list [])           ;; clear and redo state created by previous undos
-  (reset! redo-explain-list [])           ;; clear and redo state created by previous undos
+  (reset! redo-explain-list [])   ;; clear and redo state created by previous undos
   (reset! undo-list (vec (take
                            @max-undos
                            (conj @undo-list @app-db))))
@@ -78,23 +78,23 @@
 
 
 (subs/register
-  :undo-explantions
+  :undo-explanations
   (fn handler
-    ; "returns a vector of string explnations
+    ; "return a vector of string explanations ordered oldest to most recent"
     [_ _]
-    (reaction (deref undo-explain-list))))
+    (reaction (conj @undo-explain-list @app-explain))))
 
 (subs/register
-  :redo-explantions
+  :redo-explanations
   (fn handler
-    ; "returns a vector of string explnations
+    ; "returns a vector of string explanations ordered from most recent undo onward"
     [_ _]
     (reaction (deref redo-explain-list))))
 
 ;; -- event handlers  ----------------------------------------------------------------------------
 
 
-(defn undo
+(defn- undo
   [undos cur redos]
   (let [u @undos
         r (cons @cur @redos)]
@@ -102,16 +102,21 @@
     (reset! redos r)
     (reset! undos (pop u))))
 
+(defn- undo-count
+  "undo until we reach count or run out of undos"
+  [count]
+  (when (and (pos? count) (undos?))
+    (undo undo-list app-db redo-list)
+    (undo undo-explain-list app-explain redo-explain-list)
+    (recur (dec count))))
 
 (handlers/register-base     ;; not a pure handler
-  :undo                     ;; usage:  (dispatch [:undo])
+  :undo                     ;; usage:  (dispatch [:undo n])
   (fn handler
-    [_ _]
+    [_ event-v]
     (if-not (undos?)
       (warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
-      (do
-        (undo undo-list app-db redo-list)
-        (undo undo-explain-list app-explain redo-explain-list)))))
+      (undo-count (if (second event-v) (second event-v) 1)))))
 
 
 (defn- redo
@@ -122,15 +127,19 @@
     (reset! redos (rest r))
     (reset! undos u)))
 
-
+(defn- redo-count
+  "redo until we reach count or run out of redos"
+  [count]
+  (when (and (pos? count) (redos?))
+    (redo undo-list app-db redo-list)
+    (redo undo-explain-list app-explain redo-explain-list)
+    (recur (dec count))))
 
 (handlers/register-base     ;; not a pure handler
-  :redo                     ;; usage:  (dispatch [:redo])
+  :redo                     ;; usage:  (dispatch [:redo n])
   (fn handler
-    [_ _]
+    [_ event-v]
     (if-not (redos?)
       (warn "re-frame: you did a (dispatch [:redo]), but there is nothing to redo.")
-      (do
-        (redo undo-list app-db redo-list)
-        (redo undo-explain-list app-explain redo-explain-list)))))
+      (redo-count (if (second event-v) (second event-v) 1)))))
 
