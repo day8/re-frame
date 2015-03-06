@@ -669,7 +669,7 @@ Let's sketch out the situation described above ...
         {:name "c" :val 23 :flag "y"}])
 
 (def  db-app (reagent/atom  {:items L
-                            :sort-by :name})     ;; sorted by the :name attribute
+                            :sort-by :name}))     ;; sorted by the :name attribute
 ```
 
 The subscription-handler might be written:
@@ -681,7 +681,7 @@ The subscription-handler might be written:
    (reaction
       (let [items      (get-in @db [:items])     ;; extract items from db
             sort-attr  (get-in @db [:sort-by])]  ;; extract sort key from db
-          (sort-by @sort-attr @items)))))        ;; return them sorted
+          (sort-by sort-attr items)))))        ;; return them sorted
 ```
 
 
