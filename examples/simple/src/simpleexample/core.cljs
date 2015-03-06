@@ -1,14 +1,12 @@
 (ns simpleexample.core
   (:require-macros [reagent.ratom :refer [reaction]])  
   (:require [reagent.core :as reagent :refer [atom]]
-            [re-frame.core :refer [register-handler 
-                                   register-pure-handler
-                                   pure
+            [re-frame.core :refer [register-handler
+                                   path
                                    register-sub 
                                    dispatch 
                                    subscribe]]))
 
-(defonce timer (atom (js/Date.)))
 
 (defonce time-updater (js/setInterval
                         #(dispatch [:timer (js/Date.)]) 1000))
@@ -22,9 +20,7 @@
 ;-------------------------------------------------------------
 
 ;; This handler sets the initial state
-(register-pure-handler
-  ;; register-pure-handler is a convience macro that will be used 90% of the 
-  ;; time  
+(register-handler
   ;; the handler is passed a map (not an atom) and must return the new state
   ;; of the db
   :initialize
@@ -37,24 +33,21 @@
   ;;; register-handler can take 3 arguments to allow you to insert middleware
   ;;; see https://github.com/Day8/re-frame/wiki/Handler-Middleware
   :time-color
-  pure
+  (path [:time-color])
   (fn
-    ;; the first item in the second argument is :time-color the second is the 
-    ;; new value
-    [db [_ value]]
-    (assoc db :time-color value)))
+    ;; the path handler allows you to get directly to items in the database
+    ;; return the value you want assoc'd in
+    [time-color [_ value]]
+    value))
 
 ;; This handler changes the value of the time
 (register-handler
-  ;; This is a non-pure handler (NOT RECCOMENDED), no middleware is called
-  ;; and the app-db is passed directly as a atom.
-  ;; Note, there is no reason why this particular handler should not be pure
   :timer
   (fn
     ;; the first item in the second argument is :timer the second is the 
     ;; new value
     [db [_ value]]
-    (swap! db assoc :timer value)))
+    (assoc db :timer value)))
 
 ;; add subscriptions to :timer and :time-color
 (register-sub
