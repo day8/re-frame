@@ -34,9 +34,11 @@ Changes:
 
 ### Headline
 
+  - exceptions in handler now reported more sanely via console.error.
+    (core.async really messes with a good stack)
   - example `todomvc` available in examples folder.
   - Wiki documentation is now more substantial.
-  - introduce some new handler middleware: `debug`, `enrich` and `after`
+  - introduce new handler middleware: `debug`, `enrich` and `after`
 
 ### Other:
   - exceptions in a go loop are a special type of hell.  Improve the reporting of exceptions happening in event handlers.
@@ -52,19 +54,18 @@ Changes:
 
 ### Details On Undo Changes
 
-We've made changes so that the undo/redo feature is more powerful.  Associated
-with each undo state is an explanation which can be presented to the user to
-inform them as to the actions they will be undoing or redoing.
+The undo/redo feature built into re-frame is now more functional
+(at the cost of a breaking change).
+
+There is now an explanation associated with each undo state describing
+modification. This allows an app to inform the user what actions
+they will be undoing or redoing.
 
 Previously `undoable` was simply middleware, but it is now a middleware factory.
 
-Essentially that means you can't use it "plain" anymore, you must call it to
-get middleware (put it in `()`) and, when you do, supply a parameter which is
-an explanation for the mutation. "Set spam flag to yes",  "add todo", etc.
-
-When the time comes to present undos to the user, you then have an explanation
-associated with each one.
+Essentially, that means you can't use it "plain" anymore, and instead you must
+call it, like this `(undoable "Some explanation")`
 
 The `explanation` provided to undoable must be either a `string` (static
-explanation) or a function  `(db event) -> string`  (allowing you to customize
-the undo message based on details of the event.  "Added todo called blah blah blah").
+explanation) or a function  `(db event) -> string`, allowing you to customize
+the undo message based on details of the event.
