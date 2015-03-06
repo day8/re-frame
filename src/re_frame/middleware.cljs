@@ -75,7 +75,7 @@
   If a get-in of the path results in a nil, then \"default-fn\" will be called to supply a value.
   XXX very like update-in. Should the name be more indicative of that closeness? "
   ([p]
-    (path p #(nil)))
+    (path p nil))
   ([p default-fn]
     (fn middleware
       [handler]
@@ -84,7 +84,7 @@
         (if-not (vector? p)
           (warn  "re-frame: \"path\" expected a vector, got: " p))
         (let [val (get-in db p)
-              val (if (nil? val) (default-fn) val)]
+              val (if (and (nil? val) (fn? default-fn)) (default-fn) val)]
           (assoc-in db p (handler val v)))))))
 
 
