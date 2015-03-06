@@ -1,11 +1,11 @@
 (ns re-frame.undo
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
-    [re-frame.utils    :refer  [warn]]
-    [reagent.core      :as     reagent]
-    [re-frame.db       :refer  [app-db]]
-    [re-frame.handlers :as     handlers]
-    [re-frame.subs     :as     subs]))
+    [re-frame.utils      :refer  [warn]]
+    [reagent.core        :as     reagent]
+    [re-frame.db         :refer  [app-db]]
+    [re-frame.handlers   :as     handlers]
+    [re-frame.subs       :as     subs]))
 
 
 ;; -- History -------------------------------------------------------------------------------------
@@ -102,21 +102,21 @@
     (reset! redos r)
     (reset! undos (pop u))))
 
-(defn- undo-count
-  "undo until we reach count or run out of undos"
-  [count]
-  (when (and (pos? count) (undos?))
+(defn- undo-n
+  "undo until we reach n or run out of undos"
+  [n]
+  (when (and (pos? n) (undos?))
     (undo undo-list app-db redo-list)
     (undo undo-explain-list app-explain redo-explain-list)
-    (recur (dec count))))
+    (recur (dec n))))
 
 (handlers/register-base     ;; not a pure handler
   :undo                     ;; usage:  (dispatch [:undo n])
   (fn handler
-    [_ event-v]
+    [_ [_ n]]               ;; if n absent, defaults to 1
     (if-not (undos?)
       (warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
-      (undo-count (if (second event-v) (second event-v) 1)))))
+      (undo-n (or n 1)))))
 
 
 (defn- redo
@@ -127,19 +127,19 @@
     (reset! redos (rest r))
     (reset! undos u)))
 
-(defn- redo-count
-  "redo until we reach count or run out of redos"
-  [count]
-  (when (and (pos? count) (redos?))
+(defn- redo-n
+  "redo until we reach n or run out of redos"
+  [n]
+  (when (and (pos? n) (redos?))
     (redo undo-list app-db redo-list)
     (redo undo-explain-list app-explain redo-explain-list)
-    (recur (dec count))))
+    (recur (dec n))))
 
 (handlers/register-base     ;; not a pure handler
   :redo                     ;; usage:  (dispatch [:redo n])
-  (fn handler
-    [_ event-v]
+  (fn handler               ;; if n absent, defaults to 1
+    [_ [_ n]]
     (if-not (redos?)
       (warn "re-frame: you did a (dispatch [:redo]), but there is nothing to redo.")
-      (redo-count (if (second event-v) (second event-v) 1)))))
+      (redo-n (or n 1)))))
 
