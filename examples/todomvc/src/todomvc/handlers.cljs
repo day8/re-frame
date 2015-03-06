@@ -12,10 +12,10 @@
 ;; checks that the structure in app-db matches the schema
 (def check-schema (after valid-schema?))
 
-(def write-ls (after set-local-storage!))
+(def write-ls-todos (after #(set-local-storage! :todos %)))
 
 ;; middleware for any handler which manipulates todos.
-(def todo-middleware [check-schema (path [:todos])  debug  trim-v])
+(def todo-middleware [check-schema (path [:todos]) write-ls-todos debug  trim-v])
 
 
 ;; -- Helpers -----------------------------------------------------------------
@@ -39,7 +39,7 @@
 
 (register-handler                 ;; handlers changes the footer filter
   :set-showing                    ;; event-id
-  [write-ls check-schema debug trim-v]     ;; middleware  (wraps the handler)
+  [check-schema debug trim-v]     ;; middleware  (wraps the handler)
   (fn                             ;; handler
     [db [filter-kw]]
     (assoc db :showing filter-kw)))

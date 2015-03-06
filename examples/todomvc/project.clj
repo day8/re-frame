@@ -4,7 +4,8 @@
                  [reagent "0.5.0-alpha3"]
                  [figwheel "0.2.3-SNAPSHOT"]
                  [re-frame "0.2.0"]
-                 [prismatic/schema "0.3.7"]]
+                 [prismatic/schema "0.3.7"]
+                 [secretary "1.2.1"]]
 
   :plugins [[lein-cljsbuild "1.0.4"]
             [lein-figwheel "0.2.3-SNAPSHOT"]]

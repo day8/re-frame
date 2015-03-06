@@ -34,17 +34,16 @@
   (let [footer-stats (subscribe [:footer-stats])]
     (fn []
       (let [[active done filter] @footer-stats
-            props-for (fn [filter-kw]
-                        {:class (if (= filter-kw filter) "selected")
-                         :on-click #(dispatch [:set-showing filter-kw])})]
+            props-for (fn [filter-kw txt]
+                        [:a {:href (str "#/" (name filter-kw))} txt])]
         [:footer#footer
          [:div
           [:span#todo-count
            [:strong active] " " (case active 1 "item" "items") " left"]
           [:ul#filters
-           [:li [:a (props-for :all) "All"]]
-           [:li [:a (props-for :active) "Active"]]
-           [:li [:a (props-for :done) "Completed"]]]
+           [:li (props-for :all "All")]
+           [:li (props-for :active "Active")]
+           [:li (props-for :done "Completed")]]
           (when (pos? done)
             [:button#clear-completed {:on-click #(dispatch [:clear-completed])}
              "Clear completed " done])]]))))
@@ -77,7 +76,8 @@
 
 (defn todo-app
   []
-  (let [visible-todos   (subscribe [:visible-todos])
+  (let [todos           (subscribe [:todos])
+        visible-todos   (subscribe [:visible-todos])
         completed-count (subscribe [:completed-count])]
     (fn []
       [:div
@@ -86,8 +86,8 @@
          [:h1 "todos"]
          [todo-input {:id "new-todo"
                       :placeholder "What needs to be done?"
-                      :on-save #(dispatch [:add-todo %1])}]]
-        (when-not (empty? @visible-todos)
+                      :on-save #(dispatch [:add-todo %])}]]
+        (when-not (empty? @todos)
           [:div
            [:section#main
             [:input#toggle-all
