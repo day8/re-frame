@@ -103,7 +103,7 @@
                           (fn? explanation)     (explanation db event-vec)
                           (string? explanation) explanation
                           (nil? explanation)    ""
-                          :else (warn "re-frame: undoable given bad parameter. Got: " explanation))]
+                          :else (warn "re-frame: undoable given a bad parameter. Got: " explanation))]
       (store-now! explanation)
       (handler db event-vec)))))
 
