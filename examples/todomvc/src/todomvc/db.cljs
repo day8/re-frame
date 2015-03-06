@@ -32,10 +32,7 @@
 ;;
 (def default-value
   {:todos   (sorted-map)        ;; todo ids are the keys
-   :showing :all
-   })
-
-
+   :showing :all})
 
 ;; -- Local Storage  ----------------------------------------------------------
 ;;
@@ -43,14 +40,23 @@
 
 (def local-storage-key "re-frame-todomvc")
 
+(def persistent-db "keeps track of what is persisted" (atom {}))
+
 (defn get-local-storage
+ "load information from local-storage"
   []
   (let [data (.getItem js/localStorage local-storage-key)]
     (when-not (nil? data)
-      (-> data (js/JSON.parse) (js->clj :keywordize-keys true)))))
-
+      (-> data 
+          (js/JSON.parse) 
+          (js->clj :keywordize-keys true)
+          (#(reset! persistent-db %))))))
 
 (defn set-local-storage!
-  [db]
-  (let [data (-> db (clj->js) (js/JSON.stringify))]
+ "puts the value of key into local storage"
+  [key value]
+  (swap! persistent-db assoc key value)
+  (let [data (-> @persistent-db 
+                 (clj->js) 
+                 (js/JSON.stringify))]
     (.setItem js/localStorage local-storage-key data)))

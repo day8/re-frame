@@ -32,6 +32,11 @@
   :initialised?                    ;; usage:  (subscribe [:initialised?])
   (complement empty? deref))
 
+(register-sub
+  :todos
+  (fn [db _]
+    (reaction
+      (vals (:todos @db)))))
 
 (register-sub
   :visible-todos

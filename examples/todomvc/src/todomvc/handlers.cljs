@@ -12,10 +12,10 @@
 ;; checks that the structure in app-db matches the schema
 (def check-schema (after valid-schema?))
 
-(def write-ls (after set-local-storage!))
+(def write-ls-todos (after #(set-local-storage! :todos %)))
 
 ;; middleware for any handler which manipulates todos.
-(def todo-middleware [check-schema (path [:todos])  debug  trim-v])
+(def todo-middleware [check-schema (path [:todos]) write-ls-todos debug  trim-v])
 
 
 ;; -- Helpers -----------------------------------------------------------------
