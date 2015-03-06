@@ -32,10 +32,7 @@
                _        (if (:flush-dom (meta event-v))   ;; check the event for metadata
                           (do (flush) (<! (timeout 20)))  ;; wait just over one annimation frame (16ms), to rensure all pending GUI work is flushed to the DOM.
                           (<! (timeout 0)))]              ;; just in case we are handling one dispatch after an other, give the browser back control to do its stuff
-           (try
-             (handle event-v)                             ;; XXX There should be a plugable place to write exceptions and warns
-             (catch js/Object e
-               (.error js/console e)))  ;; exceptions are a special kind of rubbish when you are in a goloop. So catch it here and print.
+           (handle event-v)
            (recur)))
 
 
@@ -55,8 +52,13 @@
 
 
 (defn dispatch-sync
-  "Invoke the event handler sycronously, avoiding the async-inducing use of core.async/chan"
+  "Send an event to be processed by the registered handler, but avoid the async-inducing
+  use of core.async/chan.
+
+  Usage example:
+     (dispatch-sync [:delete-item 42])"
   [event-v]
-  (handle event-v))
+  (handle event-v)
+  nil)    ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Returning-False
 
 

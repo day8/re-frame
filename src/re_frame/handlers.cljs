@@ -65,5 +65,13 @@
         handler-fn  (lookup-handler event-id)]
     (if (nil? handler-fn)
       (warn "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")   ;; TODO: make exception
-      (handler-fn app-db event-v))))
+      (try
+        (handler-fn app-db event-v)
+        (catch :default e
+          (do
+            ;; use of a core.async loop seems to completely ruin exception stacks.
+            ;; So we're going print the exception to the console here, before it gets trashed.
+            (.error js/console e)
+            (throw e)))))))
+
 
