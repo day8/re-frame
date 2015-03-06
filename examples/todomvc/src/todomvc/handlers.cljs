@@ -34,15 +34,15 @@
   check-schema                    ;; middleware
   (fn  [_ _]                      ;; the handler
     (merge default-value
-           (get-local-storage))))    ;; all hail the new state
+           #_(get-local-storage))))    ;; all hail the new state
 
 
 (register-handler                 ;; handlers changes the footer filter
   :set-showing                    ;; event-id
-  [check-schema debug trim-v]     ;; middleware  (wraps the handler)
+  [(path [:showing]) #_write-ls check-schema debug trim-v]     ;; middleware  (wraps the handler)
   (fn                             ;; handler
     [db [filter-kw]]
-    (assoc db :showing filter-kw)))
+    filter-kw))
 
 
 (register-handler                  ;; given the text, create a new todo

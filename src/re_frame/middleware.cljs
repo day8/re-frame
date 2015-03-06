@@ -11,24 +11,29 @@
 
 (defn pure
   "Acts as an adaptor, allowing handlers to be writen as pure functions.
-  The re-frame router will pass in an atom as the first parameter. This middleware
-  adapts that to the value within the atom.
-  If you strip away the error/efficiency checks, this middleware is just:
-     (reset! app-db (handler @app-db event-vec))"
+  The re-frame router will pass in an atom as the first parameter. This
+  middleware adapts that atom to be the value within the atom.
+  If you strip away the error/efficiency checks, this middleware is just doing:
+     (reset! app-db (handler @app-db event-vec))
+  You don't have to use this middleare directly. Is supplied by default
+  when you use register-handler.
+  The only way to by-pass use of pure is to use the low level registration function
+  re-frame.handlers/register-handler-base"
   [handler]
   (fn pure-handler
     [app-db event-vec]
-    (assert (satisfies? IReactiveAtom app-db)
-            (str "re-frame: pure not given a Ratom."
-                 (if (map? app-db)
-                   " Looks like \"pure\" is in the middleware pipeline twice."
-                   (str " Got: " app-db))))
-    (let [orig-db @app-db
-          new-db  (handler orig-db event-vec)]
-      (if (nil? new-db)
-        (warn "re-frame: your pure handler returned nil. It should return the new db.")
-        (if-not (identical? orig-db new-db)
-          (reset! app-db new-db))))))
+    (if (not (satisfies? IReactiveAtom app-db))
+      (do
+        (if (map? app-db)
+          (warn "re-frame: Looks like \"pure\" is in the middleware pipeline twice. Ignoring.")
+          (warn "re-frame: \"pure\" middleware not given a Ratom.  Got: " app-db))
+        handler)    ;; turn this into a noop handler
+      (let [orig-db @app-db
+            new-db  (handler orig-db event-vec)]
+        (if (nil? new-db)
+          (warn "re-frame: your pure handler returned nil. It should return the new db state.")
+          (if-not (identical? orig-db new-db)
+            (reset! app-db new-db)))))))
 
 
 (defn debug
@@ -38,24 +43,14 @@
   [handler]
   (fn debug-handler
     [db v]
-    (if (satisfies? IReactiveAtom db)
-      (str "re-frame: \"debug\" middleware used without prior \"pure\"."))
     (group "re-frame event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
       (log "only before: " (first diff))
-      (log " only after: " (second diff))
+      (log "only after : " (second diff))
       (groupEnd)
       new-db)))
 
-
-(defn undoable
-  "Middleware which stores an undo checkpoint."
-  [handler]
-  (fn undoable-handler
-    [app-db event-vec]
-    (store-now!)
-    (handler app-db event-vec)))
 
 
 (defn trim-v
@@ -73,25 +68,44 @@
 
 
 (defn path
-  "Supplies a sub-tree of `db` to the handler. A narrowed view.
+  "A middleware factory which supplies a sub-tree of `db` to the handler.
+  Supplies a narrowed view.
   Assumes \"pure\" is in the middleware pipeline prior.
   Grafts the result back into db.
   If a get-in of the path results in a nil, then \"default-fn\" will be called to supply a value.
   XXX very like update-in. Should the name be more indicative of that closeness? "
   ([p]
-    (path p hash-map))
+    (path p nil))
   ([p default-fn]
     (fn middleware
       [handler]
       (fn path-handler
         [db v]
-        (if (satisfies? IReactiveAtom db)
-          (str "re-frame: \"path\" used in middleware, without prior \"pure\"."))
         (if-not (vector? p)
           (warn  "re-frame: \"path\" expected a vector, got: " p))
         (let [val (get-in db p)
-              val (if (nil? val) (default-fn) val)]
+              val (if (and (nil? val) (fn? default-fn)) (default-fn) val)]
           (assoc-in db p (handler val v)))))))
+
+
+(defn undoable
+  "A Middleware factory which stores an undo checkpoint.
+  \"explanation\" can be either a string or a function. If it is a
+  function then it must be:  (db event-vec) -> string.
+  \"explanation\" can be nil. in which case no
+  "
+  [explanation]
+  (fn middleware
+    [handler]
+    (fn undoable-handler
+      [db event-vec]
+      (let [explanation (cond
+                          (fn? explanation)     (explanation db event-vec)
+                          (string? explanation) explanation
+                          (nil? explanation)    ""
+                          :else (warn "re-frame: undoable given bad parameter. Got: " explanation))]
+      (store-now! explanation)
+      (handler db event-vec)))))
 
 
 (defn enrich
@@ -126,7 +140,8 @@
   position presumably for side effects.
   \"f\" is given the value of \"db\". It's return value is ignored.
   Examples: \"f\" can run schema validation. Or write current state to localstorage. etc.
-  In effect, \"f\" is meant to sideeffect. It gets no chance to change db. See \"derive\" (if you need that.)"
+  In effect, \"f\" is meant to sideeffect. It gets no chance to change db. See \"enrich\"
+  (if you need that.)"
   [f]
   (fn middleware
     [handler]
