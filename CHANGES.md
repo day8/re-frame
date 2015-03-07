@@ -1,4 +1,34 @@
 
+## Planned for v0.3.0
+
+  - automatically wrap subscriptions in a `reaction`  (removing the need for over
+    10 keystrokes per handler!!).  Just kidding there are better reasons than that.
+  - devlop the testing story.
+  - modifiy todoMVC for new subscriptions approach
+  - document new approach
+  - move contents of README across to Wiki. Make Readme simpler and instructive.
+  - produce a more fully featured todomvc (beyond the standard one), todomvc-with-extras
+    - use `enrich` to handle todo duplication
+    - add prismatic schema
+    - show testing
+    - show debug
+    - undo
+  - begin to use goog.Logger ??  How to let client apps know about exceptions, etc ??
+
+
+### Breaking
+
+Renames:
+  - `XXX` renamed to `XXX`
+
+Changes:
+  - XXX happened
+
+### Headline
+
+  - XXX
+
+
 ## v0.2.0  (2015-03-06)
 
 ### Breaking
