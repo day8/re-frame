@@ -1,6 +1,5 @@
-# re-frame [![Build Status](https://travis-ci.org/Day8/re-frame.png?branch=master)](https://travis-ci.org/Day8/reframe)
+# re-frame: Derived Values, Flowing [![Build Status](https://travis-ci.org/Day8/re-frame.png?branch=master)](https://travis-ci.org/Day8/reframe)
 
-## On Derived Values
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
 sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the
@@ -14,11 +13,11 @@ y'know. Pretty good.
 
 Either:
 
-1.  You want to develop an SPA in ClojureScript, and you are looking for a framework; or
+1.  You want to develop an [SPA] in ClojureScript, and you are looking for a framework; or
 2.  You believe that, by early 2015, ReactJS had won the JavaScript framework wars and
     you are curious about the bigger implications. Is the combination of
     `reactive programming`, `functional programming` and `immutable data` going to
-    **completely change everything**?  If so, what would that look like in a language
+    **completely change everything**?  And, if so, what would that look like in a language
     that embraces those paradigms?
 
 
@@ -1132,6 +1131,7 @@ Copyright © 2015 Michael Thompson
 Distributed under The MIT License (MIT) - See LICENSE.txt
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
+[SPA]:http://en.wikipedia.org/wiki/Single-page_application
 [Reagent]:http://reagent-project.github.io/
 [Dan Holmsand]:https://twitter.com/holmsand
 [Flux]:http://facebook.github.io/flux/docs/overview.html#content
