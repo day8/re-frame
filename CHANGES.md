@@ -1,24 +1,5 @@
 
-
-## Planned for v0.3.0
-
-  - automatically wrap subscriptions in a `reaction`  (removing the need for over
-    10 keystrokes per handler!!).  Just kidding there are better reasons than that.
-  - produce a more fully featured todomvc (beyond the standard one), todomvc-with-extras
-    - use `enrich` to handle todo duplication
-    - show testing
-    - show debug
-  - begin to use goog.Logger ??  How to let client apps know about exceptions, etc ??
-
-
 ## v0.2.0  (2015-03-06)
-
-Being blocked by:
-
-In todomvc, to be done tomorrow ahead of release:
-  - fix bug in todomvc  which means the footer disappears and doesn't come back.
-  - add localstorage
-  - add history, back button etc.
 
 ### Breaking
 
