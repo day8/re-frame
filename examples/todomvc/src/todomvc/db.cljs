@@ -1,4 +1,5 @@
-(ns todomvc.db)
+(ns todomvc.db
+  (:require [cljs.reader]))
 
 
 ;; -- Default app-db Value  ---------------------------------------------------
@@ -10,25 +11,17 @@
 
 ;; -- Local Storage  ----------------------------------------------------------
 
-(def lsk "ls-key")      ;; local store key
+(def lsk "todos-reframe")     ;; local store key
 
 (defn ls->todos
-  "Read in a list of todos from local storage, and process into a
-  sorted-map, suitable for merging into app-db.
-  LocalStorage can only keep strings, so we loose keywords on the way in.
-  Here, on load, we struggle to recreate the lost keywords. But we'll stay
-  strong, and refuse to to wimp out and go with string keys"
+  "Read in a map of todos from local storage, and process into a
+  sorted-map, suitable for merging into app-db."
   []
   (some->> (.getItem js/localStorage lsk)
-          (js/JSON.parse) 
-          (#(js->clj %1 :keywordize-keys true))
-          (map (juxt :id identity))
-          (flatten)
-          (apply sorted-map)
-          (hash-map :todos)))
+           (cljs.reader/read-string)
+           (into (sorted-map))         ;; map -> sorted-map
+           (hash-map :todos)))
 
 (defn todos->ls!
   [todos]
-  (->> (clj->js (vals todos))        ;;  Write just the todos, not the sorted-map
-       (js/JSON.stringify)
-       (.setItem js/localStorage lsk)))
+  (.setItem js/localStorage lsk (str todos)))   ;; sorted-map writen as a map
