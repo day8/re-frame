@@ -14,8 +14,7 @@
 (def lsk "todos-reframe")     ;; local store key
 
 (defn ls->todos
-  "Read in a map of todos from local storage, and process into a
-  sorted-map, suitable for merging into app-db."
+  "Read in todos from LS, and process into a form we can merge into app-db."
   []
   (some->> (.getItem js/localStorage lsk)
            (cljs.reader/read-string)
