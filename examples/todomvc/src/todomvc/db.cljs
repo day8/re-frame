@@ -10,7 +10,7 @@
 
 ;; -- Local Storage  ----------------------------------------------------------
 
-(def lsk "todos-key")  ;; local store key
+(def lsk "todos-re-frame")  ;; local store key
 
 (defn ls->todos       ;; read in todos from local storage
   []
