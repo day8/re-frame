@@ -35,9 +35,11 @@
                                             :pretty-print true}}]
                  
                  :test-commands {"rhino" ["rhino" "-opt" "-1" :rhino-runner
-                                            ""
-                                            "run/compiled/test.js"]}}
+                                            "run/compiled/test.js"]
+                                 "slimer" ["xvfb-run" "-a" "slimerjs" :runner
+                                                   "run/compiled/test.js"]}}
   
   :aliases      {"auto"  ["do" "clean," "cljsbuild" "clean," "cljsbuild" "auto" "demo,"]
                  "once"  ["do" "clean," "cljsbuild" "clean," "cljsbuild" "once" "demo,"]
-                 "test"  ["do" "clean," "cljsbuild" "once," "cljsbuild" "test" "rhino"]})
+                 "test"  ["do" "clean," "cljsbuild" "once," "cljsbuild" "test" "rhino"]
+                 "slimer-test" ["do" "clean," "cljsbuild" "once," "cljsbuild" "test" "slimer"] })
