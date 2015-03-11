@@ -41,5 +41,5 @@
   
   :aliases      {"auto"  ["do" "clean," "cljsbuild" "clean," "cljsbuild" "auto" "demo,"]
                  "once"  ["do" "clean," "cljsbuild" "clean," "cljsbuild" "once" "demo,"]
-                 "test"  ["do" "clean," "cljsbuild" "once," "cljsbuild" "test" "rhino"]
-                 "slimer-test" ["do" "clean," "cljsbuild" "once," "cljsbuild" "test" "slimer"] })
+                 "test-rhino"  ["do" "clean," "cljsbuild" "once," "cljsbuild" "test" "rhino"]
+                 "test-slimer" ["do" "clean," "cljsbuild" "once," "cljsbuild" "test" "slimer"] })
