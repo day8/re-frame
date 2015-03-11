@@ -36,7 +36,8 @@
   (reset! undo-list [])
   (reset! redo-list [])
   (reset! undo-explain-list [])
-  (reset! redo-explain-list []))
+  (reset! redo-explain-list [])
+  (reset! app-explain ""))
 
 
 (defn store-now!
@@ -60,6 +61,13 @@
   []
   (pos? (count @redo-list)))
 
+(defn undo-explanations
+  "return list of undo descriptions or empty list if no undos"
+  []
+  (if (undos?)
+    (conj @undo-explain-list @app-explain)
+    []))
+
 ;; -- subscriptions  -----------------------------------------------------------------------------
 
 (subs/register
@@ -82,7 +90,7 @@
   (fn handler
     ; "return a vector of string explanations ordered oldest to most recent"
     [_ _]
-    (reaction (conj @undo-explain-list @app-explain))))
+    (reaction (undo-explanations))))
 
 (subs/register
   :redo-explanations
