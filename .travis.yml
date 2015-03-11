@@ -1,6 +1,15 @@
 language: clojure
 lein: lein2
-script: "lein2 test"
+script: "lein2 test-slimer"
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq rhino
+env:
+  - SLIMERJSLAUNCHER=$(which firefox) DISPLAY=:99.0 PATH=$TRAVIS_BUILD_DIR/slimerjs:$PATH
+addons:
+  firefox: "34.0"
+before_script:
+  - "echo 'Installing Slimer'"
+  - "wget http://download.slimerjs.org/releases/0.9.4/slimerjs-0.9.4.zip"
+  - "unzip slimerjs-0.9.4.zip"
+  - "mv slimerjs-0.9.4 ./slimerjs"
