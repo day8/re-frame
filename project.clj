@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2760"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [reagent "0.5.0-alpha3"]]
+                 [reagent "0.5.0"]]
   
   :profiles     {:debug {:debug true}
                  :dev   {:dependencies [[spellhouse/clairvoyant "0.0-48-gf5e59d3"]]
