@@ -71,7 +71,7 @@
           (do
             ;; use of a core.async loop seems to completely ruin exception stacks.
             ;; So we're going print the exception to the console here, before it gets trashed.
-            (.error js/console e)
+            (.error js/console e.stack)
             (throw e)))))))
 
 

@@ -1,4 +1,4 @@
-# re-frame: Derived Values, Flowing [![Build Status](https://travis-ci.org/Day8/re-frame.png?branch=master)](https://travis-ci.org/Day8/reframe)
+# re-frame: Derived Values, Flowing [![Build Status](https://travis-ci.org/Day8/re-frame.png?branch=master)](https://travis-ci.org/Day8/re-frame)
 
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
