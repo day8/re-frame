@@ -13,20 +13,21 @@
     - show testing
     - show debug
     - undo
-  - begin to use goog.Logger ??  How to let client apps know about exceptions, etc ??
 
-
-### Breaking
-
-Renames:
-  - `XXX` renamed to `XXX`
-
-Changes:
-  - XXX happened
 
 ### Headline
 
-  - XXX
+  - add new middleare `log-ex` for correctly printing handler stacktraces. See [explanation](https://github.com/Day8/re-frame/wiki/Debugging-Event-Handlers#1-an-exception-is-thrown).
+  - ongoing improvements to the docs in Wiki
+
+### Other
+
+  - move to reagent v0.5.0
+  - fix undo bug
+  - improve todomvc's use of localstorage
+  - experimental work with slimmer.js for testing
+  - correct README wiki link
+  - license.txt was incorrectly named previously
 
 
 ## v0.2.0  (2015-03-06)
