@@ -1105,7 +1105,7 @@ We need a means by which long running handlers can hand control
 back for "other" processing every so often, while still continuing on with their
 computation.
 
-Luckily, [re-frame has a solution](https://github.com/Day8/re-frame/wiki/The-CPU-Hog-Problem).
+Luckily, [re-frame has a solution](https://github.com/Day8/re-frame/wiki/Solve-the-CPU-hog-problem).
 
 
 ### In Summary
