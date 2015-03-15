@@ -2,7 +2,7 @@
   (:require
     [reagent.ratom  :refer [IReactiveAtom]]
     [re-frame.undo  :refer [store-now!]]
-    [re-frame.utils :refer [warn log dbg group groupEnd]]
+    [re-frame.utils :refer [warn log group groupEnd]]
     [clojure.data   :as data]))
 
 
@@ -51,7 +51,7 @@
       (handler db v)
       (catch :default e     ;; ooops, handler threw
         (do
-          (.error js/console e.stack)
+          (.error js/console (.-stack e))
           (throw e))))))
 
 
@@ -62,6 +62,7 @@
   [handler]
   (fn debug-handler
     [db v]
+    (log  "-- New Event ----------------------------------------------------")
     (group "re-frame event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
