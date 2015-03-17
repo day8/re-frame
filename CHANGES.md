@@ -3,7 +3,7 @@
 
   - automatically wrap subscriptions in a `reaction`  (removing the need for over
     10 keystrokes per handler!!).  Just kidding there are better reasons than that.
-  - devlop the testing story.
+  - develop the testing story.
   - modifiy todoMVC for new subscriptions approach
   - document new approach
   - move contents of README across to Wiki. Make Readme simpler and instructive.
@@ -17,13 +17,18 @@
 
 ### Headline
 
-  - add new middleare `log-ex` for correctly printing handler stacktraces. See [explanation](https://github.com/Day8/re-frame/wiki/Debugging-Event-Handlers#1-an-exception-is-thrown).
+  - new, easy way of creating and registering subscription handlers.
+  - new event handler middleware `log-ex` for correctly printing handler stacktraces.
+    See [explanation](https://github.com/Day8/re-frame/wiki/Debugging-Event-Handlers#1-an-exception-is-thrown).
   - ongoing improvements to the docs in Wiki
 
 ### Other
 
-  - move to reagent v0.5.0
-  - fix undo bug
+  - move to newly released reagent v0.5.0
+  - fix undo bug which could result in incorrect explanations.
+  - middleware `after` and `enrich` now call the supplied function `f` with
+    both `db` and `v` (previously just `db`). Because javascript is so forgiving
+    about function arity, this change is backwards compatible.
   - improve todomvc's use of localstorage
   - experimental work with slimmer.js for testing
   - correct README wiki link
