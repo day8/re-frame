@@ -130,7 +130,7 @@
 
 (defn enrich
   "Middleware factory which runs a given function \"f\" in the after position.
-  \"f\" is (db) -> db
+  \"f\" is (db v) -> db
   Unlike \"after\" which is about side effects, \"enrich\" expects f to process and alter
   db in some useful way, contributing to the derived data, flowing vibe.
   Imagine that todomvc needed to do duplicate detection - if any two todos had
@@ -151,7 +151,7 @@
     [handler]
     (fn validate-handler
       [db v]
-      (f (handler db v)))))    ;;  (comp f handler)
+      (f (handler db v) v))))
 
 
 
@@ -168,7 +168,7 @@
     (fn after-handler
       [db v]
       (let [new-db (handler db v)]
-        (f new-db)   ;; call f for side effects
+        (f new-db v)   ;; call f for side effects
         new-db))))
 
 
