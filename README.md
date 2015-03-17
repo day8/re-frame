@@ -639,7 +639,7 @@ function and not in the inner render function.  So the following is **wrong** (c
        [:div "Hello" @name-ratom]))
 ```
 
-Why is this wrong?  Well, this component would be re-rendered every time `db-app` changed, even if the value
+Why is this wrong?  Well, this component would be re-rendered every time `app-db` changed, even if the value
 in `name-ratom` (the result of the query) stayed the same. If you were to use a `Form-2` component instead, and put the
 subscription in the outer functions, then there'll be no re-render unless the value queried (i.e. `name-ratom`) changed.
 
@@ -669,7 +669,7 @@ Let's sketch out the situation described above ...
         {:name "b" :val 81 :flag "n"}
         {:name "c" :val 23 :flag "y"}])
 
-(def  db-app (reagent/atom  {:items L
+(def  app-db (reagent/atom  {:items L
                             :sort-by :name})     ;; sorted by the :name attribute
 ```
 
@@ -742,7 +742,7 @@ that it chains `reactions`:
 
 The original version had only one `reaction` which would be re-run completely each time `app-db` changed.
 This new version, has chained reactions.
-The 1st and 2nd reactions just extract from `db`.  They will run each time `db-app` changes.
+The 1st and 2nd reactions just extract from `db`.  They will run each time `app-db` changes.
 But they are cheap. The 3rd one does the expensive
 computation using the result from the first two.
 
