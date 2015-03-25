@@ -917,6 +917,8 @@ and sometimes with async results.
 But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!). That leaves your event
 handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
 
+If you want to know more about event handlers and how to add and share functionalities. Read the Middleware [section](https://github.com/Day8/re-frame/wiki#handler-middleware) of the wiki.
+
 ### Routing
 
 When `dispatch` is passed an event vector, it just puts that event onto a conveyor belt.
