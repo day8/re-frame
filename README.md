@@ -58,6 +58,43 @@ Features:
 
 __Warning__:  this is a long document. That was the summary.
 
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [What Problem Does It Solve?](#)
+- [Correct Acronym?](#)
+- [Mostly A Mashup](#)
+- [Client Side Bias](#)
+- [Guiding Philosophy](#)
+- [FRP Clarifications](#)
+- [Explaining re-frame](#)
+	- [On Data](#)
+	- [The Big Ratom](#)
+	- [The Benefits Of Data-In-The-One-Place](#)
+- [Flow](#)
+	- [How Flow Happens In Reagent](#)
+- [Components](#)
+	- [Truth Interlude](#)
+	- [Components Like Templates?](#)
+	- [React etc.](#)
+- [Subscribe](#)
+	- [Just A Read-Only Cursor?](#)
+- [The Signal Graph](#)
+- [A More Efficient Signal Graph](#)
+- [The 2nd Flow](#)
+- [Event Flow](#)
+	- [What are events?](#)
+	- [Dispatching Events](#)
+	- [Event Handlers](#)
+	- [Routing](#)
+	- [Control Via FSM](#)
+	- [As A Reduce](#)
+	- [Derived Data, Everywhere, flowing](#)
+	- [Logging And Debugging](#)
+	- [Talking To A Server](#)
+- [The CPU Hog Problem](#)
+	- [In Summary](#)
+	- [Licence](#)
+
 ## What Problem Does It Solve?
 
 First, we decided to build our SPA apps with ClojureScript, then we
