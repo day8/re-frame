@@ -1075,7 +1075,7 @@ a checkpoint, and the events since then.
 Some events handlers will need to initiate an async server connection (e.g. GET or POST something).
 
 The initiating event handlers should organise that the `on-success` or `on-fail` handlers for
-these HTTP requests themselves simply dispatch an event.  They should never attempt to
+these HTTP requests themselves simply dispatch a new event.  They should never attempt to
 modify `app-db` themselves.  That is always done in a handler.
 
 **Notes**:
@@ -1087,6 +1087,8 @@ modify `app-db` themselves.  That is always done in a handler.
  - if you kick off an HTTP request in a handler, then organise for the on-success or on-fail handlers
    to dispatch their outcome.  All events are handled via dispatch. on-success should never ever change
    `app-db`.
+
+See the [wiki](https://github.com/Day8/re-frame/wiki/Talking-To-Servers) for examples
 
 ## The CPU Hog Problem
 
