@@ -600,7 +600,7 @@ There is only one (global) `subscribe` function and it takes one parameter, assu
 The first element in the vector (shown as `query-id` above) identifies/names the query and the other elements are optional
 query parameters. With a traditional database a query might be:
 
-```
+```SQL
 select * from customers where name="blah"
 ```
 
@@ -1106,7 +1106,7 @@ We need a means by which long running handlers can hand control
 back for "other" processing every so often, while still continuing on with their
 computation.
 
-Luckily, [re-frame has a solution](https://github.com/Day8/re-frame/wiki/The-CPU-Hog-Problem).
+Luckily, [re-frame has a solution](https://github.com/Day8/re-frame/wiki/Solve-the-CPU-hog-problem).
 
 
 ### In Summary
