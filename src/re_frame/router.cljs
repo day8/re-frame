@@ -48,7 +48,7 @@
   (if (nil? event-v)
     (warn "re-frame: \"dispatch\" is ignoring a nil event.")     ;; nil would close the channel
     (put! event-chan event-v))
-  nil)   ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Returning-False
+  nil)   ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 
 (defn dispatch-sync
@@ -59,6 +59,6 @@
      (dispatch-sync [:delete-item 42])"
   [event-v]
   (handle event-v)
-  nil)    ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Returning-False
+  nil)    ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 
