@@ -7,6 +7,11 @@
 ;; maps from handler-id to handler-fn
 (def ^:private key->fn (atom {}))
 
+(defn clear-subs!
+  "Unregister all subscriptions.
+  May be useful for those applications using the reloaded workflow."
+  []
+  (reset! key->fn {}))
 
 (defn register
   "register a hander function for an id"
