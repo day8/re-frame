@@ -27,6 +27,11 @@
 
 (def ^:private id->fn  (atom {}))
 
+(defn clear-handlers!
+  "Unregister all event handlers.
+  May be useful for those applications using the reloaded workflow."
+  []
+  (reset! id->fn {}))
 
 (defn lookup-handler
   [event-id]
