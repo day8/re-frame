@@ -33,13 +33,6 @@
   (defn warn [& args] (do-log :warn args))
   (defn error [& args] (do-log :error args)))
 
-(defn group
-  [& args]
-  (.group js/console (apply str args)))
-
-(defn groupEnd
-  []
-  (.groupEnd js/console))
 
 ;; -- Misc ----------------------------------------------------------------------------------------
 

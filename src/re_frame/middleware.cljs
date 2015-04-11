@@ -2,7 +2,7 @@
   (:require
     [reagent.ratom  :refer [IReactiveAtom]]
     [re-frame.undo  :refer [store-now!]]
-    [re-frame.utils :refer [warn log dbg group groupEnd]]
+    [re-frame.utils :refer [warn log dbg]]
     [clojure.data   :as data]))
 
 
@@ -43,12 +43,10 @@
   [handler]
   (fn debug-handler
     [db v]
-    (group "re-frame event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
-      (log "only before: " (first diff))
-      (log "only after : " (second diff))
-      (groupEnd)
+      (log "re-frame event: only before: " (first diff))
+      (log "re-frame event: only after : " (second diff))
       new-db)))
 
 
