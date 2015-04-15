@@ -31,7 +31,7 @@
 ;; This handler changes the color of the displayed time
 (register-handler
   ;;; register-handler can take 3 arguments to allow you to insert middleware
-  ;;; see https://github.com/Day8/re-frame/wiki/Handler-Middleware
+  ;;; see https://github.com/Day8/re-frame/wiki/Using-Handler-Middleware
   :time-color
   (path [:time-color])
   (fn
