@@ -140,12 +140,12 @@
   complete reassesment of duplication errors and warnings. Eg: that edit
   update might have introduced a new duplicate or removed one. Same with a
   todo removal.
-  And to perform this enrichment, a function has inspect all the todos,
+  And to perform this enrichment, a function has to inspect all the todos,
   possibly set flags on each, and set some overall list of duplicates.
-  And this duplicates checking might be just one check amoung a number.
+  And this duplication check might just be one check among many.
   \"f\" would need to be both adding and removing the duplicate warnings.
   By applying \"f\" in middleware, we keep the handlers simple and yet we
-  ensure this important step is not missed. "
+  ensure this important step is not missed."
   [f]
   (fn middleware
     [handler]
