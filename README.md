@@ -670,7 +670,7 @@ Let's sketch out the situation described above ...
         {:name "c" :val 23 :flag "y"}])
 
 (def  app-db (reagent/atom  {:items L
-                            :sort-by :name})     ;; sorted by the :name attribute
+                            :sort-by :name}))     ;; sorted by the :name attribute
 ```
 
 The subscription-handler might be written:
