@@ -18,7 +18,8 @@
 
 ### Other
 
-  - Fix a broken wiki link #32
+  - #32 - fix a broken wiki link
+  - #31 - Fix list formatting in README
 
 
 ## v0.3.0  (2015-04-15)
