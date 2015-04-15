@@ -1,4 +1,19 @@
 
+## Planned for v0.4.0
+
+  - automatically wrap subscriptions in a `reaction`  (removing the need for over
+    10 keystrokes per handler!!).  Just kidding there are better reasons than that.
+  - further develop the debugging story.
+  - modifiy todoMVC for new subscriptions approach
+  - document new sbscriptions approach
+  - move contents of README across to Wiki. Make Readme simpler and more pragmatic.
+  - produce a more fully featured todomvc (beyond the standard one), todomvc-with-extras
+    - use `enrich` to handle todo duplication
+    - add prismatic schema
+    - show testing
+    - show debug
+    - undo
+
 
 ## v0.3.0  (2015-04-15)
 
