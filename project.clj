@@ -1,5 +1,5 @@
 (defproject re-frame "0.3.0"
-  :description  "A Reagent Framework For Writing SPAs, in Clojurescript"
+  :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Regent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
   :dependencies [[org.clojure/clojure "1.6.0"]
@@ -20,11 +20,7 @@
   :jvm-opts       ["-Xmx1g" "-XX:+UseConcMarkSweepGC"] ;;
   :source-paths ["src"]
   :test-paths   ["test"]
-  
-  ;; Exclude the demo code from the output of either:
-  ;;   - lein jar
-  ;;   - lein install
-  ;; :jar-exclusions [#"(?:^|\/)re-frame-demo\/"]
+
   
   :cljsbuild    {:builds [{:id "test"      ;; currently bogus, there is no demo or tests
                            :source-paths   ["test"]
