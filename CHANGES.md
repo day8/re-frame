@@ -18,8 +18,11 @@
 
 ### Other
 
-  - #32 - fix a broken wiki link
+  - middleware anonymous functions given better names. Makes stack traces easier to understand.
+  - #24 - Fix missing paren in README
   - #31 - Fix list formatting in README
+  - #32 - fix a broken wiki link
+  - #30 - Fix up the enrich docstring
 
 
 ## v0.3.0  (2015-04-15)
