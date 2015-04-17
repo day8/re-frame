@@ -1,5 +1,5 @@
 (ns todomvc.subs
-  (:require-macros [reagent.ratom :refer [reaction]])   ;; remove for v0.2.0-alpha2
+  (:require-macros [reagent.ratom :refer [reaction]])
   (:require [re-frame.core :refer [register-sub]]))
 
 
