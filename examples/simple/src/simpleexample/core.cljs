@@ -73,7 +73,7 @@
 (defn clock []
   (let [time-color (subscribe [:time-color])
         timer (subscribe [:timer])]
-    ;;; wrap your component in a function to use the suscription
+    ;;; wrap your component in a function to use the subscription
     (fn [] 
       ;; note that the initialize call will not be dispatched immediately
       ;; as it is an async call
@@ -85,7 +85,7 @@
 
 (defn color-input []
   (let [time-color (subscribe [:time-color])]
-    ;;; wrap your component in a function to use the suscription
+    ;;; wrap your component in a function to use the subscription
     (fn []
       [:div.color-input
        "Time color: "
