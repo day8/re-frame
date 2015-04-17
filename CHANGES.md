@@ -1,24 +1,12 @@
 
-## Planned for v0.4.0
 
-  - automatically wrap subscriptions in a `reaction`  (removing the need for over
-    10 keystrokes per handler!!).  Just kidding there are better reasons than that.
-  - further develop the debugging story.
-  - modifiy todoMVC for new subscriptions approach
-  - document new sbscriptions approach
-  - move contents of README across to Wiki. Make Readme simpler and more pragmatic.
-  - produce a more fully featured todomvc (beyond the standard one), todomvc-with-extras
-    - use `enrich` to handle todo duplication
-    - add prismatic schema
-    - show testing
-    - show debug
-    - undo
+## v0.3.1  (2015-04-18)
 
+Various small improvements and bug fixes:
 
-
-### Other
-
-  - middleware anonymous functions given better names. Makes stack traces easier to understand.
+  - modest improves to simple example. Better comments, layout, etc.
+  - the anonymous functions in standard middleware now have meaningful
+    names, which makes stack traces easier to understand.
   - #24 - Fix missing paren in README
   - #31 - Fix list formatting in README
   - #32 - fix a broken wiki link
@@ -28,7 +16,6 @@
 ## v0.3.0  (2015-04-15)
 
 ### Headline
-
 
   - the middleware `after` and `enrich` now call the supplied function `f` with
     both `db` and `v` (previously just `db`). Because javascript is so forgiving

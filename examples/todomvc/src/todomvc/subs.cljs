@@ -22,29 +22,41 @@
 
 ;; -- Subscription handlers and registration  ---------------------------------
 
-(register-sub
+(def register-sub-2 (fn [a b c]))   ;; XXXremove
+(def fetch (fn [a]))   ;; XXXremove
+
+(register-sub-2
   :todos                ;; usage:  (subscribe [:todos])
-  (fn [db _]
-    (reaction (vals (:todos @db)))))
+  (fetch :todos)
+  (fn [todos _]
+    (vals todos)))
 
-(register-sub
+(register-sub-2
   :visible-todos
-  (fn [db _]
-    (reaction (let [filter-fn (filter-fn-for (:showing @db))
-                    todos     (vals (:todos @db))]
-                (filter filter-fn todos)))))
+  [(fetch :todos) (fetch :showing)]
+  (fn [todos showing _]
+     (filter (filter-fn-for showing) (vals todos))))
 
-(register-sub
+(register-sub-2
   :completed-count
-  (fn [db _]
-    (reaction (completed-count (:todos @db)))))
+  (fetch :todos)
+  (fn [todos _]
+   (completed-count todos)))
 
-(register-sub
+(register-sub-2
   :footer-stats
-  (fn [db _]
-    (reaction
-      (let [todos (:todos @db)
-            completed-count (completed-count todos)
-            active-count    (- (count todos) completed-count)
-            showing         (:showing @db)]
-        [active-count completed-count showing]))))  ;; tuple
+  [(fetch :todos)  (fetch :showing)]
+  (fn [todos showing _]
+      (let [completed-count (completed-count todos)
+            active-count    (- (count todos) completed-count)]
+        [active-count completed-count showing])))  ;; tuple
+
+
+;; So [:todos  :showing]   is the same as [(pull [:todos]) (from [:showing])]
+;; a keyword  or vector is wrapped in "from"
+;; a fucntion is called with 'app-db' and 'v'
+
+;; What about the base case:   no accessors
+
+
+
