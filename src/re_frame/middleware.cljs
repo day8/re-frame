@@ -75,7 +75,7 @@
 
 (defn trim-v
   "Middleware which removes the first element of v, allowing you to write
-  more asthetically pleasing handlers. No leading underscore on the event-v!
+  more aesthetically pleasing handlers. No leading underscore on the event-v!
   Your handlers will look like this:
       (defn my-handler
         [db [x y z]]    ;; <-- instead of [_ x y z]

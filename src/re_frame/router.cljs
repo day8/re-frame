@@ -16,12 +16,12 @@
 
 ;; -- router loop ---------------------------------------------------------------------------------
 ;;
-;; In a perpretual loop, read events from "event-chan", and call the right handler.
+;; In a perpetual loop, read events from "event-chan", and call the right handler.
 ;;
 ;; Because handlers occupy the CPU, before each event is handled, hand
 ;; back control to the browser, via a (<! (timeout 0)) call.
 ;;
-;; In some cases, we need to pause for an entire annimationFrame, to ensure that
+;; In some cases, we need to pause for an entire animationFrame, to ensure that
 ;; the DOM is fully flushed, before then calling a handler known to hog the CPU
 ;; for an extended period.  In such a case, the event should be laballed with metadata
 ;; Example usage (notice the ":flush-dom" metadata):

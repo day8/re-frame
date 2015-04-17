@@ -7,9 +7,9 @@
 
 (defn comp-middleware
   "Given a vector of middleware, filter out any nils, and use \"comp\" to compose the elements.
-  v can have nested vectors, and will be flattended before \"comp\" is applied.
+  v can have nested vectors, and will be flattened before \"comp\" is applied.
   For convienience, if v a function (assumed to be middleware already), just return it.
-  Filtering out nils allows us to create Middlewhere conditionally like this:
+  Filtering out nils allows us to create Middleware conditionally like this:
      (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil
   "
   [v]
@@ -17,7 +17,7 @@
     (fn? v)       v  ;; assumed to be existing middleware
     (vector? v)   (let [v (remove nil? (flatten v))]
                     (cond
-                      (empty? v)       identity     ;; noop middleware
+                      (empty? v)       identity     ;; no-op middleware
                       (= 1 (count v))  (first v)    ;; only one middleware, no composing needed
                       :else            (apply comp v)))
     :else         (warn "re-frame: comp-middleware expects a vector, got: " v)))
