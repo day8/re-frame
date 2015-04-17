@@ -7,56 +7,44 @@
 
 
 (defn filter-fn-for
-  [showing-kw]
-  (case showing-kw
-    :active (complement :done)
-    :done   :done
-    :all    identity))
+      [showing-kw]
+      (case showing-kw
+            :active (complement :done)
+            :done   :done
+            :all    identity))
 
 
 (defn completed-count
-  "return the count of todos for which :done is true"
-  [todos]
-  (count (filter :done (vals todos))))
+      "return the count of todos for which :done is true"
+      [todos]
+      (count (filter :done (vals todos))))
 
 
 ;; -- Subscription handlers and registration  ---------------------------------
 
-(def register-sub-2 (fn [a b c]))   ;; XXXremove
-(def fetch (fn [a]))   ;; XXXremove
-
-(register-sub-2
+(register-sub
   :todos                ;; usage:  (subscribe [:todos])
-  (fetch :todos)
-  (fn [todos _]
-    (vals todos)))
+  (fn [db _]
+      (reaction (vals (:todos @db)))))
 
-(register-sub-2
+(register-sub
   :visible-todos
-  [(fetch :todos) (fetch :showing)]
-  (fn [todos showing _]
-     (filter (filter-fn-for showing) (vals todos))))
+  (fn [db _]
+      (reaction (let [filter-fn (filter-fn-for (:showing @db))
+                      todos     (vals (:todos @db))]
+                     (filter filter-fn todos)))))
 
-(register-sub-2
+(register-sub
   :completed-count
-  (fetch :todos)
-  (fn [todos _]
-   (completed-count todos)))
+  (fn [db _]
+      (reaction (completed-count (:todos @db)))))
 
-(register-sub-2
+(register-sub
   :footer-stats
-  [(fetch :todos)  (fetch :showing)]
-  (fn [todos showing _]
-      (let [completed-count (completed-count todos)
-            active-count    (- (count todos) completed-count)]
-        [active-count completed-count showing])))  ;; tuple
-
-
-;; So [:todos  :showing]   is the same as [(pull [:todos]) (from [:showing])]
-;; a keyword  or vector is wrapped in "from"
-;; a fucntion is called with 'app-db' and 'v'
-
-;; What about the base case:   no accessors
-
-
-
+  (fn [db _]
+      (reaction
+        (let [todos (:todos @db)
+              completed-count (completed-count todos)
+              active-count    (- (count todos) completed-count)
+              showing         (:showing @db)]
+             [active-count completed-count showing]))))  ;; tuple
