@@ -1,8 +1,8 @@
 (defproject todomvc-re-frame "0.3.1"
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2816"]
+                 [org.clojure/clojurescript "0.0-3208"]
                  [reagent "0.5.0"]
-                 [re-frame "0.3.1"]
+                 [re-frame "0.4.0.SNAPSHOT"]
                  [secretary "1.2.1"]]
 
   :plugins [[lein-cljsbuild "1.0.4"]]
