@@ -1,4 +1,4 @@
-(defproject re-frame "0.3.0"
+(defproject re-frame "0.3.1"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Regent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}

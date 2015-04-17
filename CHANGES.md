@@ -1,9 +1,21 @@
 
+## v0.3.1  (2015-04-18)
+
+Various small improvements and bug fixes:
+
+  - log-ex middleware added to core api (it was a mistake that it was missing)
+  - modest improves to simple example. Better comments, layout, etc.
+  - the anonymous functions in standard middleware now have meaningful
+    names, which makes stack traces easier to understand.
+  - #24 - Fix missing paren in README
+  - #31 - Fix list formatting in README
+  - #32 - fix a broken wiki link
+  - #30 - Fix up the enrich docstring
+
 
 ## v0.3.0  (2015-04-15)
 
 ### Headline
-
 
   - the middleware `after` and `enrich` now call the supplied function `f` with
     both `db` and `v` (previously just `db`). Because javascript is so forgiving
