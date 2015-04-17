@@ -1,9 +1,9 @@
 
-
 ## v0.3.1  (2015-04-18)
 
 Various small improvements and bug fixes:
 
+  - log-ex middleware added to core api (it was a mistake that it was missing)
   - modest improves to simple example. Better comments, layout, etc.
   - the anonymous functions in standard middleware now have meaningful
     names, which makes stack traces easier to understand.

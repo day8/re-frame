@@ -23,14 +23,14 @@
 (def enrich      middleware/enrich)
 (def trim-v      middleware/trim-v)
 (def after       middleware/after)
-; (def log-events  middleware/log-events)
+(def log-ex      middleware/log-ex)
 
 
 
 ;; --  Convenience API -------
 
 ;; Almost 100% of handlers will be pure, so make it easy to
-;; register with "pure" middleware in the correct position.
+;; register with "pure" middleware in the correct (left-hand-side) position.
 (defn register-handler
   ([id handler]
     (handlers/register-base id pure handler))
