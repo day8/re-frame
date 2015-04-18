@@ -35,6 +35,7 @@
           (if-not (identical? db new-db)
             (reset! app-db new-db)))))))
 
+
 (defn log-ex
   "Middleware which catches and prints any handler-generated exceptions to console.
   Handlers are called from within a core.async go-loop, and core.async produces
@@ -100,8 +101,8 @@
   [& args]
   (let [path   (flatten args)
         _      (if (empty? path)
-                 (warn "re-frame: path middleware given no params. Probably a mistake."))]
-    (fn middleware
+                 (warn "re-frame: \"path\" middleware given no params. Probably a mistake."))]
+    (fn path-middleware
       [handler]
       (fn path-handler
         [db v]
@@ -115,7 +116,7 @@
   \"explanation\" can be nil. in which case \"\" is recorded.
   "
   [explanation]
-  (fn middleware
+  (fn undoable-middleware
     [handler]
     (fn undoable-handler
       [db event-vec]
@@ -123,7 +124,7 @@
                           (fn? explanation)     (explanation db event-vec)
                           (string? explanation) explanation
                           (nil? explanation)    ""
-                          :else (warn "re-frame: undoable given a bad parameter. Got: " explanation))]
+                          :else (warn "re-frame: \"undoable\" middleware given a bad parameter. Got: " explanation))]
       (store-now! explanation)
       (handler db event-vec)))))
 
@@ -147,7 +148,7 @@
   By applying \"f\" in middleware, we keep the handlers simple and yet we
   ensure this important step is not missed."
   [f]
-  (fn middleware
+  (fn enrich-middleware
     [handler]
     (fn enrich-handler
       [db v]
@@ -158,12 +159,12 @@
 (defn after
   "Middleware factory which runs a function \"f\" in the \"after handler\"
   position presumably for side effects.
-  \"f\" is given the value of \"db\". It's return value is ignored.
+  \"f\" is given the new value of \"db\". It's return value is ignored.
   Examples: \"f\" can run schema validation. Or write current state to localstorage. etc.
   In effect, \"f\" is meant to sideeffect. It gets no chance to change db. See \"enrich\"
   (if you need that.)"
   [f]
-  (fn middleware
+  (fn after-middleware
     [handler]
     (fn after-handler
       [db v]

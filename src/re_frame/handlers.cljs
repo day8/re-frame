@@ -8,7 +8,7 @@
 (defn comp-middleware
   "Given a vector of middleware, filter out any nils, and use \"comp\" to compose the elements.
   v can have nested vectors, and will be flattended before \"comp\" is applied.
-  For convienience, if v a function (assumed to be middleware already), just return it.
+  For convienience, if v is a function (assumed to be middleware already), just return it.
   Filtering out nils allows us to create Middlewhere conditionally like this:
      (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil
   "
@@ -35,17 +35,17 @@
 
 (defn register-base
   "register a handler for an event.
-  This is low level and it is expected that \"register-handler\" would
-  generally be used, see re-frame.core."
+  This is low level and it is expected that \"re-frame.core/register-handler\" would
+  generally be used."
   ([event-id handler-fn]
     (when (contains? @id->fn event-id)
       (warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
     (swap! id->fn assoc event-id handler-fn))
 
   ([event-id middleware handler-fn]
-    (let  [mid-ware  (comp-middleware middleware)   ;; compose the middleware
-           hander-fn (mid-ware handler-fn)]         ;; wrap the handler in the middleware
-      (register-base event-id hander-fn))))
+    (let  [mid-ware    (comp-middleware middleware)   ;; compose the middleware
+           midware+hfn (mid-ware handler-fn)]         ;; wrap the handler in the middleware
+      (register-base event-id midware+hfn))))
 
 
 
@@ -56,10 +56,10 @@
   "Given an event vector, look up the handler, then call it.
   By default, handlers are not assumed to be pure. They are called with
   two paramters:
-    - the `app-db` atom and
+    - the `app-db` atom
     - the event vector
-  The handler is assumed to side-effect on the given atom, the return value is ignored.
-  To write pure handlers, use the \"pure\" middleware when registering the handler."
+  The handler is assumed to side-effect on `app-db` - the return value is ignored.
+  To write a pure handler, use the \"pure\" middleware when registering the handler."
   [event-v]
   (let [event-id    (first-in-vector event-v)
         handler-fn  (lookup-handler event-id)]
