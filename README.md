@@ -57,6 +57,43 @@ Features:
 
 __Warning__:  this is a long document. That was the summary.
 
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [What Problem Does It Solve?](#what-problem-does-it-solve)
+- [Correct Acronym?](#correct-acronym)
+- [Mostly A Mashup](#mostly-a-mashup)
+- [Client Side Bias](#client-side-bias)
+- [Guiding Philosophy](#guiding-philosophy)
+- [FRP Clarifications](#frp-clarifications)
+- [Explaining re-frame](#explaining-re-frame)
+  - [On Data](#on-data)
+  - [The Big Ratom](#the-big-ratom)
+  - [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
+- [Flow](#flow)
+  - [How Flow Happens In Reagent](#how-flow-happens-in-reagent)
+- [Components](#components)
+  - [Truth Interlude](#truth-interlude)
+  - [Components Like Templates?](#components-like-templates)
+  - [React etc.](#react-etc)
+- [Subscribe](#subscribe)
+  - [Just A Read-Only Cursor?](#just-a-read-only-cursor)
+- [The Signal Graph](#the-signal-graph)
+- [A More Efficient Signal Graph](#a-more-efficient-signal-graph)
+- [The 2nd Flow](#the-2nd-flow)
+- [Event Flow](#event-flow)
+  - [What are events?](#what-are-events)
+  - [Dispatching Events](#dispatching-events)
+  - [Event Handlers](#event-handlers)
+  - [Routing](#routing)
+  - [Control Via FSM](#control-via-fsm)
+  - [As A Reduce](#as-a-reduce)
+  - [Derived Data, Everywhere, flowing](#derived-data-everywhere-flowing)
+  - [Logging And Debugging](#logging-and-debugging)
+  - [Talking To A Server](#talking-to-a-server)
+- [The CPU Hog Problem](#the-cpu-hog-problem)
+  - [In Summary](#in-summary)
+  - [Licence](#licence)
+
 ## What Problem Does It Solve?
 
 First, we decided to build our SPA apps with ClojureScript, then we
@@ -916,6 +953,8 @@ and sometimes with async results.
 But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!). That leaves your event
 handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
 
+If you want to know more about event handlers and how to add and share functionalities. Read the Middleware [section](https://github.com/Day8/re-frame/wiki#handler-middleware) of the wiki.
+
 ### Routing
 
 When `dispatch` is passed an event vector, it just puts that event onto a conveyor belt.
@@ -1074,7 +1113,7 @@ a checkpoint, and the events since then.
 Some events handlers will need to initiate an async server connection (e.g. GET or POST something).
 
 The initiating event handlers should organise that the `on-success` or `on-fail` handlers for
-these HTTP requests themselves simply dispatch an event.  They should never attempt to
+these HTTP requests themselves simply dispatch a new event.  They should never attempt to
 modify `app-db` themselves.  That is always done in a handler.
 
 **Notes**:
@@ -1086,6 +1125,8 @@ modify `app-db` themselves.  That is always done in a handler.
  - if you kick off an HTTP request in a handler, then organise for the on-success or on-fail handlers
    to dispatch their outcome.  All events are handled via dispatch. on-success should never ever change
    `app-db`.
+
+See the [wiki](https://github.com/Day8/re-frame/wiki/Talking-To-Servers) for examples
 
 ## The CPU Hog Problem
 
