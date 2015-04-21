@@ -1,4 +1,4 @@
-(defproject re-frame "0.4.0.SNAPSHOT"
+(defproject re-frame "0.3.2"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Regent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
@@ -9,7 +9,7 @@
   
   :profiles     {:debug {:debug true}
                  :dev   {:dependencies [[spellhouse/clairvoyant "0.0-48-gf5e59d3"]]
-                         :plugins      [[lein-cljsbuild "1.0.4"]
+                         :plugins      [[lein-cljsbuild "1.0.5"]
                                         [com.cemerick/clojurescript.test "0.3.3"]]}}
   
   

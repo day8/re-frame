@@ -1,11 +1,11 @@
-(defproject todomvc-re-frame "0.3.1"
+(defproject todomvc-re-frame "0.3.2"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-3208"]
                  [reagent "0.5.0"]
-                 [re-frame "0.4.0.SNAPSHOT"]
-                 [secretary "1.2.1"]]
+                 [re-frame "0.3.2"]
+                 [secretary "1.2.3"]]
 
-  :plugins [[lein-cljsbuild "1.0.4"]]
+  :plugins [[lein-cljsbuild "1.0.5"]]
 
   :hooks [leiningen.cljsbuild]
 
