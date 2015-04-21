@@ -4,6 +4,7 @@
 Improvements:
   - Fix #42 - Put in checks for dispatch-sync
   - Fix #49 - add table of content and link to wiki for middleware
+  - Fix #46 - Minor typos fixed
 
 
 ## v0.3.1  (2015-04-18)
