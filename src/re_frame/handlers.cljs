@@ -52,6 +52,9 @@
 
 ;; -- lookup and call -----------------------------------------------------------------------------
 
+(def ^:dynamic *handling* nil)    ;; remember what event we are currently handling
+
+
 (defn handle
   "Given an event vector, look up the handler, then call it.
   By default, handlers are not assumed to be pure. They are called with
@@ -65,5 +68,8 @@
         handler-fn  (lookup-handler event-id)]
     (if (nil? handler-fn)
       (warn "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")   ;; TODO: make exception
-      (handler-fn app-db event-v))))
+      (if  *handling*
+        (warn "re-frame: in the middle of handling \""  *handling*  "\"  tried to handle \"" event-v "\"")
+        (binding [*handling*  event-v]
+          (handler-fn app-db event-v))))))
 
