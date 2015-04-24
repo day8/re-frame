@@ -130,13 +130,11 @@
 (handlers/register-base     ;; not a pure handler
   :undo                     ;; usage:  (dispatch [:undo n])
   (fn handler
-    [_ [_ n clear-redos?]]
+    [_ [_ n]]
     ;; if n absent, defaults to 1. If clear-redos? absent, defaults to false.
     (if-not (undos?)
       (warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
-      (do
-        (undo-n (or n 1))
-        (when clear-redos? (clear-redos!))))))
+      (undo-n (or n 1)))))
 
 
 (defn- redo
@@ -162,4 +160,13 @@
     (if-not (redos?)
       (warn "re-frame: you did a (dispatch [:redo]), but there is nothing to redo.")
       (redo-n (or n 1)))))
+
+
+(handlers/register-base     ;; not a pure handler
+  :purge-redos              ;; usage:  (dispatch [:purge-redo])
+  (fn handler
+    [_ _]
+    (if-not (redos?)
+      (warn "re-frame: you did a (dispatch [:purge-redos]), but there is nothing to redo.")
+      (clear-redos!))))
 
