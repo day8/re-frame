@@ -1,8 +1,8 @@
 ## v0.4.0  (2015-04-24)
 
 Improvements:
-  - new handler :purge-redos in core.undo
-  - move to clojurescript v0.0-3211
+  - #52 Add a way to purge redos
+  
 
 ## v0.3.2  (2015-04-21)
 
