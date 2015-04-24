@@ -2,6 +2,7 @@
 
 Improvements:
   - #52 Add a way to purge redos
+  - #50 Add "reaction-like" middleware 
   
 
 ## v0.3.2  (2015-04-21)

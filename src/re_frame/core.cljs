@@ -26,6 +26,10 @@
 (def log-ex      middleware/log-ex)
 
 
+;; ALPHA - EXPERIMENTAL
+(def on-changes  middleware/on-changes)
+
+
 
 ;; --  Convenience API -------
 
