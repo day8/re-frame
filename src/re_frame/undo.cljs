@@ -128,10 +128,9 @@
     (recur (dec n))))
 
 (handlers/register-base     ;; not a pure handler
-  :undo                     ;; usage:  (dispatch [:undo n])
+  :undo                     ;; usage:  (dispatch [:undo n])  n is optional, defaults to 1
   (fn handler
     [_ [_ n]]
-    ;; if n absent, defaults to 1. If clear-redos? absent, defaults to false.
     (if-not (undos?)
       (warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
       (undo-n (or n 1)))))
