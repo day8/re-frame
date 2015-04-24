@@ -9,6 +9,12 @@
 (def ^:private key->fn (atom {}))
 
 
+(defn clear-handlers!
+  "Unregister all subscription handlers"
+  []
+  (reset! key->fn {}))
+
+
 (defn register
   "register a hander function for an id"
   [key-v handler-fn]

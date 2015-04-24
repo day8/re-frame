@@ -11,9 +11,12 @@
 (def dispatch         router/dispatch)
 (def dispatch-sync    router/dispatch-sync)
 
-(def register-sub  subs/register)
-(def subscribe     subs/subscribe)
+(def register-sub        subs/register)
+(def clear-sub-handlers! subs/clear-handlers!)
+(def subscribe           subs/subscribe)
 
+
+(def clear-event-handlers!  handlers/clear-handlers!)
 
 
 (def pure        middleware/pure)

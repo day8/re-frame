@@ -33,6 +33,12 @@
   (get @id->fn event-id))
 
 
+(defn clear-handlers!
+  "Unregister all event handlers"
+  []
+  (reset! id->fn {}))
+
+
 (defn register-base
   "register a handler for an event.
   This is low level and it is expected that \"re-frame.core/register-handler\" would
