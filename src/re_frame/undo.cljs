@@ -30,21 +30,29 @@
 (def ^:private undo-explain-list (reagent/atom []))   ;; mirrors undo-list
 (def ^:private redo-explain-list (reagent/atom []))   ;; mirrors redo-list
 
+(defn- clear-undos!
+  []
+  (reset! undo-list [])
+  (reset! undo-explain-list []))
+
+
+(defn- clear-redos!
+  []
+  (reset! redo-list [])
+  (reset! redo-explain-list []))
+
 
 (defn clear-history!
   []
-  (reset! undo-list [])
-  (reset! redo-list [])
-  (reset! undo-explain-list [])
-  (reset! redo-explain-list [])
+  (clear-undos!)
+  (clear-redos!)
   (reset! app-explain ""))
 
 
 (defn store-now!
   "stores the value currently in app-db, so the user can later undo"
   [explanation]
-  (reset! redo-list [])           ;; clear and redo state created by previous undos
-  (reset! redo-explain-list [])   ;; clear and redo state created by previous undos
+  (clear-redos!)
   (reset! undo-list (vec (take
                            @max-undos
                            (conj @undo-list @app-db))))
@@ -52,6 +60,7 @@
                                    @max-undos
                                    (conj @undo-explain-list @app-explain))))
   (reset! app-explain explanation))
+
 
 (defn undos?
   []
@@ -119,9 +128,9 @@
     (recur (dec n))))
 
 (handlers/register-base     ;; not a pure handler
-  :undo                     ;; usage:  (dispatch [:undo n])
+  :undo                     ;; usage:  (dispatch [:undo n])  n is optional, defaults to 1
   (fn handler
-    [_ [_ n]]               ;; if n absent, defaults to 1
+    [_ [_ n]]
     (if-not (undos?)
       (warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
       (undo-n (or n 1)))))
@@ -150,4 +159,13 @@
     (if-not (redos?)
       (warn "re-frame: you did a (dispatch [:redo]), but there is nothing to redo.")
       (redo-n (or n 1)))))
+
+
+(handlers/register-base     ;; not a pure handler
+  :purge-redos              ;; usage:  (dispatch [:purge-redo])
+  (fn handler
+    [_ _]
+    (if-not (redos?)
+      (warn "re-frame: you did a (dispatch [:purge-redos]), but there is nothing to redo.")
+      (clear-redos!))))
 

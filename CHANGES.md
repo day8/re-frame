@@ -1,3 +1,8 @@
+## v0.4.0  (2015-04-24)
+
+Improvements:
+  - #52 Add a way to purge redos
+  
 
 ## v0.3.2  (2015-04-21)
 
