@@ -1,15 +1,21 @@
+
+
 ## v0.4.0  (2015-04-28)
 
-Improvements:
-  - #52 Add a way to purge redos
-  - #50 Add "reaction-like" middleware 
+New Features:
+  - #52 Add a way to purge redos   `(dispatch [:purge-redos])`
   - #43 Add ability to clear handlers (event and subs).  
     Add two new API functions:
       - re-frame.core/clear-sub-handlers!
       - re-frame.core/clear-event-handlers!
     Useful for those using the [ClojureScript fork](https://github.com/quile/component-cljs) of [Component](https://github.com/stuartsierra/component).
     
+Fixes:
+  - #53 Fix Logging And Error Reporting
   
+Experimental:
+  - #50 Add "reaction-like" middleware.
+     
 
 ## v0.3.2  (2015-04-21)
 

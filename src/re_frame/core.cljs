@@ -29,10 +29,17 @@
 (def log-ex      middleware/log-ex)
 
 
-;; ALPHA - EXPERIMENTAL
+;; ALPHA - EXPERIMENTAL MIDDLEWARE
 (def on-changes  middleware/on-changes)
 
 
+;; --  Logging -----
+;; re-frame uses a few utility logging functions: warn, log, error, group and groupEnd
+;; By default they use the js/console implementations
+;; But you can override:
+;;   (set-loggers!  {:warn  my-warn   :log  my-looger ...})
+;; The functions you supply will be given a string.
+(def set-loggers! utils/set-loggers!)
 
 ;; --  Convenience API -------
 
