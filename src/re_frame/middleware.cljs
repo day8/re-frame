@@ -190,10 +190,11 @@
 
   (on-changes my-f [:c]  [:a] [:b])
 
-  Put the middlware above on the right handlers (ones which might change :a or :b.
+  Put the middlware above on the right handlers (ones which might change :a or :b).
   It will:
-     - run 'f' each time the value at path [:a] or [:b] changes
-     - put the return value from f into the path  [:c]
+     - call 'f' each time the value at path [:a] or [:b] changes
+     - call 'f' with the values extracted from [:a] [:b]
+     - assoc the return value from 'f' into the path  [:c]
   "
   [f out-path & in-paths]
   (fn on-changed-middleware
