@@ -2,7 +2,7 @@
  (:require
    [reagent.ratom  :refer [make-reaction]]
    [re-frame.db    :refer [app-db]]
-   [re-frame.utils :refer [first-in-vector warn group log groupEnd]]))
+   [re-frame.utils :refer [first-in-vector warn group groupEnd]]))
 
 
 ;; maps from handler-id to handler-fn
