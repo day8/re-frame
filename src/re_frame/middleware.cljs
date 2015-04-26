@@ -180,7 +180,7 @@
   "Middleware factory which acts a bit like \"reaction\"  (but it flows into db , rather than out)
   It observes N  inputs (paths into db) and if any of them change (as a result of the
   handler being run) then it runs 'f' to compute a new value, which is
-  then assoced into the given out=path within app-db.
+  then assoced into the given out-path within app-db.
 
   Usage:
 
