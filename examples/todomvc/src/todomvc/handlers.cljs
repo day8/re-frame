@@ -7,10 +7,12 @@
 ;; -- Middleware --------------------------------------------------------------
 ;;
 
-(def ->ls (after todos->ls!))    ;; middleware to put todos into local storage
+(def ->ls (after todos->ls!))    ;; middleware to store todos into local storage
 
-;; middleware for any handler which manipulates todos.
-(def todo-ware [(path :todos) ->ls trim-v])
+;; middleware for any handler that manipulates todos
+(def todo-middleware [(path :todos)   ;; 1st param to handler will be value from this path
+                      ->ls            ;; write to localstore each time
+                      trim-v])        ;; remove event id from event vec
 
 
 ;; -- Helpers -----------------------------------------------------------------
@@ -22,23 +24,29 @@
 
 ;; -- Handlers ----------------------------------------------------------------
 
-(register-handler                 ;; disptached to on app startup
+                                  ;; usage:  (dispatch [:initialise-db])
+(register-handler                 ;; On app startup, ceate initial state
   :initialise-db                  ;; event id being handled
-  (fn  [_ _]                      ;; the handler
+  (fn [_ _]                       ;; the handler being registered
     (merge default-value (ls->todos))))  ;; all hail the new state
 
 
-(register-handler                 ;; handlers changes the footer filter
+(register-handler                 ;; this handler changes the footer filter
   :set-showing                    ;; event-id
   [(path :showing) trim-v]        ;; middleware  (wraps the handler)
-  (fn                             ;; handler
-    [db [filter-kw]]
-    filter-kw))
+
+  ;; Because of the path middleware above, the 1st parameter to
+  ;; the handler below won't be the entire 'db', and instead will
+  ;; be the value at a certain path within db.
+  ;; Also, the use of the 'trim-v' middleware means we can omit
+  ;; the leading underscore from the 2nd parameter (event vector).
+  (fn [old-kw [new-filter-kw]]    ;; handler
+    new-filter-kw))               ;; return new state for the path
 
 
 (register-handler                  ;; given the text, create a new todo
   :add-todo
-  todo-ware
+  todo-middleware
   (fn [todos [text]]               ;; "path" middlware means we are given :todo
     (let [id  (next-id todos)]
       (assoc todos id {:id id :title text :done false}))))
@@ -46,38 +54,38 @@
 
 (register-handler
   :toggle-done
-  todo-ware
+  todo-middleware
   (fn [todos [id]]
     (update-in todos [id :done] not)))
 
 
 (register-handler
   :save
-  todo-ware
+  todo-middleware
   (fn [todos [id title]]
     (assoc-in todos [id :title] title)))
 
 
 (register-handler
   :delete-todo
-  todo-ware
+  todo-middleware
   (fn [todos [id]]
     (dissoc todos id)))
 
 
 (register-handler
   :clear-completed
-  todo-ware
+  todo-middleware
   (fn [todos _]
     (->> (vals todos)                ;; remove all todos where :done is true
          (filter :done)
          (map :id)
-         (reduce dissoc todos))))
+         (reduce dissoc todos))))    ;; returns the new version of todos
 
 
 (register-handler
   :complete-all-toggle
-  todo-ware
+  todo-middleware
   (fn [todos]
     (let [new-done (not-every? :done (vals todos))]   ;; toggle true or false?
       (reduce #(assoc-in %1 [%2 :done] new-done)
