@@ -2,7 +2,7 @@
  (:require
    [reagent.ratom  :refer [make-reaction]]
    [re-frame.db    :refer [app-db]]
-   [re-frame.utils :refer [first-in-vector warn group groupEnd]]))
+   [re-frame.utils :refer [first-in-vector warn error]]))
 
 
 ;; maps from handler-id to handler-fn
@@ -29,6 +29,6 @@
   (let [key-v       (first-in-vector v)
         handler-fn  (get @key->fn key-v)]
     (if (nil? handler-fn)
-      (warn "re-frame: no subscription handler registered for: \"" key-v "\".  Returning a nil subscription.")
+      (error "re-frame: no subscription handler registered for: \"" key-v "\".  Returning a nil subscription.")
       (handler-fn app-db v))))
 
