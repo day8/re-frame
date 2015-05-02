@@ -2,7 +2,7 @@
   (:require
     [reagent.ratom  :refer [IReactiveAtom]]
     [re-frame.undo  :refer [store-now!]]
-    [re-frame.utils :refer [warn log group groupEnd]]
+    [re-frame.utils :refer [warn log group groupEnd error]]
     [clojure.data   :as data]))
 
 
@@ -31,7 +31,7 @@
       (let [db      @app-db
             new-db  (handler db event-vec)]
         (if (nil? new-db)
-          (warn "re-frame: your pure handler returned nil. It should return the new db state.")
+          (error "re-frame: your pure handler returned nil. It should return the new db state.")
           (if-not (identical? db new-db)
             (reset! app-db new-db)))))))
 
@@ -48,6 +48,7 @@
   [handler]
   (fn log-ex-handler
     [db v]
+    (warn "re-frame: use of \"log-ex\" is deprecated. You don't need it any more. Chrome seems to now produce good stack traces.")
     (try
       (handler db v)
       (catch :default e     ;; ooops, handler threw
@@ -101,7 +102,9 @@
   [& args]
   (let [path   (flatten args)
         _      (if (empty? path)
-                 (warn "re-frame: \"path\" middleware given no params. Probably a mistake."))]
+                 (error "re-frame: \"path\" middleware given no params."))
+        _      (if (fn? (first args))
+                 (error "re-frame: you've used \"path\" incorrectly. It is a middleare factory and must be called like this \"(path something)\", whereas you just supplied \"path\"."))]
     (fn path-middleware
       [handler]
       (fn path-handler
@@ -124,7 +127,7 @@
                           (fn? explanation)     (explanation db event-vec)
                           (string? explanation) explanation
                           (nil? explanation)    ""
-                          :else (warn "re-frame: \"undoable\" middleware given a bad parameter. Got: " explanation))]
+                          :else (error "re-frame: \"undoable\" middleware given a bad parameter. Got: " explanation))]
       (store-now! explanation)
       (handler db event-vec)))))
 

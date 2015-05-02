@@ -1,6 +1,6 @@
 (ns re-frame.handlers
   (:require [re-frame.db         :refer [app-db]]
-            [re-frame.utils      :refer [first-in-vector warn]]))
+            [re-frame.utils      :refer [first-in-vector warn error]]))
 
 
 ;; -- composing middleware  -----------------------------------------------------------------------
@@ -73,9 +73,9 @@
   (let [event-id    (first-in-vector event-v)
         handler-fn  (lookup-handler event-id)]
     (if (nil? handler-fn)
-      (warn "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")   ;; TODO: make exception
+      (error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
       (if  *handling*
-        (warn "re-frame: in the middle of handling \""  *handling*  "\"  tried to handle \"" event-v "\"")
+        (error "re-frame: while handling \""  *handling*  "\"  dispatch-sync was called for \"" event-v "\". You can't call dispatch-sync in an event handler.")
         (binding [*handling*  event-v]
           (handler-fn app-db event-v))))))
 
