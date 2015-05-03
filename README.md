@@ -57,13 +57,15 @@ Features:
    and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
    What could possibly go wrong?
    
-## Using It
+## Using re-frame
+
 
 [![Build Status](https://travis-ci.org/Day8/re-frame.png?branch=master)](https://travis-ci.org/Day8/re-frame)
 
+re-frame is available from clojars. Add the following to your project dependencies: 
 [![Clojars Project](http://clojars.org/re-frame/latest-version.svg)](http://clojars.org/re-frame)
 
-__Warning__:  okay, that was the summary. What follows is a lengthy tutorial with a [Where Do I Go Next](#Where-Do-I-Go-Next) section at the end. 
+__Warning__:  That was the summary. What follows is a long-ish tutorial/explanation. 
 
 
 ## Tutorial Table of Contents
