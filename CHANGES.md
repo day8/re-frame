@@ -4,14 +4,13 @@
 
 New Features:
   - #52 Add a way to purge redos   `(dispatch [:purge-redos])`
-  - #43 Add ability to clear handlers (event and subs).  
-    Add two new API functions:
+  - #43 Add ability to clear handlers (event and subs) via 
+    two new API functions:
       - re-frame.core/clear-sub-handlers!
       - re-frame.core/clear-event-handlers!
     Useful for those using the [ClojureScript fork](https://github.com/quile/component-cljs) of [Component](https://github.com/stuartsierra/component).
-    
-Fixes:
   - #53 Fix Logging And Error Reporting
+    Introduce [`re-frame.core/set-logging!`](https://github.com/Day8/re-frame/wiki/FAQ#3-can-re-frame-use-my-logging-functions)
   
 Experimental:
   - #50 Add "reaction-like" middleware.
