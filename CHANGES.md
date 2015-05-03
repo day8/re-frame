@@ -1,19 +1,40 @@
 
 
-## v0.4.0  (2015-04-28)
+## v0.4.0  (2015-05-04)
 
+Headline:
+  - Exceptions in event handlers no longer break the router loop. 
+    Previously, any exception in an event handler broke the app
+    permanently. This change will:
+      - improve the debugging experience with figwheel 
+      - mean apps, in production, stand a chance of reporting UHE
+        to the user, and can perhaps even recover to a sane state.
+  - #53 Fix Logging And Error Reporting
+    You can now provide your own logging fucntions. 
+    Further explanation [here](https://github.com/Day8/re-frame/wiki/FAQ#3-can-re-frame-use-my-logging-functions).
+    
+Deprecated:
+  - `log-ex` middleware is no longer needed.  Simply remove its use. 
+    Sometime in the last couple of months, changes to the CLJS
+    runtime meant that useful exceptions could escape go-loops, and
+    good stack traces appear (at least in Chrome). 
+    
 New Features:
   - #52 Add a way to purge redos   `(dispatch [:purge-redos])`
+    When trying to recover from an UHE, do an undo to get back to the 
+    last sane state, and then use this new feature to purge the 
+    just-generated-redo.  
   - #43 Add ability to clear handlers (event and subs) via 
     two new API functions:
       - re-frame.core/clear-sub-handlers!
       - re-frame.core/clear-event-handlers!
     Useful for those using the [ClojureScript fork](https://github.com/quile/component-cljs) of [Component](https://github.com/stuartsierra/component).
-  - #53 Fix Logging And Error Reporting
-    Introduce [`re-frame.core/set-logging!`](https://github.com/Day8/re-frame/wiki/FAQ#3-can-re-frame-use-my-logging-functions)
   
 Experimental:
-  - #50 Add "reaction-like" middleware.
+  - #50 Add "reaction-like" middleware called `on-changes`.
+  
+Other:
+  - improve some comments in todomvc example
      
 
 ## v0.3.2  (2015-04-21)
