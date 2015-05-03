@@ -17,9 +17,9 @@ A [re-frame](https://github.com/Day8/re-frame) implementation of [TodoMVC](http:
    cd re-frame/examples/todomvc
    ```
 
-1. build
+1. clean build
    ```
-   lein cljsbuild once
+   lein do clean, cljsbuild once
    ```
 
 1. run
