@@ -1183,7 +1183,7 @@ To build an app using re-frame, you'll have to:
 
 Your next steps with re-frame should be:
   - look at the examples:  https://github.com/Day8/re-frame/tree/master/examples
-  - use the lein template:  https://github.com/Day8/re-frame-template​
+  - use the lein template:  https://github.com/Day8/re-frame-template
   - read more in the Wiki:  https://github.com/Day8/re-frame/wiki
 
 You might also be interested in James MacAulay's excellent work (not re-frame!): 
