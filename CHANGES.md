@@ -1,4 +1,12 @@
 
+## v0.5.0  (2015-05-?????)
+
+
+Headline:
+
+New Features:
+  - both examples now work with figwheel
+  
 
 ## v0.4.0  (2015-05-04)
 
