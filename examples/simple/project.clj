@@ -2,7 +2,7 @@
 (defproject simple-re-frame "0.4.0"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-3208"]
-                 [reagent "0.5.0"]
+                 [reagent "0.5.1-SNAPSHOT"]
                  [re-frame "0.4.0"]
                  [figwheel "0.2.6"]]
 
@@ -15,6 +15,7 @@
                    {:builds {:client {:source-paths ["devsrc"]
                                       :compiler
                                       {:main simpleexample.dev
+                                       :asset-path "js"
                                        :optimizations :none
                                        :source-map true
                                        :source-map-timestamp true}}}}}
@@ -27,7 +28,9 @@
 
   :figwheel {:repl false}
 
+  :clean-targets ^{:protect false} ["resources/public/js"]
+
   :cljsbuild {:builds {:client {:source-paths ["src"]
                                 :compiler
-                                {:output-dir "target/client"
-                                 :output-to "target/client.js"}}}})
+                                {:output-dir "resources/public/js"
+                                 :output-to "resources/public/js/client.js"}}}})
