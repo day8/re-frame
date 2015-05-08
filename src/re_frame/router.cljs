@@ -44,12 +44,14 @@
              (try
                (handle event-v)
 
-               ;; Unhandled exceptions from event handlers must be managed as follows:
-               ;;   - call the standard logging function "error"
-               ;;   - allow them to continue to bubble up because the app, in production,
+               ;; If the handler throws:
+               ;;   - allow the exception to bubble up because the app, in production,
                ;;     may have hooked window.onerror and perform special processing.
-               ;;   - But an exception which bubbles out will break the enclosing go-loop.
+               ;;   - But an exception which bubbles up will break the enclosing go-loop.
                ;;     So we'll need to start another one.
+               ;;   - purge any pending events, because they are probably related to the
+               ;;     event which just fell in a screaming heap. Not sane to handle further
+               ;;     events if the prior event failed.
                (catch js/Object e
                  (do
                    ;; try to recover from this (probably uncaught) error as best we can
