@@ -2,7 +2,7 @@
 (defproject simple-re-frame "0.4.0"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-3208"]
-                 [reagent "0.5.1-SNAPSHOT"]
+                 [reagent "0.5.0"]
                  [re-frame "0.4.0"]
                  [figwheel "0.2.6"]]
 
