@@ -1,4 +1,4 @@
-# re-frame: Derived Values, Flowing 
+# re-frame: Derived Values, Flowing
 
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
@@ -23,7 +23,7 @@ Either:
 
 ## re-frame
 
-re-frame is a pattern for writing [SPAs] in ClojureScript, using [Reagent].  
+re-frame is a pattern for writing [SPAs] in ClojureScript, using [Reagent].
 
 This repo contains both a **description of this pattern** and a **reference implementation**.
 
@@ -56,16 +56,16 @@ Features:
    It also has a charming xkcd reference (soon)
    and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
    What could possibly go wrong?
-   
+
 ## Using re-frame
 
 
 [![Build Status](https://travis-ci.org/Day8/re-frame.png?branch=master)](https://travis-ci.org/Day8/re-frame)
 
-re-frame is available from clojars. Add the following to your project dependencies: 
+re-frame is available from clojars. Add the following to your project dependencies:
 [![Clojars Project](http://clojars.org/re-frame/latest-version.svg)](http://clojars.org/re-frame)
 
-__Warning__:  That was the summary. What follows is a long-ish tutorial/explanation. 
+__Warning__:  That was the summary. What follows is a long-ish tutorial/explanation.
 
 
 ## Tutorial Table of Contents
@@ -104,7 +104,7 @@ __Warning__:  That was the summary. What follows is a long-ish tutorial/explanat
  - [Talking To A Server](#talking-to-a-server)
  - [The CPU Hog Problem](#the-cpu-hog-problem)
  - [In Summary](#in-summary)
- - [Where Do I Go Next](#Where-Do-I-Go-Next)
+ - [Where Do I Go Next](#where-do-i-go-next)
  - [Licence](#licence)
 
 ## What Problem Does It Solve?
@@ -157,7 +157,7 @@ Not much about re-frame is original or clever. You'll find
 no ingenious use of functional zippers, transducers or core.async.
 
 Re-frame does use Reagent's features in a novel way.
-And I did actively reject the current ClojureScript fashion of using 
+And I did actively reject the current ClojureScript fashion of using
 Cursors.  And, yes, the event middleware concept has turned out nicely.
 But, for the most part, re-frame is simply a mashup of
 emerging ideas.
@@ -385,7 +385,7 @@ Right, so that was a lot of words. Some code to clarify:
 (ns example1
  (:require-macros [reagent.ratom :refer [reaction]])  ;; reaction is a macro
  (:require        [reagent.core  :as    reagent]))
-  
+
 (def app-db  (reagent/atom {:a 1}))           ;; our root ratom  (signal)
 
 (def ratom2  (reaction {:b (:a @app-db)}))    ;; reaction wraps a computation, returns a signal
@@ -456,7 +456,7 @@ Here is a slightly more interesting (parameterised) component (function):
 (def n (reagent/atom "re-frame"))
 
 ;; call our `component` function, passing in a ratom
-(greet n)                  
+(greet n)
 ;; ==>  [:div "Hello " "re-frame"]    returns a vector
 ```
 
@@ -476,7 +476,7 @@ might as well bite the bullet here and now ... and, anyway, it is pretty easy...
 (defn greet                ;; a component - data in, Hiccup out.
   [name]                   ;; name is a ratom
   [:div "Hello "  @name])  ;; dereference name here, to extract the value within
- 
+
 (def n (reagent/atom "re-frame"))
 
 ;; The computation '(greet n)' returns Hiccup which is stored into 'hiccup-ratom'
@@ -664,7 +664,7 @@ So let's now look at how to write and register the subscription handler for `:cu
    [db, [sid cid]]      ;; query fns are given 'app-db', plus vector given to subscribe
    (assert (= sid :customer-query))   ;; subscription id was the first vector
    (reaction (get-in @db [:path :to :a :map cid])))    ;; re-runs each time db changes
-  
+
 ;; register our query handler
 (register-sub
    :customer-query       ;; the id (the name of the query()
@@ -754,7 +754,7 @@ In a component, we could use this query via `subscribe`:
         num     (reaction (count @items))     ;; Woh! a reaction based on the subscription
         top-20  (reaction (take 20 @items))]  ;; Another dependent reaction
      (fn []
-       [:div 
+       [:div
            (str "there's " @num " of these suckers. Here's top 20")     ;; rookie mistake to leave off the @
            (into [:div ] (map item-render @top-20))])))   ;; item-render is another component, not shown
 ```
@@ -966,7 +966,7 @@ and sometimes with async results.
 But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!). That leaves your event
 handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
 
-There's more to event handlers than can be covered here in this introductory tutorial. Read up on 
+There's more to event handlers than can be covered here in this introductory tutorial. Read up on
 issues like Middleware [in the Wiki](https://github.com/Day8/re-frame/wiki#handler-middleware).
 
 ### Routing
@@ -1139,7 +1139,7 @@ modify `app-db` themselves.  That is always done in a handler.
  - if you kick off an HTTP request in a handler, then organise for the on-success or on-fail handlers
    to dispatch their outcome.  All events are handled via dispatch. on-success should never ever change
    `app-db`.
-   
+
 The [wiki](https://github.com/Day8/re-frame/wiki/Talking-To-Servers) has more on the subject.
 
 ## The CPU Hog Problem
@@ -1186,7 +1186,7 @@ Your next steps with re-frame should be:
   - use the lein template:  https://github.com/Day8/re-frame-template
   - read more in the Wiki:  https://github.com/Day8/re-frame/wiki
 
-You might also be interested in James MacAulay's excellent work (not re-frame!): 
+You might also be interested in James MacAulay's excellent work (not re-frame!):
 https://github.com/jamesmacaulay/zelkova
 
 If you want reusable layout and widget components, consider this sister project:
@@ -1211,6 +1211,3 @@ Distributed under The MIT License (MIT) - See LICENSE.txt
 [datascript]:https://github.com/tonsky/datascript
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
-
-
-
