@@ -7,25 +7,39 @@ A [re-frame](https://github.com/Day8/re-frame) implementation of [TodoMVC](http:
 
 1. Install [Leiningen](http://leiningen.org/)  (plus Java).
 
-1. Get the re-frame repo
+2. Get the re-frame repo
    ```
    git clone https://github.com/Day8/re-frame.git
    ```
 
-1. cd to the right example directory
+3. cd to the right example directory
    ```
    cd re-frame/examples/todomvc
    ```
 
-1. clean build
+4. Clean build
    ```
-   lein do clean, cljsbuild once
+   lein do clean, figwheel
    ```
 
-1. run
+5. Run
    ```
-   open index.html
+   http://localhost:3450
    ```
+
+
+## Compile an optimized version
+
+1. Compile
+   ```
+   lein do clean, with-profile prod compile
+   ```
+
+2. Open the following in your browser
+   ```
+   resources/public/index.html
+   ```
+
 
 ## Exploring The Code
 
