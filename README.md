@@ -732,7 +732,7 @@ The subscription-handler might be written:
    (reaction
       (let [items      (get-in @db [:items])     ;; extract items from db
             sort-attr  (get-in @db [:sort-by])]  ;; extract sort key from db
-          (sort-by @sort-attr @items)))))        ;; return them sorted
+          (sort-by sort-attr items)))))          ;; return them sorted
 ```
 
 
