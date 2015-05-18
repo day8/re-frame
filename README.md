@@ -662,7 +662,7 @@ So let's now look at how to write and register the subscription handler for `:cu
 ```Clojure
 (defn customer-query     ;; a query over 'app-db' which returns a customer
    [db, [sid cid]]      ;; query fns are given 'app-db', plus vector given to subscribe
-   (assert (= sid :customer-query))   ;; subscription id was the first vector
+   (assert (= sid :customer-query))   ;; subscription id was the first element in the vector
    (reaction (get-in @db [:path :to :a :map cid])))    ;; re-runs each time db changes
 
 ;; register our query handler
