@@ -1,8 +1,8 @@
 (ns re-frame.undo
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
-    [re-frame.utils      :refer  [warn]]
     [reagent.core        :as     reagent]
+    [re-frame.utils      :refer  [warn]]
     [re-frame.db         :refer  [app-db]]
     [re-frame.handlers   :as     handlers]
     [re-frame.subs       :as     subs]))
@@ -11,24 +11,24 @@
 ;; -- History -------------------------------------------------------------------------------------
 ;;
 ;;
-(def ^:private max-undos (atom 50))     ;; maximum number of undo states maintained
+(def ^:private max-undos "Maximum number of undo states maintained" (atom 50))
 (defn set-max-undos!
   [n]
   (reset! max-undos n))
 
 
-(def ^:private undo-list (reagent/atom []))   ;; a list of history states
-(def ^:private redo-list (reagent/atom []))   ;; a list of future states, caused by undoing
+(def ^:private undo-list "A list of history states" (reagent/atom []))
+(def ^:private redo-list "A list of future states, caused by undoing" (reagent/atom []))
 
-;; -- Explainations -----------------------------------------------------------
+;; -- Explanations -----------------------------------------------------------
 ;;
 ;; Each undo has an associated explanation which can be displayed to the user.
 ;;
 ;; Seems really ugly to have mirrored vectors, but ...
 ;; the code kinda falls out when you do. I'm feeling lazy.
-(def ^:private app-explain (reagent/atom ""))         ;; mirrors app-db
-(def ^:private undo-explain-list (reagent/atom []))   ;; mirrors undo-list
-(def ^:private redo-explain-list (reagent/atom []))   ;; mirrors redo-list
+(def ^:private app-explain "Mirrors app-db" (reagent/atom ""))
+(def ^:private undo-explain-list "Mirrors undo-list" (reagent/atom []))
+(def ^:private redo-explain-list "Mirrors redo-list" (reagent/atom []))
 
 (defn- clear-undos!
   []
@@ -50,7 +50,7 @@
 
 
 (defn store-now!
-  "stores the value currently in app-db, so the user can later undo"
+  "Stores the value currently in app-db, so the user can later undo"
   [explanation]
   (clear-redos!)
   (reset! undo-list (vec (take
@@ -63,15 +63,17 @@
 
 
 (defn undos?
+  "Returns true if undos exist, false otherwise"
   []
   (pos? (count @undo-list)))
 
 (defn redos?
+  "Returns true if redos exist, false otherwise"
   []
   (pos? (count @redo-list)))
 
 (defn undo-explanations
-  "return list of undo descriptions or empty list if no undos"
+  "Returns list of undo descriptions or empty list if no undos"
   []
   (if (undos?)
     (conj @undo-explain-list @app-explain)
@@ -120,7 +122,7 @@
     (reset! undos (pop u))))
 
 (defn- undo-n
-  "undo until we reach n or run out of undos"
+  "undo n steps or until we run out of undos"
   [n]
   (when (and (pos? n) (undos?))
     (undo undo-list app-db redo-list)
@@ -145,7 +147,7 @@
     (reset! undos u)))
 
 (defn- redo-n
-  "redo until we reach n or run out of redos"
+  "redo n steps or until we run out of redos"
   [n]
   (when (and (pos? n) (redos?))
     (redo undo-list app-db redo-list)

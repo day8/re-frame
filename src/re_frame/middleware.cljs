@@ -104,7 +104,7 @@
         _      (if (empty? path)
                  (error "re-frame: \"path\" middleware given no params."))
         _      (if (fn? (first args))
-                 (error "re-frame: you've used \"path\" incorrectly. It is a middleare factory and must be called like this \"(path something)\", whereas you just supplied \"path\"."))]
+                 (error "re-frame: you've used \"path\" incorrectly. It is a middleware factory and must be called like this \"(path something)\", whereas you just supplied \"path\"."))]
     (fn path-middleware
       [handler]
       (fn path-handler
