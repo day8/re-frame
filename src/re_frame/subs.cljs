@@ -10,13 +10,13 @@
 
 
 (defn clear-handlers!
-  "Unregister all subscription handlers"
+  "Unregisters all subscription handlers"
   []
   (reset! key->fn {}))
 
 
 (defn register
-  "register a hander function for an id"
+  "Registers a handler function for an id"
   [key-v handler-fn]
   (if (contains? @key->fn key-v)
     (warn "re-frame: overwriting subscription-handler for: " key-v))   ;; allow it, but warn.
@@ -24,7 +24,7 @@
 
 
 (defn subscribe
-  "returns a reagent/reaction which observes a part of app-db"
+  "Returns a reagent/reaction which observes a part of app-db"
   [v]
   (let [key-v       (first-in-vector v)
         handler-fn  (get @key->fn key-v)]
