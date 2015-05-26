@@ -288,7 +288,7 @@ a map.  It could, for example, be a [datascript] database.  In fact, any databas
 (can tell you when it changes) would do.  (We'd love! to be using [datascript] - so damn cool -
 but we had too much
 data in our apps. If you were to use it, you'd have to tweak the reference implementation a bit,
-[perhaps using this inspiration](https://gist.github.com/allgress/11348685)).
+[perhaps using this inspiration](https://gist.github.com/allgress/11348685)).  The reference implementation already creates and manages an internal `app-db` for you, you don't need to declare one yourself.
 
 
 ### The Benefits Of Data-In-The-One-Place
@@ -662,7 +662,7 @@ So let's now look at how to write and register the subscription handler for `:cu
 ```Clojure
 (defn customer-query     ;; a query over 'app-db' which returns a customer
    [db, [sid cid]]      ;; query fns are given 'app-db', plus vector given to subscribe
-   (assert (= sid :customer-query))   ;; subscription id was the first vector
+   (assert (= sid :customer-query))   ;; subscription id was the first element in the vector
    (reaction (get-in @db [:path :to :a :map cid])))    ;; re-runs each time db changes
 
 ;; register our query handler
