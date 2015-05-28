@@ -23,8 +23,9 @@ A [re-frame](https://github.com/Day8/re-frame) implementation of [TodoMVC](http:
    ```
 
 5. Run
+   You'll have to wait for step 4 to do its compile, but then:
    ```
-   http://localhost:3450
+   open http://localhost:3450
    ```
 
 
