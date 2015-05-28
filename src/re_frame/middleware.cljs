@@ -48,7 +48,7 @@
   [handler]
   (fn log-ex-handler
     [db v]
-    (warn "re-frame: use of \"log-ex\" is deprecated. You don't need it any more. Chrome seems to now produce good stack traces.")
+    (warn "re-frame: use of \"log-ex\" is deprecated. You don't need it any more IF YOU ARE USING CHROME 44. Chrome now seems to now produce good stack traces.")
     (try
       (handler db v)
       (catch :default e     ;; ooops, handler threw
@@ -89,50 +89,64 @@
     (handler db (vec (rest v)))))
 
 
-(defn path
+;; -- Middleware Factories ----------------------------------------------------
+;;
+;; Note: wierd approach defn-ing middleware factories below. Why? Because
+;; I wanted to put some metadata on them (useful for later checking).
+;; Found I had to do it this way:
+;;   (def fn-name
+;;     "docstring"
+;;     ^{....}       ;; middleware put on the following fn
+;;     (fn fn-name ....))
+;;
+;; So, yeah, wierd.
+
+(def path
   "A middleware factory which supplies a sub-tree of `db` to the handler.
-  Works a bit like update-in. Supplies a narrowed data structure for the handler.
-  Afterwards, grafts the result of the handler back into db.
-  Usage:
+   Works a bit like update-in. Supplies a narrowed data structure for the handler.
+   Afterwards, grafts the result of the handler back into db.
+   Usage:
      (path :some :path)
      (path [:some :path])
      (path [:some :path] :to :here)
      (path [:some :path] [:to] :here)
   "
-  [& args]
-  (let [path   (flatten args)
-        _      (if (empty? path)
-                 (error "re-frame: \"path\" middleware given no params."))
-        _      (if (fn? (first args))
-                 (error "re-frame: you've used \"path\" incorrectly. It is a middleware factory and must be called like this \"(path something)\", whereas you just supplied \"path\"."))]
-    (fn path-middleware
-      [handler]
-      (fn path-handler
-        [db v]
-        (assoc-in db path (handler (get-in db path) v))))))
+  ^{:re-frame-factory-name "path"}
+  (fn path
+    [& args]
+    (let [path   (flatten args)
+          _      (if (empty? path)
+                   (error "re-frame: \"path\" middleware given no params."))]
+      (fn path-middleware
+        [handler]
+        (fn path-handler
+          [db v]
+          (assoc-in db path (handler (get-in db path) v)))))))
 
 
-(defn undoable
+(def undoable
   "A Middleware factory which stores an undo checkpoint.
   \"explanation\" can be either a string or a function. If it is a
   function then must be:  (db event-vec) -> string.
   \"explanation\" can be nil. in which case \"\" is recorded.
   "
-  [explanation]
-  (fn undoable-middleware
-    [handler]
-    (fn undoable-handler
-      [db event-vec]
-      (let [explanation (cond
-                          (fn? explanation)     (explanation db event-vec)
-                          (string? explanation) explanation
-                          (nil? explanation)    ""
-                          :else (error "re-frame: \"undoable\" middleware given a bad parameter. Got: " explanation))]
-      (store-now! explanation)
-      (handler db event-vec)))))
+  ^{:re-frame-factory-name "undoable"}
+  (fn undoable
+    [explanation]
+    (fn undoable-middleware
+      [handler]
+      (fn undoable-handler
+        [db event-vec]
+        (let [explanation (cond
+                            (fn? explanation)     (explanation db event-vec)
+                            (string? explanation) explanation
+                            (nil? explanation)    ""
+                            :else (error "re-frame: \"undoable\" middleware given a bad parameter. Got: " explanation))]
+          (store-now! explanation)
+          (handler db event-vec))))))
 
 
-(defn enrich
+(def enrich
   "Middleware factory which runs a given function \"f\" in the after position.
   \"f\" is (db v) -> db
   Unlike \"after\" which is about side effects, \"enrich\" expects f to process and alter
@@ -150,36 +164,38 @@
   \"f\" would need to be both adding and removing the duplicate warnings.
   By applying \"f\" in middleware, we keep the handlers simple and yet we
   ensure this important step is not missed."
-  [f]
-  (fn enrich-middleware
-    [handler]
-    (fn enrich-handler
-      [db v]
-      (f (handler db v) v))))
+  ^{:re-frame-factory-name "enrich"}
+  (fn enrich
+    [f]
+    (fn enrich-middleware
+      [handler]
+      (fn enrich-handler
+        [db v]
+        (f (handler db v) v)))))
 
 
-
-(defn after
+(def after
   "Middleware factory which runs a function \"f\" in the \"after handler\"
   position presumably for side effects.
   \"f\" is given the new value of \"db\". It's return value is ignored.
   Examples: \"f\" can run schema validation. Or write current state to localstorage. etc.
   In effect, \"f\" is meant to sideeffect. It gets no chance to change db. See \"enrich\"
   (if you need that.)"
-  [f]
-  (fn after-middleware
-    [handler]
-    (fn after-handler
-      [db v]
-      (let [new-db (handler db v)]
-        (f new-db v)   ;; call f for side effects
-        new-db))))
-
+  ^{:re-frame-factory-name "after"}
+  (fn after
+    [f]
+    (fn after-middleware
+      [handler]
+      (fn after-handler
+        [db v]
+        (let [new-db (handler db v)]
+          (f new-db v)   ;; call f for side effects
+          new-db)))))
 
 
 ;; EXPERIMENTAL
 
-(defn on-changes
+(def  on-changes
   "Middleware factory which acts a bit like \"reaction\"  (but it flows into db , rather than out)
   It observes N  inputs (paths into db) and if any of them change (as a result of the
   handler being run) then it runs 'f' to compute a new value, which is
@@ -199,20 +215,22 @@
      - call 'f' with the values extracted from [:a] [:b]
      - assoc the return value from 'f' into the path  [:c]
   "
-  [f out-path & in-paths]
-  (fn on-changed-middleware
-    [handler]
-    (fn on-changed-handler
-      [db v]
-      (let [ ;; run the handler, computing a new generation of db
-            new-db (handler db v)
+  ^{:re-frame-factory-name "on-changes"}
+  (fn on-changes
+    [f out-path & in-paths]
+    (fn on-changed-middleware
+      [handler]
+      (fn on-changed-handler
+        [db v]
+        (let [ ;; run the handler, computing a new generation of db
+              new-db (handler db v)
 
-            ;; work out if any "inputs" have changed
-            new-ins      (map #(get-in new-db %) in-paths)
-            old-ins      (map #(get-in db %) in-paths)
-            changed-ins? (some false? (map identical? new-ins old-ins))]
+              ;; work out if any "inputs" have changed
+              new-ins      (map #(get-in new-db %) in-paths)
+              old-ins      (map #(get-in db %) in-paths)
+              changed-ins? (some false? (map identical? new-ins old-ins))]
 
-        ;; if one of the inputs has changed, then run 'f'
-        (if changed-ins?
-          (assoc-in new-db out-path (apply f new-ins))
-          new-db)))))
+          ;; if one of the inputs has changed, then run 'f'
+          (if changed-ins?
+            (assoc-in new-db out-path (apply f new-ins))
+            new-db))))))

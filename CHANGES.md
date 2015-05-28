@@ -1,11 +1,9 @@
 
-## v0.5.0  (2015-05-?????)
+## v0.4.1 (2015-05-29)
 
-
-Headline:
-
-New Features:
-  - both examples now work with figwheel
+Improvements:
+  - fix #65 - Detect mistaken use of middleware factories
+  - `examples/` now work with figwheel
   
 
 ## v0.4.0  (2015-05-04)

@@ -5,6 +5,20 @@
 
 ;; -- composing middleware  -----------------------------------------------------------------------
 
+
+(defn report-middleware-factories
+  "See https://github.com/Day8/re-frame/issues/65"
+  [v]
+  (letfn [(name-of-factory
+            [f]
+            (-> f meta :re-frame-factory-name))
+          (factory-names-in
+            [v]
+            (remove nil? (map name-of-factory v)))]
+    (doseq [name (factory-names-in v)]
+      (error "re-frame: \"" name "\" used incorrectly. Must be used like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
+
+
 (defn comp-middleware
   "Given a vector of middleware, filter out any nils, and use \"comp\" to compose the elements.
   v can have nested vectors, and will be flattened before \"comp\" is applied.
@@ -13,9 +27,11 @@
      (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil
   "
   [v]
+
   (cond
     (fn? v)       v  ;; assumed to be existing middleware
-    (vector? v)   (let [v (remove nil? (flatten v))]
+    (vector? v)   (let [v (remove nil? (flatten v))
+                        _ (report-middleware-factories v)]   ;; damn error detection! always messes up the code
                     (cond
                       (empty? v)       identity     ;; no-op middleware
                       (= 1 (count v))  (first v)    ;; only one middleware, no composing needed
