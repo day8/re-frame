@@ -963,7 +963,7 @@ Handling an event invariably involves mutating the value in `app-db`
 An item is added here, or one is deleted there.  So, often simple CRUD, but sometimes much more,
 and sometimes with async results.
 
-But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!). That leaves your event
+But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!`). That leaves your event
 handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
 
 There's more to event handlers than can be covered here in this introductory tutorial. Read up on
