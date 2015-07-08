@@ -51,7 +51,7 @@
   :timer
   (fn 
     [db _]                       ;; db is the app-db atom
-    (reaction (:timer @db))))    ;; wrap the compitation in a reaction
+    (reaction (:timer @db))))    ;; wrap the computation in a reaction
 
 
 (register-sub
