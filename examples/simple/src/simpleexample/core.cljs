@@ -1,6 +1,6 @@
 (ns simpleexample.core
   (:require-macros [reagent.ratom :refer [reaction]])  
-  (:require [reagent.core :as reagent :refer [atom]]
+  (:require [reagent.core :as reagent]
             [re-frame.core :refer [register-handler
                                    path
                                    register-sub
