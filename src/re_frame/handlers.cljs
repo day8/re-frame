@@ -30,12 +30,9 @@
 
   (cond
     (fn? v)       v  ;; assumed to be existing middleware
-    (vector? v)   (let [v (remove nil? (flatten v))
-                        _ (report-middleware-factories v)]   ;; damn error detection! always messes up the code
-                    (cond
-                      (empty? v)       identity     ;; no-op middleware
-                      (= 1 (count v))  (first v)    ;; only one middleware, no composing needed
-                      :else            (apply comp v)))
+    (seq? v)      (let [v (remove nil? (flatten v))]
+                    (report-middleware-factories v)
+                    (apply comp v))
     :else         (warn "re-frame: comp-middleware expects a vector, got: " v)))
 
 
