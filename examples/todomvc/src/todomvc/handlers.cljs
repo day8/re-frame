@@ -8,21 +8,21 @@
 ;; -- Middleware --------------------------------------------------------------
 ;;
 
-(defn schema-checker
-      "throw error with schema details if schema does not match.
-      For better errors, tag your schema with :ref metadata
-      e.g. (def my-schema ^{:ref (ns-line)} {...my schema....}"
-      [db]
-      (if-let [problems  (s/check schema db)]
-          (throw (js/Error. (str "schema check failed: " problems)))))
+(defn check-and-throw
+      "throw an exception if db doesn't match the schema."
+      [a-schema db]
+      (if-let [problems  (s/check a-schema db)]
+         (throw (js/Error. (str "schema check failed: " problems)))))
 
-(def check-schema (after schema-checker))
+;; after an event handler has run, this middleware can check that
+;; it the value in app-db still correctly matches the schema.
+(def check-schema-mw (after (partial check-and-throw schema)))
 
 
 (def ->ls (after todos->ls!))    ;; middleware to store todos into local storage
 
 ;; middleware for any handler that manipulates todos
-(def todo-middleware [check-schema    ;; after ever event handler make sure the schema is still valid
+(def todo-middleware [check-schema-mw ;; after ever event handler make sure the schema is still valid
                       (path :todos)   ;; 1st param to handler will be value from this path
                       ->ls            ;; write to localstore each time
                       trim-v])        ;; remove event id from event vec
@@ -43,14 +43,14 @@
                                   ;; usage:  (dispatch [:initialise-db])
 (register-handler                 ;; On app startup, ceate initial state
   :initialise-db                  ;; event id being handled
-  check-schema
+  check-schema-mw
   (fn [_ _]                       ;; the handler being registered
     (merge default-value (ls->todos))))  ;; all hail the new state
 
 
 (register-handler                 ;; this handler changes the footer filter
   :set-showing                    ;; event-id
-  [check-schema (path :showing) trim-v]        ;; middleware  (wraps the handler)
+  [check-schema-mw (path :showing) trim-v]  ;; middleware  (wraps the handler)
 
   ;; Because of the path middleware above, the 1st parameter to
   ;; the handler below won't be the entire 'db', and instead will

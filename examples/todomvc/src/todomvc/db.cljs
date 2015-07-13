@@ -8,20 +8,20 @@
 ;; This is a Prismatic Schema which documents the structure of app-db
 ;; See: https://github.com/Prismatic/schema
 ;;
-;; The value in app-db should ALWAYS match this schema. The value in app-db
-;; can ONLY be changed by event handlers so, after each handler has run, we
-;; re-check that app-db still matches this schema.
+;; The value in app-db should ALWAYS match this schema. Now, the value in
+;; app-db can ONLY be changed by event handlers so, after each event handler
+;; has run, we re-check that app-db still matches this schema.
 ;;
 ;; How is this done? Look in handlers.cljs and you'll notice that all handers
-;; have an "after" middleware which does the re-check.
+;; have an "after" middleware which does the schema re-check.
 ;;
-;; None of this is strickly necessary. It could  be omitted. But we find it
+;; None of this is strictly necessary. It could  be omitted. But we find it
 ;; good practice.
 
 (def schema {;; a sorted-map is used to hold the todos.
              :todos    (s/both PersistentTreeMap        ;; ensure sorted-map, not just map
                                
-                               ;; each todos is keyed by its :id value
+                               ;; each todo is keyed by its integer :id value
                                {s/Int {:id s/Int :title s/Str :done s/Bool}})
 
              ;; controls what todos are shown/visible to the user
@@ -43,8 +43,8 @@
 
 ;; -- Local Storage  ----------------------------------------------------------
 ;;
-;; Part of the todomvc challenge is to ongoingly store the todos in LocalStorage.
-;; On app startup, must reload the todos from when the program was last run.
+;; Part of the todomvc challenge is to store the todos in LocalStorage, and
+;; on app startup, reload the todos from when the program was last run.
 ;; But not the setting for "showing" filter. Just the todos.
 ;;
 
