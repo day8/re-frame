@@ -336,7 +336,7 @@ from place to place and momentarily comes together to be you. Whatever you are, 
 are not the stuff of which you are made. If that does not make the hair stand up on the back of
 your neck, read it again until it does, because it is important.
 
-Richard Dawkins
+Steve Grand
 
 
 ### How Flow Happens In Reagent
