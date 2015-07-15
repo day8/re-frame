@@ -15,23 +15,27 @@
 ;; How is this done? Look in handlers.cljs and you'll notice that all handers
 ;; have an "after" middleware which does the schema re-check.
 ;;
-;; None of this is strictly necessary. It could  be omitted. But we find it
+;; None of this is strictly necessary. It could be omitted. But we find it
 ;; good practice.
 
-(def schema {;; a sorted-map is used to hold the todos.
-             :todos    (s/both PersistentTreeMap        ;; ensure sorted-map, not just map
-                               
-                               ;; each todo is keyed by its integer :id value
-                               {s/Int {:id s/Int :title s/Str :done s/Bool}})
+(def TODO-ID s/Int)
+(def TODO    {:id TODO-ID :title s/Str :done s/Bool})
+(def schema  {:todos (s/both
+                       PersistentTreeMap   ;; it is a sorted-map (not just a map)
+                       {TODO-ID TODO})     ;; in this map, each todo is keyed by its :id
 
-             ;; controls what todos are shown/visible to the user
-             :showing  (s/enum :active :done :all)})
+              :showing  (s/enum            ;; what todos are shown to the user?
+                          :all             ;; all todos are shown
+                          :active          ;; only todos whose :done is false
+                          :done            ;; only todos whose :done is true
+                          )})
 
 
 
 ;; -- Default app-db Value  ---------------------------------------------------
 ;;
 ;; When the application first starts, this will be the value put in app-db
+;; Unless, or course, there are todos in the LocalStore (see further below)
 ;; Look in core.cljs for  "(dispatch-sync [:initialise-db])"
 ;;
 
@@ -43,9 +47,9 @@
 
 ;; -- Local Storage  ----------------------------------------------------------
 ;;
-;; Part of the todomvc challenge is to store the todos in LocalStorage, and
+;; Part of the todomvc challenge is to store todos in LocalStorage, and
 ;; on app startup, reload the todos from when the program was last run.
-;; But not the setting for "showing" filter. Just the todos.
+;; But we are not to load the setting for the "showing" filter. Just the todos.
 ;;
 
 (def lsk "todos-reframe")     ;; localstore key
