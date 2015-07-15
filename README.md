@@ -72,9 +72,6 @@ __Warning__:  That was the summary. What follows is a long-ish tutorial/explanat
 
 
  - [What Problem Does It Solve?](#what-problem-does-it-solve)
- - [Correct Acronym?](#correct-acronym)
- - [Mostly A Mashup](#mostly-a-mashup)
- - [Client Side Bias](#client-side-bias)
  - [Guiding Philosophy](#guiding-philosophy)
  - [FRP Clarifications](#frp-clarifications)
  - [Explaining re-frame](#explaining-re-frame)
@@ -116,12 +113,12 @@ For all its considerable brilliance,  Reagent (+ ReactJS)
 delivers only the 'V' part of a traditional MVC framework.
 
 But apps involve much more than V. Where
-does the control logic go? How is state stored & manipulated, how does the V bit source data? etc.
+does the control logic go? How is state stored & manipulated? etc.
 
 We read up on [Flux], [Pedestal App],
-[Hoplon], [OM], [Elm], etc and re-frame is what emerged.
+[Hoplon], [OM], [Elm], etc and re-frame is the architecture that emerged.
 
-So re-frame ended up with M, V, and C parts but they aren't objects, they
+re-frame does have M, V, and C parts but they aren't objects, they
 are pure functions (or pure data),
 and they are wired together via reactive data flows.  It is sufficiently different in nature
 from (traditional, Smalltalk) MVC that calling it MVC would be confusing.  I'd
