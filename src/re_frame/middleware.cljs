@@ -114,9 +114,9 @@
   ^{:re-frame-factory-name "path"}
   (fn path
     [& args]
-    (let [path   (flatten args)
-          _      (if (empty? path)
-                   (error "re-frame: \"path\" middleware given no params."))]
+    (let [path   (flatten args)]
+      (when (empty? path)
+        (error "re-frame: \"path\" middleware given no params."))
       (fn path-middleware
         [handler]
         (fn path-handler
