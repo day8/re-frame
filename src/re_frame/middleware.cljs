@@ -64,7 +64,6 @@
   [handler]
   (fn debug-handler
     [db v]
-    (log  "-- New Event ----------------------------------------------------")
     (group "re-frame event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
