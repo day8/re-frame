@@ -169,7 +169,7 @@ emerging ideas.
 
 We write larger, more complicated SPAs which have a Parisian's indifference for servers.
 
-Unsurprising, re-frame's design reflects our needs. So there's nothing in re-frame about, say,
+Unsurprisingly, re-frame's design reflects our needs. So there's nothing in re-frame about, say,
 routes, or sessions or syncing client state with server state, etc.  It is just about writing
 browser-based apps which are desktop-like.
 
