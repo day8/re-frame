@@ -15,19 +15,19 @@
 
 (deftest trim-v
   (let [handler (fn [db vect] vect)]
-    (is (= (handler nil [:a :b :c]) 
+    (is (= (handler nil [:a :b :c])
            [:a :b :c]))
-    (is (= ((middleware/trim-v handler) nil [:a :b :c]) 
+    (is (= ((middleware/trim-v handler) nil [:a :b :c])
            [:b :c]))))
 
 (deftest path
   (let [db  {:a true}
-        handler (fn 
-                  [a [_]] 
-                  (not a))] 
+        handler (fn
+                  [a [_]]
+                  (not a))]
     (let [new-db (((middleware/path [:a])
                    handler) db [nil])]
-      (is (= (:a new-db) 
+      (is (= (:a new-db)
              false)))))
 
 

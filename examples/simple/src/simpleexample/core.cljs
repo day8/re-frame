@@ -1,5 +1,5 @@
 (ns simpleexample.core
-  (:require-macros [reagent.ratom :refer [reaction]])  
+  (:require-macros [reagent.ratom :refer [reaction]])
   (:require [reagent.core :as reagent]
             [re-frame.core :refer [register-handler
                                    path
@@ -22,7 +22,7 @@
 
 (register-handler                 ;; setup initial state
   :initialize                     ;; usage:  (submit [:initialize])
-  (fn 
+  (fn
     [db _]
     (merge db initial-state)))    ;; what it returns becomes the new state
 
@@ -38,7 +38,7 @@
 (register-handler
   :timer
   (fn
-    ;; the first item in the second argument is :timer the second is the 
+    ;; the first item in the second argument is :timer the second is the
     ;; new value
     [db [_ value]]
     (assoc db :timer value)))    ;; return the new version of db
@@ -49,14 +49,14 @@
 
 (register-sub
   :timer
-  (fn 
+  (fn
     [db _]                       ;; db is the app-db atom
     (reaction (:timer @db))))    ;; wrap the computation in a reaction
 
 
 (register-sub
   :time-color
-  (fn 
+  (fn
     [db _]
     (reaction (:time-color @db))))
 
