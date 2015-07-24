@@ -20,7 +20,7 @@
 
 (def schema {;; a sorted-map is used to hold the todos.
              :todos    (s/both PersistentTreeMap        ;; ensure sorted-map, not just map
-                               
+
                                ;; each todo is keyed by its integer :id value
                                {s/Int {:id s/Int :title s/Str :done s/Bool}})
 
