@@ -586,9 +586,18 @@ With `Form-2` components, there's a function returning a function:
 - the returned function is the render function. Behind the scenes, Reagent will wrap this render function
  in a `reaction` to make it produce new Hiccup when its input Signals change.  In our example above, that
  means it will rerun every time `name-ratom` changes.
-- the outer function is a setup function, called once to initialise the component. Notice the use of
+- the outer function is a setup function, called once for each instance of the component. Notice the use of
  'subscribe' with the parameter `:name-query`. That creates a Signal through which new values are supplied
- over time.
+ over time; each new value causing the returned function (the actual renderer) to be run. 
+
+>It is important to distinguish between a new instance of the component versus the same instance of a component reacting to a new value. Simplistically, a new component is returned for every unique value the setup function (i.e. the outer function) is called with. This allows subscriptions based on initialisation values to be created, for example: 
+``` Clojure
+  (defn my-cmp [row-id]
+    (let [row-state (subscribe [row-id])]
+      (fn [row-id]
+        [div (str "Row: " row-id " is " @row-state)])))
+```
+In this example, `[my-cmp 1][my-cmp 2]` will create two instances of `my-cmp`. Each instance will re-render when its internal `row-state` signal changes.
 
 `subscribe` is always called like this:
 
