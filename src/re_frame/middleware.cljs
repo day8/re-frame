@@ -91,7 +91,7 @@
 
 ;; -- Middleware Factories ----------------------------------------------------
 ;;
-;; Note: wierd approach defn-ing middleware factories below. Why? Because
+;; Note: weird approach defn-ing middleware factories below. Why? Because
 ;; I wanted to put some metadata on them (useful for later checking).
 ;; Found I had to do it this way:
 ;;   (def fn-name
@@ -99,7 +99,7 @@
 ;;     ^{....}       ;; middleware put on the following fn
 ;;     (fn fn-name ....))
 ;;
-;; So, yeah, wierd.
+;; So, yeah, weird.
 
 (def path
   "A middleware factory which supplies a sub-tree of `db` to the handler.
