@@ -20,6 +20,8 @@
   :jvm-opts       ["-Xmx1g" "-XX:+UseConcMarkSweepGC"] ;;
   :source-paths ["src"]
   :test-paths   ["test"]
+  :deploy-repositories [["releases" :clojars]
+                        ["snapshots" :clojars]]
 
 
   :cljsbuild    {:builds [{:id "test"      ;; currently bogus, there is no demo or tests
