@@ -30,11 +30,15 @@
   (swap! loggers merge new-loggers))
 
 
-(defn log      [& args] ((:log @loggers)      (apply str args)))
-(defn warn     [& args] ((:warn @loggers)     (apply str args)))
-(defn group    [& args] ((:group @loggers)    (apply str args)))
-(defn groupEnd [& args] ((:groupEnd @loggers) (apply str args)))
-(defn error    [& args] ((:error @loggers)    (apply str args)))
+(defn logger-gen [k]
+  (fn [& args]
+    (k @loggers (apply str args))))
+
+(def log (logger-gen :log))
+(def warn (logger-gen :warn))
+(def group (logger-gen :group))
+(def groupEnd (logger-gen :groupEnd))
+(def error (logger-gen :error))
 
 ;; -- Misc --------------------------------------------------------------------
 
