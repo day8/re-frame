@@ -32,7 +32,7 @@
 
 (defn logger-gen [k]
   (fn [& args]
-    (k @loggers (apply str args))))
+    ((k @loggers) (apply str args))))
 
 (def log (logger-gen :log))
 (def warn (logger-gen :warn))
