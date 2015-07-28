@@ -42,7 +42,7 @@
            [:li (props-for :done "Completed")]]
           (when (pos? done)
             [:button#clear-completed {:on-click #(dispatch [:clear-completed])}
-             "Clear completed " done])]]))))
+             "Clear completed " #_done])]]))))
 
 (defn todo-item
   []
@@ -93,4 +93,3 @@
            [stats-footer]])]
        [:footer#info
         [:p "Double-click to edit a todo"]]])))
-
