@@ -1,6 +1,6 @@
 (ns re-frame.subs
  (:require
-   [reagent.ratom  :refer [make-reaction]]
+   [reagent.ratom  :refer [make-reaction] :refer-macros [reaction run!]]
    [re-frame.db    :refer [app-db]]
    [re-frame.utils :refer [first-in-vector warn error]]))
 
@@ -25,10 +25,21 @@
 
 (defn subscribe
   "Returns a reagent/reaction which observes a part of app-db"
-  [v]
-  (let [key-v       (first-in-vector v)
-        handler-fn  (get @key->fn key-v)]
-    (if (nil? handler-fn)
-      (error "re-frame: no subscription handler registered for: \"" key-v "\".  Returning a nil subscription.")
-      (handler-fn app-db v))))
-
+  ([v]
+   (let [key-v (first-in-vector v)
+         handler-fn (get @key->fn key-v)]
+     (if (nil? handler-fn)
+       (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
+       (handler-fn app-db v))))
+  ([v dynv]
+   (let [key-v (first-in-vector v)
+         handler-fn (get @key->fn key-v)]
+     (if (nil? handler-fn)
+       (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
+       (let [result (reagent.ratom/atom nil)
+             dyn-vals (reaction (mapv deref dynv))
+             sub (reaction (handler-fn app-db v @dyn-vals))
+             ;; handler-fn returns a reaction which is then wrapped in the sub reaction
+             ;; need to double deref it to get to the actual value.
+             _ (run! (reset! result @@sub))]                ;; run! here to force this to be started, won't ever run otherwise
+         result)))))
