@@ -5,6 +5,9 @@ Improvements
   - removed `-------New Event-------` log msg
   - made groups collapsed by default
 
+Other:
+  - updated TodoMvc css
+
 ## v0.4.1 (2015-05-29)
 
 Improvements:
