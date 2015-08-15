@@ -1,56 +1,34 @@
 (ns re-frame.core
-  (:require
-    [re-frame.handlers   :as handlers]
-    [re-frame.subs       :as subs]
-    [re-frame.router     :as router]
-    [re-frame.utils      :as utils]
-    [re-frame.middleware :as middleware]))
+  (:require [re-frame.scaffold :as scaffold]))
 
+; this file provides public API to default re-frame setup
+; note: by including this namespace, you will get default app-db, default app-frame
+; and start default router-loop automatically
+
+(def app-db scaffold/app-db)                                ; the default instance of app-db
+(def app-frame scaffold/app-frame)                          ; the default instance of re-frame
 
 ;; --  API  -------
 
-(def dispatch         router/dispatch)
-(def dispatch-sync    router/dispatch-sync)
+(def router-loop scaffold/router-loop)
+(def set-loggers! scaffold/set-loggers!)
+(def register-sub scaffold/register-sub)
+(def clear-sub-handlers! scaffold/clear-sub-handlers!)
+(def subscribe scaffold/subscribe)
+(def clear-event-handlers! scaffold/clear-event-handlers!)
+(def dispatch scaffold/dispatch)
+(def dispatch-sync scaffold/dispatch-sync)
+(def register-handler scaffold/register-handler)
 
-(def register-sub        subs/register)
-(def clear-sub-handlers! subs/clear-handlers!)
-(def subscribe           subs/subscribe)
+;(def pure scaffold/pure)
+(def debug scaffold/debug)
+;(def undoable scaffold/undoable)
+(def path scaffold/path)
+(def enrich scaffold/enrich)
+(def trim-v scaffold/trim-v)
+(def after scaffold/after)
+(def log-ex scaffold/log-ex)
+(def on-changes scaffold/on-changes)
 
-
-(def clear-event-handlers!  handlers/clear-handlers!)
-
-
-(def pure        middleware/pure)
-(def debug       middleware/debug)
-(def undoable    middleware/undoable)
-(def path        middleware/path)
-(def enrich      middleware/enrich)
-(def trim-v      middleware/trim-v)
-(def after       middleware/after)
-(def log-ex      middleware/log-ex)
-
-
-;; ALPHA - EXPERIMENTAL MIDDLEWARE
-(def on-changes  middleware/on-changes)
-
-
-;; --  Logging -----
-;; re-frame uses the logging functions: warn, log, error, group and groupEnd
-;; By default, these functions map directly to the js/console implementations
-;; But you can override with your own (set or subset):
-;;   (set-loggers!  {:warn  my-warn   :log  my-looger ...})
-(def set-loggers! utils/set-loggers!)
-
-
-;; --  Convenience API -------
-
-;; Almost 100% of handlers will be pure, so make it easy to
-;; register with "pure" middleware in the correct (left-hand-side) position.
-(defn register-handler
-  ([id handler]
-    (handlers/register-base id pure handler))
-  ([id middleware handler]
-    (handlers/register-base id [pure middleware] handler)))
-
-
-
+;; start event processing
+(scaffold/router-loop)
