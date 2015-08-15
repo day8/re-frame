@@ -1,7 +1,6 @@
 (ns re-frame.subs
  (:require
    [reagent.ratom  :refer [make-reaction]]
-   [re-frame.db    :refer [app-db]]
    [re-frame.utils :refer [first-in-vector warn error]]))
 
 
@@ -25,7 +24,7 @@
 
 (defn subscribe
   "Returns a reagent/reaction which observes a part of app-db"
-  [v]
+  [app-db v]
   (let [key-v       (first-in-vector v)
         handler-fn  (get @key->fn key-v)]
     (if (nil? handler-fn)

@@ -4,17 +4,18 @@
     [re-frame.subs       :as subs]
     [re-frame.router     :as router]
     [re-frame.utils      :as utils]
-    [re-frame.middleware :as middleware]))
-
+    [re-frame.middleware :as middleware]
+    [re-frame.db         :refer [app-db]]))
 
 ;; --  API  -------
 
 (def dispatch         router/dispatch)
-(def dispatch-sync    router/dispatch-sync)
+(def dispatch-sync    (partial router/dispatch-sync app-db))
 
 (def register-sub        subs/register)
 (def clear-sub-handlers! subs/clear-handlers!)
-(def subscribe           subs/subscribe)
+(def subscribe           (partial subs/subscribe app-db))
+(def router-loop         (partial router/router-loop app-db))
 
 
 (def clear-event-handlers!  handlers/clear-handlers!)
@@ -52,5 +53,5 @@
   ([id middleware handler]
     (handlers/register-base id [pure middleware] handler)))
 
-
-
+;; start event processing
+(router-loop)
