@@ -1,6 +1,5 @@
 (ns re-frame.handlers
-  (:require [re-frame.db         :refer [app-db]]
-            [re-frame.utils      :refer [first-in-vector warn error]]))
+  (:require [re-frame.utils      :refer [first-in-vector warn error]]))
 
 
 ;; -- composing middleware  -----------------------------------------------------------------------
@@ -82,7 +81,7 @@
     - the event vector
   The handler is assumed to side-effect on `app-db` - the return value is ignored.
   To write a pure handler, use the \"pure\" middleware when registering the handler."
-  [event-v]
+  [app-db event-v]
   (let [event-id    (first-in-vector event-v)
         handler-fn  (lookup-handler event-id)]
     (if (nil? handler-fn)
