@@ -26,7 +26,6 @@
   (swap! app-frame #(frame/set-loggers % new-loggers)))
 
 (defn register-sub [subscription-id handler-fn]
-  (.log js/console "register-sub" subscription-id handler-fn)
   (swap! app-frame #(frame/register-subscription-handler % subscription-id handler-fn)))
 
 (defn clear-sub-handlers! []

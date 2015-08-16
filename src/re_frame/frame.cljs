@@ -37,7 +37,6 @@ This transducer reads event-id and applies matching handler on input state."
 (defn subscribe
   "Returns a reagent/reaction which observes state."
   [frame subscription-spec]
-  (.log js/console "in-subscribe" frame)
   (let [subscription-id (get-subscription-id subscription-spec)
         handler-fn (get-in frame [:subscriptions subscription-id])]
     (if (nil? handler-fn)
@@ -49,7 +48,6 @@ This transducer reads event-id and applies matching handler on input state."
 (defn legacy-subscribe
   "Returns a reagent/reaction which observes state."
   [frame app-db subscription-spec]
-  (.log js/console "in-subscribe" frame)
   (let [subscription-id (get-subscription-id subscription-spec)
         handler-fn (get-in frame [:subscriptions subscription-id])]
     (if (nil? handler-fn)
