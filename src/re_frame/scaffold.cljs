@@ -5,7 +5,8 @@
             [reagent.core :as reagent]
             [re-frame.frame :as frame]
             [re-frame.logging :as logging]
-            [re-frame.middleware :as middleware]))
+            [re-frame.middleware :as middleware]
+            [re-frame.utils :as utils]))
 
 ; scaffold's responsibility is to implement re-frame 0.4.1 functionality on top reusable re-frame parts
 ;
@@ -31,8 +32,17 @@
 (defn clear-sub-handlers! []
   (swap! app-frame #(frame/clear-subscription-handlers %)))
 
+(defn legacy-subscribe [frame app-db-atom subscription-spec]
+  (let [subscription-id (utils/get-subscription-id subscription-spec)
+        handler-fn (get-in frame [:subscriptions subscription-id])]
+    (if (nil? handler-fn)
+      (let [error (get-in frame [:loggers :error])]
+        (error "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
+        nil)
+      (handler-fn app-db-atom subscription-spec))))
+
 (defn subscribe [subscription-spec]
-  (frame/legacy-subscribe @app-frame app-db subscription-spec))
+  (legacy-subscribe @app-frame app-db subscription-spec))
 
 (defn clear-event-handlers! []
   (swap! app-frame #(frame/clear-event-handlers %)))

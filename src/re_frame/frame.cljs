@@ -41,19 +41,9 @@ This transducer reads event-id and applies matching handler on input state."
         handler-fn (get-in frame [:subscriptions subscription-id])]
     (if (nil? handler-fn)
       (let [error (get-in frame [:loggers :error])]
-        (error "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription."))
+        (error "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
+        nil)
       (handler-fn subscription-spec))))
-
-; TODO: figure out what to do here, re-frame should not be aware of app-db here, this is for backward compatibility
-(defn legacy-subscribe
-  "Returns a reagent/reaction which observes state."
-  [frame app-db subscription-spec]
-  (let [subscription-id (get-subscription-id subscription-spec)
-        handler-fn (get-in frame [:subscriptions subscription-id])]
-    (if (nil? handler-fn)
-      (let [error (get-in frame [:loggers :error])]
-        (error "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription."))
-      (handler-fn app-db subscription-spec))))
 
 (defn register-subscription-handler
   "Registers a handler function for an id."
