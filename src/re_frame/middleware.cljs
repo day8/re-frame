@@ -1,5 +1,6 @@
 (ns re-frame.middleware
-  (:require [clojure.data :as data]))
+  (:require [clojure.data :as data]
+            [re-frame.logging :refer [log warn error group group-end]]))
 
 
 ;; See docs in the Wiki: https://github.com/Day8/re-frame/wiki
@@ -17,7 +18,7 @@
   (fn [handler]
     (fn log-ex-handler
       [db v]
-      ((get-in @frame-atom [:loggers :warn]) "re-frame: use of \"log-ex\" is deprecated. You don't need it any more IF YOU ARE USING CHROME 44. Chrome now seems to now produce good stack traces.")
+      (warn @frame-atom "re-frame: use of \"log-ex\" is deprecated. You don't need it any more IF YOU ARE USING CHROME 44. Chrome now seems to now produce good stack traces.")
       (try
         (handler db v)
         (catch :default e                                   ;; ooops, handler threw
@@ -33,18 +34,14 @@
   [frame-atom]
   (fn [handler]
     (fn debug-handler [db v]
-      (let [frame @frame-atom
-            loggers (get frame :loggers)
-            log (get loggers :log)
-            group (get loggers :group)
-            groupEnd (get loggers :groupEnd)]
-        (log "-- New Event ----------------------------------------------------")
-        (group "re-frame event: " v)
+      (let [frame @frame-atom]
+        (log frame "-- New Event ----------------------------------------------------")
+        (group frame "re-frame event: " v)
         (let [new-db (handler db v)
               diff (data/diff db new-db)]
-          (log "only before: " (first diff))
-          (log "only after : " (second diff))
-          (groupEnd)
+          (log frame "only before: " (first diff))
+          (log frame "only after : " (second diff))
+          (group-end frame)
           new-db)))))
 
 
@@ -92,7 +89,7 @@
     [& args]
     (let [path (flatten args)]
       (when (empty? path)
-        ((get-in @frame-atom [:loggers :error]) "re-frame: \"path\" middleware given no params."))
+        (error @frame-atom "re-frame: \"path\" middleware given no params."))
       (fn path-middleware
         [handler]
         (fn path-handler

@@ -1,5 +1,12 @@
 (ns re-frame.logging)
 
+; logging helpers
+(defn log [frame & args] (apply (:log (:loggers frame)) args))
+(defn warn [frame & args] (apply (:warn (:loggers frame)) args))
+(defn error [frame & args] (apply (:error (:loggers frame)) args))
+(defn group [frame & args] (apply (:group (:loggers frame)) args))
+(defn group-end [frame & args] (apply (:groupEnd (:loggers frame)) args))
+
 (defn no-op [& _])
 
 (defn js-console-log [& args]

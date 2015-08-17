@@ -1,6 +1,6 @@
 (ns re-frame.frame
   (:require [re-frame.utils :refer [get-event-id get-subscription-id simple-inflection frame-summary-description]]
-            [re-frame.logging :as logging]))
+            [re-frame.logging :as logging :refer [log warn error]]))
 
 ; re-frame meat reimplemented in terms of pure functions (with help of transducers)
 
@@ -12,7 +12,7 @@ Tranducer must have no knowledge of underlying app-db-atom, reagent, core.async 
 All business of queuing events and application of their effects must be baked into reducing-fn and provided from outside
 by the process doing actual transduction. See scaffold's transduce-events-by-resetting-atom for an example."
   [frame]
-  (let [{:keys [handlers loggers db-selector]} frame]
+  (let [{:keys [handlers db-selector]} frame]
     (fn [reducing-fn]
       (fn
         ([] (reducing-fn))                                  ; transduction init, see [1]
@@ -21,14 +21,14 @@ by the process doing actual transduction. See scaffold's transduce-events-by-res
          (let [event-id (get-event-id event)
                handler-fn (event-id handlers)]
            (if (nil? handler-fn)
-             (let [error (:error loggers)]
-               (error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
+             (do
+               (error frame "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
                state)
              (let [old-db (db-selector state)               ; db-selector is responsible for retrieving actual db from current state
                    new-db (handler-fn old-db event)]        ; calls selected handler (including all composed middlewares)
                (if (nil? new-db)                            ; TODO: this test should be optional, there could be valid use-cases for nil db
-                 (let [error (:error loggers)]
-                   (error "re-frame: your handler returned nil. It should return the new db state. Ignoring.")
+                 (do
+                   (error frame "re-frame: your handler returned nil. It should return the new db state. Ignoring.")
                    state)
                  (reducing-fn state new-db))))))))))        ; reducing function prepares new transduction state
 
@@ -66,8 +66,8 @@ by the process doing actual transduction. See scaffold's transduce-events-by-res
   (let [subscription-id (get-subscription-id subscription-spec)
         handler-fn (get-in frame [:subscriptions subscription-id])]
     (if (nil? handler-fn)
-      (let [error (get-in frame [:loggers :error])]
-        (error "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
+      (do
+        (error frame "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
         nil)
       (handler-fn subscription-spec))))
 
@@ -76,8 +76,7 @@ by the process doing actual transduction. See scaffold's transduce-events-by-res
   [frame subscription-id handler-fn]
   (let [existing-subscriptions (get frame :subscriptions)]
     (if (contains? existing-subscriptions subscription-id)
-      (let [warn (get-in frame [:loggers :warn])]
-        (warn "re-frame: overwriting subscription handler for: " subscription-id))))
+      (warn frame "re-frame: overwriting subscription handler for: " subscription-id)))
   (assoc-in frame [:subscriptions subscription-id] handler-fn))
 
 (defn unregister-subscription-handler
@@ -85,8 +84,7 @@ by the process doing actual transduction. See scaffold's transduce-events-by-res
   [frame subscription-id]
   (let [existing-subscriptions (get frame :subscriptions)]
     (if-not (contains? existing-subscriptions subscription-id)
-      (let [warn (get-in frame [:loggers :warn])]
-        (warn "re-frame: unregistering subscription handler \"" subscription-id "\" which does not exist."))))
+      (warn frame "re-frame: unregistering subscription handler \"" subscription-id "\" which does not exist.")))
   (update frame :subscriptions dissoc subscription-id))
 
 (defn clear-subscription-handlers
@@ -99,8 +97,7 @@ by the process doing actual transduction. See scaffold's transduce-events-by-res
   ([frame event-id handler-fn]
    (let [existing-handlers (get frame :handlers)]
      (if (contains? existing-handlers event-id)
-       (let [warn (get-in frame [:loggers :warn])]
-         (warn "re-frame: overwriting an event handler for: " event-id)))
+       (warn frame "re-frame: overwriting an event handler for: " event-id))
      (assoc-in frame [:handlers event-id] handler-fn))))
 
 (defn unregister-event-handler
@@ -108,8 +105,7 @@ by the process doing actual transduction. See scaffold's transduce-events-by-res
   [frame event-id]
   (let [existing-handlers (get frame :handlers)]
     (if (contains? existing-handlers event-id)
-      (let [warn (get-in frame [:loggers :warn])]
-        (warn "re-frame: unregistering event handler \"" event-id "\" which does not exist."))))
+      (warn frame "re-frame: unregistering event handler \"" event-id "\" which does not exist.")))
   (update frame :handlers dissoc event-id))
 
 (defn clear-event-handlers

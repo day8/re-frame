@@ -5,6 +5,7 @@
             [reagent.core :as reagent]
             [re-frame.frame :as frame]
             [re-frame.middleware :as middleware]
+            [re-frame.logging :refer [log warn error]]
             [re-frame.utils :as utils]))
 
 ; scaffold's responsibility is to implement re-frame 0.4.1 functionality on top reusable re-frame parts
@@ -38,8 +39,8 @@
   (let [subscription-id (utils/get-subscription-id subscription-spec)
         handler-fn (get-in frame [:subscriptions subscription-id])]
     (if (nil? handler-fn)
-      (let [error (get-in frame [:loggers :error])]
-        (error "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
+      (do
+        (error frame "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
         nil)
       (handler-fn app-db-atom subscription-spec))))
 
@@ -70,7 +71,7 @@
             [v]
             (remove nil? (map name-of-factory v)))]
     (doseq [name (factory-names-in v)]
-      ((get-in frame [:loggers :error]) "re-frame: \"" name "\" used incorrectly. Must be used like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
+      (error frame "re-frame: \"" name "\" used incorrectly. Must be used like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
 
 (defn comp-middleware
   "Given a vector of middleware, filter out any nils, and use \"comp\" to compose the elements.
@@ -87,7 +88,7 @@
                     (report-middleware-factories frame middlewares)
                     (apply comp middlewares))
       :else (do
-              ((get-in frame [:loggers :warn]) "re-frame: comp-middleware expects a vector, got: " what)
+              (warn frame "re-frame: comp-middleware expects a vector, got: " what)
               nil))))
 
 (defn register-base
@@ -199,7 +200,7 @@
   "
   [frame-atom event-v]
   (if (nil? event-v)
-    ((get-in @frame-atom [:loggers :error]) "re-frame: \"dispatch\" is ignoring a nil event.") ;; nil would close the channel
+    (error @frame-atom "re-frame: \"dispatch\" is ignoring a nil event.") ;; nil would close the channel
     (put! event-chan event-v))
   nil)                                                      ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
