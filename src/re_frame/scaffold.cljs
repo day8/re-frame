@@ -67,13 +67,16 @@
   Filtering out nils allows us to create Middleware conditionally like this:
      (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil
   "
-  [frame v]
-  (cond
-    (fn? v) v                                               ;; assumed to be existing middleware
-    (seq? v) (let [v (remove nil? (flatten v))]
-               (report-middleware-factories frame v)
-               (apply comp v))
-    :else ((get-in frame [:loggers :warn]) "re-frame: comp-middleware expects a vector, got: " v)))
+  [frame what]
+  (let [spec (if (seqable? what) (seq what) what)]
+    (cond
+      (fn? spec) spec                                       ;; assumed to be existing middleware
+      (seq? spec) (let [middlewares (remove nil? (flatten spec))]
+                    (report-middleware-factories frame middlewares)
+                    (apply comp middlewares))
+      :else (do
+              ((get-in frame [:loggers :warn]) "re-frame: comp-middleware expects a vector, got: " what)
+              nil))))
 
 (defn register-base
   "register a handler for an event.
@@ -83,15 +86,16 @@
    (swap! app-frame #(frame/register-event-handler % event-id handler-fn)))
 
   ([event-id middleware handler-fn]
-   (let [mid-ware (comp-middleware @app-frame middleware)   ;; compose the middleware
-         midware+hfn (mid-ware handler-fn)]                 ;; wrap the handler in the middleware
-     (register-base event-id midware+hfn))))
+   (if-let [mid-ware (comp-middleware @app-frame middleware)] ;; compose the middleware
+     (register-base event-id (mid-ware handler-fn)))))      ;; wrap the handler in the middleware
 
 (defn register-handler
   ([event-id handler]
    (register-base event-id handler))
   ([event-id middleware handler]
-   (register-base event-id middleware handler)))
+   (if middleware
+     (register-base event-id middleware handler)
+     (register-base event-id handler))))
 
 ;; -- The Event Conveyor Belt  --------------------------------------------------------------------
 ;;
