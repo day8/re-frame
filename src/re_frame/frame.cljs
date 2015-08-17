@@ -10,7 +10,7 @@
 This transducer resolves event-id, selects matching handler and calls it with old db state to produce a new db state.
 Tranducer must have no knowledge of underlying app-db-atom, reagent, core.async or anything else out there.
 All business of queuing events and application of their effects must be baked into reducing-fn and provided from outside
-by the process doing actual transduction. See scaffold's transduce-by-resetting-atom for an example."
+by the process doing actual transduction. See scaffold's transduce-events-by-resetting-atom for an example."
   [frame]
   (let [{:keys [handlers loggers db-selector]} frame]
     (fn [reducing-fn]

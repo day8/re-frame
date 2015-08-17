@@ -140,7 +140,8 @@
 ;;   (dispatch ^:flush-dom  [:event-id other params])
 ;;
 
-(defn transduce-by-resetting-atom [frame-atom db-atom events]
+; this is just a sample implementation, for reducing single event we use single-step transduce-event-by-resetting-atom
+(defn transduce-events-by-resetting-atom [frame-atom db-atom events]
   (let [reducing-fn (fn
                       ([db-atom] db-atom)                   ; completion
                       ([db-atom new-state]                  ; apply new-state to atom
@@ -151,6 +152,15 @@
     (let [xform (frame/get-frame-transducer @frame-atom)]
       (transduce xform reducing-fn db-atom events))))
 
+(defn transduce-event-by-resetting-atom [frame-atom db-atom event]
+  (let [reducing-fn (fn [db-atom new-state]                 ; apply new-state to atom
+                      (let [old-state @db-atom]
+                        (if-not (identical? old-state new-state)
+                          (reset! db-atom new-state)))
+                      db-atom)]
+    (let [xform (frame/get-frame-transducer @frame-atom)]
+      ((xform reducing-fn) db-atom event))))
+
 (defn router-loop* [db-atom frame-atom]
   (go-loop []
     (let [event (<! event-chan)                             ;; wait for an event
@@ -158,7 +168,7 @@
               (do (reagent/flush) (<! (timeout 20)))        ;; wait just over one annimation frame (16ms), to rensure all pending GUI work is flushed to the DOM.
               (<! (timeout 0)))]                            ;; just in case we are handling one dispatch after an other, give the browser back control to do its stuff
       (try
-        (transduce-by-resetting-atom frame-atom db-atom [event])
+        (transduce-event-by-resetting-atom frame-atom db-atom event)
 
         ;; If the handler throws:
         ;;   - allow the exception to bubble up because the app, in production,
@@ -202,7 +212,7 @@
   Usage example:
      (dispatch-sync [:delete-item 42])"
   [db-atom frame-atom event]
-  (transduce-by-resetting-atom frame-atom db-atom [event])
+  (transduce-event-by-resetting-atom frame-atom db-atom event)
   nil)                                                      ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 (def dispatch-sync (partial dispatch-sync* app-db app-frame))
