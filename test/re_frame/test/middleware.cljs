@@ -1,6 +1,6 @@
 (ns re-frame.test.middleware
   (:require-macros [cemerick.cljs.test :refer (is deftest)])
-  (:require [cemerick.cljs.test :as t]
+  (:require [cemerick.cljs.test]
             [reagent.ratom :refer [atom]]
             [re-frame.core :as re-frame]))
 

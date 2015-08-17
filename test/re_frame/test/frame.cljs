@@ -1,6 +1,6 @@
 (ns re-frame.test.frame
   (:require-macros [cemerick.cljs.test :refer (is deftest testing)])
-  (:require [cemerick.cljs.test :as t]
+  (:require [cemerick.cljs.test]
             [re-frame.frame :as frame]))
 
 (def log-transcript (atom {}))
@@ -33,7 +33,7 @@
 (defn make-empty-test-frame []
   (frame/frame-factory {} {} recording-loggers identity))
 
-(defn transduce-single-event [frame event]
+(defn process-single-event [frame event]
   (let [reducing-fn (fn
                       ([result] result)
                       ([_old-state new-state] new-state))]
@@ -73,4 +73,4 @@
     (let [my-handler (fn [_state [event-id & args]] (str "result" event-id args))
           frame (-> (make-empty-test-frame)
                   (frame/register-event-handler :my-handler my-handler))]
-      (is (= (transduce-single-event frame [:my-handler 1 2]) "result:my-handler(1 2)")))))
+      (is (= (process-single-event frame [:my-handler 1 2]) "result:my-handler(1 2)")))))

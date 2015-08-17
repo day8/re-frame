@@ -1,6 +1,6 @@
 (ns re-frame.test.core
   (:require-macros [cemerick.cljs.test :refer (is deftest testing done)])
-  (:require [cemerick.cljs.test :as t]
+  (:require [cemerick.cljs.test]
             [re-frame.core :as core]
             [re-frame.frame :as frame]
             [re-frame.logging :as logging]))
