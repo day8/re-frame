@@ -31,6 +31,6 @@
 
   :clean-targets ^{:protect false} ["resources/public/js"]
 
-  :cljsbuild {:builds {:client {:source-paths ["src"]
+  :cljsbuild {:builds {:client {:source-paths ["checkouts/re-frame/src" "src"]
                                 :compiler     {:output-dir "resources/public/js"
                                                :output-to  "resources/public/js/client.js"}}}})
