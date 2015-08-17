@@ -1,11 +1,17 @@
 (ns re-frame.logging)
 
+(defn make-logger-for-key [logger-key]
+  (fn [frame & args]
+    (if-let [logger-fn (get-in frame [:loggers logger-key])]
+      (apply logger-fn args)
+      (throw (js/Error. (str "re-frame: missing logger \"" logger-key "\""))))))
+
 ; logging helpers
-(defn log [frame & args] (apply (:log (:loggers frame)) args))
-(defn warn [frame & args] (apply (:warn (:loggers frame)) args))
-(defn error [frame & args] (apply (:error (:loggers frame)) args))
-(defn group [frame & args] (apply (:group (:loggers frame)) args))
-(defn group-end [frame & args] (apply (:groupEnd (:loggers frame)) args))
+(def log (make-logger-for-key :log))
+(def warn (make-logger-for-key :warn))
+(def error (make-logger-for-key :error))
+(def group (make-logger-for-key :group))
+(def group-end (make-logger-for-key :groupEnd))
 
 (defn no-op [& _])
 
