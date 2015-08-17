@@ -24,7 +24,8 @@
                                                   :elide-asserts true
                                                   :pretty-print  false}}}}}}
 
-  :figwheel {:repl false}
+  :figwheel {:server-port 3440
+             :nrepl-port  3540}
 
   :clean-targets ^{:protect false} ["resources/public/js"]
 
