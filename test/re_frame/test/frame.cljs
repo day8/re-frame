@@ -45,20 +45,26 @@
     (reset-log-recorder!)
     (let [frame (make-empty-test-frame)]
       (is (thrown-with-msg? js/Error #"expected a vector subscription, but got:" (frame/subscribe frame :non-vector)))))
-  (testing "subscribing to non-existent subscription handler"
+  (testing "subscribing to a non-existent subscription handler"
     (reset-log-recorder!)
     (let [frame (make-empty-test-frame)]
       (is (= (last-error) nil))
       (frame/subscribe frame [:subscription-which-does-not-exist])
       (is (= (last-error) ["re-frame: no subscription handler registered for: \"" :subscription-which-does-not-exist "\".  Returning a nil subscription."]))))
-  (testing "calling handler which returns nil"
+  (testing "calling a handler which returns nil"
     (reset-log-recorder!)
     (let [my-handler (fn [_state _] nil)
           frame (-> (make-empty-test-frame)
                   (frame/register-event-handler :my-handler my-handler))]
       (is (= (last-error) nil))
       (is (= (process-single-event frame [:my-handler]) nil))
-      (is (= (last-error) ["re-frame: your handler returned nil. It should return the new db state. Ignoring."])))))
+      (is (= (last-error) ["re-frame: your handler returned nil. It should return the new db state. Ignoring."]))))
+  (testing "calling a handler which does not exist"
+    (reset-log-recorder!)
+    (let [frame (make-empty-test-frame)]
+      (is (= (last-error) nil))
+      (is (= (process-single-event frame [:non-existing-handler]) nil))
+      (is (= (last-error) ["re-frame: no event handler registered for: \"" :non-existing-handler "\". Ignoring."])))))
 
 (deftest frame-warning-handling
   (testing "overwriting subscription handler"
