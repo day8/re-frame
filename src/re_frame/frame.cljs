@@ -1,5 +1,6 @@
 (ns re-frame.frame
-  (:require [re-frame.utils :refer [get-event-id get-subscription-id]]))
+  (:require [re-frame.utils :refer [get-event-id get-subscription-id simple-inflection]]
+            [re-frame.logging :as logging]))
 
 ; re-frame meat reimplemented in terms of pure functions (with help of transducers)
 
@@ -22,14 +23,42 @@ This transducer reads event-id and applies matching handler on input state."
                state)
              (rf state (handler-fn (db-selector state) event)))))))))
 
-; TODO: this should be implemented as deftype/defrecord in future
+(defn frame-summary-description [frame]
+  (let [handlers-count (count (:handlers frame))
+        subscriptions-count (count (:subscriptions frame))]
+    (str
+      handlers-count " " (simple-inflection "handler" handlers-count) ", "
+      subscriptions-count " " (simple-inflection "subscription" subscriptions-count))))
+
+(defprotocol IFrame)
+
+(defrecord Frame [handlers subscriptions db-selector loggers]
+  IFrame
+
+  IHash
+  (-hash [this] (goog/getUid this))
+
+  IPrintWithWriter
+  (-pr-writer [this writer opts]
+    (-write writer (str "#<Frame #" (hash this) " :" (frame-summary-description frame)))
+    (-write writer "| handlers:")
+    (pr-writer (:handlers this) writer opts)
+    (-write writer "| subscriptions:")
+    (pr-writer (:subscriptions this) writer opts)
+    (-write writer ">")))
+
 (defn frame-factory
   "Constructs independent frame instance."
-  [handlers subscriptions loggers db-selector]
-  {:handlers      handlers
-   :subscriptions subscriptions
-   :loggers       loggers
-   :db-selector   db-selector})
+  ([] (frame-factory nil))
+  ([handlers] (frame-factory handlers nil))
+  ([handlers subscriptions] (frame-factory handlers subscriptions deref))
+  ([handlers subscriptions db-selector] (frame-factory handlers subscriptions db-selector logging/default-loggers))
+  ([handlers subscriptions db-selector loggers]
+   {:pre [(or (map? handlers) (nil? handlers))
+          (or (map? subscriptions) (nil? subscriptions))
+          (fn? db-selector)
+          (map? loggers)]}
+   (Frame. handlers subscriptions db-selector loggers)))
 
 (defn subscribe
   "Returns a reagent/reaction which observes state."

@@ -19,7 +19,7 @@
 (def app-db (reagent/atom nil))
 
 ; the default instance of re-frame
-(def app-frame (atom (frame/frame-factory nil nil logging/default-loggers deref)))
+(def app-frame (atom (frame/frame-factory)))
 
 ; methods bellow operate on app-db and provide backward-compatible interface as was present in re-frame 0.4.1
 
