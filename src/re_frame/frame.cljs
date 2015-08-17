@@ -2,53 +2,14 @@
   (:require [re-frame.utils :refer [get-event-id get-subscription-id simple-inflection frame-summary-description]]
             [re-frame.logging :refer [log warn error default-loggers]]))
 
-; re-frame meat reimplemented in terms of pure functions (with help of transducers)
-
-(defn frame-transducer-factory [frame]                      ; <- returns a function which is able to build transducers
-  (fn [db-selector]                                         ; <- returns a transducer parametrized with db-selector
-    (fn [reducing-fn]                                       ; <- this is a transducer
-      (fn
-        ([] (reducing-fn))                                  ; transduction init, see [1]
-        ([result] (reducing-fn result))                     ; transduction completion, see [1]
-        ([state event]                                      ; transduction step, see [1]
-         (let [event-id (get-event-id event)
-               handler-fn (event-id (:handlers frame))]
-           (if (nil? handler-fn)
-             (do
-               (error frame "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
-               state)
-             (let [old-db (db-selector state)               ; db-selector is responsible for retrieving actual db from current state
-                   new-db (handler-fn old-db event)]        ; calls selected handler (including all composed middlewares)
-               (if (nil? new-db)                            ; TODO: this test should be optional, there could be valid use-cases for nil db
-                 (do
-                   (error frame "re-frame: your handler returned nil. It should return the new db state. Ignoring.")
-                   state)
-                 (reducing-fn state new-db))))))))))        ; reducing function prepares new transduction state
-
-; see http://clojure.org/transducers[1]
-(defn get-frame-transducer
-  "Returns a transducer: state, event -> state.
-This transducer resolves event-id, selects matching handler and calls it with old db state to produce a new db state.
-Transducer must have no knowledge of underlying app-db-atom, reagent, core.async or anything else out there.
-All business of queuing events and application of their effects must be baked into reducing-fn and provided from outside
-by the process doing actual transduction. See event processing helpers below for an example."
-  ([frame] (get-frame-transducer frame identity))
-  ([frame db-selector] ((frame-transducer-factory frame) db-selector)))
+; re-frame meat implemented in terms of pure functions (with help of transducers)
 
 (defprotocol IFrame)
 
 (defrecord Frame [handlers subscriptions loggers]
   IFrame)
 
-(extend-protocol IPrintWithWriter
-  Frame
-  (-pr-writer [this writer opts]
-    (-write writer (str "#<Frame " (frame-summary-description this)))
-    (-write writer " | handlers ")
-    (pr-writer (keys (.-handlers this)) writer opts)
-    (-write writer " | subscriptions ")
-    (pr-writer (keys (.-subscriptions this)) writer opts)
-    (-write writer ">")))
+;; -- construction -----------------------------------------------------------------------------------------------------
 
 (defn make-frame
   "Constructs an independent frame instance."
@@ -61,37 +22,7 @@ by the process doing actual transduction. See event processing helpers below for
           (map? loggers)]}
    (Frame. handlers subscriptions loggers)))
 
-(defn subscribe
-  "Returns a reagent/reaction which observes state."
-  [frame subscription-spec]
-  (let [subscription-id (get-subscription-id subscription-spec)
-        handler-fn (get-in frame [:subscriptions subscription-id])]
-    (if (nil? handler-fn)
-      (do
-        (error frame "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
-        nil)
-      (handler-fn subscription-spec))))
-
-(defn register-subscription-handler
-  "Registers a subscription handler function for an id."
-  [frame subscription-id handler-fn]
-  (let [existing-subscriptions (get frame :subscriptions)]
-    (if (contains? existing-subscriptions subscription-id)
-      (warn frame "re-frame: overwriting subscription handler for: " subscription-id)))
-  (assoc-in frame [:subscriptions subscription-id] handler-fn))
-
-(defn unregister-subscription-handler
-  "Unregisters subscription handler function previously registered via register-subscription-handler."
-  [frame subscription-id]
-  (let [existing-subscriptions (get frame :subscriptions)]
-    (if-not (contains? existing-subscriptions subscription-id)
-      (warn frame "re-frame: unregistering subscription handler \"" subscription-id "\" which does not exist.")))
-  (update frame :subscriptions dissoc subscription-id))
-
-(defn clear-subscription-handlers
-  "Unregisters all subscription handlers."
-  [frame]
-  (assoc frame :subscriptions nil))
+;; -- event handlers ---------------------------------------------------------------------------------------------------
 
 (defn register-event-handler
   "Register a handler for an event."
@@ -114,18 +45,88 @@ by the process doing actual transduction. See event processing helpers below for
   [frame]
   (assoc frame :handlers nil))
 
+;; -- subscriptions ----------------------------------------------------------------------------------------------------
+
+(defn register-subscription-handler
+  "Registers a subscription handler function for an id."
+  [frame subscription-id handler-fn]
+  (let [existing-subscriptions (get frame :subscriptions)]
+    (if (contains? existing-subscriptions subscription-id)
+      (warn frame "re-frame: overwriting subscription handler for: " subscription-id)))
+  (assoc-in frame [:subscriptions subscription-id] handler-fn))
+
+(defn unregister-subscription-handler
+  "Unregisters subscription handler function previously registered via register-subscription-handler."
+  [frame subscription-id]
+  (let [existing-subscriptions (get frame :subscriptions)]
+    (if-not (contains? existing-subscriptions subscription-id)
+      (warn frame "re-frame: unregistering subscription handler \"" subscription-id "\" which does not exist.")))
+  (update frame :subscriptions dissoc subscription-id))
+
+(defn clear-subscription-handlers
+  "Unregisters all subscription handlers."
+  [frame]
+  (assoc frame :subscriptions nil))
+
+(defn subscribe
+  "Returns a reagent/reaction which observes state."
+  [frame subscription-spec]
+  (let [subscription-id (get-subscription-id subscription-spec)
+        handler-fn (get-in frame [:subscriptions subscription-id])]
+    (if (nil? handler-fn)
+      (do
+        (error frame "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
+        nil)
+      (handler-fn subscription-spec))))
+
+;; -- utilities --------------------------------------------------------------------------------------------------------
+
 (defn set-loggers
   "Resets loggers."
   [frame new-loggers]
   (assoc frame :loggers new-loggers))
 
-;; -- event processing -----------------------------------------------------------------------
+;; -- transducers ------------------------------------------------------------------------------------------------------
+;;
+;; see http://clojure.org/transducers[1]
+
+(defn frame-transducer-factory [frame]                      ; <- returns a function which is able to build transducers
+  (fn [db-selector]                                         ; <- returns a transducer parametrized with db-selector
+    (fn [reducing-fn]                                       ; <- this is a transducer
+      (fn
+        ([] (reducing-fn))                                  ; transduction init, see [1]
+        ([result] (reducing-fn result))                     ; transduction completion, see [1]
+        ([state event]                                      ; transduction step, see [1]
+         (let [event-id (get-event-id event)
+               handler-fn (event-id (:handlers frame))]
+           (if (nil? handler-fn)
+             (do
+               (error frame "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
+               state)
+             (let [old-db (db-selector state)               ; db-selector is responsible for retrieving actual db from current state
+                   new-db (handler-fn old-db event)]        ; calls selected handler (including all composed middlewares)
+               (if (nil? new-db)                            ; TODO: this test should be optional, there could be valid use-cases for nil db
+                 (do
+                   (error frame "re-frame: your handler returned nil. It should return the new db state. Ignoring.")
+                   state)
+                 (reducing-fn state new-db))))))))))        ; reducing function prepares new transduction state
+
+(defn get-frame-transducer
+  "Returns a transducer: state, event -> state.
+This transducer resolves event-id, selects matching handler and calls it with old db state to produce a new db state.
+Transducer must have no knowledge of underlying app-db-atom, reagent, core.async or anything else out there.
+All business of queuing events and application of their effects must be baked into reducing-fn and provided from outside
+by the process doing actual transduction. See event processing helpers below for an example."
+  ([frame] (get-frame-transducer frame identity))
+  ([frame db-selector] ((frame-transducer-factory frame) db-selector)))
+
+;; -- event processing -------------------------------------------------------------------------------------------------
 
 (defn process-events-on-atom [frame db-atom events]
   (let [reducing-fn (fn
                       ([db-atom] db-atom)                   ; completion
-                      ([db-atom new-db]                     ; apply new-state to atom
-                       (let [old-db @db-atom]
+                      ([db-atom new-db]                     ; in each step
+                       (let [old-db @db-atom]               ; commit new-db to atom
                          (if-not (identical? old-db new-db)
                            (reset! db-atom new-db)))
                        db-atom))
@@ -135,10 +136,10 @@ by the process doing actual transduction. See event processing helpers below for
 (defn process-events-on-atom-with-coallesced-write [frame db-atom events]
   (let [old-db @db-atom
         reducing-fn (fn
-                      ([final-db]
-                       (if-not (identical? old-db final-db)
-                         (reset! db-atom final-db)))        ; completion
-                      ([_old-db new-db] new-db))            ; simply carry-on with new-state
+                      ([final-db]                           ; completion
+                       (if-not (identical? old-db final-db) ; commit final-db to atom
+                         (reset! db-atom final-db)))
+                      ([_old-db new-db] new-db))            ; simply carry-on with new-db as our new state
         xform (get-frame-transducer frame identity)]
     (transduce xform reducing-fn old-db events)))
 
@@ -152,3 +153,15 @@ by the process doing actual transduction. See event processing helpers below for
         new-db (process-event frame old-db event)]
     (if-not (identical? old-db new-db)
       (reset! db-atom new-db))))
+
+;; -- nice to have -----------------------------------------------------------------------------------------------------
+
+(extend-protocol IPrintWithWriter
+  Frame
+  (-pr-writer [this writer opts]
+    (-write writer (str "#<Frame " (frame-summary-description this)))
+    (-write writer " | handlers ")
+    (pr-writer (keys (.-handlers this)) writer opts)
+    (-write writer " | subscriptions ")
+    (pr-writer (keys (.-subscriptions this)) writer opts)
+    (-write writer ">")))
