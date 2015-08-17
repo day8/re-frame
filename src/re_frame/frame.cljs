@@ -33,18 +33,16 @@ This transducer reads event-id and applies matching handler on input state."
 (defprotocol IFrame)
 
 (defrecord Frame [handlers subscriptions db-selector loggers]
-  IFrame
+  IFrame)
 
-  IHash
-  (-hash [this] (goog/getUid this))
-
-  IPrintWithWriter
+(extend-protocol IPrintWithWriter
+  Frame
   (-pr-writer [this writer opts]
-    (-write writer (str "#<Frame #" (hash this) " :" (frame-summary-description frame)))
-    (-write writer "| handlers:")
-    (pr-writer (:handlers this) writer opts)
-    (-write writer "| subscriptions:")
-    (pr-writer (:subscriptions this) writer opts)
+    (-write writer (str "#<Frame " (frame-summary-description this)))
+    (-write writer " | handlers ")
+    (pr-writer (keys (.-handlers this)) writer opts)
+    (-write writer " | subscriptions ")
+    (pr-writer (keys (.-subscriptions this)) writer opts)
     (-write writer ">")))
 
 (defn make-frame
