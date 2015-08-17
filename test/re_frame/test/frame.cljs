@@ -38,9 +38,9 @@
                       ([result] result)
                       ([_old-state new-state] new-state))]
     (let [xform (frame/get-frame-transducer frame)]
-      (transduce xform reducing-fn nil [event]))))
+      ((xform reducing-fn) nil event))))
 
-(deftest frame-error-handling
+(deftest frame-errors
   (testing "doing invalid subscription"
     (reset-log-recorder!)
     (let [frame (make-empty-test-frame)]
@@ -66,21 +66,41 @@
       (is (= (process-single-event frame [:non-existing-handler]) nil))
       (is (= (last-error) ["re-frame: no event handler registered for: \"" :non-existing-handler "\". Ignoring."])))))
 
-(deftest frame-warning-handling
+(deftest frame-warnings
   (testing "overwriting subscription handler"
     (reset-log-recorder!)
     (let [frame (make-empty-test-frame)
           frame-with-some-handler (frame/register-subscription-handler frame :some-handler identity)]
       (is (= (last-warn) nil))
       (frame/register-subscription-handler frame-with-some-handler :some-handler (fn []))
-      (is (= (last-warn) ["re-frame: overwriting subscription-handler for: " :some-handler]))))
+      (is (= (last-warn) ["re-frame: overwriting subscription handler for: " :some-handler]))))
   (testing "overwriting event handler"
     (reset-log-recorder!)
     (let [frame (make-empty-test-frame)
           frame-with-some-handler (frame/register-event-handler frame :some-handler identity)]
       (is (= (last-warn) nil))
       (frame/register-event-handler frame-with-some-handler :some-handler (fn []))
-      (is (= (last-warn) ["re-frame: overwriting an event-handler for: " :some-handler])))))
+      (is (= (last-warn) ["re-frame: overwriting an event handler for: " :some-handler]))))
+  (testing "unregistering subscription handler which does not exist"
+    (reset-log-recorder!)
+    (let [frame (make-empty-test-frame)]
+      (is (= (last-warn) nil))
+      (frame/unregister-subscription-handler frame :non-existing-handler)
+      (is (= (last-warn) ["re-frame: unregistering subscription handler \"" :non-existing-handler "\" which does not exist."])))))
+
+(deftest frame-event-handlers
+  (testing "unregister event handler"
+    (let [frame (-> (make-empty-test-frame)
+                  (frame/register-event-handler :some-handler identity))]
+      (is (= (get-in frame [:handlers :some-handler]) identity))
+      (is (= (get-in (frame/unregister-event-handler frame :some-handler) [:handlers :some-handler] ::not-found) ::not-found)))))
+
+(deftest frame-subscription-handlers
+  (testing "unregister subscription handler"
+    (let [frame (-> (make-empty-test-frame)
+                  (frame/register-subscription-handler :some-handler identity))]
+      (is (= (get-in frame [:subscriptions :some-handler]) identity))
+      (is (= (get-in (frame/unregister-subscription-handler frame :some-handler) [:subscriptions :some-handler] ::not-found) ::not-found)))))
 
 (deftest frame-transduction
   (testing "simple transduce"

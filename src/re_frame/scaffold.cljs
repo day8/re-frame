@@ -28,6 +28,9 @@
 (defn register-sub [subscription-id handler-fn]
   (swap! app-frame #(frame/register-subscription-handler % subscription-id handler-fn)))
 
+(defn unregister-sub [subscription-id]
+  (swap! app-frame #(frame/unregister-subscription-handler % subscription-id)))
+
 (defn clear-sub-handlers! []
   (swap! app-frame #(frame/clear-subscription-handlers %)))
 
@@ -105,6 +108,9 @@
    (if middleware
      (register-base event-id middleware handler)
      (register-base event-id handler))))
+
+(defn unregister-handler [event-id]
+  (swap! app-frame #(frame/unregister-event-handler % event-id)))
 
 ;; -- The Event Conveyor Belt  --------------------------------------------------------------------
 ;;

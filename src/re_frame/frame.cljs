@@ -15,9 +15,9 @@ by the process doing actual transduction. See scaffold's transduce-by-resetting-
   (let [{:keys [handlers loggers db-selector]} frame]
     (fn [reducing-fn]
       (fn
-        ([] (reducing-fn))                                  ; transduction initialization, see [1]
+        ([] (reducing-fn))                                  ; transduction init, see [1]
         ([result] (reducing-fn result))                     ; transduction completion, see [1]
-        ([state event]
+        ([state event]                                      ; transduction step, see [1]
          (let [event-id (get-event-id event)
                handler-fn (event-id handlers)]
            (if (nil? handler-fn)
@@ -48,7 +48,7 @@ by the process doing actual transduction. See scaffold's transduce-by-resetting-
     (-write writer ">")))
 
 (defn make-frame
-  "Constructs independent frame instance."
+  "Constructs an independent frame instance."
   ([] (make-frame nil))
   ([handlers] (make-frame handlers nil))
   ([handlers subscriptions] (make-frame handlers subscriptions deref))
@@ -72,18 +72,27 @@ by the process doing actual transduction. See scaffold's transduce-by-resetting-
       (handler-fn subscription-spec))))
 
 (defn register-subscription-handler
-  "Registers a handler function for an id."
+  "Registers a subscription handler function for an id."
   [frame subscription-id handler-fn]
   (let [existing-subscriptions (get frame :subscriptions)]
     (if (contains? existing-subscriptions subscription-id)
       (let [warn (get-in frame [:loggers :warn])]
-        (warn "re-frame: overwriting subscription-handler for: " subscription-id))))
+        (warn "re-frame: overwriting subscription handler for: " subscription-id))))
   (assoc-in frame [:subscriptions subscription-id] handler-fn))
+
+(defn unregister-subscription-handler
+  "Unregisters subscription handler function previously registered via register-subscription-handler."
+  [frame subscription-id]
+  (let [existing-subscriptions (get frame :subscriptions)]
+    (if-not (contains? existing-subscriptions subscription-id)
+      (let [warn (get-in frame [:loggers :warn])]
+        (warn "re-frame: unregistering subscription handler \"" subscription-id "\" which does not exist."))))
+  (update frame :subscriptions dissoc subscription-id))
 
 (defn clear-subscription-handlers
   "Unregisters all subscription handlers."
   [frame]
-  (assoc frame :subscriptions {}))
+  (assoc frame :subscriptions nil))
 
 (defn register-event-handler
   "Register a handler for an event."
@@ -91,13 +100,22 @@ by the process doing actual transduction. See scaffold's transduce-by-resetting-
    (let [existing-handlers (get frame :handlers)]
      (if (contains? existing-handlers event-id)
        (let [warn (get-in frame [:loggers :warn])]
-         (warn "re-frame: overwriting an event-handler for: " event-id)))
+         (warn "re-frame: overwriting an event handler for: " event-id)))
      (assoc-in frame [:handlers event-id] handler-fn))))
+
+(defn unregister-event-handler
+  "Unregisters event handler function previously registered via register-event-handler."
+  [frame event-id]
+  (let [existing-handlers (get frame :handlers)]
+    (if (contains? existing-handlers event-id)
+      (let [warn (get-in frame [:loggers :warn])]
+        (warn "re-frame: unregistering event handler \"" event-id "\" which does not exist."))))
+  (update frame :handlers dissoc event-id))
 
 (defn clear-event-handlers
   "Unregisters all event handlers."
   [frame]
-  (assoc frame :handlers {}))
+  (assoc frame :handlers nil))
 
 (defn set-loggers
   "Resets loggers."
