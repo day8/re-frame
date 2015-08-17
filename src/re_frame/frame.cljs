@@ -1,6 +1,6 @@
 (ns re-frame.frame
   (:require [re-frame.utils :refer [get-event-id get-subscription-id simple-inflection frame-summary-description]]
-            [re-frame.logging :as logging :refer [log warn error]]))
+            [re-frame.logging :refer [log warn error default-loggers]]))
 
 ; re-frame meat reimplemented in terms of pure functions (with help of transducers)
 
@@ -52,7 +52,7 @@ by the process doing actual transduction. See scaffold's transduce-events-by-res
   ([] (make-frame nil))
   ([handlers] (make-frame handlers nil))
   ([handlers subscriptions] (make-frame handlers subscriptions deref))
-  ([handlers subscriptions db-selector] (make-frame handlers subscriptions db-selector logging/default-loggers))
+  ([handlers subscriptions db-selector] (make-frame handlers subscriptions db-selector default-loggers))
   ([handlers subscriptions db-selector loggers]
    {:pre [(or (map? handlers) (nil? handlers))
           (or (map? subscriptions) (nil? subscriptions))

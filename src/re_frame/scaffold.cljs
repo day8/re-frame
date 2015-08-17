@@ -36,17 +36,17 @@
 (defn clear-sub-handlers! []
   (swap! app-frame #(frame/clear-subscription-handlers %)))
 
-(defn legacy-subscribe [frame app-db-atom subscription-spec]
+(defn legacy-subscribe [frame-atom app-db-atom subscription-spec]
   (let [subscription-id (utils/get-subscription-id subscription-spec)
-        handler-fn (get-in frame [:subscriptions subscription-id])]
+        handler-fn (get-in @frame-atom [:subscriptions subscription-id])]
     (if (nil? handler-fn)
       (do
-        (error frame "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
+        (error @frame-atom "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
         nil)
       (handler-fn app-db-atom subscription-spec))))
 
 (defn subscribe [subscription-spec]
-  (legacy-subscribe @app-frame app-db subscription-spec))
+  (legacy-subscribe app-frame app-db subscription-spec))
 
 (defn clear-event-handlers! []
   (swap! app-frame #(frame/clear-event-handlers %)))
@@ -63,54 +63,18 @@
 
 ;; -- composing middleware  -----------------------------------------------------------------------
 
-(defn report-middleware-factories
-  "See https://github.com/Day8/re-frame/issues/65"
-  [frame v]
-  (letfn [(name-of-factory
-            [f]
-            (-> f meta :re-frame-factory-name))
-          (factory-names-in
-            [v]
-            (remove nil? (map name-of-factory v)))]
-    (doseq [name (factory-names-in v)]
-      (error frame "re-frame: \"" name "\" used incorrectly. Must be used like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
-
-(defn comp-middleware
-  "Given a vector of middleware, filter out any nils, and use \"comp\" to compose the elements.
-  v can have nested vectors, and will be flattened before \"comp\" is applied.
-  For convienience, if v is a function (assumed to be middleware already), just return it.
-  Filtering out nils allows us to create Middleware conditionally like this:
-     (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil
-  "
-  [frame what]
-  (let [spec (if (seqable? what) (seq what) what)]
-    (cond
-      (fn? spec) spec                                       ;; assumed to be existing middleware
-      (seq? spec) (let [middlewares (remove nil? (flatten spec))]
-                    (report-middleware-factories frame middlewares)
-                    (apply comp middlewares))
-      :else (do
-              (warn frame "re-frame: comp-middleware expects a vector, got: " what)
-              nil))))
-
 (defn register-base
   "register a handler for an event.
   This is low level and it is expected that \"re-frame.core/register-handler\" would
   generally be used."
-  ([event-id handler-fn]
-   (swap! app-frame #(frame/register-event-handler % event-id handler-fn)))
+  ([app-frame-atom event-id handler-fn]
+   (swap! app-frame-atom #(frame/register-event-handler % event-id handler-fn)))
 
-  ([event-id middleware handler-fn]
-   (if-let [mid-ware (comp-middleware @app-frame middleware)] ;; compose the middleware
-     (register-base event-id (mid-ware handler-fn)))))      ;; wrap the handler in the middleware
+  ([app-frame-atom event-id middleware handler-fn]
+   (if-let [mid-ware (utils/compose-middleware @app-frame middleware)] ;; compose the middleware
+     (register-base app-frame-atom event-id (mid-ware handler-fn))))) ;; wrap the handler in the middleware
 
-(defn register-handler
-  ([event-id handler]
-   (register-base event-id handler))
-  ([event-id middleware handler]
-   (if middleware
-     (register-base event-id middleware handler)
-     (register-base event-id handler))))
+(def register-handler (partial register-base app-frame))
 
 (defn unregister-handler [event-id]
   (swap! app-frame #(frame/unregister-event-handler % event-id)))
