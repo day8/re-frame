@@ -54,3 +54,24 @@
       :else (do
               (warn frame "re-frame: comp-middleware expects a vector, got: " what)
               nil))))
+
+
+;; -- event processing -----------------------------------------------------------------------
+
+(defn handle-events-and-apply-results-to-atom [frame-transducer db-atom events]
+  (let [reducing-fn (fn
+                      ([db-atom] db-atom)                   ; completion
+                      ([db-atom new-state]                  ; apply new-state to atom
+                       (let [old-state @db-atom]
+                         (if-not (identical? old-state new-state)
+                           (reset! db-atom new-state)))
+                       db-atom))]
+    (transduce frame-transducer reducing-fn db-atom events)))
+
+(defn handle-event-and-reset-atom [frame-transducer db-atom event]
+  (let [reducing-fn (fn [db-atom new-state]                 ; apply new-state to atom
+                      (let [old-state @db-atom]
+                        (if-not (identical? old-state new-state)
+                          (reset! db-atom new-state)))
+                      db-atom)]
+    ((frame-transducer reducing-fn) db-atom event)))
