@@ -22,7 +22,7 @@
 (def register-handler scaffold/register-handler)
 (def unregister-handler scaffold/unregister-handler)
 
-;(def pure scaffold/pure)
+(def pure scaffold/pure)
 (def debug scaffold/debug)
 ;(def undoable scaffold/undoable)
 (def path scaffold/path)
