@@ -1,4 +1,4 @@
-(defproject re-frame "0.4.2-TRANSDUCERS"
+(defproject re-frame "0.5.0-TRANSDUCERS"
   :description "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url "https://github.com/Day8/re-frame.git"
   :license {:name "MIT"}
@@ -12,8 +12,7 @@
                      :plugins      [[lein-cljsbuild "1.0.5"]
                                     [com.cemerick/clojurescript.test "0.3.3"]]}}
 
-  :clean-targets [:target-path
-                  "run/compiled"]
+  :clean-targets [:target-path "run/compiled"]
 
   :resource-paths ["run/resources"]
   :jvm-opts ["-Xmx1g" "-XX:+UseConcMarkSweepGC"]
@@ -23,12 +22,9 @@
 
   :cljsbuild {:builds        [{:id           "test"         ;; currently bogus, there is no demo or tests
                                :source-paths ["src" "test"]
-                               :compiler     {;:main          re-frame.test-runner
-                                              :output-to     "run/compiled/test.js"
+                               :compiler     {:output-to     "run/compiled/test.js"
                                               :source-map    "run/compiled/test.js.map"
                                               :output-dir    "run/compiled/test"
-                                              ;:target        :nodejs ;;; this target required for node, plus a *main* defined in the tests.
-                                              ;:hashbang      false ;;; https://github.com/cemerick/clojurescript.test/issues/68#issuecomment-52981151
                                               :optimizations :simple ;; https://github.com/cemerick/clojurescript.test/issues/68
                                               :pretty-print  true}}]
 
