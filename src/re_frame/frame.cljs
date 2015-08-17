@@ -4,16 +4,19 @@
 
 ; re-frame meat reimplemented in terms of pure functions (with help of transducers)
 
-; see http://clojure.org/transducers
+; see http://clojure.org/transducers[1]
 (defn get-frame-transducer
   "Returns a transducer: state, event -> state.
-This transducer reads event-id and applies matching handler on input state."
+This transducer resolves event-id, selects matching handler and calls it with old db state to produce a new db state.
+Tranducer must have no knowledge of underlying app-db-atom, reagent, core.async or anything else out there.
+All business of queuing events and application of their effects must be baked into reducing-fn and provided from outside
+by the process doing actual transduction. See scaffold's transduce-by-resetting-atom for an example."
   [frame]
   (let [{:keys [handlers loggers db-selector]} frame]
     (fn [reducing-fn]
       (fn
-        ([] (reducing-fn))
-        ([result] (reducing-fn result))
+        ([] (reducing-fn))                                  ; transduction initialization, see [1]
+        ([result] (reducing-fn result))                     ; transduction completion, see [1]
         ([state event]
          (let [event-id (get-event-id event)
                handler-fn (event-id handlers)]
@@ -21,11 +24,14 @@ This transducer reads event-id and applies matching handler on input state."
              (let [error (:error loggers)]
                (error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
                state)
-             (if-let [new-db (handler-fn (db-selector state) event)]
-               (reducing-fn state new-db)
-               (let [error (:error loggers)]
-                 (error "re-frame: your handler returned nil. It should return the new db state. Ignoring.")
-                 state)))))))))
+             (let [old-db (db-selector state)               ; db-selector is responsible for retrieving actual db from current state
+                   new-db (handler-fn old-db event)]        ; calls selected handler (including all composed middlewares)
+               (if (nil? new-db)                            ; TODO: this test should be optional, there could be valid use-cases for nil db
+                 (let [error (:error loggers)]
+                   (error "re-frame: your handler returned nil. It should return the new db state. Ignoring.")
+                   state)
+                 (reducing-fn state new-db))))))))))        ; reducing function prepares new transduction state
+
 
 (defn frame-summary-description [frame]
   (let [handlers-count (count (:handlers frame))
