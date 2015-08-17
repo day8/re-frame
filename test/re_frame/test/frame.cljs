@@ -41,7 +41,7 @@
       (transduce xform reducing-fn nil [event]))))
 
 (deftest frame-error-handling
-  (testing "invalid subscription"
+  (testing "doing invalid subscription"
     (reset-log-recorder!)
     (let [frame (make-empty-test-frame)]
       (is (thrown-with-msg? js/Error #"expected a vector subscription, but got:" (frame/subscribe frame :non-vector)))))
@@ -50,7 +50,15 @@
     (let [frame (make-empty-test-frame)]
       (is (= (last-error) nil))
       (frame/subscribe frame [:subscription-which-does-not-exist])
-      (is (= (last-error) ["re-frame: no subscription handler registered for: \"" :subscription-which-does-not-exist "\".  Returning a nil subscription."])))))
+      (is (= (last-error) ["re-frame: no subscription handler registered for: \"" :subscription-which-does-not-exist "\".  Returning a nil subscription."]))))
+  (testing "calling handler which returns nil"
+    (reset-log-recorder!)
+    (let [my-handler (fn [_state _] nil)
+          frame (-> (make-empty-test-frame)
+                  (frame/register-event-handler :my-handler my-handler))]
+      (is (= (last-error) nil))
+      (is (= (process-single-event frame [:my-handler]) nil))
+      (is (= (last-error) ["re-frame: your handler returned nil. It should return the new db state. Ignoring."])))))
 
 (deftest frame-warning-handling
   (testing "overwriting subscription handler"

@@ -138,11 +138,9 @@
   (let [reducing-fn (fn
                       ([db-atom] db-atom)                   ; completion
                       ([db-atom new-state]                  ; apply new-state to atom
-                       (if (nil? new-state)
-                         ((get-in frame-atom [:loggers :error]) "re-frame: your pure handler returned nil. It should return the new db state.")
-                         (let [old-state @db-atom]
-                           (if-not (identical? old-state new-state)
-                             (reset! db-atom new-state))))
+                       (let [old-state @db-atom]
+                         (if-not (identical? old-state new-state)
+                           (reset! db-atom new-state)))
                        db-atom))]
     (let [xform (frame/get-frame-transducer @frame-atom)]
       (transduce xform reducing-fn db-atom events))))

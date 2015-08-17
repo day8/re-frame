@@ -10,10 +10,10 @@
 This transducer reads event-id and applies matching handler on input state."
   [frame]
   (let [{:keys [handlers loggers db-selector]} frame]
-    (fn [rf]
+    (fn [reducing-fn]
       (fn
-        ([] (rf))
-        ([result] (rf result))
+        ([] (reducing-fn))
+        ([result] (reducing-fn result))
         ([state event]
          (let [event-id (get-event-id event)
                handler-fn (event-id handlers)]
@@ -21,7 +21,11 @@ This transducer reads event-id and applies matching handler on input state."
              (let [error (:error loggers)]
                (error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
                state)
-             (rf state (handler-fn (db-selector state) event)))))))))
+             (if-let [new-db (handler-fn (db-selector state) event)]
+               (reducing-fn state new-db)
+               (let [error (:error loggers)]
+                 (error "re-frame: your handler returned nil. It should return the new db state. Ignoring.")
+                 state)))))))))
 
 (defn frame-summary-description [frame]
   (let [handlers-count (count (:handlers frame))
