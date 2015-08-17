@@ -2,8 +2,7 @@
   (:require-macros [cemerick.cljs.test :refer (is deftest testing done)])
   (:require [cemerick.cljs.test]
             [re-frame.core :as core]
-            [re-frame.frame :as frame]
-            [re-frame.logging :as logging]))
+            [re-frame.frame :as frame]))
 
 (defn reinitialize! []
   ; TODO: figure out, how to force channel flush
@@ -14,8 +13,8 @@
   (testing "modify app-db via handler (sync)"
     (reinitialize!)
     (is (= @core/app-db nil))
-    (core/register-handler :modify-app (fn [app-db [_ data]]
-                                         (assoc app-db :modify-app-handler-was-here data)))
+    (core/register-handler :modify-app (fn [db [_ data]]
+                                         (assoc db :modify-app-handler-was-here data)))
     (core/dispatch-sync [:modify-app "something"])
     (is (= @core/app-db {:modify-app-handler-was-here "something"}))))
 
@@ -23,12 +22,12 @@
   (testing "modify app-db via handler (async)"
     (reinitialize!)
     (is (= @core/app-db nil))
-    (core/register-handler :modify-app (fn [app-db [_ data]]
-                                         (assoc app-db :modify-app-handler-was-here data)))
-    (core/register-handler :check (fn [app-db]
-                                    (is (= app-db @core/app-db))
-                                    (is (= app-db {:modify-app-handler-was-here "something"}))
+    (core/register-handler :modify-app (fn [db [_ data]]
+                                         (assoc db :modify-app-handler-was-here data)))
+    (core/register-handler :check (fn [db]
+                                    (is (= db @core/app-db))
+                                    (is (= db {:modify-app-handler-was-here "something"}))
                                     (done)
-                                    app-db))
+                                    db))
     (core/dispatch [:modify-app "something"])
     (core/dispatch [:check])))
