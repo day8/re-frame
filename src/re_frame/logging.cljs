@@ -1,5 +1,7 @@
 (ns re-frame.logging)
 
+(defn no-op [& _])
+
 ;; -- Logging -----------------------------------------------------------------
 ;;
 ;; re-frame internally uses a set of logging functions which, by default,
@@ -15,3 +17,11 @@
    :error     #(.error js/console %)
    :group     #(if (.group js/console) (.group js/console %) (.log js/console %))  ;; group does not exist  < IE 11
    :groupEnd  #(when (.groupEnd js/console) (.groupEnd js/console))})              ;; groupEnd does not exist  < IE 11
+
+(def no-loggers
+  {:log       no-op
+   :warn      no-op
+   :error     no-op
+   :group     no-op
+   :groupEnd  no-op}
+)
