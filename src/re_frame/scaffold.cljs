@@ -17,10 +17,10 @@
 ; * router event queue is implemented using core.async channel
 
 ; the default instance of app-db implemented as ratom
-(def app-db (reagent/atom nil))
+(defonce app-db (reagent/atom nil))
 
 ; the default instance of re-frame
-(def app-frame (atom (frame/make-frame)))
+(defonce app-frame (atom (frame/make-frame)))
 
 ; methods bellow operate on app-db and provide backward-compatible interface as was present in re-frame 0.4.1
 
