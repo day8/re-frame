@@ -1,5 +1,5 @@
 (ns re-frame.frame
-  (:require [re-frame.utils :refer [get-event-id get-subscription-id simple-inflection]]
+  (:require [re-frame.utils :refer [get-event-id get-subscription-id simple-inflection frame-summary-description]]
             [re-frame.logging :as logging]))
 
 ; re-frame meat reimplemented in terms of pure functions (with help of transducers)
@@ -31,14 +31,6 @@ by the process doing actual transduction. See scaffold's transduce-by-resetting-
                    (error "re-frame: your handler returned nil. It should return the new db state. Ignoring.")
                    state)
                  (reducing-fn state new-db))))))))))        ; reducing function prepares new transduction state
-
-
-(defn frame-summary-description [frame]
-  (let [handlers-count (count (:handlers frame))
-        subscriptions-count (count (:subscriptions frame))]
-    (str
-      handlers-count " " (simple-inflection "handler" handlers-count) ", "
-      subscriptions-count " " (simple-inflection "subscription" subscriptions-count))))
 
 (defprotocol IFrame)
 
