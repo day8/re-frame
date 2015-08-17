@@ -4,7 +4,6 @@
   (:require [cljs.core.async :refer [chan put! <! timeout]]
             [reagent.core :as reagent]
             [re-frame.frame :as frame]
-            [re-frame.logging :as logging]
             [re-frame.middleware :as middleware]
             [re-frame.utils :as utils]))
 
@@ -19,7 +18,7 @@
 (def app-db (reagent/atom nil))
 
 ; the default instance of re-frame
-(def app-frame (atom (frame/frame-factory)))
+(def app-frame (atom (frame/make-frame)))
 
 ; methods bellow operate on app-db and provide backward-compatible interface as was present in re-frame 0.4.1
 

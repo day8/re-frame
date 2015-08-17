@@ -47,12 +47,12 @@ This transducer reads event-id and applies matching handler on input state."
     (pr-writer (:subscriptions this) writer opts)
     (-write writer ">")))
 
-(defn frame-factory
+(defn make-frame
   "Constructs independent frame instance."
-  ([] (frame-factory nil))
-  ([handlers] (frame-factory handlers nil))
-  ([handlers subscriptions] (frame-factory handlers subscriptions deref))
-  ([handlers subscriptions db-selector] (frame-factory handlers subscriptions db-selector logging/default-loggers))
+  ([] (make-frame nil))
+  ([handlers] (make-frame handlers nil))
+  ([handlers subscriptions] (make-frame handlers subscriptions deref))
+  ([handlers subscriptions db-selector] (make-frame handlers subscriptions db-selector logging/default-loggers))
   ([handlers subscriptions db-selector loggers]
    {:pre [(or (map? handlers) (nil? handlers))
           (or (map? subscriptions) (nil? subscriptions))

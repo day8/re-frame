@@ -8,7 +8,7 @@
 (defn reinitialize! []
   ; TODO: figure out, how to force channel flush
   (reset! core/app-db nil)
-  (reset! core/app-frame (frame/frame-factory)))
+  (reset! core/app-frame (frame/make-frame)))
 
 (deftest modify-app-db-sync
   (testing "modify app-db via handler (sync)"

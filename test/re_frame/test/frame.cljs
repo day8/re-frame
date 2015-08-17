@@ -31,7 +31,7 @@
   (reset! log-transcript {}))
 
 (defn make-empty-test-frame []
-  (frame/frame-factory nil nil identity recording-loggers))
+  (frame/make-frame nil nil identity recording-loggers))
 
 (defn process-single-event [frame event]
   (let [reducing-fn (fn
