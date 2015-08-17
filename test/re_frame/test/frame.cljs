@@ -33,13 +33,6 @@
 (defn make-empty-test-frame []
   (frame/make-frame nil nil recording-loggers))
 
-(defn process-single-event [frame event]
-  (let [reducing-fn (fn
-                      ([result] result)
-                      ([_old-state new-state] new-state))]
-    (let [xform (frame/get-frame-transducer frame identity)]
-      ((xform reducing-fn) nil event))))
-
 (deftest frame-errors
   (testing "doing invalid subscription"
     (reset-log-recorder!)
@@ -57,13 +50,13 @@
           frame (-> (make-empty-test-frame)
                   (frame/register-event-handler :my-handler my-handler))]
       (is (= (last-error) nil))
-      (is (= (process-single-event frame [:my-handler]) nil))
+      (is (= (frame/process-event frame nil [:my-handler]) nil))
       (is (= (last-error) ["re-frame: your handler returned nil. It should return the new db state. Ignoring."]))))
   (testing "calling a handler which does not exist"
     (reset-log-recorder!)
     (let [frame (make-empty-test-frame)]
       (is (= (last-error) nil))
-      (is (= (process-single-event frame [:non-existing-handler]) nil))
+      (is (= (frame/process-event frame nil [:non-existing-handler]) nil))
       (is (= (last-error) ["re-frame: no event handler registered for: \"" :non-existing-handler "\". Ignoring."])))))
 
 (deftest frame-warnings
@@ -102,9 +95,40 @@
       (is (= (get-in frame [:subscriptions :some-handler]) identity))
       (is (= (get-in (frame/unregister-subscription-handler frame :some-handler) [:subscriptions :some-handler] ::not-found) ::not-found)))))
 
-(deftest frame-transduction
-  (testing "simple transduce"
-    (let [my-handler (fn [_state [event-id & args]] (str "result" event-id args))
+(deftest frame-events
+  (testing "process event"
+    (let [my-handler (fn [state [& args]] (str "state:" state " args:" args))
           frame (-> (make-empty-test-frame)
-                  (frame/register-event-handler :my-handler my-handler))]
-      (is (= (process-single-event frame [:my-handler 1 2]) "result:my-handler(1 2)")))))
+                  (frame/register-event-handler :my-handler my-handler))
+          result (frame/process-event frame "[initial state]" [:my-handler 1 2])]
+      (is (= result "state:[initial state] args:(:my-handler 1 2)"))))
+  (testing "process event on atom"
+    (let [db (atom 0)
+          reset-counter (atom 0)
+          _ (add-watch db ::watcher #(swap! reset-counter inc))
+          add-handler (fn [state [_event-id num]] (+ state num))
+          frame (-> (make-empty-test-frame)
+                  (frame/register-event-handler :add add-handler))]
+      (frame/process-event-on-atom frame db [:add 100])
+      (is (= @db 100))
+      (is (= @reset-counter 1))))
+  (testing "process multiple events on atom"
+    (let [db (atom 0)
+          reset-counter (atom 0)
+          _ (add-watch db ::watcher #(swap! reset-counter inc))
+          add-handler (fn [state [_event-id num]] (+ state num))
+          frame (-> (make-empty-test-frame)
+                  (frame/register-event-handler :add add-handler))]
+      (frame/process-events-on-atom frame db [[:add 1] [:add 2]])
+      (is (= @db 3))
+      (is (= @reset-counter 2))))
+  (testing "process multiple events on atom with coallesced write"
+    (let [db (atom 0)
+          reset-counter (atom 0)
+          _ (add-watch db ::watcher #(swap! reset-counter inc))
+          add-handler (fn [state [_event-id num]] (+ state num))
+          frame (-> (make-empty-test-frame)
+                  (frame/register-event-handler :add add-handler))]
+      (frame/process-events-on-atom-with-coallesced-write frame db [[:add 1] [:add 2]])
+      (is (= @db 3))
+      (is (= @reset-counter 1)))))

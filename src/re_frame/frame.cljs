@@ -133,18 +133,21 @@ by the process doing actual transduction. See event processing helpers below for
     (transduce xform reducing-fn db-atom events)))
 
 (defn process-events-on-atom-with-coallesced-write [frame db-atom events]
-  (let [reducing-fn (fn
-                      ([final-db] (reset! db-atom final-db)) ; completion
+  (let [old-db @db-atom
+        reducing-fn (fn
+                      ([final-db]
+                       (if-not (identical? old-db final-db)
+                         (reset! db-atom final-db)))        ; completion
                       ([_old-db new-db] new-db))            ; simply carry-on with new-state
         xform (get-frame-transducer frame identity)]
-    (transduce xform reducing-fn @db-atom events)))
+    (transduce xform reducing-fn old-db events)))
 
 (defn process-event [frame old-db event]
   (let [reducing-fn (fn [_old-state new-state] new-state)
         xform (get-frame-transducer frame identity)]
     ((xform reducing-fn) old-db event)))
 
-(defn process-event-and-reset-atom [frame db-atom event]
+(defn process-event-on-atom [frame db-atom event]
   (let [old-db @db-atom
         new-db (process-event frame old-db event)]
     (if-not (identical? old-db new-db)
