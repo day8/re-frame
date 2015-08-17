@@ -3,23 +3,24 @@
 
 ; re-frame meat reimplemented in terms of pure functions (with help of transducers)
 
-(defn frame-xform
+; see http://clojure.org/transducers
+(defn get-frame-transducer
   "Returns a transducer: state, event -> state.
 This transducer reads event-id and applies matching handler on input state."
-  [handlers loggers db-selector]
-  (fn [rf]
-    (fn
-      ([] (rf))
-      ([result] (rf result))
-      ([state event]
-       (let [event-id (get-event-id event)
-             handler-fn (event-id handlers)]
-         (if (nil? handler-fn)
-           (let [error (:error loggers)]
-             (error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
-             state)
-           (rf state (handler-fn (db-selector state) event))))))))
-
+  [frame]
+  (let [{:keys [handlers loggers db-selector]} frame]
+    (fn [rf]
+      (fn
+        ([] (rf))
+        ([result] (rf result))
+        ([state event]
+         (let [event-id (get-event-id event)
+               handler-fn (event-id handlers)]
+           (if (nil? handler-fn)
+             (let [error (:error loggers)]
+               (error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
+               state)
+             (rf state (handler-fn (db-selector state) event)))))))))
 
 ; TODO: this should be implemented as deftype/defrecord in future
 (defn frame-factory
@@ -29,10 +30,6 @@ This transducer reads event-id and applies matching handler on input state."
    :subscriptions subscriptions
    :loggers       loggers
    :db-selector   db-selector})
-
-; see http://clojure.org/transducers
-(defn get-frame-transducer [frame]
-  (frame-xform (:handlers frame) (:loggers frame) (:db-selector frame)))
 
 (defn subscribe
   "Returns a reagent/reaction which observes state."
