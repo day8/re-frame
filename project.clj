@@ -1,6 +1,6 @@
 (defproject re-frame "0.4.2-TRANSDUCERS"
   :description "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
-  :url "https://github.com/Day8/re_frame.git"
+  :url "https://github.com/Day8/re-frame.git"
   :license {:name "MIT"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.107"]
