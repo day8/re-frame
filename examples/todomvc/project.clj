@@ -5,7 +5,8 @@
                  [re-frame "0.4.1"]
                  [figwheel "0.3.7"]
                  [secretary "1.2.3"]
-                 [prismatic/schema "0.4.3"]]
+                 [prismatic/schema "0.4.3"]
+                 [binaryage/devtools "0.3.0"]]
 
   :plugins [[lein-cljsbuild "1.0.5"]
             [lein-figwheel "0.3.7"]]

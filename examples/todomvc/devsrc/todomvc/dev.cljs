@@ -1,6 +1,9 @@
 (ns todomvc.dev
   (:require [todomvc.core :as todomvc]
-            [figwheel.client :as fw]))
+            [figwheel.client :as fw]
+            [devtools.core :as devtools]))
 
-(fw/start {:on-jsload todomvc/main
+(devtools/install!)
+
+(fw/start {:on-jsload     todomvc/main
            :websocket-url "ws://localhost:3450/figwheel-ws"})

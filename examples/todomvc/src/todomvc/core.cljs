@@ -1,7 +1,7 @@
 (ns todomvc.core
   (:require-macros [secretary.core :refer [defroute]])
   (:require [goog.events :as events]
-            [reagent.core :as reagent :refer [atom]]
+            [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [secretary.core :as secretary]
             [todomvc.handlers]
@@ -21,7 +21,7 @@
 (def history
   (doto (History.)
     (events/listen EventType.NAVIGATE
-                   (fn [event] (secretary/dispatch! (.-token event))))
+      (fn [event] (secretary/dispatch! (.-token event))))
     (.setEnabled true)))
 
 
@@ -31,4 +31,4 @@
   []
   (dispatch-sync [:initialise-db])
   (reagent/render [todomvc.views/todo-app]
-                  (.getElementById js/document "app")))
+    (.getElementById js/document "app")))
