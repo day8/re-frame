@@ -114,7 +114,7 @@
               (do (reagent/flush) (<! (timeout 20)))        ;; wait just over one annimation frame (16ms), to rensure all pending GUI work is flushed to the DOM.
               (<! (timeout 0)))]                            ;; just in case we are handling one dispatch after an other, give the browser back control to do its stuff
       (try
-        (utils/handle-event-and-reset-atom (frame/get-frame-transducer @frame-atom) db-atom event)
+        (frame/process-event-and-reset-atom @frame-atom db-atom event)
 
         ;; If the handler throws:
         ;;   - allow the exception to bubble up because the app, in production,
@@ -158,7 +158,7 @@
   Usage example:
      (dispatch-sync [:delete-item 42])"
   [db-atom frame-atom event]
-  (utils/handle-event-and-reset-atom (frame/get-frame-transducer @frame-atom) db-atom event)
+  (frame/process-event-and-reset-atom @frame-atom db-atom event)
   nil)                                                      ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 (def dispatch-sync (partial dispatch-sync* app-db app-frame))

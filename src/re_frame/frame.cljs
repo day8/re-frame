@@ -4,22 +4,15 @@
 
 ; re-frame meat reimplemented in terms of pure functions (with help of transducers)
 
-; see http://clojure.org/transducers[1]
-(defn get-frame-transducer
-  "Returns a transducer: state, event -> state.
-This transducer resolves event-id, selects matching handler and calls it with old db state to produce a new db state.
-Transducer must have no knowledge of underlying app-db-atom, reagent, core.async or anything else out there.
-All business of queuing events and application of their effects must be baked into reducing-fn and provided from outside
-by the process doing actual transduction. See utils/handle-events-and-apply-results-to-atom for an example."
-  [frame]
-  (let [{:keys [handlers db-selector]} frame]
-    (fn [reducing-fn]
+(defn frame-transducer-factory [frame]                      ; <- returns a function which is able to build transducers
+  (fn [db-selector]                                         ; <- returns a transducer parametrized with db-selector
+    (fn [reducing-fn]                                       ; <- this is a transducer
       (fn
         ([] (reducing-fn))                                  ; transduction init, see [1]
         ([result] (reducing-fn result))                     ; transduction completion, see [1]
         ([state event]                                      ; transduction step, see [1]
          (let [event-id (get-event-id event)
-               handler-fn (event-id handlers)]
+               handler-fn (event-id (:handlers frame))]
            (if (nil? handler-fn)
              (do
                (error frame "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
@@ -32,9 +25,19 @@ by the process doing actual transduction. See utils/handle-events-and-apply-resu
                    state)
                  (reducing-fn state new-db))))))))))        ; reducing function prepares new transduction state
 
+; see http://clojure.org/transducers[1]
+(defn get-frame-transducer
+  "Returns a transducer: state, event -> state.
+This transducer resolves event-id, selects matching handler and calls it with old db state to produce a new db state.
+Transducer must have no knowledge of underlying app-db-atom, reagent, core.async or anything else out there.
+All business of queuing events and application of their effects must be baked into reducing-fn and provided from outside
+by the process doing actual transduction. See event processing helpers below for an example."
+  ([frame] (get-frame-transducer frame identity))
+  ([frame db-selector] ((frame-transducer-factory frame) db-selector)))
+
 (defprotocol IFrame)
 
-(defrecord Frame [handlers subscriptions db-selector loggers]
+(defrecord Frame [handlers subscriptions loggers]
   IFrame)
 
 (extend-protocol IPrintWithWriter
@@ -51,14 +54,12 @@ by the process doing actual transduction. See utils/handle-events-and-apply-resu
   "Constructs an independent frame instance."
   ([] (make-frame nil))
   ([handlers] (make-frame handlers nil))
-  ([handlers subscriptions] (make-frame handlers subscriptions deref))
-  ([handlers subscriptions db-selector] (make-frame handlers subscriptions db-selector default-loggers))
-  ([handlers subscriptions db-selector loggers]
+  ([handlers subscriptions] (make-frame handlers subscriptions default-loggers))
+  ([handlers subscriptions loggers]
    {:pre [(or (map? handlers) (nil? handlers))
           (or (map? subscriptions) (nil? subscriptions))
-          (fn? db-selector)
           (map? loggers)]}
-   (Frame. handlers subscriptions db-selector loggers)))
+   (Frame. handlers subscriptions loggers)))
 
 (defn subscribe
   "Returns a reagent/reaction which observes state."
@@ -117,3 +118,34 @@ by the process doing actual transduction. See utils/handle-events-and-apply-resu
   "Resets loggers."
   [frame new-loggers]
   (assoc frame :loggers new-loggers))
+
+;; -- event processing -----------------------------------------------------------------------
+
+(defn process-events-on-atom [frame db-atom events]
+  (let [reducing-fn (fn
+                      ([db-atom] db-atom)                   ; completion
+                      ([db-atom new-db]                     ; apply new-state to atom
+                       (let [old-db @db-atom]
+                         (if-not (identical? old-db new-db)
+                           (reset! db-atom new-db)))
+                       db-atom))
+        xform (get-frame-transducer frame deref)]
+    (transduce xform reducing-fn db-atom events)))
+
+(defn process-events-on-atom-with-coallesced-write [frame db-atom events]
+  (let [reducing-fn (fn
+                      ([final-db] (reset! db-atom final-db)) ; completion
+                      ([_old-db new-db] new-db))            ; simply carry-on with new-state
+        xform (get-frame-transducer frame identity)]
+    (transduce xform reducing-fn @db-atom events)))
+
+(defn process-event [frame old-db event]
+  (let [reducing-fn (fn [_old-state new-state] new-state)
+        xform (get-frame-transducer frame identity)]
+    ((xform reducing-fn) old-db event)))
+
+(defn process-event-and-reset-atom [frame db-atom event]
+  (let [old-db @db-atom
+        new-db (process-event frame old-db event)]
+    (if-not (identical? old-db new-db)
+      (reset! db-atom new-db))))

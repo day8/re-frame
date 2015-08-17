@@ -31,13 +31,13 @@
   (reset! log-transcript {}))
 
 (defn make-empty-test-frame []
-  (frame/make-frame nil nil identity recording-loggers))
+  (frame/make-frame nil nil recording-loggers))
 
 (defn process-single-event [frame event]
   (let [reducing-fn (fn
                       ([result] result)
                       ([_old-state new-state] new-state))]
-    (let [xform (frame/get-frame-transducer frame)]
+    (let [xform (frame/get-frame-transducer frame identity)]
       ((xform reducing-fn) nil event))))
 
 (deftest frame-errors
