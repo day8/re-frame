@@ -3,7 +3,8 @@
                  [org.clojure/clojurescript "1.7.107"]
                  [reagent "0.5.0"]
                  [re-frame "0.4.1"]
-                 [figwheel "0.3.7"]]
+                 [figwheel "0.3.7"]
+                 [binaryage/devtools "0.3.0"]]
 
   :plugins [[lein-cljsbuild "1.0.5"]
             [lein-figwheel "0.3.7"]]
