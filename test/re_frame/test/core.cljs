@@ -1,5 +1,6 @@
 (ns re-frame.test.core
-  (:require-macros [cemerick.cljs.test :refer (is deftest testing done)])
+  (:require-macros [cemerick.cljs.test :refer (is deftest testing done)]
+                   [reagent.ratom :refer [reaction run!]])
   (:require [cemerick.cljs.test]
             [re-frame.core :as core]
             [re-frame.frame :as frame]))
@@ -31,3 +32,17 @@
                                     db))
     (core/dispatch [:modify-app "something"])
     (core/dispatch [:check])))
+
+(deftest subscribing
+  (testing "register subscription handler and trigger it"
+    (reinitialize!)
+    (reset! core/app-db 0)
+    (let [target (atom nil)
+          db-adder (fn [db [_sub-id num]] (reaction (+ @db num)))
+          _ (core/register-sub :db-adder db-adder)
+          subscription (core/subscribe [:db-adder 10])]
+      (is (= @target nil))
+      (run! (reset! target @subscription))
+      (is (= @target 10))
+      (swap! core/app-db inc)
+      (is (= @target 11)))))

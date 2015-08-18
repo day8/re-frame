@@ -1,8 +1,10 @@
 (ns re-frame.test.frame
-  (:require-macros [cemerick.cljs.test :refer (is deftest testing)])
+  (:require-macros [cemerick.cljs.test :refer (is deftest testing)]
+                   [reagent.ratom :refer [reaction run!]])
   (:require [cemerick.cljs.test]
             [re-frame.frame :as frame]
-            [re-frame.test.utils.log-recording :refer [recording-loggers reset-log-recorder! last-error last-warn last-log]]))
+            [re-frame.test.utils.log-recording :refer [recording-loggers reset-log-recorder! last-error last-warn last-log]]
+            [reagent.core :as reagent]))
 
 (defn make-test-frame-with-log-recording []
   (frame/make-frame nil nil recording-loggers))
@@ -60,16 +62,26 @@
     (let [frame (-> (make-test-frame-with-log-recording)
                   (frame/register-event-handler :some-handler identity))]
       (is (= (get-in frame [:handlers :some-handler]) identity))
-      (is (= (get-in (frame/unregister-event-handler frame :some-handler) [:handlers :some-handler] ::not-found) ::not-found)))))
+      (is (= (get-in (frame/unregister-event-handler frame :some-handler) [:handlers :some-handler] ::not-found) ::not-found))))
+  (testing "clear event handlers"
+    (let [frame (-> (make-test-frame-with-log-recording)
+                  (frame/register-event-handler :some-handler identity))]
+      (is (= (count (get frame :handlers)) 1))
+      (is (= (count (get (frame/clear-event-handlers frame) :handlers)) 0)))))
 
 (deftest frame-subscription-handlers
   (testing "unregister subscription handler"
     (let [frame (-> (make-test-frame-with-log-recording)
                   (frame/register-subscription-handler :some-handler identity))]
       (is (= (get-in frame [:subscriptions :some-handler]) identity))
-      (is (= (get-in (frame/unregister-subscription-handler frame :some-handler) [:subscriptions :some-handler] ::not-found) ::not-found)))))
+      (is (= (get-in (frame/unregister-subscription-handler frame :some-handler) [:subscriptions :some-handler] ::not-found) ::not-found))))
+  (testing "clear subscription handlers"
+    (let [frame (-> (make-test-frame-with-log-recording)
+                  (frame/register-subscription-handler :some-handler identity))]
+      (is (= (count (get frame :subscriptions)) 1))
+      (is (= (count (get (frame/clear-subscription-handlers frame) :subscriptions)) 0)))))
 
-(deftest frame-events
+(deftest frame-processing-events
   (testing "process event"
     (let [my-handler (fn [state [& args]] (str "state:" state " args:" args))
           frame (-> (make-test-frame-with-log-recording)
@@ -113,3 +125,17 @@
       (frame/process-events-on-atom-with-coallesced-write frame db [[:add 1] [:add 2]])
       (is (= @db 3))
       (is (= @reset-counter 1)))))
+
+(deftest frame-subscriptions
+  (testing "register subscription handler and trigger it"
+    (let [source (reagent/atom 0)
+          target (atom nil)
+          source-adder (fn [_sub-id num] (reaction (+ @source num)))
+          frame (-> (make-test-frame-with-log-recording)
+                  (frame/register-subscription-handler :source-adder source-adder))
+          subscription (frame/subscribe frame [:source-adder 10])]
+      (is (= @target nil))
+      (run! (reset! target @subscription))
+      (is (= @target 10))
+      (swap! source inc)
+      (is (= @target 11)))))

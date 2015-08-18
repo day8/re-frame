@@ -77,7 +77,7 @@
       (do
         (error frame "re-frame: no subscription handler registered for: \"" subscription-id "\".  Returning a nil subscription.")
         nil)
-      (handler-fn subscription-spec))))
+      (apply handler-fn subscription-spec))))
 
 ;; -- utilities --------------------------------------------------------------------------------------------------------
 
