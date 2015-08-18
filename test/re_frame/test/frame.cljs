@@ -102,6 +102,13 @@
                   (frame/register-event-handler :my-handler my-handler))
           result (frame/process-event frame "[initial state]" [:my-handler 1 2])]
       (is (= result "state:[initial state] args:(:my-handler 1 2)"))))
+  (testing "process multiple events, get vector of states back"
+    (let [init-db 0
+          add-handler (fn [state [_event-id num]] (+ state num))
+          frame (-> (make-empty-test-frame)
+                  (frame/register-event-handler :add add-handler))
+          result (frame/process-events frame init-db [[:add 1] [:add 2] [:add 10]])]
+      (is (= result [0 1 3 13]))))
   (testing "process event on atom"
     (let [db (atom 0)
           reset-counter (atom 0)

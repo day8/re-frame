@@ -122,6 +122,25 @@ by the process doing actual transduction. See event processing helpers below for
 
 ;; -- event processing -------------------------------------------------------------------------------------------------
 
+(defn process-event [frame init-db event]
+  (let [reducing-fn (fn [_old-state new-state] new-state)
+        xform (get-frame-transducer frame identity)]
+    ((xform reducing-fn) init-db event)))
+
+(defn process-events [frame init-db events]
+  (let [reducing-fn (fn
+                      ([db-states] db-states)               ; completion
+                      ([db-states new-db]                   ; in each step
+                       (conj db-states new-db)))            ; add new-db state to the vector
+        xform (get-frame-transducer frame last)]
+    (transduce xform reducing-fn [init-db] events)))
+
+(defn process-event-on-atom [frame db-atom event]
+  (let [old-db @db-atom
+        new-db (process-event frame old-db event)]
+    (if-not (identical? old-db new-db)
+      (reset! db-atom new-db))))
+
 (defn process-events-on-atom [frame db-atom events]
   (let [reducing-fn (fn
                       ([db-atom] db-atom)                   ; completion
@@ -142,17 +161,6 @@ by the process doing actual transduction. See event processing helpers below for
                       ([_old-db new-db] new-db))            ; simply carry-on with new-db as our new state
         xform (get-frame-transducer frame identity)]
     (transduce xform reducing-fn old-db events)))
-
-(defn process-event [frame old-db event]
-  (let [reducing-fn (fn [_old-state new-state] new-state)
-        xform (get-frame-transducer frame identity)]
-    ((xform reducing-fn) old-db event)))
-
-(defn process-event-on-atom [frame db-atom event]
-  (let [old-db @db-atom
-        new-db (process-event frame old-db event)]
-    (if-not (identical? old-db new-db)
-      (reset! db-atom new-db))))
 
 ;; -- nice to have -----------------------------------------------------------------------------------------------------
 
