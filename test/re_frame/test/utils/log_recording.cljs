@@ -2,27 +2,26 @@
 
 (def log-transcript (atom {}))
 
-(defn record-log-call [what args]
+(defn record-log-call [key args]
   (swap! log-transcript (fn [transcript]
-                          (update transcript what
+                          (update transcript key
                             (fn [record]
                               (-> (or record {})
                                 (update :counter inc)
                                 (update :history conj (vec args))))))))
 
-(defn last-log* [what]
-  (last (get-in @log-transcript [what :history])))
+(defn last-log* [key]
+  (last (get-in @log-transcript [key :history])))
 
 (def last-log (partial last-log* :log))
 (def last-warn (partial last-log* :warn))
 (def last-error (partial last-log* :error))
 
+(defn make-log-recorder-for-key [key]
+  (fn [& args] (record-log-call key args)))
+
 (def recording-loggers
-  {:log      (fn [& args] (record-log-call :log args))
-   :warn     (fn [& args] (record-log-call :warn args))
-   :error    (fn [& args] (record-log-call :error args))
-   :group    (fn [& args] (record-log-call :group args))
-   :groupEnd (fn [& args] (record-log-call :groupEnd args))})
+  (into {} (map (fn [key] [key (make-log-recorder-for-key key)]) [:log :warn :error :group :groupEnd])))
 
 (defn reset-log-recorder! []
   (reset! log-transcript {}))
