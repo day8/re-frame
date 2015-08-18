@@ -38,7 +38,9 @@
     (reinitialize!)
     (reset! core/app-db 0)
     (let [target (atom nil)
-          db-adder (fn [db [_sub-id num]] (reaction (+ @db num)))
+          db-adder (fn [db [sub-id num]]
+                     (is (= sub-id :db-adder))
+                     (reaction (+ @db num)))
           _ (core/register-sub :db-adder db-adder)
           subscription (core/subscribe [:db-adder 10])]
       (is (= @target nil))

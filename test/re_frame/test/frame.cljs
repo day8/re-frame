@@ -130,7 +130,9 @@
   (testing "register subscription handler and trigger it"
     (let [source (reagent/atom 0)
           target (atom nil)
-          source-adder (fn [_sub-id num] (reaction (+ @source num)))
+          source-adder (fn [sub-id num]
+                         (is (= sub-id :source-adder))
+                         (reaction (+ @source num)))
           frame (-> (make-test-frame-with-log-recording)
                   (frame/register-subscription-handler :source-adder source-adder))
           subscription (frame/subscribe frame [:source-adder 10])]
