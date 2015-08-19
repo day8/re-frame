@@ -102,7 +102,7 @@
           add-handler (fn [state [_event-id num]] (+ state num))
           frame (-> (make-test-frame-with-log-recording)
                   (frame/register-event-handler :add add-handler))]
-      (frame/process-event-on-atom frame db [:add 100])
+      (frame/process-event-on-atom! frame db [:add 100])
       (is (= @db 100))
       (is (= @reset-counter 1))))
   (testing "process multiple events on atom"
@@ -112,7 +112,7 @@
           add-handler (fn [state [_event-id num]] (+ state num))
           frame (-> (make-test-frame-with-log-recording)
                   (frame/register-event-handler :add add-handler))]
-      (frame/process-events-on-atom frame db [[:add 1] [:add 2]])
+      (frame/process-events-on-atom! frame db [[:add 1] [:add 2]])
       (is (= @db 3))
       (is (= @reset-counter 2))))
   (testing "process multiple events on atom with coallesced write"
@@ -122,7 +122,7 @@
           add-handler (fn [state [_event-id num]] (+ state num))
           frame (-> (make-test-frame-with-log-recording)
                   (frame/register-event-handler :add add-handler))]
-      (frame/process-events-on-atom-with-coallesced-write frame db [[:add 1] [:add 2]])
+      (frame/process-events-on-atom-with-coallesced-write! frame db [[:add 1] [:add 2]])
       (is (= @db 3))
       (is (= @reset-counter 1)))))
 
