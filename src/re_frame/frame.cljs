@@ -1,5 +1,5 @@
 (ns re-frame.frame
-  (:require [re-frame.utils :refer [get-event-id get-subscription-id simple-inflection frame-summary-description]]
+  (:require [re-frame.utils :refer [get-event-id get-subscription-id simple-inflection frame-summary-description reset-if-changed!]]
             [re-frame.logging :refer [log warn error default-loggers]]))
 
 ; re-frame meat implemented in terms of pure functions (with help of transducers)
@@ -111,6 +111,8 @@
                    state)
                  (reducing-fn state new-db))))))))))        ; reducing function prepares new transduction state
 
+; TODO: we should memoize this function, beause it will be usually called with same frame
+; using something like https://github.com/clojure/core.memoize with LRU cache would be neat
 (defn get-frame-transducer
   "Returns a transducer: state, event -> state.
 This transducer resolves event-id, selects matching handler and calls it with old db state to produce a new db state.
@@ -136,31 +138,25 @@ by the process doing actual transduction. See event processing helpers below for
     (transduce xform reducing-fn [init-db] events)))
 
 (defn process-event-on-atom [frame db-atom event]
-  (let [old-db @db-atom
-        new-db (process-event frame old-db event)]
-    (if-not (identical? old-db new-db)
-      (reset! db-atom new-db))))
+  (let [new-db (process-event frame @db-atom event)]
+    (reset-if-changed! db-atom new-db)))
 
 (defn process-events-on-atom [frame db-atom events]
   (let [reducing-fn (fn
                       ([db-atom] db-atom)                   ; completion
                       ([db-atom new-db]                     ; in each step
-                       (let [old-db @db-atom]               ; commit new-db to atom
-                         (if-not (identical? old-db new-db)
-                           (reset! db-atom new-db)))
+                       (reset-if-changed! db-atom new-db)     ; commit new-db to atom
                        db-atom))
         xform (get-frame-transducer frame deref)]
     (transduce xform reducing-fn db-atom events)))
 
 (defn process-events-on-atom-with-coallesced-write [frame db-atom events]
-  (let [old-db @db-atom
-        reducing-fn (fn
+  (let [reducing-fn (fn
                       ([final-db]                           ; completion
-                       (if-not (identical? old-db final-db) ; commit final-db to atom
-                         (reset! db-atom final-db)))
+                       (reset-if-changed! db-atom final-db))  ; commit final-db to atom
                       ([_old-db new-db] new-db))            ; simply carry-on with new-db as our new state
         xform (get-frame-transducer frame identity)]
-    (transduce xform reducing-fn old-db events)))
+    (transduce xform reducing-fn @db-atom events)))
 
 ;; -- nice to have -----------------------------------------------------------------------------------------------------
 

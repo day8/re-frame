@@ -23,6 +23,10 @@
       handlers-count " " (simple-inflection "handler" handlers-count) ", "
       subscriptions-count " " (simple-inflection "subscription" subscriptions-count))))
 
+(defn reset-if-changed! [db-atom new-db-state]
+  (if-not (identical? @db-atom new-db-state)
+    (reset! db-atom new-db-state)))
+
 ;; -- composing middleware  -----------------------------------------------------------------------
 
 (defn report-middleware-factories
