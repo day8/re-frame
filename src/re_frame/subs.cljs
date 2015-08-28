@@ -36,10 +36,8 @@
          handler-fn (get @key->fn key-v)]
      (if (nil? handler-fn)
        (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
-       (let [result (reagent.ratom/atom nil)
-             dyn-vals (reaction (mapv deref dynv))
-             sub (reaction (handler-fn app-db v @dyn-vals))
-             ;; handler-fn returns a reaction which is then wrapped in the sub reaction
-             ;; need to double deref it to get to the actual value.
-             _ (run! (reset! result @@sub))]                ;; run! here to force this to be started, won't ever run otherwise
-         result)))))
+       (let [dyn-vals (reaction (mapv deref dynv))
+             sub (reaction (handler-fn app-db v @dyn-vals))]
+         ;; handler-fn returns a reaction which is then wrapped in the sub reaction
+         ;; need to double deref it to get to the actual value.
+         (reaction @@sub))))))
