@@ -34,6 +34,9 @@
   ([v dynv]
    (let [key-v (first-in-vector v)
          handler-fn (get @key->fn key-v)]
+     (when ^boolean js/goog.DEBUG
+       (when-let [not-reactive (seq (remove #(implements? reagent.ratom/IReactiveAtom %) dynv))]
+         (warn "re-frame: dynv contained parameters that don't implement IReactiveAtom: " not-reactive)))
      (if (nil? handler-fn)
        (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
        (let [dyn-vals (reaction (mapv deref dynv))
