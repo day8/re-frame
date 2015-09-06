@@ -41,7 +41,7 @@
 ;; -- Handlers ----------------------------------------------------------------
 
                                   ;; usage:  (dispatch [:initialise-db])
-(register-handler                 ;; On app startup, create initial state
+(register-handler                 ;; On app startup, ceate initial state
   :initialise-db                  ;; event id being handled
   check-schema-mw
   (fn [_ _]                       ;; the handler being registered
