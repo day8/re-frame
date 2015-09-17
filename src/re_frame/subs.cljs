@@ -35,7 +35,7 @@
    (let [key-v (first-in-vector v)
          handler-fn (get @key->fn key-v)]
      (when ^boolean goog.DEBUG
-       (when-let [not-reactive-dynv (seq (remove (partial implements? reagent.ratom/IReactiveAtom) dynv))]
+       (when-let [not-reactive-dynv (seq (remove (fn [v] (implements? reagent.ratom/IReactiveAtom v)) dynv))]
          (warn "re-frame: 3rd parameter to 'subscribe' should be a seq of input signals (implementing IReactiveAtom) but you supplied non reactive items: " not-reactive-dynv)))
      (if (nil? handler-fn)
        (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
