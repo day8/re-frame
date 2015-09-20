@@ -4,14 +4,17 @@
   (:require [reagent.core        :refer [flush]]
             [re-frame.handlers   :refer [handle]]
             [re-frame.utils      :refer [warn error]]
-            [cljs.core.async     :refer [chan put! <! timeout]]))
+            [cljs.core.async     :refer [chan put! <! timeout tap mult]]))
 
 ;; -- The Event Conveyor Belt  --------------------------------------------------------------------
 ;;
 ;; Moves events from "dispatch" to the router loop.
 ;; Using core.async means we can have the aysnc handling of events.
 ;;
-(def ^:private event-chan (chan))    ;; TODO: set buffer size?
+(def ^:private event-chan-in (chan))    ;; TODO: set buffer size?
+(def ^:private event-chan-out (chan))
+(def event-chan-multiplexer (mult event-chan-in))
+(tap event-chan-multiplexer event-chan-out)
 
 (defn purge-chan
   "read all pending events from the channel and drop them on the floor"
@@ -37,7 +40,7 @@
 (defn router-loop
   []
   (go-loop []
-           (let [event-v  (<! event-chan)                   ;; wait for an event
+           (let [event-v  (<! event-chan-out)               ;; wait for an event
                  _        (if (:flush-dom (meta event-v))   ;; check the event for metadata
                             (do (flush) (<! (timeout 20)))  ;; wait just over one annimation frame (16ms), to rensure all pending GUI work is flushed to the DOM.
                             (<! (timeout 0)))]              ;; just in case we are handling one dispatch after an other, give the browser back control to do its stuff
@@ -76,7 +79,7 @@
   [event-v]
   (if (nil? event-v)
     (error "re-frame: \"dispatch\" is ignoring a nil event.")     ;; nil would close the channel
-    (put! event-chan event-v))
+    (put! event-chan-in event-v))
   nil)   ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 
