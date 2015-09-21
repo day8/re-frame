@@ -5,6 +5,10 @@
 The following is a set of guidelines for contributing to re-frame which is hosted on [Github](https://github.com/Day8/re-frame).
 These are just guidelines, not rules, use your best judgment and feel free to propose changes to this document in a pull request.
 
+## Support questions
+
+**The Github issues for re-frame are for bug reports and feature requests. Support requests and usage questions should go to the [Clojure Slack channel](http://clojurians.net), the [ClojureScript mailing list](https://groups.google.com/forum/#!forum/clojurescript), or the [Reagent mailing list](https://groups.google.com/forum/#!forum/reagent-project).**
+
 ## Creating issues for bugs
 
 Check if the issue has already been reported. If possible provide:
