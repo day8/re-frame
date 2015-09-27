@@ -16,8 +16,8 @@
   {:log       #(.log js/console %)
    :warn      #(.warn js/console %)
    :error     #(.error js/console %)
-   :group     #(if (.group js/console) (.group js/console %) (.log js/console %))  ;; group does not exist  < IE 11
-   :groupEnd  #(when (.groupEnd js/console) (.groupEnd js/console))})              ;; groupEnd does not exist  < IE 11
+   :group     #(if (.-groupCollapsed js/console) (.groupCollapsed js/console %) (.log js/console %))  ;; group does not exist  < IE 11
+   :groupEnd  #(when (.-groupEnd js/console) (.groupEnd js/console))})              ;; groupEnd does not exist  < IE 11
 
 ;; holds the current set of loggers.
 (def loggers (atom default-loggers))

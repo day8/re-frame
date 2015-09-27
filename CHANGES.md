@@ -1,3 +1,9 @@
+## v0.4.2 (tba)
+
+Improvements
+  - fixed problem with log grouping
+  - removed `-------New Event-------` log msg
+  - made groups collapsed by default
 
 ## v0.4.1 (2015-05-29)
 

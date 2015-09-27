@@ -1,4 +1,4 @@
-(defproject re-frame "0.4.1"
+(defproject re-frame "0.4.2-SNAPSHOT"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
@@ -20,6 +20,8 @@
   :jvm-opts       ["-Xmx1g" "-XX:+UseConcMarkSweepGC"] ;;
   :source-paths ["src"]
   :test-paths   ["test"]
+  :deploy-repositories [["releases" :clojars]
+                        ["snapshots" :clojars]]
 
 
   :cljsbuild    {:builds [{:id "test"      ;; currently bogus, there is no demo or tests

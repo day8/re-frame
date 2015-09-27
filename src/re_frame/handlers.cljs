@@ -30,7 +30,7 @@
 
   (cond
     (fn? v)       v  ;; assumed to be existing middleware
-    (seq? v)      (let [v (remove nil? (flatten v))]
+    (coll? v)     (let [v (remove nil? (flatten v))]
                     (report-middleware-factories v)
                     (apply comp v))
     :else         (warn "re-frame: comp-middleware expects a vector, got: " v)))

@@ -22,7 +22,7 @@
   [handler]
   (fn pure-handler
     [app-db event-vec]
-    (if (not (satisfies? IReactiveAtom app-db))
+    (if-not (satisfies? IReactiveAtom app-db)
       (do
         (if (map? app-db)
           (warn "re-frame: Looks like \"pure\" is in the middleware pipeline twice. Ignoring.")
@@ -64,7 +64,6 @@
   [handler]
   (fn debug-handler
     [db v]
-    (log  "-- New Event ----------------------------------------------------")
     (group "re-frame event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]

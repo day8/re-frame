@@ -7,12 +7,14 @@
 
 ;; -- Middleware --------------------------------------------------------------
 ;;
+;; See https://github.com/Day8/re-frame/wiki/Using-Handler-Middleware
+;;
 
 (defn check-and-throw
-      "throw an exception if db doesn't match the schema."
-      [a-schema db]
-      (if-let [problems  (s/check a-schema db)]
-         (throw (js/Error. (str "schema check failed: " problems)))))
+  "throw an exception if db doesn't match the schema."
+  [a-schema db]
+  (if-let [problems  (s/check a-schema db)]
+    (throw (js/Error. (str "schema check failed: " problems)))))
 
 ;; after an event handler has run, this middleware can check that
 ;; it the value in app-db still correctly matches the schema.
@@ -22,7 +24,7 @@
 (def ->ls (after todos->ls!))    ;; middleware to store todos into local storage
 
 ;; middleware for any handler that manipulates todos
-(def todo-middleware [check-schema-mw ;; after ever event handler make sure the schema is still valid
+(def todo-middleware [check-schema-mw ;; ensure the schema is still valid
                       (path :todos)   ;; 1st param to handler will be value from this path
                       ->ls            ;; write to localstore each time
                       trim-v])        ;; remove event id from event vec
@@ -31,24 +33,25 @@
 ;; -- Helpers -----------------------------------------------------------------
 
 (defn allocate-next-id
-  "Returns the next daypart id.
-  Assumes dayaprts are sorted.
+  "Returns the next todo id.
+  Assumes todos are sorted.
   Returns one more than the current largest id."
   [todos]
   ((fnil inc 0) (last (keys todos))))
 
 
-;; -- Handlers ----------------------------------------------------------------
+;; -- Event Handlers ----------------------------------------------------------
 
                                   ;; usage:  (dispatch [:initialise-db])
 (register-handler                 ;; On app startup, ceate initial state
   :initialise-db                  ;; event id being handled
-  check-schema-mw
+  check-schema-mw                 ;; afterwards: check that app-db matches the schema
   (fn [_ _]                       ;; the handler being registered
     (merge default-value (ls->todos))))  ;; all hail the new state
 
 
-(register-handler                 ;; this handler changes the footer filter
+                                  ;; usage:  (dispatch [:set-showing  :active])
+(register-handler                 ;; this handler changes the todo filter
   :set-showing                    ;; event-id
   [check-schema-mw (path :showing) trim-v]  ;; middleware  (wraps the handler)
 
@@ -61,6 +64,7 @@
     new-filter-kw))               ;; return new state for the path
 
 
+                                   ;; usage:  (dispatch [:add-todo  "Finsih comments"])
 (register-handler                  ;; given the text, create a new todo
   :add-todo
   todo-middleware

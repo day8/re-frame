@@ -72,9 +72,6 @@ __Warning__:  That was the summary. What follows is a long-ish tutorial/explanat
 
 
  - [What Problem Does It Solve?](#what-problem-does-it-solve)
- - [Correct Acronym?](#correct-acronym)
- - [Mostly A Mashup](#mostly-a-mashup)
- - [Client Side Bias](#client-side-bias)
  - [Guiding Philosophy](#guiding-philosophy)
  - [FRP Clarifications](#frp-clarifications)
  - [Explaining re-frame](#explaining-re-frame)
@@ -116,30 +113,15 @@ For all its considerable brilliance,  Reagent (+ ReactJS)
 delivers only the 'V' part of a traditional MVC framework.
 
 But apps involve much more than V. Where
-does the control logic go? How is state stored and manipulated (remembering that shared, mutable state
-is the root of all evil). How does the V bit source data? etc.
+does the control logic go? How is state stored & manipulated? etc.
 
-We wondered: what should the rest of the architecture look like?  So we read about [Flux], [Pedestal App],
-[Hoplon], [OM], [Elm], etc. and, slowly but surely, re-frame emerged.
+We read up on [Flux], [Pedestal App],
+[Hoplon], [OM], [Elm], etc and re-frame is the architecture that emerged.
 
-
-## Correct Acronym?
-
-Is re-frame MVC, MVP or MVVC?  Any of those?
-
-Hmm, I'd say "no".
-
-Your brow furrows.  "But, Mike", you protest, "I've read the document once already
-and there's clearly a 'V' bit and there's a layer which is
-'C' related, and definitely an 'M'.  How can it not be MVC?"
-
-Yes, that's true.  But to quote McCoy: "It's MVC, Jim,
-but not as we know it".
-
-In re-frame, none of the M, V, or C bits are objects, they
+re-frame does have M, V, and C parts but they aren't objects, they
 are pure functions (or pure data),
-and they are all wired together via reactive data flows.  It is sufficiently different in nature
-from (traditional, Smalltalk) MVC that calling it MVC would likely just be confusing.  So, I'd
+and they are wired together via reactive data flows.  It is sufficiently different in nature
+from (traditional, Smalltalk) MVC that calling it MVC would be confusing.  I'd
 love an alternative.
 
 Perhaps it is a RACES framework - Reactive-Atom Component Event
@@ -150,38 +132,6 @@ Or, if we distill to pure essence, `DDATWD` - Derived Data All The Way Down.
 *TODO:* get acronym down to 3 chars! Get an image of stacked Turtles for `DDATWD`
 insider's joke, conference T-Shirt.
 
-
-## Mostly A Mashup
-
-Not much about re-frame is original or clever. You'll find
-no ingenious use of functional zippers, transducers or core.async.
-
-Re-frame does use Reagent's features in a novel way.
-And I did actively reject the current ClojureScript fashion of using
-Cursors.  And, yes, the event middleware concept has turned out nicely.
-But, for the most part, re-frame is simply a mashup of
-emerging ideas.
-
-(For the record, one day I'd love to develop something original and clever).
-
-
-## Client Side Bias
-
-We write larger, more complicated SPAs which have a Parisian's indifference for servers.
-
-Unsurprisingly, re-frame's design reflects our needs. So there's nothing in re-frame about, say,
-routes, or sessions or syncing client state with server state, etc.  It is just about writing
-browser-based apps which are desktop-like.
-
-That doesn't mean re-frame wouldn't work well when
-servers are more centrally involved, it's just that we haven't tweaked it in that direction.
-
-Remember, re-frame is more of a pattern than an implementation, so you can easily fork it
-in whatever direction (GraphQL?) you need.  Did I mention it is only about 200 lines of code?
-
-At small scale, any framework or architecture seems like pesky overhead. The
-explanatory examples in here are necessarily small scale, so you'll need to
-squint a little to see the benefits that accrue at larger scale.
 
 ## Guiding Philosophy
 
@@ -204,6 +154,8 @@ promote the two way flow of data. As programs get bigger, we've found that their
 use seems to encourage control logic into all the wrong places.
 
 ## FRP Clarifications
+
+We'll get to the meat in a second, I promise, but first one final, useful diversion ...
 
 Terminology in the FRP world seems to get people hot under the collar. Those who believe in continuous-time
 semantics might object to me describing re-frame as having FRP-nature. They'd claim that it does something
@@ -634,9 +586,18 @@ With `Form-2` components, there's a function returning a function:
 - the returned function is the render function. Behind the scenes, Reagent will wrap this render function
  in a `reaction` to make it produce new Hiccup when its input Signals change.  In our example above, that
  means it will rerun every time `name-ratom` changes.
-- the outer function is a setup function, called once to initialise the component. Notice the use of
+- the outer function is a setup function, called once for each instance of the component. Notice the use of
  'subscribe' with the parameter `:name-query`. That creates a Signal through which new values are supplied
- over time.
+ over time; each new value causing the returned function (the actual renderer) to be run. 
+
+>It is important to distinguish between a new instance of the component versus the same instance of a component reacting to a new value. Simplistically, a new component is returned for every unique value the setup function (i.e. the outer function) is called with. This allows subscriptions based on initialisation values to be created, for example: 
+``` Clojure
+  (defn my-cmp [row-id]
+    (let [row-state (subscribe [row-id])]
+      (fn [row-id]
+        [div (str "Row: " row-id " is " @row-state)])))
+```
+In this example, `[my-cmp 1][my-cmp 2]` will create two instances of `my-cmp`. Each instance will re-render when its internal `row-state` signal changes.
 
 `subscribe` is always called like this:
 
@@ -831,6 +792,8 @@ While the first flow has FRP-nature, the 2nd flow does not.  Well, not at first 
 When I think about these two flows, I imagine [one of those school diagrams](http://thumbnails-visually.netdna-ssl.com/water-cycle_521f29b8b6271_w1500.png) showing the water cycle. Rivers taking water down to the oceans, and evaporation/clouds/wind taking water back over the mountains to fall again as rain or snow. Repeat.
 
 There is a cycle, but it is handled by two independent flows.
+
+*With re-frame, it is not water that is flowing, it is data.*
 
 ## Event Flow
 
