@@ -1155,6 +1155,10 @@ https://github.com/jamesmacaulay/zelkova
 If you want reusable layout and widget components, consider this sister project:
 https://github.com/Day8/re-com
 
+Here are some open source re-frame apps you can look at for more inspiration:
+
+- https://github.com/madvas/fractalify/
+
 ### Licence
 
 Copyright © 2015 Michael Thompson
