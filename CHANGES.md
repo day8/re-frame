@@ -1,9 +1,11 @@
-## v0.4.2 (tba)
+## Unreleased
 
 Improvements
   - fixed problem with log grouping
   - removed `-------New Event-------` log msg
   - made groups collapsed by default
+  - Add dynamic subscriptions. [#108](https://github.com/Day8/re-frame/pull/108)
+  - Use `yield` instead of `(core.async/timeout 0)` to speed up event handling. [#121](https://github.com/Day8/re-frame/pull/121)
 
 ## v0.4.1 (2015-05-29)
 
