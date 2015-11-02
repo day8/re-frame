@@ -1,15 +1,15 @@
-(defproject re-frame "0.5.0-alpha1"
+(defproject re-frame "0.5.0-alpha2"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-3211"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [reagent "0.5.0"]]
+  :dependencies [[org.clojure/clojure        "1.7.0"]
+                 [org.clojure/clojurescript  "1.7.145"]
+                 [reagent "0.5.1"]]
 
   :profiles     {:debug {:debug true}
                  :dev   {:dependencies [[spellhouse/clairvoyant "0.0-48-gf5e59d3"]]
-                         :plugins      [[lein-cljsbuild "1.0.5"]
+                         :plugins      [[lein-cljsbuild "1.1.0"]
+                                        [lein-figwheel "0.3.8"]
                                         [com.cemerick/clojurescript.test "0.3.3"]]}}
 
 

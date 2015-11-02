@@ -1,12 +1,12 @@
-(defproject simple-re-frame "0.4.0"
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-3208"]
-                 [reagent "0.5.0"]
-                 [re-frame "0.4.1"]
+(defproject simple-re-frame "0.5.0"
+  :dependencies [[org.clojure/clojure       "1.7.0"]
+                 [org.clojure/clojurescript "1.7.145"]
+                 [reagent "0.5.1"]
+                 [re-frame "0.5.0-alpha2"]
                  [figwheel "0.2.6"]]
 
-  :plugins [[lein-cljsbuild "1.0.5"]
-            [lein-figwheel "0.2.6"]]
+  :plugins [[lein-cljsbuild "1.1.0"]
+            [lein-figwheel "0.3.8"]]
 
   :hooks [leiningen.cljsbuild]
 
