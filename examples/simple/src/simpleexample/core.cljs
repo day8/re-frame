@@ -93,7 +93,7 @@
          "Time color: "
          [:input {:type "text"
                   :value @time-color
-                  :on-change #(dispatch-sync
+                  :on-change #(dispatch
                                [:time-color (-> % .-target .-value)])}]])))
 
 (defn simple-example
