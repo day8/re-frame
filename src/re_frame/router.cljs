@@ -11,14 +11,14 @@
 ;;
 ;; Conceptually, the task is to process events in a perpetual loop, one after
 ;; the other, FIFO, calling the right event-handler for each. Being idle when
-;; ther are no events, and firing up when one arrived. Etc. The processing
+;; ther are no events, and firing up when one arrives, etc. The processing
 ;; of events happens "asynchronously" sometime after an event is dispatched.
 ;;
 ;; In practice, browsers only have a single thread of control and we must be
 ;; careful to not hog the CPU.
 ;; When processing events one after another, we must hand back control to
 ;; the browser regularly, so it can redraw, process websockets, etc. But not
-;; too regularly!  If we are in a de-focused tab of the browser, then the app
+;; too regularly!  If we are in a de-focused browser tab, then our app
 ;; will be CPU throttled. Each time we get back control, we have to process all
 ;; queued events, or else something like a bursty websocket (producing events)
 ;; might overwhelm the queue. So there's a balance.
@@ -29,15 +29,17 @@
 ;;
 ;; The strategy is this:
 ;;   - maintain a queue of `dispatched` events.
-;;   - when a new event arrives, "schedule" processing of this queue.
-;;   - when given a chance to process events, do ALL the
-;;     ones currently queued. Don't stop. Hog the CPU. Don't give control
-;;     back to the browser.
-;;   - but if any new events arrive during this processing run, don't do
-;;     them immediately. Yield first to the browser, and do these new events
-;;     in the next processing run.  That way we drain the queue, but we
+;;   - when a new event arrives, "schedule" processing of this queue using
+;;     goog.async.nextTick, which means it will happen "very soon".
+;;   - when processing events, do ALL the ones currently queued. Don't stop.
+;;     Don't yield to the browser. Hog that CPU.
+;;   - but if any new events arrive during this cycle of processing,
+;;     don't do them immediately. Leave then queued. Yield first to the
+;;     browser, and do these new events in the next processing cycle.
+;;     That way we drain the queue up to a point, but we
 ;;     never hog the CPU forever.  In particular, we handle the case
-;;     where handling one event will begat another event.
+;;     where handling one event will begat another event. The freshly begated
+;;     event will be handled next cycle, with yielding in between.
 ;;   - In some cases, an event should not be run until after the GUI has been
 ;;     updated. Ie. after the next reagent animation frame. In such a case,
 ;;     the event should be dispatched with :flush-dom metadata like this:
@@ -71,6 +73,7 @@
   (-resume-run [this]))
 
 
+;; Want to understand this? Look at FSM in -fsm-trigger?
 (deftype EventQueue [^:mutable fsm-state ^:mutable queue]
   IEventQueue
 

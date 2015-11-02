@@ -1,11 +1,11 @@
 ## 0.5.0  (2015-11-07)
 
-Improvements
+Improvements:
   - fixed problem with log grouping
   - removed `-------New Event-------` log msg
   - made groups collapsed by default
   - Add dynamic subscriptions. [#108](https://github.com/Day8/re-frame/pull/108)
-  - Replaced the current router loop, removing current use of core.async
+  - Replaced the router loop, removing current use of core.async. See [420e42a](https://github.com/Day8/re-frame/commit/420e42aacccbac2d81fedc5ff861442a4ce70c1d)
     There is now less of a pause before dispatched events are handled. 
     This fixed issues like [#39](https://github.com/Day8/re-frame/pull/39) and 
     [#121](https://github.com/Day8/re-frame/pull/121)
