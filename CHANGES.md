@@ -5,11 +5,19 @@ Improvements:
   - removed `-------New Event-------` log msg
   - made groups collapsed by default
   - Add dynamic subscriptions. [#108](https://github.com/Day8/re-frame/pull/108)
-  - Replaced the router loop, removing current use of core.async. See [420e42a](https://github.com/Day8/re-frame/commit/420e42aacccbac2d81fedc5ff861442a4ce70c1d)
-    There is now less of a pause before dispatched events are handled. 
-    This fixed issues like [#39](https://github.com/Day8/re-frame/pull/39) and 
+  - Reimplemented the router loop. Removed use of core.async. Replaced with hand rolled scheduling. 
+    See [420e42a](https://github.com/Day8/re-frame/commit/420e42aacccbac2d81fedc5ff861442a4ce70c1d)
+   
+    As a result:
+      - there is less of a pause between a `dispatch` and the associated event handler being run. (<1ms vs 5ms??)
+      - groups of events queued up will be handled in a batch, one after the other, without yielding 
+        to the browser (previously re-frame yielded to the browser before every single event).
+        
+    This fixes issues like [#39](https://github.com/Day8/re-frame/pull/39) and 
     [#121](https://github.com/Day8/re-frame/pull/121)
-
+    
+    I doubt this will affect normal apps. But it could affect games which depend on existing timings. Maybe.
+    It could affect apps which dispatch large volumes of events (telemetry?) very quickly. Maybe.
 
 ## v0.4.1 (2015-05-29)
 

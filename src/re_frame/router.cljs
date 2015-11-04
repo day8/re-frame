@@ -49,11 +49,12 @@
 ;;     ones behind it.
 ;;
 ;; Implementation
-;;   - this queue can be in a few different states. So it is modeled explicitly
-;;     as a FSM. See -fsm-trigger below for the states and transitions.
+;;   - queue processing can be in a number of states: scheduled, running, paused
+;;     etc. So it is modeled explicitly as a FSM.
+;;     See "-fsm-trigger" (below) for the states and transitions.
 ;;   - the scheduling is done via "goog.async.nextTick" which is pretty quick
 ;;   - when the event has :dom-flush we schedule via "reagent.impl.batching.doLater"
-;;     which will run after event processing after the next reagent animation frame.
+;;     which will run event processing after the next reagent animation frame.
 ;;
 
 
