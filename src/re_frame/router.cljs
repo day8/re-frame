@@ -1,9 +1,7 @@
 (ns re-frame.router
-  (:refer-clojure :exclude [flush])
-  (:require [reagent.core :refer [flush]]
-            [reagent.impl.batching :refer [do-later]]
+  (:require [reagent.impl.batching :refer [do-later]]
             [re-frame.handlers :refer [handle]]
-            [re-frame.utils :refer [warn error]]
+            [re-frame.utils :refer [error]]
             [goog.async.nextTick]))
 
 
