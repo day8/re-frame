@@ -185,11 +185,10 @@
 ;;
 
 (defn dispatch
-  "Send an event to be processed by the registered handler.
+  "Queue an event to be processed by the registered handler.
 
   Usage example:
-     (dispatch [:delete-item 42])
-  "
+     (dispatch [:delete-item 42])"
   [event-v]
   (if (nil? event-v)
     (error "re-frame: \"dispatch\" is ignoring a nil event.")
@@ -198,8 +197,9 @@
 
 
 (defn dispatch-sync
-  "Send an event to be processed by the registered handler, but avoid the async-inducing
-  use of core.async/chan.
+  "Send an event to be processed by the registered handler
+  immediately. Note: dispatch-sync may not be called while another
+  event is being handled.
 
   Usage example:
      (dispatch-sync [:delete-item 42])"
