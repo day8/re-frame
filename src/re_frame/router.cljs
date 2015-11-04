@@ -8,22 +8,22 @@
 ;; -- Router Loop ------------------------------------------------------------
 ;;
 ;; Conceptually, the task is to process events in a perpetual loop, one after
-;; the other, FIFO, calling the right event-handler for each. Being idle when
-;; ther are no events, and firing up when one arrives, etc. The processing
-;; of events happens "asynchronously" sometime after an event is dispatched.
+;; the other, FIFO, calling the right event-handler for each, being idle when
+;; there are no events, and firing up when one arrives, etc. The processing
+;; of an event happens "asynchronously" sometime after the event is
+;; dispatched.
 ;;
 ;; In practice, browsers only have a single thread of control and we must be
-;; careful to not hog the CPU.
-;; When processing events one after another, we must hand back control to
-;; the browser regularly, so it can redraw, process websockets, etc. But not
-;; too regularly!  If we are in a de-focused browser tab, then our app
-;; will be CPU throttled. Each time we get back control, we have to process all
-;; queued events, or else something like a bursty websocket (producing events)
-;; might overwhelm the queue. So there's a balance.
+;; careful to not hog the CPU. When processing events one after another, we
+;; must hand back control to the browser regularly, so it can redraw, process
+;; websockets, etc. But not too regularly! If we are in a de-focused browser
+;; tab, our app will be CPU throttled. Each time we get back control, we have
+;; to process all queued events, or else something like a bursty websocket
+;; (producing events) might overwhelm the queue. So there's a balance.
 ;;
-;; The original implementation of this router loop used core.async. It
-;; was fairly simple, and it mostly worked, but it did not give enough
-;; control. So now we hand-roll our own, mini finite-state-machine and all.
+;; The original implementation of this router loop used core.async. It was
+;; fairly simple, and it mostly worked, but it did not give enough
+;; control. So now we hand-roll our own, finite-state-machine and all.
 ;;
 ;; The strategy is this:
 ;;   - maintain a queue of `dispatched` events.
@@ -31,20 +31,20 @@
 ;;     goog.async.nextTick, which means it will happen "very soon".
 ;;   - when processing events, do ALL the ones currently queued. Don't stop.
 ;;     Don't yield to the browser. Hog that CPU.
-;;   - but if any new events arrive during this cycle of processing,
-;;     don't do them immediately. Leave then queued. Yield first to the
-;;     browser, and do these new events in the next processing cycle.
-;;     That way we drain the queue up to a point, but we
-;;     never hog the CPU forever.  In particular, we handle the case
-;;     where handling one event will begat another event. The freshly begated
-;;     event will be handled next cycle, with yielding in between.
+;;   - but if any new events arrive during this cycle of processing, don't do
+;;     them immediately. Leave them queued. Yield first to the browser, and
+;;     do these new events in the next processing cycle. That way we drain
+;;     the queue up to a point, but we never hog the CPU forever. In
+;;     particular, we handle the case where handling one event will beget
+;;     another event. The freshly begat event will be handled next cycle,
+;;     with yielding in between.
 ;;   - In some cases, an event should not be run until after the GUI has been
-;;     updated. Ie. after the next reagent animation frame. In such a case,
+;;     updated, i.e., after the next reagent animation frame. In such a case,
 ;;     the event should be dispatched with :flush-dom metadata like this:
-;;       (dispatch ^:flush-dom  [:event-id other params])
-;;     Such an event will block all further processing, because events are
-;;     processed sequentially. We must do one event before we can handle the
-;;     ones behind it.
+;;       (dispatch ^:flush-dom [:event-id other params])
+;;     Such an event will temporarily block all further processing because
+;;     events are processed sequentially: we handle each event before we
+;;     handle the ones behind it.
 ;;
 ;; Implementation
 ;;   - queue processing can be in a number of states: scheduled, running, paused
