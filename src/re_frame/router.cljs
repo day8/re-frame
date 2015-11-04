@@ -56,6 +56,11 @@
 ;;
 
 
+;; A map from event metadata keys to the corresponding "run later" functions
+(def later-fns
+  {:flush-dom do-later              ;; after next annimation frame
+   :yield     goog.async.nextTick}) ;; almost immediately
+
 (defprotocol IEventQueue
   (enqueue [this event])
 
@@ -67,7 +72,7 @@
   (-process-1st-event [this])
   (-run-next-tick [this])
   (-run-queue [this])
-  (-pause-run [this])
+  (-pause-run [this later-fn])
   (-exception [this ex])
   (-begin-resume [this]))
 
@@ -111,19 +116,14 @@
         (if (zero? n)
           (-fsm-trigger this :finish-run nil)
           (let [event-v (peek queue)]
-            (if (some #{:flush-dom :yield} (keys (meta event-v)))
-              (-fsm-trigger this :pause-run nil)
+            (if-let [later-fn (some later-fns (keys (meta event-v)))]
+              (-fsm-trigger this :pause-run later-fn)
               (do (-process-1st-event this)
                   (recur (dec n)))))))))
 
   (-pause-run
-    [this]
-    (let [event-v (peek queue)
-          m       (meta event-v)
-          later   (cond
-                    (:flush-dom m) do-later                ;; after next annimation frame
-                    (:yield m)     goog.async.nextTick)]   ;; almost immediately
-      (later #(-fsm-trigger this :begin-resume nil))))
+    [this later-fn]
+    (later-fn #(-fsm-trigger this :begin-resume nil)))
 
   (-begin-resume
     [this]
@@ -148,11 +148,11 @@
 
             ;; processing one event after another
             [:running :add-event ]  [:running   #(-add-event this arg1)]
-            [:running :pause-run ]  [:paused    #(-pause-run this)]
             [:running :exception ]  [:quiescent #(-exception this arg1)]
             [:running :finish-run]  (if (empty? queue)       ;; FSM guard
                                       [:quiescent]
                                       [:scheduled  #(-run-next-tick this)])
+            [:running :pause-run ]  [:paused    #(-pause-run this arg1)]
 
             ;; event processing is paused - probably by :flush-dom metadata
             [:paused :add-event    ]  [:paused   #(-add-event this arg1)]
