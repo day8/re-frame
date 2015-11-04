@@ -1,4 +1,4 @@
-## 0.5.0  (2015-11-07)
+## 0.5.0  (2015-11-XXXXX)
 
 Improvements:
   - fixed problem with log grouping
@@ -18,6 +18,7 @@ Improvements:
     
     I doubt this will affect normal apps. But it could affect games which depend on existing timings. Maybe.
     It could affect apps which dispatch large volumes of events (telemetry?) very quickly. Maybe.
+    
 
 ## v0.4.1 (2015-05-29)
 
