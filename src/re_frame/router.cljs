@@ -111,15 +111,13 @@
   ;; Be aware that events might have metadata which will pause processing.
   (-run-queue
     [this]
-    (let [queue-length (count queue)]
-      (loop [n queue-length]
-        (if (zero? n)
-          (-fsm-trigger this :finish-run nil)
-          (let [event-v (peek queue)]
-            (if-let [later-fn (some later-fns (keys (meta event-v)))]
-              (-fsm-trigger this :pause-run later-fn)
-              (do (-process-1st-event this)
-                  (recur (dec n)))))))))
+    (loop [n (count queue)]
+      (if (zero? n)
+        (-fsm-trigger this :finish-run nil)
+        (if-let [later-fn (some later-fns (-> queue peek meta keys))]
+          (-fsm-trigger this :pause-run later-fn)
+          (do (-process-1st-event this)
+              (recur (dec n)))))))
 
   (-pause-run
     [this later-fn]
