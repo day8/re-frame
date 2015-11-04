@@ -125,12 +125,12 @@
           later   (cond
                     (:flush-dom m) do-later                ;; after next annimation frame
                     (:yield m)     goog.async.nextTick)]   ;; almost immediately
-      (later #(-fsm-trigger this :resume-run nil))))
+      (later #(-fsm-trigger this :begin-resume nil))))
 
   (-resume-run
     [this]
     (-process-1st-event this)               ;; do the event which paused processing
-    (-fsm-trigger this :done-paused nil))   ;; do the rest of the queued events
+    (-fsm-trigger this :finish-resume nil)) ;; do the rest of the queued events
 
   (-fsm-trigger
     [this trigger arg1]
@@ -157,13 +157,13 @@
                                       [:scheduled  #(-run-next-tick this)])
 
             ;; event processing is paused - probably by :flush-dom metadata
-            [:paused :add-event  ]  [:paused    #(-add-event this arg1)]
-            [:paused :resume-run ]  [:do-paused #(-resume-run this)]
+            [:paused :add-event    ]  [:paused   #(-add-event this arg1)]
+            [:paused :begin-resume ]  [:resuming #(-resume-run this)]
 
             ;; processing an event which previously caused the queue to be paused
-            [:do-paused :add-event  ] [:do-paused  #(-add-event this arg1)]
-            [:do-paused :exception  ] [:quiescent  #(-exception this arg1)]
-            [:do-paused :done-paused] [:running    #(-run-queue this)]
+            [:resuming :add-event    ] [:resuming  #(-add-event this arg1)]
+            [:resuming :exception    ] [:quiescent #(-exception this arg1)]
+            [:resuming :finish-resume] [:running   #(-run-queue this)]
 
             (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
 
