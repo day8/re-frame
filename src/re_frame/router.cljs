@@ -1,31 +1,29 @@
 (ns re-frame.router
-  (:refer-clojure :exclude [flush])
-  (:require [reagent.core :refer [flush]]
-            [reagent.impl.batching :refer [do-later]]
+  (:require [reagent.impl.batching :refer [do-later]]
             [re-frame.handlers :refer [handle]]
-            [re-frame.utils :refer [warn error]]
+            [re-frame.utils :refer [error]]
             [goog.async.nextTick]))
 
 
 ;; -- Router Loop ------------------------------------------------------------
 ;;
 ;; Conceptually, the task is to process events in a perpetual loop, one after
-;; the other, FIFO, calling the right event-handler for each. Being idle when
-;; ther are no events, and firing up when one arrives, etc. The processing
-;; of events happens "asynchronously" sometime after an event is dispatched.
+;; the other, FIFO, calling the right event-handler for each, being idle when
+;; there are no events, and firing up when one arrives, etc. The processing
+;; of an event happens "asynchronously" sometime after the event is
+;; dispatched.
 ;;
 ;; In practice, browsers only have a single thread of control and we must be
-;; careful to not hog the CPU.
-;; When processing events one after another, we must hand back control to
-;; the browser regularly, so it can redraw, process websockets, etc. But not
-;; too regularly!  If we are in a de-focused browser tab, then our app
-;; will be CPU throttled. Each time we get back control, we have to process all
-;; queued events, or else something like a bursty websocket (producing events)
-;; might overwhelm the queue. So there's a balance.
+;; careful to not hog the CPU. When processing events one after another, we
+;; must hand back control to the browser regularly, so it can redraw, process
+;; websockets, etc. But not too regularly! If we are in a de-focused browser
+;; tab, our app will be CPU throttled. Each time we get back control, we have
+;; to process all queued events, or else something like a bursty websocket
+;; (producing events) might overwhelm the queue. So there's a balance.
 ;;
-;; The original implementation of this router loop used core.async. It
-;; was fairly simple, and it mostly worked, but it did not give enough
-;; control. So now we hand-roll our own, mini finite-state-machine and all.
+;; The original implementation of this router loop used core.async. It was
+;; fairly simple, and it mostly worked, but it did not give enough
+;; control. So now we hand-roll our own, finite-state-machine and all.
 ;;
 ;; The strategy is this:
 ;;   - maintain a queue of `dispatched` events.
@@ -33,20 +31,20 @@
 ;;     goog.async.nextTick, which means it will happen "very soon".
 ;;   - when processing events, do ALL the ones currently queued. Don't stop.
 ;;     Don't yield to the browser. Hog that CPU.
-;;   - but if any new events arrive during this cycle of processing,
-;;     don't do them immediately. Leave then queued. Yield first to the
-;;     browser, and do these new events in the next processing cycle.
-;;     That way we drain the queue up to a point, but we
-;;     never hog the CPU forever.  In particular, we handle the case
-;;     where handling one event will begat another event. The freshly begated
-;;     event will be handled next cycle, with yielding in between.
+;;   - but if any new events arrive during this cycle of processing, don't do
+;;     them immediately. Leave them queued. Yield first to the browser, and
+;;     do these new events in the next processing cycle. That way we drain
+;;     the queue up to a point, but we never hog the CPU forever. In
+;;     particular, we handle the case where handling one event will beget
+;;     another event. The freshly begat event will be handled next cycle,
+;;     with yielding in between.
 ;;   - In some cases, an event should not be run until after the GUI has been
-;;     updated. Ie. after the next reagent animation frame. In such a case,
+;;     updated, i.e., after the next reagent animation frame. In such a case,
 ;;     the event should be dispatched with :flush-dom metadata like this:
-;;       (dispatch ^:flush-dom  [:event-id other params])
-;;     Such an event will block all further processing, because events are
-;;     processed sequentially. We must do one event before we can handle the
-;;     ones behind it.
+;;       (dispatch ^:flush-dom [:event-id other params])
+;;     Such an event will temporarily block all further processing because
+;;     events are processed sequentially: we handle each event before we
+;;     handle the ones behind it.
 ;;
 ;; Implementation
 ;;   - queue processing can be in a number of states: scheduled, running, paused
@@ -57,6 +55,11 @@
 ;;     which will run event processing after the next reagent animation frame.
 ;;
 
+
+;; A map from event metadata keys to the corresponding "run later" functions
+(def later-fns
+  {:flush-dom do-later              ;; after next annimation frame
+   :yield     goog.async.nextTick}) ;; almost immediately
 
 (defprotocol IEventQueue
   (enqueue [this event])
@@ -69,7 +72,7 @@
   (-process-1st-event [this])
   (-run-next-tick [this])
   (-run-queue [this])
-  (-pause-run [this])
+  (-pause-run [this later-fn])
   (-exception [this ex])
   (-begin-resume [this]))
 
@@ -108,24 +111,17 @@
   ;; Be aware that events might have metadata which will pause processing.
   (-run-queue
     [this]
-    (let [queue-length (count queue)]
-      (loop [n queue-length]
-        (if (zero? n)
-          (-fsm-trigger this :finish-run nil)
-          (let [event-v (peek queue)]
-            (if (some #{:flush-dom :yield} (keys (meta event-v)))
-              (-fsm-trigger this :pause-run nil)
-              (do (-process-1st-event this)
-                  (recur (dec n)))))))))
+    (loop [n (count queue)]
+      (if (zero? n)
+        (-fsm-trigger this :finish-run nil)
+        (if-let [later-fn (some later-fns (-> queue peek meta keys))]
+          (-fsm-trigger this :pause-run later-fn)
+          (do (-process-1st-event this)
+              (recur (dec n)))))))
 
   (-pause-run
-    [this]
-    (let [event-v (peek queue)
-          m       (meta event-v)
-          later   (cond
-                    (:flush-dom m) do-later                ;; after next annimation frame
-                    (:yield m)     goog.async.nextTick)]   ;; almost immediately
-      (later #(-fsm-trigger this :begin-resume nil))))
+    [this later-fn]
+    (later-fn #(-fsm-trigger this :begin-resume nil)))
 
   (-begin-resume
     [this]
@@ -133,36 +129,38 @@
     (-fsm-trigger this :finish-resume nil)) ;; do the rest of the queued events
 
   (-fsm-trigger
-    [this trigger arg1]
+    [this trigger arg]
 
     ;; work out new FSM state and action function for the transition
     (let [[new-state action-fn]
           (case [fsm-state trigger]
 
-            ; Here is the FSM
-            ;[current-state :trigger]  [:new-state  action-fn]
+            ;; Here is the FSM
+            ;; [current-state trigger] [new-state action-fn]
 
-            [:quiescent :add-event] [:scheduled #(do (-add-event this arg1) (-run-next-tick this))]
+            ;; the queue is idle
+            [:quiescent :add-event] [:scheduled #(do (-add-event this arg)
+                                                     (-run-next-tick this))]
 
             ;; processing has been already been scheduled to run in the future
-            [:scheduled :add-event] [:scheduled #(-add-event this arg1)]
+            [:scheduled :add-event] [:scheduled #(-add-event this arg)]
             [:scheduled :begin-run] [:running   #(-run-queue this)]
 
             ;; processing one event after another
-            [:running :add-event ]  [:running   #(-add-event this arg1)]
-            [:running :pause-run ]  [:paused    #(-pause-run this)]
-            [:running :exception ]  [:quiescent #(-exception this arg1)]
-            [:running :finish-run]  (if (empty? queue)       ;; FSM guard
-                                      [:quiescent]
-                                      [:scheduled  #(-run-next-tick this)])
+            [:running :add-event ] [:running   #(-add-event this arg)]
+            [:running :pause-run ] [:paused    #(-pause-run this arg)]
+            [:running :exception ] [:quiescent #(-exception this arg)]
+            [:running :finish-run] (if (empty? queue)       ;; FSM guard
+                                     [:quiescent]
+                                     [:scheduled #(-run-next-tick this)])
 
             ;; event processing is paused - probably by :flush-dom metadata
-            [:paused :add-event    ]  [:paused   #(-add-event this arg1)]
-            [:paused :begin-resume ]  [:resuming #(-begin-resume this)]
+            [:paused :add-event   ] [:paused   #(-add-event this arg)]
+            [:paused :begin-resume] [:resuming #(-begin-resume this)]
 
-            ;; processing an event which previously caused the queue to be paused
-            [:resuming :add-event    ] [:resuming  #(-add-event this arg1)]
-            [:resuming :exception    ] [:quiescent #(-exception this arg1)]
+            ;; processing the event that caused the queue to be paused
+            [:resuming :add-event    ] [:resuming  #(-add-event this arg)]
+            [:resuming :exception    ] [:quiescent #(-exception this arg)]
             [:resuming :finish-resume] [:running   #(-run-queue this)]
 
             (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
@@ -185,21 +183,21 @@
 ;;
 
 (defn dispatch
-  "Send an event to be processed by the registered handler.
+  "Queue an event to be processed by the registered handler.
 
   Usage example:
-     (dispatch [:delete-item 42])
-  "
+     (dispatch [:delete-item 42])"
   [event-v]
   (if (nil? event-v)
-    (error "re-frame: \"dispatch\" is ignoring a nil event.") ;; nil would close the channel
+    (error "re-frame: \"dispatch\" is ignoring a nil event.")
     (enqueue event-queue event-v))
   nil)                                                      ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 
 (defn dispatch-sync
-  "Send an event to be processed by the registered handler, but avoid the async-inducing
-  use of core.async/chan.
+  "Send an event to be processed by the registered handler
+  immediately. Note: dispatch-sync may not be called while another
+  event is being handled.
 
   Usage example:
      (dispatch-sync [:delete-item 42])"
