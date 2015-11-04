@@ -161,7 +161,7 @@
             [:paused :resume-run ]  [:do-paused #(-resume-run this)]
 
             ;; processing an event which previously caused the queue to be paused
-            [:do-paused :add-event  ] [:paused     #(-add-event this arg1)]
+            [:do-paused :add-event  ] [:do-paused  #(-add-event this arg1)]
             [:do-paused :exception  ] [:quiescent  #(-exception this arg1)]
             [:do-paused :done-paused] [:running    #(-run-queue this)]
 
