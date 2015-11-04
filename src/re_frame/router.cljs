@@ -131,7 +131,7 @@
     (-fsm-trigger this :finish-resume nil)) ;; do the rest of the queued events
 
   (-fsm-trigger
-    [this trigger arg1]
+    [this trigger arg]
 
     ;; work out new FSM state and action function for the transition
     (let [[new-state action-fn]
@@ -140,27 +140,28 @@
             ; Here is the FSM
             ;[current-state :trigger]  [:new-state  action-fn]
 
-            [:quiescent :add-event] [:scheduled #(do (-add-event this arg1) (-run-next-tick this))]
+            [:quiescent :add-event] [:scheduled #(do (-add-event this arg)
+                                                     (-run-next-tick this))]
 
             ;; processing has been already been scheduled to run in the future
-            [:scheduled :add-event] [:scheduled #(-add-event this arg1)]
+            [:scheduled :add-event] [:scheduled #(-add-event this arg)]
             [:scheduled :begin-run] [:running   #(-run-queue this)]
 
             ;; processing one event after another
-            [:running :add-event ]  [:running   #(-add-event this arg1)]
-            [:running :exception ]  [:quiescent #(-exception this arg1)]
-            [:running :finish-run]  (if (empty? queue)       ;; FSM guard
-                                      [:quiescent]
-                                      [:scheduled  #(-run-next-tick this)])
-            [:running :pause-run ]  [:paused    #(-pause-run this arg1)]
+            [:running :add-event ] [:running   #(-add-event this arg)]
+            [:running :pause-run ] [:paused    #(-pause-run this arg)]
+            [:running :exception ] [:quiescent #(-exception this arg)]
+            [:running :finish-run] (if (empty? queue)       ;; FSM guard
+                                     [:quiescent]
+                                     [:scheduled #(-run-next-tick this)])
 
             ;; event processing is paused - probably by :flush-dom metadata
-            [:paused :add-event    ]  [:paused   #(-add-event this arg1)]
-            [:paused :begin-resume ]  [:resuming #(-begin-resume this)]
+            [:paused :add-event   ] [:paused   #(-add-event this arg)]
+            [:paused :begin-resume] [:resuming #(-begin-resume this)]
 
             ;; processing an event which previously caused the queue to be paused
-            [:resuming :add-event    ] [:resuming  #(-add-event this arg1)]
-            [:resuming :exception    ] [:quiescent #(-exception this arg1)]
+            [:resuming :add-event    ] [:resuming  #(-add-event this arg)]
+            [:resuming :exception    ] [:quiescent #(-exception this arg)]
             [:resuming :finish-resume] [:running   #(-run-queue this)]
 
             (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
