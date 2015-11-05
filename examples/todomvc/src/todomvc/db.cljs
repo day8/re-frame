@@ -20,9 +20,9 @@
 
 (def TODO-ID s/Int)
 (def TODO    {:id TODO-ID :title s/Str :done s/Bool})
-(def schema  {:todos (s/both
-                       PersistentTreeMap   ;; it is a sorted-map (not just a map)
-                       {TODO-ID TODO})     ;; in this map, each todo is keyed by its :id
+(def schema  {:todos (s/conditional
+                       #(instance? PersistentTreeMap %)  ;; is a sorted-map (not just a map)
+                       {TODO-ID TODO})                   ;; in this map, each todo is keyed by its :id
 
               :showing  (s/enum            ;; what todos are shown to the user?
                           :all             ;; all todos are shown
