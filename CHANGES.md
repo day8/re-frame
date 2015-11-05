@@ -20,6 +20,9 @@ Improvements:
     It could affect apps which dispatch large volumes of events (telemetry?) very quickly. Maybe.
     
 
+Other:
+  - updated TodoMvc css
+
 ## v0.4.1 (2015-05-29)
 
 Improvements:

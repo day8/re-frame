@@ -32,17 +32,17 @@
             props-for (fn [filter-kw txt]
                         [:a {:class (if (= filter-kw filter) "selected")
                              :href (str "#/" (name filter-kw))} txt])]
-        [:footer#footer
+        [:footer.footer
          [:div
-          [:span#todo-count
+          [:span.todo-count
            [:strong active] " " (case active 1 "item" "items") " left"]
-          [:ul#filters
+          [:ul.filters
            [:li (props-for :all "All")]
            [:li (props-for :active "Active")]
            [:li (props-for :done "Completed")]]
           (when (pos? done)
-            [:button#clear-completed {:on-click #(dispatch [:clear-completed])}
-             "Clear completed " done])]]))))
+            [:button.clear-completed {:on-click #(dispatch [:clear-completed])}
+             "Clear completed"])]]))))
 
 (defn todo-item
   []
@@ -64,7 +64,7 @@
 
 (defn todo-list
   [visible-todos]
-  [:ul#todo-list
+  [:ul.todo-list
    (for [todo  @visible-todos]
      ^{:key (:id todo)} [todo-item todo])])
 
@@ -75,22 +75,21 @@
         completed-count (subscribe [:completed-count])]
     (fn []
       [:div
-       [:section#todoapp
+       [:section.todoapp
         [:header#header
          [:h1 "todos"]
-         [todo-input {:id "new-todo"
+         [todo-input {:class "new-todo"
                       :placeholder "What needs to be done?"
                       :on-save #(dispatch [:add-todo %])}]]
         (when-not (empty? @todos)
           [:div
-           [:section#main
-            [:input#toggle-all
+           [:section.main
+            [:input.toggle-all
              {:type "checkbox"
               :checked (pos? @completed-count)
               :on-change #(dispatch [:complete-all-toggle])}]
             [:label {:for "toggle-all"} "Mark all as complete"]
             [todo-list visible-todos]]
            [stats-footer]])]
-       [:footer#info
+       [:footer.info
         [:p "Double-click to edit a todo"]]])))
-
