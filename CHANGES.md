@@ -1,17 +1,16 @@
 ## 0.5.0  (2015-11-5)
 
 New Features:
-  - [#108](https://github.com/Day8/re-frame/pull/108) - Add dynamic subscriptions. 
-    Docs to follow.
+  - [#108](https://github.com/Day8/re-frame/pull/108) - Add dynamic subscriptions.  
+    Docs to follow, and your cheque is in the mail.
 
 Improvements:
   - fixed problem with log grouping
   - removed `-------New Event-------` log msg
   - made groups collapsed by default
-  - [#104](https://github.com/Day8/re-frame/pull/104) - Updated TodoMvc css
+  - [#104](https://github.com/Day8/re-frame/pull/104) - Updated to the latest TodoMVC CSS
   - Reimplemented the router loop. Removed use of core.async. Replaced with hand rolled scheduling. 
     See [420e42a](https://github.com/Day8/re-frame/commit/420e42aacccbac2d81fedc5ff861442a4ce70c1d)
-   
     As a result:
       - there is less of a pause between a `dispatch` and the associated event handler being run. (<1ms vs 5ms??)
       - groups of events queued up will be handled in a batch, one after the other, without yielding 
