@@ -1,10 +1,14 @@
-## 0.5.0  (2015-11-XXXXX)
+## 0.5.0  (2015-11-5)
+
+New Features:
+  - [#108](https://github.com/Day8/re-frame/pull/108) - Add dynamic subscriptions. 
+    Docs to follow.
 
 Improvements:
   - fixed problem with log grouping
   - removed `-------New Event-------` log msg
   - made groups collapsed by default
-  - Add dynamic subscriptions. [#108](https://github.com/Day8/re-frame/pull/108)
+  - [#104](https://github.com/Day8/re-frame/pull/104) - Updated TodoMvc css
   - Reimplemented the router loop. Removed use of core.async. Replaced with hand rolled scheduling. 
     See [420e42a](https://github.com/Day8/re-frame/commit/420e42aacccbac2d81fedc5ff861442a4ce70c1d)
    
@@ -19,9 +23,6 @@ Improvements:
     I doubt this will affect normal apps. But it could affect games which depend on existing timings. Maybe.
     It could affect apps which dispatch large volumes of events (telemetry?) very quickly. Maybe.
     
-
-Other:
-  - updated TodoMvc css
 
 ## v0.4.1 (2015-05-29)
 
