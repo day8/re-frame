@@ -120,7 +120,7 @@
         [handler]
         (fn path-handler
           [db v]
-          (assoc-in db path (handler (get-in db path) v)))))))
+          (update-in db path handler v))))))
 
 
 (def undoable
