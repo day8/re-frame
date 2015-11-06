@@ -23,7 +23,7 @@
 ;;
 ;; The original implementation of this router loop used core.async. It was
 ;; fairly simple, and it mostly worked, but it did not give enough
-;; control. So now we hand-roll our own, finite-state-machine and all.
+;; control. So now we hand-roll our own.
 ;;
 ;; The strategy is this:
 ;;   - maintain a queue of `dispatched` events.
@@ -45,14 +45,21 @@
 ;;     Such an event will temporarily block all further processing because
 ;;     events are processed sequentially: we handle each event before we
 ;;     handle the ones behind it.
+;;   - It's also possible to request a much shorter duration yield to the
+;;     browser before handling an event. The event should be dispatched with
+;;     :yield metadata like this:
+;;       (dispatch ^:yield [:event-id other params])
+;;     This ends the current processing cycle early. The event and those
+;;     queued up after it will be processed in the next processing cycle.
 ;;
 ;; Implementation
-;;   - queue processing can be in a number of states: scheduled, running, paused
-;;     etc. So it is modeled explicitly as a FSM.
-;;     See "-fsm-trigger" (below) for the states and transitions.
-;;   - the scheduling is done via "goog.async.nextTick" which is pretty quick
-;;   - when the event has :dom-flush we schedule via "reagent.impl.batching.doLater"
-;;     which will run event processing after the next reagent animation frame.
+;;   - a simple finite state machine where the only state that affects
+;;     decisions (around scheduling) is whether or not the queue is
+;;     empty.
+;;   - most scheduling is done via "goog.async.nextTick" which is pretty quick
+;;   - when the event has :flush-dom metadata we schedule via
+;;     "reagent.impl.batching.do-later" which will run event processing after
+;;     the next reagent animation frame.
 ;;
 
 
@@ -64,48 +71,31 @@
 (defprotocol IEventQueue
   (enqueue [this event])
 
-  ;; Finite State Machine transitions
-  (-fsm-trigger [this trigger arg])
-
-  ;; Finite State Machine (FSM) actions
-  (-add-event [this event])
-  (-process-1st-event [this])
-  (-run-next-tick [this])
+  (-schedule-run [this])
   (-run-queue [this])
-  (-pause-run [this later-fn])
-  (-exception [this ex])
-  (-begin-resume [this]))
+  (-run-first [this])
+  (-resume [this]))
 
+;; EventQueue invariant:
+;; - queue processing is in progress if and only if the queue is not empty
+;;   - where "in progress" means either:
+;;     - running now, or
+;;     - waiting for a callback to run
+;; Queue processing starts when an event is added to an empty queue, and
+;; stops when the queue has been drained.
 
-;; Want to understand this? Look at FSM in -fsm-trigger?
-(deftype EventQueue [^:mutable fsm-state ^:mutable queue]
+(deftype EventQueue [^:mutable queue]
   IEventQueue
 
-  (enqueue [this event]
-    (-fsm-trigger this :add-event event))
-
-  ;; Finite State Machine "Actions"
-  (-add-event
+  (enqueue
     [this event]
+    (when (empty? queue)
+      (-schedule-run this))
     (set! queue (conj queue event)))
 
-  (-process-1st-event
+  (-schedule-run
     [this]
-    (let [event-v (peek queue)]
-      (try
-        (handle event-v)
-        (catch :default ex
-          (-fsm-trigger this :exception ex)))
-      (set! queue (pop queue))))
-
-  (-run-next-tick
-    [this]
-    (goog.async.nextTick #(-fsm-trigger this :begin-run nil)))
-
-  (-exception
-    [_ ex]
-    (set! queue #queue [])     ;; purge the queue
-    (throw ex))
+    (goog.async.nextTick #(-run-queue this)))
 
   ;; Process all the events currently in the queue, but not any new ones.
   ;; Be aware that events might have metadata which will pause processing.
@@ -113,61 +103,27 @@
     [this]
     (loop [n (count queue)]
       (if (zero? n)
-        (-fsm-trigger this :finish-run nil)
+        (when (seq queue)
+          (-schedule-run this))
         (if-let [later-fn (some later-fns (-> queue peek meta keys))]
-          (-fsm-trigger this :pause-run later-fn)
-          (do (-process-1st-event this)
+          (later-fn #(-resume this))
+          (do (-run-first this)
               (recur (dec n)))))))
 
-  (-pause-run
-    [this later-fn]
-    (later-fn #(-fsm-trigger this :begin-resume nil)))
-
-  (-begin-resume
+  (-run-first
     [this]
-    (-process-1st-event this)               ;; do the event which paused processing
-    (-fsm-trigger this :finish-resume nil)) ;; do the rest of the queued events
+    (try
+      (handle (peek queue))
+      (catch :default ex
+        (set! queue #queue []) ;; purge the queue
+        (throw ex)))
+    (set! queue (pop queue)))
 
-  (-fsm-trigger
-    [this trigger arg]
+  (-resume
+    [this]
+    (-run-first this)   ;; process the event that generated the pause
+    (-run-queue this))) ;; continue with a new queue full of events
 
-    ;; work out new FSM state and action function for the transition
-    (let [[new-state action-fn]
-          (case [fsm-state trigger]
-
-            ;; Here is the FSM
-            ;; [current-state trigger] [new-state action-fn]
-
-            ;; the queue is idle
-            [:quiescent :add-event] [:scheduled #(do (-add-event this arg)
-                                                     (-run-next-tick this))]
-
-            ;; processing has been already been scheduled to run in the future
-            [:scheduled :add-event] [:scheduled #(-add-event this arg)]
-            [:scheduled :begin-run] [:running   #(-run-queue this)]
-
-            ;; processing one event after another
-            [:running :add-event ] [:running   #(-add-event this arg)]
-            [:running :pause-run ] [:paused    #(-pause-run this arg)]
-            [:running :exception ] [:quiescent #(-exception this arg)]
-            [:running :finish-run] (if (empty? queue)       ;; FSM guard
-                                     [:quiescent]
-                                     [:scheduled #(-run-next-tick this)])
-
-            ;; event processing is paused - probably by :flush-dom metadata
-            [:paused :add-event   ] [:paused   #(-add-event this arg)]
-            [:paused :begin-resume] [:resuming #(-begin-resume this)]
-
-            ;; processing the event that caused the queue to be paused
-            [:resuming :add-event    ] [:resuming  #(-add-event this arg)]
-            [:resuming :exception    ] [:quiescent #(-exception this arg)]
-            [:resuming :finish-resume] [:running   #(-run-queue this)]
-
-            (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
-
-      ;;  change state and run the action fucntion
-      (set! fsm-state new-state)
-      (when action-fn (action-fn)))))
 
 ;; ---------------------------------------------------------------------------
 ;; This is the global queue for events
@@ -175,7 +131,7 @@
 ;; will "run" and the event will be "handled" by the registered event handler.
 ;;
 
-(def event-queue (->EventQueue :quiescent #queue []))
+(def event-queue (->EventQueue #queue []))
 
 
 ;; ---------------------------------------------------------------------------
@@ -204,4 +160,3 @@
   [event-v]
   (handle event-v)
   nil)                                                      ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
-
