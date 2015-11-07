@@ -126,8 +126,8 @@
 
   (-resume
     [this]
-    (-process-1st-event this)               ;; do the event which paused processing
-    (-fsm-trigger this :finish-resume nil)) ;; do the rest of the queued events
+    (-process-1st-event this) ;; do the event which paused processing
+    (-run-queue this))        ;; do the rest of the queued events
 
   (-fsm-trigger
     [this trigger arg]
