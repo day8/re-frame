@@ -51,7 +51,8 @@
 ;;     etc. So it is modeled explicitly as a FSM.
 ;;     See "-fsm-trigger" (below) for the states and transitions.
 ;;   - the scheduling is done via "goog.async.nextTick" which is pretty quick
-;;   - when the event has :dom-flush we schedule via "reagent.impl.batching.doLater"
+;;   - when the event has :flush-dom we schedule via
+;;       "reagent.impl.batching.do-later"
 ;;     which will run event processing after the next reagent animation frame.
 ;;
 
@@ -142,7 +143,7 @@
             [:quiescent :add-event] [:scheduled #(do (-add-event this arg)
                                                      (-run-next-tick this))]
 
-            ;; processing has been already been scheduled to run in the future
+            ;; processing has already been scheduled to run in the future
             [:scheduled :add-event] [:scheduled #(-add-event this arg)]
             [:scheduled :begin-run] [:running   #(-run-queue this)]
 
