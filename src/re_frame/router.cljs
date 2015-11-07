@@ -73,9 +73,9 @@
   (-process-1st-event [this])
   (-run-next-tick [this])
   (-run-queue [this])
-  (-pause-run [this later-fn])
   (-exception [this ex])
-  (-begin-resume [this]))
+  (-pause [this later-fn])
+  (-resume [this]))
 
 
 ;; Want to understand this? Look at FSM in -fsm-trigger?
@@ -101,12 +101,12 @@
 
   (-run-next-tick
     [this]
-    (goog.async.nextTick #(-fsm-trigger this :begin-run nil)))
 
   (-exception
     [_ ex]
     (set! queue #queue [])     ;; purge the queue
     (throw ex))
+    (goog.async.nextTick #(-fsm-trigger this :run-queue nil)))
 
   ;; Process all the events currently in the queue, but not any new ones.
   ;; Be aware that events might have metadata which will pause processing.
@@ -116,15 +116,15 @@
       (if (zero? n)
         (-fsm-trigger this :finish-run nil)
         (if-let [later-fn (some later-fns (-> queue peek meta keys))]
-          (-fsm-trigger this :pause-run later-fn)
+          (-fsm-trigger this :pause later-fn)
           (do (-process-1st-event this)
               (recur (dec n)))))))
 
-  (-pause-run
+  (-pause
     [this later-fn]
-    (later-fn #(-fsm-trigger this :begin-resume nil)))
+    (later-fn #(-fsm-trigger this :resume nil)))
 
-  (-begin-resume
+  (-resume
     [this]
     (-process-1st-event this)               ;; do the event which paused processing
     (-fsm-trigger this :finish-resume nil)) ;; do the rest of the queued events
@@ -145,11 +145,11 @@
 
             ;; processing has already been scheduled to run in the future
             [:scheduled :add-event] [:scheduled #(-add-event this arg)]
-            [:scheduled :begin-run] [:running   #(-run-queue this)]
+            [:scheduled :run-queue] [:running   #(-run-queue this)]
 
             ;; processing one event after another
             [:running :add-event ] [:running   #(-add-event this arg)]
-            [:running :pause-run ] [:paused    #(-pause-run this arg)]
+            [:running :pause     ] [:paused    #(-pause this arg)]
             [:running :exception ] [:quiescent #(-exception this arg)]
             [:running :finish-run] (if (empty? queue)       ;; FSM guard
                                      [:quiescent]
@@ -157,12 +157,12 @@
 
             ;; event processing is paused - probably by :flush-dom metadata
             [:paused :add-event   ] [:paused   #(-add-event this arg)]
-            [:paused :begin-resume] [:resuming #(-begin-resume this)]
 
             ;; processing the event that caused the queue to be paused
             [:resuming :add-event    ] [:resuming  #(-add-event this arg)]
             [:resuming :exception    ] [:quiescent #(-exception this arg)]
             [:resuming :finish-resume] [:running   #(-run-queue this)]
+            [:paused :resume   ] [:running #(-resume this)]
 
             (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
 
