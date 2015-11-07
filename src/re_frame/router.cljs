@@ -156,12 +156,7 @@
                                      [:scheduled #(-run-next-tick this)])
 
             ;; event processing is paused - probably by :flush-dom metadata
-            [:paused :add-event   ] [:paused   #(-add-event this arg)]
-
-            ;; processing the event that caused the queue to be paused
-            [:resuming :add-event    ] [:resuming  #(-add-event this arg)]
-            [:resuming :exception    ] [:quiescent #(-exception this arg)]
-            [:resuming :finish-resume] [:running   #(-run-queue this)]
+            [:paused :add-event] [:paused  #(-add-event this arg)]
             [:paused :resume   ] [:running #(-resume this)]
 
             (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
