@@ -101,11 +101,6 @@
 
   (-run-next-tick
     [this]
-
-  (-exception
-    [_ ex]
-    (set! queue #queue [])     ;; purge the queue
-    (throw ex))
     (goog.async.nextTick #(-fsm-trigger this :run-queue nil)))
 
   ;; Process all the events currently in the queue, but not any new ones.
@@ -119,6 +114,11 @@
           (-fsm-trigger this :pause later-fn)
           (do (-process-1st-event this)
               (recur (dec n)))))))
+
+  (-exception
+    [_ ex]
+    (set! queue #queue [])     ;; purge the queue
+    (throw ex))
 
   (-pause
     [this later-fn]
