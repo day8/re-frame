@@ -1019,6 +1019,7 @@ Second, remind yourself that the `combining function` of a `reduce` takes two pa
 2. the next collection member to fold in.
 
 Then notice that event handlers take two parameters too:
+
 1. the current state of `app-db`
 2. the next item to fold in.
 
