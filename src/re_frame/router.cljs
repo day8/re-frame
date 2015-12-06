@@ -65,6 +65,8 @@
 (defprotocol IEventQueue
   (enqueue [this event])
 
+  (add-post-event-callback [this f])
+
   ;; Finite State Machine transitions
   (-fsm-trigger [this trigger arg])
 
@@ -78,14 +80,57 @@
   (-resume [this]))
 
 
-;; Want to understand this? Look at FSM in -fsm-trigger?
-(deftype EventQueue [^:mutable fsm-state ^:mutable queue]
+;;
+(deftype EventQueue [^:mutable fsm-state
+                     ^:mutable queue
+                     ^:mutable post-event-callback-fns]
   IEventQueue
 
+  ;; -- API ------------------------------------------------------------------
   (enqueue [this event]
     (-fsm-trigger this :add-event event))
 
-  ;; Finite State Machine "Actions"
+  (add-post-event-callback [this f]
+    (set! post-event-callback-fns (conj post-event-callback-fns f)))
+
+
+  ;; -- FSM ------------------------------------------------------------------
+  (-fsm-trigger
+    [this trigger arg]
+
+    ;; work out new FSM state and action function for the transition
+    (let [[new-state action-fn]
+          (case [fsm-state trigger]
+
+            ;; The following specifies all FSM states, tranistions and actions
+            ;; [current-state trigger] [new-state action-fn]
+
+            ;; the queue is idle
+            [:idle :add-event] [:scheduled #(do (-add-event this arg)
+                                                (-run-next-tick this))]
+
+            ;; processing has already been scheduled to run in the future
+            [:scheduled :add-event] [:scheduled #(-add-event this arg)]
+            [:scheduled :run-queue] [:running   #(-run-queue this)]
+
+            ;; processing one event after another
+            [:running :add-event ] [:running  #(-add-event this arg)]
+            [:running :pause     ] [:paused   #(-pause this arg)]
+            [:running :exception ] [:idle     #(-exception this arg)]
+            [:running :finish-run] (if (empty? queue)       ;; FSM guard
+                                     [:idle]
+                                     [:scheduled #(-run-next-tick this)])
+
+            ;; event processing is paused - probably by :flush-dom metadata
+            [:paused :add-event] [:paused  #(-add-event this arg)]
+            [:paused :resume   ] [:running #(-resume this)]
+
+            (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
+
+      ;;  change state and run the action fucntion
+      (set! fsm-state new-state)
+      (when action-fn (action-fn))))
+
   (-add-event
     [this event]
     (set! queue (conj queue event)))
@@ -97,7 +142,11 @@
         (handle event-v)
         (catch :default ex
           (-fsm-trigger this :exception ex)))
-      (set! queue (pop queue))))
+      (set! queue (pop queue))
+
+      ;; Tell all registed callbacks that an event was just processed.
+      ;; Pass in the event just handled and the new state of the queue
+      (doseq [f post-event-callback-fns] (f event-v queue))))
 
   (-run-next-tick
     [this]
@@ -110,7 +159,7 @@
     (loop [n (count queue)]
       (if (zero? n)
         (-fsm-trigger this :finish-run nil)
-        (if-let [later-fn (some later-fns (-> queue peek meta keys))]
+        (if-let [later-fn (some later-fns (-> queue peek meta keys))]  ;; any metadata which causes pausing?
           (-fsm-trigger this :pause later-fn)
           (do (-process-1st-event this)
               (recur (dec n)))))))
@@ -126,44 +175,9 @@
 
   (-resume
     [this]
-    (-process-1st-event this) ;; do the event which paused processing
-    (-run-queue this))        ;; do the rest of the queued events
+    (-process-1st-event this)  ;; do the event which paused processing
+    (-run-queue this)))        ;; do the rest of the queued events
 
-  (-fsm-trigger
-    [this trigger arg]
-
-    ;; work out new FSM state and action function for the transition
-    (let [[new-state action-fn]
-          (case [fsm-state trigger]
-
-            ;; Here is the FSM
-            ;; [current-state trigger] [new-state action-fn]
-
-            ;; the queue is idle
-            [:quiescent :add-event] [:scheduled #(do (-add-event this arg)
-                                                     (-run-next-tick this))]
-
-            ;; processing has already been scheduled to run in the future
-            [:scheduled :add-event] [:scheduled #(-add-event this arg)]
-            [:scheduled :run-queue] [:running   #(-run-queue this)]
-
-            ;; processing one event after another
-            [:running :add-event ] [:running   #(-add-event this arg)]
-            [:running :pause     ] [:paused    #(-pause this arg)]
-            [:running :exception ] [:quiescent #(-exception this arg)]
-            [:running :finish-run] (if (empty? queue)       ;; FSM guard
-                                     [:quiescent]
-                                     [:scheduled #(-run-next-tick this)])
-
-            ;; event processing is paused - probably by :flush-dom metadata
-            [:paused :add-event] [:paused  #(-add-event this arg)]
-            [:paused :resume   ] [:running #(-resume this)]
-
-            (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
-
-      ;;  change state and run the action fucntion
-      (set! fsm-state new-state)
-      (when action-fn (action-fn)))))
 
 ;; ---------------------------------------------------------------------------
 ;; This is the global queue for events
@@ -171,7 +185,7 @@
 ;; will "run" and the event will be "handled" by the registered event handler.
 ;;
 
-(def event-queue (->EventQueue :quiescent #queue []))
+(def event-queue (->EventQueue :idle  #queue [] []))
 
 
 ;; ---------------------------------------------------------------------------

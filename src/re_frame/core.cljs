@@ -34,6 +34,12 @@
 (def on-changes  middleware/on-changes)
 
 
+;; -- Event Procssing Callbacks
+
+(defn add-post-event-callback
+  [f]
+  (add-post-event-callback re-frame.router/event-queue  f))
+
 ;; --  Logging -----
 ;; re-frame uses the logging functions: warn, log, error, group and groupEnd
 ;; By default, these functions map directly to the js/console implementations
