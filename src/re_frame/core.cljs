@@ -38,7 +38,7 @@
 
 (defn add-post-event-callback
   [f]
-  (add-post-event-callback re-frame.router/event-queue  f))
+  (router/add-post-event-callback re-frame.router/event-queue f))
 
 ;; --  Logging -----
 ;; re-frame uses the logging functions: warn, log, error, group and groupEnd
