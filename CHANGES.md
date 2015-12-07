@@ -1,3 +1,16 @@
+## 0.6.0  (2015-12-10)
+
+New API:
+  - [#118](https://github.com/Day8/re-frame/pull/118) - Add `add-post-event-callback` to the API.   
+    @pupeno is developing [preprender](https://carouselapps.com/prerenderer) which looks pretty neat.  
+    Support this effort by adding a way for preprender to hook event processing. 
+    
+Improvements:
+  - [#134](https://github.com/Day8/re-frame/pull/134)
+    My thanks to @scgilardi for a nice simplification of the routing state machine. Again!
+  - [#133](https://github.com/Day8/re-frame/pull/133) Improve Readme formatting
+   
+
 ## 0.5.0  (2015-11-5)
 
 New Features:
