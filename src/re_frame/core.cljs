@@ -28,17 +28,8 @@
 (def trim-v      middleware/trim-v)
 (def after       middleware/after)
 (def log-ex      middleware/log-ex)
-
-
-;; ALPHA - EXPERIMENTAL MIDDLEWARE
 (def on-changes  middleware/on-changes)
 
-
-;; -- Event Procssing Callbacks
-
-(defn add-post-event-callback
-  [f]
-  (router/add-post-event-callback re-frame.router/event-queue f))
 
 ;; --  Logging -----
 ;; re-frame uses the logging functions: warn, log, error, group and groupEnd
@@ -59,4 +50,19 @@
     (handlers/register-base id [pure middleware] handler)))
 
 
+
+;; -- Event Procssing Callbacks
+
+(defn add-post-event-callback
+  "Normal users of re-frame can ignore this part of the API. Only
+  needs to be used by libraries providing, so called, Isomorphic rendering.
+
+  Registers a callback function 'f'.
+  f will be called after each dispatched event is proce
+  f will be called with two parameters:
+    - the event's vector. That which was dispatched orignally.
+    - the further event queue - what is still to be processed.
+  "
+  [f]
+  (router/add-post-event-callback re-frame.router/event-queue f))
 
