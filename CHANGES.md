@@ -1,4 +1,4 @@
-## 0.6.0  (2015-12-10)
+## 0.6.0  (2015-12-09)
 
 New API:
   - [#118](https://github.com/Day8/re-frame/pull/118) - Add `add-post-event-callback` to the API.   

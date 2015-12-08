@@ -54,14 +54,15 @@
 ;; -- Event Procssing Callbacks
 
 (defn add-post-event-callback
-  "Normal users of re-frame can ignore this part of the API. Only
-  needs to be used by libraries providing, so called, Isomorphic rendering.
+  "Normal users of re-frame can ignore this part of the API. Useful
+  only to libraries providing 'isomorphic javascript' rendering on
+  Nodejs or Nashorn.
 
   Registers a callback function 'f'.
-  f will be called after each dispatched event is proce
+  f will be called after each dispatched event is procecessed
   f will be called with two parameters:
     - the event's vector. That which was dispatched orignally.
-    - the further event queue - what is still to be processed.
+    - the further event queue - what is still to be processed. A PersistentQueue.
   "
   [f]
   (router/add-post-event-callback re-frame.router/event-queue f))
