@@ -5,6 +5,8 @@ New API:
     @pupeno is developing [preprender](https://carouselapps.com/prerenderer) which looks pretty neat.  
     Support this effort by adding a way for preprender to hook event processing. 
     
+  - `on-changes` middleware now official. No longer experimental.
+    
 Improvements:
   - [#134](https://github.com/Day8/re-frame/pull/134)
     My thanks to @scgilardi for a nice simplification of the routing state machine. Again!
