@@ -1,5 +1,6 @@
 # re-frame: Derived Values, Flowing
 
+[![Circle CI](https://circleci.com/gh/Day8/re-frame.svg?style=svg)](https://circleci.com/gh/Day8/re-frame)
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
 sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the

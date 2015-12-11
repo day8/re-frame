@@ -24,6 +24,16 @@ Use your best judgement on what is needed here.
 
 **Create pull requests to the develop branch**, work will merged onto master when it is ready to be released.
 
+## Running the tests
+
+To run the tests:
+
+```
+lein deps # will run lein-npm and install Karma and other node dependencies. Only needed the first time.
+lein once # or lein auto # to build re-frame
+karma start # to run the tests with an auto watcher
+```
+
 ## Pull requests for bugs
 
 If possible provide:
