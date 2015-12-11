@@ -26,7 +26,7 @@ Use your best judgement on what is needed here.
 
 ## Running the tests
 
-To run the tests:
+To run the tests, you must have recent versions of node, npm, Leiningen, and a C++ compiler toolchain installed. If you're on Linux or Mac OS X then you will be fine, if you're on Windows then you need to install Visual Studio Community Edition, and the C++ compiler dependencies.
 
 ```
 lein deps # will run lein-npm and install Karma and other node dependencies. Only needed the first time.
