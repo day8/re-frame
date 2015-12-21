@@ -2,6 +2,7 @@
 
 
 Improvements:
+  - works with reagent 0.6.0  (untested claim)
   - [#138](https://github.com/Day8/re-frame/pull/138) Switch to using CircleCI and automated testing with Karma
 
 ## 0.6.0  (2015-12-09)
