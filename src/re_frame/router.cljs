@@ -1,5 +1,6 @@
 (ns re-frame.router
-  (:require [reagent.impl.batching :refer [do-later]]
+  (:require [reagent.impl.batching]
+            [reagent.core]
             [re-frame.handlers :refer [handle]]
             [re-frame.utils :refer [error]]
             [goog.async.nextTick]))
@@ -59,7 +60,9 @@
 
 ;; A map from event metadata keys to the corresponding "run later" functions
 (def later-fns
-  {:flush-dom do-later              ;; after next annimation frame
+  {:flush-dom (if (exists? reagent.core/after-render)              ;; after next annimation frame
+                (.-after-render reagent.core)                      ;; reagent >= 0.6.0
+                (.-do-later reagent.impl.batching))                ;; reagent < 0.6.0
    :yield     goog.async.nextTick}) ;; almost immediately
 
 (defprotocol IEventQueue
