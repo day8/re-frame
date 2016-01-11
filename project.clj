@@ -22,7 +22,7 @@
   :deploy-repositories [["releases" :clojars]
                         ["snapshots" :clojars]]
 
-  :npm {:dependencies [[karma "https://github.com/danielcompton/karma/archive/v0.13.15.tar.gz"]
+  :npm {:dependencies [[karma "https://github.com/danielcompton/karma/archive/v0.13.19.tar.gz"]
                        [karma-cljs-test "0.1.0"]
                        [karma-chrome-launcher "0.2.0"]
                        [karma-junit-reporter "0.3.8"]]}
