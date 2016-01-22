@@ -159,7 +159,7 @@
   todo removal.
   And to perform this enrichment, a function has to inspect all the todos,
   possibly set flags on each, and set some overall list of duplicates.
-  And this duplication check might just be one check amoung many.
+  And this duplication check might just be one check among many.
   \"f\" would need to be both adding and removing the duplicate warnings.
   By applying \"f\" in middleware, we keep the handlers simple and yet we
   ensure this important step is not missed."
