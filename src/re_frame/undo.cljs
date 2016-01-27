@@ -53,10 +53,10 @@
   "Stores the value currently in app-db, so the user can later undo"
   [explanation]
   (clear-redos!)
-  (reset! undo-list (vec (take
+  (reset! undo-list (vec (take-last
                            @max-undos
                            (conj @undo-list @app-db))))
-  (reset! undo-explain-list (vec (take
+  (reset! undo-explain-list (vec (take-last
                                    @max-undos
                                    (conj @undo-explain-list @app-explain))))
   (reset! app-explain explanation))
