@@ -164,7 +164,7 @@
 
 
 (handlers/register-base     ;; not a pure handler
-  :purge-redos              ;; usage:  (dispatch [:purge-redo])
+  :purge-redos              ;; usage:  (dispatch [:purge-redos])
   (fn handler
     [_ _]
     (if-not (redos?)
