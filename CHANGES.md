@@ -4,6 +4,9 @@ Improvements:
   - works with reagent 0.6.0 (while remaining backwards compatible with previous versions)
   - [#138](https://github.com/Day8/re-frame/pull/138) Switch to using CircleCI and automated testing with Karma
 
+Fixed:
+  - [#149](https://github.com/Day8/re-frame/pull/149) Undo now discards oldest undo states, not the newest ones.
+
 ## 0.6.0  (2015-12-09)
 
 New API:
