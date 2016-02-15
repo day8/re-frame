@@ -18,7 +18,7 @@
   You don't have to use this middleware directly. It is automatically applied to
   your handler's middleware when you use \"register-handler\".
   In fact, the only way to by-pass automatic use of \"pure\" in your middleware
-  is to use the low level registration function \"re-frame.handlers/register-handler-base\""
+  is to use the low level registration function \"re-frame.handlers/register-base\""
   [handler]
   (fn pure-handler
     [app-db event-vec]
