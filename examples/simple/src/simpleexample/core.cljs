@@ -21,14 +21,14 @@
 
 
 (register-handler                 ;; setup initial state
-  :initialize                     ;; usage:  (submit [:initialize])
+  :initialize                     ;; usage:  (dispatch [:initialize])
   (fn
     [db _]
     (merge db initial-state)))    ;; what it returns becomes the new state
 
 
 (register-handler
-  :time-color                     ;; usage:  (submit [:time-color 34562])
+  :time-color                     ;; usage:  (dispatch [:time-color 34562])
   (path [:time-color])            ;; this is middleware
   (fn
     [time-color [_ value]]        ;; path middleware adjusts the first parameter
