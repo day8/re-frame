@@ -192,8 +192,6 @@
           new-db)))))
 
 
-;; EXPERIMENTAL
-
 (def  on-changes
   "Middleware factory which acts a bit like \"reaction\"  (but it flows into db , rather than out)
   It observes N  inputs (paths into db) and if any of them change (as a result of the
