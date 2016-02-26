@@ -1,8 +1,9 @@
 ## 0.7.0  (2016-NN-NN)
 
 Improvements:
-  - added one tick of extra pause when events have `:flush=dom` metadata. Previously, there were odd times when the pause wasn't enough. 
-  - compatable with reagent 0.6.0 (untested) while remaining backwards compatible with previous versions
+  - added one tick of extra pause when events have `:flush=dom` metadata. Previously, there were odd times when 
+    the pause wasn't long enough to ensure redraws. 
+  - now compatable with Reagent 0.6.0 (but not fully tested) while remaining backwards compatible with Reagent v0.5.1
   - [#138](https://github.com/Day8/re-frame/pull/138) Switch to using CircleCI and automated testing with Karma
 
 Fixed:
