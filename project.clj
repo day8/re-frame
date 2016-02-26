@@ -1,10 +1,10 @@
-(defproject re-frame "0.7.0-alpha-2"
+(defproject re-frame "0.7.0-alpha-3"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
   :dependencies [[org.clojure/clojure        "1.7.0"]
                  [org.clojure/clojurescript  "1.7.170"]
-                 [reagent "0.6.0-alpha"]]
+                 [reagent "0.5.1"]]
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[karma-reporter "0.3.0"]]
@@ -22,6 +22,7 @@
   :deploy-repositories [["releases" :clojars]
                         ["snapshots" :clojars]]
 
+  ;; because of https://github.com/karma-runner/karma/issues/1746  we include our own fork of karma
   :npm {:dependencies [[karma "https://github.com/danielcompton/karma/archive/v0.13.19.tar.gz"]
                        [karma-cljs-test "0.1.0"]
                        [karma-chrome-launcher "0.2.0"]

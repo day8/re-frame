@@ -57,13 +57,15 @@
 ;;     which will run event processing after the next reagent animation frame.
 ;;
 
+(def run-after-next-annimation-frame
+  (if (exists? reagent.core/after-render)
+    (.-after-render reagent.core)                ;; reagent >= 0.6.0
+    (.-do-later reagent.impl.batching)))          ;; reagent < 0.6.0
 
 ;; A map from event metadata keys to the corresponding "run later" functions
 (def later-fns
-  {:flush-dom (if (exists? reagent.core/after-render)              ;; after next annimation frame
-                (.-after-render reagent.core)                      ;; reagent >= 0.6.0
-                (.-do-later reagent.impl.batching))                ;; reagent < 0.6.0
-   :yield     goog.async.nextTick}) ;; almost immediately
+  {:flush-dom (fn [f] (run-after-next-annimation-frame #(goog.async.nextTick f)))   ;; a tick after the next annimation frame
+   :yield     goog.async.nextTick})           ;; almost immediately
 
 (defprotocol IEventQueue
   (enqueue [this event])
