@@ -596,7 +596,7 @@ With `Form-2` components, there's a function returning a function:
   (defn my-cmp [row-id]
     (let [row-state (subscribe [row-id])]
       (fn [row-id]
-        [div (str "Row: " row-id " is " @row-state)])))
+        [:div (str "Row: " row-id " is " @row-state)])))
 ```
 In this example, `[my-cmp 1][my-cmp 2]` will create two instances of `my-cmp`. Each instance will re-render when its internal `row-state` signal changes.
 
