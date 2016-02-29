@@ -330,7 +330,7 @@ again, and then into further computations, etc.  "Values" flow (propagate) throu
 But this Signal graph must be without cycles, because cycles cause mayhem!  re-frame achieves
 a unidirectional flow.
 
-While the mechanics are different, `reaction` has the intent of `lift` in [Elm] and `defc=` in [Hoplon].
+While the mechanics are different, `reaction` has the intent of `map` in [Elm] and `defc=` in [Hoplon].
 
 Right, so that was a lot of words. Some code to clarify:
 
