@@ -16,8 +16,10 @@
   (if-let [problems  (s/check a-schema db)]
     (throw (js/Error. (str "schema check failed: " problems)))))
 
-;; after an event handler has run, this middleware can check that
-;; it the value in app-db still correctly matches the schema.
+;; Event handlers change state, that's their job. But what heppens if there's
+;; a bug and they corrupt this state in some subtle way? This middleware is run after
+;; each event handler has finished, and it checks app-db against a schema.  This
+;; helpd us detect event handler bugs very early.
 (def check-schema-mw (after (partial check-and-throw schema)))
 
 
