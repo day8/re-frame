@@ -2,7 +2,6 @@
   (:require
     [todomvc.db    :refer [default-value ls->todos todos->ls! schema]]
     [re-frame.core :refer [register-handler path trim-v after debug]]
-    [clojure.data  :as data]
     [schema.core   :as s]))
 
 
