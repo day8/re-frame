@@ -36,6 +36,8 @@
             (reset! app-db new-db)))))))
 
 
+;; no longer needed
+
 #_(defn log-ex
   "Middleware which catches and prints any handler-generated exceptions to console.
   Handlers are called from within a core.async go-loop, and core.async produces
@@ -64,11 +66,12 @@
   [handler]
   (fn debug-handler
     [db v]
-    (group "re-frame event: " v)
+    (log "Handling re-frame event: " v)
     (let [new-db  (handler db v)
           diff    (data/diff db new-db)]
-      (log "only before: " (first diff))
-      (log "only after : " (second diff))
+      (group "clojure.data/diff for: " v)
+        (log "only before: " (first diff))
+        (log "only after : " (second diff))
       (groupEnd)
       new-db)))
 

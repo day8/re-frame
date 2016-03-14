@@ -1,14 +1,19 @@
-## 0.7.0  (2016-NN-NN)
+## 0.7.0  (2016-03-14)
 
 Breaking:
   - removed middleware `log-ex`. It is no longer needed because browsers now correctly report the 
     throw site of re-thown exceptions.  In the unlikely event that you absolutely still need it, 
-    the source for `log-ex`is still in `middleware.cljs`, commented out.  Just transfer it to your project.  
+    the source for `log-ex` is still in `middleware.cljs`, commented out.  Just transfer it to your project.  
+    
+  - `debug` middleware now produces slightly different output (to console). So no code will need to change, 
+    just your expectations of what you see in console. Previously all console output from an event handler was put 
+    into the one console group, which could lead to exceptions being hidden (down in a closed group).   
   
 Improvements:
   - added one tick of extra pause when events have `:flush=dom` metadata. Previously, there were odd times when 
     the pause wasn't long enough to ensure redraws. 
-  - now compatable with Reagent 0.6.0 (but not fully tested) while remaining backwards compatible with Reagent v0.5.1
+  - now compatible with Reagent 0.6.0 (but this not fully tested) while remaining backwards compatible with 
+    Reagent v0.5.1
   - [#138](https://github.com/Day8/re-frame/pull/138) Switch to using CircleCI and automated testing with Karma
 
 Fixed:
