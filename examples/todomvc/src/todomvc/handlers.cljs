@@ -1,7 +1,8 @@
 (ns todomvc.handlers
   (:require
     [todomvc.db    :refer [default-value ls->todos todos->ls! schema]]
-    [re-frame.core :refer [register-handler path trim-v after]]
+    [re-frame.core :refer [register-handler path trim-v after debug]]
+    [clojure.data  :as data]
     [schema.core   :as s]))
 
 
@@ -19,16 +20,18 @@
 ;; Event handlers change state, that's their job. But what heppens if there's
 ;; a bug and they corrupt this state in some subtle way? This middleware is run after
 ;; each event handler has finished, and it checks app-db against a schema.  This
-;; helpd us detect event handler bugs very early.
+;; helps us detect event handler bugs early.
 (def check-schema-mw (after (partial check-and-throw schema)))
 
 
 (def ->ls (after todos->ls!))    ;; middleware to store todos into local storage
 
+
 ;; middleware for any handler that manipulates todos
 (def todo-middleware [check-schema-mw ;; ensure the schema is still valid
                       (path :todos)   ;; 1st param to handler will be value from this path
                       ->ls            ;; write to localstore each time
+                      (when ^boolean js/goog.DEBUG debug)       ;; look in your browser console
                       trim-v])        ;; remove event id from event vec
 
 
