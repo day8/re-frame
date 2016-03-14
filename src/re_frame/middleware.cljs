@@ -36,7 +36,7 @@
             (reset! app-db new-db)))))))
 
 
-(defn log-ex
+#_(defn log-ex
   "Middleware which catches and prints any handler-generated exceptions to console.
   Handlers are called from within a core.async go-loop, and core.async produces
   a special kind of hell when in comes to stacktraces. By the time an exception

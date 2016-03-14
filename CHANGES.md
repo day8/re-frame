@@ -1,5 +1,10 @@
 ## 0.7.0  (2016-NN-NN)
 
+Breaking:
+  - removed middleware `log-ex`. It is no longer needed because browsers now correctly report the 
+    throw site of re-thown exceptions.  In the unlikely event that you absolutely still need it, 
+    the source for `log-ex`is still in `middleware.cljs`, commented out.  Just transfer it to your project.  
+  
 Improvements:
   - added one tick of extra pause when events have `:flush=dom` metadata. Previously, there were odd times when 
     the pause wasn't long enough to ensure redraws. 

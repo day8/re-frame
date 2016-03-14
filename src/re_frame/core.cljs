@@ -27,7 +27,6 @@
 (def enrich      middleware/enrich)
 (def trim-v      middleware/trim-v)
 (def after       middleware/after)
-(def log-ex      middleware/log-ex)
 (def on-changes  middleware/on-changes)
 
 
