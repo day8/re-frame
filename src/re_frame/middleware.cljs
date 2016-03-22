@@ -6,7 +6,8 @@
     [clojure.data   :as data]))
 
 
-;; See docs in the Wiki: https://github.com/Day8/re-frame/wiki
+;; Middleware docs can be found in the Wiki: https://github.com/Day8/re-frame/wiki
+;; Real use can be seen in: examples/todomvc/handler.cljs
 
 
 (defn pure
