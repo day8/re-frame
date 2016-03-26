@@ -16,8 +16,8 @@
   (if-let [problems  (s/check a-schema db)]
     (throw (js/Error. (str "schema check failed: " problems)))))
 
-;; Event handlers change state, that's their job. But what heppens if there's
-;; a bug and they corrupt this state in some subtle way? This middleware is run after
+;; Event handlers change state, that's their job. But what happens if there's
+;; a bug and it corrupts this state in some subtle way? This middleware is run after
 ;; each event handler has finished, and it checks app-db against a schema.  This
 ;; helps us detect event handler bugs early.
 (def check-schema-mw (after (partial check-and-throw schema)))
@@ -28,7 +28,7 @@
 
 ;; middleware for any handler that manipulates todos
 (def todo-middleware [check-schema-mw ;; ensure the schema is still valid
-                      (path :todos)   ;; 1st param to handler will be value from this path
+                      (path :todos)   ;; 1st param to handler will be the value from this path
                       ->ls            ;; write to localstore each time
                       (when ^boolean js/goog.DEBUG debug)       ;; look in your browser console
                       trim-v])        ;; remove event id from event vec
@@ -47,7 +47,7 @@
 ;; -- Event Handlers ----------------------------------------------------------
 
                                   ;; usage:  (dispatch [:initialise-db])
-(register-handler                 ;; On app startup, ceate initial state
+(register-handler                 ;; On app startup, create initial state
   :initialise-db                  ;; event id being handled
   check-schema-mw                 ;; afterwards: check that app-db matches the schema
   (fn [_ _]                       ;; the handler being registered
