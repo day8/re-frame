@@ -32,3 +32,4 @@
   (dispatch-sync [:initialise-db])
   (reagent/render [todomvc.views/todo-app]
                   (.getElementById js/document "app")))
+

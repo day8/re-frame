@@ -93,3 +93,4 @@
            [stats-footer]])]
        [:footer.info
         [:p "Double-click to edit a todo"]]])))
+
