@@ -112,3 +112,4 @@
   (dispatch-sync [:initialize])
   (reagent/render [simple-example]
                   (js/document.getElementById "app")))
+

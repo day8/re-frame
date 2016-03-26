@@ -48,3 +48,4 @@
               active-count    (- (count todos) completed-count)
               showing         (:showing @db)]
              [active-count completed-count showing]))))  ;; tuple
+
