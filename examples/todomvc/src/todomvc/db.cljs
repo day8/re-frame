@@ -31,7 +31,6 @@
                           )})
 
 
-
 ;; -- Default app-db Value  ---------------------------------------------------
 ;;
 ;; When the application first starts, this will be the value put in app-db
@@ -42,7 +41,6 @@
 (def default-value            ;; what gets put into app-db by default.
   {:todos   (sorted-map)      ;; an empty list of todos. Use the (int) :id as the key
    :showing :all})            ;; show all todos
-
 
 
 ;; -- Local Storage  ----------------------------------------------------------
@@ -66,3 +64,4 @@
   "Puts todos into localStorage"
   [todos]
   (.setItem js/localStorage lsk (str todos)))   ;; sorted-map writen as an EDN map
+
