@@ -1,18 +1,23 @@
+## Unreleased
+
+Improvements
+  - `debug` middleware logs a single log line instead of a group if there is no difference in app-db between before and after running the handler.
+
 ## 0.7.0  (2016-03-14)
 
 Breaking:
-  - removed middleware `log-ex`. It is no longer needed because browsers now correctly report the 
-    throw site of re-thown exceptions.  In the unlikely event that you absolutely still need it, 
-    the source for `log-ex` is still in `middleware.cljs`, commented out.  Just transfer it to your project.  
-    
-  - `debug` middleware now produces slightly different output (to console). So no code will need to change, 
-    just your expectations of what you see in console. Previously all console output from an event handler was put 
-    into the one console group, which could lead to exceptions being hidden (down in a closed group).   
-  
+  - removed middleware `log-ex`. It is no longer needed because browsers now correctly report the
+    throw site of re-thown exceptions.  In the unlikely event that you absolutely still need it,
+    the source for `log-ex` is still in `middleware.cljs`, commented out.  Just transfer it to your project.
+
+  - `debug` middleware now produces slightly different output (to console). So no code will need to change,
+    just your expectations of what you see in console. Previously all console output from an event handler was put
+    into the one console group, which could lead to exceptions being hidden (down in a closed group).
+
 Improvements:
-  - added one tick of extra pause when events have `:flush=dom` metadata. Previously, there were odd times when 
-    the pause wasn't long enough to ensure redraws. 
-  - now compatible with Reagent 0.6.0 (but this not fully tested) while remaining backwards compatible with 
+  - added one tick of extra pause when events have `:flush=dom` metadata. Previously, there were odd times when
+    the pause wasn't long enough to ensure redraws.
+  - now compatible with Reagent 0.6.0 (but this not fully tested) while remaining backwards compatible with
     Reagent v0.5.1
   - [#138](https://github.com/Day8/re-frame/pull/138) Switch to using CircleCI and automated testing with Karma
 
@@ -22,22 +27,22 @@ Fixed:
 ## 0.6.0  (2015-12-09)
 
 New API:
-  - [#118](https://github.com/Day8/re-frame/pull/118) - Add `add-post-event-callback` to the API.   
-    @pupeno is developing [preprender](https://carouselapps.com/prerenderer) which looks pretty neat.  
-    Support this effort by adding a way for preprender to hook event processing. 
-    
+  - [#118](https://github.com/Day8/re-frame/pull/118) - Add `add-post-event-callback` to the API.
+    @pupeno is developing [preprender](https://carouselapps.com/prerenderer) which looks pretty neat.
+    Support this effort by adding a way for preprender to hook event processing.
+
   - `on-changes` middleware now official. No longer experimental.
-    
+
 Improvements:
   - [#134](https://github.com/Day8/re-frame/pull/134)
     My thanks to @scgilardi for a nice simplification of the routing state machine. Again!
   - [#133](https://github.com/Day8/re-frame/pull/133) Improve Readme formatting
-   
+
 
 ## 0.5.0  (2015-11-5)
 
 New Features:
-  - [#108](https://github.com/Day8/re-frame/pull/108) - Add dynamic subscriptions.  
+  - [#108](https://github.com/Day8/re-frame/pull/108) - Add dynamic subscriptions.
     Docs to follow, and your cheque is in the mail.
 
 Improvements:
@@ -45,19 +50,19 @@ Improvements:
   - removed `-------New Event-------` log msg
   - made groups collapsed by default
   - [#104](https://github.com/Day8/re-frame/pull/104) - Updated to the latest TodoMVC CSS
-  - Reimplemented the router loop. Removed use of core.async. Replaced with hand rolled scheduling. 
+  - Reimplemented the router loop. Removed use of core.async. Replaced with hand rolled scheduling.
     See [420e42a](https://github.com/Day8/re-frame/commit/420e42aacccbac2d81fedc5ff861442a4ce70c1d)
     As a result:
       - there is less of a pause between a `dispatch` and the associated event handler being run. (<1ms vs 5ms??)
-      - groups of events queued up will be handled in a batch, one after the other, without yielding 
+      - groups of events queued up will be handled in a batch, one after the other, without yielding
         to the browser (previously re-frame yielded to the browser before every single event).
-        
-    This fixes issues like [#39](https://github.com/Day8/re-frame/pull/39) and 
+
+    This fixes issues like [#39](https://github.com/Day8/re-frame/pull/39) and
     [#121](https://github.com/Day8/re-frame/pull/121)
-    
+
     I doubt this will affect normal apps. But it could affect games which depend on existing timings. Maybe.
     It could affect apps which dispatch large volumes of events (telemetry?) very quickly. Maybe.
-    
+
 
 ## v0.4.1 (2015-05-29)
 
