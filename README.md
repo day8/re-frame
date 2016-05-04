@@ -1,6 +1,12 @@
 # re-frame: Derived Values, Flowing
 
-[![Circle CI](https://circleci.com/gh/Day8/re-frame.svg?style=svg)](https://circleci.com/gh/Day8/re-frame)
+### Build Status
+
+Branch | Status
+----------|--------
+`master` | [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=svg)](https://circleci.com/gh/Day8/re-frame/tree/master)
+`develop` | [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=svg)](https://circleci.com/gh/Day8/re-frame/tree/develop)
+
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
 sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the
@@ -589,9 +595,9 @@ With `Form-2` components, there's a function returning a function:
  means it will rerun every time `name-ratom` changes.
 - the outer function is a setup function, called once for each instance of the component. Notice the use of
  'subscribe' with the parameter `:name-query`. That creates a Signal through which new values are supplied
- over time; each new value causing the returned function (the actual renderer) to be run. 
+ over time; each new value causing the returned function (the actual renderer) to be run.
 
->It is important to distinguish between a new instance of the component versus the same instance of a component reacting to a new value. Simplistically, a new component is returned for every unique value the setup function (i.e. the outer function) is called with. This allows subscriptions based on initialisation values to be created, for example: 
+>It is important to distinguish between a new instance of the component versus the same instance of a component reacting to a new value. Simplistically, a new component is returned for every unique value the setup function (i.e. the outer function) is called with. This allows subscriptions based on initialisation values to be created, for example:
 ``` Clojure
   (defn my-cmp [row-id]
     (let [row-state (subscribe [row-id])]
