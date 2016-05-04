@@ -13,7 +13,7 @@
                                     [lein-figwheel "0.3.8"]]}}
 
   :clean-targets [:target-path
-                  "run/compiled/demo"]
+                  "run/compiled"]
 
   :resource-paths ["run/resources"]
   :jvm-opts       ["-Xmx1g" "-XX:+UseConcMarkSweepGC"]
