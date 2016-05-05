@@ -47,11 +47,14 @@
     [db v]
     (log "Handling re-frame event: " v)
     (let [new-db  (handler db v)
-          diff    (data/diff db new-db)]
-      (group "clojure.data/diff for: " v)
-        (log "only before: " (first diff))
-        (log "only after : " (second diff))
-      (groupEnd)
+          [before after] (data/diff db new-db)
+          db-changed? (or (some? before) (some? after))]
+      (if db-changed?
+        (do (group "clojure.data/diff for: " v
+              (log "only before: " before)
+              (log "only after : " after))
+            (groupEnd))
+        (log "clojure.data/diff no changes for: " v))
       new-db)))
 
 
