@@ -8,7 +8,11 @@
 
 ;; -- Router Loop ------------------------------------------------------------
 ;;
-;; Conceptually, the task is to process events in a perpetual loop, one after
+;; A call to "re-frame.core/dispatch" places an event on a queue.  Sometime
+;; shortly afterwards the associated event handler will be run.  The following
+;; code handles this process.
+;;
+;; So, the task is to process events in a perpetual loop, one after
 ;; the other, FIFO, calling the right event-handler for each, being idle when
 ;; there are no events, and firing up when one arrives, etc. The processing
 ;; of an event happens "asynchronously" sometime after the event is
@@ -27,20 +31,20 @@
 ;; control. So now we hand-roll our own, finite-state-machine and all.
 ;;
 ;; The strategy is this:
-;;   - maintain a queue of `dispatched` events.
+;;   - maintain a FIFO queue of `dispatched` events.
 ;;   - when a new event arrives, "schedule" processing of this queue using
 ;;     goog.async.nextTick, which means it will happen "very soon".
-;;   - when processing events, do ALL the ones currently queued. Don't stop.
+;;   - when processing events, do ALL the those currently queued. Don't stop.
 ;;     Don't yield to the browser. Hog that CPU.
-;;   - but if any new events arrive during this cycle of processing, don't do
-;;     them immediately. Leave them queued. Yield first to the browser, and
-;;     do these new events in the next processing cycle. That way we drain
+;;   - but if any new events are dispatched during this cycle of processing,
+;;     don't do them immediately. Leave them queued. Yield first to the browser,
+;;     and do these new events in the next processing cycle. That way we drain
 ;;     the queue up to a point, but we never hog the CPU forever. In
 ;;     particular, we handle the case where handling one event will beget
 ;;     another event. The freshly begat event will be handled next cycle,
-;;     with yielding in between.
+;;     with yielding in-between.
 ;;   - In some cases, an event should not be run until after the GUI has been
-;;     updated, i.e., after the next reagent animation frame. In such a case,
+;;     updated, i.e., after the next Reagent animation frame. In such a case,
 ;;     the event should be dispatched with :flush-dom metadata like this:
 ;;       (dispatch ^:flush-dom [:event-id other params])
 ;;     Such an event will temporarily block all further processing because
