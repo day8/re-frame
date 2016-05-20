@@ -1,7 +1,11 @@
-## Unreleased
+## 0.8.0  (XXX)
 
+Breaking:
+  - this version requires reagent 0.6.0 or later.  It won't work with 0.5.N. 
+  
 Improvements
-  - `debug` middleware logs a single log line instead of a group if there is no difference in app-db between before and after running the handler.
+  - `debug` middleware logs a single log line instead of a group if there is no difference in app-db between 
+     before and after running the handler.
 
 ## 0.7.0  (2016-03-14)
 
