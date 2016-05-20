@@ -41,7 +41,9 @@
 (defn debug
   "Middleware which logs debug information to js/console for each event.
   Includes a clojure.data/diff of the db, before vs after, showing the changes
-  caused by the event."
+  caused by the event.
+  See also: https://gist.github.com/mike-thompson-day8/9439d8c502c2f307c029a142b689852d
+  "
   [handler]
   (fn debug-handler
     [db v]
