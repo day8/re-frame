@@ -7,6 +7,8 @@
 
 ;; maps from handler-id to handler-fn
 (def ^:private key->fn (atom {}))
+(def ^:private v->subscription (atom {}))
+(def ^:private dynv->subscription (atom {}))
 
 
 (defn clear-handlers!
@@ -26,21 +28,29 @@
 (defn subscribe
   "Returns a reagent/reaction which observes a part of app-db"
   ([v]
-   (let [key-v (first-in-vector v)
-         handler-fn (get @key->fn key-v)]
-     (if (nil? handler-fn)
-       (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
-       (handler-fn app-db v))))
+   (if-let [sub (get @v->subscription v)]
+     sub
+     (let [key-v (first-in-vector v)
+           handler-fn (get @key->fn key-v)]
+       (if (nil? handler-fn)
+         (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
+         (let [sub (handler-fn app-db v)]
+           (swap! v->subscription assoc v sub)
+           sub)))))
   ([v dynv]
-   (let [key-v (first-in-vector v)
-         handler-fn (get @key->fn key-v)]
-     (when ^boolean js/goog.DEBUG
-       (when-let [not-reactive (seq (remove #(implements? reagent.ratom/IReactiveAtom %) dynv))]
-         (warn "re-frame: dynv contained parameters that don't implement IReactiveAtom: " not-reactive)))
-     (if (nil? handler-fn)
-       (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
-       (let [dyn-vals (reaction (mapv deref dynv))
-             sub (reaction (handler-fn app-db v @dyn-vals))]
-         ;; handler-fn returns a reaction which is then wrapped in the sub reaction
-         ;; need to double deref it to get to the actual value.
-         (reaction @@sub))))))
+   (if-let [sub (get @dynv->subscription [v dynv])]
+     sub
+     (let [key-v (first-in-vector v)
+           handler-fn (get @key->fn key-v)]
+       (when ^boolean js/goog.DEBUG
+         (when-let [not-reactive (seq (remove #(implements? reagent.ratom/IReactiveAtom %) dynv))]
+           (warn "re-frame: dynv contained parameters that don't implement IReactiveAtom: " not-reactive)))
+       (if (nil? handler-fn)
+         (error "re-frame: no subscription handler registered for: \"" key-v "\". Returning a nil subscription.")
+         (let [dyn-vals (reaction (mapv deref dynv))
+               dyn-sub (reaction (handler-fn app-db v @dyn-vals))]
+           ;; handler-fn returns a reaction which is then wrapped in the sub reaction
+           ;; need to double deref it to get to the actual value.
+           (let [sub (reaction @@dyn-sub)]
+             (swap! dynv->subscription assoc v sub)
+             sub)))))))
