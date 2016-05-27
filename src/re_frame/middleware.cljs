@@ -82,7 +82,7 @@
 ;; Found I had to do it this way:
 ;;   (def fn-name
 ;;     "docstring"
-;;     ^{....}       ;; middleware put on the following fn
+;;     ^{....}       ;; metadata to put on the following fn
 ;;     (fn fn-name ....))
 ;;
 ;; So, yeah, weird.
