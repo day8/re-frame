@@ -303,7 +303,7 @@ building blocks, so let's now make sure we understand them.
 From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame
 perspective, we'll tweak that paradigm slightly and **view a `ratom` as having a value that
 changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
-`ratom` as a Signal. [Pause and read this](http://elm-lang.org/learn/What-is-FRP.elm).
+`ratom` as a Signal. [Pause and read this](http://elm-lang.org:1234/guide/reactivity).
 
 The 2nd building block, `reaction`, acts a bit like a function. It's a macro which wraps some
 `computation` (a block of code) and returns a `ratom` holding the result of that `computation`.
