@@ -1,11 +1,38 @@
 ## 0.8.0  (XXX)
 
+Headline:
+  - re-frame subscriptions are now de-duplicated. As a result, some Signal graphs will be much more 
+    efficient. The new behaviour better matches programmer intuitions about what "should" happen. 
+  
+    *Explanation* 
+    
+    Each subscription causes a handler to execute, producing
+    a reactive stream of updates. Two calls to `(subscribe [:some :query])` results in two copies of the same   
+    subscription handler running, each delivering a stream of updates. Now, if these two subscriptions 
+    were running at the same time, this would be inefficient. Both handlers would be
+    doing the same computations and delivering the same stream of updates. Unnecessary, duplicate work.
+    
+    Starting with this version, this sort of duplication has been eliminated. Two, or more, concurrent 
+    subscriptions for the same query will now source reactive updates from the one executing handler. 
+     
+    So, how do we know if two subscriptions are "the same".  Answer: two subscriptions
+    are the same if their query vectors test `=` to each other.
+    
+    So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even 
+    though they involve the same event id, `:some-event`, the query vectors do not test `=`. 
+     
+     
 Breaking:
-  - this version requires reagent 0.6.0 or later.  It won't work with 0.5.N. 
+  - requires Reagent >= 0.6.0 or later.  It won't work with <= Reagent 0.5.2. 
+  - XXX undo extracted and put into sister library 
   
 Improvements
-  - `debug` middleware logs a single log line instead of a group if there is no difference in app-db between 
-     before and after running the handler.
+  - XXXX   middleware for spec checking of event vectors  
+  - XXXX   better subscriptions of subscriptions 
+  - XXX spec definitions of what subscriptions deliver ??
+  - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a 
+    single line saying so, rather than a "group".  Makes it slightly easier to grok 
+    the absence of change.
 
 ## 0.7.0  (2016-03-14)
 
