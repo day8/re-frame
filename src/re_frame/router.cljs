@@ -7,17 +7,15 @@
 
 ;; -- Router Loop ------------------------------------------------------------
 ;;
-;; A call to "re-frame.core/dispatch" places an event on a queue.  Sometime
-;; shortly afterwards the associated event handler will be run.  The following
-;; code implements this process.
+;; A call to "re-frame.core/dispatch" places an event on a queue for processing.
+;; A short time later, the handler registered to handle this event will be run.
+;; What follows is the implemtation of this process.
 ;;
-;; So, the task is to process events in a perpetual loop, one after
-;; the other, FIFO, calling the right event-handler for each, being idle when
-;; there are no events, and firing up when one arrives, etc. The processing
-;; of an event happens "asynchronously" sometime after the event is
-;; dispatched.
+;; The task is to process queued events in a perpetual loop, one after
+;; the other, FIFO, calling the registered event-handler for each, being idle when
+;; there are no events, and firing up when one arrives.
 ;;
-;; In practice, browsers only have a single thread of control and we must be
+;; But browsers only have a single thread of control and we must be
 ;; careful to not hog the CPU. When processing events one after another, we
 ;; must hand back control to the browser regularly, so it can redraw, process
 ;; websockets, etc. But not too regularly! If we are in a de-focused browser
@@ -25,16 +23,17 @@
 ;; to process all queued events, or else something like a bursty websocket
 ;; (producing events) might overwhelm the queue. So there's a balance.
 ;;
-;; The original implementation of this router loop used core.async. It was
-;; fairly simple, and it mostly worked, but it did not give enough
-;; control. So now we hand-roll our own, finite-state-machine and all.
+;; The processing/handling of an event happens "asynchronously" sometime after
+;; that event was enqueued via "dispatch". The original implementation of this router loop
+;; used core.async. It was fairly simple, and it mostly worked, but it did not
+;; give enough control. So now we hand-roll our own, finite-state-machine and all.
 ;;
 ;; The strategy is this:
 ;;   - maintain a FIFO queue of `dispatched` events.
 ;;   - when a new event arrives, "schedule" processing of this queue using
 ;;     goog.async.nextTick, which means it will happen "very soon".
-;;   - when processing events, do ALL the those currently queued. Don't stop.
-;;     Don't yield to the browser. Hog that CPU.
+;;   - when processing events, one after the other, do ALL the those currently
+;;     queued. Don't stop. Don't yield to the browser. Hog that CPU.
 ;;   - but if any new events are dispatched during this cycle of processing,
 ;;     don't do them immediately. Leave them queued. Yield first to the browser,
 ;;     and do these new events in the next processing cycle. That way we drain
@@ -42,38 +41,42 @@
 ;;     particular, we handle the case where handling one event will beget
 ;;     another event. The freshly begat event will be handled next cycle,
 ;;     with yielding in-between.
-;;   - In some cases, an event should not be run until after the GUI has been
+;;   - In some cases, an event should not be handled until after the GUI has been
 ;;     updated, i.e., after the next Reagent animation frame. In such a case,
 ;;     the event should be dispatched with :flush-dom metadata like this:
 ;;       (dispatch ^:flush-dom [:event-id other params])
 ;;     Such an event will temporarily block all further processing because
-;;     events are processed sequentially: we handle each event before we
-;;     handle the ones behind it.
+;;     events are processed sequentially: we handle one event completely
+;;     before we handle the ones behind it.
 ;;
-;; Implementation
+;; Implementation Notes:
 ;;   - queue processing can be in a number of states: scheduled, running, paused
-;;     etc. So it is modeled below as a Finite State Machine.
+;;     etc. So it is modeled as a Finite State Machine.
 ;;     See "-fsm-trigger" (below) for the states and transitions.
 ;;   - the scheduling is done via "goog.async.nextTick" which is pretty quick
 ;;   - when the event has :flush-dom metadata we schedule via
-;;       "reagent.impl.batching.do-later"
-;;     which will run event processing after the next reagent animation frame.
+;;       "reagent.core.after-render"
+;;     which will run event processing after the next Reagent animation frame.
 ;;
 
+;; Events can have metadata which say to pause event processing.
 ;; event metadata -> "run later" functions
 (def later-fns
   {:flush-dom (fn [f] ((.-after-render reagent.core) #(goog.async.nextTick f)))   ;; one tick after the end of the next annimation frame
    :yield     goog.async.nextTick})           ;; almost immediately
 
-(defprotocol IEventQueue
-  (enqueue [this event])
 
+;; Abstract representation of the Queue
+(defprotocol IEventQueue
+
+  ;; -- Public API
+  (enqueue [this event])
   (add-post-event-callback [this f])
 
-  ;; Finite State Machine transitions
+  ;; -- Implementation via a Finite State Machine
   (-fsm-trigger [this trigger arg])
 
-  ;; Finite State Machine (FSM) actions
+  ;; -- Finite State Machine actions
   (-add-event [this event])
   (-process-1st-event [this])
   (-run-next-tick [this])
@@ -83,42 +86,46 @@
   (-resume [this]))
 
 
-;;
+;; Concrete implementation of IEventQueue
 (deftype EventQueue [^:mutable fsm-state
                      ^:mutable queue
                      ^:mutable post-event-callback-fns]
   IEventQueue
 
   ;; -- API ------------------------------------------------------------------
+
   (enqueue [this event]
-    ;; put an event into the queue
+    ;; put an event into the queue  (assumidly because of a dispatch)
     (-fsm-trigger this :add-event event))
 
   (add-post-event-callback [this f]
     ;; register a callback to be invoked when events are processed
-    ;; used by so-called isomorphic, server-side rendering frameworks
+    ;; Useful to so-called isomorphic, server-side rendering frameworks
     (set! post-event-callback-fns (conj post-event-callback-fns f)))
 
 
-  ;; -- FSM ------------------------------------------------------------------
+  ;; -- FSM Implementation ---------------------------------------------------
   (-fsm-trigger
     [this trigger arg]
 
-    ;; given a trigger, work out new state, plus the new action
-    (let [[new-state action-fn]
+    ;; The following "case" imoplements the Finite State Machine.
+    ;; Given a "trigger", and the existing FSM state, it computes the new
+    ;; FSM state and the tranistion action (function) to perform.
+
+    (let [[new-fsm-state action-fn]
           (case [fsm-state trigger]
 
-            ;; The following defines the FSM.
-            ;; All FSM states, tranistions and actions are described
-            ;; in the next 20-odd lines.
-            ;; Read it as:
-            ;; [current-state trigger] -> [new-state action-fn]
-
-            ;; State:  idle
+            ;; You should read the following "case" as:
+            ;; [current-FSM-state trigger] -> [new-FSM-state action-fn]
+            ;;
+            ;; So, the next line should be interpreted as:
+            ;; if you are in state ":idle" and a trigger ":add-event"
+            ;; happens, then move the FSM to state ":scheduled" and execute
+            ;; that "do" fucntion.
             [:idle :add-event] [:scheduled #(do (-add-event this arg)
                                                 (-run-next-tick this))]
 
-            ;; State: :scheduled  (the queue is scheduled to run - soon)
+            ;; State: :scheduled  (the queue is scheduled to run, soon)
             [:scheduled :add-event] [:scheduled #(-add-event this arg)]
             [:scheduled :run-queue] [:running   #(-run-queue this)]
 
@@ -130,14 +137,14 @@
                                      [:idle]
                                      [:scheduled #(-run-next-tick this)])
 
-            ;; State: :paused (the metadata :flush-dom has caused a temporary pause in processing)
+            ;; State: :paused (the event metadata :flush-dom has caused a temporary pause in processing)
             [:paused :add-event] [:paused  #(-add-event this arg)]
             [:paused :resume   ] [:running #(-resume this)]
 
             (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
 
-      ;; The "case" above provided both the new state, and the action function to run.  So do it.
-      (set! fsm-state new-state)
+      ;; The "case" above computed both the new FSM state, and the action. Now, make it happen.
+      (set! fsm-state new-fsm-state)
       (when action-fn (action-fn))))
 
   (-add-event
@@ -189,9 +196,9 @@
 
 
 ;; ---------------------------------------------------------------------------
-;; This is the global queue for events
-;; When "dispatch" is called, the event is put into this queue.  Later the queue
-;; will "run" and the event will be "handled" by the registered event handler.
+;; Event Queue
+;; When "dispatch" is called, the event is added into this queue.  Later the queue
+;; will "run" and the event will be "handled" by the registered function.
 ;;
 (def event-queue (->EventQueue :idle  #queue [] []))
 
@@ -201,7 +208,7 @@
 ;;
 
 (defn dispatch
-  "Queue an event to be processed by the registered handler.
+  "Queue an event to be processed by the registered handler function.
 
   Usage example:
      (dispatch [:delete-item 42])"
@@ -214,7 +221,7 @@
 
 (defn dispatch-sync
   "Send an event to be processed by the registered handler
-  immediately. Note: dispatch-sync may not be called while another
+  immediately. Note: dispatch-sync cannot be called while another
   event is being handled.
 
   Usage example:
