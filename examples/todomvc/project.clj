@@ -1,8 +1,8 @@
-(defproject todomvc-re-frame "0.7.0"
-  :dependencies [[org.clojure/clojure       "1.7.0"]
-                 [org.clojure/clojurescript "1.7.170"]
-                 [reagent "0.5.1"]
-                 [re-frame "0.7.0"]
+(defproject todomvc-re-frame "0.8.0"
+  :dependencies [[org.clojure/clojure        "1.8.0"]
+                 [org.clojure/clojurescript  "1.8.51"]
+                 [reagent "0.6.0-SNAPSHOT"]
+                 [re-frame "0.8.0-SNAPSHOT"]
                  [secretary "1.2.3"]
                  [prismatic/schema "1.0.3"]]
 
@@ -13,7 +13,7 @@
 
   :profiles {:dev {:cljsbuild
                    {:builds {:client {:source-paths ["devsrc"]
-                                      :compiler     {:main todomvc.dev
+                                      :compiler     {:main "todomvc.dev"
                                                      :asset-path "js"
                                                      :optimizations :none
                                                      :source-map true

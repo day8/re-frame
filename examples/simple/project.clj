@@ -1,8 +1,8 @@
-(defproject simple-re-frame "0.7.0"
-  :dependencies [[org.clojure/clojure       "1.7.0"]
-                 [org.clojure/clojurescript "1.7.170"]
-                 [reagent "0.5.1"]
-                 [re-frame "0.7.0"]]
+(defproject simple-re-frame "0.8.0"
+  :dependencies [[org.clojure/clojure        "1.8.0"]
+                 [org.clojure/clojurescript  "1.8.51"]
+                 [reagent  "0.6.0-SNAPSHOT"]
+                 [re-frame "0.8.0-SNAPSHOT"]]
 
   :plugins [[lein-cljsbuild "1.1.1"]
             [lein-figwheel  "0.5.0-2"]]
@@ -11,7 +11,7 @@
 
   :profiles {:dev {:cljsbuild
                    {:builds {:client {:source-paths ["devsrc"]
-                                      :compiler     {:main simpleexample.dev
+                                      :compiler     {:main "simpleexample.dev"
                                                      :asset-path "js"
                                                      :optimizations :none
                                                      :source-map true

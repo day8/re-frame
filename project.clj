@@ -1,10 +1,10 @@
-(defproject re-frame "0.7.1-SNAPSHOT"
+(defproject re-frame "0.8.0-SNAPSHOT"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
-  :dependencies [[org.clojure/clojure        "1.7.0"]
-                 [org.clojure/clojurescript  "1.7.170"]
-                 [reagent "0.5.1"]]
+  :dependencies [[org.clojure/clojure        "1.8.0"]
+                 [org.clojure/clojurescript  "1.8.51"]
+                 [reagent "0.6.0-SNAPSHOT"]]
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[karma-reporter "0.3.0"]]
