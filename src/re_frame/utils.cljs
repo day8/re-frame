@@ -42,5 +42,5 @@
   [v]
   (if (vector? v)
     (first v)
-    (error "re-frame: expected a vector event, but got: " v)))
+    (error "re-frame: expected a vector, but got: " v)))
 
