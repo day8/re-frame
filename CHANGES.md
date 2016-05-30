@@ -26,9 +26,9 @@ Breaking:
   - requires Reagent >= 0.6.0 or later.  It won't work with <= Reagent 0.5.2.
    
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can  
-    supply alternatives via `re-frame.core/set-loggers!`.  
+    supply alternatives using `re-frame.core/set-loggers!`.  
     
-    With this release, alternatives you supply will be called with different parameter values. 
+    With this release, any alternatives you supply will be called with different parameters. 
     Previously loggers were given a single `str` parameter but now they are expected to act 
     like `console.log` itself and take variadic, non string params. Sorry to break things, but
     we are trying to maximise use of cljs-devtools and information is lost when strings are 
@@ -36,11 +36,11 @@ Breaking:
      
     To transition, here's the tweak you can make:
     ```
-     ;; your old version might have looked like this. Single string parameter.
+     ;; your old log function might have looked like this. Single string parameter.
     (defn my-logger [s]  (do-something-with s))    
     
     ;; your new version will have variadic params, and turn them into a string
-    (defn myloggerr [& args] (do-something-with (apply str args))
+    (defn my-logger [& args] (do-something-with (apply str args))
     ```
       
     
