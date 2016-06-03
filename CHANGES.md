@@ -1,4 +1,4 @@
-## 0.8.0  (XXX)
+## 0.8.0  (2016.06.XXXX)
 
 Headline:
   - re-frame subscriptions are now de-duplicated. As a result, some Signal graphs will be much more 
@@ -20,7 +20,7 @@ Headline:
     
     So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even 
     though they involve the same event id, `:some-event`, the query vectors do not test `=`. 
-     
+ 
      
 Breaking:
   - requires Reagent >= 0.6.0 or later.  It won't work with <= Reagent 0.5.2.
@@ -29,12 +29,12 @@ Breaking:
     supply alternatives using `re-frame.core/set-loggers!`.  
     
     With this release, any alternatives you supply will be called with different parameters. 
-    Previously loggers were given a single `str` parameter but now they are expected to act 
+    Previously loggers were called with a single `str` parameter but now they are expected to act 
     like `console.log` itself and take variadic, non string params. Sorry to break things, but
     we are trying to maximise use of cljs-devtools and information is lost when strings are 
-    output, instead of real data.
+    output, instead of actual data.
      
-    To transition, here's the tweak you can make:
+    To transition, you'll need to tweak like this: 
     ```
      ;; your old log function might have looked like this. Single string parameter.
     (defn my-logger [s]  (do-something-with s))    
@@ -42,13 +42,15 @@ Breaking:
     ;; your new version will have variadic params, and turn them into a string
     (defn my-logger [& args] (do-something-with (apply str args))
     ```
+    Of course, you only have to worry about this if you are using `re-frame.core/set-loggers!` to 
+    hook in your own loggers.  Otherwise, you have nothing to do. 
+
       
-    
-  
 Improvements
   - XXXX   middleware for spec checking of event vectors  
   - XXXX   better subscriptions of subscriptions 
   - XXX spec definitions of what subscriptions deliver ??
+  - added new API `re-frame.core/remove-post-event-callback`. See doc string. 
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a 
     single line saying so, rather than a "group".  Makes it slightly easier to grok 
     the absence of change.

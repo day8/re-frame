@@ -1,7 +1,7 @@
 (ns re-frame.router
   (:require [reagent.core]
             [re-frame.handlers :refer [handle]]
-            [re-frame.utils :refer [error]]
+            [re-frame.utils :refer [warn error]]
             [goog.async.nextTick]))
 
 
@@ -72,6 +72,7 @@
   ;; -- Public API
   (enqueue [this event])
   (add-post-event-callback [this f])
+  (remove-post-event-callback [this f])
 
   ;; -- Implementation via a Finite State Machine
   (-fsm-trigger [this trigger arg])
@@ -95,16 +96,21 @@
   ;; -- API ------------------------------------------------------------------
 
   (enqueue [this event]
-    ;; put an event into the queue  (assumidly because of a dispatch)
+    ;; put an event into the queue  (presumably because of a dispatch)
     (-fsm-trigger this :add-event event))
 
   (add-post-event-callback [this f]
-    ;; register a callback to be invoked when events are processed
+    ;; register a callback to be invoked after events are processed
     ;; Useful to so-called isomorphic, server-side rendering frameworks
+    ;; or when you want to do specialised event processing.
     (set! post-event-callback-fns (conj post-event-callback-fns f)))
+
+  (remove-post-event-callback [this f]
+    (set! post-event-callback-fns (remove #(= % f) post-event-callback-fns)))
 
 
   ;; -- FSM Implementation ---------------------------------------------------
+
   (-fsm-trigger
     [this trigger arg]
 
@@ -118,10 +124,10 @@
             ;; You should read the following "case" as:
             ;; [current-FSM-state trigger] -> [new-FSM-state action-fn]
             ;;
-            ;; So, the next line should be interpreted as:
+            ;; So, for example, the next line should be interpreted as:
             ;; if you are in state ":idle" and a trigger ":add-event"
             ;; happens, then move the FSM to state ":scheduled" and execute
-            ;; that "do" fucntion.
+            ;; that two-part "do" fucntion.
             [:idle :add-event] [:scheduled #(do (-add-event this arg)
                                                 (-run-next-tick this))]
 
@@ -137,7 +143,7 @@
                                      [:idle]
                                      [:scheduled #(-run-next-tick this)])
 
-            ;; State: :paused (the event metadata :flush-dom has caused a temporary pause in processing)
+            ;; State: :paused (:flush-dom metadata on an event has caused a temporary pause in processing)
             [:paused :add-event] [:paused  #(-add-event this arg)]
             [:paused :resume   ] [:running #(-resume this)]
 
@@ -156,13 +162,13 @@
     (let [event-v (peek queue)]
       (try
         (handle event-v)
-        (catch :default ex
-          (-fsm-trigger this :exception ex)))
-      (set! queue (pop queue))
+        (set! queue (pop queue))
 
-      ;; Tell all registed callbacks that an event was just processed.
-      ;; Pass in the event just handled and the new state of the queue
-      (doseq [f post-event-callback-fns] (f event-v queue))))
+        ;; Tell all registed callbacks that an event was just processed.
+        ;; Pass in the event just handled and the new state of the queue
+        (doseq [f post-event-callback-fns] (f event-v queue))
+        (catch :default ex
+          (-fsm-trigger this :exception ex)))))
 
   (-run-next-tick
     [this]
@@ -220,13 +226,13 @@
 
 
 (defn dispatch-sync
-  "Send an event to be processed by the registered handler
-  immediately. Note: dispatch-sync cannot be called while another
-  event is being handled.
+  "Immediately process an event using the registered handler.
+
+  Generally, don't use this. Use \"dispatch\" instead.  It
+  is an error to even try and use it within an event handler.
 
   Usage example:
      (dispatch-sync [:delete-item 42])"
   [event-v]
   (handle event-v)
   nil)                                                      ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
-
