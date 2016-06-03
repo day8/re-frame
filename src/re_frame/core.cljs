@@ -33,8 +33,10 @@
 ;; --  Logging -----
 ;; re-frame uses the logging functions: warn, log, error, group and groupEnd
 ;; By default, these functions map directly to the js/console implementations
-;; But you can override with your own (set or subset):
-;;   (set-loggers!  {:warn  my-warn   :log  my-looger ...})
+;; But you can override with your own (set or subset).
+;; Example Usage:
+;;   (defn my-warn-fn [& args]  (post-somewhere (apply str args)))
+;;   (re-frame.core/set-loggers!  {:warn  my-warn-fn})
 (def set-loggers! utils/set-loggers!)
 
 
