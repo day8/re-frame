@@ -50,6 +50,7 @@ Improvements
   - XXXX   middleware for spec checking of event vectors  
   - XXXX   better subscriptions of subscriptions 
   - XXX spec definitions of what subscriptions deliver ??
+  - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.  
   - added new API `re-frame.core/remove-post-event-callback`. See doc string. 
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a 
     single line saying so, rather than a "group".  Makes it slightly easier to grok 

@@ -69,8 +69,8 @@
 ;; Abstract representation of the Queue
 (defprotocol IEventQueue
 
-  ;; -- Public API
-  (enqueue [this event])
+  ;; -- API
+  (push [this event])
   (add-post-event-callback [this f])
   (remove-post-event-callback [this f])
 
@@ -79,12 +79,13 @@
 
   ;; -- Finite State Machine actions
   (-add-event [this event])
-  (-process-1st-event [this])
+  (-process-1st-event-in-queue [this])
   (-run-next-tick [this])
   (-run-queue [this])
   (-exception [this ex])
   (-pause [this later-fn])
-  (-resume [this]))
+  (-resume [this])
+  (-call-post-event-callbacks[this event]))
 
 
 ;; Concrete implementation of IEventQueue
@@ -95,18 +96,15 @@
 
   ;; -- API ------------------------------------------------------------------
 
-  (enqueue [this event]
-    ;; put an event into the queue  (presumably because of a dispatch)
+  (push [this event]         ;; presumably called by dispatch
     (-fsm-trigger this :add-event event))
 
-  (add-post-event-callback [this f]
-    ;; register a callback to be invoked after events are processed
-    ;; Useful to so-called isomorphic, server-side rendering frameworks
-    ;; or when you want to do specialised event processing.
-    (set! post-event-callback-fns (conj post-event-callback-fns f)))
+  (add-post-event-callback [_ callback-fn]
+    ;; register a callback function to be called after each event is processed
+    (set! post-event-callback-fns (conj post-event-callback-fns callback-fn)))
 
-  (remove-post-event-callback [this f]
-    (set! post-event-callback-fns (remove #(= % f) post-event-callback-fns)))
+  (remove-post-event-callback [_ callback-fn]
+    (set! post-event-callback-fns (remove #(= % callback-fn) post-event-callback-fns)))
 
 
   ;; -- FSM Implementation ---------------------------------------------------
@@ -114,9 +112,9 @@
   (-fsm-trigger
     [this trigger arg]
 
-    ;; The following "case" imoplements the Finite State Machine.
-    ;; Given a "trigger", and the existing FSM state, it computes the new
-    ;; FSM state and the tranistion action (function) to perform.
+    ;; The following "case" impliments the Finite State Machine.
+    ;; Given a "trigger", and the existing FSM state, it computes the
+    ;; new FSM state and the tranistion action (function).
 
     (let [[new-fsm-state action-fn]
           (case [fsm-state trigger]
@@ -147,26 +145,23 @@
             [:paused :add-event] [:paused  #(-add-event this arg)]
             [:paused :resume   ] [:running #(-resume this)]
 
-            (throw (str "re-frame: state transition not found. " fsm-state " " trigger)))]
+            (throw (js/Error. (str "re-frame: router state transition not found. " fsm-state " " trigger))))]
 
       ;; The "case" above computed both the new FSM state, and the action. Now, make it happen.
       (set! fsm-state new-fsm-state)
       (when action-fn (action-fn))))
 
   (-add-event
-    [this event]
+    [_ event]
     (set! queue (conj queue event)))
 
-  (-process-1st-event
+  (-process-1st-event-in-queue
     [this]
     (let [event-v (peek queue)]
       (try
         (handle event-v)
         (set! queue (pop queue))
-
-        ;; Tell all registed callbacks that an event was just processed.
-        ;; Pass in the event just handled and the new state of the queue
-        (doseq [f post-event-callback-fns] (f event-v queue))
+        (-call-post-event-callbacks this event-v)
         (catch :default ex
           (-fsm-trigger this :exception ex)))))
 
@@ -183,7 +178,7 @@
         (-fsm-trigger this :finish-run nil)
         (if-let [later-fn (some later-fns (-> queue peek meta keys))]  ;; any metadata which causes pausing?
           (-fsm-trigger this :pause later-fn)
-          (do (-process-1st-event this)
+          (do (-process-1st-event-in-queue this)
               (recur (dec n)))))))
 
   (-exception
@@ -195,9 +190,15 @@
     [this later-fn]
     (later-fn #(-fsm-trigger this :resume nil)))
 
+  (-call-post-event-callbacks
+    [_ event-v]
+    ;; Call each registed post-event callback.
+    (doseq [callback post-event-callback-fns]
+      (callback event-v queue)))
+
   (-resume
     [this]
-    (-process-1st-event this)  ;; do the event which paused processing
+    (-process-1st-event-in-queue this)  ;; do the event which paused processing
     (-run-queue this)))        ;; do the rest of the queued events
 
 
@@ -220,19 +221,20 @@
      (dispatch [:delete-item 42])"
   [event-v]
   (if (nil? event-v)
-    (error "re-frame: \"dispatch\" is ignoring a nil event.")
-    (enqueue event-queue event-v))
-  nil)                                                      ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
+    (throw (js/Error. "re-frame: you called \"dispatch\" without an event vector."))
+    (push event-queue event-v))
+  nil)                                           ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 
 (defn dispatch-sync
   "Immediately process an event using the registered handler.
 
-  Generally, don't use this. Use \"dispatch\" instead.  It
+  Generally, you shouldn't use this. Use \"dispatch\" instead.  It
   is an error to even try and use it within an event handler.
 
   Usage example:
      (dispatch-sync [:delete-item 42])"
   [event-v]
   (handle event-v)
-  nil)                                                      ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
+  (-call-post-event-callbacks event-queue event-v)  ;; ugly hack.  Just so post-event-callbacks get called
+  nil)                                              ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
