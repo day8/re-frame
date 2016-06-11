@@ -66,6 +66,5 @@ src
 ## Notes
 
 Various:
- - The [offical reagent example](https://github.com/reagent-project/reagent/tree/master/examples/todomvc).
- - There's also a sibling example (under construction) called TodoMVC-plus which is a more complete example, including testing etc.
- - Look at the [re-frame Wiki](https://github.com/Day8/re-frame/wiki).
+ - The [official reagent example](https://github.com/reagent-project/reagent/tree/master/examples/todomvc)
+ - Look at the [re-frame Wiki](https://github.com/Day8/re-frame/wiki)
