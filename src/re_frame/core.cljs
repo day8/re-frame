@@ -8,6 +8,7 @@
 
 
 ;; --  API  -------
+;; See also macros in clj file
 
 (def dispatch         router/dispatch)
 (def dispatch-sync    router/dispatch-sync)
@@ -32,10 +33,10 @@
 
 ;; --  Logging -----
 ;; re-frame uses the logging functions: warn, log, error, group and groupEnd
-;; By default, these functions map directly to the js/console implementations
-;; But you can override with your own (set or subset).
+;; By default, these functions map directly to the js/console implementations,
+;; but you can override with your own (set or subset).
 ;; Example Usage:
-;;   (defn my-warn-fn [& args]  (post-somewhere (apply str args)))
+;;   (defn my-warn-fn [& args]  (post-it-somewhere (apply str args)))
 ;;   (re-frame.core/set-loggers!  {:warn  my-warn-fn})
 (def set-loggers! utils/set-loggers!)
 
@@ -57,7 +58,7 @@
 (defn add-post-event-callback
   "Registers a callback function 'f'.
   f will be called after each dispatched event is procecessed
-  f will be called with two parameters:
+  f will be called with two arguments:
     - the event's vector. That which was dispatched orignally.
     - the further event queue - what is still to be processed. A PersistentQueue.
 
@@ -65,7 +66,7 @@
     - you are implementing a complex bootstrap pipeline
     - you want to create your own handling infrastructure, with perhaps multiple
       handlers for the one event, etc.  Hook in here.
-    - a libraries providing 'isomorphic javascript' rendering on  Nodejs or Nashorn.
+    - libraries providing 'isomorphic javascript' rendering on  Nodejs or Nashorn.
   "
   [f]
   (router/add-post-event-callback re-frame.router/event-queue f))
