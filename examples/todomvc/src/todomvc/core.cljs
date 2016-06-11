@@ -1,6 +1,7 @@
 (ns todomvc.core
   (:require-macros [secretary.core :refer [defroute]])
   (:require [goog.events :as events]
+            [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [secretary.core :as secretary]
             [todomvc.handlers]
