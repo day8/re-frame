@@ -2,15 +2,16 @@
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
-  :dependencies [[org.clojure/clojure        "1.8.0"]
-                 [org.clojure/clojurescript  "1.8.51"]
-                 [reagent "0.6.0-SNAPSHOT"]]
+  :dependencies [[org.clojure/clojure        "1.9.0-alpha5"]
+                 [org.clojure/clojurescript  "1.9.36"]
+                 [clj-transit "0.8.285"]
+                 [reagent "0.6.0-rc"]]
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[karma-reporter "0.3.0"]]
                      :plugins      [[lein-cljsbuild "1.1.1"]
                                     [lein-npm "0.6.1"]
-                                    [lein-figwheel "0.3.8"]]}}
+                                    [lein-figwheel "0.5.3-2"]]}}
 
   :clean-targets [:target-path
                   "run/compiled"]

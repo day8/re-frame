@@ -1,7 +1,7 @@
 (defproject todomvc-re-frame "0.8.0"
-  :dependencies [[org.clojure/clojure        "1.8.0"]
-                 [org.clojure/clojurescript  "1.8.51"]
-                 [reagent "0.6.0-SNAPSHOT"]
+  :dependencies [[org.clojure/clojure        "1.9.0-alpha5"]
+                 [org.clojure/clojurescript  "1.9.36"]
+                 [reagent "0.6.0-rc"]
                  [re-frame "0.8.0-SNAPSHOT"]
                  [secretary "1.2.3"]
                  [prismatic/schema "1.0.3"]]
