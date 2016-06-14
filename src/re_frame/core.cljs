@@ -4,6 +4,7 @@
     [re-frame.subs       :as subs]
     [re-frame.router     :as router]
     [re-frame.utils      :as utils]
+    [re-frame.undo       :as undo]
     [re-frame.middleware :as middleware]))
 
 
@@ -23,12 +24,22 @@
 
 (def pure        middleware/pure)
 (def debug       middleware/debug)
-(def undoable    middleware/undoable)
 (def path        middleware/path)
 (def enrich      middleware/enrich)
 (def trim-v      middleware/trim-v)
 (def after       middleware/after)
 (def on-changes  middleware/on-changes)
+
+
+;; -- Undo API -----
+;;
+;; https://github.com/Day8/re-frame/wiki/Undo-&-Redo
+
+
+(def undoable    undo/undoable)
+(def set-max-undos!  undo/set-max-undos!)
+(def set-undo-path!  undo/set-undo-path!)
+
 
 
 ;; --  Logging -----
