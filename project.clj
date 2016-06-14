@@ -4,7 +4,6 @@
   :license      {:name "MIT"}
   :dependencies [[org.clojure/clojure        "1.9.0-alpha5"]
                  [org.clojure/clojurescript  "1.9.36"]
-                 [clj-transit "0.8.285"]
                  [reagent "0.6.0-rc"]]
 
   :profiles {:debug {:debug true}
