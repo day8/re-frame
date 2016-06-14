@@ -1,7 +1,7 @@
 ## 0.8.0  (2016.06.XXXX)
 
 Headline:
-  - re-frame subscriptions are now de-duplicated. As a result, some Signal graphs will be much more 
+  - re-frame subscriptions are now de-duplicated. As a result, many Signal graphs will be more 
     efficient. The new behaviour better matches programmer intuitions about what "should" happen. 
   
     *Explanation* 
@@ -15,15 +15,26 @@ Headline:
     Starting with this version, this sort of duplication has been eliminated. Two, or more, concurrent 
     subscriptions for the same query will now source reactive updates from the one executing handler. 
      
-    So, how do we know if two subscriptions are "the same".  Answer: two subscriptions
+    So, how do we know if two subscriptions are "the same"?  Answer: two subscriptions
     are the same if their query vectors test `=` to each other.
     
     So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even 
     though they involve the same event id, `:some-event`, the query vectors do not test `=`. 
  
+  - added a convenience macro called `regsub` which is an easier, more natural way of writing
+    and registering subscription handlers.  The design has really fallen out nicely. 
+    
+    XXX link to more docs. 
+    
+  - the API for the undo/redo framework has been documented. It existed previously, but it
+    was not formally documented.
+    https://github.com/Day8/re-frame/wiki/Undo-&-Redo
+    
      
 Breaking:
   - requires Reagent >= 0.6.0 or later.  It won't work with <= Reagent 0.5.2.
+  
+  - requires both Clojure and ClojureScript >= 1.9.0, because the `specs` library is  used.
    
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can  
     supply alternatives using `re-frame.core/set-loggers!`.  
@@ -42,14 +53,15 @@ Breaking:
     ;; your new version will have variadic params, and turn them into a string
     (defn my-logger [& args] (do-something-with (apply str args))
     ```
-    Of course, you only have to worry about this if you are using `re-frame.core/set-loggers!` to 
+    Of course, you need only worry about this if you are using `re-frame.core/set-loggers!` to 
     hook in your own loggers.  Otherwise, you have nothing to do. 
 
       
 Improvements
+  - XXX    (full-debug!)
   - XXXX   middleware for spec checking of event vectors  
-  - XXXX   better subscriptions of subscriptions 
-  - XXX spec definitions of what subscriptions deliver ??
+  - XXX    todomvc split into simple and advanced.
+
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.  
   - added new API `re-frame.core/remove-post-event-callback`. See doc string. 
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a 

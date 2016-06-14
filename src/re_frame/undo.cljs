@@ -2,20 +2,35 @@
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
     [reagent.core        :as     reagent]
-    [re-frame.utils      :refer  [warn]]
+    [re-frame.utils      :refer  [warn error]]
     [re-frame.db         :refer  [app-db]]
     [re-frame.handlers   :as     handlers]
     [re-frame.subs       :as     subs]))
 
 
-;; -- History -------------------------------------------------------------------------------------
+;; -- Configuration ----------------------------------------------------------
 ;;
 ;;
-(def ^:private max-undos "Maximum number of undo states maintained" (atom 50))
+(def ^:private undo-config (atom {:max-undos 50}   ;; Maximum number of undo states maintained
+                                 {:path  []}))     ;; undo and redos will apply to only this path within app-db
 (defn set-max-undos!
   [n]
-  (reset! max-undos n))
+  (swap! undo-config assoc :max-undos n))
 
+(defn set-undo-path!
+  [ks]
+  (swap! undo-config assoc :path ks))
+
+(defn max-undos
+  []
+  (:max-undos @undo-config))
+
+(defn undo-path-ks
+  []
+  (:path @undo-config))
+
+
+;; -- State history ----------------------------------------------------------
 
 (def ^:private undo-list "A list of history states" (reagent/atom []))
 (def ^:private redo-list "A list of future states, caused by undoing" (reagent/atom []))
@@ -54,10 +69,10 @@
   [explanation]
   (clear-redos!)
   (reset! undo-list (vec (take-last
-                           @max-undos
-                           (conj @undo-list @app-db))))
+                           (max-undos)
+                           (conj @undo-list (get-in @app-db (undo-path-ks))))))
   (reset! undo-explain-list (vec (take-last
-                                   @max-undos
+                                   (max-undos)
                                    (conj @undo-explain-list @app-explain))))
   (reset! app-explain explanation))
 
@@ -65,15 +80,15 @@
 (defn undos?
   "Returns true if undos exist, false otherwise"
   []
-  (pos? (count @undo-list)))
+  (seq @undo-list))
 
 (defn redos?
   "Returns true if redos exist, false otherwise"
   []
-  (pos? (count @redo-list)))
+  (seq @redo-list))
 
 (defn undo-explanations
-  "Returns list of undo descriptions or empty list if no undos"
+  "Returns a vector of undo descriptions, perhaps empty"
   []
   (if (undos?)
     (conj @undo-explain-list @app-explain)
@@ -82,16 +97,16 @@
 ;; -- subscriptions  -----------------------------------------------------------------------------
 
 (subs/register
-  :undos?
+  :undos?                   ;;  usage:  (subscribe [:undos?])
   (fn handler
-    ; "return true if anything is stored in the undo list, otherwise false"
+    ; "returns true if anything is stored in the undo list, otherwise false"
     [_ _]
     (reaction (undos?))))
 
 (subs/register
   :redos?
   (fn handler
-    ; "return true if anything is stored in the redo list, otherwise false"
+    ; "returns true if anything is stored in the redo list, otherwise false"
     [_ _]
     (reaction (redos?))))
 
@@ -99,7 +114,7 @@
 (subs/register
   :undo-explanations
   (fn handler
-    ; "return a vector of string explanations ordered oldest to most recent"
+    ; "returns a vector of string explanations ordered oldest to most recent"
     [_ _]
     (reaction (undo-explanations))))
 
@@ -117,7 +132,7 @@
   [undos cur redos]
   (let [u @undos
         r (cons @cur @redos)]
-    (reset! cur (last u))
+    (swap! cur assoc-in (undo-path-ks) (last u))
     (reset! redos r)
     (reset! undos (pop u))))
 
@@ -142,7 +157,7 @@
   [undos cur redos]
   (let [u (conj @undos @cur)
         r  @redos]
-    (reset! cur (first r))
+    (swap! cur assoc-in (undo-path-ks) (first r))
     (reset! redos (rest r))
     (reset! undos u)))
 
@@ -171,3 +186,27 @@
       (warn "re-frame: you did a (dispatch [:purge-redos]), but there is nothing to redo.")
       (clear-redos!))))
 
+
+
+;; -- Middleware ----------------------------------------------------------
+
+(defn- undoable_
+  "A Middleware factory which stores an undo checkpoint.
+  \"explanation\" can be either a string or a function. If it is a
+  function then must be:  (db event-vec) -> string.
+  \"explanation\" can be nil. in which case \"\" is recorded.
+  "
+  [explanation]
+  (fn undoable-middleware
+    [handler]
+    (fn undoable-handler
+      [db event-vec]
+      (let [explanation (cond
+                          (fn? explanation)     (explanation db event-vec)
+                          (string? explanation) explanation
+                          (nil? explanation)    ""
+                          :else (error "re-frame: \"undoable\" middleware given a bad parameter. Got: " explanation))]
+        (store-now! explanation)
+        (handler db event-vec)))))
+
+(def undoable (with-meta undoable_ {:re-frame-factory-name "undoable"}))
