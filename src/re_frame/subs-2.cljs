@@ -35,9 +35,6 @@
     (coll? data) (map deref data)
     :else @data))
 
-(s/fdef register-pure
-        :args ::args)
-
 (defn register-pure
   "This fn allows the user to write a 'pure' subscription
   i.e. that is a subscription that operates on the values within app-db
@@ -100,3 +97,8 @@
          sub-name
          (fn [db q-vec d-vec]
            (ratom/make-reaction (fn [] (f @db q-vec d-vec))))))))
+
+#_(s/fdef register-pure
+        :args ::args)
+
+#_(s/instrument #'register-pure)
