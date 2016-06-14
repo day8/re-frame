@@ -12,9 +12,8 @@
            [goog.history EventType]))
 
 
-;; debugging aids
-;; we love https://github.com/binaryage/cljs-devtools
-(devtools/install!)
+;; -- Debugging aids ----------------------------------------------------------
+(devtools/install!)     ;; we love https://github.com/binaryage/cljs-devtools
 (enable-console-print!)
 
 ;; -- Routes and History ------------------------------------------------------
