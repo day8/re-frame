@@ -77,6 +77,32 @@
     (reset! db/app-db {:a 1 :b 2})
     (is (= {:a [1 :c], :b [2 :c]} @test-sub))))
 
+
+;============== test cached-subs ================
+(def side-effect-atom (atom 0))
+
+(deftest test-cached-subscriptions
+  (subs/clear-handlers!)
+  (reset! side-effect-atom 0)
+
+  (subs/register
+    :side-effecting-handler
+    (fn side-effect
+      [db [_] [_]]
+      (swap! side-effect-atom inc)
+      (reaction @db)))
+
+ (let [test-sub (subs/subscribe [:side-effecting-handler])]
+    (reset! db/app-db :test)
+    (is (= :test @test-sub))
+    (is (= @side-effect-atom 1))
+    (subs/subscribe [:side-effecting-handler])  ;; this should be handled by cache
+    (is (= @side-effect-atom 1))
+    (subs/subscribe [:side-effecting-handler :a]) ;; should fire again because of the param
+    (is (= @side-effect-atom 2))
+    (subs/subscribe [:side-effecting-handler :a]) ;; this should be handled by cache
+    (is (= @side-effect-atom 2))))
+
 ;============== test register-pure macros ================
 
 (deftest test-reg-sub-macro
