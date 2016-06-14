@@ -29,7 +29,7 @@
                        [karma-junit-reporter "0.3.8"]]}
 
   :cljsbuild {:builds [{:id           "test"
-                        :source-paths ["test"]
+                        :source-paths ["test" "src"]
                         :compiler     {:output-to     "run/compiled/test.js"
                                        :source-map    "run/compiled/test.js.map"
                                        :output-dir    "run/compiled/test"
