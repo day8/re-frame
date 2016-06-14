@@ -6,11 +6,15 @@
             [secretary.core :as secretary]
             [todomvc.handlers]
             [todomvc.subs]
-            [todomvc.views])
+            [todomvc.views]
+            [devtools.core :as devtools])
   (:import [goog History]
            [goog.history EventType]))
 
 
+;; debugging aids
+;; we love https://github.com/binaryage/cljs-devtools
+(devtools/install!)
 (enable-console-print!)
 
 ;; -- Routes and History ------------------------------------------------------
