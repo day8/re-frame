@@ -14,6 +14,7 @@
 (def dispatch-sync    router/dispatch-sync)
 
 (def register-sub        subs/register)
+(def register-pure-sub   subs/register-pure)
 (def clear-sub-handlers! subs/clear-handlers!)
 (def subscribe           subs/subscribe)
 

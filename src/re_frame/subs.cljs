@@ -1,5 +1,6 @@
 (ns re-frame.subs
  (:require
+   [cljs.spec      :as s]
    [reagent.ratom  :as ratom :refer [make-reaction] :refer-macros [reaction]]
    [re-frame.db    :refer [app-db]]
    [re-frame.utils :refer [first-in-vector warn error]]))
@@ -9,11 +10,6 @@
 
 ;; Maps from a query-id to a handler function.
 (def ^:private qid->fn (atom {}))
-
-(defn clear-handlers!
-  "Unregisters all existing subscription handlers"
-  []
-  (reset! qid->fn {}))
 
 (defn register
   "Registers a subscription handler function for an query id"
@@ -30,6 +26,12 @@
 ;; Two subscriptions are "identical" if their query vectors
 ;; test "=".
 (def ^:private query->reaction (atom {}))
+
+(defn clear-handlers!
+  "Unregisters all existing subscription handlers"
+  []
+  (reset! qid->fn {})
+  (reset! query->reaction {}))
 
 (defn cache-and-return
   "cache the reaction r"
@@ -61,7 +63,7 @@
          cached)
      (let [query-id   (first-in-vector v)
            handler-fn (get @qid->fn query-id)]
-       (warn "Subscription crerated: " v)
+       (warn "Subscription created: " v)
        (if-not handler-fn
          (error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
        (cache-and-return v [] (handler-fn app-db v)))))
@@ -83,3 +85,93 @@
             ;; need to double deref it to get to the actual value.
             (warn "Subscription created: " v dynv)
             (cache-and-return v dynv (reaction @@sub))))))))
+
+;; -- Helper code for register-pure -------------------
+
+(s/def ::register-pure-args (s/cat
+                :sub-name   keyword?
+                :sub-fn     (s/? fn?)
+                :arrow-args (s/* (s/cat :key #{:<-} :val vector?))
+                :f          fn?))
+
+(defn- fmap
+  "Returns a new version of 'm' in which f has been applied to each value.
+  (fmap inc {:a 4, :b 2}) => {:a 5, :b 3}"
+  [f m]
+  (into {} (for [[k val] m] [k (f val)])))
+
+(defn- multi-deref
+  "derefs a map sequence or a singleton"
+  [data]
+  (cond
+    (map? data)  (fmap deref data)
+    (coll? data) (map deref data)
+    :else @data))
+
+(defn register-pure
+  "This fn allows the user to write a 'pure' subscription
+  i.e. that is a subscription that operates on the values within app-db
+  rather than the atom itself
+  Note there are 3 ways this function can be called
+
+    ```(register-pure
+         :test-sub
+         (fn [db [_]] db))```
+  In this example the entire app-db is derefed and passed to the subscription
+  function as a singleton
+
+      ```(subs/register-pure
+           :a-b-sub
+           (fn [q-vec d-vec]
+               [(subs/subscribe [:a-sub])
+                (subs/subscribe [:b-sub])]
+           (fn [[a b] [_]] {:a a :b b}))```
+  In this example the the first function is called with the query vector
+  and the dynamic vector as arguements the return value of this function
+  can be singleton reaction or a list or map of reactions. Note that `q-vec`
+  and `d-vec` can be destructured and used in the subscriptions (this is the point
+  actually). Again the subscriptions are derefed and passed to the subscription
+  function
+
+      ```(subs/register-pure
+           :a-b-sub
+           :<- [:a-sub]
+           :<- [:b-sub]
+           (fn [[a b] [_]] {:a a :b b}))```
+  In this example the convienent syntax of `:<-` is used to cover the majority
+  of cases where only a simple subscription is needed without any parameters
+
+  "
+  [& args]
+  (let [conform           (s/conform ::register-pure-args args)
+        {:keys [sub-name
+                sub-fn
+                arrow-args
+                f]}       conform
+        arrow-subs (->> arrow-args
+                        (map :val))]
+    (cond
+      sub-fn                   ;; first case the user provides a custom sub-fn
+      (register
+         sub-name
+         (fn [db q-vec d-vec]
+           (let [subscriptions (sub-fn q-vec d-vec)]    ;; this let needs to be outside the fn
+             (ratom/make-reaction
+               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
+      arrow-args              ;; the user uses the :<- sugar
+      (register
+         sub-name
+         (fn [db q-vec d-vec]
+           (let [subscriptions (map subscribe arrow-subs)]    ;; this let needs to be outside the fn
+             (ratom/make-reaction
+               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
+      :else
+      (register ;; the simple case with no subs
+         sub-name
+         (fn [db q-vec d-vec]
+           (ratom/make-reaction (fn [] (f @db q-vec d-vec))))))))
+
+#_(s/fdef register-pure
+        :args ::register-pure-args)
+
+#_(s/instrument #'register-pure)

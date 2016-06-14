@@ -2,7 +2,6 @@
   (:require [cljs.test         :refer-macros [is deftest]]
             [reagent.ratom     :refer-macros [reaction]]
             [re-frame.subs     :as subs]
-            [re-frame.subs2     :as subs2]
             [re-frame.db       :as db]
             [re-frame.core     :as re-frame]))
 
@@ -83,7 +82,7 @@
 (deftest test-reg-sub-macro
   (subs/clear-handlers!)
 
-  (subs2/register-pure
+  (subs/register-pure
     :test-sub
     (fn [db [_]] db))
 
@@ -95,11 +94,11 @@
 (deftest test-reg-sub-macro-singleton
   (subs/clear-handlers!)
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-b-sub
     (fn [_ _ _]
       (subs/subscribe [:a-sub]))
@@ -115,15 +114,15 @@
 (deftest test-reg-sub-macro-vector
   (subs/clear-handlers!)
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs2/register-pure
+  (subs/register-pure
     :b-sub
     (fn [db [_]] (:b db)))
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-b-sub
     (fn [_ _ _]
       [(subs/subscribe [:a-sub])
@@ -140,15 +139,15 @@
 (deftest test-reg-sub-macro-map
   (subs/clear-handlers!)
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs2/register-pure
+  (subs/register-pure
     :b-sub
     (fn [db [_]] (:b db)))
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-b-sub
     (fn [_ _ _]
       {:a (subs/subscribe [:a-sub])
@@ -165,7 +164,7 @@
 (deftest test-sub-macro-parameters
   (subs/clear-handlers!)
 
-  (subs2/register-pure
+  (subs/register-pure
     :test-sub
     (fn [db [_ b]] [(:a db) b]))
 
@@ -176,15 +175,15 @@
 (deftest test-sub-macros-chained-parameters
   (subs/clear-handlers!)
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-sub
     (fn [db [_ a]] [(:a db) a]))
 
-  (subs2/register-pure
+  (subs/register-pure
     :b-sub
     (fn [db [_ b]] [(:b db) b]))
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-b-sub
     (fn [[_ c] _]
       [(subs/subscribe [:a-sub c])
@@ -200,15 +199,15 @@
   "test the syntactial sugar"
   (subs/clear-handlers!)
 
-  (subs2/register-pure
+  (subs/register-pure
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs2/register-pure
+  (subs/register-pure
     :b-sub
     (fn [db [_]] (:b db)))
 
-  (subs2/register-pure
+  (subs/register-pure
         :a-b-sub
         :<- [:a-sub]
         :<- [:b-sub]
