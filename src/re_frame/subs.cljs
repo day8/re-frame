@@ -33,13 +33,16 @@
 
 (defn cache-and-return
   "cache the reaction r"
-  [v dynv r]
-  (let [cache-key [v dynv]]
+  [query-v dynv r]
+  (let [cache-key [query-v dynv]]
     ;; when this reaction is nolonger being used, remove it from the cache
     (ratom/add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
                                   (warn "Removing subscription: " cache-key)))
 
-    ;; cache this reaction, so it can be used for identical subscriptions
+    (.log js/console "Dispatch site: ")
+    (.log js/console (:dispatch-site (meta query-v)))
+
+    ;; cache this reaction, so it can be used to deduplicate other, identical subscriptions
     (swap! query->reaction assoc cache-key r)
 
     r))  ;; return the actual reaction
@@ -55,16 +58,16 @@
 
 (defn subscribe
   "Returns a Reagent/reaction which contains a computation"
-  ([v]
-   (if-let [cached (cache-lookup v)]
-     (do (warn "Using cached subscription: " v)
+  ([query-v]
+   (if-let [cached (cache-lookup query-v)]
+     (do (warn "Using cached subscription: " query-v)
          cached)
-     (let [query-id   (first-in-vector v)
+     (let [query-id   (first-in-vector query-v)
            handler-fn (get @qid->fn query-id)]
-       (warn "Subscription crerated: " v)
+       (warn "Subscription crerated: " query-v)
        (if-not handler-fn
          (error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
-       (cache-and-return v [] (handler-fn app-db v)))))
+       (cache-and-return query-v [] (handler-fn app-db query-v)))))
 
   ([v dynv]
     (if-let [cached (cache-lookup v dynv)]
