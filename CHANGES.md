@@ -27,14 +27,14 @@ Headline:
     XXX link to more docs. 
     
   - the API for the undo/redo framework has been documented. It existed previously, but it
-    was not formally documented.
+    was not officially there. 
     https://github.com/Day8/re-frame/wiki/Undo-&-Redo
     
      
 Breaking:
   - requires Reagent >= 0.6.0 or later.  It won't work with <= Reagent 0.5.2.
   
-  - requires both Clojure and ClojureScript >= 1.9.0, because the `specs` library is  used.
+  - requires ClojureScript >= 1.9.0, because the `specs` library is  used.
    
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can  
     supply alternatives using `re-frame.core/set-loggers!`.  
@@ -56,7 +56,6 @@ Breaking:
     Of course, you need only worry about this if you are using `re-frame.core/set-loggers!` to 
     hook in your own loggers.  Otherwise, you have nothing to do. 
 
-      
 Improvements
   - XXX    (full-debug!)
   - XXXX   middleware for spec checking of event vectors  
