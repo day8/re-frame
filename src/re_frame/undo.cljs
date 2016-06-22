@@ -227,24 +227,5 @@
     (fn fsm-handler
       [db event-v]
       (let [new-db (handler db event-v)]
-         (update-fn new-db event-v trigger fsm-path))))   ;; think about access to event-v
+         (update-fn new-db event-v trigger fsm-path)))))   ;; think about access to event-v
 
-
-(register-handler
-  :database-connection
-  (fsm-tirgger :db-working bootstrap-fsm [:fsms :bnootstrap] )
-  (fn [db q]
-    .....)
-  )
-
-
-;; state
-;;    fms-state
-;;    seen-evetns
-;;    started-tasks
-
-(defn bootstrap-fsm
-  [new-db event-v trigger fsm-path]
-  (let [new-state ]
-    )
-  )
