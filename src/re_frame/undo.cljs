@@ -12,7 +12,7 @@
 ;;
 ;;
 (def ^:private config (atom {:max-undos 50   ;; Maximum number of undo states maintained
-                             :path  []}))     ;; undo and redos will apply to only this path within app-db
+                             :path  nil}))     ;; undo and redos will apply to only this path within app-db
 (defn set-max-undos!
   [n]
   (swap! config assoc :max-undos n))
@@ -131,13 +131,19 @@
 (defn- undo
   [undos cur redos]
   (let [u @undos
-        r (cons @cur @redos)]
+        r (cons @cur @redos)
+        path (undo-path-ks)]
+    (if path
+      (swap! cur assoc-in path (last u))
+      (reset! cur (last u)))
+    (reset! redos r)
+    (reset! undos (pop u))))
 
-    (.log js/console "in undo")
-    (.log js/console cur)
-    (.log js/console (undo-path-ks))
-    (.log js/console (last u))
-    (swap! cur assoc-in (undo-path-ks) (last u))
+(defn- undo-explain
+  [undos cur redos]
+  (let [u @undos
+        r (cons @cur @redos)]
+    (reset! cur (last u))
     (reset! redos r)
     (reset! undos (pop u))))
 
@@ -146,7 +152,7 @@
   [n]
   (when (and (pos? n) (undos?))
     (undo undo-list app-db redo-list)
-    (undo undo-explain-list app-explain redo-explain-list)
+    (undo-explain undo-explain-list app-explain redo-explain-list)
     (recur (dec n))))
 
 (handlers/register-base     ;; not a pure handler
@@ -162,8 +168,19 @@
 (defn- redo
   [undos cur redos]
   (let [u (conj @undos @cur)
+        r  @redos
+        path (undo-path-ks)]
+    (if path
+      (swap! cur assoc-in path (first r))
+      (reset! cur (first r)))
+    (reset! redos (rest r))
+    (reset! undos u)))
+
+(defn- redo-explain
+  [undos cur redos]
+  (let [u (conj @undos @cur)
         r  @redos]
-    (swap! cur assoc-in (undo-path-ks) (first r))
+    (reset! cur (first r))
     (reset! redos (rest r))
     (reset! undos u)))
 
@@ -172,7 +189,7 @@
   [n]
   (when (and (pos? n) (redos?))
     (redo undo-list app-db redo-list)
-    (redo undo-explain-list app-explain redo-explain-list)
+    (redo-explain undo-explain-list app-explain redo-explain-list)
     (recur (dec n))))
 
 (handlers/register-base     ;; not a pure handler
@@ -216,16 +233,3 @@
         (handler db event-vec)))))
 
 (def undoable (with-meta undoable_ {:re-frame-factory-name "undoable"}))
-
-
-
-;; middleware
-(defn fsm-trigger
-  [trigger update-fn fsm-path]
-  (fn fsm-middleware
-    [handler]
-    (fn fsm-handler
-      [db event-v]
-      (let [new-db (handler db event-v)]
-         (update-fn new-db event-v trigger fsm-path)))))   ;; think about access to event-v
-
