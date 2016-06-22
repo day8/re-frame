@@ -220,6 +220,22 @@
     (reset! db/app-db {:a 1 :b 2})
     (is (= {:a [1 :c] :b [2 :c]} @test-sub))))
 
+(deftest test-sub-macros-<-
+  "test the syntactial sugar"
+  (subs/clear-handlers!)
+
+  (subs/register-pure
+    :a-sub
+    (fn [db [_]] (:a db)))
+
+  (subs/register-pure
+        :a-b-sub
+        :<- [:a-sub]
+        (fn [a [_]] {:a a}))
+
+  (let [test-sub (subs/subscribe [:a-b-sub])]
+    (reset! db/app-db {:a 1 :b 2})
+    (is (= {:a 1} @test-sub) )))
 
 (deftest test-sub-macros-chained-parameters-<-
   "test the syntactial sugar"
@@ -241,5 +257,4 @@
 
   (let [test-sub (subs/subscribe [:a-b-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
-    (is (= {:a 1 :b 2} @test-sub) ))
-  )
+    (is (= {:a 1 :b 2} @test-sub) )))

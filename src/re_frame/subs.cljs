@@ -163,11 +163,14 @@
                (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
       arrow-args              ;; the user uses the :<- sugar
       (register
-         sub-name
-         (fn [db q-vec d-vec]
-           (let [subscriptions (map subscribe arrow-subs)]    ;; this let needs to be outside the fn
-             (ratom/make-reaction
-               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
+        sub-name
+        (fn [db q-vec d-vec]
+          (let [subscriptions    (map subscribe arrow-subs)
+                subscriptions    (if (< 1 (count subscriptions))
+                                   subscriptions
+                                   (first subscriptions))]    ;; automatically provide a singlton
+            (ratom/make-reaction
+              (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
       :else
       (register ;; the simple case with no subs
          sub-name
