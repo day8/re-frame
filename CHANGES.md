@@ -26,8 +26,10 @@ Headline:
     
     XXX link to more docs. 
     
-  - the API for the undo/redo framework has been documented. It existed previously, but it
-    was not officially there. 
+  - the API for the undo/redo features have been documented and put into `re-frame.core`. 
+    Most of the features existed previously, but now more official.
+     
+    One feature is new: the ability to undo/redo just part of the `app-db` tree.  
     https://github.com/Day8/re-frame/wiki/Undo-&-Redo
     
      
@@ -57,9 +59,12 @@ Breaking:
     hook in your own loggers.  Otherwise, you have nothing to do. 
 
 Improvements
-  - XXX    (full-debug!)
-  - XXXX   middleware for spec checking of event vectors  
-  - XXX    todomvc split into simple and advanced.
+  - XXX  What name for reg-pure-sub  (too long)
+  - XXX  review todomvc views
+  - XXX   (full-debug!)
+  - XXX   middleware for spec checking of event vectors  
+  - XXX   todomvc changed to use spc, instead of Schema
+  - XXX   todomvc split into simple and advanced.
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.  
   - added new API `re-frame.core/remove-post-event-callback`. See doc string. 

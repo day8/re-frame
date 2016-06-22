@@ -13,8 +13,8 @@
 
 
 ;; -- Debugging aids ----------------------------------------------------------
-(devtools/install!)     ;; we love https://github.com/binaryage/cljs-devtools
-(enable-console-print!)
+(devtools/install!)       ;; we love https://github.com/binaryage/cljs-devtools
+(enable-console-print!)   ;; so println writes to console.log
 
 ;; -- Routes and History ------------------------------------------------------
 

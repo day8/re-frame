@@ -11,23 +11,23 @@
 ;; -- Configuration ----------------------------------------------------------
 ;;
 ;;
-(def ^:private undo-config (atom {:max-undos 50}   ;; Maximum number of undo states maintained
-                                 {:path  []}))     ;; undo and redos will apply to only this path within app-db
+(def ^:private config (atom {:max-undos 50   ;; Maximum number of undo states maintained
+                             :path  []}))     ;; undo and redos will apply to only this path within app-db
 (defn set-max-undos!
   [n]
-  (swap! undo-config assoc :max-undos n))
+  (swap! config assoc :max-undos n))
 
 (defn set-undo-path!
   [ks]
-  (swap! undo-config assoc :path ks))
+  (swap! config assoc :path ks))
 
 (defn max-undos
   []
-  (:max-undos @undo-config))
+  (:max-undos @config))
 
 (defn undo-path-ks
   []
-  (:path @undo-config))
+  (:path @config))
 
 
 ;; -- State history ----------------------------------------------------------
@@ -132,6 +132,11 @@
   [undos cur redos]
   (let [u @undos
         r (cons @cur @redos)]
+
+    (.log js/console "in undo")
+    (.log js/console cur)
+    (.log js/console (undo-path-ks))
+    (.log js/console (last u))
     (swap! cur assoc-in (undo-path-ks) (last u))
     (reset! redos r)
     (reset! undos (pop u))))
@@ -148,6 +153,7 @@
   :undo                     ;; usage:  (dispatch [:undo n])  n is optional, defaults to 1
   (fn handler
     [_ [_ n]]
+    (.log js/console "in :undo handler")
     (if-not (undos?)
       (warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
       (undo-n (or n 1)))))
@@ -210,3 +216,35 @@
         (handler db event-vec)))))
 
 (def undoable (with-meta undoable_ {:re-frame-factory-name "undoable"}))
+
+
+
+;; middleware
+(defn fsm-trigger
+  [trigger update-fn fsm-path]
+  (fn fsm-middleware
+    [handler]
+    (fn fsm-handler
+      [db event-v]
+      (let [new-db (handler db event-v)]
+         (update-fn new-db event-v trigger fsm-path))))   ;; think about access to event-v
+
+
+(register-handler
+  :database-connection
+  (fsm-tirgger :db-working bootstrap-fsm [:fsms :bnootstrap] )
+  (fn [db q]
+    .....)
+  )
+
+
+;; state
+;;    fms-state
+;;    seen-evetns
+;;    started-tasks
+
+(defn bootstrap-fsm
+  [new-db event-v trigger fsm-path]
+  (let [new-state ]
+    )
+  )

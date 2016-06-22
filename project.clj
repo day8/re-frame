@@ -7,7 +7,8 @@
                  [reagent "0.6.0-rc"]]
 
   :profiles {:debug {:debug true}
-             :dev   {:dependencies [[karma-reporter "0.3.0"]]
+             :dev   {:dependencies [[karma-reporter "0.3.0"]
+                                    [binaryage/devtools "0.7.0"]]
                      :plugins      [[lein-cljsbuild "1.1.3"]
                                     [lein-npm "0.6.1"]
                                     [lein-figwheel "0.5.4-2"]]}}
@@ -33,7 +34,7 @@
                         :compiler     {:output-to     "run/compiled/test.js"
                                        :source-map    "run/compiled/test.js.map"
                                        :output-dir    "run/compiled/test"
-                                       :optimizations :simple
+                                       :optimizations :whitespace
                                        :pretty-print  true}}]}
 
   :aliases {"auto"        ["do" "clean," "cljsbuild" "auto" "test,"]
