@@ -8,7 +8,7 @@
 
 (deftest test-undos
   ;; Create undo history
-  (undo/set-max-undos! 5)
+  (undo/undo-config! {:max-undos 5})
 
   (undo/clear-history!)
   (is (not (undo/undos?)))
@@ -24,10 +24,8 @@
   (is (= [4 5 6 7 8 9] (undo/undo-explanations)))
   (is (= [{5 5} {6 6} {7 7} {8 8} {9 9}] @undo/undo-list))
 
-  (.log js/console "----1-----")
   ;; Undo the actions
   (re-frame/dispatch-sync [:undo])
-  (.log js/console "----2-----")
   (is (= @db/app-db {9 9}))
   (is (undo/redos?))
   (re-frame/dispatch-sync [:undo])
@@ -40,7 +38,6 @@
   (is (= @db/app-db {5 5}))
   (is (not (undo/undos?)))
   (is (undo/redos?))
-
 
   ;; Redo them again
   (re-frame/dispatch-sync [:redo 5])

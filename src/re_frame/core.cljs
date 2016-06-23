@@ -33,12 +33,11 @@
 
 
 ;; -- Undo API -----
-;;
+;; For an explanation of the undo/redo capabilities:
 ;; https://github.com/Day8/re-frame/wiki/Undo-&-Redo
 
 (def undoable    undo/undoable)
-(def set-max-undos!  undo/set-max-undos!)
-(def set-undo-path!  undo/set-undo-path!)
+(def undo-config!  undo/undo-config!)
 
 
 ;; --  Logging -----

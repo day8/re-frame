@@ -1,7 +1,7 @@
 ## 0.8.0  (2016.06.XXXX)
 
 Headline:
-  - re-frame subscriptions are now de-duplicated. As a result, many Signal graphs will be more 
+  - re-frame subscriptions are now de-duplicated. This is a big deal. As a result, many Signal graphs will be more 
     efficient. The new behaviour better matches programmer intuitions about what "should" happen. 
   
     *Explanation* 
@@ -26,11 +26,9 @@ Headline:
     
     XXX link to more docs. 
     
-  - the API for the undo/redo features have been documented and put into `re-frame.core`. 
-    Most of the features existed previously, but now more official.
-     
-    One feature is new: the ability to undo/redo just part of the `app-db` tree.  
-    https://github.com/Day8/re-frame/wiki/Undo-&-Redo
+  - the API for the undo/redo features has been put into `re-frame.core`. 
+    Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo  
+    
     
      
 Breaking:
@@ -60,7 +58,6 @@ Breaking:
 
 Improvements
   - XXX  What name for reg-pure-sub  (too long)
-  - XXX  review todomvc views
   - XXX   (full-debug!)
   - XXX   middleware for spec checking of event vectors  
   - XXX   todomvc changed to use spc, instead of Schema

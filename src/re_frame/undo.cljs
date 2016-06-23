@@ -8,26 +8,26 @@
     [re-frame.subs       :as     subs]))
 
 
+;;  background docs:  https://github.com/Day8/re-frame/wiki/Undo-&-Red
+
+
 ;; -- Configuration ----------------------------------------------------------
-;;
-;;
-(def ^:private config (atom {:max-undos 50   ;; Maximum number of undo states maintained
-                             :path  nil}))     ;; undo and redos will apply to only this path within app-db
-(defn set-max-undos!
-  [n]
-  (swap! config assoc :max-undos n))
 
-(defn set-undo-path!
-  [ks]
-  (swap! config assoc :path ks))
+(def ^:private config (atom {:max-undos    50   ;; Maximum number of undo states maintained
+                             :harvest-fn   deref
+                             :reinstate-fn reset!}))
 
-(defn max-undos
+(defn undo-config!
+  [new-config]
+  (if-let [unknown-keys (seq (clojure.set/difference (-> new-config keys set) (-> @config keys set)))]
+    (warn "re-frame: you called undo-config! within unknown keys: " unknown-keys)
+    (swap! config merge new-config)))
+
+
+(defn- max-undos
   []
   (:max-undos @config))
 
-(defn undo-path-ks
-  []
-  (:path @config))
 
 
 ;; -- State history ----------------------------------------------------------
@@ -70,7 +70,7 @@
   (clear-redos!)
   (reset! undo-list (vec (take-last
                            (max-undos)
-                           (conj @undo-list (get-in @app-db (undo-path-ks))))))
+                           (conj @undo-list ((:harvest-fn @config) app-db)))))
   (reset! undo-explain-list (vec (take-last
                                    (max-undos)
                                    (conj @undo-explain-list @app-explain))))
@@ -129,58 +129,36 @@
 
 
 (defn- undo
-  [undos cur redos]
+  [harvester reinstater undos cur redos]
   (let [u @undos
-        r (cons @cur @redos)
-        path (undo-path-ks)]
-    (if path
-      (swap! cur assoc-in path (last u))
-      (reset! cur (last u)))
+        r (cons (harvester cur) @redos)]
+    (reinstater cur (last u))
     (reset! redos r)
     (reset! undos (pop u))))
 
-(defn- undo-explain
-  [undos cur redos]
-  (let [u @undos
-        r (cons @cur @redos)]
-    (reset! cur (last u))
-    (reset! redos r)
-    (reset! undos (pop u))))
 
 (defn- undo-n
   "undo n steps or until we run out of undos"
   [n]
   (when (and (pos? n) (undos?))
-    (undo undo-list app-db redo-list)
-    (undo-explain undo-explain-list app-explain redo-explain-list)
+    (undo (:harvest-fn @config) (:reinstate-fn @config) undo-list app-db redo-list)
+    (undo deref reset! undo-explain-list app-explain redo-explain-list)
     (recur (dec n))))
 
 (handlers/register-base     ;; not a pure handler
   :undo                     ;; usage:  (dispatch [:undo n])  n is optional, defaults to 1
   (fn handler
     [_ [_ n]]
-    (.log js/console "in :undo handler")
     (if-not (undos?)
       (warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
       (undo-n (or n 1)))))
 
 
 (defn- redo
-  [undos cur redos]
-  (let [u (conj @undos @cur)
-        r  @redos
-        path (undo-path-ks)]
-    (if path
-      (swap! cur assoc-in path (first r))
-      (reset! cur (first r)))
-    (reset! redos (rest r))
-    (reset! undos u)))
-
-(defn- redo-explain
-  [undos cur redos]
-  (let [u (conj @undos @cur)
+  [harvester reinstater undos cur redos]
+  (let [u (conj @undos (harvester cur))
         r  @redos]
-    (reset! cur (first r))
+    (reinstater cur (first r))
     (reset! redos (rest r))
     (reset! undos u)))
 
@@ -188,8 +166,8 @@
   "redo n steps or until we run out of redos"
   [n]
   (when (and (pos? n) (redos?))
-    (redo undo-list app-db redo-list)
-    (redo-explain undo-explain-list app-explain redo-explain-list)
+    (redo (:harvest-fn @config) (:reinstate-fn @config) undo-list app-db redo-list)
+    (redo deref reset! undo-explain-list app-explain redo-explain-list)
     (recur (dec n))))
 
 (handlers/register-base     ;; not a pure handler
@@ -199,7 +177,6 @@
     (if-not (redos?)
       (warn "re-frame: you did a (dispatch [:redo]), but there is nothing to redo.")
       (redo-n (or n 1)))))
-
 
 (handlers/register-base     ;; not a pure handler
   :purge-redos              ;; usage:  (dispatch [:purge-redos])
