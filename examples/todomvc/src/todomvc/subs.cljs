@@ -130,13 +130,13 @@
 (register-pure-sub
   :all-complete?
   :<- [:todos]
-  (fn [[todos] _]
+  (fn [todos _]
     (seq todos)))
 
 (register-pure-sub
   :completed-count
   :<- [:todos]
-  (fn [[todos] _]
+  (fn [todos _]
     (count (filter :done todos))))
 
 (register-pure-sub
