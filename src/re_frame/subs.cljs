@@ -3,7 +3,8 @@
    [cljs.spec      :as s]
    [reagent.ratom  :as ratom :refer [make-reaction] :refer-macros [reaction]]
    [re-frame.db    :refer [app-db]]
-   [re-frame.utils :refer [first-in-vector warn error]]))
+   [re-frame.loggers :refer [warn error]]
+   [re-frame.utils :refer [first-in-vector]]))
 
 
 ;; -- Subscription Handler Lookup and Registration --------------------------------------------------

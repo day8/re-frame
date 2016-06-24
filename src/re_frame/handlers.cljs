@@ -1,6 +1,7 @@
 (ns re-frame.handlers
   (:require [re-frame.db         :refer [app-db]]
-            [re-frame.utils      :refer [first-in-vector warn error]]))
+            [re-frame.utils      :refer [first-in-vector]]
+            [re-frame.loggers    :refer [warn error]]))
 
 
 ;; -- composing middleware  -----------------------------------------------------------------------

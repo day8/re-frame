@@ -1,7 +1,7 @@
 (ns re-frame.middleware
   (:require
     [reagent.ratom  :refer [IReactiveAtom]]
-    [re-frame.utils :refer [warn log group groupEnd error]]
+    [re-frame.loggers :refer [warn log group groupEnd error]]
     [clojure.data   :as data]))
 
 

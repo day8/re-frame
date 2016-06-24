@@ -3,7 +3,7 @@
     [re-frame.handlers   :as handlers]
     [re-frame.subs       :as subs]
     [re-frame.router     :as router]
-    [re-frame.utils      :as utils]
+    [re-frame.loggers    :as loggers]
     [re-frame.undo       :as undo]
     [re-frame.middleware :as middleware]))
 
@@ -36,8 +36,8 @@
 ;; For an explanation of the undo/redo capabilities:
 ;; https://github.com/Day8/re-frame/wiki/Undo-&-Redo
 
-(def undoable    undo/undoable)
-(def undo-config!  undo/undo-config!)
+(def undoable     undo/undoable)
+(def undo-config! undo/undo-config!)
 
 
 ;; --  Logging -----
@@ -47,7 +47,7 @@
 ;; Example Usage:
 ;;   (defn my-warn-fn [& args]  (post-it-somewhere (apply str args)))
 ;;   (re-frame.core/set-loggers!  {:warn  my-warn-fn})
-(def set-loggers! utils/set-loggers!)
+(def set-loggers! loggers/set-loggers!)
 
 
 ;; --  Convenience API -------

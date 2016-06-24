@@ -1,7 +1,7 @@
 (ns re-frame.router
   (:require [reagent.core]
             [re-frame.handlers :refer [handle]]
-            [re-frame.utils :refer [warn error]]
+            [re-frame.loggers :refer [warn error]]
             [goog.async.nextTick]))
 
 

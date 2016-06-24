@@ -2,7 +2,7 @@
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
     [reagent.core        :as     reagent]
-    [re-frame.utils      :refer  [warn error]]
+    [re-frame.loggers    :refer  [warn error]]
     [re-frame.db         :refer  [app-db]]
     [re-frame.handlers   :as     handlers]
     [re-frame.subs       :as     subs]))
