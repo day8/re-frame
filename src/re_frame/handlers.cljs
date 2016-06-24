@@ -20,14 +20,12 @@
 
 
 (defn comp-middleware
-  "Given a vector of middleware, filter out any nils, and use \"comp\" to compose the elements.
-  v can have nested vectors, and will be flattened before \"comp\" is applied.
-  For convienience, if v is a function (assumed to be middleware already), just return it.
+  "Use \"comp\" to compose a vector 'v' of middleware.
+  For convienience, if 'v' is a function (assumed to be middleware already), return it unchanged.
+  Prior to the \"comp\", flatten is used to remove all nested vectors, and nils are removed.
   Filtering out nils allows us to create Middleware conditionally like this:
-     (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil
-  "
+     (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil"
   [v]
-
   (cond
     (fn? v)       v  ;; assumed to be existing middleware
     (coll? v)     (let [v (remove nil? (flatten v))]
