@@ -9,13 +9,12 @@
 
 
 ;; --  API  -------
-;; See also macros in clj file
 
 (def dispatch         router/dispatch)
 (def dispatch-sync    router/dispatch-sync)
 
 (def register-sub        subs/register)
-(def register-pure-sub   subs/register-pure)
+(def reg-sub             subs/register-pure)
 (def clear-sub-handlers! subs/clear-handlers!)
 (def subscribe           subs/subscribe)
 
@@ -33,17 +32,16 @@
 
 
 ;; -- Undo API -----
-;; For an explanation of the undo/redo capabilities:
-;; https://github.com/Day8/re-frame/wiki/Undo-&-Redo
+;; Docs on undo/redo: https://github.com/Day8/re-frame/wiki/Undo-&-Redo
 
 (def undoable     undo/undoable)
 (def undo-config! undo/undo-config!)
 
 
 ;; --  Logging -----
-;; re-frame uses the logging functions: warn, log, error, group and groupEnd
+;; Internally, re-frame uses the logging functions: warn, log, error, group and groupEnd
 ;; By default, these functions map directly to the js/console implementations,
-;; but you can override with your own (set or subset).
+;; but you can override with your own fns (set or subset).
 ;; Example Usage:
 ;;   (defn my-warn-fn [& args]  (post-it-somewhere (apply str args)))
 ;;   (re-frame.core/set-loggers!  {:warn  my-warn-fn})
