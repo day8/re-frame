@@ -6,19 +6,17 @@
 ;; By default, re-frame uses the functions provided by js/console.
 ;; Use set-loggers! to change these defaults.
 
-(def loggers
+(def ^:private loggers
   (atom {:log       (js/console.log.bind   js/console)
          :warn      (js/console.warn.bind  js/console)
          :error     (js/console.error.bind js/console)
-         :group     (if (.-group js/console) (js/console.group.bind js/console) default-log)   ;; console.group does not exist  < IE 11
+         :group     (if (.-group js/console) (js/console.group.bind js/console) (js/console.log.bind   js/console))   ;; console.group does not exist  < IE 11
          :groupEnd  (if (.-groupEnd js/console) (js/console.groupEnd.bind js/console) #())}))  ;; console.groupEnd does not exist  < IE 11
 
-
-(defn log      [& args] (apply (:log @loggers)      args))
-(defn warn     [& args] (apply (:warn @loggers)     args))
-(defn group    [& args] (apply (:group @loggers)    args))
-(defn groupEnd [& args] (apply (:groupEnd @loggers) args))
-(defn error    [& args] (apply (:error @loggers)    args))
+(defn console
+  [level & args]
+  (assert (contains? @loggers level) (str "re-frame: log called with unknown level: " level))
+  (apply (level @loggers) args))
 
 
 (defn set-loggers!

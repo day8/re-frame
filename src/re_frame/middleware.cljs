@@ -1,7 +1,7 @@
 (ns re-frame.middleware
   (:require
     [reagent.ratom  :refer [IReactiveAtom]]
-    [re-frame.loggers :refer [warn log group groupEnd error]]
+    [re-frame.loggers :refer [console]]
     [clojure.data   :as data]))
 
 
@@ -25,13 +25,13 @@
     (if-not (satisfies? IReactiveAtom app-db)
       (do
         (if (map? app-db)
-          (warn "re-frame: Looks like \"pure\" is in the middleware pipeline twice. Ignoring.")
-          (warn "re-frame: \"pure\" middleware not given a Ratom.  Got: " app-db))
+          (console :warn "re-frame: Looks like \"pure\" is in the middleware pipeline twice. Ignoring.")
+          (console :warn "re-frame: \"pure\" middleware not given a Ratom.  Got: " app-db))
         handler)    ;; turn this into a noop handler
       (let [db      @app-db
             new-db  (handler db event-vec)]
         (if (nil? new-db)
-          (error "re-frame: your pure handler returned nil. It should return the new db state.")
+          (console :error "re-frame: your pure handler returned nil. It should return the new db state.")
           (if-not (identical? db new-db)
             (reset! app-db new-db)))))))
 
@@ -46,16 +46,16 @@
   [handler]
   (fn debug-handler
     [db v]
-    (log "Handling re-frame event: " v)
+    (console :log "Handling re-frame event: " v)
     (let [new-db  (handler db v)
           [before after] (data/diff db new-db)
           db-changed? (or (some? before) (some? after))]
       (if db-changed?
-        (do (group "clojure.data/diff for: " v)
-            (log "only before: " before)
-            (log "only after : " after)
-            (groupEnd))
-        (log "clojure.data/diff no changes for: " v))
+        (do (console :group "clojure.data/diff for: " v)
+            (console :log "only before: " before)
+            (console :log "only after : " after)
+            (console :groupEnd))
+        (console :log "clojure.data/diff no changes for: " v))
       new-db)))
 
 
@@ -92,7 +92,7 @@
   [& args]
   (let [path   (flatten args)]
     (when (empty? path)
-      (error "re-frame: \"path\" middleware given no params."))
+      (console :error "re-frame: \"path\" middleware given no params."))
     (fn path-middleware
       [handler]
       (fn path-handler

@@ -3,7 +3,7 @@
    [cljs.spec      :as s]
    [reagent.ratom  :as ratom :refer [make-reaction] :refer-macros [reaction]]
    [re-frame.db    :refer [app-db]]
-   [re-frame.loggers :refer [warn error]]
+   [re-frame.loggers :refer [console]]
    [re-frame.utils :refer [first-in-vector]]))
 
 
@@ -16,7 +16,7 @@
   "Registers a subscription handler function for an query id"
   [query-id handler-fn]
   (if (contains? @qid->fn query-id)
-    (warn "re-frame: overwriting subscription handler for: " query-id))  ;; allow it, but warn. Happens on figwheel reloads.
+    (console :warn "re-frame: overwriting subscription handler for: " query-id))  ;; allow it, but warn. Happens on figwheel reloads.
   (swap! qid->fn assoc query-id handler-fn))
 
 
@@ -40,7 +40,7 @@
   (let [cache-key [query-v dynv]]
     ;; when this reaction is nolonger being used, remove it from the cache
     (ratom/add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
-                                  (warn "Removing subscription: " cache-key)))
+                                  (console :warn "Removing subscription: " cache-key)))
 
     (.log js/console "Dispatch site: ")
     (.log js/console (:dispatch-site (meta query-v)))
@@ -63,31 +63,31 @@
   "Returns a Reagent/reaction which contains a computation"
   ([query-v]
    (if-let [cached (cache-lookup query-v)]
-     (do (warn "Using cached subscription: " query-v)
+     (do (console :warn "Using cached subscription: " query-v)
          cached)
      (let [query-id   (first-in-vector query-v)
            handler-fn (get @qid->fn query-id)]
-       (warn "Subscription crerated: " query-v)
+       (console :warn "Subscription crerated: " query-v)
        (if-not handler-fn
-         (error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
+         (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
        (cache-and-return query-v [] (handler-fn app-db query-v)))))
 
   ([v dynv]
     (if-let [cached (cache-lookup v dynv)]
-      (do (warn "Using cached subscription: " v " and " dynv)
+      (do (console :warn "Using cached subscription: " v " and " dynv)
           cached)
       (let [query-id   (first-in-vector v)
             handler-fn (get @qid->fn query-id)]
         (when ^boolean js/goog.DEBUG
           (when-let [not-reactive (remove #(implements? reagent.ratom/IReactiveAtom %) dynv)]
-            (warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom: " not-reactive)))
+            (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom: " not-reactive)))
         (if (nil? handler-fn)
-          (error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")
+          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")
           (let [dyn-vals (reaction (mapv deref dynv))
                 sub (reaction (handler-fn app-db v @dyn-vals))]
             ;; handler-fn returns a reaction which is then wrapped in the sub reaction
             ;; need to double deref it to get to the actual value.
-            (warn "Subscription created: " v dynv)
+            (console :warn "Subscription created: " v dynv)
             (cache-and-return v dynv (reaction @@sub))))))))
 
 ;; -- Helper code for register-pure -------------------

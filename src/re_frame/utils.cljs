@@ -1,11 +1,11 @@
 (ns re-frame.utils
   (:require
-    [re-frame.loggers :refer [error]]))
+    [re-frame.loggers :refer [console]]))
 
 
 (defn first-in-vector
   [v]
   (if (vector? v)
     (first v)
-    (error "re-frame: expected a vector, but got: " v)))
+    (console :error "re-frame: expected a vector, but got: " v)))
 

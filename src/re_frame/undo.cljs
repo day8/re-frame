@@ -2,7 +2,7 @@
   (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
     [reagent.core        :as     reagent]
-    [re-frame.loggers    :refer  [warn error]]
+    [re-frame.loggers    :refer  [console]]
     [re-frame.db         :refer  [app-db]]
     [re-frame.handlers   :as     handlers]
     [re-frame.subs       :as     subs]))
@@ -20,7 +20,7 @@
 (defn undo-config!
   [new-config]
   (if-let [unknown-keys (seq (clojure.set/difference (-> new-config keys set) (-> @config keys set)))]
-    (warn "re-frame: you called undo-config! within unknown keys: " unknown-keys)
+    (console :warn "re-frame: you called undo-config! within unknown keys: " unknown-keys)
     (swap! config merge new-config)))
 
 
@@ -150,7 +150,7 @@
   (fn handler
     [_ [_ n]]
     (if-not (undos?)
-      (warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
+      (console :warn "re-frame: you did a (dispatch [:undo]), but there is nothing to undo.")
       (undo-n (or n 1)))))
 
 
@@ -175,7 +175,7 @@
   (fn handler               ;; if n absent, defaults to 1
     [_ [_ n]]
     (if-not (redos?)
-      (warn "re-frame: you did a (dispatch [:redo]), but there is nothing to redo.")
+      (console :warn "re-frame: you did a (dispatch [:redo]), but there is nothing to redo.")
       (redo-n (or n 1)))))
 
 (handlers/register-base     ;; not a pure handler
@@ -183,7 +183,7 @@
   (fn handler
     [_ _]
     (if-not (redos?)
-      (warn "re-frame: you did a (dispatch [:purge-redos]), but there is nothing to redo.")
+      (console :warn "re-frame: you did a (dispatch [:purge-redos]), but there is nothing to redo.")
       (clear-redos!))))
 
 
@@ -205,7 +205,7 @@
                           (fn? explanation)     (explanation db event-vec)
                           (string? explanation) explanation
                           (nil? explanation)    ""
-                          :else (error "re-frame: \"undoable\" middleware given a bad parameter. Got: " explanation))]
+                          :else (console :error "re-frame: \"undoable\" middleware given a bad parameter. Got: " explanation))]
         (store-now! explanation)
         (handler db event-vec)))))
 

@@ -1,7 +1,7 @@
 (ns re-frame.handlers
   (:require [re-frame.db         :refer [app-db]]
             [re-frame.utils      :refer [first-in-vector]]
-            [re-frame.loggers    :refer [warn error]]))
+            [re-frame.loggers    :refer [console]]))
 
 
 ;; -- composing middleware  -----------------------------------------------------------------------
@@ -17,7 +17,7 @@
             [v]
             (remove nil? (map name-of-factory v)))]
     (doseq [name (factory-names-in v)]
-      (error "re-frame: \"" name "\" is a factory. It must be called like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
+      (console :error "re-frame: \"" name "\" is a factory. It must be called like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
 
 
 (defn comp-middleware
@@ -28,11 +28,11 @@
      (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil"
   [v]
   (cond
-    (fn? v)       v  ;; assumed to be existing middleware
-    (coll? v)     (let [v (remove nil? (flatten v))]
-                    (report-middleware-factories v)
-                    (apply comp v))
-    :else         (warn "re-frame: comp-middleware expects a vector, got: " v)))
+    (fn? v)    v  ;; assumed to be existing middleware
+    (coll? v)  (let [v (remove nil? (flatten v))]
+                 (report-middleware-factories v)
+                 (apply comp v))
+    :else      (console :warn "re-frame: comp-middleware expects a vector, got: " v)))
 
 
 ;; -- the register of event handlers --------------------------------------------------------------
@@ -57,7 +57,7 @@
   generally be used."
   ([event-id handler-fn]
     (when (contains? @id->fn event-id)
-      (warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
+      (console :warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
     (swap! id->fn assoc event-id handler-fn))
 
   ([event-id middleware handler-fn]
@@ -85,9 +85,9 @@
   (let [event-id    (first-in-vector event-v)
         handler-fn  (lookup-handler event-id)]
     (if (nil? handler-fn)
-      (error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
+      (console :error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
       (if  *handling*
-        (error "re-frame: while handling \""  *handling*  "\"  dispatch-sync was called for \"" event-v "\". You can't call dispatch-sync in an event handler.")
+        (console :error "re-frame: while handling \""  *handling*  "\"  dispatch-sync was called for \"" event-v "\". You can't call dispatch-sync in an event handler.")
         (binding [*handling*  event-v]
           (handler-fn app-db event-v))))))
 
