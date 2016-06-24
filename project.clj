@@ -23,8 +23,7 @@
   :deploy-repositories [["releases" :clojars]
                         ["snapshots" :clojars]]
 
-  ;; because of https://github.com/karma-runner/karma/issues/1746  we include our own fork of karma
-  :npm {:dependencies [[karma "https://github.com/danielcompton/karma/archive/v0.13.19.tar.gz"]
+  :npm {:dependencies [[karma "1.0.0"]
                        [karma-cljs-test "0.1.0"]
                        [karma-chrome-launcher "0.2.0"]
                        [karma-junit-reporter "0.3.8"]]}
