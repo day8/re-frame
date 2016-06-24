@@ -16,7 +16,7 @@
             [v]
             (remove nil? (map name-of-factory v)))]
     (doseq [name (factory-names-in v)]
-      (error "re-frame: \"" name "\" used incorrectly. Must be used like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
+      (error "re-frame: \"" name "\" is a factory. It must be called like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
 
 
 (defn comp-middleware
