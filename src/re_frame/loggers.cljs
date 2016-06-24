@@ -2,17 +2,16 @@
   (:require
     [clojure.set :refer [difference]]))
 
-;;
+;; "loggers" holds the current set of logging functions.
 ;; By default, re-frame uses the functions provided by js/console.
 ;; Use set-loggers! to change these defaults.
-;;
 
-;; holds the current set of loggin functions.
-(def loggers (atom {:log       (js/console.log.bind   js/console)
-                    :warn      (js/console.warn.bind  js/console)
-                    :error     (js/console.error.bind js/console)
-                    :group     (if (.-group js/console) (js/console.group.bind js/console) default-log)  ;; group does not exist  < IE 11
-                    :groupEnd  (if (.-groupEnd js/console) (js/console.groupEnd.bind js/console) #())}))  ;; groupEnd does not exist  < IE 11
+(def loggers
+  (atom {:log       (js/console.log.bind   js/console)
+         :warn      (js/console.warn.bind  js/console)
+         :error     (js/console.error.bind js/console)
+         :group     (if (.-group js/console) (js/console.group.bind js/console) default-log)   ;; console.group does not exist  < IE 11
+         :groupEnd  (if (.-groupEnd js/console) (js/console.groupEnd.bind js/console) #())}))  ;; console.groupEnd does not exist  < IE 11
 
 
 (defn log      [& args] (apply (:log @loggers)      args))
