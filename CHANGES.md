@@ -21,14 +21,19 @@ Headline:
     So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even 
     though they involve the same event id, `:some-event`, the query vectors do not test `=`. 
  
-  - added a convenience macro called `regsub` which is an easier, more natural way of writing
-    and registering subscription handlers.  The design has really fallen out nicely. 
+  - added an alternative to `re-frame.core/register-sub` which is significantly easier to use, 
+    easier to understand and, in many cases, more performant.  The new registration functions is 
+    `re-frame.core/reg-sub`. The design has really fallen out nicely and we're delighted with 
+    it. 
     
-    XXX link to more docs. 
+    You no longer need to use `reaction` explicitly. Subscription handlers are now pure. 
+    
+    At this point the README still describes the old way (of using `reaction`).  For the moment, 
+    the best docs on the new way can be found XXXXXX
+    
     
   - the API for the undo/redo features has been put into `re-frame.core`. 
     Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo  
-    
     
      
 Breaking:
