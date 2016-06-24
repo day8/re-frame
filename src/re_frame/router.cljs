@@ -59,14 +59,14 @@
 ;;     which will run event processing after the next Reagent animation frame.
 ;;
 
-;; Events can have metadata which say to pause event processing.
+;; Events can have metadata which says to pause event processing.
 ;; event metadata -> "run later" functions
 (def later-fns
   {:flush-dom (fn [f] ((.-after-render reagent.core) #(goog.async.nextTick f)))   ;; one tick after the end of the next annimation frame
    :yield     goog.async.nextTick})           ;; almost immediately
 
 
-;; Abstract representation of the Queue
+;; Abstract representation of the Event Queue
 (defprotocol IEventQueue
 
   ;; -- API
@@ -100,7 +100,7 @@
     (-fsm-trigger this :add-event event))
 
   (add-post-event-callback [_ callback-fn]
-    ;; register a callback function to be called after each event is processed
+    ;; register a callback function which will be called after each event is processed
     (set! post-event-callback-fns (conj post-event-callback-fns callback-fn)))
 
   (remove-post-event-callback [_ callback-fn]
@@ -204,8 +204,8 @@
 
 ;; ---------------------------------------------------------------------------
 ;; Event Queue
-;; When "dispatch" is called, the event is added into this queue.  Later the queue
-;; will "run" and the event will be "handled" by the registered function.
+;; When "dispatch" is called, the event is added into this event queue.  Later,
+;;  the queue will "run" and the event will be "handled" by the registered function.
 ;;
 (def event-queue (->EventQueue :idle  #queue [] []))
 
