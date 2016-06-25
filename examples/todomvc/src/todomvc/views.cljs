@@ -27,8 +27,8 @@
   []
   (let [editing (reagent/atom false)]
     (fn [{:keys [id done title]}]
-      [:li {:class (str (if done "completed ")
-                        (if @editing "editing"))}
+      [:li {:class (str (when done "completed ")
+                        (when @editing "editing"))}
         [:div.view
           [:input.toggle
             {:type "checkbox"
@@ -39,18 +39,12 @@
             title]
           [:button.destroy
             {:on-click #(dispatch [:delete-todo id])}]]
-       (when @editing
-         [todo-input
-           {:class "edit"
-            :title title
-            :on-save #(dispatch [:save id %])
-            :on-stop #(reset! editing false)}])])))
-
-
-(defn footer
-  []
-  [:footer#info
-   [:p "Double-click to edit a todo"]])
+        (when @editing
+          [todo-input
+            {:class "edit"
+             :title title
+             :on-save #(dispatch [:save id %])
+             :on-stop #(reset! editing false)}])])))
 
 
 (defn task-list
@@ -83,24 +77,24 @@
         [:footer#footer
 
           [:span#todo-count
-           [:strong active] " " (case active 1 "item" "items") " left"]
+            [:strong active] " " (case active 1 "item" "items") " left"]
           [:ul#filters
-           [:li (a-fn :all    "All")]
-           [:li (a-fn :active "Active")]
-           [:li (a-fn :done   "Completed")]]
+            [:li (a-fn :all    "All")]
+            [:li (a-fn :active "Active")]
+            [:li (a-fn :done   "Completed")]]
           (when (pos? done)
             [:button#clear-completed {:on-click #(dispatch [:clear-completed])}
-             "Clear completed"])]))))
+              "Clear completed"])]))))
 
 
 (defn task-entry
   []
   [:header#header
-   [:h1 "todos"]
-   [todo-input
-    {:id "new-todo"
-     :placeholder "What needs to be done?"
-     :on-save #(dispatch [:add-todo %])}]])
+    [:h1 "todos"]
+    [todo-input
+      {:id "new-todo"
+       :placeholder "What needs to be done?"
+       :on-save #(dispatch [:add-todo %])}]])
 
 
 (defn todo-app
@@ -113,4 +107,5 @@
           (when (seq @todos)
             [task-list])
           [footer-controls]]
-        [footer]])))
+        [:footer#info
+          [:p "Double-click to edit a todo"]]])))
