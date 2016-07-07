@@ -1,7 +1,7 @@
 (ns todomvc.subs
   (:require [re-frame.core :refer [def-sub subscribe]]))
 
-;; register-pure-sub allows us to write subscription handlers without ever
+;; Using def-sub, you can write subscription handlers without ever
 ;; using `reaction` directly.
 ;; This is how you would register a simple handler.
 (def-sub

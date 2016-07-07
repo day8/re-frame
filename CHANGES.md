@@ -10,8 +10,8 @@ Headline:
     *Explanation*
     
     Each subscription causes a handler to execute, producing
-    a reactive stream of updates. Two calls to `(subscribe [:some :query])` results in two copies of the same   
-    subscription handler running, each delivering a stream of updates. Now, if these two subscriptions 
+    a reactive stream of updates. Two calls to `(subscribe [:some :query])` results in two copies of the same
+    subscription handler running, each delivering a stream of updates. Now, if these two subscriptions
     were running at the same time, this would be inefficient. Both handlers would be
     doing the same computations and delivering the same stream of updates. Unnecessary, duplicate work.
     
@@ -25,7 +25,8 @@ Headline:
     though they involve the same event id, `:some-event`, the query vectors do not test `=`. 
  
   - added new subscription registration functions called `re-frame.core/def-sub`. It is an 
-    alternative to `re-frame.core/register-sub` which is significantly easier to use and understand, 
+    alternative to `re-frame.core/register-sub` (now renamed to `re-frame.core/def-sub-raw`).
+    `def-sub` is significantly easier to use and understand,
     while often also being more performant.  The design has really fallen out nicely and we're 
     delighted with it. 
     
@@ -33,7 +34,7 @@ Headline:
     which makes them easier to understand and test etc. Plus, as you'll see in the docs, there is some
     gratuitous syntactic sugar.      
      
-    The todomvc example is a tutorial on the subject:
+    The todomvc example is a tutorial on the subject:  
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
     
   - the API for the undo/redo features has been put into `re-frame.core`. 
