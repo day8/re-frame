@@ -4,7 +4,7 @@ This is a large release which contains significant new features.
 
 Headline:
   - re-frame subscriptions are now de-duplicated. This is a really big deal. As a result, 
-    many Signal graphs will be more 
+    many Signal graphs will be more
     efficient. The new behaviour better matches programmer intuitions about what "should" happen. 
   
     *Explanation*
@@ -24,7 +24,7 @@ Headline:
     So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even 
     though they involve the same event id, `:some-event`, the query vectors do not test `=`. 
  
-  - added new subscription registration functions called `re-frame.core/def-sub`. It is an 
+  - added a new subscription handler registration function called `re-frame.core/def-sub`. It is an 
     alternative to `re-frame.core/register-sub` (now renamed to `re-frame.core/def-sub-raw`).
     `def-sub` is significantly easier to use and understand,
     while often also being more performant.  The design has really fallen out nicely and we're 
@@ -37,10 +37,13 @@ Headline:
     The todomvc example is a tutorial on the subject:  
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
     
-  - the API for the undo/redo features has been put into `re-frame.core`. 
+  - The API for the undo/redo features has been put into `re-frame.core`.  
     Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo  
+    While undo and redo has been a part of re-frame from the beginning, the feature has been hidden 
+    and not documented, so it is nice to see it given proper API status. 
+    Plus, this release has [a couple of enhancements](https://github.com/Day8/re-frame/wiki/Undo-&-Redo#harvesting-and-re-instating) over what existed previously. 
     
-  - there's now two kinds of event handlers: pure and effectful. XXXX
+  - there's now two kinds of event handlers: pure and effectful. XXX  
     For description see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
     
      
@@ -80,10 +83,10 @@ Breaking:
 
 Improvements
   - XXX   (full-debug!)
-  - XXX   middleware for spec checking of event vectors  
+  - XXX   middleware for spec checking of event vectors
   - XXX   todomvc changed to use spec, instead of Schema
 
-  - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.  
+  - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
   - added new API `re-frame.core/remove-post-event-callback`. See doc string. 
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a 
     single line saying so, rather than a "group".  Makes it slightly easier to grok 
