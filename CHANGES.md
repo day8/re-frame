@@ -1,4 +1,4 @@
-## 0.8.0  (2016.07.XXXX)
+## 0.8.0  (2016.07.XX)
 
 This is a large release which contains significant new features. 
 
@@ -41,13 +41,13 @@ Headline:
     Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo  
     
   - there's now two kinds of event handlers: pure and effectful. XXXX
-    
+    For description see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
     
      
 Breaking:
   - requires Reagent >= v0.6.0 
   
-  - requires ClojureScript >= 1.9.0, because the `specs` library is  used.   XXXX not tur yet. 1.8.0 is fine. 
+  - requires ClojureScript >= 1.9.0, because the `specs` library is  used.   XXX not true yet. 1.8.0 is fine. 
   
   - `re-frame.core/register-handler` has been renamed `re-frame.core/def-event`. (There's now 
     two kinds of event-handlers, pure and effectful. Event handlers of the 2nd, new kind 
