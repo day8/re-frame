@@ -1,7 +1,7 @@
 (ns todomvc.handlers
   (:require
     [todomvc.db    :refer [default-value ls->todos todos->ls! schema]]
-    [re-frame.core :refer [register-handler path trim-v after debug]]
+    [re-frame.core :refer [def-event path trim-v after debug]]
     [schema.core   :as s]))
 
 
@@ -31,7 +31,7 @@
                       (path :todos)   ;; 1st param to handler will be the value from this path
                       ->ls            ;; write to localstore each time
                       (when ^boolean js/goog.DEBUG debug)       ;; look in your browser console
-                      trim-v])        ;; remove event id from event vec
+                      trim-v])        ;; remove the first (event id) element from the event vec
 
 
 ;; -- Helpers -----------------------------------------------------------------
@@ -47,7 +47,7 @@
 ;; -- Event Handlers ----------------------------------------------------------
 
                                   ;; usage:  (dispatch [:initialise-db])
-(register-handler                 ;; On app startup, create initial state
+(def-event                        ;; On app startup, create initial state
   :initialise-db                  ;; event id being handled
   check-schema-mw                 ;; afterwards: check that app-db matches the schema
   (fn [_ _]                       ;; the handler being registered
@@ -55,7 +55,7 @@
 
 
                                   ;; usage:  (dispatch [:set-showing  :active])
-(register-handler                 ;; this handler changes the todo filter
+(def-event                        ;; this handler changes the todo filter
   :set-showing                    ;; event-id
   [check-schema-mw (path :showing) trim-v]  ;; middleware  (wraps the handler)
 
@@ -68,37 +68,37 @@
     new-filter-kw))               ;; return new state for the path
 
 
-                                   ;; usage:  (dispatch [:add-todo  "Finsih comments"])
-(register-handler                  ;; given the text, create a new todo
+                                  ;; usage:  (dispatch [:add-todo  "Finsih comments"])
+(def-event                        ;; given the text, create a new todo
   :add-todo
   todo-middleware
-  (fn [todos [text]]               ;; "path" middlware in "todo-middleware" means 1st parameter is :todos
+  (fn [todos [text]]              ;; "path" middlware in "todo-middleware" means 1st parameter is :todos
     (let [id (allocate-next-id todos)]
       (assoc todos id {:id id :title text :done false}))))
 
 
-(register-handler
+(def-event
   :toggle-done
   todo-middleware
   (fn [todos [id]]
     (update-in todos [id :done] not)))
 
 
-(register-handler
+(def-event
   :save
   todo-middleware
   (fn [todos [id title]]
     (assoc-in todos [id :title] title)))
 
 
-(register-handler
+(def-event
   :delete-todo
   todo-middleware
   (fn [todos [id]]
     (dissoc todos id)))
 
 
-(register-handler
+(def-event
   :clear-completed
   todo-middleware
   (fn [todos _]
@@ -108,7 +108,7 @@
          (reduce dissoc todos))))    ;; returns the new version of todos
 
 
-(register-handler
+(def-event
   :complete-all-toggle
   todo-middleware
   (fn [todos _]

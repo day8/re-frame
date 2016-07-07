@@ -1,9 +1,9 @@
 (ns simpleexample.core
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [reagent.core :as reagent]
-            [re-frame.core :refer [register-handler
+            [re-frame.core :refer [def-event
                                    path
-                                   register-sub
+                                   def-sub
                                    dispatch
                                    dispatch-sync
                                    subscribe]]))
@@ -20,14 +20,14 @@
 ;; -- Event Handlers ----------------------------------------------------------
 
 
-(register-handler                 ;; setup initial state
+(def-event                 ;; setup initial state
   :initialize                     ;; usage:  (dispatch [:initialize])
   (fn
     [db _]
     (merge db initial-state)))    ;; what it returns becomes the new state
 
 
-(register-handler
+(def-event
   :time-color                     ;; usage:  (dispatch [:time-color 34562])
   (path [:time-color])            ;; this is middleware
   (fn
@@ -35,7 +35,7 @@
     value))
 
 
-(register-handler
+(def-event
   :timer
   (fn
     ;; the first item in the second argument is :timer the second is the
@@ -47,18 +47,18 @@
 ;; -- Subscription Handlers ---------------------------------------------------
 
 
-(register-sub
+(def-sub
   :timer
   (fn
-    [db _]                       ;; db is the app-db atom
-    (reaction (:timer @db))))    ;; wrap the computation in a reaction
+    [db _]             ;; db is the value currently in the app-db atom
+    (:timer @db)))
 
 
-(register-sub
+(def-sub
   :time-color
   (fn
     [db _]
-    (reaction (:time-color @db))))
+    (:time-color @db)))
 
 
 ;; -- View Components ---------------------------------------------------------

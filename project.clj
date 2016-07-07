@@ -1,9 +1,9 @@
-(defproject re-frame "0.8.0-SNAPSHOT"
+(defproject re-frame "0.8.0-alpha1"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
   :dependencies [[org.clojure/clojure        "1.8.0"]
-                 [org.clojure/clojurescript  "1.9.36"]
+                 [org.clojure/clojurescript  "1.9.89"]
                  [reagent "0.6.0-rc"]]
 
   :profiles {:debug {:debug true}

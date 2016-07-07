@@ -9,6 +9,9 @@
 ;; Example use can be found in this repo: examples/todomvc/handler.cljs
 
 
+(defn fx
+  [handler])
+
 (defn pure
   "Acts as an adaptor, allowing handlers to be writen as pure functions.
   The re-frame router passes the `app-db` atom as the first parameter to any handler.
@@ -16,7 +19,7 @@
   If you strip away the error/efficiency checks, this middleware is doing:
      (reset! app-db (handler @app-db event-vec))
   You don't have to use this middleware directly. It is automatically applied to
-  your handler's middleware when you use \"register-handler\".
+  your handler's middleware when you use \"reg-event-pure\".
   In fact, the only way to by-pass automatic use of \"pure\" in your middleware
   is to use the low level registration function \"re-frame.handlers/register-base\""
   [handler]

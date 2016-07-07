@@ -1,10 +1,13 @@
-## 0.8.0  (2016.06.XXXX)
+## 0.8.0  (2016.07.XXXX)
+
+This is a large release which contains significant new features. 
 
 Headline:
-  - re-frame subscriptions are now de-duplicated. This is a big deal. As a result, many Signal graphs will be more 
+  - re-frame subscriptions are now de-duplicated. This is a really big deal. As a result, 
+    many Signal graphs will be more 
     efficient. The new behaviour better matches programmer intuitions about what "should" happen. 
   
-    *Explanation* 
+    *Explanation*
     
     Each subscription causes a handler to execute, producing
     a reactive stream of updates. Two calls to `(subscribe [:some :query])` results in two copies of the same   
@@ -21,25 +24,38 @@ Headline:
     So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even 
     though they involve the same event id, `:some-event`, the query vectors do not test `=`. 
  
-  - added an alternative to `re-frame.core/register-sub` which is significantly easier to use, 
-    easier to understand and, in many cases, more performant.  The new registration functions is 
-    `re-frame.core/reg-sub`. The design has really fallen out nicely and we're delighted with 
-    it. 
+  - added new subscription registration functions called `re-frame.core/def-sub`. It is an 
+    alternative to `re-frame.core/register-sub` which is significantly easier to use and understand, 
+    while often also being more performant.  The design has really fallen out nicely and we're 
+    delighted with it. 
     
-    You no longer need to use `reaction` explicitly. Subscription handlers are now pure. 
-    
-    At this point the README still describes the old way (of using `reaction`).  For the moment, 
-    the best docs on the new way can be found XXXXXX
-    
+    With `def-sub`, you no longer need to use `reaction` explicitly. Subscription handlers are now pure
+    which makes them easier to understand and test etc. Plus, as you'll see in the docs, there is some
+    gratuitous syntactic sugar.      
+     
+    The todomvc example is a tutorial on the subject:
+    https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
     
   - the API for the undo/redo features has been put into `re-frame.core`. 
     Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo  
     
+  - there's now two kinds of event handlers: pure and effectful. XXXX
+    
+    
      
 Breaking:
-  - requires Reagent >= 0.6.0 or later.  It won't work with <= Reagent 0.5.2.
+  - requires Reagent >= v0.6.0 
   
-  - requires ClojureScript >= 1.9.0, because the `specs` library is  used.
+  - requires ClojureScript >= 1.9.0, because the `specs` library is  used.   XXXX not tur yet. 1.8.0 is fine. 
+  
+  - `re-frame.core/register-handler` has been renamed `re-frame.core/def-event`. (There's now 
+    two kinds of event-handlers, pure and effectful. Event handlers of the 2nd, new kind 
+    should be registered via the new function `re-frame.core/def-event-fx`) 
+    
+  - `re-frame.core/register-sub` has been renamed `re-frame.core/def-sub-raw`  (this is to indicate that 
+     this kind of registration is now considered the low level, close to the metal way to 
+     create subscriptions handlers.  This release introduced `def-sub` which becomes the preferred way
+     to register subscription handlers.
    
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can  
     supply alternatives using `re-frame.core/set-loggers!`.  
@@ -59,14 +75,12 @@ Breaking:
     (defn my-logger [& args] (do-something-with (apply str args))
     ```
     Of course, you need only worry about this if you are using `re-frame.core/set-loggers!` to 
-    hook in your own loggers.  Otherwise, you have nothing to do. 
+    hook in your own loggers.  Otherwise, you have nothing to do.
 
 Improvements
-  - XXX  What name for reg-pure-sub  (too long)
   - XXX   (full-debug!)
   - XXX   middleware for spec checking of event vectors  
-  - XXX   todomvc changed to use spc, instead of Schema
-  - XXX   todomvc split into simple and advanced.
+  - XXX   todomvc changed to use spec, instead of Schema
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.  
   - added new API `re-frame.core/remove-post-event-callback`. See doc string. 

@@ -4,7 +4,7 @@
     [reagent.core        :as     reagent]
     [re-frame.loggers    :refer  [console]]
     [re-frame.db         :refer  [app-db]]
-    [re-frame.handlers   :as     handlers]
+    [re-frame.events   :as     handlers]
     [re-frame.subs       :as     subs]))
 
 

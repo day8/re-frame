@@ -1,10 +1,10 @@
 (ns todomvc.subs
-  (:require [re-frame.core :refer [reg-sub subscribe]]))
+  (:require [re-frame.core :refer [def-sub subscribe]]))
 
 ;; register-pure-sub allows us to write subscription handlers without ever
 ;; using `reaction` directly.
 ;; This is how you would register a simple handler.
-(reg-sub
+(def-sub
   :showing
   (fn [db _]        ;; db, is the value in app-db
     (:showing db))) ;; I repeat:  db is a value. Not a ratom.  And this fn does not return a reaction, just a value.
@@ -17,7 +17,7 @@
 (defn sorted-todos
   [db _]
   (:todos db))
-(reg-sub :sorted-todos sorted-todos)
+(def-sub :sorted-todos sorted-todos)
 
 ;; -------------------------------------------------------------------------------------
 ;; Beyond Simple Handlers
@@ -47,7 +47,7 @@
 ;; In the two simple examples at the top, we only supplied the 2nd of these functions.
 ;; But now we are dealing with intermediate nodes, we'll need to provide both fns.
 ;;
-(reg-sub
+(def-sub
   :todos
 
   ;; This function returns the input signals.
@@ -77,7 +77,7 @@
 ;; As a result note:
 ;;   - the first function (which returns the signals, returns a 2-vector)
 ;;   - the second function (which is the computation, destructures this 2-vector as its first parameter)
-(reg-sub
+(def-sub
   :visible-todos
   (fn [query-v _]           ;; returns a vector of two signals.
     [(subscribe [:todos])
@@ -115,7 +115,7 @@
 ;; register-pure-sub provides some macro sugar so you can nominate a very minimal
 ;; vector of input signals. The 1st function is not needed.
 ;; Here is the example above rewritten using the sugar.
-#_(reg-sub
+#_(def-sub
   :visible-todos
   :<- [:todos]
   :<- [:showing]
@@ -127,19 +127,19 @@
       (filter filter-fn todos))))
 
 
-(reg-sub
+(def-sub
   :all-complete?
   :<- [:todos]
   (fn [todos _]
     (seq todos)))
 
-(reg-sub
+(def-sub
   :completed-count
   :<- [:todos]
   (fn [todos _]
     (count (filter :done todos))))
 
-(reg-sub
+(def-sub
   :footer-counts                     ;; XXXX different from original. Now does not return showing
   :<- [:todos]
   :<- [:completed-count]

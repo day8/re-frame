@@ -1,6 +1,6 @@
 (ns re-frame.router
   (:require [reagent.core]
-            [re-frame.handlers :refer [handle]]
+            [re-frame.events :refer [handle]]
             [goog.async.nextTick]))
 
 
