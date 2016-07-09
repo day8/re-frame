@@ -14,7 +14,7 @@
 
 (def initial-state
   {:timer (js/Date.)
-   :time-color "#f34"})
+   :time-color "#f88"})
 
 
 ;; -- Event Handlers ----------------------------------------------------------
@@ -51,14 +51,14 @@
   :timer
   (fn
     [db _]             ;; db is the value currently in the app-db atom
-    (:timer @db)))
+    (:timer db)))
 
 
 (def-sub
   :time-color
   (fn
     [db _]
-    (:time-color @db)))
+    (:time-color db)))
 
 
 ;; -- View Components ---------------------------------------------------------
@@ -72,7 +72,6 @@
   []
   (let [time-color (subscribe [:time-color])
         timer (subscribe [:timer])]
-
     (fn clock-render
         []
         (let [time-str (-> @timer
@@ -86,7 +85,6 @@
 (defn color-input
   []
   (let [time-color (subscribe [:time-color])]
-
     (fn color-input-render
         []
         [:div.color-input

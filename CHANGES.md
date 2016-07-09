@@ -1,9 +1,14 @@
 ## 0.8.0  (2016.07.XX)
 
-This is a large release which contains significant new features. 
+Staying on the leading edge of new buzzwords is obviously critical for any framework. Angluar's terrifying faceplant 
+is a sobering  reminder to us all.  
+With this release, re-frame's already impressive buzzword muscles bulge further with new 
+walnuts like "effects", "coeffects", and "de-duplicated signal graph".  I know, right?  
+
+Some may even find the new features useful.
 
 Headline:
-  - re-frame subscriptions are now de-duplicated. This is a really big deal. As a result, 
+  - re-frame subscriptions are now de-duplicated. As a result, 
     many Signal graphs will be more
     efficient. The new behaviour better matches programmer intuitions about what "should" happen. 
   
@@ -28,11 +33,11 @@ Headline:
     alternative to `re-frame.core/register-sub` (now renamed to `re-frame.core/def-sub-raw`).
     `def-sub` is significantly easier to use and understand,
     while often also being more performant.  The design has really fallen out nicely and we're 
-    delighted with it. 
+    delighted with it.
     
     With `def-sub`, you no longer need to use `reaction` explicitly. Subscription handlers are now pure
     which makes them easier to understand and test etc. Plus, as you'll see in the docs, there is some
-    gratuitous syntactic sugar.      
+    gratuitous syntactic sugar.
      
     The todomvc example is a tutorial on the subject:  
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
@@ -41,7 +46,8 @@ Headline:
     Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo  
     While undo and redo has been a part of re-frame from the beginning, the feature has been hidden 
     and not documented, so it is nice to see it given proper API status. 
-    Plus, this release has [a couple of enhancements](https://github.com/Day8/re-frame/wiki/Undo-&-Redo#harvesting-and-re-instating) over what existed previously. 
+    Plus, this release has [a couple of enhancements](https://github.com/Day8/re-frame/wiki/Undo-&-Redo#harvesting-and-re-instating)
+    over that which previously existed previously. 
     
   - there's now two kinds of event handlers: pure and effectful. XXX  
     For description see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
@@ -56,13 +62,13 @@ Breaking:
     two kinds of event-handlers, pure and effectful. Event handlers of the 2nd, new kind 
     should be registered via the new function `re-frame.core/def-event-fx`) 
     
-  - `re-frame.core/register-sub` has been renamed `re-frame.core/def-sub-raw`  (this is to indicate that 
+  - `re-frame.core/register-sub` has been renamed `re-frame.core/def-sub-raw`.  This is to indicate that 
      this kind of registration is now considered the low level, close to the metal way to 
      create subscriptions handlers.  This release introduced `def-sub` which becomes the preferred way
      to register subscription handlers.
    
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can  
-    supply alternatives using `re-frame.core/set-loggers!`.  
+    supply alternative functions using `re-frame.core/set-loggers!`.  
     
     With this release, any alternatives you supply will be called with different parameters. 
     Previously loggers were called with a single `str` parameter but now they are expected to act 
