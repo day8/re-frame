@@ -1,11 +1,10 @@
 ## 0.8.0  (2016.07.XX)
 
-Staying on the leading edge of new buzzwords is obviously critical for any framework. Angluar's terrifying faceplant 
-is a sobering  reminder to us all.  
-With this release, re-frame's already impressive buzzword muscles bulge further with new 
-walnuts like "effects", "coeffects", and "de-duplicated signal graph".  I know, right?  
+Staying on the leading edge of new buzzwords is obviously critical for any framework. Angular's terrifying faceplant 
+is a sobering  reminder to us all. With this release, re-frame's already impressive buzzword muscles 
+bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  Yeah, I know, right?  
 
-Some may even find the new features useful.
+Some may even find these new features useful.
 
 Headline:
   - re-frame subscriptions are now de-duplicated. As a result, 
@@ -52,12 +51,13 @@ Headline:
   - there's now two kinds of event handlers: pure and effectful. XXX  
     For description see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
     
+  - taking advantage of the new effectful event handlers, there's now a new library
+    which makes it easy to XXXX
+    
      
 Breaking:
   - requires Reagent >= v0.6.0 
-  
-  - requires ClojureScript >= 1.9.0, because the `specs` library is  used.   XXX not true yet. 1.8.0 is fine. 
-  
+    
   - `re-frame.core/register-handler` has been renamed `re-frame.core/def-event`. (There's now 
     two kinds of event-handlers, pure and effectful. Event handlers of the 2nd, new kind 
     should be registered via the new function `re-frame.core/def-event-fx`) 
@@ -75,8 +75,9 @@ Breaking:
     like `console.log` itself and take variadic, non string params. Sorry to break things, but
     we are trying to maximise use of cljs-devtools and information is lost when strings are 
     output, instead of actual data.
-     
-    To transition, you'll need to tweak like this: 
+    
+    Of course, you need only worry about this if you are using `re-frame.core/set-loggers!` to 
+    hook in your own loggers.  If you are, then, to transition, you'll need to tweak like this: 
     ```
      ;; your old log function might have looked like this. Single string parameter.
     (defn my-logger [s]  (do-something-with s))    
@@ -84,8 +85,6 @@ Breaking:
     ;; your new version will have variadic params, and turn them into a string
     (defn my-logger [& args] (do-something-with (apply str args))
     ```
-    Of course, you need only worry about this if you are using `re-frame.core/set-loggers!` to 
-    hook in your own loggers.  Otherwise, you have nothing to do.
 
 Improvements
   - XXX   (full-debug!)
@@ -297,3 +296,5 @@ call it, like this `(undoable "Some explanation")`
 The `explanation` provided to undoable must be either a `string` (static
 explanation) or a function  `(db event) -> string`, allowing you to customize
 the undo message based on details of the event.
+
+
