@@ -97,7 +97,7 @@
 ;; We supplied only one function in those registrations, not two?
 ;; I'm glad you asked.
 ;; You see, when the signal-returning-fn is omitted, register-pure-sub provides a default.
-;; And it loks like this:
+;; And it looks like this:
 ;;    (fn [_ _] re-frame.db/app-db)
 ;; You can see that it returns one signal, and that signal is app-db itself.
 ;;
