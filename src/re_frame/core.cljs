@@ -2,6 +2,7 @@
   (:require
     [re-frame.events     :as events]
     [re-frame.subs       :as subs]
+    [re-frame.fx         :as fx]
     [re-frame.router     :as router]
     [re-frame.loggers    :as loggers]
     [re-frame.undo       :as undo]
@@ -15,11 +16,8 @@
 
 (def def-sub-raw         subs/register)
 (def def-sub             subs/register-pure)
-(def clear-sub-handlers! subs/clear-handlers!)
+(def clear-sub-handlers! subs/clear-all-handlers!)
 (def subscribe           subs/subscribe)
-
-
-(def clear-event-handlers!  events/clear-handlers!)
 
 (def pure        middleware/pure)
 (def fx          middleware/fx)
@@ -29,6 +27,9 @@
 (def trim-v      middleware/trim-v)
 (def after       middleware/after)
 (def on-changes  middleware/on-changes)
+
+
+(def def-fx      fx/register)
 
 
 ;; -- Undo API -----
@@ -48,7 +49,10 @@
 (def set-loggers! loggers/set-loggers!)
 
 
-;; --  Convenience API -------
+;; --  Events API -------
+
+(def clear-all-event-handlers!  events/clear-all-handlers!)
+(def clear-event-handler!       events/clear-handler!)
 
 ;; Registers a pure event handler. Places pure middleare in the correct, LHS position.
 (defn def-event

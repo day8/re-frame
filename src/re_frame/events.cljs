@@ -45,25 +45,29 @@
   (get @id->fn event-id))
 
 
-(defn clear-handlers!
-  "Unregister all event handlers"
+(defn clear-all-handlers!
   []
   (reset! id->fn {}))
+
+
+(defn clear-handler!
+  [id]
+  (swap! dissoc id->fn id))
 
 
 (defn register-base
   "register a handler for an event.
   This is low level and it is expected that \"re-frame.core/def-event\" would
   generally be used."
-  ([event-id handler-fn]
+  ([event-id handler-fn
     (when (contains? @id->fn event-id)
       (console :warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
-    (swap! id->fn assoc event-id handler-fn))
+    (swap! id->fn assoc event-id handler-fn)])
 
-  ([event-id middleware handler-fn]
+  ([event-id middleware handler-fn
     (let  [mid-ware    (comp-middleware middleware)   ;; compose the middleware
            midware+hfn (mid-ware handler-fn)]         ;; wrap the handler in the middleware
-      (register-base event-id midware+hfn))))
+      (register-base event-id midware+hfn))]))
 
 
 

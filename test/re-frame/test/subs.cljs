@@ -8,7 +8,7 @@
 ;=====test basic subscriptions  ======
 
 (deftest test-reg-sub
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register
     :test-sub
@@ -20,7 +20,7 @@
     (is (= 1 @test-sub))))
 
 (deftest test-chained-subs
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register
     :a-sub
@@ -44,7 +44,7 @@
     (is (= {:a 1 :b 3} @test-sub))))
 
 (deftest test-sub-parameters
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register
     :test-sub
@@ -56,7 +56,7 @@
 
 
 (deftest test-sub-chained-parameters
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register
     :a-sub
@@ -82,7 +82,7 @@
 (def side-effect-atom (atom 0))
 
 (deftest test-cached-subscriptions
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
   (reset! side-effect-atom 0)
 
   (subs/register
@@ -106,7 +106,7 @@
 ;============== test register-pure macros ================
 
 (deftest test-reg-sub-macro
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register-pure
     :test-sub
@@ -118,7 +118,7 @@
     (is (= 1 @test-sub))))
 
 (deftest test-reg-sub-macro-singleton
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register-pure
     :a-sub
@@ -138,7 +138,7 @@
     (is (= {:a 1} @test-sub))))
 
 (deftest test-reg-sub-macro-vector
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register-pure
     :a-sub
@@ -163,7 +163,7 @@
     (is (= {:a 1 :b 3} @test-sub))))
 
 (deftest test-reg-sub-macro-map
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register-pure
     :a-sub
@@ -188,7 +188,7 @@
     (is (= {:a 1 :b 3} @test-sub))))
 
 (deftest test-sub-macro-parameters
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register-pure
     :test-sub
@@ -199,7 +199,7 @@
     (is (= [1 :c] @test-sub))))
 
 (deftest test-sub-macros-chained-parameters
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register-pure
     :a-sub
@@ -222,7 +222,7 @@
 
 (deftest test-sub-macros-<-
   "test the syntactial sugar"
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register-pure
     :a-sub
@@ -239,7 +239,7 @@
 
 (deftest test-sub-macros-chained-parameters-<-
   "test the syntactial sugar"
-  (subs/clear-handlers!)
+  (subs/clear-all-handlers!)
 
   (subs/register-pure
     :a-sub

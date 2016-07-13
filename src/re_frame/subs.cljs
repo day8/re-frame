@@ -28,7 +28,7 @@
 ;; test "=".
 (def ^:private query->reaction (atom {}))
 
-(defn clear-handlers!
+(defn clear-all-handlers!
   "Unregisters all existing subscription handlers"
   []
   (reset! qid->fn {})
@@ -72,7 +72,7 @@
          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
        (cache-and-return query-v [] (handler-fn app-db query-v)))))
 
-  ([v dynv]
+  ([v dynv
     (if-let [cached (cache-lookup v dynv)]
       (do (console :warn "Using cached subscription: " v " and " dynv)
           cached)
@@ -88,15 +88,15 @@
             ;; handler-fn returns a reaction which is then wrapped in the sub reaction
             ;; need to double deref it to get to the actual value.
             (console :warn "Subscription created: " v dynv)
-            (cache-and-return v dynv (reaction @@sub))))))))
+            (cache-and-return v dynv (reaction @@sub))))))]))
 
 ;; -- Helper code for register-pure -------------------
 
-(s/def ::register-pure-args (s/cat
+(s/def ::register-pure-args (s/cat)
                 :sub-name   keyword?
                 :sub-fn     (s/? fn?)
                 :arrow-args (s/* (s/cat :key #{:<-} :val vector?))
-                :f          fn?))
+                :f          fn?)
 
 (defn- fmap
   "Returns a new version of 'm' in which f has been applied to each value.

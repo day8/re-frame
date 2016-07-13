@@ -12,7 +12,7 @@
 ;; that `fn` is a pure function
 
 ;; Next, the registration of a similar handler is done in two steps.
-;; First, we `defn` a pure handler function.  Then, we use `register-pure-sub` to register it.
+;; First, we `defn` a pure handler function.  Then, we use `def-sub` to register it.
 ;; Two steps. This is different to the first registration, which was done in one step.
 (defn sorted-todos
   [db _]
@@ -36,7 +36,7 @@
 ;; When writing and registering the handler for an intermediate node, you must nominate
 ;; one or more input signals (typically one or two).
 ;;
-;; register-pure-sub allows you to supply:
+;; def-sub allows you to supply:
 ;;
 ;;   1. a function which returns the input signals. It can return either a single signal or
 ;;      a vector of signals, or a map of where the values are the signals.
@@ -115,7 +115,7 @@
 ;; register-pure-sub provides some macro sugar so you can nominate a very minimal
 ;; vector of input signals. The 1st function is not needed.
 ;; Here is the example above rewritten using the sugar.
-#_(def-sub
+#_(def-sub)
   :visible-todos
   :<- [:todos]
   :<- [:showing]
@@ -124,7 +124,7 @@
                       :active (complement :done)
                       :done   :done
                       :all    identity)]
-      (filter filter-fn todos))))
+      (filter filter-fn todos)))
 
 
 (def-sub
