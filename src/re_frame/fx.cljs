@@ -1,23 +1,27 @@
 (ns re-frame.fx
   (:require [re-frame.router :refer [dispatch]]
             [re-frame.db :refer [app-db]]
+            [re-frame.events]
             [re-frame.loggers    :refer [console]]))
 
 
-
 ;; -- Registration ------------------------------------------------------------
-;;
+
 (def ^:private id->handler-fn  (atom {}))
 
 (defn lookup-handler
-  [event-id]
-  (get @id->handler-fn event-id))
+  [effect-id]
+  (get @id->handler-fn effect-id))
 
 
-(defn clear-handlers!
-  "Unregister all effects handlers"
+(defn clear-all-handlers!
   []
   (reset! id->handler-fn {}))
+
+
+(defn clear-handler!
+  [effect-id]
+  (swap! id->handler-fn dissoc effect-id))
 
 
 (defn register
@@ -29,7 +33,6 @@
 
 
 ;; -- Standard effets ---------------------------------------------------------
-
 
 (defn dispatch-helper
   [effect]
@@ -62,11 +65,11 @@
 ;;
 ;; {:forward-events  {:unlisten :the-listner-id-I-originally-supplied}}
 ;;
-(register
+#_(register
   :forward-events
   (let [id->listen-fn (atom {})
         process-entry (fn [{:keys [listen events dispatch-to unlisten]}]
-                        (if (some? unlisten)
+                        (if  unlisten
                           (do
                             (unregister XXXX)
                             (swap! id->listen-fn dissoc unlisten))))]
@@ -80,10 +83,17 @@
 
 
 (register
+  :deregister-event-handler
+  (fn [val]
+    (if (list? val)
+      (doall (map re-frame.events/clear-handler! val))
+      (re-frame.events/clear-handler! val))))
+
+
+(register
   :db
-  (fn [world]
-    (if-let [db (:db world)]
-      (reset! app-db db))))
+  (fn [effect]
+    (reset! app-db effect)))
 
 ;; -- Middleware --------------------------------------------------------------
 
@@ -93,9 +103,7 @@
 ;; XXX world or branch ??  Return world?
 ;; XXX ordering
 ;; XXX review other standard middleware
-;; XXX write a gist for :http
 ;; XXX think about an undo effect
-;;     :undo
 
 
 (defn fx

@@ -2,7 +2,7 @@
   :dependencies [[org.clojure/clojure        "1.8.0"]
                  [org.clojure/clojurescript  "1.9.89"]
                  [reagent "0.6.0-rc"]
-                 [re-frame "0.8.0-alpha1"]
+                 [re-frame "0.8.0-SNAPSHOT"]
                  [binaryage/devtools "0.7.0"]
                  [secretary "1.2.3"]
                  [prismatic/schema "1.0.3"]]

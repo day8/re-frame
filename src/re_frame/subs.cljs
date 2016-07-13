@@ -72,31 +72,31 @@
          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
        (cache-and-return query-v [] (handler-fn app-db query-v)))))
 
-  ([v dynv
-    (if-let [cached (cache-lookup v dynv)]
-      (do (console :warn "Using cached subscription: " v " and " dynv)
-          cached)
-      (let [query-id   (first-in-vector v)
-            handler-fn (get @qid->fn query-id)]
-        (when ^boolean js/goog.DEBUG
-          (when-let [not-reactive (remove #(implements? reagent.ratom/IReactiveAtom %) dynv)]
-            (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom: " not-reactive)))
-        (if (nil? handler-fn)
-          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")
-          (let [dyn-vals (reaction (mapv deref dynv))
-                sub (reaction (handler-fn app-db v @dyn-vals))]
-            ;; handler-fn returns a reaction which is then wrapped in the sub reaction
-            ;; need to double deref it to get to the actual value.
-            (console :warn "Subscription created: " v dynv)
-            (cache-and-return v dynv (reaction @@sub))))))]))
+  ([v dynv]
+   (if-let [cached (cache-lookup v dynv)]
+     (do (console :warn "Using cached subscription: " v " and " dynv)
+         cached)
+     (let [query-id   (first-in-vector v)
+           handler-fn (get @qid->fn query-id)]
+       (when ^boolean js/goog.DEBUG
+         (when-let [not-reactive (remove #(implements? reagent.ratom/IReactiveAtom %) dynv)]
+           (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom: " not-reactive)))
+       (if (nil? handler-fn)
+         (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")
+         (let [dyn-vals (reaction (mapv deref dynv))
+               sub (reaction (handler-fn app-db v @dyn-vals))]
+           ;; handler-fn returns a reaction which is then wrapped in the sub reaction
+           ;; need to double deref it to get to the actual value.
+           (console :warn "Subscription created: " v dynv)
+           (cache-and-return v dynv (reaction @@sub))))))))
 
 ;; -- Helper code for register-pure -------------------
 
-(s/def ::register-pure-args (s/cat)
-                :sub-name   keyword?
-                :sub-fn     (s/? fn?)
-                :arrow-args (s/* (s/cat :key #{:<-} :val vector?))
-                :f          fn?)
+(s/def ::register-pure-args (s/cat
+                              :sub-name   keyword?
+                              :sub-fn     (s/? fn?)
+                              :arrow-args (s/* (s/cat :key #{:<-} :val vector?))
+                              :f          fn?))
 
 (defn- fmap
   "Returns a new version of 'm' in which f has been applied to each value.
@@ -157,11 +157,11 @@
     (cond
       sub-fn                   ;; first case the user provides a custom sub-fn
       (register
-         sub-name
-         (fn [db q-vec d-vec]
-           (let [subscriptions (sub-fn q-vec d-vec)]    ;; this let needs to be outside the fn
-             (ratom/make-reaction
-               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
+        sub-name
+        (fn [db q-vec d-vec]
+          (let [subscriptions (sub-fn q-vec d-vec)]    ;; this let needs to be outside the fn
+            (ratom/make-reaction
+              (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
       arrow-args              ;; the user uses the :<- sugar
       (register
         sub-name
@@ -174,11 +174,11 @@
               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
       :else
       (register ;; the simple case with no subs
-         sub-name
-         (fn [db q-vec d-vec]
-           (ratom/make-reaction (fn [] (f @db q-vec d-vec))))))))
+        sub-name
+        (fn [db q-vec d-vec]
+          (ratom/make-reaction (fn [] (f @db q-vec d-vec))))))))
 
 #_(s/fdef register-pure
-        :args ::register-pure-args)
+          :args ::register-pure-args)
 
 #_(s/instrument #'register-pure)

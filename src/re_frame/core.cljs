@@ -9,15 +9,26 @@
     [re-frame.middleware :as middleware]))
 
 
-;; --  API  -------
+;; --  dispatch
 
 (def dispatch         router/dispatch)
 (def dispatch-sync    router/dispatch-sync)
 
+
+;; --  subscribe
+
 (def def-sub-raw         subs/register)
 (def def-sub             subs/register-pure)
-(def clear-sub-handlers! subs/clear-all-handlers!)
+(def clear-all-subs!     subs/clear-all-handlers!)
 (def subscribe           subs/subscribe)
+
+;; -- Effects
+
+(def def-fx      fx/register)
+(def clear-fx!   fx/clear-handler!)
+
+
+;; --  Middleware
 
 (def pure        middleware/pure)
 (def fx          middleware/fx)
@@ -28,8 +39,25 @@
 (def after       middleware/after)
 (def on-changes  middleware/on-changes)
 
+;; --  Events
 
-(def def-fx      fx/register)
+(def clear-all-events!   events/clear-all-handlers!)
+(def clear-event!        events/clear-handler!)
+
+;; Registers a pure event handler. Places pure middleare in the correct, LHS position.
+(defn def-event
+  ([id handler]
+    (events/register-base id pure handler))
+  ([id middleware handler]
+    (events/register-base id [pure middleware] handler)))
+
+
+;; Registers an effectful event handler. Places fx middleare in the correct, LHS position.
+(defn def-event-fx
+  ([id handler]
+   (events/register-base id fx handler))
+  ([id middleware handler]
+   (events/register-base id [fx middleware] handler)))
 
 
 ;; -- Undo API -----
@@ -47,27 +75,6 @@
 ;;   (defn my-fn [& args]  (post-it-somewhere (apply str args)))
 ;;   (re-frame.core/set-loggers!  {:warn my-fn :log my-fn})    ;; I should override the rest of them too.
 (def set-loggers! loggers/set-loggers!)
-
-
-;; --  Events API -------
-
-(def clear-all-event-handlers!  events/clear-all-handlers!)
-(def clear-event-handler!       events/clear-handler!)
-
-;; Registers a pure event handler. Places pure middleare in the correct, LHS position.
-(defn def-event
-  ([id handler]
-    (events/register-base id pure handler))
-  ([id middleware handler]
-    (events/register-base id [pure middleware] handler)))
-
-
-;; Registers an effectful event handler. Places fx middleare in the correct, LHS position.
-(defn def-event-fx
-  ([id handler]
-   (events/register-base id fx handler))
-  ([id middleware handler]
-   (events/register-base id [fx middleware] handler)))
 
 
 
