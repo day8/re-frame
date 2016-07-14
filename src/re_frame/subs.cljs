@@ -67,7 +67,7 @@
          cached)
      (let [query-id   (first-in-vector query-v)
            handler-fn (get @qid->fn query-id)]
-       (console :warn "Subscription crerated: " query-v)
+       (console :warn "Subscription created: " query-v)
        (if-not handler-fn
          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
        (cache-and-return query-v [] (handler-fn app-db query-v)))))
