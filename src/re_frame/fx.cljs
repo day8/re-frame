@@ -21,18 +21,20 @@
 
 (defn clear-handler!
   [effect-id]
-  (swap! id->handler-fn dissoc effect-id))
+  (if (lookup-handler effect-id)
+    (swap! id->handler-fn dissoc effect-id)
+    (console :warn "re-frame: unable to clear effect handler for  " effect-id ". Not defined.")))
 
 
 (defn register
   "register a handler fn for an effect."
-  [event-id handler-fn]
-  (when (contains? @id->handler-fn event-id)
-    (console :warn "re-frame: overwriting an effects handler for: " event-id))   ;; allow it, but warn.
-  (swap! id->handler-fn assoc event-id handler-fn))
+  [effect-id handler-fn]
+  (when (lookup-handler effect-id)
+    (console :warn "re-frame: overwriting an effects handler for: " effect-id))   ;; allow it, but warn.
+  (swap! id->handler-fn assoc effect-id handler-fn))
 
 
-;; -- Standard effets ---------------------------------------------------------
+;; -- Standard Builtin Effects Handlers  --------------------------------------
 
 (defn dispatch-helper
   [effect]
@@ -52,10 +54,17 @@
     (doseq  [[ms events] effect]
         (js/setTimeout #(dispatch-helper events) ms))))
 
+
+;; Supply either a vector or a list of vectors. For example:
+;;
+;;   {:dispatch [:event-id "param"] }
+;;
+;;   {:dispatch (list [:do :all] [:three :of] [:these]) }
+;;
 (register
   :dispatch
-  (fn [effect]
-    (dispatch-helper effect)))
+  (fn [val]
+    (dispatch-helper val)))
 
 
 ;;
@@ -92,8 +101,8 @@
 
 (register
   :db
-  (fn [effect]
-    (reset! app-db effect)))
+  (fn [val]
+    (reset! app-db val)))
 
 ;; -- Middleware --------------------------------------------------------------
 
@@ -110,11 +119,9 @@
   [handler]
   (fn fx-handler
     [app-db event-vec]
-    (let [world   {:db @app-db}
-          result (handler world event-vec)
-          effects (-> result (dissoc :db) keys)
-          handlers (map lookup-handler effects)
-          retult' (reduce #(%2 %1) result handlers)]
-
-      (if-let [db (:db result)]
-        (reset! app-db db)))))
+    (let [world   {:db @app-db}]
+      (->> (handler world event-vec)
+           (map (fn [[key val]]
+                  (if-let [effect-fn  (lookup-handler key)]
+                    (effect-fn val)
+                    (console :error "re-frame: no effects handler defined for: " key ". Ignoring"))))))))

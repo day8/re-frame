@@ -2,14 +2,14 @@
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. Angular's terrifying faceplant
 is a sobering  reminder to us all. With this release, re-frame's already impressive buzzword muscles
-bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  Yeah, I know, right?
+bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  I know, right?
 
 Some may even find these new features useful.
 
 Headline:
   - re-frame subscriptions are now de-duplicated. As a result,
-    many Signal graphs will be more
-    efficient. The new behaviour better matches programmer intuitions about what "should" happen.
+    many Signal graphs will be more efficient. The new behaviour better 
+    matches programmer intuitions about what "should" happen.  
 
     *Explanation*
 
@@ -38,7 +38,7 @@ Headline:
     which makes them easier to understand and test etc. Plus, as you'll see in the docs, there is some
     gratuitous syntactic sugar.
 
-    The todomvc example is a tutorial on the subject:
+    The todomvc example is a tutorial on the subject:  
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
 
   - The API for the undo/redo features has been put into `re-frame.core`.
@@ -48,7 +48,7 @@ Headline:
     Plus, this release has [a couple of enhancements](https://github.com/Day8/re-frame/wiki/Undo-&-Redo#harvesting-and-re-instating)
     over that which previously existed previously.
 
-  - there's now two kinds of event handlers: pure and effectful. XXX
+  - there's now two kinds of event handlers: pure and effectful. XXX  
     For description see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
 
   - taking advantage of the new effectful event handlers, there's now a new library
@@ -86,10 +86,10 @@ Breaking:
     (defn my-logger [& args] (do-something-with (apply str args))
     ```
 
-Improvements
-  - XXX   (full-debug!)
-  - XXX   middleware for spec checking of event vectors
-  - XXX   todomvc changed to use spec, instead of Schema
+Improvements:
+  - XXX  (full-debug!)
+  - XXX  middleware for spec checking of event vectors
+  - XXX  todomvc changed to use spec, instead of Schema
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
   - added new API `re-frame.core/remove-post-event-callback`. See doc string.
@@ -97,16 +97,10 @@ Improvements
     single line saying so, rather than a "group".  Makes it slightly easier to grok
     the absence of change.
   - Standardised test namespaces: renamed to use -test suffix and moved to eliminate redundant /test folder
-  - Added cljs.test based tests via browser/html. These mimic original karma tests. NOTE: previous lein aliases `once` and `auto` have been replaced by `test-once` , `test-auto` & `karma-once` see [CONTRIBUTING.md](CONTRIBUTING.md)
+  - Added cljs.test based tests via browser/html. These mimic original karma tests. NOTE: previous 
+    lein aliases `once` and `auto` have been replaced by `test-once` , `test-auto` & `karma-once` 
+    see [CONTRIBUTING.md](CONTRIBUTING.md)
 
-####Other:####
-  - changed dev deps/plugins
-    <pre>
-    binaryage/devtools "0.7.2"
-    lein-npm           "0.6.2"
-    lein-figwheel      "0.5.4-7"
-    lein-shell         "0.5.0"  (added)
-    </pre>
 
 ## 0.7.0  (2016-03-14)
 

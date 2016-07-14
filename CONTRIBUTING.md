@@ -1,41 +1,40 @@
 # Contributing to re-frame
 
-:+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
-
-The following is a set of guidelines for contributing to re-frame which is hosted on [Github](https://github.com/Day8/re-frame).
-These are just guidelines, not rules, use your best judgment and feel free to propose changes to this document in a pull request.
+Thank you for taking the time to contribute!
 
 ## Support questions
 
-**The Github issues for re-frame are for bug reports and feature requests. Support requests and usage questions should go to the [Clojure Slack channel](http://clojurians.net), the [ClojureScript mailing list](https://groups.google.com/forum/#!forum/clojurescript), or the [Reagent mailing list](https://groups.google.com/forum/#!forum/reagent-project).**
-
-## Creating issues for bugs
-
-Check if the issue has already been reported. If possible provide:
-
-* Version of re-frame being used
-* Minimal reproduction steps
-
-## Creating issues for features
-
-Use your best judgement on what is needed here.
+The Github issues are for bug reports and feature requests only. Support requests and usage
+questions should go to the re-frame [Clojure Slack channel](http://clojurians.net) or
+the [ClojureScript mailing list](https://groups.google.com/forum/#!forum/clojurescript).
 
 ## Pull requests
 
-**Create pull requests to the develop branch**, work will merged onto master when it is ready to be released.
+**Create pull requests to the develop branch**, work will be merged onto master when it is ready to be released.
 
-## Running the tests
+
+## Running tests
 
 #### Via Browser/HTML
+
+To build the tests and run them in one step, just:
 ```sh
-lein test-once  # builds re-frame tests & opens browser on test/test.html
-                # or lein test-auto # then open a browser on test/test.html
-                # and refresh browser to rerun tests after each auto compile.
+lein test-once  # compiles & then opens test.html in the browser
 ```
+
+You can also get auto compiles via:
+```sh
+lein test-auto
+```
+but you'll need to manually open `test/test.html` in a browser. And you'll also need to 
+manually reload this page after each auto compile.  
 
 #### Via Karma
 
-To run the tests, you must have recent versions of node, npm, Leiningen, and a C++ compiler toolchain installed. If you're on Linux or Mac OS X then you will be fine, if you're on Windows then you need to install Visual Studio Community Edition, and the C++ compiler dependencies.
+To run the tests, you must have recent versions of node, npm, Leiningen, and a C++ compiler 
+toolchain installed. If you're on Linux or Mac OS X then you will be fine, 
+if you're on Windows then you need to install Visual Studio Community Edition, 
+and the C++ compiler dependencies.
 
 ```sh
 lein deps       # runs lein-npm, installs Karma & other node dependencies. Only needed the first time.

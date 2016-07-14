@@ -52,7 +52,9 @@
 
 (defn clear-handler!
   [id]
-  (swap! dissoc id->fn id))
+  (if (lookup-handler id)
+    (swap! id->fn dissoc id)
+    (console :warn "re-frame: unable to clear event handler for  " id ". Not  defined.")))
 
 
 (defn register-base
