@@ -1,4 +1,4 @@
-(ns re-frame.test.undo
+(ns re-frame.undo-test
   (:require [cljs.test :refer-macros [is deftest]]
             [re-frame.undo :as undo]
             [re-frame.db :as db]

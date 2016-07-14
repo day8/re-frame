@@ -1,6 +1,6 @@
 module.exports = function (config) {
-    var root = 'run/compiled/test'; // same as :output-dir
-    var junitOutputDir = process.env.CIRCLE_TEST_REPORTS || "run/compiled/test/junit";
+    var root = 'run/compiled/karma/test'; // same as :output-dir
+    var junitOutputDir = process.env.CIRCLE_TEST_REPORTS || "run/compiled/karma/test/junit";
 
     config.set({
         frameworks: ['cljs-test'],
@@ -11,7 +11,7 @@ module.exports = function (config) {
         ],
 
         client: {
-            args: ['re_frame.test.runner.run']
+            args: ['re_frame.test_runner.run_karma']
         },
 
         // the default configuration

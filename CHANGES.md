@@ -1,87 +1,87 @@
 ## 0.8.0  (2016.07.XX)
 
-Staying on the leading edge of new buzzwords is obviously critical for any framework. Angular's terrifying faceplant 
-is a sobering  reminder to us all. With this release, re-frame's already impressive buzzword muscles 
-bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  Yeah, I know, right?  
+Staying on the leading edge of new buzzwords is obviously critical for any framework. Angular's terrifying faceplant
+is a sobering  reminder to us all. With this release, re-frame's already impressive buzzword muscles
+bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  Yeah, I know, right?
 
 Some may even find these new features useful.
 
 Headline:
-  - re-frame subscriptions are now de-duplicated. As a result, 
+  - re-frame subscriptions are now de-duplicated. As a result,
     many Signal graphs will be more
-    efficient. The new behaviour better matches programmer intuitions about what "should" happen. 
-  
+    efficient. The new behaviour better matches programmer intuitions about what "should" happen.
+
     *Explanation*
-    
+
     Each subscription causes a handler to execute, producing
     a reactive stream of updates. Two calls to `(subscribe [:some :query])` results in two copies of the same
     subscription handler running, each delivering a stream of updates. Now, if these two subscriptions
     were running at the same time, this would be inefficient. Both handlers would be
     doing the same computations and delivering the same stream of updates. Unnecessary, duplicate work.
-    
-    Starting with this version, this sort of duplication has been eliminated. Two, or more, concurrent 
-    subscriptions for the same query will now source reactive updates from the one executing handler. 
-     
+
+    Starting with this version, this sort of duplication has been eliminated. Two, or more, concurrent
+    subscriptions for the same query will now source reactive updates from the one executing handler.
+
     So, how do we know if two subscriptions are "the same"?  Answer: two subscriptions
     are the same if their query vectors test `=` to each other.
-    
-    So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even 
-    though they involve the same event id, `:some-event`, the query vectors do not test `=`. 
- 
-  - added a new subscription handler registration function called `re-frame.core/def-sub`. It is an 
+
+    So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even
+    though they involve the same event id, `:some-event`, the query vectors do not test `=`.
+
+  - added a new subscription handler registration function called `re-frame.core/def-sub`. It is an
     alternative to `re-frame.core/register-sub` (now renamed to `re-frame.core/def-sub-raw`).
     `def-sub` is significantly easier to use and understand,
-    while often also being more performant.  The design has really fallen out nicely and we're 
+    while often also being more performant.  The design has really fallen out nicely and we're
     delighted with it.
-    
+
     With `def-sub`, you no longer need to use `reaction` explicitly. Subscription handlers are now pure
     which makes them easier to understand and test etc. Plus, as you'll see in the docs, there is some
     gratuitous syntactic sugar.
-     
-    The todomvc example is a tutorial on the subject:  
+
+    The todomvc example is a tutorial on the subject:
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
-    
-  - The API for the undo/redo features has been put into `re-frame.core`.  
-    Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo  
-    While undo and redo has been a part of re-frame from the beginning, the feature has been hidden 
-    and not documented, so it is nice to see it given proper API status. 
+
+  - The API for the undo/redo features has been put into `re-frame.core`.
+    Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo
+    While undo and redo has been a part of re-frame from the beginning, the feature has been hidden
+    and not documented, so it is nice to see it given proper API status.
     Plus, this release has [a couple of enhancements](https://github.com/Day8/re-frame/wiki/Undo-&-Redo#harvesting-and-re-instating)
-    over that which previously existed previously. 
-    
-  - there's now two kinds of event handlers: pure and effectful. XXX  
+    over that which previously existed previously.
+
+  - there's now two kinds of event handlers: pure and effectful. XXX
     For description see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
-    
+
   - taking advantage of the new effectful event handlers, there's now a new library
     which makes it easy to XXXX
-    
-     
+
+
 Breaking:
-  - requires Reagent >= v0.6.0 
-    
-  - `re-frame.core/register-handler` has been renamed `re-frame.core/def-event`. (There's now 
-    two kinds of event-handlers, pure and effectful. Event handlers of the 2nd, new kind 
-    should be registered via the new function `re-frame.core/def-event-fx`) 
-    
-  - `re-frame.core/register-sub` has been renamed `re-frame.core/def-sub-raw`.  This is to indicate that 
-     this kind of registration is now considered the low level, close to the metal way to 
+  - requires Reagent >= v0.6.0
+
+  - `re-frame.core/register-handler` has been renamed `re-frame.core/def-event`. (There's now
+    two kinds of event-handlers, pure and effectful. Event handlers of the 2nd, new kind
+    should be registered via the new function `re-frame.core/def-event-fx`)
+
+  - `re-frame.core/register-sub` has been renamed `re-frame.core/def-sub-raw`.  This is to indicate that
+     this kind of registration is now considered the low level, close to the metal way to
      create subscriptions handlers.  This release introduced `def-sub` which becomes the preferred way
      to register subscription handlers.
-   
-  - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can  
-    supply alternative functions using `re-frame.core/set-loggers!`.  
-    
-    With this release, any alternatives you supply will be called with different parameters. 
-    Previously loggers were called with a single `str` parameter but now they are expected to act 
+
+  - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can
+    supply alternative functions using `re-frame.core/set-loggers!`.
+
+    With this release, any alternatives you supply will be called with different parameters.
+    Previously loggers were called with a single `str` parameter but now they are expected to act
     like `console.log` itself and take variadic, non string params. Sorry to break things, but
-    we are trying to maximise use of cljs-devtools and information is lost when strings are 
+    we are trying to maximise use of cljs-devtools and information is lost when strings are
     output, instead of actual data.
-    
-    Of course, you need only worry about this if you are using `re-frame.core/set-loggers!` to 
-    hook in your own loggers.  If you are, then, to transition, you'll need to tweak like this: 
+
+    Of course, you need only worry about this if you are using `re-frame.core/set-loggers!` to
+    hook in your own loggers.  If you are, then, to transition, you'll need to tweak like this:
     ```
      ;; your old log function might have looked like this. Single string parameter.
-    (defn my-logger [s]  (do-something-with s))    
-    
+    (defn my-logger [s]  (do-something-with s))
+
     ;; your new version will have variadic params, and turn them into a string
     (defn my-logger [& args] (do-something-with (apply str args))
     ```
@@ -92,10 +92,21 @@ Improvements
   - XXX   todomvc changed to use spec, instead of Schema
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
-  - added new API `re-frame.core/remove-post-event-callback`. See doc string. 
-  - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a 
-    single line saying so, rather than a "group".  Makes it slightly easier to grok 
+  - added new API `re-frame.core/remove-post-event-callback`. See doc string.
+  - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a
+    single line saying so, rather than a "group".  Makes it slightly easier to grok
     the absence of change.
+  - Standardised test namespaces: renamed to use -test suffix and moved to eliminate redundant /test folder
+  - Added cljs.test based tests via browser/html. These mimic original karma tests. NOTE: previous lein aliases `once` and `auto` have been replaced by `test-once` , `test-auto` & `karma-once` see [CONTRIBUTING.md](CONTRIBUTING.md)
+
+####Other:####
+  - changed dev deps/plugins
+    <pre>
+    binaryage/devtools "0.7.2"
+    lein-npm           "0.6.2"
+    lein-figwheel      "0.5.4-7"
+    lein-shell         "0.5.0"  (added)
+    </pre>
 
 ## 0.7.0  (2016-03-14)
 

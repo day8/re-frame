@@ -1,4 +1,4 @@
-(ns re-frame.test.middleware
+(ns re-frame.middleware-test
   (:require [cljs.test :refer-macros [is deftest]]
             [reagent.ratom  :refer [atom]]
             [re-frame.middleware :as middleware]))

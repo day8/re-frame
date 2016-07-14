@@ -1,0 +1,129 @@
+<html lang="en">
+  <head>
+    <title>re-frame Unit Tests</title>
+    <meta charset='utf-8'>
+    <meta name="google" content="notranslate"/>
+
+    <!-- Use a monospaced font and a dark theme           -->
+    <!-- some colour from Palette from http://clrs.cc/    -->
+    <style>
+        body {
+            font-family: Courier, "Courier New", monospace;
+            font-size: 11;
+            background-color: #111;
+            color: #AAA;
+            margin: 0.25in 0.25in 0.25in 0.25in;
+        }
+        h2 {
+            font-size: 24;
+        }
+        .red {
+            color: #FF4136;
+        }
+        .green {
+            color: #2ECC40;
+        }
+        .orange {
+            color: #FF851B;
+        }
+        .blue {
+            color: #0074D9;
+        }
+        .test-header {
+            color: #EEE;
+        }
+    </style>
+  </head>
+
+  <body>
+    <h2>re-frame Unit Tests</h2>
+    <div id="output-goes-here"></div>
+
+    <script src="../run/compiled/browser/test/goog/base.js" type="text/javascript"></script>
+    <script src="../run/compiled/browser/test.js" type="text/javascript"></script>
+
+    <script>
+        // This loop is where a lot of important work happens
+        // It will inject both the unit tests and code-to-be-tested into the page
+        //find out what requires cljs.core
+        // reverse nameToPath
+        var pathToName = {};
+        for (var key in goog.dependencies_.nameToPath) {
+            var value = goog.dependencies_.nameToPath[key];
+            pathToName[value] = key;
+        }
+        for (var key in goog.dependencies_.requires) {
+            if (goog.dependencies_.requires.hasOwnProperty(key)) {
+                if (goog.dependencies_.requires[key]["cljs.core"]) {
+                    //as key is a path find its namespace
+                    goog.require(pathToName[key]);    // will trigger CLOSURE_IMPORT_SCRIPT calls which injectJs into page
+                }
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Output
+        var outputDiv = document.getElementById("output-goes-here")
+
+        function testPrintLn(line) {
+            line = line.replace(/\n/g, "");
+            if (line == "")
+               return;
+            line = line.replace(/</g, "&lt;");
+            line = line.replace(/>/g, "&gt;");
+
+            // First, to the console
+            console.log(line);
+
+            // Second, into the HTML
+            var span = document.createElement("pre");
+            outputDiv.appendChild(span);
+
+            // look for colour markers
+            if (-1 != line.indexOf('ERRORS:')) {
+                span.className = "blue"
+            }
+            if (-1 != line.indexOf('WARNINGS:')) {
+                span.className = "blue"
+            }
+            if (-1 != line.indexOf('ERROR ')) {
+                span.className = "orange"
+            }
+            if (-1 != line.indexOf('FAIL')) {
+                span.className = "red"
+            }
+            if (-1 != line.indexOf('Testing test.')) {
+                span.className = "test-header"
+            }
+            if (-1 != line.indexOf('failures,')) {
+                if (-1 != line.indexOf('0 failures, 0 errors')) {
+                    document.body.style.backgroundColor = "#00430D";
+                    span.className = "green";
+                }
+                else {
+                    document.body.style.backgroundColor = "771419";
+                    span.className = "red";
+                }
+            }
+
+            // replace leading blanks with &nbsp; so text lines up
+            var numLeadingBlanks = line.match(/^\s*/)[0].length;
+            var leadingNBSP = Array(numLeadingBlanks).join("&nbsp;")
+
+            span.innerHTML = leadingNBSP + line + "<br>";
+        }
+
+        // --------------------------------------------------------------------
+        // Run Tests
+        //
+        function run_tests() {
+            re_frame.test_runner.set_print_fn_BANG_(testPrintLn);
+            re_frame.test_runner.run_html_tests();
+        }
+
+        // Don't run any tests till this page is fully loaded.
+        // Remember there'll be lots of async <script> added by the loop above.
+        window.addEventListener('load', run_tests);
+    </script>
+  </body>
+</html>

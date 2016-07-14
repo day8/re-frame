@@ -10,5 +10,5 @@ dependencies:
     - node_modules
 test:
   override:
-    - lein once
+    - lein karma-once
     - karma start --single-run --reporters junit,dots

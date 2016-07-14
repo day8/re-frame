@@ -26,12 +26,21 @@ Use your best judgement on what is needed here.
 
 ## Running the tests
 
+#### Via Browser/HTML
+```sh
+lein test-once  # builds re-frame tests & opens browser on test/test.html
+                # or lein test-auto # then open a browser on test/test.html
+                # and refresh browser to rerun tests after each auto compile.
+```
+
+#### Via Karma
+
 To run the tests, you must have recent versions of node, npm, Leiningen, and a C++ compiler toolchain installed. If you're on Linux or Mac OS X then you will be fine, if you're on Windows then you need to install Visual Studio Community Edition, and the C++ compiler dependencies.
 
-```
-lein deps # will run lein-npm and install Karma and other node dependencies. Only needed the first time.
-lein once # or lein auto # to build re-frame
-karma start # to run the tests with an auto watcher
+```sh
+lein deps       # runs lein-npm, installs Karma & other node dependencies. Only needed the first time.
+lein karma-once # to build re-frame tests
+karma start     # to run the tests with an auto watcher
 ```
 
 ## Pull requests for bugs
