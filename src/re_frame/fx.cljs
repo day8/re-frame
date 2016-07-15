@@ -38,9 +38,10 @@
 ;; -- Standard Builtin Effects Handlers  --------------------------------------
 
 (defn dispatch-helper
+  "There are cases where eitherone event is to be dipatch "
   [effect]
   (cond
-    (list? effect)   (map dispatch effect)
+    (list? effect)   (doall (map dispatch effect))
     (vector? effect) (dispatch effect)
     :else (console :error "re-frame: expected :dispatch effect to be a list or vector, but got: " effect)))
 
@@ -68,35 +69,6 @@
     (dispatch-helper val)))
 
 
-;; Provides a way to "forward" events. To put it another way, it provides
-;; a way to "sniff" events.
-;;
-;; Normally, when `(dispatch [:a 42])` happens the event will be routed to
-;; the registered handler for `:a`, and that is the end of the matter.
-;;
-;; BUT with this effect, you can ask that an event is ALSO
-;; forwarded to another handler for further processing. This allows this
-;; 2nd handler to further process events.
-;;
-;; You provide a set of events to which you'd like to subscribe.
-;; "listen" for a set of events and, when they occur,
-;; to "forward" the events to another handler.
-;;
-;; In effect, if you registered a "listener" for event `:a`  and asked for them
-;; to be forewared to `[:another "hello"]`, then:
-;;   - when some did (dispatch [:a 42])
-;;   - the event would be handler by the normal handler for event `:a`
-;;   - but then a further dispatch would be made (dispatch [:naother "hello"  [:a 42]])
-;;
-;; As you can see the enter event is "forwarded' to enother handler for further
-;; processing.
-;;
-;; {:forward-events  {:register    :an-id-for-this-listner
-;;                    :events      #{:event1  :event2}
-;;                    :dispatch-to [:eid "eg. param"]}     ;; the forwared event will be conj to the end of the dispatch.
-;;
-;; {:forward-events  {:unregister :the-id-supplied-when-registering}}
-;;
 #_(register
   :forward-events
   (let [id->listen-fn (atom {})
