@@ -1,5 +1,6 @@
 (ns re-frame.fx
-  (:require [re-frame.router :refer [dispatch]]
+  (:require [reagent.ratom  :refer [IReactiveAtom]]
+            [re-frame.router :refer [dispatch]]
             [re-frame.db :refer [app-db]]
             [re-frame.events]
             [re-frame.loggers    :refer [console]]))
@@ -77,18 +78,22 @@
 #_(register
   :forward-events
   (let [id->listen-fn (atom {})
-        process-entry (fn [{:keys [listen events dispatch-to unlisten]}]
-                        (if  unlisten
-                          (do
-                            (unregister XXXX)
-                            (swap! id->listen-fn dissoc unlisten))))]
-
-
+        process-one-entry (fn [{:as m :keys [listen events dispatch-to unlisten]}]
+                            (let [_  (assert (map? m) (str "re-frame: effects handler for :forward-events expected a map or a list of maps. Got: " m))]   ;; XXX do this better
+                              (if  unlisten
+                                (do
+                                  (re-frame.core/remove-post-event-callback (@id->listen-fn unlisten))
+                                  (swap! id->listen-fn dissoc unlisten))
+                                (let [post-event-callback-fn  (fn [event-v _]
+                                                                (when (events (first event-v))
+                                                                  (dispatch (conj dispatch-to event-v))))]
+                                  (re-frame.core/add-post-event-callback  post-event-callback-fn)
+                                  (swap! id->listen-fn assoc listen post-event-callback-fn)))))]
     (fn [val]
       (cond
-        (map? val) (process-entry m)
-        (list? val) (doseq []))
-      (do-dispatches (:dispatch world)))))
+        (map? val) (process-one-entry val)
+        (list? val) (doall (map process-one-entry val)))     ;; XXX add else
+      )))
 
 
 (register
@@ -119,6 +124,10 @@
   [handler]
   (fn fx-handler
     [app-db event-vec]
+    (if-not (satisfies? IReactiveAtom app-db)
+        (if (map? app-db)
+          (console :warn "re-frame: Looks like you might be using \"fx\" middleware with \"def-event\".  Use \"def-event-fx\" to put Or something. ")
+          (console :warn "re-frame: \"pure\" middleware not given a Ratom.  Got: " app-db)))
     (let [world   {:db @app-db}]
       (->> (handler world event-vec)
            (map (fn [[key val]]
