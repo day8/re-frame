@@ -1,12 +1,11 @@
-# re-frame: Derived Values, Flowing
 
-#### Build Status
+[![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
+[![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/develop)
+[![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/master)
+[![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
+[![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/Day8/re-frame/example)
 
-Branch | Status
-----------|--------
-`master` | [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=svg)](https://circleci.com/gh/Day8/re-frame/tree/master)
-`develop` | [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=svg)](https://circleci.com/gh/Day8/re-frame/tree/develop)
-
+## Derived Values, Flowing
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
 sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the
@@ -16,7 +15,7 @@ y'know. Pretty good.
 
 > -- Terry Pratchett, The Fifth Elephant
 
-## Why Should You Care About re-frame?
+## Why Should You Care?
 
 Either:
 
@@ -46,8 +45,7 @@ Features:
 
 1. The functions you write are pure, so the computational pieces of your app can
    be described, understood and tested independently.
-   You won't need sophisticated Dependency Injection to test. So much
-   incidental complexity evaporates.
+   You won't need Dependency Injection to test. Think about that.
 2. These computational parts are composed via reactive data flows - a dynamic,
    unidirectional Signal graph.
 3. The resulting architecture involves "derived data" flowing in a two-stage, reactive loop.
@@ -63,14 +61,6 @@ Features:
    It also has a charming xkcd reference (soon)
    and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
    What could possibly go wrong?
-
-## Using re-frame
-
-
-[![Build Status](https://travis-ci.org/Day8/re-frame.png?branch=master)](https://travis-ci.org/Day8/re-frame)
-
-re-frame is available from clojars. Add the following to your project dependencies:
-[![Clojars Project](http://clojars.org/re-frame/latest-version.svg)](http://clojars.org/re-frame)
 
 __Warning__:  That was the summary. What follows is a long-ish tutorial/explanation.
 
