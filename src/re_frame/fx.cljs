@@ -68,6 +68,28 @@
     (dispatch-helper val)))
 
 
+;; Provides a way to "forward" events. To put it another way, it provides
+;; a way to "sniff" events.
+;;
+;; Normally, when `(dispatch [:a 42])` happens the event will be routed to
+;; the registered handler for `:a`, and that is the end of the matter.
+;;
+;; BUT with this effect, you can ask that an event is ALSO
+;; forwarded to another handler for further processing. This allows this
+;; 2nd handler to further process events.
+;;
+;; You provide a set of events to which you'd like to subscribe.
+;; "listen" for a set of events and, when they occur,
+;; to "forward" the events to another handler.
+;;
+;; In effect, if you registered a "listener" for event `:a`  and asked for them
+;; to be forewared to `[:another "hello"]`, then:
+;;   - when some did (dispatch [:a 42])
+;;   - the event would be handler by the normal handler for event `:a`
+;;   - but then a further dispatch would be made (dispatch [:naother "hello"  [:a 42]])
+;;
+;; As you can see the enter event is "forwarded' to enother handler for further
+;; processing.
 ;;
 ;; {:forward-events  {:register    :an-id-for-this-listner
 ;;                    :events      #{:event1  :event2}
@@ -130,9 +152,10 @@
         (if (map? app-db)
           (console :warn "re-frame: Did you use \"fx\" middleware with \"def-event\"?  Use \"def-event-fx\" instead (and don't directly use \"fx\")")
           (console :warn "re-frame: \"fx\" middleware not given a Ratom.  Got: " app-db)))
-    (let [world   {:db @app-db}]
-      (->> (handler world event-vec)
-           (mapv (fn [[key val]]     ;; use mapv to get rid of lazyness
-                  (if-let [effect-fn  (lookup-handler key)]
-                    (effect-fn val)
-                    (console :error "re-frame: no effects handler defined for: " key ". Ignoring"))))))))
+    (let [run-effect (fn [[key val]]
+                       (if-let [effect-fn  (lookup-handler key)]
+                         (effect-fn val)
+                         (console :error "re-frame: no effects handler registered for: " key ". Ignoring")))
+          world   {:db @app-db}]
+      (->> (handler world event-vec)   ;; is expected to return a map of effects
+           (mapv run-effect)))))       ;; use mapv to process the returned effects (because it isn't lazy)
