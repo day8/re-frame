@@ -69,18 +69,20 @@
 
 
 ;;
-;; {:forward-events  {:listen      :an-id-for-this-listner
+;; {:forward-events  {:register    :an-id-for-this-listner
 ;;                    :events      #{:event1  :event2}
 ;;                    :dispatch-to [:eid "eg. param"]}     ;; the forwared event will be conj to the end of the dispatch.
 ;;
-;; {:forward-events  {:unlisten :the-listner-id-I-originally-supplied}}
+;; {:forward-events  {:unregister :the-id-supplied-when-registering}}
 ;;
 #_(register
   :forward-events
   (let [id->listen-fn (atom {})
-        process-one-entry (fn [{:as m :keys [listen events dispatch-to unlisten]}]
-                            (let [_  (assert (map? m) (str "re-frame: effects handler for :forward-events expected a map or a list of maps. Got: " m))]   ;; XXX do this better
-                              (if  unlisten
+        process-one-entry (fn [{:as m :keys [unlisten listen events dispatch-to]}]
+                            (let [_  (assert (map? m) (str "re-frame: effects handler for :forward-events expected a map or a list of maps. Got: " m))
+                                  _  (assert (or (= #{:unlisten} (-> m keys set))
+                                                 (= #{:listen :events :dispatch-to} (-> m keys set))) "re-frame: effects handler for :forward-events given wrong map keys")]
+                              (if unlisten
                                 (do
                                   (re-frame.core/remove-post-event-callback (@id->listen-fn unlisten))
                                   (swap! id->listen-fn dissoc unlisten))
@@ -130,7 +132,7 @@
           (console :warn "re-frame: \"fx\" middleware not given a Ratom.  Got: " app-db)))
     (let [world   {:db @app-db}]
       (->> (handler world event-vec)
-           (map (fn [[key val]]
+           (mapv (fn [[key val]]     ;; use mapv to get rid of lazyness
                   (if-let [effect-fn  (lookup-handler key)]
                     (effect-fn val)
                     (console :error "re-frame: no effects handler defined for: " key ". Ignoring"))))))))
