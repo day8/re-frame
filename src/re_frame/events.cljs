@@ -59,8 +59,8 @@
 
 (defn register-base
   "register a handler for an event.
-  This is low level and it is expected that \"re-frame.core/def-event\" would
-  generally be used."
+  This is low level and it is expected that a higher level function like
+  \"re-frame.core/def-event\" or  \"re-frame.core/def-event-fx\" would generally be used."
   ([event-id handler-fn]
    (when (contains? @id->fn event-id)
      (console :warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
