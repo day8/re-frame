@@ -126,8 +126,8 @@
     [app-db event-vec]
     (if-not (satisfies? IReactiveAtom app-db)
         (if (map? app-db)
-          (console :warn "re-frame: Looks like you might be using \"fx\" middleware with \"def-event\".  Use \"def-event-fx\" to put Or something. ")
-          (console :warn "re-frame: \"pure\" middleware not given a Ratom.  Got: " app-db)))
+          (console :warn "re-frame: Did you use \"fx\" middleware with \"def-event\"?  Use \"def-event-fx\" instead (and don't directly use \"fx\")")
+          (console :warn "re-frame: \"fx\" middleware not given a Ratom.  Got: " app-db)))
     (let [world   {:db @app-db}]
       (->> (handler world event-vec)
            (map (fn [[key val]]
