@@ -9,9 +9,6 @@
 ;; Example use can be found in this repo: examples/todomvc/handler.cljs
 
 
-(defn fx
-  [handler])
-
 (defn pure
   "Acts as an adaptor, allowing handlers to be writen as pure functions.
   The re-frame router passes the `app-db` atom as the first parameter to any handler.

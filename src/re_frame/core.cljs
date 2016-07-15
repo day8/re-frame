@@ -10,28 +10,25 @@
 
 
 ;; --  dispatch
-
 (def dispatch         router/dispatch)
 (def dispatch-sync    router/dispatch-sync)
 
 
 ;; --  subscribe
-
 (def def-sub-raw         subs/register)
 (def def-sub             subs/register-pure)
 (def clear-all-subs!     subs/clear-all-handlers!)
 (def subscribe           subs/subscribe)
 
-;; -- Effects
+;; --  effects
+(def def-fx         fx/register)
+(def clear-fx!      fx/clear-handler!)
+(def clear-all-fx!  fx/clear-all-handlers!)
 
-(def def-fx      fx/register)
-(def clear-fx!   fx/clear-handler!)
 
-
-;; --  Middleware
-
+;; --  middleware
 (def pure        middleware/pure)
-(def fx          middleware/fx)
+(def fx          fx/fx)
 (def debug       middleware/debug)
 (def path        middleware/path)
 (def enrich      middleware/enrich)
@@ -40,7 +37,6 @@
 (def on-changes  middleware/on-changes)
 
 ;; --  Events
-
 (def clear-all-events!   events/clear-all-handlers!)
 (def clear-event!        events/clear-handler!)
 
