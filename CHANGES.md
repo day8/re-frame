@@ -90,6 +90,7 @@ Improvements:
   - XXX  (full-debug!)
   - XXX  middleware for spec checking of event vectors
   - XXX  todomvc changed to use spec, instead of Schema
+  - XXX  remove use of spec in reg-sub
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
   - added new API `re-frame.core/remove-post-event-callback`. See doc string.
