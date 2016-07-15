@@ -51,10 +51,11 @@ Headline:
   - there's now two kinds of event handlers: pure and effectful. XXX  
     For description see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers  
     For examples see:  
-      1. https://github.com/Day8/re-frame-async-flow-fx
-      2. https://github.com/Day8/re-frame-http-fx
-    
+      1. https://github.com/Day8/re-frame-http-fx
+      2. https://github.com/Day8/re-frame-forward-events-fx
+      3. https://github.com/Day8/re-frame-async-flow-fx
 
+    
   - taking advantage of the new effectful event handlers, there's now a new library
     which makes it easy to XXXX
 
