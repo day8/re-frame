@@ -71,7 +71,7 @@
 ;;   (defn my-fn [& args]  (post-it-somewhere (apply str args)))
 ;;   (re-frame.core/set-loggers!  {:warn my-fn :log my-fn})    ;; I should override the rest of them too.
 (def set-loggers! loggers/set-loggers!)
-
+(def console loggers/console)
 
 
 ;; -- Event Procssing Callbacks
