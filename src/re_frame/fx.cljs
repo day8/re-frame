@@ -41,7 +41,7 @@
   "There are cases where eitherone event is to be dipatch "
   [effect]
   (cond
-    (list? effect)   (doall (map dispatch effect))
+    (list? effect)   (dorun (map dispatch effect))
     (vector? effect) (dispatch effect)
     :else (console :error "re-frame: expected :dispatch effect to be a list or vector, but got: " effect)))
 

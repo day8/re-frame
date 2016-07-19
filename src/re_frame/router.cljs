@@ -219,9 +219,15 @@
   Usage example:
      (dispatch [:delete-item 42])"
   [event-v]
-  (if (nil? event-v)
-    (throw (js/Error. "re-frame: you called \"dispatch\" without an event vector."))
-    (push event-queue event-v))
+  (let [stack  (->> (js/Error.
+                      (str "Error thrown in event handler " (first event-v)))
+                    .-stack
+                    clojure.string/split-lines
+                    (remove #(re-find #"react.inc.js|\(native\)" %))  ;; get rid of the react frames
+                    (clojure.string/join "\n"))]  ;; grab a stack here so that give it to events
+    (if (nil? event-v)
+      (throw (js/Error. "re-frame: you called \"dispatch\" without an event vector."))
+      (push event-queue (with-meta event-v {:stack stack}))))
   nil)                                           ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 

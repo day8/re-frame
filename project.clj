@@ -1,4 +1,4 @@
-(defproject re-frame "0.8.0-SNAPSHOT"
+(defproject re-frame "0.8.0-alpha2"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
@@ -27,6 +27,15 @@
 
   :deploy-repositories [["releases" :clojars {:sign-releases false}]
                         ["snapshots" :clojars {:sign-releases false}]]
+
+  :release-tasks [["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["vcs" "commit"]
+                  ["vcs" "tag" "v" "--no-sign"]
+                  ["deploy"]
+                  ["change" "version" "leiningen.release/bump-version"]
+                  ["vcs" "commit"]
+                  ["vcs" "push"]]
 
   :npm {:dependencies [[karma                 "1.0.0"]
                        [karma-cljs-test       "0.1.0"]
