@@ -25,8 +25,8 @@
                                       :macosx  "open"
                                       :linux   "xdg-open"}}}
 
-  :deploy-repositories [["releases" :clojars {:sign-releases false}]
-                        ["snapshots" :clojars {:sign-releases false}]]
+  :deploy-repositories [["releases"  {:sign-releases false :url "https://clojars.org/repo"}]
+                        ["snapshots" {:sign-releases false :url "https://clojars.org/repo"}]]
 
   :release-tasks [["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
