@@ -95,5 +95,12 @@
       (if  *handling*
         (console :error "re-frame: while handling \""  *handling*  "\"  dispatch-sync was called for \"" event-v "\". You can't call dispatch-sync in an event handler.")
         (binding [*handling*  event-v]
-          (handler-fn app-db event-v))))))
+          (let [stack (some-> event-v
+                          meta
+                          :stack)]
+            (try
+              (handler-fn app-db event-v)
+              (catch :default e
+                (console :warn stack) ;; output a msg to help to track down dispatching point
+                (throw e)))))))))
 
