@@ -1,9 +1,9 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
+[![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
 [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/develop)
 [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/master)
-[![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
-[![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/Day8/re-frame/example)
+[![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/Day8/re-frame/tree/master/examples)
 
 ## Derived Values, Flowing
 
