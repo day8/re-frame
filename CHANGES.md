@@ -1,12 +1,16 @@
 ## 0.8.0  (2016.07.XX)
 
-Staying on the leading edge of new buzzwords is obviously critical for any framework. Angular's terrifying faceplant
-is a sobering  reminder to us all. With this release, re-frame's already impressive buzzword muscles
+Deftly surfing buzzword waves is obviously crucial for any framework. Angular's terrifying faceplant
+is a sobering  reminder to us all - a rooster one day and a feather duster the next. With this release, 
+re-frame's already impressive buzzword muscles
 bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  I know, right?
 
 Some may even find these new features useful.
 
-Headline:
+Headline
+
+Joking aside, this is a substantial release which will fundamentally change how you use re-frame:
+
   - re-frame subscriptions are now de-duplicated. As a result,
     many Signal graphs will be more efficient. The new behaviour better 
     matches programmer intuitions about what "should" happen.  
@@ -97,6 +101,7 @@ Improvements:
   - XXX  todomvc changed to use spec, instead of Schema
   - XXX  remove use of spec in reg-sub
 
+  - Enhancement:  
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
   - added new API `re-frame.core/remove-post-event-callback`. See doc string.
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a
