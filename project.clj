@@ -28,6 +28,15 @@
   :deploy-repositories [["releases" :clojars {:sign-releases false}]
                         ["snapshots" :clojars {:sign-releases false}]]
 
+  :release-tasks [["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["vcs" "commit"]
+                  ["vcs" "tag" "v" "--no-sign"]
+                  ["deploy"]
+                  ["change" "version" "leiningen.release/bump-version"]
+                  ["vcs" "commit"]
+                  ["vcs" "push"]]
+
   :npm {:dependencies [[karma                 "1.0.0"]
                        [karma-cljs-test       "0.1.0"]
                        [karma-chrome-launcher "0.2.0"]
