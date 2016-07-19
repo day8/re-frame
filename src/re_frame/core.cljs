@@ -71,6 +71,12 @@
 ;;   (defn my-fn [& args]  (post-it-somewhere (apply str args)))
 ;;   (re-frame.core/set-loggers!  {:warn my-fn :log my-fn})    ;; I should override the rest of them too.
 (def set-loggers! loggers/set-loggers!)
+
+;; If you are writing an extension to re-frame, like perhaps
+;; an effeects handler, you may want to use re-frame logging.
+;;
+;; usage:  (console :error "this is bad: " a-variable " and " anotherv)
+;;         (console :warn "possible breach of containment wall at: " dt)
 (def console loggers/console)
 
 
