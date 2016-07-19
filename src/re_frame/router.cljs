@@ -219,14 +219,18 @@
   Usage example:
      (dispatch [:delete-item 42])"
   [event-v]
-  (let [stack  (->> (js/Error.
-                      (str "Error thrown in event handler " (first event-v)))
+  (let [;; At the point of dispatch, we capture the current stack.
+        ;; Attach this stack to the event as meta data so that later, if
+        ;; anything goes wrong, we know where it came from.
+        ;; To get a source mapped stack, we must get rid of the react frames
+        ;; See https://github.com/Day8/re-frame/issues/164#issuecomment-233528154
+        stack  (->> (js/Error. (str "Event " (first event-v) " dispatched from here:"))
                     .-stack
                     clojure.string/split-lines
-                    (remove #(re-find #"react.inc.js|\(native\)" %))  ;; get rid of the react frames
-                    (clojure.string/join "\n"))]  ;; grab a stack here so that give it to events
+                    (remove #(re-find #"react.inc.js|\(native\)" %))
+                    (clojure.string/join "\n"))]
     (if (nil? event-v)
-      (throw (js/Error. "re-frame: you called \"dispatch\" without an event vector."))
+      (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
       (push event-queue (with-meta event-v {:stack stack}))))
   nil)                                           ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
