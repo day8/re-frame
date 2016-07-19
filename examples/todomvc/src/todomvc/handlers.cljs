@@ -14,7 +14,7 @@
   "throw an exception if db doesn't match the schema."
   [a-schema db]
   (if-let [problems  (s/check a-schema db)]
-    (throw (js/Error. (str "schema check failed: " problems)))))
+    (throw (ex-info "schema check failed: " {:problems problems}))))
 
 ;; Event handlers change state, that's their job. But what happens if there's
 ;; a bug and it corrupts this state in some subtle way? This middleware is run after

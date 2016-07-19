@@ -144,7 +144,7 @@
             [:paused :add-event] [:paused  #(-add-event this arg)]
             [:paused :resume   ] [:running #(-resume this)]
 
-            (throw (js/Error. (str "re-frame: router state transition not found. " fsm-state " " trigger))))]
+            (throw (ex-info "re-frame: router state transition not found" {:fsm-state fsm-state :trigger trigger})))]
 
       ;; The "case" above computed both the new FSM state, and the action. Now, make it happen.
       (set! fsm-state new-fsm-state)
