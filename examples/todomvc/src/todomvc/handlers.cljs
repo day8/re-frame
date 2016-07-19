@@ -1,8 +1,8 @@
 (ns todomvc.handlers
   (:require
-    [todomvc.db    :refer [default-value ls->todos todos->ls! schema]]
+    [todomvc.db    :refer [default-value ls->todos todos->ls!]]
     [re-frame.core :refer [def-event path trim-v after debug]]
-    [schema.core   :as s]))
+    [cljs.spec     :as s]))
 
 
 ;; -- Middleware --------------------------------------------------------------
@@ -11,23 +11,24 @@
 ;;
 
 (defn check-and-throw
-  "throw an exception if db doesn't match the schema."
-  [a-schema db]
-  (if-let [problems  (s/check a-schema db)]
-    (throw (ex-info "schema check failed: " {:problems problems}))))
+  "throw an exception if db doesn't match the spec."
+  [a-spec db]
+  (if-not (s/valid? a-spec db)
+    (throw (ex-info "spec check failed: " {:problems
+                                             (s/explain-str a-spec db)}))))
 
 ;; Event handlers change state, that's their job. But what happens if there's
 ;; a bug and it corrupts this state in some subtle way? This middleware is run after
-;; each event handler has finished, and it checks app-db against a schema.  This
+;; each event handler has finished, and it checks app-db against a spec.  This
 ;; helps us detect event handler bugs early.
-(def check-schema-mw (after (partial check-and-throw schema)))
+(def check-spec-mw (after (partial check-and-throw :todomvc.db/db)))
 
 
 (def ->ls (after todos->ls!))    ;; middleware to store todos into local storage
 
 
 ;; middleware for any handler that manipulates todos
-(def todo-middleware [check-schema-mw ;; ensure the schema is still valid
+(def todo-middleware [check-spec-mw   ;; ensure the spec is still valid
                       (path :todos)   ;; 1st param to handler will be the value from this path
                       ->ls            ;; write to localstore each time
                       (when ^boolean js/goog.DEBUG debug)       ;; look in your browser console
@@ -49,7 +50,7 @@
                                   ;; usage:  (dispatch [:initialise-db])
 (def-event                        ;; On app startup, create initial state
   :initialise-db                  ;; event id being handled
-  check-schema-mw                 ;; afterwards: check that app-db matches the schema
+  check-spec-mw                   ;; afterwards: check that app-db matches the spec
   (fn [_ _]                       ;; the handler being registered
     (merge default-value (ls->todos))))  ;; all hail the new state
 
@@ -57,7 +58,7 @@
                                   ;; usage:  (dispatch [:set-showing  :active])
 (def-event                        ;; this handler changes the todo filter
   :set-showing                    ;; event-id
-  [check-schema-mw (path :showing) trim-v]  ;; middleware  (wraps the handler)
+  [check-spec-mw (path :showing) trim-v]  ;; middleware  (wraps the handler)
 
   ;; Because of the path middleware above, the 1st parameter to
   ;; the handler below won't be the entire 'db', and instead will
