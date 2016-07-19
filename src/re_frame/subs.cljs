@@ -42,8 +42,8 @@
     (ratom/add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
                                   (console :warn "Removing subscription: " cache-key)))
 
-    (.log js/console "Dispatch site: ")
-    (.log js/console (:dispatch-site (meta query-v)))
+    (console :log "Dispatch site: ")
+    (console :log (:dispatch-site (meta query-v)))
 
     ;; cache this reaction, so it can be used to deduplicate other, identical subscriptions
     (swap! query->reaction assoc cache-key r)
