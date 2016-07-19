@@ -220,7 +220,7 @@
      (dispatch [:delete-item 42])"
   [event-v]
   (if (nil? event-v)
-    (throw (js/Error. "re-frame: you called \"dispatch\" without an event vector."))
+    (throw (ex-info "re-frame: you called \"dispatch\" without an event vector" {}))
     (push event-queue event-v))
   nil)                                           ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
