@@ -98,7 +98,6 @@ Breaking:
 Improvements:
   - XXX  (full-debug!)
   - XXX  middleware for spec checking of event vectors
-  - XXX  todomvc changed to use spec, instead of Schema
   - XXX  remove use of spec in reg-sub
 
   - Enhancement:  
