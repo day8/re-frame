@@ -40,7 +40,7 @@
 (def clear-all-events!   events/clear-all-handlers!)
 (def clear-event!        events/clear-handler!)
 
-;; Registers a pure event handler. Places pure middleare in the correct, LHS position.
+;; Registers a pure event handler. Places pure middleware in the correct, LHS position.
 (defn def-event
   ([id handler]
     (events/register-base id pure handler))
@@ -48,7 +48,7 @@
     (events/register-base id [pure middleware] handler)))
 
 
-;; Registers an effectful event handler. Places fx middleare in the correct, LHS position.
+;; Registers an effectful event handler. Places fx middleware in the correct, LHS position.
 (defn def-event-fx
   ([id handler]
    (events/register-base id fx handler))
