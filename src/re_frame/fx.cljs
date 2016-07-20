@@ -41,8 +41,8 @@
   "There are cases where eitherone event is to be dipatch "
   [effect]
   (cond
-    (list? effect)   (dorun (map dispatch effect))
     (vector? effect) (dispatch effect)
+    (seq? effect)    (dorun (map dispatch effect))
     :else (console :error "re-frame: expected :dispatch effect to be a list or vector, but got: " effect)))
 
 ;; Example:
@@ -88,14 +88,14 @@
     (fn [val]
       (cond
         (map? val) (process-one-entry val)
-        (list? val) (doall (map process-one-entry val)))     ;; XXX add else
+        (seq? val) (doall (map process-one-entry val)))     ;; XXX add else
       )))
 
 
 (register
   :deregister-event-handler
   (fn [val]
-    (if (list? val)
+    (if (sequential? val)
       (doall (map re-frame.events/clear-handler! val))
       (re-frame.events/clear-handler! val))))
 
