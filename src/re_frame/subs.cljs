@@ -1,6 +1,5 @@
 (ns re-frame.subs
  (:require
-   [cljs.spec      :as s]
    [reagent.ratom  :as ratom :refer [make-reaction] :refer-macros [reaction]]
    [re-frame.db    :refer [app-db]]
    [re-frame.loggers :refer [console]]
@@ -92,12 +91,6 @@
 
 ;; -- Helper code for register-pure -------------------
 
-(s/def ::register-pure-args (s/cat
-                              :sub-name   keyword?
-                              :sub-fn     (s/? fn?)
-                              :arrow-args (s/* (s/cat :key #{:<-} :val vector?))
-                              :f          fn?))
-
 (defn- fmap
   "Returns a new version of 'm' in which f has been applied to each value.
   (fmap inc {:a 4, :b 2}) => {:a 5, :b 3}"
@@ -146,14 +139,17 @@
   of cases where only a simple subscription is needed without any parameters
 
   "
-  [& args]
-  (let [conform           (s/conform ::register-pure-args args)
-        {:keys [sub-name
-                sub-fn
-                arrow-args
-                f]}       conform
-        arrow-subs (->> arrow-args
-                        (map :val))]
+  [sub-name & args]
+  (let [f                        (last args)  ;; grab the last arg
+        middle-args              (butlast args)    ;; grab the middle args
+        maybe-func               (first middle-args)
+        sub-fn                   (when (fn? maybe-func) maybe-func)
+        arrow-args               (if (fn? maybe-func)
+                                   (rest middle-args)
+                                   middle-args)
+        arrow-subs               (->> arrow-args
+                                      (partition 2)
+                                      (map last))]
     (cond
       sub-fn                   ;; first case the user provides a custom sub-fn
       (register
@@ -162,7 +158,7 @@
           (let [subscriptions (sub-fn q-vec d-vec)]    ;; this let needs to be outside the fn
             (ratom/make-reaction
               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
-      arrow-args              ;; the user uses the :<- sugar
+      (seq arrow-args)              ;; the user uses the :<- sugar
       (register
         sub-name
         (fn [db q-vec d-vec]
@@ -176,9 +172,4 @@
       (register ;; the simple case with no subs
         sub-name
         (fn [db q-vec d-vec]
-          (ratom/make-reaction (fn [] (f @db q-vec d-vec))))))))
-
-#_(s/fdef register-pure
-          :args ::register-pure-args)
-
-#_(s/instrument #'register-pure)
+          (ratom/make-reaction (fn [] (f @db q-vec d-vec)))))))())
