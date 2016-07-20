@@ -103,7 +103,7 @@
                               :stack)]
             (try
               (handler-fn app-db event-v)
-              (catch :default e
+              (catch #?(:cljs :default :clj Exception) e
                 (console :warn stack) ;; output a msg to help to track down dispatching point
                 (throw e)))))))))
 

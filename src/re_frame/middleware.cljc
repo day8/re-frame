@@ -1,6 +1,6 @@
 (ns re-frame.middleware
   (:require
-    [reagent.ratom  :refer [IReactiveAtom]]
+    [re-frame.interop :refer [ratom?]]
     [re-frame.loggers :refer [console]]
     [clojure.data   :as data]))
 
@@ -22,7 +22,7 @@
   [handler]
   (fn pure-handler
     [app-db event-vec]
-    (if-not (satisfies? IReactiveAtom app-db)
+    (if-not (ratom? app-db)
       (do
         (if (map? app-db)
           (console :warn "re-frame: Looks like \"pure\" is in the middleware pipeline twice. Ignoring.")

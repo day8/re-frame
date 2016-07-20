@@ -1,10 +1,9 @@
 (ns re-frame.undo
-  (:require-macros [reagent.ratom  :refer [reaction]])
   (:require
-    [reagent.core        :as     reagent]
     [re-frame.loggers    :refer  [console]]
     [re-frame.db         :refer  [app-db]]
-    [re-frame.events   :as     handlers]
+    [re-frame.events     :as     handlers]
+    [re-frame.interop    :refer  [make-reaction ratom]]
     [re-frame.subs       :as     subs]))
 
 
@@ -32,8 +31,8 @@
 
 ;; -- State history ----------------------------------------------------------
 
-(def ^:private undo-list "A list of history states" (reagent/atom []))
-(def ^:private redo-list "A list of future states, caused by undoing" (reagent/atom []))
+(def ^:private undo-list "A list of history states" (ratom []))
+(def ^:private redo-list "A list of future states, caused by undoing" (ratom []))
 
 ;; -- Explanations -----------------------------------------------------------
 ;;
@@ -41,9 +40,9 @@
 ;;
 ;; Seems really ugly to have mirrored vectors, but ...
 ;; the code kinda falls out when you do. I'm feeling lazy.
-(def ^:private app-explain "Mirrors app-db" (reagent/atom ""))
-(def ^:private undo-explain-list "Mirrors undo-list" (reagent/atom []))
-(def ^:private redo-explain-list "Mirrors redo-list" (reagent/atom []))
+(def ^:private app-explain "Mirrors app-db" (ratom ""))
+(def ^:private undo-explain-list "Mirrors undo-list" (ratom []))
+(def ^:private redo-explain-list "Mirrors redo-list" (ratom []))
 
 (defn- clear-undos!
   []
@@ -101,14 +100,14 @@
   (fn handler
     ; "returns true if anything is stored in the undo list, otherwise false"
     [_ _]
-    (reaction (undos?))))
+    (make-reaction undos?)))
 
 (subs/register
   :redos?
   (fn handler
     ; "returns true if anything is stored in the redo list, otherwise false"
     [_ _]
-    (reaction (redos?))))
+    (make-reaction redos?)))
 
 
 (subs/register
@@ -116,14 +115,14 @@
   (fn handler
     ; "returns a vector of string explanations ordered oldest to most recent"
     [_ _]
-    (reaction (undo-explanations))))
+    (make-reaction undo-explanations)))
 
 (subs/register
   :redo-explanations
   (fn handler
     ; "returns a vector of string explanations ordered from most recent undo onward"
     [_ _]
-    (reaction (deref redo-explain-list))))
+    (make-reaction #(deref redo-explain-list))))
 
 ;; -- event handlers  ----------------------------------------------------------------------------
 

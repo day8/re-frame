@@ -1,8 +1,8 @@
 (ns re-frame.fx
-  (:require [reagent.ratom  :refer [IReactiveAtom]]
-            [re-frame.router :refer [dispatch]]
+  (:require [re-frame.router :refer [dispatch]]
             [re-frame.db :refer [app-db]]
             [re-frame.events]
+            [re-frame.interop :refer [ratom? set-timeout!]]
             [re-frame.loggers    :refer [console]]))
 
 
@@ -54,7 +54,7 @@
   :dispatch-later
   (fn [effect]
     (doseq  [[ms events] effect]
-        (js/setTimeout #(dispatch-helper events) ms))))
+      (set-timeout! #(dispatch-helper events) ms))))
 
 
 ;; Supply either a vector or a list of vectors. For example:
@@ -120,7 +120,7 @@
   [handler]
   (fn fx-handler
     [app-db event-vec]
-    (if-not (satisfies? IReactiveAtom app-db)
+    (if-not (ratom? app-db)
         (if (map? app-db)
           (console :warn "re-frame: Did you use \"fx\" middleware with \"def-event\"?  Use \"def-event-fx\" instead (and don't directly use \"fx\")")
           (console :warn "re-frame: \"fx\" middleware not given a Ratom.  Got: " app-db)))
