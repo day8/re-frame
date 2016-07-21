@@ -154,22 +154,37 @@
       sub-fn                   ;; first case the user provides a custom sub-fn
       (register
         sub-name
-        (fn [db q-vec d-vec]
-          (let [subscriptions (sub-fn q-vec d-vec)]    ;; this let needs to be outside the fn
-            (make-reaction
-              (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
+        (fn subs-handler-fn    ;; multi-arity to match the arities `subscribe` might invoke.
+          ([db q-vec]
+           (let [subscriptions (sub-fn q-vec)]
+             (make-reaction
+              (fn [] (f (multi-deref subscriptions) q-vec)))))
+          ([db q-vec d-vec]
+           (let [subscriptions (sub-fn q-vec d-vec)]
+             (make-reaction
+              (fn [] (f (multi-deref subscriptions) q-vec d-vec)))))))
       (seq arrow-args)              ;; the user uses the :<- sugar
       (register
         sub-name
-        (fn [db q-vec d-vec]
-          (let [subscriptions    (map subscribe arrow-subs)
-                subscriptions    (if (< 1 (count subscriptions))
-                                   subscriptions
-                                   (first subscriptions))]    ;; automatically provide a singlton
-            (make-reaction
-              (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
+        (letfn [(get-subscriptions []
+                  (let [subscriptions (map subscribe arrow-subs)]
+                    (if (< 1 (count subscriptions))
+                      subscriptions
+                      (first subscriptions))))] ;; automatically provide a singleton
+         (fn subs-handler-fn
+           ([db q-vec]
+            (let [subscriptions (get-subscriptions)]
+              (make-reaction
+               (fn [] (f (multi-deref subscriptions) q-vec)))))
+           ([db q-vec d-vec]
+            (let [subscriptions (get-subscriptions)]
+              (make-reaction
+               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))))
       :else
       (register ;; the simple case with no subs
         sub-name
-        (fn [db q-vec d-vec]
-          (make-reaction (fn [] (f @db q-vec d-vec)))))))())
+        (fn subs-handler-fn
+          ([db q-vec]
+           (make-reaction (fn [] (f @db q-vec))))
+          ([db q-vec d-vec]
+           (make-reaction (fn [] (f @db q-vec d-vec))))))))())
