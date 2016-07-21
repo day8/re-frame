@@ -14,8 +14,8 @@
 (defn ratom [x]
   (reagent.core/atom x))
 
-(defn ratom? [maybe-ratom]
-  (satisfies? reagent.ratom/IReactiveAtom maybe-ratom))
+(defn ratom? [x]
+  (satisfies? reagent.ratom/IReactiveAtom x))
 
 (defn make-reaction [f]
   (reagent.ratom/make-reaction f))

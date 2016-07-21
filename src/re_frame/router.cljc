@@ -227,7 +227,7 @@
         stack  #?(:cljs (->> (js/Error. (str "Event " (first event-v) " dispatched from here:"))
                              .-stack
                              clojure.string/split-lines
-                             (remove #(re-find #"react.inc.js|\(native\)" %))
+                             (remove #(re-find #"react\.inc\.js|\(native\)" %))
                              (clojure.string/join "\n"))
                   :clj  "n/a")]
     (if (nil? event-v)
