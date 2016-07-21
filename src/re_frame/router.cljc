@@ -1,7 +1,6 @@
 (ns re-frame.router
-  (:require [reagent.core]
-            [re-frame.events :refer [handle]]
-            [goog.async.nextTick]))
+  (:require [re-frame.events :refer [handle]]
+            [re-frame.interop :refer [after-render empty-queue next-tick]]))
 
 
 ;; -- Router Loop ------------------------------------------------------------
@@ -61,8 +60,8 @@
 ;; Events can have metadata which says to pause event processing.
 ;; event metadata -> "run later" functions
 (def later-fns
-  {:flush-dom (fn [f] ((.-after-render reagent.core) #(goog.async.nextTick f)))   ;; one tick after the end of the next annimation frame
-   :yield     goog.async.nextTick})           ;; almost immediately
+  {:flush-dom (fn [f] (after-render #(next-tick f)))   ;; one tick after the end of the next annimation frame
+   :yield     next-tick})               ;; almost immediately
 
 
 ;; Abstract representation of the Event Queue
@@ -88,9 +87,9 @@
 
 
 ;; Concrete implementation of IEventQueue
-(deftype EventQueue [^:mutable fsm-state
-                     ^:mutable queue
-                     ^:mutable post-event-callback-fns]
+(deftype EventQueue [#?(:cljs ^:mutable fsm-state               :clj ^:volatile-mutable fsm-state)
+                     #?(:cljs ^:mutable queue                   :clj ^:volatile-mutable queue)
+                     #?(:cljs ^:mutable post-event-callback-fns :clj ^:volatile-mutable post-event-callback-fns)]
   IEventQueue
 
   ;; -- API ------------------------------------------------------------------
@@ -144,7 +143,8 @@
             [:paused :add-event] [:paused  #(-add-event this arg)]
             [:paused :resume   ] [:running #(-resume this)]
 
-            (throw (js/Error. (str "re-frame: router state transition not found. " fsm-state " " trigger))))]
+            (throw (ex-info (str "re-frame: router state transition not found. " fsm-state " " trigger)
+                            {:fsm-state fsm-state, :trigger trigger})))]
 
       ;; The "case" above computed both the new FSM state, and the action. Now, make it happen.
       (set! fsm-state new-fsm-state)
@@ -161,12 +161,12 @@
         (handle event-v)
         (set! queue (pop queue))
         (-call-post-event-callbacks this event-v)
-        (catch :default ex
+        (catch #?(:cljs :default :clj Exception) ex
           (-fsm-trigger this :exception ex)))))
 
   (-run-next-tick
     [this]
-    (goog.async.nextTick #(-fsm-trigger this :run-queue nil)))
+    (next-tick #(-fsm-trigger this :run-queue nil)))
 
   ;; Process all the events currently in the queue, but not any new ones.
   ;; Be aware that events might have metadata which will pause processing.
@@ -182,7 +182,7 @@
 
   (-exception
     [_ ex]
-    (set! queue #queue [])     ;; purge the queue
+    (set! queue empty-queue) ;; purge the queue
     (throw ex))
 
   (-pause
@@ -206,7 +206,7 @@
 ;; When "dispatch" is called, the event is added into this event queue.  Later,
 ;;  the queue will "run" and the event will be "handled" by the registered function.
 ;;
-(def event-queue (->EventQueue :idle  #queue [] []))
+(def event-queue (->EventQueue :idle empty-queue []))
 
 
 ;; ---------------------------------------------------------------------------
@@ -224,11 +224,12 @@
         ;; anything goes wrong, we know where it came from.
         ;; To get a source mapped stack, we must get rid of the react frames
         ;; See https://github.com/Day8/re-frame/issues/164#issuecomment-233528154
-        stack  (->> (js/Error. (str "Event " (first event-v) " dispatched from here:"))
-                    .-stack
-                    clojure.string/split-lines
-                    (remove #(re-find #"react.inc.js|\(native\)" %))
-                    (clojure.string/join "\n"))]
+        stack  #?(:cljs (->> (js/Error. (str "Event " (first event-v) " dispatched from here:"))
+                             .-stack
+                             clojure.string/split-lines
+                             (remove #(re-find #"react\.inc\.js|\(native\)" %))
+                             (clojure.string/join "\n"))
+                  :clj  "n/a")]
     (if (nil? event-v)
       (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
       (push event-queue (with-meta event-v {:stack stack}))))

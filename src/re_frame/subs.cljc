@@ -1,7 +1,7 @@
 (ns re-frame.subs
  (:require
-   [reagent.ratom  :as ratom :refer [make-reaction] :refer-macros [reaction]]
    [re-frame.db    :refer [app-db]]
+   [re-frame.interop :refer [add-on-dispose! debug-enabled? make-reaction ratom?]]
    [re-frame.loggers :refer [console]]
    [re-frame.utils :refer [first-in-vector]]))
 
@@ -38,8 +38,8 @@
   [query-v dynv r]
   (let [cache-key [query-v dynv]]
     ;; when this reaction is nolonger being used, remove it from the cache
-    (ratom/add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
-                                  (console :warn "Removing subscription: " cache-key)))
+    (add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
+                            (console :warn "Removing subscription: " cache-key)))
 
     (console :log "Dispatch site: ")
     (console :log (:dispatch-site (meta query-v)))
@@ -77,17 +77,17 @@
          cached)
      (let [query-id   (first-in-vector v)
            handler-fn (get @qid->fn query-id)]
-       (when ^boolean js/goog.DEBUG
-         (when-let [not-reactive (remove #(implements? reagent.ratom/IReactiveAtom %) dynv)]
+       (when debug-enabled?
+         (when-let [not-reactive (remove ratom? dynv)]
            (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom: " not-reactive)))
        (if (nil? handler-fn)
          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")
-         (let [dyn-vals (reaction (mapv deref dynv))
-               sub (reaction (handler-fn app-db v @dyn-vals))]
+         (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
+               sub (make-reaction (fn [] (handler-fn app-db v @dyn-vals)))]
            ;; handler-fn returns a reaction which is then wrapped in the sub reaction
            ;; need to double deref it to get to the actual value.
            (console :warn "Subscription created: " v dynv)
-           (cache-and-return v dynv (reaction @@sub))))))))
+           (cache-and-return v dynv (make-reaction (fn [] @@sub)))))))))
 
 ;; -- Helper code for register-pure -------------------
 
@@ -154,22 +154,37 @@
       sub-fn                   ;; first case the user provides a custom sub-fn
       (register
         sub-name
-        (fn [db q-vec d-vec]
-          (let [subscriptions (sub-fn q-vec d-vec)]    ;; this let needs to be outside the fn
-            (ratom/make-reaction
-              (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
+        (fn subs-handler-fn    ;; multi-arity to match the arities `subscribe` might invoke.
+          ([db q-vec]
+           (let [subscriptions (sub-fn q-vec)]
+             (make-reaction
+              (fn [] (f (multi-deref subscriptions) q-vec)))))
+          ([db q-vec d-vec]
+           (let [subscriptions (sub-fn q-vec d-vec)]
+             (make-reaction
+              (fn [] (f (multi-deref subscriptions) q-vec d-vec)))))))
       (seq arrow-args)              ;; the user uses the :<- sugar
       (register
         sub-name
-        (fn [db q-vec d-vec]
-          (let [subscriptions    (map subscribe arrow-subs)
-                subscriptions    (if (< 1 (count subscriptions))
-                                   subscriptions
-                                   (first subscriptions))]    ;; automatically provide a singlton
-            (ratom/make-reaction
-              (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))
+        (letfn [(get-subscriptions []
+                  (let [subscriptions (map subscribe arrow-subs)]
+                    (if (< 1 (count subscriptions))
+                      subscriptions
+                      (first subscriptions))))] ;; automatically provide a singleton
+         (fn subs-handler-fn
+           ([db q-vec]
+            (let [subscriptions (get-subscriptions)]
+              (make-reaction
+               (fn [] (f (multi-deref subscriptions) q-vec)))))
+           ([db q-vec d-vec]
+            (let [subscriptions (get-subscriptions)]
+              (make-reaction
+               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))))
       :else
       (register ;; the simple case with no subs
         sub-name
-        (fn [db q-vec d-vec]
-          (ratom/make-reaction (fn [] (f @db q-vec d-vec)))))))())
+        (fn subs-handler-fn
+          ([db q-vec]
+           (make-reaction (fn [] (f @db q-vec))))
+          ([db q-vec d-vec]
+           (make-reaction (fn [] (f @db q-vec d-vec))))))))())

@@ -1,5 +1,5 @@
 (ns re-frame.db
-  (:require [reagent.core :as reagent]))
+  (:require [re-frame.interop :refer [ratom]]))
 
 
 ;; -- Application State  --------------------------------------------------------------------------
@@ -7,5 +7,5 @@
 ;; Should not be accessed directly by application code
 ;; Read access goes through subscriptions.
 ;; Updates via event handlers.
-(def app-db (reagent/atom {}))
+(def app-db (ratom {}))
 
