@@ -1,6 +1,13 @@
 (ns re-frame.loggers
   (:require
-    [clojure.set :refer [difference]]))
+   [clojure.set :refer [difference]]
+   #?@(:clj [[clojure.string :as str]
+             [clojure.tools.logging :as log]])))
+
+(defn log [level & args]
+  (log/log level (if (= 1 (count args))
+                   (first args)
+                   (str/join " " (map pr-str args)))))
 
 ;; "loggers" holds the current set of logging functions.
 ;; By default, re-frame uses the functions provided by js/console.
@@ -8,15 +15,15 @@
 
 (def ^:private loggers
   (atom {:log       #?(:cljs (js/console.log.bind   js/console)
-                       :clj  println)
+                       :clj  (partial log :info))
          :warn      #?(:cljs (js/console.warn.bind  js/console)
-                       :clj  (partial println "WARN: "))
+                       :clj  (partial log :warn))
          :error     #?(:cljs (js/console.error.bind js/console)
-                       :clj  (partial println "ERROR: "))
+                       :clj  (partial log :error))
          :group     #?(:cljs (if (.-group js/console) ;; console.group does not exist  < IE 11
                                (js/console.group.bind js/console)
                                (js/console.log.bind   js/console))
-                       :clj  println)
+                       :clj  (partial log :info))
          :groupEnd  #?(:cljs (if (.-groupEnd js/console) ;; console.groupEnd does not exist  < IE 11
                                (js/console.groupEnd.bind js/console)
                                #())

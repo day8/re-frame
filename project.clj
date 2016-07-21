@@ -7,12 +7,13 @@
                  [reagent                    "0.6.0-rc"]]
 
   :profiles {:debug {:debug true}
-             :dev   {:dependencies [[karma-reporter     "0.3.0"]
-                                    [binaryage/devtools "0.7.2"]]
-                     :plugins      [[lein-cljsbuild     "1.1.3"]
-                                    [lein-npm           "0.6.2"]
-                                    [lein-figwheel      "0.5.4-7"]
-                                    [lein-shell         "0.5.0"]]}}
+             :dev   {:dependencies [[karma-reporter            "0.3.0"]
+                                    [binaryage/devtools        "0.7.2"]
+                                    [org.clojure/tools.logging "0.3.1"]]
+                     :plugins      [[lein-cljsbuild            "1.1.3"]
+                                    [lein-npm                  "0.6.2"]
+                                    [lein-figwheel             "0.5.4-7"]
+                                    [lein-shell                "0.5.0"]]}}
 
   :clean-targets  [:target-path "run/compiled"]
 
