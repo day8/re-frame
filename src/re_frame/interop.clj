@@ -37,7 +37,7 @@
   (atom x))
 
 (defn ratom? [x]
-  (satisfies? clojure.lang.IAtom x))
+  (instance? clojure.lang.IAtom x))
 
 (defn make-reaction
   "On JVM Clojure, return a `deref`-able thing which invokes the given function
