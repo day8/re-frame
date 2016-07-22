@@ -1,11 +1,5 @@
 <a href="" target="_blank"><img src="/logo/re-frame-white-125x45.png"/></a>
 
-[![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
-[![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
-[![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/develop)
-[![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/master)
-[![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/Day8/re-frame/tree/master/examples)
-
 ## Derived Values, Flowing
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
@@ -63,8 +57,15 @@ Features:
    and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
    What could possibly go wrong?
 
-__Warning__:  That was the summary. What follows is a long-ish tutorial/explanation.
 
+[![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
+[![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
+[![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/develop)
+[![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/master)
+[![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/Day8/re-frame/tree/master/examples)
+
+
+__Warning__:  That was the summary. What follows is a long-ish tutorial/explanation.
 
 ## Tutorial Table of Contents
 
