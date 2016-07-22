@@ -74,7 +74,7 @@
      (let [query-id   (first-in-vector v)
            handler-fn (get @qid->fn query-id)]
        (when debug-enabled?
-         (when-let [not-reactive (remove ratom? dynv)]
+         (when-let [not-reactive (not-empty (remove ratom? dynv))]
            (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom: " not-reactive)))
        (if (nil? handler-fn)
          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")
