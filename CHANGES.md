@@ -74,6 +74,8 @@ Joking aside, this is a substantial release which will change how you use re-fra
     XXX add a document describing the cross platform testing setup and process. 
 
 
+  - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!!
+
 ##### Breaking
 
   - requires Reagent >= v0.6.0
