@@ -4,10 +4,10 @@
    #?@(:clj [[clojure.string :as str]
              [clojure.tools.logging :as log]])))
 
-(defn log [level & args]
-  (log/log level (if (= 1 (count args))
-                   (first args)
-                   (str/join " " (map pr-str args)))))
+#?(:clj (defn log [level & args]
+          (log/log level (if (= 1 (count args))
+                           (first args)
+                           (str/join " " args)))))
 
 ;; "loggers" holds the current set of logging functions.
 ;; By default, re-frame uses the functions provided by js/console.
