@@ -1,15 +1,15 @@
 ## 0.8.0  (2016.07.XX)
 
-Deftly surfing buzzword waves is obviously crucial for any framework. Angular's terrifying faceplant
-is a sobering  reminder to us all - a rooster one day and a feather duster the next. With this release,
-re-frame's already impressive buzzword muscles
+Staying on the leading edge of new buzzwords is obviously critical for any framework. 
+Angular's terrifying faceplant is a sobering  reminder to us all - a rooster one day and 
+a feather duster the next. With this release, re-frame's already impressive buzzword muscles
 bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  I know, right?
 
 Some may even find these new features useful.
 
 Headline
 
-Joking aside, this is a substantial release which will fundamentally change how you use re-frame:
+Joking aside, this is a very substantial release which will fundamentally change how you use re-frame:
 
   - re-frame subscriptions are now de-duplicated. As a result,
     many Signal graphs will be more efficient. The new behaviour better
@@ -53,15 +53,20 @@ Joking aside, this is a substantial release which will fundamentally change how 
     over that which previously existed previously.
 
   - there's now two kinds of event handlers: pure and effectful. XXX
-    For description see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
+    For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
     For examples see:
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
       3. https://github.com/Day8/re-frame-async-flow-fx
 
-
-  - taking advantage of the new effectful event handlers, there's now a new library
-    which makes it easy to XXXX
+  - Thanks to @samroberton and @escherize, you can now run and debug your re-frame tests on the JVM.  
+    They've converted re-frame itself to `.cljc`, and stubbed out the necessary  `js` and `jvm` interop.
+    
+    This does not mean you can run re-frame apps on the JVM (there's no React or Reagent).  But you can
+    run and debug your apps tests.
+    
+    XXX look at todomvc-extra sample
+    XXX add a document describing the cross platform testing setup and process. 
 
 
 Breaking:
