@@ -4,12 +4,12 @@
   :license      {:name "MIT"}
   :dependencies [[org.clojure/clojure        "1.8.0"]
                  [org.clojure/clojurescript  "1.9.89"]
-                 [reagent                    "0.6.0-rc"]]
+                 [reagent                    "0.6.0-rc"]
+                 [org.clojure/tools.logging  "0.3.1"]]
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[karma-reporter            "0.3.0"]
-                                    [binaryage/devtools        "0.7.2"]
-                                    [org.clojure/tools.logging "0.3.1"]]
+                                    [binaryage/devtools        "0.7.2"]]
                      :plugins      [[lein-cljsbuild            "1.1.3"]
                                     [lein-npm                  "0.6.2"]
                                     [lein-figwheel             "0.5.4-7"]
