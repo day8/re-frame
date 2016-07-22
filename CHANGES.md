@@ -50,10 +50,10 @@ Joking aside, this is a very substantial release which will fundamentally change
     While undo and redo has been a part of re-frame from the beginning, the feature has been hidden
     and not documented, so it is nice to see it given proper API status.
     Plus, this release has [a couple of enhancements](https://github.com/Day8/re-frame/wiki/Undo-&-Redo#harvesting-and-re-instating)
-    over that which previously existed previously.
+    over that which existed previously.
 
   - there's now two kinds of event handlers: pure and effectful. XXX
-    For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
+    For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers.
     For examples see:
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
@@ -86,7 +86,7 @@ Breaking:
 
     With this release, any alternatives you supply will be called with different parameters.
     Previously loggers were called with a single `str` parameter but now they are expected to act
-    like `console.log` itself and take variadic, non string params. Sorry to break things, but
+    like `console.log` itself and take variadic, non-string params. Sorry to break things, but
     we are trying to maximise use of cljs-devtools and information is lost when strings are
     output, instead of actual data.
 
