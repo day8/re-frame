@@ -40,10 +40,6 @@
     ;; when this reaction is nolonger being used, remove it from the cache
     (add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
                             (console :log "Removing subscription: " cache-key)))
-
-    (console :log "Dispatch site: ")
-    (console :log (:dispatch-site (meta query-v)))
-
     ;; cache this reaction, so it can be used to deduplicate other, identical subscriptions
     (swap! query->reaction assoc cache-key r)
 

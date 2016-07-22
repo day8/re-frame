@@ -6,7 +6,6 @@
     [devtools.core :as devtools]
     ;; Test Namespaces -------------------------------
     [re-frame.middleware-test]
-    [re-frame.undo-test]
     [re-frame.subs-test]))
 
 (enable-console-print!)
@@ -20,7 +19,6 @@
 (defn ^:export run-html-tests []
   (cljs-test/run-tests
     're-frame.middleware-test
-    're-frame.undo-test
     're-frame.subs-test))
 
 ;; ---- KARMA  -----------------------------------------------------------------
@@ -29,5 +27,4 @@
   (karma/run-tests
     karma
     're-frame.middleware-test
-    're-frame.undo-test
     're-frame.subs-test))

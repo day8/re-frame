@@ -55,6 +55,13 @@
    (events/register-base id [fx middleware] handler)))
 
 
+; ;; -- Undo API -----
+; ;; The docs are here: https://github.com/Day8/re-frame/wiki/Undo-&-Redo
+
+; (def undoable     undo/undoable)
+; (def undo-config! undo/undo-config!)
+
+
 ;; --  Logging -----
 ;; Internally, re-frame uses the logging functions: warn, log, error, group and groupEnd
 ;; By default, these functions map directly to the js/console implementations,
