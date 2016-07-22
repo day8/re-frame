@@ -1,3 +1,4 @@
+<a href="" target="_blank"><img src="/logo/re-frame-white-125x45.png"/></a>
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
 [![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
