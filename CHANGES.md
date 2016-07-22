@@ -1,3 +1,10 @@
+## 0.9.0  
+
+Future releases:
+  - XXX  traceability 
+  - XXX  framework -> library
+  - XXX  middleware for spec checking of event vectors
+  
 ## 0.8.0  (2016.07.XX)
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. 
@@ -7,15 +14,13 @@ bulge further with new walnuts like "effects", "coeffects", and "de-duplicated s
 
 Some may even find these new features useful.
 
-Headline
+##### Headline
 
-Joking aside, this is a very substantial release which will fundamentally change how you use re-frame:
+Joking aside, this is a substantial release which will change how you use re-frame:
 
   - re-frame subscriptions are now de-duplicated. As a result,
     many Signal graphs will be more efficient. The new behaviour better
     matches programmer intuitions about what "should" happen.
-
-    *Explanation*
 
     Each subscription causes a handler to execute, producing
     a reactive stream of updates. Two calls to `(subscribe [:some :query])` results in two copies of the same
@@ -52,8 +57,8 @@ Joking aside, this is a very substantial release which will fundamentally change
     Plus, this release has [a couple of enhancements](https://github.com/Day8/re-frame/wiki/Undo-&-Redo#harvesting-and-re-instating)
     over that which previously existed previously.
 
-  - there's now two kinds of event handlers: pure and effectful. XXX
-    For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers
+  - there's now two kinds of event handlers: pure and effectful. XXX  <br>
+    For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers  <br>
     For examples see:
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
@@ -65,11 +70,12 @@ Joking aside, this is a very substantial release which will fundamentally change
     This does not mean you can run re-frame apps on the JVM (there's no React or Reagent).  But you can
     run and debug your apps tests.
     
-    XXX look at todomvc-extra sample
+    XXX look at todomvc-extra sample <br>
     XXX add a document describing the cross platform testing setup and process. 
 
 
-Breaking:
+##### Breaking
+
   - requires Reagent >= v0.6.0
 
   - `re-frame.core/register-handler` has been renamed `re-frame.core/def-event`. (There's now
@@ -100,11 +106,8 @@ Breaking:
     (defn my-logger [& args] (do-something-with (apply str args))
     ```
 
-Improvements:
-  - XXX  (full-debug!)
-  - XXX  middleware for spec checking of event vectors
+##### Improvements
 
-  - Enhancement:
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
   - added new API `re-frame.core/remove-post-event-callback`. See doc string.
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a
