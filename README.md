@@ -1,4 +1,5 @@
-<a href="" target="_blank"><img src="/logo/re-frame-white-125x45.png"/></a>
+![logo](/logo/re-frame_256w.png?raw=true)
+
 
 ## Derived Values, Flowing
 
