@@ -8,8 +8,8 @@ Future releases:
 ## 0.8.0  (2016.07.XX)
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. 
-Angular's terrifying faceplant is a sobering  reminder to us all - a rooster one day and 
-a feather duster the next. With this release, re-frame's already impressive buzzword muscles
+Angular's terrifying faceplant is a sobering  reminder to us all. 
+With this release, re-frame's already impressive buzzword muscles
 bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  I know, right?
 
 Some may even find these new features useful.
@@ -73,8 +73,8 @@ Joking aside, this is a substantial release which will change how you use re-fra
     XXX look at todomvc-extra sample <br>
     XXX add a document describing the cross platform testing setup and process. 
 
-
-  - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!!
+  - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!!  But remember, no 
+    good deed ever goes unpunished - we're coming to you every time from now on :-)
 
 ##### Breaking
 
