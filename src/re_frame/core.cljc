@@ -40,6 +40,7 @@
 (def clear-event!        events/clear-handler!)
 
 ;; Registers a pure event handler. Places pure middleware in the correct, LHS position.
+
 (defn reg-event
   ([id handler]
     (events/register-base id pure handler))
@@ -94,3 +95,20 @@
 (defn remove-post-event-callback
   [f]
   (router/remove-post-event-callback re-frame.router/event-queue f))
+
+
+;; --  Helpful Message
+;; Assisting the v0.0.7 ->  v0.0.8 tranistion.  Remove in v0.0.9
+(defn register-handler
+  [& args]
+  (console :error  "re-frame:  \"register-handler\" has been renamed \"reg-event\""))
+
+(defn register-sub
+  [& args]
+  (console :error  "re-frame:  \"register-sub\" has been renamed \"reg-sub-raw\"."))
+
+;; v0.0.8 alpha2 -> alpha3
+(defn def-fx    [& args]  (console :error  "re-frame:  in v0.0.8-alpha3 \"def-fx\" was renamed \"reg-fx\"."))
+(defn def-event [& args]  (console :error  "re-frame:  in v0.0.8-alpha3 \"def-event\" was renamed \"reg-event\"."))
+(defn def-sub   [& args]  (console :error  "re-frame:  in v0.0.8-alpha3 \"def-sub\" was renamed \"reg-sub\"."))
+
