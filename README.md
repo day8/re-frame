@@ -1,4 +1,4 @@
-![logo](/logo/re-frame_256w.png?raw=true)
+![logo](/images/logo/re-frame_256w.png?raw=true)
 
 
 ## Derived Values, Flowing
@@ -789,7 +789,12 @@ the 2nd part of the story: the flow in the opposite direction.
 
 While the first flow has FRP-nature, the 2nd flow does not.  Well, not at first glance anyway.
 
-When I think about these two flows, I imagine [one of those school diagrams](http://thumbnails-visually.netdna-ssl.com/water-cycle_521f29b8b6271_w1500.png) showing the water cycle. Rivers taking water down to the oceans, and evaporation/clouds/wind taking water back over the mountains to fall again as rain or snow. Repeat.
+When I think about these two flows, I imagine one of those school diagrams showing the water cycle.
+
+![logo](/images/the-water-cycle.png?raw=true)
+
+Rivers taking water down to the oceans, and evaporation/clouds/wind taking water back over 
+the mountains to fall again as rain or snow. Repeat.
 
 There is a cycle, but it is handled by two independent flows.
 
