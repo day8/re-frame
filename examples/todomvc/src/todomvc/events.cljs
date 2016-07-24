@@ -1,7 +1,7 @@
-(ns todomvc.handlers
+(ns todomvc.events
   (:require
     [todomvc.db    :refer [default-value ls->todos todos->ls!]]
-    [re-frame.core :refer [def-event path trim-v after debug]]
+    [re-frame.core :refer [reg-event path trim-v after debug]]
     [cljs.spec     :as s]))
 
 
@@ -48,7 +48,7 @@
 ;; -- Event Handlers ----------------------------------------------------------
 
                                   ;; usage:  (dispatch [:initialise-db])
-(def-event                        ;; On app startup, create initial state
+(reg-event                        ;; On app startup, create initial state
   :initialise-db                  ;; event id being handled
   check-spec-mw                   ;; afterwards: check that app-db matches the spec
   (fn [_ _]                       ;; the handler being registered
@@ -56,7 +56,7 @@
 
 
                                   ;; usage:  (dispatch [:set-showing  :active])
-(def-event                        ;; this handler changes the todo filter
+(reg-event                        ;; this handler changes the todo filter
   :set-showing                    ;; event-id
   [check-spec-mw (path :showing) trim-v]  ;; middleware  (wraps the handler)
 
@@ -70,7 +70,7 @@
 
 
                                   ;; usage:  (dispatch [:add-todo  "Finsih comments"])
-(def-event                        ;; given the text, create a new todo
+(reg-event                        ;; given the text, create a new todo
   :add-todo
   todo-middleware
   (fn [todos [text]]              ;; "path" middlware in "todo-middleware" means 1st parameter is :todos
@@ -78,28 +78,28 @@
       (assoc todos id {:id id :title text :done false}))))
 
 
-(def-event
+(reg-event
   :toggle-done
   todo-middleware
   (fn [todos [id]]
     (update-in todos [id :done] not)))
 
 
-(def-event
+(reg-event
   :save
   todo-middleware
   (fn [todos [id title]]
     (assoc-in todos [id :title] title)))
 
 
-(def-event
+(reg-event
   :delete-todo
   todo-middleware
   (fn [todos [id]]
     (dissoc todos id)))
 
 
-(def-event
+(reg-event
   :clear-completed
   todo-middleware
   (fn [todos _]
@@ -109,7 +109,7 @@
          (reduce dissoc todos))))    ;; returns the new version of todos
 
 
-(def-event
+(reg-event
   :complete-all-toggle
   todo-middleware
   (fn [todos _]

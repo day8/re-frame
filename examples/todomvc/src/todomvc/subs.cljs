@@ -1,10 +1,10 @@
 (ns todomvc.subs
-  (:require [re-frame.core :refer [def-sub subscribe]]))
+  (:require [re-frame.core :refer [reg-sub subscribe]]))
 
-;; Using def-sub, you can write subscription handlers without ever
+;; Using reg-sub, you can write subscription handlers without ever
 ;; using `reaction` directly.
 ;; This is how you would register a simple handler.
-(def-sub
+(reg-sub
   :showing
   (fn [db _]        ;; db, is the value in app-db
     (:showing db))) ;; I repeat:  db is a value. Not a ratom.  And this fn does not return a reaction, just a value.
@@ -12,12 +12,12 @@
 ;; that `fn` is a pure function
 
 ;; Next, the registration of a similar handler is done in two steps.
-;; First, we `defn` a pure handler function.  Then, we use `def-sub` to register it.
+;; First, we `defn` a pure handler function.  Then, we use `reg-sub` to register it.
 ;; Two steps. This is different to the first registration, which was done in one step.
 (defn sorted-todos
   [db _]
   (:todos db))
-(def-sub :sorted-todos sorted-todos)
+(reg-sub :sorted-todos sorted-todos)
 
 ;; -------------------------------------------------------------------------------------
 ;; Beyond Simple Handlers
@@ -36,7 +36,7 @@
 ;; When writing and registering the handler for an intermediate node, you must nominate
 ;; one or more input signals (typically one or two).
 ;;
-;; def-sub allows you to supply:
+;; reg-sub allows you to supply:
 ;;
 ;;   1. a function which returns the input signals. It can return either a single signal or
 ;;      a vector of signals, or a map of where the values are the signals.
@@ -47,7 +47,7 @@
 ;; In the two simple examples at the top, we only supplied the 2nd of these functions.
 ;; But now we are dealing with intermediate nodes, we'll need to provide both fns.
 ;;
-(def-sub
+(reg-sub
   :todos
 
   ;; This function returns the input signals.
@@ -77,7 +77,7 @@
 ;; As a result note:
 ;;   - the first function (which returns the signals, returns a 2-vector)
 ;;   - the second function (which is the computation, destructures this 2-vector as its first parameter)
-(def-sub
+(reg-sub
   :visible-todos
   (fn [query-v _]           ;; returns a vector of two signals.
     [(subscribe [:todos])
@@ -115,7 +115,7 @@
 ;; register-pure-sub provides some macro sugar so you can nominate a very minimal
 ;; vector of input signals. The 1st function is not needed.
 ;; Here is the example above rewritten using the sugar.
-#_(def-sub)
+#_(reg-sub)
   :visible-todos
   :<- [:todos]
   :<- [:showing]
@@ -127,19 +127,19 @@
       (filter filter-fn todos)))
 
 
-(def-sub
+(reg-sub
   :all-complete?
   :<- [:todos]
   (fn [todos _]
     (seq todos)))
 
-(def-sub
+(reg-sub
   :completed-count
   :<- [:todos]
   (fn [todos _]
     (count (filter :done todos))))
 
-(def-sub
+(reg-sub
   :footer-counts                     ;; XXXX different from original. Now does not return showing
   :<- [:todos]
   :<- [:completed-count]

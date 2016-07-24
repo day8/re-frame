@@ -4,7 +4,7 @@
             [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [secretary.core :as secretary]
-            [todomvc.handlers]
+            [todomvc.events]
             [todomvc.subs]
             [todomvc.views]
             [devtools.core :as devtools])

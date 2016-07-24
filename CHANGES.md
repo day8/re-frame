@@ -1,9 +1,3 @@
-## 0.9.0  
-
-Future releases:
-  - XXX  traceability 
-  - XXX  framework -> library
-  - XXX  middleware for spec checking of event vectors
   
 ## 0.8.0  (2016.07.XX)
 
@@ -37,13 +31,13 @@ Joking aside, this is a substantial release which will change how you use re-fra
     So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even
     though they involve the same event id, `:some-event`, the query vectors do not test `=`.
 
-  - added a new subscription handler registration function called `re-frame.core/def-sub`. It is an
-    alternative to `re-frame.core/register-sub` (now renamed to `re-frame.core/def-sub-raw`).
-    `def-sub` is significantly easier to use and understand,
+  - added a new subscription handler registration function called `re-frame.core/reg-sub`. It is an
+    alternative to `re-frame.core/register-sub` (now renamed to `re-frame.core/reg-sub-raw`).
+    `reg-sub` is significantly easier to use and understand,
     while often also being more performant.  The design has really fallen out nicely and we're
     delighted with it.
 
-    With `def-sub`, you no longer need to use `reaction` explicitly. Subscription handlers are now pure
+    With `reg-sub`, you no longer need to use `reaction` explicitly. Subscription handlers are now pure
     which makes them easier to understand and test etc. Plus, as you'll see in the docs, there is some
     gratuitous syntactic sugar.
 
@@ -80,13 +74,13 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
   - requires Reagent >= v0.6.0
 
-  - `re-frame.core/register-handler` has been renamed `re-frame.core/def-event`. (There's now
+  - `re-frame.core/register-handler` has been renamed `re-frame.core/reg-event`. (There's now
     two kinds of event-handlers, pure and effectful. Event handlers of the 2nd, new kind
-    should be registered via the new function `re-frame.core/def-event-fx`)
+    should be registered via the new function `re-frame.core/reg-event-fx`)
 
-  - `re-frame.core/register-sub` has been renamed `re-frame.core/def-sub-raw`.  This is to indicate that
+  - `re-frame.core/register-sub` has been renamed `re-frame.core/reg-sub-raw`.  This is to indicate that
      this kind of registration is now considered the low level, close to the metal way to
-     create subscriptions handlers.  This release introduced `def-sub` which becomes the preferred way
+     create subscriptions handlers.  This release introduced `reg-sub` which becomes the preferred way
      to register subscription handlers.
 
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can
@@ -119,6 +113,12 @@ Joking aside, this is a substantial release which will change how you use re-fra
   - Added cljs.test based tests via browser/html. These mimic original karma tests. NOTE: previous
     lein aliases `once` and `auto` have been replaced by `test-once` , `test-auto` & `karma-once`
     see [CONTRIBUTING.md](CONTRIBUTING.md)
+    
+Pending 
+  - should reg-event return the pure handler ?? 
+  - XXX  traceability 
+  - XXX  framework -> library
+  - XXX  middleware for spec checking of event vectors
 
 
 ## 0.7.0  (2016-03-14)

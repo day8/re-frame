@@ -14,13 +14,13 @@
 
 
 ;; --  subscribe
-(def def-sub-raw         subs/register)
-(def def-sub             subs/register-pure)
+(def reg-sub-raw         subs/register)
+(def reg-sub             subs/register-pure)
 (def clear-all-subs!     subs/clear-all-handlers!)
 (def subscribe           subs/subscribe)
 
 ;; --  effects
-(def def-fx         fx/register)
+(def reg-fx         fx/register)
 (def clear-fx!      fx/clear-handler!)
 (def clear-all-fx!  fx/clear-all-handlers!)
 
@@ -40,7 +40,7 @@
 (def clear-event!        events/clear-handler!)
 
 ;; Registers a pure event handler. Places pure middleware in the correct, LHS position.
-(defn def-event
+(defn reg-event
   ([id handler]
     (events/register-base id pure handler))
   ([id middleware handler]
@@ -48,7 +48,7 @@
 
 
 ;; Registers an effectful event handler. Places fx middleware in the correct, LHS position.
-(defn def-event-fx
+(defn reg-event-fx
   ([id handler]
    (events/register-base id fx handler))
   ([id middleware handler]

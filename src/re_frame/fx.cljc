@@ -107,12 +107,9 @@
 
 ;; -- Middleware --------------------------------------------------------------
 
-;; XXX a coeffect for jsDate ?
+;; XXX a coeffect for jsDate or random number
 ;; XXX add metadata saying it is fx.
-;; XXX add config
-;; XXX world or branch ??  Return world?
 ;; XXX ordering
-;; XXX review other standard middleware
 ;; XXX think about an undo effect
 
 
@@ -122,7 +119,7 @@
     [app-db event-vec]
     (if-not (ratom? app-db)
         (if (map? app-db)
-          (console :warn "re-frame: Did you use \"fx\" middleware with \"def-event\"?  Use \"def-event-fx\" instead (and don't directly use \"fx\")")
+          (console :warn "re-frame: Did you use \"fx\" middleware with \"reg-event\"?  Use \"reg-event-fx\" instead (and don't directly use \"fx\")")
           (console :warn "re-frame: \"fx\" middleware not given a Ratom.  Got: " app-db)))
     (let [run-effect (fn [[key val]]
                        (if-let [effect-fn  (lookup-handler key)]
