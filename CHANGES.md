@@ -41,34 +41,39 @@ Joking aside, this is a substantial release which will change how you use re-fra
     which makes them easier to understand and test etc. Plus, as you'll see in the docs, there is some
     gratuitous syntactic sugar.
 
-    The todomvc example is a tutorial on the subject:
+    At this point, the todomvc example represents the best tutorial on the subject:
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
 
-  - The API for the undo/redo features has been put into `re-frame.core`.
-    Detailed documentation is now available: https://github.com/Day8/re-frame/wiki/Undo-&-Redo
-    While undo and redo has been a part of re-frame from the beginning, the feature has been hidden
-    and not documented, so it is nice to see it given proper API status.
-    Plus, this release has [a couple of enhancements](https://github.com/Day8/re-frame/wiki/Undo-&-Redo#harvesting-and-re-instating)
-    over that which previously existed previously.
-
-  - there's now two kinds of event handlers: pure and effectful. XXX  <br>
+  - there's now two kinds of event handlers: pure and effectful. <br>
     For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers  <br>
-    For examples see:
+    For example use see:
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
       3. https://github.com/Day8/re-frame-async-flow-fx
 
-  - Thanks to @samroberton and @escherize, you can now run and debug your re-frame tests on the JVM.  
-    They've converted re-frame itself to `.cljc`, and stubbed out the necessary  `js` and `jvm` interop.
+  - You can now run and debug re-frame tests on the JVM.  This will be a really big deal for some. 
+  
+    Just to be clear: this does not mean you can run re-frame apps on the JVM (there's no React or 
+    Reagent available). But you can debug your handler tests using full JVM tooling goodness.
     
-    This does not mean you can run re-frame apps on the JVM (there's no React or Reagent).  But you can
-    run and debug your apps tests.
-    
-    XXX look at todomvc-extra sample <br>
-    XXX add a document describing the cross platform testing setup and process. 
+    @samroberton and and @escherize have provided the thought leadership and drive here.  They converted 
+    re-frame to `.cljc`, supplying plugable interop for both the `js` and `jvm` platforms.
 
-  - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!!  But remember, no 
-    good deed ever goes unpunished - we're coming to you every time from now on :-)
+    They then worked with @danielcompton to create a library of testing utilities which are actually 
+    a nice step forward for both platforms: <br>
+    https://github.com/Day8/re-frame-undo
+
+  - the undo/redo feature buried in re-frame has been factored out into its own library.
+  
+    undo and redo have been a part of re-frame from the beginning, but this feature has been hidden 
+    (not a part of the official API) and not documented. So it nice to see it made available, and fully 
+    documented here: https://github.com/Day8/re-frame-undo
+    
+    This library also has [a couple of enhancements](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
+    over that which previously existed previously, including a feature which works in with the new effects handler. 
+
+  - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no 
+    good deed ever goes unpunished - we'll be pestering you every time from now on :-)
 
 ##### Breaking
 
@@ -82,6 +87,9 @@ Joking aside, this is a substantial release which will change how you use re-fra
      this kind of registration is now considered the low level, close to the metal way to
      create subscriptions handlers.  This release introduced `reg-sub` which becomes the preferred way
      to register subscription handlers.
+     
+  - if you have previously used the undo/redo capabilities in re-frame, be aware they have migrated to 
+    a sibling library:  XXX
 
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can
     supply alternative functions using `re-frame.core/set-loggers!`.
