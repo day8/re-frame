@@ -1,10 +1,17 @@
 (ns re-frame.fx
-  (:require [re-frame.router :refer [dispatch]]
-            [re-frame.db :refer [app-db]]
-            [re-frame.events]
-            [re-frame.interop :refer [ratom? set-timeout!]]
-            [re-frame.loggers    :refer [console]]))
+  (:require
+    [re-frame.router  :refer [dispatch]]
+    [re-frame.db      :refer [app-db]]
+    [re-frame.events  :as events]
+    [re-frame.interop :refer [ratom? set-timeout!]]
+    [re-frame.loggers :refer [console]]))
 
+;; ---- Spec schema -----------------------------------------------------------
+;; TODO use Spec to validate events for :dispatch and :dispatch-n
+;; e.g. (when (= :cljs.spec/invalid (s/conform ::event val))
+;;        (console :error (s/explain-str ::event val)))
+;; (s/def ::event (s/and vector? (complement empty?)))
+;; (s/def ::events-n (s/coll-off ::event))
 
 ;; -- Registration ------------------------------------------------------------
 
@@ -39,11 +46,11 @@
 
 (defn dispatch-helper
   "There are cases where either one event is to be dipatched or a list of them"
-  [effect]
+  [event]
   (cond
-    (vector? effect) (dispatch effect)
-    (seq? effect)    (dorun (map dispatch effect))
-    :else (console :error "re-frame: expected :dispatch effect to be a list or vector, but got: " effect)))
+    (vector? event) (dispatch event)
+    (seq? event)    (dorun (map dispatch event))
+    :else (console :error "re-frame: expected :dispatch event to be a list or vector, but got: " event)))
 
 ;; Example:
 ;; {:dispatch-later {200  [:event-id "param"]    ;;  in 200ms do this: (dispatch [:event-id "param"])
@@ -57,24 +64,38 @@
       (set-timeout! #(dispatch-helper events) ms))))
 
 
-;; Supply either a vector or a list of vectors. For example:
+;; Supply a vector. For example:
 ;;
 ;;   {:dispatch [:event-id "param"] }
-;;
-;;   {:dispatch (list [:do :all] [:three :of] [:these]) }
-;;
+
 (register
   :dispatch
   (fn [val]
-    (dispatch-helper val)))
+    (when-not (vector? val)
+      (console :warn "re-frame: :dispatch fx val expected vector got:" val))
+    (dispatch val)))
+
+
+;; Supply sequencial coll. For example:
+;;
+;;   {:dispatch-n (list [:do :all] [:three :of] [:these])}
+;;
+;; Coll can be anything that returns true to sequential? but should not be a map
+;; NOTE: this does not include Set
+(register
+  :dispatch-n
+  (fn [val]
+    (when (or (-> val sequential? not) (map? val))
+      (console :warn "re-frame: :dispatch-n fx val expected sequential not map got:" val))
+    (doseq [event val] (dispatch event))))
 
 
 (register
   :deregister-event-handler
   (fn [val]
     (if (sequential? val)
-      (doall (map re-frame.events/clear-handler! val))
-      (re-frame.events/clear-handler! val))))
+      (doall (map events/clear-handler! val))
+      (events/clear-handler! val))))
 
 
 (register
