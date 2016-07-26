@@ -63,12 +63,13 @@
   \"re-frame.core/reg-event\" or  \"re-frame.core/reg-event-fx\" would generally be used."
   ([event-id handler-fn]
    (when (contains? @id->fn event-id)
-     (console :warn "re-frame: overwriting an event-handler for: " event-id))   ;; allow it, but warn.
-   (swap! id->fn assoc event-id handler-fn))
+     (console :warn "re-frame: overwriting an event-handler for: " event-id)) ;; allow it, but warn.
+   (swap! id->fn assoc event-id handler-fn)
+   nil)
 
   ([event-id middleware handler-fn]
-   (let  [mid-ware    (comp-middleware middleware)   ;; compose the middleware
-          midware+hfn (mid-ware handler-fn)]         ;; wrap the handler in the middleware
+   (let [mid-ware    (comp-middleware middleware)           ;; compose the middleware
+         midware+hfn (mid-ware handler-fn)]                 ;; wrap the handler in the middleware
      (register-base event-id midware+hfn))))
 
 
