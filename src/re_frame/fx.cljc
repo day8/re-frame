@@ -38,7 +38,7 @@
 ;; -- Standard Builtin Effects Handlers  --------------------------------------
 
 (defn dispatch-helper
-  "There are cases where eitherone event is to be dipatch "
+  "There are cases where either one event is to be dipatched or a list of them"
   [effect]
   (cond
     (vector? effect) (dispatch effect)
