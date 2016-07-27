@@ -100,11 +100,6 @@
 
 ;; -- Middleware --------------------------------------------------------------
 
-;; XXX a coeffect for jsDate or random number
-;; XXX add metadata saying it is fx.
-;; XXX ordering
-;; XXX think about an undo effect
-
 
 (defn fx
   [handler]
