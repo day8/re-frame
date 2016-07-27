@@ -91,18 +91,18 @@
       (filter filter-fn todos))))
 
 ;; -------------------------------------------------------------------------------------
-;; HEY, WAIT ON
+;; Hey, wait on!!
 ;;
-;; How did those two simple registrations at the top work, I hear you ask?
-;; We supplied only one function in those registrations, not two?
-;; I'm glad you asked.
-;; You see, when the signal-returning-fn is omitted, register-pure-sub provides a default.
-;; And it looks like this:
+;; How did those two simple registrations at the top work?
+;; We only supplied one function in those registrations, not two?
+;; Very observant of you, I'm glad you asked.
+;; When the signal-returning-fn is omitted, re-sub provides a default,
+;; and it looks like this:
 ;;    (fn [_ _] re-frame.db/app-db)
-;; You can see that it returns one signal, and that signal is app-db itself.
+;; It returns one signal, and that signal is app-db itself.
 ;;
-;; So that's why those two simple registrations didn't provide a signal-fn, but they
-;; still got the value in app-db supplied as that first parameter.
+;; So the two simple registrations at the top didn't need to provide a signal-fn,
+;; because they operated only on the value in app-db, supplied as 'db' in the 1st arguement.
 
 ;; -------------------------------------------------------------------------------------
 ;; SUGAR ?
@@ -115,7 +115,7 @@
 ;; register-pure-sub provides some macro sugar so you can nominate a very minimal
 ;; vector of input signals. The 1st function is not needed.
 ;; Here is the example above rewritten using the sugar.
-#_(reg-sub)
+#_(reg-sub
   :visible-todos
   :<- [:todos]
   :<- [:showing]
@@ -124,7 +124,7 @@
                       :active (complement :done)
                       :done   :done
                       :all    identity)]
-      (filter filter-fn todos)))
+      (filter filter-fn todos))))
 
 
 (reg-sub
@@ -140,7 +140,7 @@
     (count (filter :done todos))))
 
 (reg-sub
-  :footer-counts                     ;; XXXX different from original. Now does not return showing
+  :footer-counts
   :<- [:todos]
   :<- [:completed-count]
   (fn [[todos completed] _]
