@@ -120,4 +120,5 @@
                          (console :error "re-frame: no effects handler registered for: " key ". Ignoring")))
           world   {:db @app-db}]
       (->> (handler world event-vec)   ;; is expected to return a map of effects
-           (doall run-effect)))))      ;; process the returned effects
+           (map run-effect)            ;; process the returned effects
+           doall))))
