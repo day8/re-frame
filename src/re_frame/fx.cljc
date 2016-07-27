@@ -53,12 +53,10 @@
   :dispatch-later
   (fn [effects-v]
     ;TODO: use Spec to verify vector and elements when clj 1.9.0 is rel.
-    (doseq  [effect effects-v]
-      (let [ms    (:ms effect)
-            event (:dispatch effect)]
-        (if (or (empty? event) (-> ms number? not))
-          (console :warn "re-frame: dispatch-later fx :ms not number or missing :dispatch Got:" effect " Ignored.")
-          (set-timeout! #(router/dispatch event) ms))))))
+    (doseq  [{:keys [ms dispatch] :as effect} effects-v]
+        (if (or (empty? dispatch) (-> ms number? not))
+          (console :warn "re-frame: bad values given to :dispatch-later. Got: " effect ". Ignored.")
+          (set-timeout! #(router/dispatch dispatch) ms)))))
 
 
 ;; Supply a vector. For example:
@@ -69,7 +67,7 @@
   :dispatch
   (fn [val]
     (when-not (vector? val)
-      (console :warn "re-frame: :dispatch fx val expected vector got:" val))
+      (console :warn "re-frame: the value for :dispatch is not a vector. Got: " val))
     (router/dispatch val)))
 
 
@@ -82,8 +80,8 @@
 (register
   :dispatch-n
   (fn [val]
-    (when (or (-> val sequential? not) (map? val))
-      (console :warn "re-frame: :dispatch-n fx val expected sequential not map got:" val))
+    (when-not (sequential? val)
+      (console :warn "re-frame: the value for :dispatch-n is not sequential. Got: " val))
     (doseq [event val] (router/dispatch event))))
 
 
@@ -122,4 +120,4 @@
                          (console :error "re-frame: no effects handler registered for: " key ". Ignoring")))
           world   {:db @app-db}]
       (->> (handler world event-vec)   ;; is expected to return a map of effects
-           (mapv run-effect)))))       ;; use mapv to process the returned effects (because it isn't lazy)
+           (doall run-effect)))))      ;; process the returned effects
