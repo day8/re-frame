@@ -6,7 +6,8 @@
     [devtools.core :as devtools]
     ;; Test Namespaces -------------------------------
     [re-frame.middleware-test]
-    [re-frame.subs-test]))
+    [re-frame.subs-test]
+    [re-frame.fx-test]))
 
 (enable-console-print!)
 (devtools/install! [:custom-formatters :sanity-hints]) ;; we love https://github.com/binaryage/cljs-devtools
@@ -19,7 +20,8 @@
 (defn ^:export run-html-tests []
   (cljs-test/run-tests
     're-frame.middleware-test
-    're-frame.subs-test))
+    're-frame.subs-test
+    're-frame.fx-test))
 
 ;; ---- KARMA  -----------------------------------------------------------------
 
@@ -27,4 +29,5 @@
   (karma/run-tests
     karma
     're-frame.middleware-test
-    're-frame.subs-test))
+    're-frame.subs-test
+    're-frame.fx-test))

@@ -1,13 +1,13 @@
 (ns re-frame.fx
   (:require
-    [re-frame.router  :refer [dispatch]]
+    [re-frame.router  :as router]
     [re-frame.db      :refer [app-db]]
     [re-frame.events  :as events]
     [re-frame.interop :refer [ratom? set-timeout!]]
     [re-frame.loggers :refer [console]]))
 
 ;; ---- Spec schema -----------------------------------------------------------
-;; TODO use Spec to validate events for :dispatch and :dispatch-n
+;; TODO use Spec to validate events for :dispatch and :dispatch-n when clj 1.9
 ;; e.g. (when (= :cljs.spec/invalid (s/conform ::event val))
 ;;        (console :error (s/explain-str ::event val)))
 ;; (s/def ::event (s/and vector? (complement empty?)))
@@ -44,24 +44,27 @@
 
 ;; -- Standard Builtin Effects Handlers  --------------------------------------
 
-(defn dispatch-helper
-  "There are cases where either one event is to be dipatched or a list of them"
-  [event]
-  (cond
-    (vector? event) (dispatch event)
-    (seq? event)    (dorun (map dispatch event))
-    :else (console :error "re-frame: expected :dispatch event to be a list or vector, but got: " event)))
-
+;; Dispatch event(s) after some time.
 ;; Example:
-;; {:dispatch-later {200  [:event-id "param"]    ;;  in 200ms do this: (dispatch [:event-id "param"])
-;;                   100  [:also :this :in :100ms]
-;;                   250  (list [:do ] [:all ] [:three ])}
+;; {:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}    ;;  in 200ms do this: (dispatch [:event-id "param"])
+;;                   {:ms 100 :dispatch [:also :this :in :100ms]}
+;;                   {:ms 250 :dispatch-n (list [:do ] [:all ] [:three ])}]}
 ;;
 (register
   :dispatch-later
-  (fn [effect]
-    (doseq  [[ms events] effect]
-      (set-timeout! #(dispatch-helper events) ms))))
+  (fn [effects-v]
+    ;TODO: use Spec to verify vector and elements when clj 1.9.0 is rel.
+    (doseq  [effect effects-v]
+      (let [{:keys [ms dispatch dispatch-n]} effect
+            tasks (cond dispatch   (list dispatch)
+                        dispatch-n dispatch-n
+                        :else      (console :error "re-frame: dispatch-later fx must have one of :dispatch or :dispatch-n"))]
+        (when (and (some? dispatch) (some? dispatch-n))
+          (console :warn "re-frame: dispatch-later fx must have one of :dispatch or :dispatch-n Got: " effect " Ignoring: :dispatch-n"))
+        (if (or (empty? tasks) (-> ms number? not))
+          (console :warn "re-frame: dispatch-later fx :ms not number or missing :dispatch/:dispatch-n Got:" effect " Ignored.")
+          (set-timeout! #(doseq [event tasks]
+                          (router/dispatch event)) ms))))))
 
 
 ;; Supply a vector. For example:
@@ -73,7 +76,7 @@
   (fn [val]
     (when-not (vector? val)
       (console :warn "re-frame: :dispatch fx val expected vector got:" val))
-    (dispatch val)))
+    (router/dispatch val)))
 
 
 ;; Supply sequencial coll. For example:
@@ -87,7 +90,7 @@
   (fn [val]
     (when (or (-> val sequential? not) (map? val))
       (console :warn "re-frame: :dispatch-n fx val expected sequential not map got:" val))
-    (doseq [event val] (dispatch event))))
+    (doseq [event val] (router/dispatch event))))
 
 
 (register
