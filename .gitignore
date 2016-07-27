@@ -20,3 +20,4 @@ misc/
 .floo
 .flooignore
 node_modules/
+examples/todomvc/.idea/
