@@ -47,24 +47,18 @@
 ;; Dispatch event(s) after some time.
 ;; Example:
 ;; {:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}    ;;  in 200ms do this: (dispatch [:event-id "param"])
-;;                   {:ms 100 :dispatch [:also :this :in :100ms]}
-;;                   {:ms 250 :dispatch-n (list [:do ] [:all ] [:three ])}]}
+;;                   {:ms 100 :dispatch [:also :this :in :100ms]}]}
 ;;
 (register
   :dispatch-later
   (fn [effects-v]
     ;TODO: use Spec to verify vector and elements when clj 1.9.0 is rel.
     (doseq  [effect effects-v]
-      (let [{:keys [ms dispatch dispatch-n]} effect
-            tasks (cond dispatch   (list dispatch)
-                        dispatch-n dispatch-n
-                        :else      (console :error "re-frame: dispatch-later fx must have one of :dispatch or :dispatch-n"))]
-        (when (and (some? dispatch) (some? dispatch-n))
-          (console :warn "re-frame: dispatch-later fx must have one of :dispatch or :dispatch-n Got: " effect " Ignoring: :dispatch-n"))
-        (if (or (empty? tasks) (-> ms number? not))
-          (console :warn "re-frame: dispatch-later fx :ms not number or missing :dispatch/:dispatch-n Got:" effect " Ignored.")
-          (set-timeout! #(doseq [event tasks]
-                          (router/dispatch event)) ms))))))
+      (let [ms    (:ms effect)
+            event (:dispatch effect)]
+        (if (or (empty? event) (-> ms number? not))
+          (console :warn "re-frame: dispatch-later fx :ms not number or missing :dispatch Got:" effect " Ignored.")
+          (set-timeout! #(router/dispatch event) ms))))))
 
 
 ;; Supply a vector. For example:

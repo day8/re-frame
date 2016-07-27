@@ -29,7 +29,8 @@
             (swap! seen-events #(conj % token))
             db))
         {:dispatch-later [{:ms 100 :dispatch [::watcher :event1]}
-                          {:ms 200 :dispatch-n '([::watcher :event2] [::watcher :event3])}]}))
+                          {:ms 200 :dispatch [::watcher :event2]}
+                          {:ms 200 :dispatch [::watcher :event3]}]}))
 
     (async done
       (set-timeout!
