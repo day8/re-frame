@@ -87,9 +87,9 @@
 
 ;; -- Helper code for register-pure -------------------
 
-(defn- fmap
-  "Returns a new version of 'm' in which f has been applied to each value.
-  (fmap inc {:a 4, :b 2}) => {:a 5, :b 3}"
+(defn- map-vals
+  "Returns a new version of 'm' in which 'f' has been applied to each value.
+  (map-vals inc {:a 4, :b 2}) => {:a 5, :b 3}"
   [f m]
   (into {} (for [[k val] m] [k (f val)])))
 
@@ -97,7 +97,7 @@
   "derefs a map sequence or a singleton"
   [data]
   (cond
-    (map? data)  (fmap deref data)
+    (map? data)  (map-vals deref data)
     (coll? data) (map deref data)
     :else @data))
 
