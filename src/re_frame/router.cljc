@@ -199,7 +199,7 @@
   (-call-post-event-callbacks
     [_ event-v]
     ;; Call each registed post-event callback.
-    (doseq [callback post-event-callback-fns]
+    (doseq [callback (vals post-event-callback-fns)]
       (callback event-v queue)))
 
   (-resume
