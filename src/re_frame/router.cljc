@@ -213,7 +213,7 @@
 ;; When "dispatch" is called, the event is added into this event queue.  Later,
 ;;  the queue will "run" and the event will be "handled" by the registered function.
 ;;
-(def event-queue (->EventQueue :idle empty-queue []))
+(def event-queue (->EventQueue :idle empty-queue {}))
 
 
 ;; ---------------------------------------------------------------------------
