@@ -92,12 +92,11 @@
   (let [event-id    (first-in-vector event-v)
         handler-fn  (lookup-handler event-id)]
     (if (nil? handler-fn)
-      (console :error "re-frame: no event handler registered for: \"" event-id
-               "\". Ignoring.")
-      (if  *handling*
+      (console :error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
+      (if *handling*
         (console :error "re-frame: while handling \""  *handling*
                  "\"  dispatch-sync was called for \"" event-v
-                 "\". You can't call dispatch-sync in an event handler.")
+                 "\". You can't call dispatch-sync within an event handler.")
         (binding [*handling*  event-v]
           (let [stack (some-> event-v
                               meta
