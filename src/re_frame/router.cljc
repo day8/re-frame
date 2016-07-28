@@ -69,7 +69,7 @@
 
   ;; -- API
   (push [this event])
-  (add-post-event-callback [this f])
+  (add-post-event-callback [this id callack])
   (remove-post-event-callback [this f])
 
   ;; -- Implementation via a Finite State Machine
@@ -97,12 +97,14 @@
   (push [this event]         ;; presumably called by dispatch
     (-fsm-trigger this :add-event event))
 
-  (add-post-event-callback [_ callback-fn]
-    ;; register a callback function which will be called after each event is processed
-    (set! post-event-callback-fns (conj post-event-callback-fns callback-fn)))
+  ;; register a callback function which will be called after each event is processed
+  (add-post-event-callback [_ id callback-fn]
+    (->> (assoc post-event-callback-fns id callback-fn)
+         (set! post-event-callback-fns)))
 
-  (remove-post-event-callback [_ callback-fn]
-    (set! post-event-callback-fns (remove #(= % callback-fn) post-event-callback-fns)))
+  (remove-post-event-callback [_ id]
+    (->> (dissoc post-event-callback-fns id)
+         (set! post-event-callback-fns)))
 
 
   ;; -- FSM Implementation ---------------------------------------------------

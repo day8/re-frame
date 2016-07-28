@@ -113,7 +113,8 @@ Joking aside, this is a substantial release which will change how you use re-fra
 ##### Improvements
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
-  - added new API `re-frame.core/remove-post-event-callback`. See doc string.
+  - added new API `re-frame.core/clear-post-event-callback` which de-registers a callback 
+    added by `re-frame.core/add-post-event-callback`
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a
     single line saying so, rather than a "group".  Makes it slightly easier to grok
     the absence of change.

@@ -87,18 +87,22 @@
     - you want to create your own handling infrastructure, with perhaps multiple
       handlers for the one event, etc.  Hook in here.
     - libraries providing 'isomorphic javascript' rendering on  Nodejs or Nashorn.
+
+  'id' is typically a keyword.
   "
-  [f]
-  (router/add-post-event-callback re-frame.router/event-queue f))
+  ([f]
+    (router/add-post-event-callback re-frame.router/event-queue f f))
+  ([id f]
+   (router/add-post-event-callback re-frame.router/event-queue id f)))
 
 
 (defn remove-post-event-callback
-  [f]
-  (router/remove-post-event-callback re-frame.router/event-queue f))
+  [id]
+  (router/remove-post-event-callback re-frame.router/event-queue id))
 
 
-;; --  Helpful Message
-;; Assisting the v0.0.7 ->  v0.0.8 tranistion.  Remove in v0.0.9
+;; --  Deprecation Messages
+;; Assisting the v0.0.7 ->  v0.0.8 tranistion.
 (defn register-handler
   [& args]
   (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event\"")
