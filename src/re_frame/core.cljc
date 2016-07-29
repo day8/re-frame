@@ -76,19 +76,19 @@
 ;; -- Event Procssing Callbacks
 
 (defn add-post-event-callback
-  "Registers a callback function 'f'.
-  f will be called after each dispatched event is procecessed
-  f will be called with two arguments:
-    - the event's vector. That which was dispatched orignally.
-    - the further event queue - what is still to be processed. A PersistentQueue.
+  "Registers a callback function `f` to be called after each event is procecessed
+   `f` will be called with two arguments:
+    - `event`: a vector. The event just processed.
+    - `queue`: a PersistentQueue, possibly empty, of events yet to be processed.
 
-  This is useful in advanced cases like:
-    - you are implementing a complex bootstrap pipeline
-    - you want to create your own handling infrastructure, with perhaps multiple
-      handlers for the one event, etc.  Hook in here.
-    - libraries providing 'isomorphic javascript' rendering on  Nodejs or Nashorn.
+   This is useful in advanced cases like:
+     - you are implementing a complex bootstrap pipeline
+     - you want to create your own handling infrastructure, with perhaps multiple
+       handlers for the one event, etc.  Hook in here.
+     - libraries providing 'isomorphic javascript' rendering on  Nodejs or Nashorn.
 
-  'id' is typically a keyword.
+  'id' is typically a keyword. It is an identifier, supplied initially
+  at \"add time\", which can be subsequently be used to remove a callback.
   "
   ([f]
     (router/add-post-event-callback re-frame.router/event-queue f f))
