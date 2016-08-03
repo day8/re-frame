@@ -291,10 +291,9 @@ Used for XXXX "
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
 ;;
-;; These factories wrap handlers.
-
-;; XXX add names to annonomous `fn`
+;; These factories wrap the 3 kinds of handlers.
 ;;
+
 (defn db-handler->interceptor
   "Returns an interceptor which wraps the kind of event handler given to `reg-event-db`.
 
@@ -333,14 +332,24 @@ Used for XXXX "
   [handler-fn]
   (->interceptor
     :name   :fx-handler
-
-    :before (fn [context]
+    :before (fn fx-handler-before
+              [context]
               (let [{:keys [event] :as coeffects} (:coeffects context)]
                 (->> (handler-fn coeffects event)
                      (assoc context :effects))))))
 
 
 (defn ctx-handler->interceptor
+  "Returns an interceptor which wraps the kind of event handler given to `reg-event-ctx`.
+  These advanced handlers take one argument: `context` and they return a modified `context`.
+  Example:
+     (fn [context]
+        (enqueue context [more interceptors]))"
+  [handler-fn]
+  (->interceptor
+    :name   :ctx-handler
+    :before handler-fn))
+
 
 ;; -- Interceptors Factories -  PART 2 ------------------------------------------------------------
 ;;
@@ -362,30 +371,30 @@ Used for XXXX "
   Implementation:
     - in :before, store the original db in within `context`
     - ib :after, re-establish original db with modification
-    - remember, there's a chance that path may be used twice in the one interceptor chain.
-
-  XXX what if path is used twice XXX  Adjust implementation to allow for it.
+    - remember: path may be used twice within the one interceptor chain.
   "
   [& args]
   (let [path   (flatten args)
-        hidden-conext-path [:re-frame-internal :path-original-db]]   ;; this is where, within context, we hide the original db
+       db-store-key :re-frame-path/original-dbs]    ;; this is where, within `context`, we store the original db
     (when (empty? path)
       (console :error "re-frame: \"path\" interceptor given no params."))
-
     (->interceptor
       :name    :path
-
-      :before  (fn [context]
+      :before  (fn
+                 [context]
                  (let [original-db (get-coeffect context :db)]
                    (-> context
-                       (assoc-in  hidden-conext-path original-db)
+                       (update db-store-key conj original-db)
                        (assoc-coeffect :db (get-in original-db path)))))
-
       :after   (fn [context]
-                 (let [original-db (get-in context hidden-conext-path)]
-                   (->> (get-effect context :db)
-                        (assoc-in original-db path)
-                        (assoc-effect context :db)))))))
+                 (let [db-store    (db-store-key context)
+                       original-db (peek db-store)
+                       new-store   (pop db-store)
+                       full-db      (->> (get-effect context :db)
+                                        (assoc-in original-db path))]
+                   (-> context
+                        (assoc db-store-key new-store)
+                        (assoc-effect :db full-db)))))))
 
 
 
