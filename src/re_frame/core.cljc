@@ -55,23 +55,20 @@
    there is only a chain."
   ([id db-handler]
     (reg-event-db id nil db-handler))
-
   ([id interceptors db-handler]
-   (events/register id [base interceptors (db-handler->interceptor db-handler)])))   ;; XXX add a base-interceptor
+   (events/register id [base interceptors (db-handler->interceptor db-handler)])))
 
 
 (defn reg-event-fx
   ([id fx-handler]
    (reg-event-fx id nil fx-handler))
-
   ([id interceptors fx-handler]
-   (events/register id [base interceptors (fx-handler->interceptor fx-handler)])))   ;; XXX add a base-interceptor
+   (events/register id [base interceptors (fx-handler->interceptor fx-handler)])))
 
 
 (defn reg-event-ctx
   ([id handler]
    (reg-event-ctx id nil handler))
-
   ([id interceptors handler]
    (events/register id [base interceptors (ctx-handler->interceptor handler)])))
 
