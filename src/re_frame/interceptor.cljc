@@ -340,6 +340,7 @@ Used for XXXX "
                      (assoc context :effects))))))
 
 
+(defn ctx-handler->interceptor
 
 ;; -- Interceptors Factories -  PART 2 ------------------------------------------------------------
 ;;
