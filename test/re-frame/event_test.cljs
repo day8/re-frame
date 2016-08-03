@@ -10,7 +10,7 @@
   "tests that an error thrown generates an informational warning"
   (re-frame/clear-all-events!)
 
-  (re-frame/reg-event
+  (re-frame/reg-event-db
     :test-event
     (fn [db [event-kw stack]]
       (throw (js/Error. "thrown in handler"))

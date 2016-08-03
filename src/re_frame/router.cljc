@@ -16,7 +16,7 @@
 ;;
 ;; But browsers only have a single thread of control and we must be
 ;; careful to not hog the CPU. When processing events one after another, we
-;; must hand back control to the browser regularly, so it can redraw, process
+;; must regularly hand back control to the browser, so it can redraw, process
 ;; websockets, etc. But not too regularly! If we are in a de-focused browser
 ;; tab, our app will be CPU throttled. Each time we get back control, we have
 ;; to process all queued events, or else something like a bursty websocket
@@ -24,10 +24,11 @@
 ;;
 ;; The processing/handling of an event happens "asynchronously" sometime after
 ;; that event was enqueued via "dispatch". The original implementation of this router loop
-;; used core.async. It was fairly simple, and it mostly worked, but it did not
-;; give enough control. So now we hand-roll our own, finite-state-machine and all.
+;; used `core.async`. As a result, it was fairly simple, and it mostly worked,
+;; but it did not give enough control. So now we hand-roll our own,
+;; finite-state-machine and all.
 ;;
-;; The strategy is this:
+;; In what follows, the strategy is this:
 ;;   - maintain a FIFO queue of `dispatched` events.
 ;;   - when a new event arrives, "schedule" processing of this queue using
 ;;     goog.async.nextTick, which means it will happen "very soon".
@@ -38,7 +39,7 @@
 ;;     and do these new events in the next processing cycle. That way we drain
 ;;     the queue up to a point, but we never hog the CPU forever. In
 ;;     particular, we handle the case where handling one event will beget
-;;     another event. The freshly begat event will be handled next cycle,
+;;     another event. The freshly begatted event will be handled next cycle,
 ;;     with yielding in-between.
 ;;   - In some cases, an event should not be handled until after the GUI has been
 ;;     updated, i.e., after the next Reagent animation frame. In such a case,
@@ -48,7 +49,7 @@
 ;;     events are processed sequentially: we handle one event completely
 ;;     before we handle the ones behind it.
 ;;
-;; Implementation Notes:
+;; Implementation notes:
 ;;   - queue processing can be in a number of states: scheduled, running, paused
 ;;     etc. So it is modeled as a Finite State Machine.
 ;;     See "-fsm-trigger" (below) for the states and transitions.
@@ -65,7 +66,7 @@
    :yield     next-tick})               ;; almost immediately
 
 
-;; Abstract representation of the Event Queue
+;; Event Queue Abstraction
 (defprotocol IEventQueue
 
   ;; -- API
@@ -221,9 +222,13 @@
 ;;
 
 (defn dispatch
-  "Queue an event to be processed by the registered handler function.
+  "Queue the given event for processing by the registered event handler.
 
-  Usage example:
+  Just to be clear: the event handler is not run immediately - it is not run
+  synchronously. It will likely be run 'very soon', although it may be
+  added to the end of a FIFO queue which already contain events.
+
+  Usage:
      (dispatch [:delete-item 42])"
   [event-v]
   (let [;; At the point of dispatch, we capture the current stack.
@@ -239,19 +244,20 @@
                   :clj  "n/a")]
     (if (nil? event-v)
       (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
-      (push event-queue (with-meta event-v {:stack stack}))))
+      #_(push event-queue (with-meta event-v {:stack stack}))
+      (push event-queue event-v)))
   nil)                                           ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 
 (defn dispatch-sync
-  "Immediately process an event using the registered handler.
+  "Sychronously (immediaetly!) process the given event using the registered handler.
 
-  Generally, you shouldn't use this. Use \"dispatch\" instead.  It
-  is an error to even try and use it within an event handler.
+  Generally, you shouldn't use this - you should use `dispatch` instead.  It
+  is an error to use `dispatch-sync` within an event handler.
 
-  Usage example:
+  Usage:
      (dispatch-sync [:delete-item 42])"
   [event-v]
   (handle event-v)
-  (-call-post-event-callbacks event-queue event-v)  ;; ugly hack.  Just so post-event-callbacks get called
+  (-call-post-event-callbacks event-queue event-v)  ;; slightly ugly hack. Run the registered post event callbacks.
   nil)                                              ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False

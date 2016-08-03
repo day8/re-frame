@@ -54,7 +54,7 @@
 
 (def lsk "todos-reframe")     ;; localstore key
 
-(defn ls->todos
+(defn localstore->todos
   "Read in todos from LS, and process into a map we can merge into app-db."
   []
   (some->> (.getItem js/localStorage lsk)
@@ -62,7 +62,7 @@
            (into (sorted-map))         ;; map -> sorted-map
            (hash-map :todos)))         ;; access via the :todos key
 
-(defn todos->ls!
+(defn todos->local-store
   "Puts todos into localStorage"
   [todos]
   (.setItem js/localStorage lsk (str todos)))   ;; sorted-map writen as an EDN map

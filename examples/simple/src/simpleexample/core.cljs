@@ -1,7 +1,7 @@
 (ns simpleexample.core
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require [reagent.core :as reagent]
-            [re-frame.core :refer [reg-event
+            [re-frame.core :refer [reg-event-db
                                    path
                                    reg-sub
                                    dispatch
@@ -20,14 +20,14 @@
 ;; -- Event Handlers ----------------------------------------------------------
 
 
-(reg-event                 ;; setup initial state
+(reg-event-db                 ;; setup initial state
   :initialize                     ;; usage:  (dispatch [:initialize])
   (fn
     [db _]
     (merge db initial-state)))    ;; what it returns becomes the new state
 
 
-(reg-event
+(reg-event-db
   :time-color                     ;; usage:  (dispatch [:time-color 34562])
   (path [:time-color])            ;; this is middleware
   (fn
@@ -35,7 +35,7 @@
     value))
 
 
-(reg-event
+(reg-event-db
   :timer
   (fn
     ;; the first item in the second argument is :timer the second is the

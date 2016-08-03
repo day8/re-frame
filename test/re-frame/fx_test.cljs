@@ -22,7 +22,7 @@
     (re-frame/reg-event-fx
       ::later-test
       (fn [_world _event-v]
-        (re-frame/reg-event
+        (re-frame/reg-event-db
           ::watcher
           (fn [db [_ token]]
             (is (#{:event1 :event2 :event3} token) "unexpected: token passed through")

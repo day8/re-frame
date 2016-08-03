@@ -3,6 +3,7 @@
     [re-frame.router  :as router]
     [re-frame.db      :refer [app-db]]
     [re-frame.events  :as events]
+    [re-frame.registrar  :refer [get-handler clear-handlers register-handler]]
     [re-frame.interop :refer [ratom? set-timeout!]]
     [re-frame.loggers :refer [console]]))
 
@@ -15,82 +16,84 @@
 
 ;; -- Registration ------------------------------------------------------------
 
-(def ^:private id->handler-fn  (atom {}))
 
-(defn lookup-handler
-  [effect-id]
-  (get @id->handler-fn effect-id))
-
-
-(defn clear-all-handlers!
-  []
-  (reset! id->handler-fn {}))
-
-
-(defn clear-handler!
-  [effect-id]
-  (if (lookup-handler effect-id)
-    (swap! id->handler-fn dissoc effect-id)
-    (console :warn "re-frame: unable to clear effect handler for  " effect-id ". Not defined.")))
-
+(def kind :fx)
+(assert (re-frame.registrar/kinds kind))
 
 (defn register
-  "register a handler fn for an effect."
-  [effect-id handler-fn]
-  (when (lookup-handler effect-id)
-    (console :warn "re-frame: overwriting an effects handler for: " effect-id))   ;; allow it, but warn.
-  (swap! id->handler-fn assoc effect-id handler-fn))
+  [id handler-fn]
+  (register-handler kind id handler-fn))
 
 
 ;; -- Standard Builtin Effects Handlers  --------------------------------------
 
-;; Dispatch event(s) after some time.
-;; Example:
-;; {:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}    ;;  in 200ms do this: (dispatch [:event-id "param"])
-;;                   {:ms 100 :dispatch [:also :this :in :100ms]}]}
+
+;; :dispatch-later
+;;
+;; `dispatch` one or more events in given times on the future. Expects a collection
+;; of maps with two keys:  :`ms` and `:dispatch`
+;;
+;; usage:
+;;
+;;    {:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}    ;;  in 200ms do this: (dispatch [:event-id "param"])
+;;                      {:ms 100 :dispatch [:also :this :in :100ms]}]}
 ;;
 (register
   :dispatch-later
   (fn [effects-v]
-    ;TODO: use Spec to verify vector and elements when clj 1.9.0 is rel.
     (doseq  [{:keys [ms dispatch] :as effect} effects-v]
         (if (or (empty? dispatch) (-> ms number? not))
-          (console :warn "re-frame: bad values given to :dispatch-later. Got: " effect ". Ignored.")
+          (console :error "re-frame: ignoring bad :dispatch-later value: " effect)
           (set-timeout! #(router/dispatch dispatch) ms)))))
 
 
-;; Supply a vector. For example:
+;; :dispatch
 ;;
+;; `dispatch` one event. Excepts a single vector.
+;;
+;; usage:
 ;;   {:dispatch [:event-id "param"] }
 
 (register
   :dispatch
   (fn [val]
-    (when-not (vector? val)
-      (console :warn "re-frame: the value for :dispatch is not a vector. Got: " val))
-    (router/dispatch val)))
+    (if-not (vector? val)
+      (console :error "re-frame: ignoring bad :dispatch value. Expected a vector, but got: " val)
+      (router/dispatch val))))
 
 
-;; Supply sequencial coll. For example:
+;; :dispatch-n
 ;;
+;; `dispatch` more than one event. Expects a list or vector of events. Something for which
+;; sequential? returns true.
+;;
+;; usage:
 ;;   {:dispatch-n (list [:do :all] [:three :of] [:these])}
 ;;
-;; Coll can be anything that returns true to sequential? but should not be a map
-;; NOTE: this does not include Set
 (register
   :dispatch-n
   (fn [val]
-    (when-not (sequential? val)
-      (console :warn "re-frame: the value for :dispatch-n is not sequential. Got: " val))
+    (if-not (sequential? val)
+      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got: " val))
     (doseq [event val] (router/dispatch event))))
 
 
+;; :deregister-event-handler
+;;
+;; removes an event handler. Expects either a single id (typically a keyword), or a seq of ids.
+;;
+;; usage:
+;;   {:deregister-event-handler: :my-id)}
+;; or:
+;;   {:deregister-event-handler: [:one-id :another-id]}
+;;
 (register
   :deregister-event-handler
   (fn [val]
-    (if (sequential? val)
-      (doall (map events/clear-handler! val))
-      (events/clear-handler! val))))
+    (let [clear-event (partial clear-handlers events/kind)]
+      (if (sequential? val)
+        (doall (map clear-event val))
+        (clear-event val)))))
 
 
 (register
@@ -98,22 +101,3 @@
   (fn [val]
     (reset! app-db val)))
 
-;; -- Middleware --------------------------------------------------------------
-
-
-(defn fx
-  [handler]
-  (fn fx-handler
-    [app-db event-vec]
-    (if-not (ratom? app-db)
-        (if (map? app-db)
-          (console :warn "re-frame: Did you use \"fx\" middleware with \"reg-event\"?  Use \"reg-event-fx\" instead (and don't directly use \"fx\")")
-          (console :warn "re-frame: \"fx\" middleware not given a Ratom.  Got: " app-db)))
-    (let [run-effect (fn [[key val]]
-                       (if-let [effect-fn  (lookup-handler key)]
-                         (effect-fn val)
-                         (console :error "re-frame: no effects handler registered for: " key ". Ignoring")))
-          world   {:db @app-db}]
-      (->> (handler world event-vec)   ;; is expected to return a map of effects
-           (map run-effect)            ;; process the returned effects
-           doall))))

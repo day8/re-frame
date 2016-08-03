@@ -1,38 +1,38 @@
 (ns todomvc.events
   (:require
-    [todomvc.db    :refer [default-value ls->todos todos->ls!]]
-    [re-frame.core :refer [reg-event path trim-v after debug]]
+    [todomvc.db    :refer [default-value localstore->todos todos->local-store]]
+    [re-frame.core :refer [reg-event-db path trim-v after debug]]
     [cljs.spec     :as s]))
 
 
-;; -- Middleware --------------------------------------------------------------
+;; -- Interceptors --------------------------------------------------------------
 ;;
-;; See https://github.com/Day8/re-frame/wiki/Using-Handler-Middleware
-;;
+;; XXX Add URL for docs here
+;; XXX Ask Stu to figure out first time spec error
 
 (defn check-and-throw
   "throw an exception if db doesn't match the spec."
   [a-spec db]
-  (if-not (s/valid? a-spec db)
+  (when-not (s/valid? a-spec db)
     (throw (ex-info "spec check failed: " {:problems
                                              (s/explain-str a-spec db)}))))
 
 ;; Event handlers change state, that's their job. But what happens if there's
-;; a bug and it corrupts this state in some subtle way? This middleware is run after
+;; a bug which corrupts app state in some subtle way? This interceptor is run after
 ;; each event handler has finished, and it checks app-db against a spec.  This
 ;; helps us detect event handler bugs early.
-(def check-spec-mw (after (partial check-and-throw :todomvc.db/db)))
+(def check-spec-interceptor (after (partial check-and-throw :todomvc.db/db)))
 
 
-(def ->ls (after todos->ls!))    ;; middleware to store todos into local storage
+(def ->local-store (after todos->local-store))    ;; interceptor to store todos into local storage
 
 
-;; middleware for any handler that manipulates todos
-(def todo-middleware [check-spec-mw   ;; ensure the spec is still valid
-                      (path :todos)   ;; 1st param to handler will be the value from this path
-                      ->ls            ;; write to localstore each time
-                      (when ^boolean js/goog.DEBUG debug)       ;; look in your browser console
-                      trim-v])        ;; remove the first (event id) element from the event vec
+;; interceptors for any handler that manipulates todos
+(def todo-interceptors [check-spec-interceptor   ;; ensure the spec is still valid
+                        (path :todos)   ;; 1st param to handler will be the value from this path
+                        ->local-store                          ;; write to localstore each time
+                        (when ^boolean js/goog.DEBUG debug)    ;; look in your browser console
+                        trim-v])                               ;; removes first (event id) element from the event vec
 
 
 ;; -- Helpers -----------------------------------------------------------------
@@ -47,71 +47,73 @@
 
 ;; -- Event Handlers ----------------------------------------------------------
 
+;; XXX make localstore a coeffect interceptor
+
                                   ;; usage:  (dispatch [:initialise-db])
-(reg-event                        ;; On app startup, create initial state
+(reg-event-db                     ;; on app startup, create initial state
   :initialise-db                  ;; event id being handled
-  check-spec-mw                   ;; afterwards: check that app-db matches the spec
+  check-spec-interceptor          ;; after the event handler runs, check that app-db matches the spec
   (fn [_ _]                       ;; the handler being registered
-    (merge default-value (ls->todos))))  ;; all hail the new state
+    (merge default-value (localstore->todos))))  ;; all hail the new state
 
 
                                   ;; usage:  (dispatch [:set-showing  :active])
-(reg-event                        ;; this handler changes the todo filter
+(reg-event-db                     ;; this handler changes the todo filter
   :set-showing                    ;; event-id
-  [check-spec-mw (path :showing) trim-v]  ;; middleware  (wraps the handler)
+  [check-spec-interceptor (path :showing) trim-v]    ;; this colelction of interceptors wrap wrap the handler
 
-  ;; Because of the path middleware above, the 1st parameter to
+  ;; Because of the path interceptor above, the 1st parameter to
   ;; the handler below won't be the entire 'db', and instead will
   ;; be the value at a certain path within db, namely :showing.
-  ;; Also, the use of the 'trim-v' middleware means we can omit
+  ;; Also, the use of the 'trim-v' interceptor means we can omit
   ;; the leading underscore from the 2nd parameter (event vector).
-  (fn [old-kw [new-filter-kw]]    ;; handler
-    new-filter-kw))               ;; return new state for the path
+  (fn [old-keyword [new-filter-kw]]  ;; handler
+    new-filter-kw))                  ;; return new state for the path
 
 
                                   ;; usage:  (dispatch [:add-todo  "Finsih comments"])
-(reg-event                        ;; given the text, create a new todo
+(reg-event-db                     ;; given the text, create a new todo
   :add-todo
-  todo-middleware
-  (fn [todos [text]]              ;; "path" middlware in "todo-middleware" means 1st parameter is :todos
+  todo-interceptors
+  (fn [todos [text]]              ;; the "path" interceptor in `todo-interceptors` means 1st parameter is :todos
     (let [id (allocate-next-id todos)]
       (assoc todos id {:id id :title text :done false}))))
 
 
-(reg-event
+(reg-event-db
   :toggle-done
-  todo-middleware
+  todo-interceptors
   (fn [todos [id]]
     (update-in todos [id :done] not)))
 
 
-(reg-event
+(reg-event-db
   :save
-  todo-middleware
+  todo-interceptors
   (fn [todos [id title]]
     (assoc-in todos [id :title] title)))
 
 
-(reg-event
+(reg-event-db
   :delete-todo
-  todo-middleware
+  todo-interceptors
   (fn [todos [id]]
     (dissoc todos id)))
 
 
-(reg-event
+(reg-event-db
   :clear-completed
-  todo-middleware
+  todo-interceptors
   (fn [todos _]
-    (->> (vals todos)                ;; remove all todos where :done is true
+    (->> (vals todos)                ;; find the ids of all todos where :done is true
          (filter :done)
          (map :id)
-         (reduce dissoc todos))))    ;; returns the new version of todos
+         (reduce dissoc todos))))    ;; now do the delete of these done ids
 
 
-(reg-event
+(reg-event-db
   :complete-all-toggle
-  todo-middleware
+  todo-interceptors
   (fn [todos _]
     (let [new-done (not-every? :done (vals todos))]   ;; toggle true or false?
       (reduce #(assoc-in %1 [%2 :done] new-done)

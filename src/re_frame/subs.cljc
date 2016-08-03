@@ -3,34 +3,31 @@
    [re-frame.db    :refer [app-db]]
    [re-frame.interop :refer [add-on-dispose! debug-enabled? make-reaction ratom?]]
    [re-frame.loggers :refer [console]]
+   [re-frame.registrar  :refer [get-handler register-handler]]
    [re-frame.utils :refer [first-in-vector]]))
 
 
 ;; -- Subscription Handler Lookup and Registration --------------------------------------------------
-
-;; Maps from a query-id to a handler function.
-(def ^:private qid->fn (atom {}))
+(def kind :sub)
+(assert (re-frame.registrar/kinds kind))
 
 (defn register
-  "Registers a subscription handler function for an query id"
+  "Register a subscription handler fucntion for an query id"
   [query-id handler-fn]
-  (if (contains? @qid->fn query-id)
-    (console :warn "re-frame: overwriting subscription handler for: " query-id))  ;; allow it, but warn. Happens on figwheel reloads.
-  (swap! qid->fn assoc query-id handler-fn))
+  (register-handler kind query-id handler-fn))
 
 
 ;; -- Subscription cache -----------------------------------------------------
 ;;
-;; De-duplicate subscriptions. If two or more identical subscriptions
+;; De-duplicate subscriptions. If two or more equal subscriptions
 ;; are concurrently active, we want only one handler running.
-;; Two subscriptions are "identical" if their query vectors
-;; test "=".
+;; Two subscriptions are "equal" if their query vectors test "=".
 (def ^:private query->reaction (atom {}))
 
 (defn clear-all-handlers!
   "Unregisters all existing subscription handlers"
   []
-  (reset! qid->fn {})
+  ; (reset! qid->fn {})     XXX
   (reset! query->reaction {}))
 
 (defn cache-and-return
@@ -61,7 +58,7 @@
      (do (console :log "Using cached subscription: " query-v)
          cached)
      (let [query-id   (first-in-vector query-v)
-           handler-fn (get @qid->fn query-id)]
+           handler-fn (get-handler kind query-id)]
        (console :log "Subscription created: " query-v)
        (if-not handler-fn
          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
@@ -72,7 +69,7 @@
      (do (console :log "Using cached subscription: " v " and " dynv)
          cached)
      (let [query-id   (first-in-vector v)
-           handler-fn (get @qid->fn query-id)]
+           handler-fn (get-handler kind query-id)]
        (when debug-enabled?
          (when-let [not-reactive (not-empty (remove ratom? dynv))]
            (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom: " not-reactive)))
@@ -87,6 +84,9 @@
 
 ;; -- Helper code for register-pure -------------------
 
+;; add `metric`  which   (metric :using-cached-subscription  {:text
+;; XXX no need for maps
+
 (defn- map-vals
   "Returns a new version of 'm' in which 'f' has been applied to each value.
   (map-vals inc {:a 4, :b 2}) => {:a 5, :b 3}"
@@ -98,7 +98,7 @@
   [data]
   (cond
     (map? data)  (map-vals deref data)
-    (coll? data) (map deref data)
+    (sequential? data) (map deref data)
     :else @data))
 
 (defn register-pure
@@ -113,7 +113,7 @@
   In this example the entire app-db is derefed and passed to the subscription
   function as a singleton
 
-      ```(subs/register-pure
+      ```(register-pure
            :a-b-sub
            (fn [q-vec d-vec]
                [(subs/subscribe [:a-sub])
@@ -126,7 +126,7 @@
   actually). Again the subscriptions are derefed and passed to the subscription
   function
 
-      ```(subs/register-pure
+      ```(register-pure
            :a-b-sub
            :<- [:a-sub]
            :<- [:b-sub]
@@ -135,9 +135,9 @@
   of cases where only a simple subscription is needed without any parameters
 
   "
-  [sub-name & args]
-  (let [f                        (last args)  ;; grab the last arg
-        middle-args              (butlast args)    ;; grab the middle args
+  [sub-id & args]
+  (let [f                        (last args)       ;; computation function
+        middle-args              (butlast args)    ;; middle args may be empty, or one or more :<-,  or a single signal fn
         maybe-func               (first middle-args)
         sub-fn                   (when (fn? maybe-func) maybe-func)
         arrow-args               (if (fn? maybe-func)
@@ -149,7 +149,7 @@
     (cond
       sub-fn                   ;; first case the user provides a custom sub-fn
       (register
-        sub-name
+        sub-id
         (fn subs-handler-fn    ;; multi-arity to match the arities `subscribe` might invoke.
           ([db q-vec]
            (let [subscriptions (sub-fn q-vec)]
@@ -159,9 +159,10 @@
            (let [subscriptions (sub-fn q-vec d-vec)]
              (make-reaction
               (fn [] (f (multi-deref subscriptions) q-vec d-vec)))))))
+
       (seq arrow-args)              ;; the user uses the :<- sugar
       (register
-        sub-name
+        sub-id
         (letfn [(get-subscriptions []
                   (let [subscriptions (map subscribe arrow-subs)]
                     (if (< 1 (count subscriptions))
@@ -176,9 +177,10 @@
             (let [subscriptions (get-subscriptions)]
               (make-reaction
                (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))))
+
       :else
       (register ;; the simple case with no subs
-        sub-name
+        sub-id
         (fn subs-handler-fn
           ([db q-vec]
            (make-reaction (fn [] (f @db q-vec))))

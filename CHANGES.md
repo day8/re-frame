@@ -2,9 +2,10 @@
 ## 0.8.0  (2016.07.XX)
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. 
-Angular's terrifying faceplant is a sobering  reminder to us all. 
+Angular's terrifying faceplant is a sobering reminder to us all. 
 With this release, re-frame's already impressive buzzword muscles
-bulge further with new walnuts like "effects", "coeffects", and "de-duplicated signal graph".  I know, right?
+bulge further with new walnuts like "effects", "coeffects", "interceptors"
+and "de-duplicated signal graph".  I know, right?
 
 Some may even find these new features useful.
 
@@ -51,7 +52,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
       2. https://github.com/Day8/re-frame-forward-events-fx
       3. https://github.com/Day8/re-frame-async-flow-fx
 
-  - You can now run and debug re-frame tests on the JVM.  This will be a really big deal for some. 
+  - You can now run and debug re-frame tests on the JVM.  This will be a really big deal for some.
   
     Just to be clear: this does not mean you can run re-frame apps on the JVM (there's no React or 
     Reagent available). But you can debug your handler tests using full JVM tooling goodness.
@@ -59,18 +60,18 @@ Joking aside, this is a substantial release which will change how you use re-fra
     @samroberton and and @escherize have provided the thought leadership and drive here.  They converted 
     re-frame to `.cljc`, supplying plugable interop for both the `js` and `jvm` platforms.
 
-    They then worked with @danielcompton to create a library of testing utilities which are actually 
-    a nice step forward for both platforms: <br>
+    Further, they have worked with @danielcompton to create a library of testing utilities which are actually 
+    a really nice step forward for both platforms: <br>
     https://github.com/Day8/re-frame-undo
 
-  - the undo/redo feature buried in re-frame has been factored out into its own library.
+  - the undo/redo features buried in re-frame has been factored out into [their own library](https://github.com/Day8/re-frame-undo).
   
-    undo and redo have been a part of re-frame from the beginning, but this feature has been hidden 
-    (not a part of the official API) and not documented. So it nice to see it made available, and fully 
-    documented here: https://github.com/Day8/re-frame-undo
+    undo and redo have been a part of re-frame from the beginning, but they have  
+    not been a part of the official API, and have not been documented. So it nice to see it available, and fully 
+    documented. 
     
-    This library also has [a couple of enhancements](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
-    over that which previously existed previously, including a feature which works in with the new effects handler. 
+    This new library also has [a couple of enhancements](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
+    over that which previously existed, including a feature which works in with the new effects handler. 
 
   - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no 
     good deed ever goes unpunished - we'll be pestering you every time from now on :-)
@@ -114,7 +115,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
   - added new API `re-frame.core/clear-post-event-callback` which de-registers a callback 
-    added by `re-frame.core/add-post-event-callback`
+    previously added by `re-frame.core/add-post-event-callback`
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a
     single line saying so, rather than a "group".  Makes it slightly easier to grok
     the absence of change.

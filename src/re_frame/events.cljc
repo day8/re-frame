@@ -1,109 +1,59 @@
 (ns re-frame.events
-  (:require [re-frame.db         :refer [app-db]]
-            [re-frame.utils      :refer [first-in-vector]]
-            [re-frame.loggers    :refer [console]]))
+  (:require [re-frame.db          :refer [app-db]]
+            [re-frame.utils       :refer [first-in-vector]]
+            [re-frame.interop     :refer [empty-queue debug-enabled?]]
+            [re-frame.registrar   :refer [get-handler register-handler]]
+            [re-frame.loggers     :refer [console]]
+            [re-frame.interceptor :as  interceptor]))
 
 
-;; -- composing middleware  -----------------------------------------------------------------------
+(def kind :event)
+(assert (re-frame.registrar/kinds kind))
+
+(defn- flatten-and-remove-nils
+  "`interceptors` might have nested collections, and contain nil elements.
+  return a flat collection, with all nils removed."
+  [id interceptors]
+  (let [make-chain  #(->> % flatten (remove nil?))]
+    (if-not debug-enabled?
+      (make-chain interceptors)
+      (do    ;; do a whole lot of development time checks
+        (when-not (coll? interceptors)
+          (console :error  "re-frame: when registering " id ", expected a collection of interceptors, got: " interceptors))
+        (let [chain (make-chain interceptors)]
+          (when (empty? chain)
+            (console :error  "re-frame: when registering " id ", given an empty interceptor chain"))
+          (when-let [not-i (some (comp not interceptor/interceptor?) chain)]
+            (if (fn? not-i)
+              (console :error  "re-frame: when registering " id ", got a function instead of an interceptor. Did you provide an old style middleware by mistake? Got: " not-i)
+              (console :error  "re-frame: when registering " id ", expected interceptors, but got: " not-i)))
+          chain)))))
 
 
-(defn report-middleware-factories
-  "See https://github.com/Day8/re-frame/issues/65"
-  [v]
-  (letfn [(name-of-factory
-            [f]
-            (-> f meta :re-frame-factory-name))
-          (factory-names-in
-            [v]
-            (remove nil? (map name-of-factory v)))]
-    (doseq [name (factory-names-in v)]
-      (console :error "re-frame: \"" name "\" is a factory. It must be called like this \"(" name " ...)\", whereas you just used \"" name "\"."))))
+(defn register
+  "Associate given `event id` with the given collection of interceptors.
 
+   `interceptors` may have nested collections and may contain nils, so process them
+   into a nice linear collection before registration.
 
-(defn comp-middleware
-  "Use \"comp\" to compose a vector 'v' of middleware.
-  For convienience, if 'v' is a function (assumed to be middleware already), return it unchanged.
-  Prior to the \"comp\", flatten is used to remove all nested vectors, and nils are removed.
-  Filtering out nils allows us to create Middleware conditionally like this:
-     (comp-middleware [pure (when debug? debug)])  ;; that 'when' might leave a nil"
-  [v]
-  (cond
-    (fn? v)    v  ;; assumed to be existing middleware
-    (coll? v)  (let [v (remove nil? (flatten v))]
-                 (report-middleware-factories v)
-                 (apply comp v))
-    :else      (console :warn "re-frame: comp-middleware expects a vector, got: " v)))
-
-
-;; -- the register of event handlers --------------------------------------------------------------
-
-(def ^:private id->fn  (atom {}))
-
-
-(defn lookup-handler
-  [event-id]
-  (get @id->fn event-id))
-
-
-(defn clear-all-handlers!
-  []
-  (reset! id->fn {}))
-
-
-(defn clear-handler!
-  [id]
-  (if (lookup-handler id)
-    (swap! id->fn dissoc id)
-    (console :warn "re-frame: unable to clear event handler for  " id ". Not  defined.")))
-
-
-(defn register-base
-  "register a handler for an event.
-  This is low level and it is expected that a higher level function like
-  \"re-frame.core/reg-event\" or  \"re-frame.core/reg-event-fx\" would generally be used."
-  ([event-id handler-fn]
-   (when (contains? @id->fn event-id)
-     (console :warn "re-frame: overwriting an event-handler for: " event-id)) ;; allow it, but warn.
-   (swap! id->fn assoc event-id handler-fn)
-   nil)
-
-  ([event-id middleware handler-fn]
-   (let [mid-ware    (comp-middleware middleware)           ;; compose the middleware
-         midware+hfn (mid-ware handler-fn)]                 ;; wrap the handler in the middleware
-     (register-base event-id midware+hfn))))
+   An `event handler` will likely be at the end of the chain (wrapped in an interceptor)."
+  [id interceptors]
+  (register-handler kind id (flatten-and-remove-nils id interceptors)))
 
 
 
-
-;; -- lookup and call -----------------------------------------------------------------------------
+;; -- handle event --------------------------------------------------------------------------------
 
 (def ^:dynamic *handling* nil)    ;; remember what event we are currently handling
 
-
 (defn handle
-  "Given an event vector, look up the handler, then call it.
-  By default, handlers are not assumed to be pure. They are called with
-  two paramters:
-    - the `app-db` atom
-    - the event vector
-  The handler is assumed to side-effect on `app-db` - the return value is ignored.
-  To write a pure handler, use the \"pure\" middleware when registering the handler."
+  "Given an event vector, look up the associated intercepter chain, and execute it."
   [event-v]
-  (let [event-id    (first-in-vector event-v)
-        handler-fn  (lookup-handler event-id)]
-    (if (nil? handler-fn)
-      (console :error "re-frame: no event handler registered for: \"" event-id "\". Ignoring.")
+  (let [event-id  (first-in-vector event-v)]
+    (if-let [interceptors  (get-handler kind event-id true)]
       (if *handling*
-        (console :error "re-frame: while handling \""  *handling*
-                 "\"  dispatch-sync was called for \"" event-v
-                 "\". You can't call dispatch-sync within an event handler.")
+        (console :error "re-frame: while handling \""  *handling* "\"  dispatch-sync was called for \"" event-v "\". You can't call dispatch-sync within an event handler.")
         (binding [*handling*  event-v]
-          (let [stack (some-> event-v
-                              meta
-                              :stack)]
-            (try
-              (handler-fn app-db event-v)
-              (catch #?(:cljs :default :clj Exception) e
-                (console :warn stack) ;; output a msg to help to track down dispatching point
-                (throw e)))))))))
+          (interceptor/execute event-v interceptors))))))
+
 

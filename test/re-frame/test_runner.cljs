@@ -5,7 +5,7 @@
     [jx.reporter.karma :as karma :include-macros true]
     [devtools.core :as devtools]
     ;; Test Namespaces -------------------------------
-    [re-frame.middleware-test]
+    [re-frame.interceptor-test]
     [re-frame.subs-test]
     [re-frame.fx-test]))
 
@@ -19,7 +19,7 @@
 
 (defn ^:export run-html-tests []
   (cljs-test/run-tests
-    're-frame.middleware-test
+    're-frame.interceptor-test
     're-frame.subs-test
     're-frame.fx-test))
 
@@ -28,6 +28,6 @@
 (defn ^:export run-karma [karma]
   (karma/run-tests
     karma
-    're-frame.middleware-test
+    're-frame.interceptor-test
     're-frame.subs-test
     're-frame.fx-test))
