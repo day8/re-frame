@@ -46,9 +46,6 @@
 (def clear-event!  (partial registrar/clear-handlers events/kind))    ;; XXX name with !
 
 
-
-;; XXX note name change in changes.md
-
 (defn reg-event-db
   "Register the given `id`, typically a kewyword, with the combination of
   `db-handler` and an interceptor chain.

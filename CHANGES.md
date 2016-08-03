@@ -45,7 +45,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     At this point, the todomvc example represents the best tutorial on the subject:
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
 
-  - there's now two kinds of event handlers: pure and effectful. <br>
+  - there's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
     For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers  <br>
     For example use see:
       1. https://github.com/Day8/re-frame-http-fx
@@ -66,12 +66,13 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
   - the undo/redo features buried in re-frame has been factored out into [their own library](https://github.com/Day8/re-frame-undo).
   
-    undo and redo have been a part of re-frame from the beginning, but they have  
-    not been a part of the official API, and have not been documented. So it nice to see it available, and fully 
+    undo and redo have been a part of re-frame from the beginning, but they have never officially  
+    been made a part of the API, and have not been documented. So it nice to see it available, and fully 
     documented. 
     
-    This new library also has [a couple of enhancements](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
-    over that which previously existed, including a feature which works in with the new effects handler. 
+    This new library includes [various enhancements](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
+    over that which previously existed, including a feature which works in with the new effectful handlers
+    described above. 
 
   - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no 
     good deed ever goes unpunished - we'll be pestering you every time from now on :-)
@@ -80,17 +81,24 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
   - requires Reagent >= v0.6.0
 
-  - `re-frame.core/register-handler` has been renamed `re-frame.core/reg-event`. (There's now
-    two kinds of event-handlers, pure and effectful. Event handlers of the 2nd, new kind
-    should be registered via the new function `re-frame.core/reg-event-fx`)
+  - `re-frame.core/register-handler` has been renamed `re-frame.core/reg-event-db`. There's now
+    three kinds of event-handlers, `-db`, `-fx` and `-ctx`. Event handlers of the 2nd and 3rd kinds
+    should be registered via the new registration functions `re-frame.core/reg-event-fx` and 
+    `re-frame.core/reg-event-ctx`
 
   - `re-frame.core/register-sub` has been renamed `re-frame.core/reg-sub-raw`.  This is to indicate that
-     this kind of registration is now considered the low level, close to the metal way to
-     create subscriptions handlers.  This release introduced `reg-sub` which becomes the preferred way
-     to register subscription handlers.
+    this kind of registration is now considered the low level, close to the metal way to
+    create subscriptions handlers.  This release introduced `reg-sub` which becomes the preferred way
+    to register subscription handlers.
      
-  - if you have previously used the undo/redo capabilities in re-frame, be aware they have migrated to 
-    a sibling library:  XXX
+  - you must rewrite any of your own middleware, to become interceptors. <br> 
+    If you simply use middleware supplied by re-frame itself, like `path` of `enrich` you don't have 
+    to change anything. It will just work.<br>  
+    But if you are using ones not a part of the  
+     
+     
+  - if you have previously used the undo/redo capabilities buried in re-frame, be aware they have 
+    extracted into a sibling library: https://github.com/Day8/re-frame-undo.
 
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can
     supply alternative functions using `re-frame.core/set-loggers!`.
