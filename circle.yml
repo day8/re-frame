@@ -1,11 +1,6 @@
 dependencies:
   pre:
     - npm install karma-cli -g
-    # To install Chrome 47. Remove once a new build environment comes out with this built in.
-    - curl -L -o google-chrome.deb https://s3.amazonaws.com/circle-downloads/google-chrome-stable_current_amd64_47.0.2526.73-1.deb
-    - sudo dpkg -i google-chrome.deb
-    - sudo sed -i 's|HERE/chrome\"|HERE/chrome\" --disable-setuid-sandbox|g' /opt/google/chrome/google-chrome
-    - rm google-chrome.deb
   cache_directories:
     - node_modules
 test:
