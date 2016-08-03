@@ -246,13 +246,13 @@ Used for XXXX "
   So, you won't want this interceptor present in production code. See the todomvc
   example to see how to exclude interceptors from production code."
   (->interceptor
-    :name :debug
-
-    :before (fn [context]
+    :name   :debug
+    :before (fn debug-before
+              [context]
               #_(console :log "Handling re-frame event: " (-> context :coeffects :event))
               context)
-
-    :after  (fn [context]
+    :after  (fn debug-after
+              [context]
               (let [event          (get-coeffect context :event)
                     orig-db        (get-coeffect context :db)
                     new-db         (get-effect   context :db)]
@@ -280,9 +280,9 @@ Used for XXXX "
         [db [x y z]]    ;; <-- instead of [_ x y z]
         ....)"
   (->interceptor
-    :name :trim-v
-
-    :before  (fn [context]
+    :name    :trim-v
+    :before  (fn trimv-before
+               [context]
                (->>  (get-coeffect context :event)
                      rest
                      vec
@@ -310,13 +310,11 @@ Used for XXXX "
   [handler-fn]
   (->interceptor
     :name   :db-handler
-
-    :before (fn handler-wrapper
+    :before (fn db-handler-before
               [context]
-              (let [{:keys [db event]} (:coeffects context)
-                    context' (->>  (handler-fn db event)
-                                   (assoc-effect context :db))]
-                context'))))
+              (let [{:keys [db event]} (:coeffects context)]
+                (->>  (handler-fn db event)
+                      (assoc-effect context :db))))))
 
 
 (defn fx-handler->interceptor
@@ -419,8 +417,8 @@ Used for XXXX "
   [f]
   (->interceptor
     :name  :enrich
-
-    :after (fn [context]
+    :after (fn enrich-after
+             [context]
              (let [event (get-coeffect context :event)
                    db    (get-effect context :db)]
                (->> (f db event)
@@ -439,8 +437,8 @@ Used for XXXX "
   [f]
   (->interceptor
     :name  :after
-
-    :after (fn [context]
+    :after (fn after-after
+             [context]
              (let [db    (get-effect context :db)
                    event (get-coeffect context :event)]
                (f db event)    ;; call f for side effects
@@ -470,8 +468,8 @@ Used for XXXX "
   [f out-path & in-paths]
   (->interceptor
     :name  :enrich
-
-    :after (fn [context]
+    :after (fn on-change-after
+             [context]
              (let [new-db   (get-effect context :db)
                    old-db   (get-coeffect context :db)
 
