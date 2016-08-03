@@ -153,7 +153,8 @@
 
      {:coeffects {:event event
                   :db    <original contents of app-db>}
-      :effects   {:db    <new value for app-db>}
+      :effects   {:db    <new value for app-db>
+                  :dispatch  [:something]}      ;; example of other effects
       :queue     <a collection of further interceptors>
       :stack     <a collection of interceptors already walked>}
 
