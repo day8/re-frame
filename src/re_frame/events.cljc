@@ -23,9 +23,9 @@
         (let [chain (make-chain interceptors)]
           (when (empty? chain)
             (console :error  "re-frame: when registering " id ", given an empty interceptor chain"))
-          (when-let [not-i (some (comp not interceptor/interceptor?) chain)]
+          (when-let [not-i (first (remove interceptor/interceptor? chain))]
             (if (fn? not-i)
-              (console :error  "re-frame: when registering " id ", got a function instead of an interceptor. Did you provide an old style middleware by mistake? Got: " not-i)
+              (console :error  "re-frame: when registering " id ", got a function instead of an interceptor. Did you provide old style middleware by mistake? Got: " not-i)
               (console :error  "re-frame: when registering " id ", expected interceptors, but got: " not-i)))
           chain)))))
 

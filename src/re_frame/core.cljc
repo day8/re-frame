@@ -125,16 +125,16 @@
 ;; Assisting the v0.0.7 ->  v0.0.8 tranistion.
 (defn register-handler
   [& args]
-  (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\"")
+  (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
   (apply reg-event-db args))
 
 (defn reg-event
   [& args]
-  (console :warn  "re-frame:  \"reg-event\" has been renamed \"reg-event-db\"")
+  (console :warn  "re-frame:  \"reg-event\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
   (apply reg-event-db args))
 
 (defn register-sub
   [& args]
-  (console :error  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\".")
+  (console :warm  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\" (look for registration of " (str (first args)) ")")
   (apply reg-sub-raw args))
 
