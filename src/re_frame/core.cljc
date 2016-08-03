@@ -6,7 +6,9 @@
     [re-frame.router     :as router]
     [re-frame.loggers    :as loggers]
     [re-frame.registrar  :as registrar]
-    [re-frame.interceptor :as interceptor :refer [base ->interceptor db-handler->interceptor fx-handler->interceptor]]))
+    [re-frame.interceptor :as interceptor :refer [base ->interceptor
+                                                  db-handler->interceptor fx-handler->interceptor
+                                                  ctx-handler->interceptor]]))
 
 
 ;; --  dispatch
@@ -69,12 +71,12 @@
    (events/register id [base interceptors (fx-handler->interceptor fx-handler)])))   ;; XXX add a base-interceptor
 
 
-(defn reg-event-context
+(defn reg-event-ctx
   ([id handler]
-   (reg-event-context id nil handler))
+   (reg-event-ctx id nil handler))
 
   ([id interceptors handler]
-   (events/register id [base interceptors handler])))   ;;   XXX can't just put in handler, must wrap it
+   (events/register id [base interceptors (ctx-handler->interceptor handler)])))
 
 
 ;; --  Logging -----
