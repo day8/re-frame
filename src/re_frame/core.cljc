@@ -17,6 +17,8 @@
 
 
 ;; XXX move API functions up here
+;; XXX add a clear all handlers:
+;; XXX add a push handlers for testing purposes
 
 ;; --  subscribe
 (def reg-sub-raw         subs/register)
@@ -27,8 +29,6 @@
 (def reg-fx       fx/register)
 (def clear-fx     (partial registrar/clear-handlers fx/kind))
 
-;; XXX add a clear all handlers:
-;; XXX add a push handlers for testing purposes
 
 ;; --  middleware
 
