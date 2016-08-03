@@ -88,11 +88,11 @@
   Returns updated context."
   ([context direction]
    (loop [context context]
-     (let [queue (:queue context)      ;; future interceptors
-           stack (:stack context)]     ;; already completed interceptors
+     (let [queue (:queue context)]         ;; future interceptors
        (if (empty? queue)
          context
-         (let [interceptor (peek queue)]
+         (let [interceptor (peek queue)
+               stack (:stack context)]    ;; already completed interceptors
            (recur (-> context
                       (assoc :queue (pop queue))
                       (assoc :stack (conj stack interceptor))
