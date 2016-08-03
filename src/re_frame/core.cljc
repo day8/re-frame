@@ -129,6 +129,11 @@
   (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\"")
   (apply reg-event-db args))
 
+(defn reg-event
+  [& args]
+  (console :warn  "re-frame:  \"reg-event\" has been renamed \"reg-event-db\"")
+  (apply reg-event-db args))
+
 (defn register-sub
   [& args]
   (console :error  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\".")
