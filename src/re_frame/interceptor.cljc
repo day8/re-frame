@@ -191,17 +191,46 @@
   "An interceptor which injects/extracts the value of app-db intto/from a context.
 Used for XXXX "
   (->interceptor
-    :name :base
-    :before (fn before
+    :name   :base
+    :before (fn base-before
               [context]
               (assoc-coeffect context :db @app-db))   ;; a coeffect for the handler
+    :after  (fn base-after
+              [context]
+              (->> (:effects context)
+                   (map (fn [[key val]]
+                          (if-let [effect-fn  (registrar/get-handler :fx key)]    ;; XXX shouldn't be using raw :fx
+                            (effect-fn val))))
+                   doall))))
 
-    :after (fn after [context]
-             (->> (:effects context)
-                  (map (fn [[key val]]
-                         (if-let [effect-fn  (registrar/get-handler :fx key)]    ;; XXX shouldn't be using raw :fx
-                           (effect-fn val))))
-                  doall))))
+
+;; XXX how to stub this out for testing purposes??
+
+#_(def now
+  "An example interceptor (of dubious utility) which is an example of adding
+  to a handler's coeffects.  This interceptor adds the current datetime to coeffects under
+  the `:now` key.
+
+  Why?  We want out handlers to be as pure as possible.  If a handler calls `js/Date.`  then
+  it stops being as pure.  What if it needs a random number?  These kinds of needed
+  \"inputs\" are referred to `coeffects` (sometimes called side-causes).
+
+  usage:
+     (reg-event-fx            ;; notice use of `-fx` registration
+        :some-id
+        [i1 i2 now]           ;; notice use of `now` as one of the handler's interceptors
+        (fn [world event]     ;; world is the handler's coeffect
+           (let [dt (:now world)]    ;; `:now` is available becaue `now` put it there.
+              ...)))
+
+  As an exercise, consider how you would write a `random` interceptor which adds a random
+  number into a handler's coeffect?
+  "
+  (->interceptor
+    :name   :now
+    :before (fn now-before
+              [context]
+              (assoc-coeffect context :now (js/Date.)))))
 
 
 (def debug

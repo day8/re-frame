@@ -3,7 +3,7 @@
    [re-frame.db    :refer [app-db]]
    [re-frame.interop :refer [add-on-dispose! debug-enabled? make-reaction ratom?]]
    [re-frame.loggers :refer [console]]
-   [re-frame.registrar  :refer [get-handler register-handler]]
+   [re-frame.registrar  :refer [get-handler clear-handlers register-handler]]
    [re-frame.utils :refer [first-in-vector]]))
 
 
@@ -27,7 +27,7 @@
 (defn clear-all-handlers!
   "Unregisters all existing subscription handlers"
   []
-  ; (reset! qid->fn {})     XXX
+  (clear-handlers kind)
   (reset! query->reaction {}))
 
 (defn cache-and-return
@@ -36,10 +36,9 @@
   (let [cache-key [query-v dynv]]
     ;; when this reaction is nolonger being used, remove it from the cache
     (add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
-                            (console :log "Removing subscription: " cache-key)))
-    ;; cache this reaction, so it can be used to deduplicate other, identical subscriptions
+                            (console :log "Removing subscription: " cache-key)))    ;; XXX remove console debug
+    ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction assoc cache-key r)
-
     r))  ;; return the actual reaction
 
 (defn cache-lookup
@@ -148,7 +147,8 @@
                                       (map last))]
     (cond
       sub-fn                   ;; first case the user provides a custom sub-fn
-      (register
+      (register-handler
+        kind
         sub-id
         (fn subs-handler-fn    ;; multi-arity to match the arities `subscribe` might invoke.
           ([db q-vec]
@@ -161,7 +161,8 @@
               (fn [] (f (multi-deref subscriptions) q-vec d-vec)))))))
 
       (seq arrow-args)              ;; the user uses the :<- sugar
-      (register
+      (register-handler
+        kind
         sub-id
         (letfn [(get-subscriptions []
                   (let [subscriptions (map subscribe arrow-subs)]
@@ -179,7 +180,8 @@
                (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))))
 
       :else
-      (register ;; the simple case with no subs
+      (register-handler  ;; the simple case with no subs
+        kind
         sub-id
         (fn subs-handler-fn
           ([db q-vec]
