@@ -11,7 +11,7 @@
 (def kind :sub)
 (assert (re-frame.registrar/kinds kind))
 
-(defn register
+(defn register-raw
   "Register a subscription handler fucntion for an query id"
   [query-id handler-fn]
   (register-handler kind query-id handler-fn))
@@ -92,99 +92,85 @@
   [f m]
   (into {} (for [[k val] m] [k (f val)])))
 
-(defn- multi-deref
-  "derefs a map sequence or a singleton"
-  [data]
+
+(defn- deref-input-signals
+  [sigs]
   (cond
-    (map? data)  (map-vals deref data)
-    (sequential? data) (map deref data)
-    :else @data))
+    (sequential? sigs) (map deref sigs)
+    (map? sigs)  (map-vals deref sigs)
+    :else @sigs))     ;; XXX should we test this satifies? Isomething?
 
-(defn register-pure
-  "This fn allows the user to write a 'pure' subscription
-  i.e. that is a subscription that operates on the values within app-db
-  rather than the atom itself
-  Note there are 3 ways this function can be called
 
-    ```(register-pure
-         :test-sub
-         (fn [db [_]] db))```
-  In this example the entire app-db is derefed and passed to the subscription
-  function as a singleton
+(defn reg-sub
+  "There's 3 ways this function can be called
 
-      ```(register-pure
-           :a-b-sub
-           (fn [q-vec d-vec]
-               [(subs/subscribe [:a-sub])
-                (subs/subscribe [:b-sub])]
-           (fn [[a b] [_]] {:a a :b b}))```
-  In this example the the first function is called with the query vector
-  and the dynamic vector as arguements the return value of this function
-  can be singleton reaction or a list or map of reactions. Note that `q-vec`
-  and `d-vec` can be destructured and used in the subscriptions (this is the point
-  actually). Again the subscriptions are derefed and passed to the subscription
-  function
+  1. (reg-sub
+       :test-sub
+       (fn [db [_]] db))
+  The value in app-db is passed to the computation function as the 1st argument.
 
-      ```(register-pure
-           :a-b-sub
-           :<- [:a-sub]
-           :<- [:b-sub]
-           (fn [[a b] [_]] {:a a :b b}))```
-  In this example the convienent syntax of `:<-` is used to cover the majority
-  of cases where only a simple subscription is needed without any parameters
+  2. (reg-sub
+       :a-b-sub
+       (fn [q-vec d-vec]
+         [(subs/subscribe [:a-sub])
+          (subs/subscribe [:b-sub])])
+       (fn [[a b] [_]] {:a a :b b}))
 
+  Two functions provided. The 2nd is computation fucntion, as before. The 1st
+  is returns what `input signals` should be provided to the computation. The
+  `input signals` function is called with two arguments: the query vector
+  and the dynamic vector. The return value can be singleton reaction or
+  a sequence of reactions.
+
+  3. (reg-sub
+       :a-b-sub
+       :<- [:a-sub]
+       :<- [:b-sub]
+       (fn [[a b] [_]] {:a a :b b}))```
+  This 3rd variation is just syntactic sugar for the 2nd. Pairs are supplied instead
+  of an `input signals` functions. `:<-` is supplied followed by the subscription
+  vector.
   "
-  [sub-id & args]
-  (let [f                        (last args)       ;; computation function
-        middle-args              (butlast args)    ;; middle args may be empty, or one or more :<-,  or a single signal fn
-        maybe-func               (first middle-args)
-        sub-fn                   (when (fn? maybe-func) maybe-func)
-        arrow-args               (if (fn? maybe-func)
-                                   (rest middle-args)
-                                   middle-args)
-        arrow-subs               (->> arrow-args
-                                      (partition 2)
-                                      (map last))]
-    (cond
-      sub-fn                   ;; first case the user provides a custom sub-fn
-      (register-handler
-        kind
-        sub-id
-        (fn subs-handler-fn    ;; multi-arity to match the arities `subscribe` might invoke.
-          ([db q-vec]
-           (let [subscriptions (sub-fn q-vec)]
-             (make-reaction
-              (fn [] (f (multi-deref subscriptions) q-vec)))))
-          ([db q-vec d-vec]
-           (let [subscriptions (sub-fn q-vec d-vec)]
-             (make-reaction
-              (fn [] (f (multi-deref subscriptions) q-vec d-vec)))))))
+  [query-id & args]
+  (let [computation-fn (last args)
+        input-args     (butlast args)    ;; may be empty, or one fn, or pairs of  :<- / vetor
+        err-header     (str "re-frame: reg-sub for " query-id ", ")
+        inputs-fn      (case (count input-args)
+                         ;; no `inputs` function provided - give the default
+                         0  (fn
+                              ([_] app-db)
+                              ([_ _] app-db))
 
-      (seq arrow-args)              ;; the user uses the :<- sugar
-      (register-handler
-        kind
-        sub-id
-        (letfn [(get-subscriptions []
-                  (let [subscriptions (map subscribe arrow-subs)]
-                    (if (< 1 (count subscriptions))
-                      subscriptions
-                      (first subscriptions))))] ;; automatically provide a singleton
-         (fn subs-handler-fn
-           ([db q-vec]
-            (let [subscriptions (get-subscriptions)]
-              (make-reaction
-               (fn [] (f (multi-deref subscriptions) q-vec)))))
-           ([db q-vec d-vec]
-            (let [subscriptions (get-subscriptions)]
-              (make-reaction
-               (fn [] (f (multi-deref subscriptions) q-vec d-vec))))))))
+                         ;; a single `inputs` fn
+                         1  (let [f (first input-args)]
+                              (when-not (fn? f)
+                                (console :error err-header "2nd argument expected to be an inputs function, got: " f))
+                              f)
 
-      :else
-      (register-handler  ;; the simple case with no subs
-        kind
-        sub-id
-        (fn subs-handler-fn
-          ([db q-vec]
-           (make-reaction (fn [] (f @db q-vec))))
-          ([db q-vec d-vec]
-           (make-reaction (fn [] (f @db q-vec d-vec))))))))())
+                         ;; one sugar pair
+                         2  (let [ret-val (subscribe (second input-args))]
+                              (fn inp-fn
+                                ([_] ret-val)
+                                ([_ _] ret-val)))
+
+                         ;; multiple sugar pairs
+                         (let [pairs   (partition 2 input-args)
+                               vecs    (map last pairs)
+                               ret-val (map subscribe vecs)]
+                           (when-not (every?  vector? vecs)
+                             (console :error err-header "expected pairs of :<- and vectors, got: " pairs))
+                           (fn inp-fn
+                             ([_] ret-val)
+                             ([_ _] ret-val))))]
+    (register-handler
+      kind
+      query-id
+      (fn subs-handler-fn
+        ([db query-vec]
+         (let [subscriptions (inputs-fn query-vec)]
+           (make-reaction
+             (fn [] (computation-fn (deref-input-signals subscriptions) query-vec)))))
+        ([db query-vec dyn-vec]
+         (let [subscriptions (inputs-fn query-vec dyn-vec)]
+           (make-reaction
+             (fn [] (computation-fn (deref-input-signals subscriptions) query-vec dyn-vec)))))))))

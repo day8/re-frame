@@ -10,7 +10,7 @@
 (deftest test-reg-sub
   (subs/clear-all-handlers!)
 
-  (subs/register
+  (subs/register-raw
     :test-sub
     (fn [db [_]] (reaction (deref db))))
 
@@ -22,15 +22,15 @@
 (deftest test-chained-subs
   (subs/clear-all-handlers!)
 
-  (subs/register
+  (subs/register-raw
     :a-sub
     (fn [db [_]] (reaction (:a @db))))
 
-  (subs/register
+  (subs/register-raw
     :b-sub
     (fn [db [_]] (reaction (:b @db))))
 
-  (subs/register
+  (subs/register-raw
     :a-b-sub
     (fn [db [_]]
       (let [a (subs/subscribe [:a-sub])
@@ -46,7 +46,7 @@
 (deftest test-sub-parameters
   (subs/clear-all-handlers!)
 
-  (subs/register
+  (subs/register-raw
     :test-sub
     (fn [db [_ b]] (reaction [(:a @db) b])))
 
@@ -58,15 +58,15 @@
 (deftest test-sub-chained-parameters
   (subs/clear-all-handlers!)
 
-  (subs/register
+  (subs/register-raw
     :a-sub
     (fn [db [_ a]] (reaction [(:a @db) a])))
 
-  (subs/register
+  (subs/register-raw
     :b-sub
     (fn [db [_ b]] (reaction [(:b @db) b])))
 
-  (subs/register
+  (subs/register-raw
     :a-b-sub
     (fn [db [_ c]]
       (let [a (subs/subscribe [:a-sub c])
@@ -85,7 +85,7 @@
   (subs/clear-all-handlers!)
   (reset! side-effect-atom 0)
 
-  (subs/register
+  (subs/register-raw
     :side-effecting-handler
     (fn side-effect
       [db [_] [_]]
@@ -108,7 +108,7 @@
 (deftest test-reg-sub-macro
   (subs/clear-all-handlers!)
 
-  (subs/register-pure
+  (subs/reg-sub
     :test-sub
     (fn [db [_]] db))
 
@@ -120,11 +120,11 @@
 (deftest test-reg-sub-macro-singleton
   (subs/clear-all-handlers!)
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-b-sub
     (fn [_ _ _]
       (subs/subscribe [:a-sub]))
@@ -140,15 +140,15 @@
 (deftest test-reg-sub-macro-vector
   (subs/clear-all-handlers!)
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs/register-pure
+  (subs/reg-sub
     :b-sub
     (fn [db [_]] (:b db)))
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-b-sub
     (fn [_ _ _]
       [(subs/subscribe [:a-sub])
@@ -165,15 +165,15 @@
 (deftest test-reg-sub-macro-map
   (subs/clear-all-handlers!)
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs/register-pure
+  (subs/reg-sub
     :b-sub
     (fn [db [_]] (:b db)))
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-b-sub
     (fn [_ _ _]
       {:a (subs/subscribe [:a-sub])
@@ -190,7 +190,7 @@
 (deftest test-sub-macro-parameters
   (subs/clear-all-handlers!)
 
-  (subs/register-pure
+  (subs/reg-sub
     :test-sub
     (fn [db [_ b]] [(:a db) b]))
 
@@ -201,15 +201,15 @@
 (deftest test-sub-macros-chained-parameters
   (subs/clear-all-handlers!)
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-sub
     (fn [db [_ a]] [(:a db) a]))
 
-  (subs/register-pure
+  (subs/reg-sub
     :b-sub
     (fn [db [_ b]] [(:b db) b]))
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-b-sub
     (fn [[_ c] _]
       [(subs/subscribe [:a-sub c])
@@ -224,32 +224,32 @@
   "test the syntactial sugar"
   (subs/clear-all-handlers!)
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs/register-pure
+  (subs/reg-sub
         :a-b-sub
         :<- [:a-sub]
         (fn [a [_]] {:a a}))
 
   (let [test-sub (subs/subscribe [:a-b-sub])]
     (reset! db/app-db {:a 1 :b 2})
-    (is (= {:a 1} @test-sub) )))
+    (is (= {:a 1} @test-sub))))
 
 (deftest test-sub-macros-chained-parameters-<-
   "test the syntactial sugar"
   (subs/clear-all-handlers!)
 
-  (subs/register-pure
+  (subs/reg-sub
     :a-sub
     (fn [db [_]] (:a db)))
 
-  (subs/register-pure
+  (subs/reg-sub
     :b-sub
     (fn [db [_]] (:b db)))
 
-  (subs/register-pure
+  (subs/reg-sub
         :a-b-sub
         :<- [:a-sub]
         :<- [:b-sub]

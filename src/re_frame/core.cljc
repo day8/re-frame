@@ -19,10 +19,11 @@
 ;; XXX move API functions up here
 ;; XXX add a clear all handlers:
 ;; XXX add a push handlers for testing purposes
+;; XXX Add ->interceptor  assoc-coeffect etc to API
 
 ;; --  subscribe
-(def reg-sub-raw         subs/register)
-(def reg-sub             subs/register-pure)
+(def reg-sub-raw         subs/register-raw)
+(def reg-sub             subs/reg-sub)
 (def subscribe           subs/subscribe)
 
 ;; --  effects
