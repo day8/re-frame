@@ -6,7 +6,7 @@
     [re-frame.router     :as router]
     [re-frame.loggers    :as loggers]
     [re-frame.registrar  :as registrar]
-    [re-frame.interceptor :as interceptor :refer [base ->interceptor
+    [re-frame.interceptor :as interceptor :refer [base
                                                   db-handler->interceptor fx-handler->interceptor
                                                   ctx-handler->interceptor]]))
 
@@ -16,10 +16,30 @@
 (def dispatch-sync    router/dispatch-sync)
 
 
-;; XXX move API functions up here
-;; XXX add a clear all handlers:
+;; XXX move certain API functions up here - to get code completion and docs
+;; XXX add a clear all handlers
 ;; XXX add a push handlers for testing purposes
 ;; XXX Add ->interceptor  assoc-coeffect etc to API
+;; XXX on figwheel reload, should invalidate all re-frame subscriptions
+
+
+;; -- interceptor related
+(def ->interceptor   interceptor/->interceptor)
+(def enqueue         interceptor/enqueue)
+(def get-coeffect    interceptor/get-coeffect)
+(def get-effect      interceptor/get-effect)
+(def assoc-effect    interceptor/assoc-effect)
+(def assoc-coeffect  interceptor/assoc-coeffect)
+
+
+;; --  standard interceptors
+(def debug       interceptor/debug)
+(def path        interceptor/path)
+(def enrich      interceptor/enrich)
+(def trim-v      interceptor/trim-v)
+(def after       interceptor/after)
+(def on-changes  interceptor/on-changes)
+
 
 ;; --  subscribe
 (def reg-sub-raw         subs/register-raw)
@@ -31,15 +51,7 @@
 (def clear-fx     (partial registrar/clear-handlers fx/kind))
 
 
-;; --  middleware
 
-; (def fx          fx/fx)
-(def debug       interceptor/debug)
-(def path        interceptor/path)
-(def enrich      interceptor/enrich)
-(def trim-v      interceptor/trim-v)
-(def after       interceptor/after)
-(def on-changes  interceptor/on-changes)
 
 ;; --  Events
 
