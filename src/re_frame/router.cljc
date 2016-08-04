@@ -230,22 +230,10 @@
 
   Usage:
      (dispatch [:delete-item 42])"
-  [event-v]
-  (let [;; At the point of dispatch, we capture the current stack.
-        ;; Attach this stack to the event as meta data so that later, if
-        ;; anything goes wrong, we know where it came from.
-        ;; To get a source mapped stack, we must get rid of the react frames
-        ;; See https://github.com/Day8/re-frame/issues/164#issuecomment-233528154
-        stack  #?(:cljs (->> (js/Error. (str "Event " (first event-v) " dispatched from here:"))
-                             .-stack
-                             clojure.string/split-lines
-                             (remove #(re-find #"react\.inc\.js|\(native\)" %))
-                             (clojure.string/join "\n"))
-                  :clj  "n/a")]
-    (if (nil? event-v)
+  [event]
+  (if (nil? event)
       (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
-      #_(push event-queue (with-meta event-v {:stack stack}))
-      (push event-queue event-v)))
+      (push event-queue event))
   nil)                                           ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 
