@@ -12,7 +12,8 @@
 
 (defn- flatten-and-remove-nils
   "`interceptors` might have nested collections, and contain nil elements.
-  return a flat collection, with all nils removed."
+  return a flat collection, with all nils removed.
+  This function is 9/10 about giving good error messages"
   [id interceptors]
   (let [make-chain  #(->> % flatten (remove nil?))]
     (if-not debug-enabled?
@@ -31,10 +32,11 @@
 
 
 (defn register
-  "Associate given `event id` with the given collection of interceptors.
+  "Associate the given event `id` with the given collection of `interceptors`.
 
-   `interceptors` may have nested collections and may contain nils, so process them
-   into a nice linear collection before registration.
+   `interceptors` may contain nested collections and there may be nils
+   at any level,so process this sturcuture into a simple, nil-less vector
+   before registration.
 
    An `event handler` will likely be at the end of the chain (wrapped in an interceptor)."
   [id interceptors]
