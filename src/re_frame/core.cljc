@@ -103,6 +103,17 @@
 (def console loggers/console)
 
 
+;; -- Registrar
+;; XXX
+;; In testing you often need to store the current state of the registrar
+;; and then reinstate it  state, and then reinstate
+;; that state at the end of the
+;; then re-instate it.
+;; So, in a testing scenario, you'd store the
+;; current state,  make changes and then put back the way it was.
+;; OR should this be done with bindings ??
+
+
 ;; -- Event Procssing Callbacks
 
 (defn add-post-event-callback
