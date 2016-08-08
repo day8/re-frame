@@ -35,30 +35,25 @@
         p  (path [:1 :2])]    ;; a two level path
 
     (let [b4 (-> (context [] [] db)
-                ((:before p)))           ;; before
-          a (-> b4
-                (assoc-effect :db :4)
-                ((:after p)))]           ;; after
-
-      (is (= (get-coeffect b4 :db))      ;; test before
-             :target)
-      (is (= (get-effect a :db)          ;; test after
-             {:1 {:2 :4}})))))
-
-(deftest test-path-with-nil-db
-  (let [db  {:1 {:2 :target}}
-        p  (path [:1 :2])]    ;; a two level path
-
-    (let [b4 (-> (context [] [] db)
-                 ((:before p)))           ;; before
-          a (-> b4
-                (assoc-effect :db nil)   ;; <-- db becomes nil
-                ((:after p)))]           ;; after
+                ((:before p))) ]          ;; before
 
       (is (= (get-coeffect b4 :db))      ;; test before
           :target)
-      (is (= (get-effect a :db)          ;; test after
-             {:1 {:2 nil}})))))
+
+      ;; test #1
+      (is (= {:1 {:2 :4}}
+             (-> b4
+                 (assoc-effect :db :4)    ;; <-- db becomes :4
+                 ((:after p))
+                 (get-effect :db))))
+
+      ;; test #2 - set dbto nil
+      (is (= {:1 {:2 nil}}
+             (-> b4
+                 (assoc-effect :db nil)   ;; <-- db becomes nil
+                 ((:after p))
+                 (get-effect :db)))))))
+
 
 (deftest test-db-handler-interceptor
   (let [event   [:a :b]
