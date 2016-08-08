@@ -18,10 +18,9 @@
 (def dispatch-sync    router/dispatch-sync)
 
 
-;; XXX move certain API functions up to this core level - to get code completion and docs
-;; XXX add a clear all handlers
-;; XXX for testing purposes, and a way to snapshot re-frame instance. Then re-instate
-;; XXX on figwheel reload, should invalidate all re-frame subscriptions
+;; XXX move API functions up to this core level - to enable code completion and docs
+;; XXX for testing purposes:  a way to snapshot re-frame state, then re-instate
+;; XXX on figwheel reload, is there a way to not get the re-registration messages.
 
 
 ;; -- interceptor related
@@ -43,24 +42,24 @@
 (def on-changes  std-interceptors/on-changes)
 
 
-;; --  subscriptions: reading and writing
+;; --  subscriptions
 (def reg-sub-raw         subs/register-raw)
 (def reg-sub             subs/reg-sub)
 (def subscribe           subs/subscribe)
 
+(def clear-sub    (partial registrar/clear-handlers subs/kind))
+
 ;; -- effects
-(def reg-fx       fx/register)
-(def clear-fx     (partial registrar/clear-handlers fx/kind))
+(def reg-fx      fx/register)
+(def clear-fx    (partial registrar/clear-handlers fx/kind))
 
 ;; -- coeffects
-(def reg-cofx       cofx/register)
-(def clear-cofx     (partial registrar/clear-handlers cofx/kind))
+(def reg-cofx    cofx/register)
+(def clear-cofx (partial registrar/clear-handlers cofx/kind))
+
 
 ;; --  Events
-
-;; usage (clear-event! :some-id)
-(def clear-all-events!  (partial registrar/clear-handlers events/kind))    ;; XXX name with !
-
+(def clear-event (partial registrar/clear-handlers events/kind))
 
 (defn reg-event-db
   "Register the given `id`, typically a keyword, with the combination of
