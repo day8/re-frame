@@ -2,31 +2,44 @@
   (:require
     [re-frame.router  :as router]
     [re-frame.db      :refer [app-db]]
+    [re-frame.interceptor :refer [->interceptor]]
+    [re-frame.interop  :refer [set-timeout!]]
     [re-frame.events  :as events]
     [re-frame.registrar  :refer [get-handler clear-handlers register-handler]]
-    [re-frame.interop :refer [ratom? set-timeout!]]
     [re-frame.loggers :refer [console]]))
 
-;; ---- Spec schema -----------------------------------------------------------
-;; TODO use Spec to validate events for :dispatch and :dispatch-n when clj 1.9
-;; e.g. (when (= :cljs.spec/invalid (s/conform ::event val))
-;;        (console :error (s/explain-str ::event val)))
-;; (s/def ::event (s/and vector? (complement empty?)))
-;; (s/def ::events-n (s/coll-off ::event))
 
 ;; -- Registration ------------------------------------------------------------
 
-
 (def kind :fx)
 (assert (re-frame.registrar/kinds kind))
+(def register  (partial register-handler kind))
 
-(defn register
-  [id handler-fn]
-  (register-handler kind id handler-fn))
+;; -- Interceptor -------------------------------------------------------------
 
+(def do-effects
+  "An interceptor which performs a `context's` (side) `:effects`.
+
+  For every key in the `:effects` map, call the handler previously
+  registered via `reg-fx`.
+
+  So, if `:effects` was:
+      {:dispatch  [:hello 42]
+       :db        {...}
+       :undo      \"set flag\"}
+  call the registered effects handlers for each of the map's keys:
+  `:dispatch`, `:undo` and `:db`."
+  (->interceptor
+    :name   :do-effects
+    :after  (fn do-effects-after
+              [context]
+              (->> (:effects context)
+                   (map (fn [[key val]]
+                          (if-let [effect-fn  (get-handler kind key)]
+                            (effect-fn val))))
+                   doall))))
 
 ;; -- Standard Builtin Effects Handlers  --------------------------------------
-
 
 ;; :dispatch-later
 ;;

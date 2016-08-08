@@ -1,8 +1,8 @@
 (ns re-frame.interceptor-test
   (:require [cljs.test :refer-macros [is deftest]]
             [reagent.ratom  :refer [atom]]
-            [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect
-                                          trim-v path on-changes
+            [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect]]
+            [re-frame.std-interceptors :refer [trim-v path on-changes
                                           db-handler->interceptor fx-handler->interceptor]]))
 
 (enable-console-print!)

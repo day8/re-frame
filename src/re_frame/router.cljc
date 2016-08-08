@@ -199,14 +199,13 @@
 
   (-call-post-event-callbacks
     [_ event-v]
-    ;; Call each registed post-event callback.
     (doseq [callback (vals post-event-callback-fns)]
       (callback event-v queue)))
 
   (-resume
     [this]
     (-process-1st-event-in-queue this)  ;; do the event which paused processing
-    (-run-queue this)))        ;; do the rest of the queued events
+    (-run-queue this)))                 ;; do the rest of the queued events
 
 
 ;; ---------------------------------------------------------------------------

@@ -36,7 +36,7 @@
   (let [cache-key [query-v dynv]]
     ;; when this reaction is nolonger being used, remove it from the cache
     (add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
-                            (console :log "Removing subscription: " cache-key)))    ;; XXX remove console debug
+                            #_(console :log "Removing subscription: " cache-key)))    ;; XXX remove console debug
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction assoc cache-key r)
     r))  ;; return the actual reaction
@@ -54,18 +54,18 @@
   "Returns a Reagent/reaction which contains a computation"
   ([query-v]
    (if-let [cached (cache-lookup query-v)]
-     (do (console :log "Using cached subscription: " query-v)
+     (do ;(console :log "Using cached subscription: " query-v)
          cached)
      (let [query-id   (first-in-vector query-v)
            handler-fn (get-handler kind query-id)]
-       (console :log "Subscription created: " query-v)
+       ;(console :log "Subscription created: " query-v)
        (if-not handler-fn
          (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
        (cache-and-return query-v [] (handler-fn app-db query-v)))))
 
   ([v dynv]
    (if-let [cached (cache-lookup v dynv)]
-     (do (console :log "Using cached subscription: " v " and " dynv)
+     (do ;(console :log "Using cached subscription: " v " and " dynv)
          cached)
      (let [query-id   (first-in-vector v)
            handler-fn (get-handler kind query-id)]
@@ -78,7 +78,7 @@
                sub (make-reaction (fn [] (handler-fn app-db v @dyn-vals)))]
            ;; handler-fn returns a reaction which is then wrapped in the sub reaction
            ;; need to double deref it to get to the actual value.
-           (console :log "Subscription created: " v dynv)
+           ;(console :log "Subscription created: " v dynv)
            (cache-and-return v dynv (make-reaction (fn [] @@sub)))))))))
 
 ;; -- Helper code for register-pure -------------------

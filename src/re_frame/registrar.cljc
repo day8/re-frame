@@ -1,10 +1,13 @@
 (ns re-frame.registrar
+  "In many places, re-frame asks you to associate an `id` (keyword)
+  with a `handler` (fucntion).  This namespace contains the
+  central registry of such associations."
   (:require  [re-frame.interop :refer [debug-enabled?]]
              [re-frame.loggers    :refer [console]]))
 
 
 ;; kinds of handlers
-(def kinds #{:event :fx :sub})
+(def kinds #{:event :fx :cofx :sub})
 
 ;; This atom contains a register of all handlers.
 ;; Is a map keyed first by kind (of handler), and then id.

@@ -14,8 +14,7 @@
   "throw an exception if db doesn't match the spec."
   [a-spec db]
   (when-not (s/valid? a-spec db)
-    (throw (ex-info "spec check failed: " {:problems
-                                             (s/explain-str a-spec db)}))))
+    (throw (ex-info (str "spec check failed: " (s/explain-str a-spec db)) {}))))
 
 ;; Event handlers change state, that's their job. But what happens if there's
 ;; a bug which corrupts app state in some subtle way? This interceptor is run after

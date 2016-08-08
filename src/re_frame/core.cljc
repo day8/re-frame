@@ -1,14 +1,16 @@
 (ns re-frame.core
   (:require
-    [re-frame.events     :as events]
-    [re-frame.subs       :as subs]
-    [re-frame.fx         :as fx]
-    [re-frame.router     :as router]
-    [re-frame.loggers    :as loggers]
-    [re-frame.registrar  :as registrar]
-    [re-frame.interceptor :as interceptor :refer [base
-                                                  db-handler->interceptor fx-handler->interceptor
-                                                  ctx-handler->interceptor]]))
+    [re-frame.events      :as events]
+    [re-frame.subs        :as subs]
+    [re-frame.fx          :as fx]
+    [re-frame.cofx        :as cofx]
+    [re-frame.router      :as router]
+    [re-frame.loggers     :as loggers]
+    [re-frame.registrar   :as registrar]
+    [re-frame.interceptor :as interceptor]
+    [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
+                                                             fx-handler->interceptor
+                                                             ctx-handler->interceptor]]))
 
 
 ;; --  dispatch
@@ -16,14 +18,14 @@
 (def dispatch-sync    router/dispatch-sync)
 
 
-;; XXX move certain API functions up here - to get code completion and docs
+;; XXX move certain API functions up to this core level - to get code completion and docs
 ;; XXX add a clear all handlers
-;; XXX add a push handlers for testing purposes
-;; XXX Add ->interceptor  assoc-coeffect etc to API
+;; XXX for testing purposes, and a way to snapshot re-frame instance. Then re-instate
 ;; XXX on figwheel reload, should invalidate all re-frame subscriptions
 
 
 ;; -- interceptor related
+;; useful if you are writing your own interceptors
 (def ->interceptor   interceptor/->interceptor)
 (def enqueue         interceptor/enqueue)
 (def get-coeffect    interceptor/get-coeffect)
@@ -33,57 +35,60 @@
 
 
 ;; --  standard interceptors
-(def debug       interceptor/debug)
-(def path        interceptor/path)
-(def enrich      interceptor/enrich)
-(def trim-v      interceptor/trim-v)
-(def after       interceptor/after)
-(def on-changes  interceptor/on-changes)
+(def debug       std-interceptors/debug)
+(def path        std-interceptors/path)
+(def enrich      std-interceptors/enrich)
+(def trim-v      std-interceptors/trim-v)
+(def after       std-interceptors/after)
+(def on-changes  std-interceptors/on-changes)
 
 
-;; --  subscribe
+;; --  subscriptions: reading and writing
 (def reg-sub-raw         subs/register-raw)
 (def reg-sub             subs/reg-sub)
 (def subscribe           subs/subscribe)
 
-;; --  effects
+;; -- effects
 (def reg-fx       fx/register)
 (def clear-fx     (partial registrar/clear-handlers fx/kind))
 
-
-
+;; -- coeffects
+(def reg-cofx       cofx/register)
+(def clear-cofx     (partial registrar/clear-handlers cofx/kind))
 
 ;; --  Events
 
 ;; usage (clear-event! :some-id)
-(def clear-event!  (partial registrar/clear-handlers events/kind))    ;; XXX name with !
+(def clear-all-events!  (partial registrar/clear-handlers events/kind))    ;; XXX name with !
 
 
 (defn reg-event-db
-  "Register the given `id`, typically a kewyword, with the combination of
+  "Register the given `id`, typically a keyword, with the combination of
   `db-handler` and an interceptor chain.
   `db-handler` is a function: (db event) -> db
   `interceptors` is a collection of interceptors, possibly nested (needs flattenting).
   `db-handler` is wrapped in an interceptor and added to the end of the chain, so in the end
-   there is only a chain."
+   there is only a chain.
+   The necessary effects and coeffects handler are added to the front of the
+   interceptor chain.  These interceptors ensure that app-db is available and updated."
   ([id db-handler]
     (reg-event-db id nil db-handler))
   ([id interceptors db-handler]
-   (events/register id [base interceptors (db-handler->interceptor db-handler)])))
+   (events/register id [cofx/add-db fx/do-effects interceptors (db-handler->interceptor db-handler)])))
 
 
 (defn reg-event-fx
   ([id fx-handler]
    (reg-event-fx id nil fx-handler))
   ([id interceptors fx-handler]
-   (events/register id [base interceptors (fx-handler->interceptor fx-handler)])))
+   (events/register id [cofx/add-db fx/do-effects interceptors (fx-handler->interceptor fx-handler)])))
 
 
 (defn reg-event-ctx
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
-   (events/register id [base interceptors (ctx-handler->interceptor handler)])))
+   (events/register id [cofx/add-db fx/do-effects interceptors (ctx-handler->interceptor handler)])))
 
 
 ;; --  Logging -----
