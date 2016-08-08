@@ -9,9 +9,9 @@ and "de-duplicated signal graph".  I know, right?
 
 Some may even find these new features useful.
 
-##### Headline
+Joking aside, this is a substantial release which will change how you use re-frame.
 
-Joking aside, this is a substantial release which will change how you use re-frame:
+##### Headline
 
   - re-frame subscriptions are now de-duplicated. As a result,
     many Signal graphs will be more efficient. The new behaviour better
@@ -39,8 +39,8 @@ Joking aside, this is a substantial release which will change how you use re-fra
     delighted with it.
 
     With `reg-sub`, you no longer need to use `reaction` explicitly. Subscription handlers are now pure
-    which makes them easier to understand and test etc. Plus, as you'll see in the docs, there is some
-    gratuitous syntactic sugar.
+    which makes them easier to understand, trace and test etc. Plus, as you'll see in the docs, there is some
+    gratuitous syntactic sugar. Who doesn't like sugar?
 
     At this point, the todomvc example represents the best tutorial on the subject:
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
@@ -52,19 +52,22 @@ Joking aside, this is a substantial release which will change how you use re-fra
       2. https://github.com/Day8/re-frame-forward-events-fx
       3. https://github.com/Day8/re-frame-async-flow-fx
 
-  - You can now run and debug re-frame tests on the JVM.  This will be a really big deal for some.
+  - You can now run and debug re-frame tests on the JVM.
   
     Just to be clear: this does not mean you can run re-frame apps on the JVM (there's no React or 
-    Reagent available). But you can debug your handler tests using full JVM tooling goodness.
+    Reagent available). But you can debug your event handler tests using full JVM tooling goodness.
     
     @samroberton and and @escherize have provided the thought leadership and drive here.  They converted 
     re-frame to `.cljc`, supplying plugable interop for both the `js` and `jvm` platforms.
 
-    Further, they have worked with @danielcompton to create a library of testing utilities which are actually 
-    a really nice step forward for both platforms: <br>
+    Further, they have worked with @danielcompton to create a library of testing utilities which 
+    will hopefully evolve into a nice step forward on both platforms: <br>
     https://github.com/Day8/re-frame-undo
+    
+    Work is ongoing in this area. 
 
-  - the undo/redo features buried in re-frame has been factored out into [their own library](https://github.com/Day8/re-frame-undo).
+  - the undo/redo features buried in re-frame has been factored out into 
+   [a standalone library](https://github.com/Day8/re-frame-undo).
   
     undo and redo have been a part of re-frame from the beginning, but they have never officially  
     been made a part of the API, and have not been documented. So it nice to see it available, and fully 
@@ -73,7 +76,30 @@ Joking aside, this is a substantial release which will change how you use re-fra
     This new library includes [various enhancements](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
     over that which previously existed, including a feature which works in with the new effectful handlers
     described above. 
-
+    
+  - Middleware is dead, long live Interceptors. 
+  
+    Up until now, re-frame has allowed you to decorate event handlers with 
+    middleware which looked after the cross cutting concerns of
+    tracing, undo/redo, validation, etc. This has proved a neat and 
+    successful part of the framework.  We thought we were happy.
+    
+    But recently @steveb8n gave a cljsyd talk on 
+    Pedistal's Interceptor pattern and he transformed them from 
+    arcane to delightfully simple in 20 mins. Interceptors are 
+    really "middleware via data" rather than "middleware via function 
+    composition". So it is another way of doing the same thing, but to my mind
+    Interceptors are both more flexible and simpler. 
+    
+    Interceptors also dovetail really nicely with the effects and coeffects 
+    story which has emerged in re-frame through this 0.8.0 release. 
+    
+    So we swapped to get a more flexible foundation. But day to day, 
+    there's a good chance you won't notice any difference.
+    
+    XXX at this point in the release cycle, there are no
+    good docs on this.  
+    
   - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no 
     good deed ever goes unpunished - we'll be pestering you every time from now on :-)
 
@@ -91,12 +117,10 @@ Joking aside, this is a substantial release which will change how you use re-fra
     create subscriptions handlers.  This release introduced `reg-sub` which becomes the preferred way
     to register subscription handlers.
      
-  - you must rewrite any of your own middleware, to become interceptors. <br> 
-    If you simply use middleware supplied by re-frame itself, like `path` of `enrich` you don't have 
-    to change anything. It will just work.<br>  
-    But if you are using ones not a part of the  
-     
-     
+  - middlewares have been replaced by Interceptors. You won't even notice the difference
+    unless you have written your own middleware, in which case you'll have to rewrite it
+    to be an interceptor. XXX reference to further docs 
+    
   - if you have previously used the undo/redo capabilities buried in re-frame, be aware they have 
     extracted into a sibling library: https://github.com/Day8/re-frame-undo.
 
