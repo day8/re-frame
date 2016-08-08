@@ -164,11 +164,11 @@
                  (let [db-store     (db-store-key context)
                        original-db  (peek db-store)
                        new-db-store (pop db-store)
-                       full-db      (->> (get-effect context :db)
-                                         (assoc-in original-db path))]
-                   (-> context
-                       (assoc db-store-key new-db-store)
-                       (assoc-effect :db full-db)))))))
+                       new-context  (assoc context db-store-key new-db-store)]
+                   (if-let [new-db-at-path (get-effect context :db)]
+                     (let [full-db (assoc-in original-db path new-db-at-path)]
+                       (assoc-effect new-context :db full-db))
+                     new-context))))))
 
 
 
