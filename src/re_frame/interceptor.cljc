@@ -31,10 +31,13 @@
 ;; -- Effect Helpers  -----------------------------------------------------------------------------
 
 (defn get-effect
-  ([context key]
-  (get-in context [:effects key]))
   ([context]
-   (:effects context)))
+   (:effects context))
+  ([context key]
+   (get-in context [:effects key]))
+  ([context key not-found]
+   (get-in context [:effects key] not-found)))
+
 
 (defn assoc-effect
   [context key value]
@@ -43,8 +46,12 @@
 ;; -- CoEffect Helpers  ---------------------------------------------------------------------------
 
 (defn get-coeffect
-  [context key]
-  (get-in context [:coeffects key]))
+  ([context]
+   (:coeffects context))
+  ([context key]
+   (get-in context [:coeffects key]))
+  ([context key not-fount]
+   (get-in context [:coeffects key] not-fount)))
 
 (defn assoc-coeffect
   [context key value]

@@ -145,13 +145,16 @@
     (path [:some :path] :to :here)
     (path [:some :path] [:to] :here)
 
-  Remember: `path` may be used multiple times within the one interceptor chain.
+  Notes:
+    1. cater for `path` appearing more than once in an interceptor chain.
+    2. `:effect` may not contain `:db` effect. Which means no change to
+       `:db` should be made.
   "
   [& args]
-  (let [path   (flatten args)
-        db-store-key :re-frame-path/original-dbs]    ;; this is where, within `context`, we store the original db
+  (let [path (flatten args)
+        db-store-key :re-frame-path/db-store]    ;; this is where, within `context`, we store the original dbs
     (when (empty? path)
-      (console :error "re-frame: \"path\" interceptor given no params."))
+      (console :error "re-frame: \"path\" interceptor given no params" ))
     (->interceptor
       :name    :path
       :before  (fn
@@ -164,26 +167,30 @@
                  (let [db-store     (db-store-key context)
                        original-db  (peek db-store)
                        new-db-store (pop db-store)
-                       full-db      (->> (get-effect context :db)
-                                         (assoc-in original-db path))]
-                   (-> context
-                       (assoc db-store-key new-db-store)
-                       (assoc-effect :db full-db)))))))
+                       context'     (assoc context db-store-key new-db-store)
+                       db           (get-effect context :db ::not-found)]
+                   (if (= db ::not-found)
+                     context'
+                     (->> (assoc-in original-db path db)
+                          (assoc-effect context' :db))))))))
 
 
 
 
 (defn enrich
-  "Interceptor factory which runs a given function \"f\" in the  \"after handler\"
-  position.  \"f\" is (db v) -> db
+  "Interceptor factory which runs the given function `f` in the `after handler`
+  position.  `f` is called with two arguments: `db` and `v`, and is expected to
+  return a modified `db`.
 
-  Unlike the \"after\" inteceptor which is only about side effects, \"enrich\"
-  expects f to process and alter the :db coeffect in some useful way, contributing
-  to the derived data, flowing vibe.
+  Unlike the `after` inteceptor which is only about side effects, `enrich`
+  expects f to process and alter the given `db` coeffect in some useful way,
+  contributing to the derived data, flowing vibe.
+
+  Example Use:
 
   Imagine that todomvc needed to do duplicate detection - if any two todos had
   the same text, then highlight their background, and report them in a warning
-  down the bottom.
+  down the bottom of the panel.
 
   Almost any action (edit text, add new todo, remove a todo) requires a
   complete reassesment of duplication errors and warnings. Eg: that edit
@@ -194,8 +201,8 @@
   possibly set flags on each, and set some overall list of duplicates.
   And this duplication check might just be one check among many.
 
-  \"f\" would need to be both adding and removing the duplicate warnings.
-  By applying \"f\" in middleware, we keep the handlers simple and yet we
+  `f` would need to be both adding and removing the duplicate warnings.
+  By applying `f` in middleware, we keep the handlers simple and yet we
   ensure this important step is not missed."
   [f]
   (->interceptor
@@ -211,10 +218,12 @@
 
 (defn after
   "Interceptor factory which runs a given function `f` in the \"after\"
-  position presumably for side effects.
+  position, presumably for side effects.
 
   `f` is called with two arguments: the `effects` value of `:db` and the event. It's return
-  value is ignored so `f` can only side-effect. Example uses:
+  value is ignored so `f` can only side-effect.
+
+  Example use:
      - `f` runs schema validation (reporting any errors found)
      - `f` writes some aspect of db to localstorage."
   [f]
@@ -230,8 +239,8 @@
 
 (defn  on-changes
   "Interceptor factory which acts a bit like `reaction`  (but it flows into `db`, rather than out)
-  It observes N paths in  `db` and if any of them test not indentical? to their previous value
-  (as a result of a handler being run) then it runs 'f' to compute a new value, which is
+  It observes N paths in `db` and if any of them test not indentical? to their previous value
+  (as a result of a handler being run) then it runs `f` to compute a new value, which is
   then assoced into the given `out-path` within `db`.
 
   Usage:
@@ -244,9 +253,9 @@
 
   Put this Interceptor on the right handlers (ones which might change :a or :b).
   It will:
-     - call 'f' each time the value at path [:a] or [:b] changes
-     - call 'f' with the values extracted from [:a] [:b]
-     - assoc the return value from 'f' into the path  [:c]
+     - call `f` each time the value at path [:a] or [:b] changes
+     - call `f` with the values extracted from [:a] [:b]
+     - assoc the return value from `f` into the path  [:c]
   "
   [f out-path & in-paths]
   (->interceptor

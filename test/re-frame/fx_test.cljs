@@ -10,7 +10,7 @@
 (defn teardown! []
   ; cleanup up our handlers
   (doseq [event [::later-test ::watcher]]
-    (re-frame/clear-event! event)))
+    (re-frame/clear-event event)))
 
 (use-fixtures :each {:after teardown!})
 
