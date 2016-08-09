@@ -99,9 +99,9 @@
 (defn fx-handler->interceptor
   "Returns an interceptor which wraps the kind of event handler given to `reg-event-fx`.
 
-  These handlers take two arguments;  `world` and `event`, and they return `effects`.
+  These handlers take two arguments;  `coeffects` and `event`, and they return `effects`.
 
-  (fn [world event]
+  (fn [coeffects event]
      {:db ...
       :dispatch ...})
 
