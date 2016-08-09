@@ -160,6 +160,5 @@
 
 (defn register-sub
   [& args]
-  (console :warm  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\" (look for registration of " (str (first args)) ")")
+  (console :warn  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\" (look for registration of " (str (first args)) ")")
   (apply reg-sub-raw args))
-
