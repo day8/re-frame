@@ -1,19 +1,19 @@
 (ns todomvc.db
   (:require [cljs.reader]
-            [cljs.spec    :as s]))
+            [cljs.spec :as s]))
 
 
 ;; -- Spec --------------------------------------------------------------------
 ;;
-;; This is a clojure.spec specification which documents the structure of app-db
-;; See: http://clojure.org/guides/spec
+;; This is a clojure.spec specification for the value in app-db. It is like a
+;; Schema. See: http://clojure.org/guides/spec
 ;;
-;; The value in app-db should ALWAYS match this spec. Now, the value in
-;; app-db can ONLY be changed by event handlers so, after each event handler
-;; has run, we re-check that app-db still matches this spec.
+;; The value in app-db should always match this spec. Only event handlers
+;; can change the value in app-db so, after each event handler
+;; has run, we re-check app-db for correctness (compliance with the Schema).
 ;;
-;; How is this done? Look in handlers.cljs and you'll notice that all handers
-;; have an "after" middleware which does the spec re-check.
+;; How is this done? Look in events.cljs and you'll notice that all handers
+;; have an "after" interceptor which does the spec re-check.
 ;;
 ;; None of this is strictly necessary. It could be omitted. But we find it
 ;; good practice.
