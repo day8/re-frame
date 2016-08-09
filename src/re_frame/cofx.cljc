@@ -79,8 +79,8 @@
 ;;   (reg-event-fx                    ;;  `-fx` variant used in registration
 ;;     :some-id
 ;;     [(coeffect :now) debug]        ;; notice (coeffect :now) is in interceptors
-;;       (fn [coeffect event]         ;; -fx handlers are given the entire coeffect as 1st argument
-;;         (let [dt (:now coeffect)]  ;; `:now` is available
+;;       (fn [coeffects event]        ;; -fx handlers are given the entire coeffect as 1st argument
+;;         (let [dt (:now coeffects)] ;; `:now` is available
 ;;            ...)))
 ;;
 ;; As a further exercise, consider how you would write a `random` interceptor which adds a random
@@ -89,4 +89,4 @@
     :now
     (fn now-coeffects-handler
       [coeffects]
-      (assoc coeffect :now (js/Date.))))
+      (assoc coeffects :now (js/Date.))))
