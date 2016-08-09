@@ -1,15 +1,15 @@
 (ns todomvc.subs
   (:require [re-frame.core :refer [reg-sub subscribe]]))
 
-;; Using reg-sub, you can write subscription handlers without ever
+;; Using `reg-sub`, you can write subscription handlers without ever
 ;; using `reaction` directly.
 ;; This is how you would register a simple handler.
 (reg-sub
   :showing
-  (fn [db _]        ;; db, is the value in app-db
+  (fn [db _]        ;; db is the value in app-db
     (:showing db))) ;; I repeat:  db is a value. Not a ratom.  And this fn does not return a reaction, just a value.
 
-;; that `fn` is a pure function
+;; so that `fn` is a pure function
 
 ;; Next, the registration of a similar handler is done in two steps.
 ;; First, we `defn` a pure handler function.  Then, we use `reg-sub` to register it.

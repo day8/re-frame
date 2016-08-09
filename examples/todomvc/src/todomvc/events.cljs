@@ -8,7 +8,8 @@
 ;; -- Interceptors --------------------------------------------------------------
 ;;
 ;; XXX Add URL for docs here
-;; XXX Ask Stu to figure out first time spec error
+;; XXX figure out first time spec error
+;; XXX seems to be a bug if you refresh the page, and other than "All" is selected.
 
 (defn check-and-throw
   "throw an exception if db doesn't match the spec."
@@ -22,16 +23,17 @@
 ;; helps us detect event handler bugs early.
 (def check-spec-interceptor (after (partial check-and-throw :todomvc.db/db)))
 
+;; this interceptor stores todos into local storage
+;; we attach it to each event handler which could update todos
+(def ->local-store (after todos->local-store))
 
-(def ->local-store (after todos->local-store))    ;; interceptor to store todos into local storage
 
-
-;; interceptors for any handler that manipulates todos
-(def todo-interceptors [check-spec-interceptor   ;; ensure the spec is still valid
-                        (path :todos)   ;; 1st param to handler will be the value from this path
-                        ->local-store                          ;; write to localstore each time
-                        (when ^boolean js/goog.DEBUG debug)    ;; look in your browser console
-                        trim-v])                               ;; removes first (event id) element from the event vec
+;; the chain of interceptors we use for all handlers that manipulate todos
+(def todo-interceptors [check-spec-interceptor               ;; ensure the spec is still valid
+                        (path :todos)                        ;; 1st param to handler will be the value from this path
+                        ->local-store                        ;; write todos to localstore
+                        (when ^boolean js/goog.DEBUG debug)  ;; look in your browser console for debug logs
+                        trim-v])                             ;; removes first (event id) element from the event vec
 
 
 ;; -- Helpers -----------------------------------------------------------------
@@ -107,14 +109,14 @@
     (->> (vals todos)                ;; find the ids of all todos where :done is true
          (filter :done)
          (map :id)
-         (reduce dissoc todos))))    ;; now do the delete of these done ids
+         (reduce dissoc todos))))    ;; now delete these ids
 
 
 (reg-event-db
   :complete-all-toggle
   todo-interceptors
   (fn [todos _]
-    (let [new-done (not-every? :done (vals todos))]   ;; toggle true or false?
+    (let [new-done (not-every? :done (vals todos))]   ;; work out: toggle true or false?
       (reduce #(assoc-in %1 [%2 :done] new-done)
               todos
               (keys todos)))))
