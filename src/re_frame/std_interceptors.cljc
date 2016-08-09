@@ -167,7 +167,8 @@
                  (let [db-store     (db-store-key context)
                        original-db  (peek db-store)
                        new-db-store (pop db-store)
-                       context'     (assoc context db-store-key new-db-store)
+                       context'     (-> (assoc context db-store-key new-db-store)
+                                        (assoc-coeffect :db original-db))     ;; put the original db back so that things like debug work later on
                        db           (get-effect context :db ::not-found)]
                    (if (= db ::not-found)
                      context'
