@@ -169,17 +169,18 @@
    server, would be somewhat anologous to `request` and `response`
    respectively.
 
-   `coeffects` will contain information like `event` and the initial
-   state of `db` - ie. the inputs required by the event handler
+   `coeffects` will contain data like `event` and the initial
+   state of `db` -  the inputs required by the event handler
    (sitting presumably on the end of the chain), while handler-returned
-   side effects are assoc-ed in `:effects` including, but not limited to,
+   side effects are put into `:effects` including, but not limited to,
    new values for `db`.
 
-   The first few interceptor in a chain will likely have `:before`
+   The first few interceptors in a chain will likely have `:before`
    functions which \"prime\" the `context` by adding the event, and
-   the current state of app-db into `:coeffects`. OR, it might instead
-   add the connection for a DataScript database, or any other inputs
-   required.
+   the current state of app-db into `:coeffects`. But interceptors can
+   add whatever they want to `:coeffect` - perhaps the event handler needs
+   some information from localstore, or a random number, or access to
+   a DataScript connection.
 
    Equally, some interceptors in the chain will have `:after` fn
    which can process the side effects accumulated into `:effects`
