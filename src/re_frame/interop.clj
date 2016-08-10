@@ -24,7 +24,8 @@
 (defonce ^:private executor (Executors/newSingleThreadExecutor))
 
 (defn next-tick [f]
-  (.execute executor f)
+  (let [bound-f (bound-fn [& args] (apply f args))]
+    (.execute executor bound-f))
   nil)
 
 (def empty-queue clojure.lang.PersistentQueue/EMPTY)
