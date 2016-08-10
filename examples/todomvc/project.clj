@@ -1,8 +1,9 @@
 (defproject todomvc-re-frame "0.8.0"
-  :dependencies [[org.clojure/clojure        "1.8.0"]
+  :dependencies [[org.clojure/clojure        "1.9.0-alpha10"]
                  [org.clojure/clojurescript  "1.9.89"]
                  [reagent "0.6.0-rc"]
-                 [re-frame "0.8.0-alpha4"]
+                 [re-frame "0.8.0-SNAPSHOT"]
+                 [day8.re-frame/test "0.1.0-SNAPSHOT"]
                  [binaryage/devtools "0.7.0"]
                  [secretary "1.2.3"]]
 
@@ -12,7 +13,7 @@
   :hooks [leiningen.cljsbuild]
 
   :profiles {:dev {:cljsbuild
-                   {:builds {:client {:source-paths ["devsrc"]
+                   {:builds {:client {:source-paths ["devsrc" "test"]
                                       :compiler     {:main "todomvc.dev"
                                                      :asset-path "js"
                                                      :optimizations :none

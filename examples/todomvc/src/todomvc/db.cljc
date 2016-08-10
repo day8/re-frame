@@ -1,6 +1,7 @@
 (ns todomvc.db
-  (:require [cljs.reader]
-            [cljs.spec :as s]))
+  (:require #?(:cljs [cljs.reader])
+            #?(:cljs [cljs.spec :as s]
+               :clj  [clojure.spec :as s])))
 
 
 ;; -- Spec --------------------------------------------------------------------
@@ -24,7 +25,7 @@
 (s/def ::todo    (s/keys :req-un [::id ::title ::done]))
 (s/def ::todos   (s/and                             ;; should use the :kind kw to s/map-of (not supported yet)
                    (s/map-of ::id ::todo)           ;; in this map, each todo is keyed by its :id
-                   #(instance? PersistentTreeMap %) ;; is a sorted-map (not just a map)
+                   #(sorted? %)                     ;; is a sorted-map (not just a map)
                    ))
 (s/def ::showing  ;; what todos are shown to the user?
        #{:all     ;; all todos are shown
@@ -57,13 +58,13 @@
 (defn localstore->todos
   "Read in todos from localstore, and process into a map we can merge into app-db."
   []
-  (some->> (.getItem js/localStorage ls-key)
-           (cljs.reader/read-string)   ;; stored as an EDN map.
-           (into (sorted-map))         ;; map -> sorted-map
-           (hash-map :todos)))         ;; access via the :todos key
+  #?(:cljs (some->> (.getItem js/localStorage ls-key)
+                    (cljs.reader/read-string) ;; stored as an EDN map.
+                    (into (sorted-map))       ;; map -> sorted-map
+                    (hash-map :todos))))      ;; access via the :todos key
 
 (defn todos->local-store
   "Puts todos into localStorage"
-  [todos]
-  (.setItem js/localStorage ls-key (str todos)))   ;; sorted-map writen as an EDN map
+  [todos _]
+  #?(:cljs (.setItem js/localStorage ls-key (str todos)))) ;; sorted-map writen as an EDN map
 
