@@ -5,7 +5,7 @@ This tutorial is about Interceptors.
 
 Two reasons.
 
-First, we want simple event handlers.  
+__First__, we want simple event handlers.  
 
 Interceptors can look after "cross-cutting" concerns like undo, tracing and validation. 
 They help us to factor out commonality, hide complexity and introduce further steps into the "Derived Data, 
@@ -13,11 +13,11 @@ Flowing" story promoted by re-frame.
 
 So, you'll want to use Interceptors - they're helpful.
 
-Second, under the covers, Interceptors are central to 
-how event handlers are executed (when you `dispatch`).  You'll 
-want to understand how it all happens. 
+__Second__, under the covers, Interceptors are the means by which 
+event handlers are executed (when you `dispatch`).  You'll 
+want to understand how that happens. 
 
-### What Does An Interceptor Do?
+### What Do Interceptors Do?
 
 They wrap. 
 
@@ -36,7 +36,7 @@ Interceptors wrap on both sides of a handler, layer after layer.
 
 Interceptors implement middleware.  But differently.
 
-Traditional middleware - often seen in web server - creates a data 
+Traditional middleware - often seen in web servers - creates a data 
 processing pipeline via the nested composition of higher order functions. 
 The result is a "stack" of functions. Data flows through this pipeline, 
 first forwards from one end to the other, and then backwards.
@@ -51,7 +51,7 @@ higher order functions, it is a more flexible arrangement.
 
 ### What's In The Pipeline?
 
-Data. It flows through being progressively transformed. 
+Data. It flows through the pipeline being progressively transformed. 
 
 Fine. But what data?
 
@@ -69,7 +69,7 @@ concept, right there.
 ### Show Me
 
 You can provide a chain of interceptors when 
-you register the event handler.
+you register an event handler.
  
 Using a 3-arity registration function:
 ```clj 
@@ -82,7 +82,7 @@ Using a 3-arity registration function:
 
 > Each Event Handler can have its own tailored interceptor chain. 
 
-### Handler Are Interceptors
+### Handlers Are Interceptors Too
 
 You might see that registration above as associating `:some-id` with two things: (1) a chain of interceptors 
 and (2) a handler.  
@@ -98,7 +98,7 @@ and adds its own interceptors
 so ACTUALLY, there's about 5 interceptors in the chain that is finally 
 registered for `:some-id`. 
 
-So event registration is actually the process of associating an 
+So, ultimately, event registration associates an 
 event id with a chain of interceptors.
  
 Later, when a `dispatch` for `:some-id` is done, that 5-chain of 
@@ -114,7 +114,7 @@ Each interceptor has this form:
 ```
 
 That's essentially a map of two functions. Now imagine a vector of these maps - that's an  
-an interceptor chain. Simple isn't it.
+an interceptor chain. Simple isn't it?
 
 To "execute" an interceptor chain:
   1. create a `context` (a map, described below)
@@ -130,10 +130,10 @@ That's it. That's how an event gets handled.
 
 Some data called a `context` is threaded through all the calls. 
 
-That means it is passed as the argument to every `:before` and `:after` 
-function and it is returned, possibly modified, by each of them too. 
+This value is passed as the argument to every `:before` and `:after` 
+function and they returned it, possibly modified. 
 
-A `context` is a map with this form: 
+A `context` is a map with this structure: 
 ```clj
 {:coeffects {:event [:some-id :some-param]
              :db    <original contents of app-db>}
@@ -149,9 +149,9 @@ A `context` is a map with this form:
 server, would be somewhat analogous to `request` and `response`
 respectively.
 
-`:coeffects` will contain data like the `:event` being processed, 
-and the initial state of `db`. These are the inputs required by the event handler
-(sitting presumably on the end of the chain).
+`:coeffects` will contain the inputs required by the event handler
+(sitting presumably on the end of the chain). So that's 
+data like the `:event` being processed, and the initial state of `db`. These are .
 
 The handler-returned side effects are put into `:effects` including, 
 but not limited to, new values for `db`.
@@ -178,8 +178,7 @@ In advanced cases, these values can be modified by the
 functions through which the `context` is threaded. 
 
 What I'm saying is that interceptors can be dynamically added 
-and removed from the `:queue` by the very interceptors already 
-in the chain.
+and removed from the `:queue` by the interceptors themselves. 
 
 ### Credit
 
@@ -225,10 +224,10 @@ Once we have written `trim-event`, our registration will change to look like thi
      (dissoc db key-to-delete)))
 ```
 
-So, `trim-event` is going to be changing the `:coeffect` (of `context`).  More specifically, it will be 
-changing the `:event` value within the `:coeffect`. 
+`trim-event` will need to change the `:coeffects` (of `context`).  More specifically, it will be 
+changing the `:event` value within the `:coeffects`. 
 
-`:event` will start as `[:delete-item 42]`, but will end up `[42]`.  We remove that 
+`:event` will start off as `[:delete-item 42]`, but will end up `[42]`.  `trim-event`  will remove that 
 leading `:delete-item` because, by the time the event is 
 being processed, we already know what id is has.
 
@@ -236,7 +235,7 @@ And, here it is:
 ```clj
 (def trim-event
   (re-frame.core/->interceptor
-    :name    :trim-v
+    :id      :trim-event
     :before  (fn [context]
                (let [new-event (-> context 
                                    :coeffects 
@@ -266,13 +265,13 @@ There's two kinds of handler:
    - the `-db` variety registered by `reg-event-db`
    - the `-fx` variety registered by `reg-event-fx`
    
-Let's do a `-db` variety. So that would be a function like this:
+Let's do a `-db` variety. We'll be wrapping a function like this:
 ```clj
 (fn [db event]               ;;  takes two params
   (assoc db :flag true))     ;; returns a new db
 ```
    
-Here how you'd do the `-db` variety: 
+Here a function which turns a given handler into an interceptor:  
 ```clj
 (defn db-handler->interceptor
   [db-handler-fn]
@@ -298,31 +297,20 @@ __1.__ When you register a handler, you can supply some interceptors:
        ....)))
 ```
 
-
 __2.__ That will associate `:some-id` with a chain of about 5 interceptors because:
-  - you have two
+  - there are two interceptors supplied
   - the handler is wrapped as an interceptor and added to the end
-  - the registration 
+  - the registration function adds a couple of interceptors of its own
   
 __3.__ Interceptors can do interesting things:
    - add to coeffects  (inputs to the handler)
    - process effects (make side effects happen)
+   - produce logs 
+   - 
    
 
 In the next Tutorial, we look at how you can add coeffects.  
  
-
-
-      
-      
-
- 
- 
-
-
-
-
-
 
 
 

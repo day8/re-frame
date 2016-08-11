@@ -117,14 +117,14 @@ Here's another purity problem:
 (reg-event-db
    :load-localstore
    (fn [db _]
-     (let [defaults (js->clj (.getItem js/localStorage "defaults-key"))]  ;; <--
-       (assoc db :defaults defaults))))
+     (let [val (js->clj (.getItem js/localStorage "defaults-key"))]  ;; <--
+       (assoc db :defaults val))))
 ```
 
 It sources data from LocalStore.
 
 So this handler has no side effect - it doesn't need to change the world - __but__ it does
-need to source data from somewhere other than its given arguments - from somewhere
+need to source data from somewhere other than its arguments - from somewhere
 outside of app-db or the event.  
 
 It isn't a pure function which leads to the normal problems. 
@@ -135,7 +135,7 @@ So there are [two concepts at play here](http://tomasp.net/blog/2014/why-coeffec
   - **Effects** - what your event handler does to the world  (aka side-effects)
   - **Coeffects** - what your event handler requires from the world  (aka [side-causes](http://blog.jenkster.com/2015/12/what-is-functional-programming.html))
 
-We will need a solution for both.   
+We'll need a solution for both.
 
 ### Why Does This Happen?
 
@@ -145,16 +145,16 @@ They have to implement the control logic of your re-frame app, and
 that means dealing with the outside, mutative world of servers, databases, 
 windows.location, LocalStore, cookies, etc.
 
-There's just no getting away from living in a mutative world, which sounds ominous. Is there no way out? No solution?
+There's just no getting away from living in a mutative world, er, 
+which sounds ominous. Is that it? Are we doomed to impurity?
 
 Well, luckily a small twist in the tale makes a profound difference. We 
 will look at side effects first. Instead of creating event handlers
 which *do side-effects*, we'll instead get them to *cause side-effects*.
 
-
 ### Doing vs Causing
 
-Above, I claimed that this `fn` event handler was pure:
+Above, I proudly claimed that this `fn` event handler was pure:
 ```clj
 (reg-event-db
    :my-event
@@ -169,14 +169,11 @@ the necessary side-effecting.
 
 Wait on.  What "necessary side-effecting"?
 
-Well, `app-db` is a ratom, right?  It contains the application state. After 
+Well, application state is stored in `app-db`, right?  And it is a ratom. After 
 each event handler runs, it must be `reset!` to the newly returned 
-value.  re-frame's steps for each event are: 
-  1. extract the value (a map) from `app-db` (a ratom)
-  2. call the registered event handler with this `db` value as the first argument
-  3. `reset!` the returned value back into `app-db`
+value.  That, right there, is the necessary side effecting. 
 
-So, we get to live in our ascetic functional world because re-frame is 
+We get to live in our ascetic functional world because re-frame is 
 looking after the "necessary side-effects" on `app-db`. Interesting.
 
 ### Et tu, React?
