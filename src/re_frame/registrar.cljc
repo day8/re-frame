@@ -17,6 +17,9 @@
 
 (defn get-handler
 
+  ([kind]
+   (get @kind->id->handler kind))
+
   ([kind id]
    (-> (get @kind->id->handler kind)
        (get id)))
