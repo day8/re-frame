@@ -172,7 +172,7 @@ including but, not limited to, updates to app-db.
 
 Through both stages (before and after), `context` contains a `:queue`
 of interceptors yet to be processed, and a `:stack` of interceptors
-already done.  
+already done.
 
 In advanced cases, these values can be modified by the
 functions through which the `context` is threaded. 
@@ -182,12 +182,12 @@ and removed from the `:queue` by the interceptors themselves.
 
 ### Credit
 
-This beautifully simple and flexible arrangement was originally 
+> All truths are easy to understand once they are discovered <br>
+>   -- Galileo Galilei
+
+This elegant and flexible arrangement was originally 
 designed by the talented 
-[Pedestal Team](https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md).
-
-Thanks!  We like the way it has turned out for re-frame.
-
+[Pedestal Team](https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md). Thanks! 
 
 ### Write An Interceptor
 
