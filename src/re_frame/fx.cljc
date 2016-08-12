@@ -35,7 +35,7 @@
               [context]
               (->> (:effects context)
                    (map (fn [[key val]]
-                          (if-let [effect-fn  (get-handler kind key)]
+                          (if-let [effect-fn  (get-handler kind key true)]
                             (effect-fn val))))
                    doall))))
 
