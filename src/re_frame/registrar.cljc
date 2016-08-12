@@ -1,6 +1,6 @@
 (ns re-frame.registrar
   "In many places, re-frame asks you to associate an `id` (keyword)
-  with a `handler` (fucntion).  This namespace contains the
+  with a `handler` (function).  This namespace contains the
   central registry of such associations."
   (:require  [re-frame.interop :refer [debug-enabled?]]
              [re-frame.loggers    :refer [console]]))
