@@ -1,6 +1,30 @@
+## Introduction 
 
-This tutorial is about Interceptors.
+This is an interceptors tutorial 
 
+## Table Of Contents
+
+- [Introduction](#introduction)
+- [Table Of Contents](#table-of-contents)
+- [Interceptors](#interceptors)
+  * [Why Interceptors?](#why-interceptors-)
+  * [What Do Interceptors Do?](#what-do-interceptors-do-)
+  * [Wait, I know That Pattern!](#wait--i-know-that-pattern-)
+  * [What's In The Pipeline?](#what-s-in-the-pipeline-)
+  * [Show Me](#show-me)
+  * [Handlers Are Interceptors Too](#handlers-are-interceptors-too)
+- [Executing A Chain](#executing-a-chain)
+  * [The Links](#the-links)
+  * [What Is Context?](#what-is-context-)
+  * [Self Modifing](#self-modifing)
+  * [Credit](#credit)
+  * [Write An Interceptor](#write-an-interceptor)
+  * [Wrapping Handlers](#wrapping-handlers)
+- [Summary](#summary)
+- [Appendix](#appendix)
+  * [The Builtin Interceptors](#the-builtin-interceptors)
+
+## Interceptors
 ### Why Interceptors?
 
 Two reasons.
@@ -23,7 +47,7 @@ They wrap.
 
 Specifically, they wrap event handlers. 
 
-Imagine your event handler is like a piece of ham. An interceptor would be  
+Imagine your event handler is like a piece of ham. An interceptor would be
 like bread either side of your ham, which makes a sandwich.
 
 And two Interceptors, in a chain, would be like you put another 
@@ -80,7 +104,7 @@ Using a 3-arity registration function:
       ....)))
 ```
 
-> Each Event Handler can have its own tailored interceptor chain. 
+> Each Event Handler can have its own tailored interceptor chain, provided at registration-time. 
 
 ### Handlers Are Interceptors Too
 
@@ -92,19 +116,21 @@ Except, the handler is turned into an interceptor too.  (We'll see how later)
 So `:some-id` is only associated with one thing: a 3-chain of interceptors, 
 with the handler wrapped in an interceptor and put on the end of the other two.  
  
-Except, except, the registration function itself, `reg-event-db`, actually takes this 3-chain 
-and adds its own interceptors 
+Except, the registration function itself, `reg-event-db`, actually takes this 3-chain 
+and inserts its own interceptors 
 (which do useful things) at the front (more on this soon too), 
-so ACTUALLY, there's about 5 interceptors in the chain that is finally 
-registered for `:some-id`. 
+so ACTUALLY, there's about 5 interceptors in the chain.
 
-So, ultimately, event registration associates an 
-event id with a chain of interceptors.
+So, ultimately, that event registration associates the event id `some-id` 
+with a chain of interceptors.
  
 Later, when a `dispatch` for `:some-id` is done, that 5-chain of 
-interceptors will be "executed". That's how events get handled. 
+interceptors will be "executed".  And that's how events get handled. 
 
-### Brass Tacks
+
+## Executing A Chain
+
+### The Links
 
 Each interceptor has this form:
 ```clj
@@ -114,7 +140,7 @@ Each interceptor has this form:
 ```
 
 That's essentially a map of two functions. Now imagine a vector of these maps - that's an  
-an interceptor chain. Simple isn't it?
+an interceptor chain.
 
 To "execute" an interceptor chain:
   1. create a `context` (a map, described below)
@@ -168,17 +194,17 @@ Equally, some interceptors in the chain will have `:after` functions
 which process the side effects accumulated into `:effects`
 including but, not limited to, updates to app-db.
 
-### Fancy
+### Self Modifing
 
 Through both stages (before and after), `context` contains a `:queue`
 of interceptors yet to be processed, and a `:stack` of interceptors
 already done.
 
-In advanced cases, these values can be modified by the
+In advanced cases, these values can be modified by the Interceptor
 functions through which the `context` is threaded. 
 
 What I'm saying is that interceptors can be dynamically added 
-and removed from the `:queue` by the interceptors themselves. 
+and removed from the `:queue` by existing Interceptors. 
 
 ### Credit
 
@@ -255,7 +281,7 @@ Notes:
      with the backwards processing flow of effects. It is concerned only 
      with coeffects in the forward flow.
       
-#### Wrapping Handlers
+####Wrapping Handlers
 
 We're going well. Let's do an advanced wrapping. 
 
@@ -284,11 +310,11 @@ Here a function which turns a given handler into an interceptor:
 ```
 
 
-### Summary
+## Summary
 
 In this tutorial, we've learned: 
  
-__1.__ When you register a handler, you can supply some interceptors:
+__1.__ When you register a handler, you can supply a collection of interceptors:
 ```
  (reg-event-db          
     :some-id
@@ -300,21 +326,20 @@ __1.__ When you register a handler, you can supply some interceptors:
 __2.__ That will associate `:some-id` with a chain of about 5 interceptors because:
   - there are two interceptors supplied
   - the handler is wrapped as an interceptor and added to the end
-  - the registration function adds a couple of interceptors of its own
+  - the registration function inserts a couple of interceptors at the front
   
 __3.__ Interceptors can do interesting things:
    - add to coeffects  (inputs to the handler)
    - process effects (make side effects happen)
    - produce logs 
-   - 
-   
+   - further process    
 
-In the next Tutorial, we look at how you can add coeffects.  
+In the next Tutorial, we'll look at Effects   
  
 
+## Appendix
 
-
-### Free Beer
+### The Builtin Interceptors
 
 re-frame comes with some builtin Interceptors:
   - __debug__: log each event as it is processed. Shows incremental [`clojure.data/diff`](https://clojuredocs.org/clojure.data/diff) reports.
