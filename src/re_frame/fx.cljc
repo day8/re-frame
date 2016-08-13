@@ -18,10 +18,10 @@
 ;; -- Interceptor -------------------------------------------------------------
 
 (def do-effects
-  "An interceptor which performs a `context's` (side) `:effects`.
+  "An interceptor which actions a `context's` (side) `:effects`.
 
-  For every key in the `:effects` map, call the handler previously
-  registered via `reg-fx`.
+  For each key in the `:effects` map, call the `effects handler` previously
+  registered using `reg-fx`.
 
   So, if `:effects` was:
       {:dispatch  [:hello 42]
@@ -34,16 +34,16 @@
     :after  (fn do-effects-after
               [context]
               (->> (:effects context)
-                   (map (fn [[key val]]
-                          (if-let [effect-fn  (get-handler kind key true)]
-                            (effect-fn val))))
+                   (map (fn [[k value]]
+                          (if-let [effect-fn  (get-handler kind k true)]
+                            (effect-fn value))))
                    doall))))
 
-;; -- Standard Builtin Effects Handlers  --------------------------------------
+;; -- Builtin Effect Handlers  ------------------------------------------------
 
 ;; :dispatch-later
 ;;
-;; `dispatch` one or more events in given times on the future. Expects a collection
+;; `dispatch` one or more events after given delays. Expects a collection
 ;; of maps with two keys:  :`ms` and `:dispatch`
 ;;
 ;; usage:
@@ -53,8 +53,8 @@
 ;;
 (register
   :dispatch-later
-  (fn [effects-v]
-    (doseq  [{:keys [ms dispatch] :as effect} effects-v]
+  (fn [value]
+    (doseq  [{:keys [ms dispatch] :as effect} value]
         (if (or (empty? dispatch) (-> ms number? not))
           (console :error "re-frame: ignoring bad :dispatch-later value: " effect)
           (set-timeout! #(router/dispatch dispatch) ms)))))
@@ -69,10 +69,10 @@
 
 (register
   :dispatch
-  (fn [val]
-    (if-not (vector? val)
-      (console :error "re-frame: ignoring bad :dispatch value. Expected a vector, but got: " val)
-      (router/dispatch val))))
+  (fn [value]
+    (if-not (vector? value)
+      (console :error "re-frame: ignoring bad :dispatch value. Expected a vector, but got: " value)
+      (router/dispatch value))))
 
 
 ;; :dispatch-n
@@ -85,32 +85,40 @@
 ;;
 (register
   :dispatch-n
-  (fn [val]
-    (if-not (sequential? val)
-      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got: " val))
-    (doseq [event val] (router/dispatch event))))
+  (fn [value]
+    (if-not (sequential? value)
+      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got: " value))
+    (doseq [event value] (router/dispatch event))))
 
 
 ;; :deregister-event-handler
 ;;
-;; removes an event handler. Expects either a single id (typically a keyword), or a seq of ids.
+;; removes a previously registered event handler. Expects either a single id (
+;; typically a keyword), or a seq of ids.
 ;;
 ;; usage:
-;;   {:deregister-event-handler: :my-id)}
+;;   {:deregister-event-handler :my-id)}
 ;; or:
-;;   {:deregister-event-handler: [:one-id :another-id]}
+;;   {:deregister-event-handler [:one-id :another-id]}
 ;;
 (register
   :deregister-event-handler
-  (fn [val]
+  (fn [value]
     (let [clear-event (partial clear-handlers events/kind)]
-      (if (sequential? val)
-        (doall (map clear-event val))
-        (clear-event val)))))
+      (if (sequential? value)
+        (doall (map clear-event value))
+        (clear-event value)))))
 
 
+;; :db
+;;
+;; reset! app-db with a new value. Expects a map.
+;;
+;; usage:
+;;   {:db  {:key1 value1 key2 value2}}
+;;
 (register
   :db
-  (fn [val]
-    (reset! app-db val)))
+  (fn [value]
+    (reset! app-db value)))
 
