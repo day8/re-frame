@@ -1,4 +1,4 @@
-## Effects
+## Introduction
 
 About 10% of the time, event handlers need to cause side effects.
 
@@ -6,8 +6,29 @@ This tutorial explains how side effects are actioned,
 how you can create your own side effects, and how you can 
 make side effects a noop in tests.
 
-[TOC]
+## Table Of Contexts
 
+- [Introduction](#introduction)
+- [Table Of Contexts](#table-of-contexts)
+- [Effects](#effects)
+  * [Where Effects Come From](#where-effects-come-from)
+  * [The Effects Map](#the-effects-map)
+  * [Infinite Effects](#infinite-effects)
+  * [Extensible Side Effects](#extensible-side-effects)
+  * [Writing An Effect Handler](#writing-an-effect-handler)
+  * [:db Not Always Needed](#-db-not-always-needed)
+  * [What Makes This Work?](#what-makes-this-work-)
+  * [Order Of Effects?](#order-of-effects-)
+  * [Noops](#noops)
+- [Builtin Effects Handlers](#builtin-effects-handlers)
+    + [:dispatch-later](#-dispatch-later)
+    + [:dispatch](#-dispatch)
+    + [:dispatch-n](#-dispatch-n)
+    + [:deregister-event-handler](#-deregister-event-handler)
+    + [:db](#-db)
+- [Other Available Effects](#other-available-effects)
+
+## Effects
 ### Where Effects Come From
 
 When an event handler is registered via `reg-event-fx`, it returns effects.
@@ -50,7 +71,7 @@ expected to be a collection of vectors to dispatch.
 
 And so on. And so on. Which brings us to a problem. 
 
-### Infinite Possible Effects
+### Infinite Effects
 
 While re-frame supplies a number of builtin effects, the set of 
 possible effects is open ended.
@@ -210,13 +231,6 @@ XXX talk about reinstating:
 - capture return 
 - XXX new feature?
 
-## What's Out There Already
-
-- https://github.com/Day8/re-frame-http-fx   (GETs and POSTs)
-- https://github.com/Day8/re-frame-forward-events-fx  (slightly exotic)
-- https://github.com/Day8/re-frame-async-flow-fx  (more complicated)
-
-Create a PR to include yours in this list. 
 
 
 ## Builtin Effects Handlers
@@ -274,3 +288,11 @@ usage:
 ```clj
 {:db  {:key1 value1 key2 value2}}
 ```
+
+## Other Available Effects
+
+- https://github.com/Day8/re-frame-http-fx   (GETs and POSTs)
+- https://github.com/Day8/re-frame-forward-events-fx  (slightly exotic)
+- https://github.com/Day8/re-frame-async-flow-fx  (more complicated)
+
+Create a PR to include yours in this list. 
