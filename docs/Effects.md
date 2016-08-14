@@ -20,13 +20,13 @@ make side effects a noop in tests.
   * [What Makes This Work?](#what-makes-this-work-)
   * [Order Of Effects?](#order-of-effects-)
   * [Noops](#noops)
-- [Builtin Effects Handlers](#builtin-effects-handlers)
+- [Builtin Effect Handlers](#builtin-effect-handlers)
     + [:dispatch-later](#-dispatch-later)
     + [:dispatch](#-dispatch)
     + [:dispatch-n](#-dispatch-n)
     + [:deregister-event-handler](#-deregister-event-handler)
     + [:db](#-db)
-- [Other Available Effects](#other-available-effects)
+- [External Effects](#external-effects)
 
 ## Effects
 ### Where Effects Come From
@@ -53,7 +53,7 @@ the particular side effect required, and the `value` for that `key` provides
 further information. The structure of the `value` varies with the side 
 effect itself.
 
-Here's two instructions: 
+Here's the two instructions from the example above: 
 ```cljs 
   {:db       (assoc db :flag  a)         ;; side effect on app-db
    :dispatch [:do-something-else 3]}     ;; dispatch this event
@@ -65,9 +65,8 @@ That `:db` `key` instructs that "app-db" should be reset to the
 That `:dispatch` `key` instructs that an event should be
 dispatched. The `value` is the vector to dispatch.
 
-In addition to those two shown above, there's many other possible
-effects, like for example `dispatch-n` whose value is
-expected to be a collection of vectors to dispatch.
+There's many other possible
+effects, like for example `:dispatch-later` or `:set-local-store`. 
 
 And so on. And so on. Which brings us to a problem. 
 
@@ -78,14 +77,14 @@ possible effects is open ended.
 
 What if you use Postgress and want an effect which issues mutating 
 queries?  Or what if you want to send logs to Logentries.
-Or write values to a LocalStore key. And what happens if your database is
+Or write values to windows.location. And what happens if your database is
 X, Y or Z?
 
 The list is long and varied, with everyone using a different combination
 of available effects.
 
 So effect handling has to be extensible. You need to a way to define 
-your own side effects. 
+your own side effects.
 
 ### Extensible Side Effects
 
@@ -104,7 +103,7 @@ __<1>__  the key for the effect.  When an effects map contains
 the key `:butterfly`, the registered function should be used to action it. <br>
 
 __<2>__  a function which actions the side effect. It is called 
-with one argument - the value for this key, in the effects map. 
+with one argument - the value for this key, in the effects map.
 
 So, if an event handler returned these effects:
 ```clj
@@ -115,20 +114,23 @@ So, if an event handler returned these effects:
 Then the function we registered for `:butterfly` would be called to handle that effect. And it would be called with the parameter "Flapping".
 
 So, terminology:
-- `:butterfly` is known as an "effect key"
-- and the function registered is known as an "effect handler"
+- `:butterfly` is an "effect key"
+- and the function registered is an "effect handler"
 
 ### Writing An Effect Handler
 
-A word of advice - make them as simple as possible, and then simplify them further.  You don't want them containing any fancy logic.  
+A word of advice - make them as simple as possible, and then 
+simplify them further.  You don't want them containing any fancy logic.  
 
-Why?  Well, because they are all side-effecty they will be a pain to test rigorously. And the combination of fancy logic and limited testing always ends in tears.
+Why?  Well, because they are all side-effecty they will be a pain 
+to test rigorously. And the combination of fancy logic and limited 
+testing always ends in tears.
 
 A second word of advice - when you create an effect handler, 
 you also have to design (and document!) the structure of the 
 `value` expected. 
 
-Realise that you are creating a nano DSL when designing this `value` and
+When you do, realise that you are creating a nano DSL for `value` and try to
 make it simple too. Resist tricky. Create as little cognitive overhead as possible 
 for the eventual readers of your effectful code.
 
@@ -152,31 +154,36 @@ An effects map does not have to include the `effect key` `:db`.
 It is perfectly okay to have effects which do not cause
 an update to `app-db`. 
 
+In fact, it is perfectly okay for an event handler to return 
+an effects of `{}`.  Slightly puzzling, but not a problem.  
+
 
 ### What Makes This Work?
 
 A silently inserted interceptor.
 
-Whenever you register an event handler via __either__ `reg-event-db`
+Whenever you register an event handler via __either__ `reg-event-db` 
+or `reg-event-fx`, an interceptor, cunningly named `do-effects`,  
+is inserted at the beginning of the chain. 
 
-or `reg-event-fx`, an interceptor, cunningly named `do-effects`,  is inserted at the beginning of the chain. 
-
-So, if your event handler registration looked like this:
+Example: if your event handler registration looked like this:
 ```clj
 (reg-event-fx
   :some-id
   [debug (path :right)]     ;; <-- two interceptors, apparently
   (fn [coeffect] 
-     {})                    ;; <-- return effects here
+     {})                    ;; <-- imagine returned effects here
 ```
 
-You have actually registered with 3 interceptors:
+While it might look like you have registered with 2 interceptors, 
+`reg-event-fx` will make it 3: 
 ```clj 
 [do-effects debug (path :right)]
 ```
 
-`do-effects` placement at the beginning of the interceptor chain means it's  `:after` function is the final act 
-in the chain's first-forwards-and-then-backwards execution.
+`do-effects` placement at the beginning of the interceptor chain means 
+it's  `:after` function would be the final act when the chain is executed 
+(forwards and then backwards, as described in the Interceptor Tutorial).
 
 In this final act, the `:after` function extracts `:effects` from `context` 
 and simply iterates across the key/value pairs it contains, calling the 
@@ -197,17 +204,19 @@ of the interceptor chain.  It is only a few lines of code.
 
 There isn't one.
 
-`do-effects` does not currently allow you to control the order in 
+`do-effects` does not currently provide you with control over the order in 
 which side effects occur. The `:db` side effect 
-might happen before `:dispatch`, or not. 
+might happen before `:dispatch`, or not.
 
-If you feel you need ordering, then please 
-open an issue and explain the usecase. It is the current absence of 
-good usecases which have lead to this not being implemented. 
+*Note:* if you feel you need ordering, then please 
+open an issue and explain the usecase. The current absence of 
+good usecases is the reason it isn't implemented. Give us some and
+we'll revisit. 
 
-If ever ordering was needed, it might be handled via metadata on `:effects`. And 
-perhaps allow `reg-fx` to optionally take two functions:
-- an effects pre-process fn <--- new
+*Further Note:* if ever ordering was needed, it might be handled via 
+metadata on `:effects`. Also, perhaps allow `reg-fx` to optionally 
+take two functions:
+- an effects pre-process fn <--- new. Takes `:effects` returns `:effects`
 - the effects handler, as already discussed.
 
 Anyway, these are all just possibilities. But not needed or implemented yet. 
@@ -233,7 +242,7 @@ XXX talk about reinstating:
 
 
 
-## Builtin Effects Handlers
+## Builtin Effect Handlers
 
 #### :dispatch-later
 
@@ -289,7 +298,7 @@ usage:
 {:db  {:key1 value1 key2 value2}}
 ```
 
-## Other Available Effects
+## External Effects
 
 - https://github.com/Day8/re-frame-http-fx   (GETs and POSTs)
 - https://github.com/Day8/re-frame-forward-events-fx  (slightly exotic)
