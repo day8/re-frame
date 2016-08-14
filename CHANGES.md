@@ -92,6 +92,9 @@ Joking aside, this is a substantial release which will change how you use re-fra
   - if you have previously used the undo/redo capabilities in re-frame, be aware they have migrated to 
     a sibling library:  XXX
 
+  - middlewares have been replaced by interceptors,
+    so `(register id (comp middle-a middle-b) fct)` becomes `(register id [(db-handler->interceptor middle-a) (db-handler->interceptor middle-b)] fct)`.
+
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can
     supply alternative functions using `re-frame.core/set-loggers!`.
 
