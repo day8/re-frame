@@ -1,8 +1,32 @@
+## Effectful Handlers
 
 This tutorial shows you how to implement pure event handlers that side-effect. 
 Yes, a surprising claim.
 
+## Table Of Contents 
 
+- [Effectful Handlers](#effectful-handlers)
+- [Table Of Contents](#table-of-contents)
+- [Effects](#effects)
+  * [Events Happen](#events-happen)
+  * [Handling The Happening](#handling-the-happening)
+  * [Your Handling](#your-handling)
+  * [90% Solution](#90--solution)
+  * [Bad, Why?](#bad--why-)
+  * [The Other Problem](#the-other-problem)
+  * [Effects And Coeffects](#effects-and-coeffects)
+  * [Why Does This Happen?](#why-does-this-happen-)
+  * [Doing vs Causing](#doing-vs-causing)
+  * [Et tu, React?](#et-tu--react-)
+  * [Pattern Structure](#pattern-structure)
+  * [The Two Step Plan](#the-two-step-plan)
+  * [Step 1 Of Plan](#step-1-of-plan)
+  * [Another Example](#another-example)
+  * [The Coeffects](#the-coeffects)
+  * [Variations On A Theme](#variations-on-a-theme)
+  * [Summary](#summary)
+
+## Effects
 ### Events Happen
 
 Events "happen" when they are dispatched.
