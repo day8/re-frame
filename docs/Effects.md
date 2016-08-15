@@ -244,7 +244,17 @@ XXX talk about reinstating:
 - capture return 
 - XXX new feature?
 
+### Effects With No Data
 
+Some effects have no associated data:
+```clj
+(reg-event-fx
+  :some-id
+  (fn [coeffect _] 
+     {:exit-fullscreen nil})     ;;   <--- no data, use a nil
+```
+
+So in these cases, although it looks odd, just supply `nil` as the value for this key.
 
 ## Builtin Effect Handlers
 
