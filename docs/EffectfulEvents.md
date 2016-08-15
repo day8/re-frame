@@ -363,6 +363,8 @@ can. The `-fx` version is more flexible, so it will sometimes have its place.
 But about 10% of the time, our handlers need additional inputs (coeffecs) or they need to 
 cause additional side-effects (effects).  That's when you reach for `-fx` handlers. 
 
+`-fx` handlers allow us to return effects, declaratively in data. 
+
 In the next tutorial, we'll shine a light on `interceptors` which are
 the mechanism by which  event handlers are executed. That knowledge will give us a springboard 
 to more deeply understand coeffects and effects. We'll soon be writing our own.   

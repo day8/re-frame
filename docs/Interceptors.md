@@ -1,6 +1,6 @@
 ## Introduction 
 
-This is an interceptors tutorial 
+This is an interceptors tutorial.
 
 ## Table Of Contents
 

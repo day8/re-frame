@@ -4,7 +4,11 @@ About 10% of the time, event handlers need to cause side effects.
 
 This tutorial explains how side effects are actioned,
 how you can create your own side effects, and how you can 
-make side effects a noop in tests.
+make side effects a noop in event replays.
+
+> imperative programming is a big pile of do  <br>
+> &nbsp; &nbsp;  -- @stuarthalloway
+
 
 ## Table Of Contexts
 
@@ -31,11 +35,11 @@ make side effects a noop in tests.
 ## Effects
 ### Where Effects Come From
 
-When an event handler is registered via `reg-event-fx`, it returns effects.
+When an event handler is registered via `reg-event-fx`, it always returns effects.
 
 Like this:  
 ```clj
-(reg-event-fx              ;; -fx version, not the -db version
+(reg-event-fx              ;; -fx registration, not -db registration
   :my-event
   (fn [coeffects [_ a]]    ;; 1st argument is coeffects, instead of db     
     {:db       (assoc (:db coeffects) :flag  a)         
@@ -50,8 +54,7 @@ An effects map contains instructions.
 
 Each key/value pair in the map is one instruction - the `key` identifies 
 the particular side effect required, and the `value` for that `key` provides 
-further information. The structure of the `value` varies with the side 
-effect itself.
+further data. The structure of the `value` varies on a per side-effect basis. 
 
 Here's the two instructions from the example above: 
 ```cljs 
@@ -63,7 +66,7 @@ That `:db` `key` instructs that "app-db" should be reset to the
 `value` supplied for that `key`.  
 
 That `:dispatch` `key` instructs that an event should be
-dispatched. The `value` is the vector to dispatch.
+dispatched. The `value` given is the vector to dispatch.
 
 There's many other possible
 effects, like for example `:dispatch-later` or `:set-local-store`. 
@@ -76,7 +79,7 @@ While re-frame supplies a number of builtin effects, the set of
 possible effects is open ended.
 
 What if you use Postgress and want an effect which issues mutating 
-queries?  Or what if you want to send logs to Logentries.
+queries?  Or what if you want to send logs to Logentries or metrics to DataDog.
 Or write values to windows.location. And what happens if your database is
 X, Y or Z?
 
@@ -88,7 +91,8 @@ your own side effects.
 
 ### Extensible Side Effects
 
-re-frame provides a function `reg-fx` through which you can register your own `Effect Handlers`.
+re-frame provides a function `reg-fx` through which you can register 
+your own `Effect Handlers`.
 
 Use it like this:
 ```clj
