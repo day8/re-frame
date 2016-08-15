@@ -1,6 +1,8 @@
 
-The documentation in this folder relates to v0.8.0 
+Understanding Event Handlers:
 
-Event Handlers
-[[EffectfulEvents.md]]
-[[Interceptors]]
+1. [EffectfulEvents](EffectfulEvents.md)  
+2. [Interceptors](Interceptors.md)  
+3. [Effects](Effects.md)  
+4. [CoEffects](coeffects.md)  
+
