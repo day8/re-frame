@@ -47,6 +47,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
   - there's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
     For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers  <br>
+    XXX Change link to new docs XXX
     For example use see:
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
