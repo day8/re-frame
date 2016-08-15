@@ -95,7 +95,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     story which has emerged in re-frame through this 0.8.0 release. 
     
     In day to day use, there's a good chance you won't notice the change from 
-    middleare to Interceptors UNLESS: 
+    middleware to Interceptors UNLESS: 
     
     1. You have written your own middleware.  If so, you'll have to rewrite it.
        See how [the builtin interceptors are done](https://github.com/Day8/re-frame/blob/develop/src/re_frame/std_interceptors.cljc). 
