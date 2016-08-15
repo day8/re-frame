@@ -3,22 +3,35 @@
 This tutorial explains `coeffects`.
 
 It explains what they are, how they are created, how they help, and how 
-to manage them in tests. There's an adults-only moment.
+to manage them in tests. There's also an adults-only moment.
 
 ## Table Of Contexts
-
-
+ 
+- [Introduction](#introduction)
+- [Table Of Contexts](#table-of-contexts)
+- [Coeffects](#coeffects)
+  * [What Are They?](#what-are-they-)
+  * [An Example](#an-example)
+  * [Let's Fix It](#let-s-fix-it)
+  * [How Are Coeffect Babies Made?](#how-are-coeffect-babies-made-)
+  * [So, Next Step](#so--next-step)
+  * [`coeffect` the function](#-coeffect--the-function)
+  * [Other Example Uses of `coeffects`](#other-example-uses-of--coeffects-)
+  * [Meet `reg-cofx`](#meet--reg-cofx-)
+  * [Examples](#examples)
+  * [Secret Interceptors](#secret-interceptors)
+  * [Testing](#testing)
 
 ## Coeffects
  
 ### What Are They?
 
-`coeffects` are the input resources required by an event handler
+`coeffects` are the input resources that an event handler requires 
 to perform its computation.  By "resources" I mean "data".
 
 Because the majority of event handlers require only `db` and 
-`event`, there's a registration function called `reg-event-db` 
-which delivers these two inputs as arguments to an event 
+`event`, there's a registration function, called `reg-event-db`, 
+which delivers these two coeffects as arguments to an event 
 handler, making it easy.
 
 But sometimes an event handler needs other inputs
@@ -29,57 +42,59 @@ DataScript database.
 
 ###  An Example  
 
-This handler is obtaining data directly from LocalStore
+This handler obtains data directly from LocalStore
 ```clj
 (reg-event-fx
-   :load-localstore
-   (fn [coeffect _]
+   :load-defaults
+   (fn [coeffects _]
      (let [val (js->clj (.getItem js/localStorage "defaults-key"))]  ;; <-- Problem
        (assoc db :defaults val))))
 ```
 
-Because this event handler has directly accessed a resources, it has stopped being 
-pure, causing well documented problems to to accrue.
+Because it has accessed LocalStore, this event handler has stopped being 
+pure, which will trigger well documented paper cuts. 
 
-### Let's Fix It Up 
+### Let's Fix It
 
-Here's how we'd like to write it. Data should only come from the coeffects argument:
+Here's how __we'd like to rewrite that handler__. Data should 
+only come from the `coeffects` argument:
 ```clj
 (reg-event-fx                     ;; using -fx registration
-   :load-localstore
+   :load-defaults
    (fn [coeffects event]         ;; 1st argument is coeffects
-     (let [val (:local-store coeffects)
-           db   (:db coeffects)]  ;; <-- get value from argument
+     (let [val (:local-store coeffects)  ;; <-- get value from argument
+           db   (:db coeffects)]  
        {:db (assoc db :defaults val))})) ;; returns an effect
 ```
 
-Problem solved? 
-
-Well, no. We must still arrange for the right LocalStore value to be put  
-into coeffects.
+Problem solved? Well, yes, the handler is now pure.  But we have a 
+new problem: how do we arrange for the right `:local-store` value 
+to be available in `coeffects`.
 
 ### How Are Coeffect Babies Made?
 
-Awkward moment, but it is now time for THAT talk. Err, hurm. When two 
-coeffects love each other very much ... no, stop ... it doesn't happen that way. This 
-is a G rated framework. Instead ...
+Well ... when two coeffects love each other very much ... no, stop ... this 
+is a G-rated framework. Instead ...
 
 Every time an event handler is executed, a new `context` is created, and within that 
 `context` is a new `:coeffect` map, which is initially totally empty.  
 
 That pristine `context` value is then threaded through a chain of Interceptors, and sitting 
-on the end of chain is the handler, wrapped up as the final interceptor. We know  
-this story well from a previous tutorials. 
+on the end of chain is the event handler, wrapped up as the final interceptor. We know  
+this story well from a previous tutorial. 
 
-So it becomes obvious that Interceptors put coeffects in place. Or more specifically, the 
-`:before` functions of Interceptors.
+So all members of the Interceptor chain have the opportunity to add to `:coeffects` 
+via their `:before` function. 
 
 ### So, Next Step
 
-So now we now tweak our localstore-consuming event handler in one way: 
+Armed with that mindset, let's add an interceptor to the registration, which 
+puts the right  localstore value into coeffect. 
+
+Here's a sketch:   
 ```clj
 (reg-event-fx                     
-   :load-localstore
+   :load-defaults
    [ (coeffect :local-store "defaults-key") ]     ;; <-- this is new
    (fn [coeffects event]         
      (let [val (:local-store coeffects)
@@ -87,111 +102,90 @@ So now we now tweak our localstore-consuming event handler in one way:
        {:db (assoc db :defaults val))})) 
 ```
 
-Problem solved? 
-
-Well, no, not yet. What's this `coeffects` function returning and how does it know to load LocalStore.   
+Problem solved? Well, no. We're still sketching here. What's that `coeffects` function returning 
+and how does it know to load from LocalStore.   
 
 
 ### `coeffect` the function 
 
-`coeffect` is a part of re-frame. 
+The `coeffect` function is part of re-frame API. 
 
-It returns an Interceptor whos `:before` fucntion loads a value into a `context's` `:coeffect`. 
+It returns an Interceptor whose `:before` function loads a value into a `context's` `:coeffect` map. 
 
-It takes either one or two arguments. The first is always the `id` of the coeffect required (called a `cofx-id`). The 2nd is optional 
-addition value.
+It takes either one or two arguments. The first is always the `id` of the coeffect 
+required (called a `cofx-id`). The 2nd is an optional addition value.
 
-So in the case above, the `cofx-id` was `:local-store`  and the additional calue was "defaults-key". 
+So in the case above, the `cofx-id` was `:local-store`  and the additional value was "defaults-key". 
+
+### Other Example Uses of `coeffects` 
  
-
-### Other Uses of `coeffects`
- 
-Here's a couple of other examples:
+Here's some other examples of its use:
 
   -  `(coeffects :random-int 10)` 
   -  `(coeffects :guid)`
-
-In a previous tutorial we also learned that `reg-events-db` and `reg-events-fx` 
-add Interceptors to front of any chain during registration.  They insert an Interceptor 
-called `do-effects`, which ultimately actions effects. 
- 
-And it turns out that they also add Interceptors which cause the value of `app-db` 
-to be placed in `coeffects`.  They do it by adding this to any events Interceptor chain:
-```
-(coeffects :db)
-```
-
-`coeffects` is a function, which takes one parameter, and that's the "coeffects handler"
-which will summon the right value. The function returns an Interceptor.
-
-Okay, let me explain that a bit more.  I've gone a bit fast.
- 
- 
- Notes:
- 
-  1. `(coeffects {:something value})`  or  `{coeffects :something)` will look up a `cofx` handler for `:something`
-  2. An Interceptor is returned from the 
-  2. It will call this handler passing in value.
-  3. It will take the returned value and add it to the `:coffect` of the context under the 
-     key.  
-
+  -  `(coeffects :now)`
   
-
-So it will come as no surprise to you to learn that it is Interceptors which 
-fill `:coeffects` with "necessary inputs". 
- 
-The `:coeffect`  might start pristine and empty, but it is threaded through the 
-`:before` functions of each Interceptor in the chain prior to the handler 
-interceptor sitting at the end.
-  
-But which Interceptors?
-
-We saw in a previous tutorial that both
-.  At the time, 
-also add another interceptor and it looks like this: 
-```
-(coeffects :db)
+So, if I wanted to,  I could create an event handler which has access to 3 coeffects:
+```clj
+(reg-event-fx 
+    :some-id 
+    [(coeffects :random-int 10) (coeffects :now)  (coeffects :local-store "blah")]  ;; 3
+    (fn [coeffects _]
+       ... in here I can access coeffect's keys :now :local-store and :random-int)) 
 ```
 
-So that interceptor is added to every one of your registered event handlers. And it 
-adds `:db` to the `coeffect`.
+Probably excessive. But we're still missing the final piece. How do we register a coeffect handler so that this function 
+`coeffect` knows what value you want?  
 
-So how does `(coffects :db`)` work?  How could I create my own. 
+### Meet `reg-cofx`
 
+This function allows you associate a`cofx-id` (like `:now` or `:local-store`) with a handler function.  
 
- 
-
-
-From previous tutorials we are familiar with `reg-event-db` and `reg-event-fx` add 
- their own Interceptors to any chain you provide.  Well, one of the interceptors XXX
- 
- 
-XXXX
-
-
-
-
-specifically a map of data. the inputs required by an event handler. 
-
-At a more pragmatic level, coeffects is a map in `context`
-
-
-### How 
-
-An Interceptor factory called `coeffect`
-
-
-### reg-cofx
-
+The handler function registered for a `cofx-id` will be passed a `:coeffects` map, and it 
+is expected to return a modified map, presumably with an added key and value. 
 
 ### Examples
 
-XXX need a random number???
+You saw above the use of `:now`.  He're is how a `cofx` handler could be registered:
+```clj 
+(reg-cofx               ;; using this new registration function
+   :now                 ;; what cofx-id are we registering
+   (fn [coeffects _]    ;; second parameter not used in this case
+      (assoc coeffects :now (js.Date.))))   ;; add :now key, with value to coeffects
+```
+
+And then there's this example:
+```clj 
+(reg-cofx               ;; new registration function
+   :local-store 
+   (fn [coeffects lsk]    ;; second parameter is the local store key
+      (assoc coeffects 
+             :local-store
+             (js->clj (.getItem js/localStorage lsk))))
+```
 
 
+With these two registrations in place, I can now use `(coefect :now)` and 
+`(coeffect :local-store "blah")` in an effect handler's inteerceptor chain. 
+ 
+### Secret Interceptors
+
+In a previous tutorial we learned that `reg-events-db` 
+and `reg-events-fx` add Interceptors to front of any chain during registration.
+
+If you remember, they insert an Interceptor called `do-effects`, which ultimately 
+actions effects, in its `:after` function.  
+
+I can now reveal that they also add `(coeffect :db)` at the front of each chain. (Last surprise, I promise) 
+
+Guess what that adds to coeffects? 
 
 
 ### Testing
 
-It immedaitely becomes harder to test, etc.
+re=-frame has very few XXX  
+
+This plugable approach, 
+
+
    
