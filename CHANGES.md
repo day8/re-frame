@@ -75,8 +75,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     documented. 
     
     This new library includes [various enhancements](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
-    over that which previously existed, including a feature which works in with the new effectful handlers
-    described above. 
+    over that which previously existed, and it works in with effectful handlers described above.
     
   - Middleware is dead, long live Interceptors. 
   
