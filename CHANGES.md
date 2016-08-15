@@ -85,20 +85,30 @@ Joking aside, this is a substantial release which will change how you use re-fra
     successful part of the framework.  We thought we were happy.
     
     But recently @steveb8n gave a cljsyd talk on 
-    Pedistal's Interceptor pattern and he transformed them from 
+    Pedistal's Interceptor pattern which suddenly transformed them from 
     arcane to delightfully simple in 20 mins. Interceptors are 
-    really "middleware via data" rather than "middleware via function 
-    composition". So it is another way of doing the same thing, but to my mind
-    Interceptors are both more flexible and simpler. 
+    really "middleware via data" rather than "middleware via higher order functions".  
+    So it is another way of doing the same thing, but to my mind
+    Interceptors are a more flexible platform, and simpler. 
     
     Interceptors also dovetail really nicely with the effects and coeffects 
     story which has emerged in re-frame through this 0.8.0 release. 
     
-    So we swapped to get a more flexible foundation. But day to day, 
-    there's a good chance you won't notice any difference.
+    In day to day use, there's a good chance you won't notice the change from 
+    middleare to Interceptors UNLESS: 
     
-    XXX at this point in the release cycle, there are no
-    good docs on this.  
+    1. You have written your own middleware.  If so, you'll have to rewrite it.
+       See how [the builtin interceptors are done](https://github.com/Day8/re-frame/blob/develop/src/re_frame/std_interceptors.cljc). 
+    2. You explicitly use `comp` like this: 
+       ```clj
+       (reg-event-db 
+           :some-id
+           (comp debug tim-v)    ;; <-- change to [debug trim-v]
+           (fn [db event] 
+               ...))
+       ```
+    
+    XXX link to docs   
     
   - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no 
     good deed ever goes unpunished - we'll be pestering you every time from now on :-)
