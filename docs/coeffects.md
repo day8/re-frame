@@ -19,6 +19,7 @@ to manage them in tests. There's also an adults-only moment.
   * [Other Example Uses of `coeffects`](#other-example-uses-of--coeffects-)
   * [Meet `reg-cofx`](#meet--reg-cofx-)
   * [Examples](#examples)
+  * [The 4 Point Summary](#the-4-point-summary)
   * [Secret Interceptors](#secret-interceptors)
   * [Testing](#testing)
 
@@ -36,11 +37,11 @@ handler, making it easy.
 
 But sometimes an event handler needs other inputs
 to perform their computation.  Things like a random number, or a GUID,
-or the current datetime. Perhaps it might need access to an in-memory 
-DataScript database.
+or the current datetime. It might even need access to a
+DataScript connection.
 
 
-###  An Example  
+###  An Example
 
 This handler obtains data directly from LocalStore
 ```clj
@@ -51,7 +52,7 @@ This handler obtains data directly from LocalStore
        (assoc db :defaults val))))
 ```
 
-Because it has accessed LocalStore, this event handler has stopped being 
+Because it has accessed LocalStore, this event handler is not 
 pure, which will trigger well documented paper cuts. 
 
 ### Let's Fix It
@@ -73,7 +74,7 @@ to be available in `coeffects`.
 
 ### How Are Coeffect Babies Made?
 
-Well ... when two coeffects love each other very much ... no, stop ... this 
+Well, when two coeffects love each other very much ... no, stop ... this 
 is a G-rated framework. Instead ...
 
 Every time an event handler is executed, a new `context` is created, and within that 
@@ -102,8 +103,7 @@ Here's a sketch:
        {:db (assoc db :defaults val))})) 
 ```
 
-Problem solved? Well, no. We're still sketching here. What's that `coeffects` function returning 
-and how does it know to load from LocalStore.   
+Problem solved? Well, no, but closer. We're assuming a `coeffects` function. How would it work?
 
 
 ### `coeffect` the function 
@@ -134,8 +134,10 @@ So, if I wanted to,  I could create an event handler which has access to 3 coeff
        ... in here I can access coeffect's keys :now :local-store and :random-int)) 
 ```
 
-Probably excessive. But we're still missing the final piece. How do we register a coeffect handler so that this function 
-`coeffect` knows what value you want?  
+Creating 3 coeffects is probably just showing off, and not generally necessary.  
+
+And we still have the final piece to put in place. How do we tell this `coeffect` function what to do when  
+it is given `:now` or `:random-int` ?
 
 ### Meet `reg-cofx`
 
@@ -167,25 +169,32 @@ And then there's this example:
 
 With these two registrations in place, I can now use `(coefect :now)` and 
 `(coeffect :local-store "blah")` in an effect handler's inteerceptor chain. 
+
+### The 4 Point Summary
+
+Here is the overall picture, summarised, in note form ...
+
+  1. Event handlers should only source data from their arguments
+  2. So we have to "inject" required data into coeffect argument
+  3. So we use `(coeffects :key)` interceptor in registration 
+  4. There has to be a coefx handler registered for that `:key`
+  
+XXX should "coeffect" function be called  "inject" ... otherwise there just too many different coeffects 
+
  
 ### Secret Interceptors
 
 In a previous tutorial we learned that `reg-events-db` 
 and `reg-events-fx` add Interceptors to front of any chain during registration.
 
-If you remember, they insert an Interceptor called `do-effects`, which ultimately 
-actions effects, in its `:after` function.  
-
-I can now reveal that they also add `(coeffect :db)` at the front of each chain. (Last surprise, I promise) 
+We found they inserted an Interceptor called `do-effects`. I can now reveal that 
+they also add `(coeffect :db)` at the front of each chain. (Last surprise, I promise) 
 
 Guess what that adds to coeffects? 
 
-
 ### Testing
 
-re=-frame has very few XXX  
-
-This plugable approach, 
+XXX 
 
 
    
