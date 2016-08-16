@@ -5,9 +5,6 @@ Yes, a surprising claim.
 
 ## Table Of Contents 
 
-- [Effectful Handlers](#effectful-handlers)
-- [Table Of Contents](#table-of-contents)
-- [Effects](#effects)
   * [Events Happen](#events-happen)
   * [Handling The Happening](#handling-the-happening)
   * [Your Handling](#your-handling)
@@ -41,16 +38,16 @@ message arrives on a websocket.
 
 ### Handling The Happening
 
-Once dispatched, an event must be "handled".  It must be processed, actioned. 
+Once dispatched, an event must be "handled" - which means it must be processed or actioned. 
 
 Events are mutative by nature. If your application is in one state before an 
 event is processed, it will be in a different state afterwards.
 
 And that state change is very desirable. Without the state change our 
 application can't incorporate that button click, or the newly arrived 
-websocket message. Without mutation, the apps just sits there, stuck. 
+websocket message. Without mutation, an app would just sits there, stuck. 
 
-State change is how the application "moves forward" - how it does its job.  Useful!
+State change is how an application "moves forward" - how it does its job.  Useful!
 
 On the other hand, control logic and state mutation tend to be the most 
 complex and error prone of part of an app.
@@ -63,7 +60,7 @@ provided you with a simple programming model.
 It said you should call `reg-event-db` to associate an event id, 
 with a function to do the handling: 
 ```clj
-(re-frame.core/reg-event-db        ;; <-- call this to register handlers
+(re-frame.core/reg-event-db        ;; <-- call this to register a handler
     :set-flag                      ;; this is an event id 
    (fn [db [_ new-value]           ;; this function does the handling 
       (assoc db :flag new-value)))
@@ -136,7 +133,7 @@ replay, inserting extra events into it, etc, which ruins the process.
 
 ### The Other Problem
 
-And there's another purity problem:
+And there's another kind of purity problem:
 ```clj
 (reg-event-db
    :load-localstore
@@ -145,21 +142,20 @@ And there's another purity problem:
        (assoc db :defaults val))))
 ```
 
-It sources data from LocalStore.
+You'll notice it sources data from LocalStore.
 
-So this handler has no side effect - it doesn't need to change the world - __but__ it does
-need to source data from somewhere other than its arguments - from somewhere
-outside of app-db or the event.  
+Although this handler has no side effect - it doesn't need to change the world - it does
+need to source data from somewhere other than its arguments, which, in turn, means it isn't pure.
 
-So, it isn't a pure function, and that leads to the normal problems. 
 
 ### Effects And Coeffects
 
 So there are [two concepts at play here](http://tomasp.net/blog/2014/why-coeffects-matter/):
   - **Effects** - what your event handler does to the world  (aka side-effects)
-  - **Coeffects** - the data your event handler requires from the world in order to do its computation (aka [side-causes](http://blog.jenkster.com/2015/12/what-is-functional-programming.html))
+  - **Coeffects** - the data your event handler requires from the world in order 
+    to do its computation (aka [side-causes](http://blog.jenkster.com/2015/12/what-is-functional-programming.html))
 
-We'll need a solution for both.
+We'll need a solution for both situations.
 
 ### Why Does This Happen?
 
@@ -169,8 +165,8 @@ They have to implement the control logic of your re-frame app, and
 that means dealing with the outside, mutative world of servers, databases, 
 windows.location, LocalStore, cookies, etc.
 
-There's just no getting away from living in a mutative world, er, 
-which sounds ominous. Is that it? Are we doomed to impurity?
+There's just no getting away from living in a mutative world,  
+which sounds pretty ominous. Is that it? Are we doomed to impurity?
 
 Well, luckily a small twist in the tale makes a profound difference. We 
 will look at side-effects first. Instead of creating event handlers
@@ -178,7 +174,7 @@ which *do side-effects*, we'll instead get them to *cause side-effects*.
 
 ### Doing vs Causing
 
-Above, I proudly claimed that this `fn` event handler was pure:
+Above, I proudly claimed that this event handler was pure:
 ```clj
 (reg-event-db
    :my-event
@@ -245,7 +241,7 @@ Here is an impure, side effecting handler:
 (reg-event-db
    :my-event
    (fn [db [_ a]]
-       (dispatch [:do-something-else 3])    ;; Eeek, side-effect
+       (dispatch [:do-something-else 3])    ;; <-- Eeek, side-effect
        (assoc db :flag true)))
 ```
 
@@ -284,7 +280,7 @@ The impure way:
        (assoc db :flag true)))
 ```
 
-the pure, descriptive way:
+the pure, descriptive alternative:
 ```clj
 (reg-event-fx
    :my-event
@@ -315,17 +311,18 @@ It is now time to name that first argument:
 ```clj
 (reg-event-fx
    :my-event
-   (fn [coeffects event]   ;;  <--- thy name be coeefects
+   (fn [cofx event]       ;;  <--- thy name be cofx
        { ... }))
 ```
 
-When you use the `-fx` form of registration, the first argument of your handler will be a coeffects map. 
+When you use the `-fx` form of registration, the first argument of your handler will be a map of coeffects which we name `cofx`.  
 
 In that map will be the complete set of "inputs" required by your function.  The complete 
 set of computational resources (data) needed to perform its computation. But how?  
-I'll explain in an upcoming tutorial, I promise, but for the moment, take it as a magical given. 
+This is will explained in an upcoming tutorial, I promise, but for the moment, 
+take it as a magical given. 
 
-One of the keys in `coeffects` will likely be `:db` and that will be the value of `app-db`. 
+One of the keys in `cofx` will likely be `:db` and that will be the value of `app-db`. 
 
 Remember this impure handler from before:
 ```clj
@@ -340,14 +337,14 @@ We'd now rewrite that as a pure handler, like this:
 ```clj
 (reg-event-fx             ;; notice the -fx
    :load-localstore
-   (fn [coeffect _]       ;; coeffect is a map containing inputs
-     (let [defaults (:defaults-key coeffect)]  ;; <--  use it here
-       {:db (assoc (:db coeffects) :defaults defaults)})))  ;; returns effects map
+   (fn [cofx  _]          ;; cofx is a map containing inputs
+     (let [defaults (:defaults-key cofx)]  ;; <--  use it here
+       {:db (assoc (:db cofx) :defaults defaults)})))  ;; returns effects map
 ```
 
 So, by some magic, not yet revealed, LocalStore will be queried before 
 this handler runs and the required value from it will be placed into 
-`coeffects` under the key `:localstore` for the handler to use. 
+`cofx` under the key `:localstore` for the handler to use. 
 
 That process leaves the handler itself pure because it only sources data from arguments.
 
@@ -368,7 +365,7 @@ Just to be clear, the following two handlers achieve exactly the same thing:
    (fn [db [_ new-value]
       (assoc db :flag new-value)))
 ```
-and
+vs
 ```clj
 (reg-event-fx
    :set-flag

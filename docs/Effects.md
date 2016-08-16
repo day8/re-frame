@@ -12,8 +12,6 @@ make side effects a noop in event replays.
 
 ## Table Of Contexts
 
-- [Introduction](#introduction)
-- [Table Of Contexts](#table-of-contexts)
 - [Effects](#effects)
   * [Where Effects Come From](#where-effects-come-from)
   * [The Effects Map](#the-effects-map)
@@ -55,12 +53,12 @@ An effects map contains instructions.
 
 Each key/value pair in the map is one instruction - the `key` uniquely identifies 
 the particular side effect required, and the `value` for that `key` provides 
-further data. The structure of the `value` varies on a per side-effect basis. 
+further data. The structure of the `value` is different for each side-effect. 
 
 Here's the two instructions from the example above: 
 ```cljs 
-  {:db       (assoc db :flag  a)         ;; side effect on app-db
-   :dispatch [:do-something-else 3]}     ;; dispatch this event
+{:db       (assoc db :flag  a)         ;; side effect on app-db
+ :dispatch [:do-something-else 3]}     ;; dispatch this event
 ```
 
 That `:db` `key` instructs that "app-db" should be `reset!` to the
@@ -84,8 +82,8 @@ queries?  Or what if you want to send logs to Logentries or metrics to DataDog.
 Or write values to windows.location. And what happens if your database is
 X, Y or Z?
 
-The list of effects is long and varied, with everyone using a 
-different combination of them.
+The list of effects is long and varied, with everyone needing to use a 
+different combination.
 
 So effect handling has to be extensible. You need to a way to define 
 your own side effects.
@@ -104,11 +102,11 @@ Use it like this:
       ))
 ```
 
-__<1>__  the key for the effect.  When an effects map contains 
-the key `:butterfly`, the registered function will be used to action it. <br>
+__<1>__  the key for the effect.  When later an effects map contains 
+the key `:butterfly`, the function we are registering will be used to action it. <br>
 
-__<2>__  the function which actions the side effect. It will be called 
-with one argument - the value for this key, in the effects map.
+__<2>__  the function which actions the side effect. Later, it will be called 
+with one argument - the value in the effects map, for this key. 
 
 So, if an event handler returned these effects:
 ```clj
@@ -179,7 +177,7 @@ Example: if your event handler registration looked like this:
 (reg-event-fx
   :some-id
   [debug (path :right)]     ;; <-- two interceptors, apparently
-  (fn [coeffect] 
+  (fn [cofx _] 
      {})                    ;; <-- imagine returned effects here
 ```
 
@@ -240,7 +238,7 @@ Some effects have no associated data:
      {:exit-fullscreen nil}))    ;;   <--- no data, use a nil
 ```
 
-So in these cases, although it looks odd, just supply `nil` as the value for this key.
+In these cases, although it looks odd, just supply `nil` as the value for this key.
 
 The associated effect handler would look like:
 ```clj
@@ -263,11 +261,6 @@ Want to stub out the `:dispatch` effect?  Do this:
   :dispatch
   (fn [_] ))    ;; a noop
 ```
-
-XXX talk about reinstating:
-- capture return 
-- XXX new feature?
-
 
 ## Builtin Effect Handlers
 

@@ -7,19 +7,16 @@ to manage them in tests.
 
 ## Table Of Contexts
  
-- [Introduction](#introduction)
-- [Table Of Contexts](#table-of-contexts)
-- [Coeffects](#coeffects)
   * [What Are They?](#what-are-they-)
   * [An Example](#an-example)
-  * [Let's Fix It](#let-s-fix-it)
+  * [How We Want It](#how-we-want-it)
   * [How Are Coeffect Babies Made?](#how-are-coeffect-babies-made-)
   * [So, Next Step](#so--next-step)
-  * [`coeffect` the function](#-coeffect--the-function)
-  * [Other Example Uses of `coeffects`](#other-example-uses-of--coeffects-)
+  * [`inject-cofx`](#-inject-cofx-)
+  * [More `inject-cofx`](#more--inject-cofx-)
   * [Meet `reg-cofx`](#meet--reg-cofx-)
   * [Examples](#examples)
-  * [The 4 Point Summary](#the-4-point-summary)
+  * [The 5 Point Summary](#the-5-point-summary)
   * [Secret Interceptors](#secret-interceptors)
   * [Testing](#testing)
 
@@ -43,7 +40,7 @@ DataScript connection.
 
 ###  An Example
 
-This handler obtains data directly from LocalStore
+This handler obtains data directly from LocalStore:
 ```clj
 (reg-event-db
    :load-defaults
@@ -52,22 +49,24 @@ This handler obtains data directly from LocalStore
        (assoc db :defaults val))))
 ```
 
-Because it has accessed LocalStore, this event handler is not 
+Because it has directly accessed LocalStore, this event handler is not 
 pure, and impure functions cause well-documented paper cuts. 
 
 ### How We Want It
 
 Our goal in this tutorial is to rewrite this event handler so 
-that data _only_ comes from the arguments. 
+that data _only_ comes from the arguments.
  
-Our first change is to start using `reg-event-fx`  (instead of 
-`reg-event-db`).  
+To make this happen, our first change is to switch to
+using `reg-event-fx` (instead of `reg-event-db`).
 
-Then we'll seek to have ALL the necessary extra data available in the 
-first argument, typically called `coeffects`.  
+Event handlers registered via `reg-event-fx` are slightly 
+different to those registered via `reg-event-fx`. `-fx` handlers 
+get two arguments, but the first is not `db`. Instead it is an argument which, in 
+this tutorial,  we will call `cofx` (that's a nice distinct name which will aid communication). 
 
 Previous tutorials have show us that we can obtain `:db` from 
-`coeffects`.  Well, not we want it to contain other useful data too. 
+`cofx`.  Well, in addition we now want it to contain other useful data too. 
 ```clj
 (reg-event-fx                     ;; note: -fx 
    :load-defaults
@@ -77,36 +76,30 @@ Previous tutorials have show us that we can obtain `:db` from
        {:db (assoc db :defaults val))})) ;; returns an effect
 ```
 
-If we can find a way to achieve this, then we are back to 
-writing pure event handlers. 
-
-But what must we do to data into cofx?  How do we organise for it 
-to contain a `:local-store` key, with the right value? 
+Notice how `cofx` magically contains a `:local-store` key with the 
+right value.  How do we organise for this magic to happen? 
  
-### How Are Coeffect Babies Made?
-
-Well, when two coeffects love each other very much ... no, stop ... this 
-is a G-rated framework. Instead ...
+### Abracadabra 
 
 Each time an event handler is executed, a brand new `context` is created, and within that 
-`context` is a brand new `:coeffect` map, which is initially totally empty.  
+`context` is a brand new `:coeffect` map, which is initially totally empty.
 
 That pristine `context` value (containing a pristine `:coeffect` map) is then threaded 
-through a chain of Interceptors before it is finally handled to our event handler
-which will be sitting on the end of chain, itself wrapped up in an interceptor. We know  
+through a chain of Interceptors before it is finally handled to our event handler,
+sitting on the end of a chain, itself wrapped up in an interceptor. We know  
 this story well from a previous tutorial. 
 
 So, all members of the Interceptor chain have the opportunity to add to `:coeffects` 
-via their `:before` function.  This is where `:coeffect` gets made.  This is where 
-new keys are added to `:coeffect`, so that later our handler magically finds the 
-right data in its parameter.
+via their `:before` function.  This is where `:coeffect` magic happens. This is where 
+new keys can be added to `:coeffect`, so that later our handler magically finds the 
+right data (like `:local-store`) in its `cofx` argument.
 
-### So, Next Step
+### Which Interceptors?
 
-If Interceptors put data in `:coeffect`, then we'd better put the right ones on 
-our handler when we register it. 
+If Interceptors put data in `:coeffect`, then we'll need to add the right ones to 
+our event handler when we register it. 
 
-This handler is the same as before, except for one addition:    
+Something like this (this handler is the same as before, except for one addition):    
 ```clj
 (reg-event-fx                     
    :load-defaults
@@ -117,8 +110,9 @@ This handler is the same as before, except for one addition:
        {:db (assoc db :defaults val))})) 
 ```
 
-So we've added one Interceptor. It will inject the right value into `context's` `:coeffeects`
-and that `:coeffects` ends up being the first parameter to our handler. 
+So we've added one Interceptor and it will do the magic. It will inject the right 
+value into `context's` `:coeffeects` which then goes on to be the first argument 
+to our event handler (`cofx`) 
 
 
 ### `inject-cofx`
@@ -128,13 +122,11 @@ and that `:coeffects` ends up being the first parameter to our handler.
 It is a function which returns an Interceptor whose `:before` function loads 
 a value into a `context's` `:coeffect` map.
  
-
 `inject-cofx` takes either one or two arguments. The first is always the `id` of the coeffect 
 required (called a `cofx-id`). The 2nd is an optional addition value. 
-.
 
 So, in the case above, the `cofx-id` was `:local-store`  and the additional value 
-was "defaults-key" which was presumable the place to look in LocalStore 
+was "defaults-key" which was presumably the LocalStore key. 
 
 ### More `inject-cofx` 
  
@@ -153,9 +145,9 @@ So, if I wanted to,  I could create an event handler which has access to 3 coeff
        ... in here I can access cofx's keys :now :local-store and :random-int)) 
 ```
 
-Creating 3 coeffects for the one handler is probably just showing off, and not generally necessary.  
+Adding 3 coeffects for the one handler is probably just showing off, and not generally necessary.  
 
-And so to the final piece in the puzzle.  How does `inject-cofx` know what to do when 
+And so, the final piece in the puzzle: how does `inject-cofx` know what to do when 
 it is given `:now` or `:local-store` ? Each `cofx-id` requires a different action.
 
 ### Meet `reg-cofx`
