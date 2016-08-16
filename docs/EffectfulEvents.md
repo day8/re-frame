@@ -10,13 +10,13 @@ Yes, a surprising claim.
   * [Your Handling](#your-handling)
   * [90% Solution](#90--solution)
   * [Bad, Why?](#bad--why-)
-  * [The Other Problem](#the-other-problem)
+  * [The 2nd Kind Of Problem](#the-2nd-kind-of-problem)
   * [Effects And Coeffects](#effects-and-coeffects)
   * [Why Does This Happen?](#why-does-this-happen-)
   * [Doing vs Causing](#doing-vs-causing)
   * [Et tu, React?](#et-tu--react-)
   * [Pattern Structure](#pattern-structure)
-  * [The Two Step Plan](#the-two-step-plan)
+  * [Effects: The Two Step Plan](#effects--the-two-step-plan)
   * [Step 1 Of Plan](#step-1-of-plan)
   * [Another Example](#another-example)
   * [The Coeffects](#the-coeffects)
@@ -45,7 +45,7 @@ event is processed, it will be in a different state afterwards.
 
 And that state change is very desirable. Without the state change our 
 application can't incorporate that button click, or the newly arrived 
-websocket message. Without mutation, an app would just sits there, stuck. 
+websocket message. Without mutation, an app would just sit there, stuck. 
 
 State change is how an application "moves forward" - how it does its job.  Useful!
 
@@ -131,9 +131,9 @@ when all the handlers are pure. Handlers with side-effects (like that HTTP GET, 
 replay, inserting extra events into it, etc, which ruins the process. 
 
 
-### The Other Problem
+### The 2nd Kind Of Problem
 
-And there's another kind of purity problem:
+And there's the other kind of purity problem:
 ```clj
 (reg-event-db
    :load-localstore
@@ -142,27 +142,26 @@ And there's another kind of purity problem:
        (assoc db :defaults val))))
 ```
 
-You'll notice it sources data from LocalStore.
+You'll notice the event handler obtains data from LocalStore.
 
-Although this handler has no side effect - it doesn't need to change the world - it does
-need to source data from somewhere other than its arguments, which, in turn, means it isn't pure.
-
+Although this handler has no side effect - it doesn't need to change the world - that action of 
+obtaining data from somewhere other than its arguments, means it isn't pure. 
 
 ### Effects And Coeffects
 
-So there are [two concepts at play here](http://tomasp.net/blog/2014/why-coeffects-matter/):
+When striving for pure event handlers [there are two considerations](http://tomasp.net/blog/2014/why-coeffects-matter/):
   - **Effects** - what your event handler does to the world  (aka side-effects)
   - **Coeffects** - the data your event handler requires from the world in order 
     to do its computation (aka [side-causes](http://blog.jenkster.com/2015/12/what-is-functional-programming.html))
 
-We'll need a solution for both situations.
+We'll need a solution for both.
 
 ### Why Does This Happen?
 
-It is inevitable that 10% of your event handlers have effects and coeffects.
+It is inevitable that, say, 10% of your event handlers have effects and coeffects.
 
-They have to implement the control logic of your re-frame app, and 
-that means dealing with the outside, mutative world of servers, databases, 
+They have to implement the control logic of your re-frame app, which 
+means dealing with the outside, mutative world of servers, databases, 
 windows.location, LocalStore, cookies, etc.
 
 There's just no getting away from living in a mutative world,  
@@ -191,7 +190,7 @@ Wait on.  What "necessary side-effecting"?
 
 Well, application state is stored in `app-db`, right?  And it is a ratom. And after 
 each event handler runs, it must be `reset!` to the newly returned 
-value.  That, right there, is the "necessary side effecting". 
+value. Notice `reset!`.   That, right there, is the "necessary side effecting". 
 
 We get to live in our ascetic functional world because re-frame is 
 looking after the "necessary side-effects" on `app-db`.
@@ -225,7 +224,7 @@ let the backing framework look after the "doing" of them. Efficiently. Discreetl
 
 Let's use this pattern to solve the side-effecting event-handler problem.
 
-### The Two Step Plan
+### Effects: The Two Step Plan
 
 From here, two steps:
   1. Work out how event handlers can declaratively describe side-effects, in data.
@@ -319,7 +318,7 @@ When you use the `-fx` form of registration, the first argument of your handler 
 
 In that map will be the complete set of "inputs" required by your function.  The complete 
 set of computational resources (data) needed to perform its computation. But how?  
-This is will explained in an upcoming tutorial, I promise, but for the moment, 
+This will be explained in an upcoming tutorial, I promise, but for the moment, 
 take it as a magical given. 
 
 One of the keys in `cofx` will likely be `:db` and that will be the value of `app-db`. 
@@ -333,7 +332,7 @@ Remember this impure handler from before:
        (assoc db :defaults defaults))))
 ```
 
-We'd now rewrite that as a pure handler, like this: 
+We'd now rewrite that as a pure handler, like this:
 ```clj
 (reg-event-fx             ;; notice the -fx
    :load-localstore
@@ -344,9 +343,10 @@ We'd now rewrite that as a pure handler, like this:
 
 So, by some magic, not yet revealed, LocalStore will be queried before 
 this handler runs and the required value from it will be placed into 
-`cofx` under the key `:localstore` for the handler to use. 
+`cofx` under the key `:localstore` for the handler to use.
 
-That process leaves the handler itself pure because it only sources data from arguments.
+That process leaves the handler itself pure because it only sources 
+data from arguments.
 
 
 ### Variations On A Theme
@@ -358,7 +358,7 @@ That process leaves the handler itself pure because it only sources data from ar
 Whereas `-fx` handlers take potentially MANY coeffects (a map of them) and they return 
 potentially MANY effects (a map of them).  So, One vs Many. 
 
-Just to be clear, the following two handlers achieve exactly the same thing:
+Just to be clear, the following two handlers achieve the same thing:
 ```clj
 (reg-event-db
    :set-flag
@@ -369,8 +369,8 @@ vs
 ```clj
 (reg-event-fx
    :set-flag
-   (fn [context [_ new-value]
-      {:db (assoc (:db context) :flag new-value)}))
+   (fn [cofx [_ new-value]
+      {:db (assoc (:db cofx) :flag new-value)}))
 ```
 
 Obviously the `-db` variation is simpler and you'd use it whenever you 
@@ -388,5 +388,5 @@ cause additional side-effects (effects).  That's when you reach for `-fx` handle
 
 In the next tutorial, we'll shine a light on `interceptors` which are
 the mechanism by which  event handlers are executed. That knowledge will give us a springboard 
-to more deeply understand coeffects and effects. We'll soon be writing our own.   
+to then, as a next step, better understand coeffects and effects. We'll soon be writing our own.   
 

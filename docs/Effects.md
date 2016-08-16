@@ -12,7 +12,6 @@ make side effects a noop in event replays.
 
 ## Table Of Contexts
 
-- [Effects](#effects)
   * [Where Effects Come From](#where-effects-come-from)
   * [The Effects Map](#the-effects-map)
   * [Infinite Effects](#infinite-effects)
