@@ -1,5 +1,5 @@
   
-## 0.8.0  (2016.07.XX)
+## 0.8.0  (2016.08.18)
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. 
 Angular's terrifying faceplant is a sobering reminder to us all. 
@@ -46,9 +46,10 @@ Joking aside, this is a substantial release which will change how you use re-fra
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
 
   - there's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
-    For a tutorial see: https://github.com/Day8/re-frame/wiki/Effectful-Event-Handlers  <br>
-    XXX Change link to new docs XXX
-    For example use see:
+    For a tutorial see: https://github.com/Day8/re-frame/tree/develop/docs  <br>
+   
+    For examples, see: 
+   
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
       3. https://github.com/Day8/re-frame-async-flow-fx
@@ -58,7 +59,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     Just to be clear: this does not mean you can run re-frame apps on the JVM (there's no React or 
     Reagent available). But you can debug your event handler tests using full JVM tooling goodness.
     
-    @samroberton and and @escherize have provided the thought leadership and drive here.  They converted 
+    @samroberton and @escherize have provided the thought leadership and drive here.  They converted 
     re-frame to `.cljc`, supplying plugable interop for both the `js` and `jvm` platforms.
 
     Further, they have worked with @danielcompton to create a library of testing utilities which 
@@ -88,27 +89,13 @@ Joking aside, this is a substantial release which will change how you use re-fra
     Pedistal's Interceptor pattern which suddenly transformed them from 
     arcane to delightfully simple in 20 mins. Interceptors are 
     really "middleware via data" rather than "middleware via higher order functions".  
-    So it is another way of doing the same thing, but to my mind
-    Interceptors are a more flexible platform, and simpler. 
+    So it is another way of doing the same thing, but thanks to @steveb8n 
+    Interceptors appear a more flexible base, and simpler. 
     
     Interceptors also dovetail really nicely with the effects and coeffects 
     story which has emerged in re-frame through this 0.8.0 release. 
     
-    In day to day use, there's a good chance you won't notice the change from 
-    middleware to Interceptors UNLESS: 
-    
-    1. You have written your own middleware.  If so, you'll have to rewrite it.
-       See how [the builtin interceptors are done](https://github.com/Day8/re-frame/blob/develop/src/re_frame/std_interceptors.cljc). 
-    2. You explicitly use `comp` like this: 
-       ```clj
-       (reg-event-db 
-           :some-id
-           (comp debug tim-v)    ;; <-- change to [debug trim-v]
-           (fn [db event] 
-               ...))
-       ```
-    
-    XXX link to docs   
+    Docs:  https://github.com/Day8/re-frame/tree/develop/docs
     
   - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no 
     good deed ever goes unpunished - we'll be pestering you every time from now on :-)
@@ -127,9 +114,20 @@ Joking aside, this is a substantial release which will change how you use re-fra
     create subscriptions handlers.  This release introduced `reg-sub` which becomes the preferred way
     to register subscription handlers.
      
-  - middlewares have been replaced by Interceptors. You won't even notice the difference
-    unless you have written your own middleware, in which case you'll have to rewrite it
-    to be an interceptor. XXX reference to further docs 
+  - middlewares have been replaced by Interceptors. In day to day use, there's a good 
+    chance you won't notice the change UNLESS: 
+    
+    1. You have written your own middleware.  If so, you'll have to rewrite it.
+       See how [the builtin interceptors are done](https://github.com/Day8/re-frame/blob/develop/src/re_frame/std_interceptors.cljc). 
+       
+    2. You explicitly use `comp` to compose middleware like this: 
+       ```clj
+       (reg-event-db 
+           :some-id
+           (comp debug tim-v)    ;; <-- change to [debug trim-v]
+           (fn [db event] 
+               ...))
+       ```
     
   - if you have previously used the undo/redo capabilities buried in re-frame, be aware they have 
     extracted into a sibling library: https://github.com/Day8/re-frame-undo.
