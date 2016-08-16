@@ -63,7 +63,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
     Further, they have worked with @danielcompton to create a library of testing utilities which 
     will hopefully evolve into a nice step forward on both platforms: <br>
-    https://github.com/Day8/re-frame-undo
+    https://github.com/Day8/re-frame-test
     
     Work is ongoing in this area. 
 
