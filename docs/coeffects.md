@@ -160,12 +160,12 @@ it is given `:now` or `:local-store` ? Each `cofx-id` requires a different actio
 
 ### Meet `reg-cofx`
 
-This function allows you associate a`cofx-id` (like `:now` or `:local-store`) with a 
-handler function that you supply.   
+Allows you associate a`cofx-id` (like `:now` or `:local-store`) with a 
+handler function that injects the right data.    
 
-The handler function you register for a given `cofx-id` will be passed two arguments:
+The function you register will be passed two arguments:
   - a `:coeffects` map, and 
-  - the optional value supplied
+  - optionally, the additional value supplied
 and it is expected to return a modified `:coeffects` map, presumably with an 
 added key and value. 
 
@@ -174,13 +174,13 @@ added key and value.
 Above we wrote an event handler that wanted `:now` data to be available.  Here 
 is how a handler could be registered for `:now`:
 ```clj 
-(reg-cofx               ;; using this new registration function
+(reg-cofx               ;; uses this new registration function
    :now                 ;; what cofx-id are we registering
-   (fn [cofx _]    ;; second parameter not used in this case
-      (assoc cofx :now (js.Date.))))   ;; add :now key, with value
+   (fn [coeffects _]    ;; second parameter not used in this case
+      (assoc coeffects :now (js.Date.))))   ;; add :now key, with value
 ```
 
-And then there's this example:
+And there's this example:
 ```clj 
 (reg-cofx               ;; new registration function
    :local-store 
@@ -194,14 +194,15 @@ And then there's this example:
 With these two registrations in place, I can now use `(inject-cofx :now)` and 
 `(inject-cofx :local-store "blah")` in an effect handler's interceptor chain. 
 
-### The 4 Point Summary
+### The 5 Point Summary
 
-Here's the overall picture, summarised, in note form ...
+In note form:
 
   1. Event handlers should only source data from their arguments
-  2. So we have to "inject" required data into coeffect argument
-  3. So we use `(inject-cofx :key)` interceptor in registration of the event handler
-  4. There has to be a coefx handler registered for that `:key`  (using `reg-cofx`)
+  2. We want to "inject" required data into the first, cofx argument
+  3. We use the `(inject-cofx :key)` interceptor in registration of the event handler
+  4. It will the registered cofx handler for that `:key` to do the injection
+  5. We must have previously registered a cofx handler via `reg-cofx`
   
  
 ### Secret Interceptors
@@ -210,13 +211,19 @@ In a previous tutorial we learned that `reg-events-db`
 and `reg-events-fx` add Interceptors to front of any chain during registration.
 
 We found they inserted an Interceptor called `do-fx`. I can now reveal that 
-they also add `(inject-cofx :db)` at the front of each chain. (Last surprise, I promise) 
+they also add `(inject-cofx :db)` at the front of each chain.
 
-Guess what that adds to the `:coeffects` of every event handler?   
+Guess what that injects into the `:coeffects` of every event handler?
+
+Okay, so that was the last surprise. Now you know everything.  Hopefully 
+the pizzle pieces fit nicely together   
 
 ### Testing
 
-During testing, you may want to stub out certain 
+During testing, you may want to stub out certain coeffets.
+
+You may, for example, want to test that an event handler works 
+using a specific `random number`.  
 
 
    
