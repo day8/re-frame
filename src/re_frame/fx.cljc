@@ -17,7 +17,7 @@
 
 ;; -- Interceptor -------------------------------------------------------------
 
-(def do-effects
+(def do-fx
   "An interceptor which actions a `context's` (side) `:effects`.
 
   For each key in the `:effects` map, call the `effects handler` previously
@@ -30,7 +30,7 @@
   call the registered effects handlers for each of the map's keys:
   `:dispatch`, `:undo` and `:db`."
   (->interceptor
-    :name   :do-effects
+    :name   :do-fx
     :after  (fn do-effects-after
               [context]
               (->> (:effects context)
