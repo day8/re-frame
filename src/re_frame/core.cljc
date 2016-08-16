@@ -55,6 +55,7 @@
 
 ;; -- coeffects
 (def reg-cofx    cofx/register)
+(def inject-cofx cofx/inject-cofx)
 (def clear-cofx (partial registrar/clear-handlers cofx/kind))
 
 
@@ -73,21 +74,21 @@
   ([id db-handler]
     (reg-event-db id nil db-handler))
   ([id interceptors db-handler]
-   (events/register id [cofx/add-db fx/do-effects interceptors (db-handler->interceptor db-handler)])))
+   (events/register id [cofx/inject-db fx/do-fx interceptors (db-handler->interceptor db-handler)])))
 
 
 (defn reg-event-fx
   ([id fx-handler]
    (reg-event-fx id nil fx-handler))
   ([id interceptors fx-handler]
-   (events/register id [cofx/add-db fx/do-effects interceptors (fx-handler->interceptor fx-handler)])))
+   (events/register id [cofx/inject-db fx/do-fx interceptors (fx-handler->interceptor fx-handler)])))
 
 
 (defn reg-event-ctx
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/add-db fx/do-effects interceptors (ctx-handler->interceptor handler)])))
+   (events/register id [cofx/inject-db fx/do-fx interceptors (ctx-handler->interceptor handler)])))
 
 
 ;; --  Logging -----
