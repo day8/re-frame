@@ -1,5 +1,5 @@
 (ns re-frame.interop
-  (:import java.util.concurrent.Executors))
+  (:import [java.util.concurrent Executor Executors]))
 
 
 ;; The purpose of this file is to provide JVM-runnable implementations of the
@@ -25,7 +25,7 @@
 
 (defn next-tick [f]
   (let [bound-f (bound-fn [& args] (apply f args))]
-    (.execute executor bound-f))
+    (.execute ^Executor executor bound-f))
   nil)
 
 (def empty-queue clojure.lang.PersistentQueue/EMPTY)
