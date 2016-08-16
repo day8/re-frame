@@ -31,7 +31,7 @@
   `:dispatch`, `:undo` and `:db`."
   (->interceptor
     :name   :do-fx
-    :after  (fn do-effects-after
+    :after  (fn do-fx-after
               [context]
               (->> (:effects context)
                    (map (fn [[k value]]

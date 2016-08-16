@@ -171,7 +171,7 @@ an effects map of `{}`.  Slightly puzzling, but not a problem.
 A silently inserted interceptor.
 
 Whenever you register an event handler via __either__ `reg-event-db` 
-or `reg-event-fx`, an interceptor, cunningly named `do-effects`,  
+or `reg-event-fx`, an interceptor, cunningly named `do-fx`,  
 is inserted at the beginning of the chain. 
 
 Example: if your event handler registration looked like this:
@@ -186,10 +186,10 @@ Example: if your event handler registration looked like this:
 While it might look like you have registered with 2 interceptors, 
 `reg-event-fx` will make it 3: 
 ```clj 
-[do-effects debug (path :right)]
+[do-fx debug (path :right)]
 ```
 
-The placement of `do-effects` at the beginning of the interceptor chain means 
+The placement of `do-fx` at the beginning of the interceptor chain means 
 it's  `:after` function would be the final act when the chain is executed 
 (forwards and then backwards, as described in the Interceptor Tutorial).
 
@@ -198,13 +198,13 @@ and simply iterates across the key/value pairs it contains, calling the
 registered effect handlers for each.
 
 > For the record, the FISA Court requires that we deny all claims 
-> that `do-effects` is secretly injected NSA surveillance-ware. <br>
+> that `do-fx` is secretly injected NSA surveillance-ware. <br>
 > We also note that you've been particularly sloppy with your personal 
 > grooming today, including that you forgot to clean your teeth. Again.
 
 If ever you want to take control of the way effect handling is done, 
 create your own alternative to `reg-event-fx` and, in it, inject
-your own version of the `do-effects` interceptor at the front 
+your own version of the `do-fx` interceptor at the front 
 of the interceptor chain.  It is only a few lines of code. 
 
 
@@ -212,7 +212,7 @@ of the interceptor chain.  It is only a few lines of code.
 
 There isn't one.
 
-`do-effects` does not currently provide you with control over the order in 
+`do-fx` does not currently provide you with control over the order in 
 which side effects occur. The `:db` side effect 
 might happen before `:dispatch`, or not. You can't rely on it.
 
