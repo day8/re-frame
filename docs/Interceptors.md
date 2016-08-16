@@ -233,12 +233,12 @@ We'd have to write this handler:
      (dissoc db key-to-delete)))
 ```
 
-Do you see it there? In the event destructing!!! Almost mocking us with that
+Do you see it there? In the event destructuring!!! Almost mocking us with that
 passive aggressive, understated thing it has going on!! Co-workers
 have said I'm "being overly sensitive", perhaps even horizontalist, but 
 you can see it, right?  Of course you can.
 
-Let's remove the need for it.  We'll write an interceptor: `trim-event`
+What a relief it would be to rid of it, but how? We'll write an interceptor: `trim-event`
 
 Once we have written `trim-event`, our registration will change to look like this:
 ```clj
@@ -250,7 +250,7 @@ Once we have written `trim-event`, our registration will change to look like thi
      (dissoc db key-to-delete)))
 ```
 
-`trim-event` will need to change the `:coeffects` (of `context`).  More specifically, it will be 
+`trim-event` will need to change the `:coeffects` map (within `context`).  More specifically, it will be 
 changing the `:event` value within the `:coeffects`. 
 
 `:event` will start off as `[:delete-item 42]`, but will end up `[42]`.  `trim-event`  will remove that 
@@ -291,13 +291,13 @@ There's two kinds of handler:
    - the `-db` variety registered by `reg-event-db`
    - the `-fx` variety registered by `reg-event-fx`
    
-Let's do a `-db` variety. We'll be wrapping a function like this:
+Let's do a `-db` variety. This is what a `-db` handler looks like:
 ```clj
 (fn [db event]               ;;  takes two params
   (assoc db :flag true))     ;; returns a new db
 ```
    
-Here a function which turns a given handler into an interceptor:  
+And here is a function which turns a given handler into an interceptor:  
 ```clj
 (defn db-handler->interceptor
   [db-handler-fn]
@@ -314,7 +314,7 @@ Here a function which turns a given handler into an interceptor:
 
 In this tutorial, we've learned: 
  
-__1.__ When you register a handler, you can supply a collection of interceptors:
+__1.__ When you register an event handler, you can supply a collection of interceptors:
 ```
  (reg-event-db          
     :some-id
@@ -323,18 +323,18 @@ __1.__ When you register a handler, you can supply a collection of interceptors:
        ....)))
 ```
 
-__2.__ That will associate `:some-id` with a chain of about 5 interceptors because:
-  - there are two interceptors supplied
-  - the handler is wrapped as an interceptor and added to the end
-  - the registration function inserts a couple of interceptors at the front
+__2.__ When you registering an event handler, you are associating an event id with a chain of interceptors including:
+  - the ones your supply 
+  - an extra one on the end, which wraps the handler itself 
+  - a couple at the beginning of the chain, put there by the `reg-event-db` or `reg-event-fx`. 
   
-__3.__ Interceptors can do interesting things:
-   - add to coeffects  (inputs to the handler)
-   - process effects (make side effects happen)
+__3.__ Interceptors do interesting things:
+   - add to coeffects  (data inputs to the handler)
+   - process side effects (returned by a handler)
    - produce logs 
    - further process    
 
-In the next Tutorial, we'll look at Effects   
+In the next Tutorial, we'll look at (side) Effects in more depth.  Later again, we'll look at Coeffects.   
  
 
 ## Appendix
