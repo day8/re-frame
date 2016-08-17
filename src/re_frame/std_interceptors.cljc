@@ -29,7 +29,7 @@
     :id     :debug
     :before (fn debug-before
               [context]
-              (console :log "Handling re-frame event: " (-> context :coeffects :event))
+              (console :log "Handling re-frame event: " (get-coeffect context :event))
               context)
     :after  (fn debug-after
               [context]
