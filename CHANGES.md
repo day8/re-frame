@@ -163,12 +163,6 @@ Joking aside, this is a substantial release which will change how you use re-fra
   - Added cljs.test based tests via browser/html. These mimic original karma tests. NOTE: previous
     lein aliases `once` and `auto` have been replaced by `test-once` , `test-auto` & `karma-once`
     see [CONTRIBUTING.md](CONTRIBUTING.md)
-    
-Pending 
-  - should reg-event return the pure handler ?? 
-  - XXX  traceability 
-  - XXX  framework -> library
-  - XXX  middleware for spec checking of event vectors
 
 
 ## 0.7.0  (2016-03-14)
