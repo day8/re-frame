@@ -94,15 +94,18 @@
 
 
 (defn- deref-input-signals
-  [sigs]
+  [sigs query-id]
   (cond
-    (sequential? sigs) (map deref sigs)
-    (map? sigs)  (map-vals deref sigs)
-    :else @sigs))     ;; XXX should we test this satifies? Isomething?
+    (sequential? sigs)       (map deref sigs)
+    (map? sigs)              (map-vals deref sigs)
+    (satisfies? IDeref sigs) @sigs
+    :else (console :error "re-frame: in reg-sub for " query-id ", input signal function returns a non-reactive input. Got: " sigs))
 
 
 (defn reg-sub
-  "There's 3 ways this function can be called
+  "Register a given handler function for a given query id.
+
+  There's 3 ways this function can be called
 
   1. (reg-sub
        :test-sub
@@ -169,8 +172,8 @@
         ([db query-vec]
          (let [subscriptions (inputs-fn query-vec)]
            (make-reaction
-             (fn [] (computation-fn (deref-input-signals subscriptions) query-vec)))))
+             (fn [] (computation-fn (deref-input-signals subscriptions query-id) query-vec)))))
         ([db query-vec dyn-vec]
          (let [subscriptions (inputs-fn query-vec dyn-vec)]
            (make-reaction
-             (fn [] (computation-fn (deref-input-signals subscriptions) query-vec dyn-vec)))))))))
+             (fn [] (computation-fn (deref-input-signals subscriptions query-id) query-vec dyn-vec)))))))))
