@@ -17,6 +17,10 @@
 (defn ratom? [x]
   (satisfies? reagent.ratom/IReactiveAtom x))
 
+(defn deref? [x]
+  (satisfies? IDeref x))
+
+
 (defn make-reaction [f]
   (reagent.ratom/make-reaction f))
 

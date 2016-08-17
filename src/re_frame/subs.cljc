@@ -1,10 +1,10 @@
 (ns re-frame.subs
  (:require
    [re-frame.db    :refer [app-db]]
-   [re-frame.interop :refer [add-on-dispose! debug-enabled? make-reaction ratom?]]
+   [re-frame.interop :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref?]]
    [re-frame.loggers :refer [console]]
-   [re-frame.registrar  :refer [get-handler clear-handlers register-handler]]
-   [re-frame.utils :refer [first-in-vector]]))
+   [re-frame.utils   :refer [first-in-vector]]
+   [re-frame.registrar :refer [get-handler clear-handlers register-handler]]))
 
 
 ;; -- Subscription Handler Lookup and Registration --------------------------------------------------
@@ -98,8 +98,8 @@
   (cond
     (sequential? sigs)       (map deref sigs)
     (map? sigs)              (map-vals deref sigs)
-    (satisfies? IDeref sigs) @sigs
-    :else (console :error "re-frame: in reg-sub for " query-id ", input signal function returns a non-reactive input. Got: " sigs))
+    (deref? sigs)      @sigs
+    :else (console :error "re-frame: in reg-sub for " query-id ", input signal function returns a non-reactive input. Got: " sigs)))
 
 
 (defn reg-sub

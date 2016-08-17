@@ -17,7 +17,7 @@
 ;; by a change to a Ratom's value, and not via a call to `dispatch`, then you're
 ;; going to have a hard time getting any accurate tests with this code.
 ;; However, if your subscriptions and Reagent render functions are pure, and
-;; your side-effects are all managed by event handlers, then hopefully this will
+;; your side-effects are all managed by effect handlers, then hopefully this will
 ;; allow you to write some useful tests that can run on the JVM.
 
 
@@ -39,6 +39,9 @@
 
 (defn ratom? [x]
   (instance? clojure.lang.IAtom x))
+
+(defn deref? [x]
+  (instance? clojure.lang.IDeref x))
 
 (defn make-reaction
   "On JVM Clojure, return a `deref`-able thing which invokes the given function
