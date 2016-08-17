@@ -26,7 +26,7 @@
   code. See the todomvc example to see how to exclude interceptors from
   production code."
   (->interceptor
-    :name   :debug
+    :id     :debug
     :before (fn debug-before
               [context]
               (console :log "Handling re-frame event: " (-> context :coeffects :event))
@@ -50,15 +50,16 @@
 
 
 (def trim-v
-  "An interceptor which removes the first element of the event vector, allowing you to write
-  more aesthetically pleasing db handlers. No leading underscore on the event-v!
+  "An interceptor which removes the first element of the event vector,
+  allowing you to write more aesthetically pleasing db handlers. No
+  leading underscore on the event-v!
   Your event handlers will look like this:
 
       (defn my-handler
         [db [x y z]]    ;; <-- instead of [_ x y z]
         ....)"
   (->interceptor
-    :name    :trim-v
+    :id      :trim-v
     :before  (fn trimv-before
                [context]
                (->>  (get-coeffect context :event)
@@ -86,7 +87,7 @@
      3. stores the db result back into context's `:effects`"
   [handler-fn]
   (->interceptor
-    :name   :db-handler
+    :id     :db-handler
     :before (fn db-handler-before
               [context]
               (let [{:keys [db event]} (:coeffects context)]
@@ -109,7 +110,7 @@
      3. stores the result back into the `:effects`"
   [handler-fn]
 (->interceptor
-  :name   :fx-handler
+  :id     :fx-handler
   :before (fn fx-handler-before
             [context]
             (let [{:keys [event] :as coeffects} (:coeffects context)]
@@ -125,7 +126,7 @@
         (enqueue context [more interceptors]))"
   [handler-fn]
   (->interceptor
-    :name   :ctx-handler
+    :id     :ctx-handler
     :before handler-fn))
 
 
@@ -154,7 +155,7 @@
     (when (empty? path)
       (console :error "re-frame: \"path\" interceptor given no params" ))
     (->interceptor
-      :name    :path
+      :id      :path
       :before  (fn
                  [context]
                  (let [original-db (get-coeffect context :db)]
@@ -205,7 +206,7 @@
   ensure this important step is not missed."
   [f]
   (->interceptor
-    :name  :enrich
+    :id    :enrich
     :after (fn enrich-after
              [context]
              (let [event (get-coeffect context :event)
@@ -227,7 +228,7 @@
      - `f` writes some aspect of db to localstorage."
   [f]
   (->interceptor
-    :name  :after
+    :id    :after
     :after (fn after-after
              [context]
              (let [db    (get-effect context :db)
@@ -258,7 +259,7 @@
   "
   [f out-path & in-paths]
   (->interceptor
-    :name  :enrich
+    :id    :enrich
     :after (fn on-change-after
              [context]
              (let [new-db   (get-effect context :db)

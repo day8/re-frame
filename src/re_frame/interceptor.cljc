@@ -7,7 +7,7 @@
 
 ;; XXX use defrecord ??
 
-(def mandatory-interceptor-keys #{:name :after :before})
+(def mandatory-interceptor-keys #{:id :after :before})
 
 
 (defn interceptor?
@@ -18,13 +18,15 @@
 
 (defn ->interceptor
   "Create an interceptor from named arguements"
-  [& {:as m :keys [name before after]}]
+  [& {:as m :keys [name id before after]}]      ;; remove `name` in due course - only in there as a backwards compat thing
   (when debug-enabled?
+    (if name
+      (console :warn  "re-frame.core/->interceptor no longer takes `:name` - has been renamed to `:id`. Please change for " name))
     (if-let [unknown-keys  (seq (clojure.set/difference
-                             (-> m keys set)
+                             (-> (dissoc m :name) keys set)         ;; XXX temporarily take out name
                              mandatory-interceptor-keys))]
-      (console :error "re-frame: interceptor " name " has unknown keys: " unknown-keys)))
-  {:name   (or name :unnamed)
+      (console :error "re-frame: ->interceptor " m " has unknown keys: " unknown-keys)))
+  {:id     (or id name :unnamed)     ;; XXX remove `name` in due course
    :before before
    :after  after })
 
