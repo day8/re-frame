@@ -65,12 +65,6 @@
 ;; Because this interceptor is used so much, we reify it
 (def inject-db (inject-cofx :db))
 
-(register
-  :local-store
-  (fn local-store-handler
-    [coeffects k]
-    ()XXXX
-    (assoc coeffects :db @app-db)))
 
 ;; -- Further Example  --------------------------------------------------------
 
