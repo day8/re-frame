@@ -9,7 +9,9 @@
 
 (def after-render reagent.core/after-render)
 
-(def ^:boolean debug-enabled? js/goog.DEBUG)
+;; make sure the Google Closure compiler see this as a boolean constatnt
+;; https://developers.google.com/closure/compiler/docs/js-for-compiler
+(def ^:boolean debug-enabled? "@const  @define {boolean}" js/goog.DEBUG)
 
 (defn ratom [x]
   (reagent.core/atom x))
