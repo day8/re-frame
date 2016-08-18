@@ -117,7 +117,7 @@ consequences:
   
   1. Cognitive load for the function's later readers goes up because they can no longer reason locally.  
   2. Testing becomes more difficult and involves "mocking".  How do we test that the http GET above is 
-     using the right URL?  "mocking" should be is mocked. It is a code smell.
+     using the right URL?  "mocking" should be mocked. It is a bad omen.
   3. And event replay-ability is lost.
   
 Regarding the 3rd point above, a re-frame application proceeds step by step, like a reduce. From the README: 
