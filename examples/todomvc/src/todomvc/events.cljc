@@ -2,7 +2,8 @@
   (:require
     [todomvc.db    :refer [default-value localstore->todos todos->local-store]]
     [re-frame.core :refer [reg-event-db path trim-v after debug]]
-    [cljs.spec     :as s]))
+    #?(:cljs [cljs.spec  :as s]
+       :clj  [clojure.spec :as s])))
 
 
 ;; -- Interceptors --------------------------------------------------------------
@@ -13,7 +14,7 @@
 
 (defn check-and-throw
   "throw an exception if db doesn't match the spec."
-  [a-spec db]
+  [a-spec db _]
   (when-not (s/valid? a-spec db)
     (throw (ex-info (str "spec check failed: " (s/explain-str a-spec db)) {}))))
 
@@ -32,7 +33,8 @@
 (def todo-interceptors [check-spec-interceptor               ;; ensure the spec is still valid
                         (path :todos)                        ;; 1st param to handler will be the value from this path
                         ->local-store                        ;; write todos to localstore
-                        (when ^boolean js/goog.DEBUG debug)  ;; look in your browser console for debug logs
+                        #?(:cljs                             ;; look in your browser console for debug logs
+                           (when ^boolean js/goog.DEBUG debug))
                         trim-v])                             ;; removes first (event id) element from the event vec
 
 
