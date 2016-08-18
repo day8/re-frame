@@ -36,7 +36,7 @@
   (let [cache-key [query-v dynv]]
     ;; when this reaction is nolonger being used, remove it from the cache
     (add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
-                            #_(console :log "Removing subscription: " cache-key)))    ;; XXX remove console debug
+                            #_(console :log "Removing subscription: " cache-key)))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction assoc cache-key r)
     r))  ;; return the actual reaction
@@ -82,9 +82,6 @@
            (cache-and-return v dynv (make-reaction (fn [] @@sub)))))))))
 
 ;; -- Helper code for register-pure -------------------
-
-;; add `metric`  which   (metric :using-cached-subscription  {:text
-;; XXX no need for maps
 
 (defn- map-vals
   "Returns a new version of 'm' in which 'f' has been applied to each value.
