@@ -2,6 +2,7 @@
   (:require
     [re-frame.events      :as events]
     [re-frame.subs        :as subs]
+    [re-frame.db          :as db]
     [re-frame.fx          :as fx]
     [re-frame.cofx        :as cofx]
     [re-frame.router      :as router]
@@ -19,7 +20,6 @@
 
 
 ;; XXX move API functions up to this core level - to enable code completion and docs
-;; XXX for testing purposes:  a way to snapshot re-frame state, then re-instate
 ;; XXX on figwheel reload, is there a way to not get the re-registration messages.
 
 
@@ -108,15 +108,22 @@
 (def console loggers/console)
 
 
-;; -- Registrar
-;; XXX
-;; In testing you often need to store the current state of the registrar
-;; and then reinstate it  state, and then reinstate
-;; that state at the end of the
-;; then re-instate it.
-;; So, in a testing scenario, you'd store the
-;; current state,  make changes and then put back the way it was.
-;; OR should this be done with bindings ??
+;; -- State Restoration For Unit Tests
+
+(defn make-restore-fn
+  "Checkpoints the state of re-frame and returns a function which, when
+  later called, will restore re-frame to that checkpointed state.
+
+  Checkpoint includes app-db, all registered handlers and all subscriptions.
+  "
+  []
+  (let [handlers @registrar/kind->id->handler
+        app-db   @db/app-db]
+    (fn []
+      ; XXX
+      (reset! registrar/kind->id->handler handlers)
+      (reset! db/app-db app-db)
+      nil)))
 
 
 ;; -- Event Procssing Callbacks
