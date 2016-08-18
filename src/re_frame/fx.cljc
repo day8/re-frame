@@ -30,7 +30,7 @@
   call the registered effects handlers for each of the map's keys:
   `:dispatch`, `:undo` and `:db`."
   (->interceptor
-    :name   :do-fx
+    :id     :do-fx
     :after  (fn do-fx-after
               [context]
               (->> (:effects context)
