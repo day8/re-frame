@@ -10,9 +10,9 @@
 (def kinds #{:event :fx :cofx :sub})
 
 ;; This atom contains a register of all handlers.
-;; Is a map keyed first by kind (of handler), and then id.
-;; leaf nodes are handlers.
-(def ^:private kind->id->handler  (atom {}))
+;; Contains a map keyed first by `kind` (of handler), and then `id`.
+;; Leaf nodes are handlers.
+(def kind->id->handler  (atom {}))
 
 
 (defn get-handler
