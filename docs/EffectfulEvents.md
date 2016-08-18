@@ -115,7 +115,7 @@ for free. Its like a muddy monster truck has shown up in our field of white tuli
 The moment we stop writing pure functions there are well documented 
 consequences:
   
-  1. Cogitative load for the function's later readers goes up because they can no longer reason locally.  
+  1. Cognitive load for the function's later readers goes up because they can no longer reason locally.  
   2. Testing becomes more difficult and involves "mocking".  How do we test that the http GET above is 
      using the right URL?  "mocking" should be is mocked. It is a code smell.
   3. And event replay-ability is lost.
