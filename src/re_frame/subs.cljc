@@ -22,7 +22,7 @@
 ;; De-duplicate subscriptions. If two or more equal subscriptions
 ;; are concurrently active, we want only one handler running.
 ;; Two subscriptions are "equal" if their query vectors test "=".
-(def ^:private query->reaction (atom {}))
+(def query->reaction (atom {}))
 
 (defn clear-all-handlers!
   "Unregisters all existing subscription handlers"
