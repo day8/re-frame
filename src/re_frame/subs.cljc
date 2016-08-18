@@ -1,6 +1,6 @@
 (ns re-frame.subs
  (:require
-   [re-frame.db    :refer [app-db]]
+   [re-frame.db      :refer [app-db]]
    [re-frame.interop :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref?]]
    [re-frame.loggers :refer [console]]
    [re-frame.utils   :refer [first-in-vector]]
@@ -94,12 +94,12 @@
 
 
 (defn- deref-input-signals
-  [sigs query-id]
+  [signals query-id]
   (cond
-    (sequential? sigs)       (map deref sigs)
-    (map? sigs)              (map-vals deref sigs)
-    (deref? sigs)      @sigs
-    :else (console :error "re-frame: in reg-sub for " query-id ", input signal function returns a non-reactive input. Got: " sigs)))
+    (sequential? signals) (map deref signals)
+    (map? signals)        (map-vals deref signals)
+    (deref? signals)      @signals
+    :else (console :error "re-frame: the reg-sub for " query-id ", must be wrong. Return value from input-signals function is: " signals)))
 
 
 (defn reg-sub
