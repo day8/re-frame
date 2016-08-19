@@ -1,7 +1,8 @@
 (ns re-frame.core
   (:require
     [re-frame.events      :as events]
-    [re-frame.subs        :as subs]
+		[re-frame.subs        :as subs]
+		[re-frame.interop     :as interop]
     [re-frame.db          :as db]
     [re-frame.fx          :as fx]
     [re-frame.cofx        :as cofx]
@@ -118,9 +119,19 @@
   "
   []
   (let [handlers @registrar/kind->id->handler
-        app-db   @db/app-db]
+        app-db   @db/app-db
+				subs-cache @subs/query->reaction]
     (fn []
-      ; XXX
+			;; call `dispose!` on all current subscriptions which
+			;; didn't originally exist.
+			#_(->> subs/query->reaction
+					 vals
+					 (remove (set (vals subs-cache)))   ;;
+					 (map interop/dispose!)
+					 (doall))
+
+			;; reset the atoms
+      (reset! subs/query->reaction subs-cache)
       (reset! registrar/kind->id->handler handlers)
       (reset! db/app-db app-db)
       nil)))

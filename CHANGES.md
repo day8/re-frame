@@ -11,7 +11,7 @@ Some may even find these new features useful.
 
 Joking aside, this is a substantial release which will change how you use re-frame.
 
-##### Headline
+#### Headline
 
   - re-frame subscriptions are now de-duplicated. As a result,
     many Signal graphs will be more efficient. The new behaviour better
@@ -100,7 +100,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
   - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no 
     good deed ever goes unpunished - we'll be pestering you every time from now on :-)
 
-##### Breaking
+#### Breaking
 
   - requires Reagent >= v0.6.0
 
@@ -151,7 +151,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     (defn my-logger [& args] (do-something-with (apply str args))
     ```
 
-##### Improvements
+#### Improvements
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
   - added new API `re-frame.core/clear-post-event-callback` which de-registers a callback 

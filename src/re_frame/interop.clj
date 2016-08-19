@@ -61,6 +61,11 @@
   [a-ratom f]
   nil)
 
+(defn dispose! [a-ratom]
+	"No-op in JVM Clojure, since for testing purposes, we don't care about
+  releasing resources for efficiency purposes."
+	nil)
+
 (defn set-timeout!
   "Note that we ignore the `ms` value and just invoke the function, because
   there isn't often much point firing a timed event in a test."
