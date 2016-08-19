@@ -1,4 +1,4 @@
-## Introduction
+## Effects
 
 About 10% of the time, event handlers need to cause side effects.
 
@@ -21,26 +21,24 @@ make side effects a noop in event replays.
   * [What Makes This Work?](#what-makes-this-work-)
   * [Order Of Effects?](#order-of-effects-)
   * [Effects With No Data](#effects-with-no-data)
-  * [Noops](#noops)
-- [Builtin Effect Handlers](#builtin-effect-handlers)
+  * [Testing And Noops](#testing-and-noops)
+  * [Builtin Effect Handlers](#builtin-effect-handlers)
     + [:dispatch-later](#-dispatch-later)
     + [:dispatch](#-dispatch)
     + [:dispatch-n](#-dispatch-n)
     + [:deregister-event-handler](#-deregister-event-handler)
     + [:db](#-db)
-- [External Effects](#external-effects)
 
-## Effects
 ### Where Effects Come From
 
-When an event handler is registered via `reg-event-fx`, it always returns effects.
+When an event handler is registered via `reg-event-fx`, it must return effects.
 
 Like this:  
 ```clj
 (reg-event-fx              ;; -fx registration, not -db registration
   :my-event
-  (fn [coeffects [_ a]]    ;; 1st argument is coeffects, instead of db     
-    {:db       (assoc (:db coeffects) :flag  a)         
+  (fn [cofx [_ a]]        ;; 1st argument is coeffects, instead of db     
+    {:db       (assoc (:db cofx) :flag  a)         
      :dispatch [:do-something-else 3]}))   ;; return effects
 ```
 
@@ -52,7 +50,7 @@ An effects map contains instructions.
 
 Each key/value pair in the map is one instruction - the `key` uniquely identifies 
 the particular side effect required, and the `value` for that `key` provides 
-further data. The structure of the `value` is different for each side-effect. 
+further data. The structure of `value` is different for each side-effect. 
 
 Here's the two instructions from the example above: 
 ```cljs 
@@ -60,10 +58,10 @@ Here's the two instructions from the example above:
  :dispatch [:do-something-else 3]}     ;; dispatch this event
 ```
 
-That `:db` `key` instructs that "app-db" should be `reset!` to the
-`value` supplied for the `key`.  
+The `:db` `key` instructs that "app-db" should be `reset!` to the
+`value` supplied.  
 
-That `:dispatch` `key` instructs that an event should be
+And the `:dispatch` `key` instructs that an event should be
 dispatched. The `value` is the vector to dispatch.
 
 There's many other possible
@@ -76,7 +74,7 @@ And so on. And so on. Which brings us to a problem.
 While re-frame supplies a number of builtin effects, the set of 
 possible effects is open ended.
 
-What if you use Postgress and want an effect which issues mutating 
+What if you use PostgreSQL and want an effect which issues mutating 
 queries?  Or what if you want to send logs to Logentries or metrics to DataDog.
 Or write values to windows.location. And what happens if your database is
 X, Y or Z?
@@ -107,10 +105,10 @@ the key `:butterfly`, the function we are registering will be used to action it.
 __<2>__  the function which actions the side effect. Later, it will be called 
 with one argument - the value in the effects map, for this key. 
 
-So, if an event handler returned these effects:
+So, if an event handler returned these two effects:
 ```clj
 {:dispatch   [:save-maiden 42]
- :butterfly  "Flapping"}         ;; butterfly effect !!
+ :butterfly  "Flapping"}         ;; butterfly effect, but no chaos !!
 ```
 
 Then the function we registered for `:butterfly` would be called to handle 
@@ -118,12 +116,15 @@ that effect. And it would be called with the parameter "Flapping".
 
 So, terminology:
 - `:butterfly` is an "effect key"
-- and the function registered is an "effect handler"
+- and the function registered is an "effect handler".
+
+So re-frame has `event handlers` and `effect handlers` and they are 
+different, despite both starting with `e` and ending in `t`!!
 
 ### Writing An Effect Handler
 
 A word of advice - make them as simple as possible, and then 
-simplify them further.  You don't want them containing any fancy logic.  
+simplify them further.  You don't want them containing any fancy logic.
 
 Why?  Well, because they are all side-effecty they will be a pain 
 to test rigorously. And the combination of fancy logic and limited 
@@ -148,20 +149,19 @@ In my defence, here's the builtin effect handler for `:db`:
     (reset! re-frame.db/app-db value)))
 ```
 
-So, yeah, simple.  
+So, yeah, simple ... and, because of it, I an almost guarantee there's no bug in ... bang, crash, smoke, flames.
 
 > Note: the return value of an effect handler is ignored.
 
 ### :db Not Always Needed
 
-An effects map does not have to include the `effect key` `:db`. 
+An effects map does not need to include the `effect key` `:db`. 
 
-It is perfectly reasonable and valid for an event handler 
-to return effects which do not include an update to `app-db`. 
+It is perfectly valid for an event handler 
+to not change `app-db`. 
 
-In fact, it is perfectly okay for an event handler to return 
+In fact, it is perfectly valid for an event handler to return 
 an effects map of `{}`.  Slightly puzzling, but not a problem.  
-
 
 ### What Makes This Work?
 
@@ -186,13 +186,15 @@ While it might look like you have registered with 2 interceptors,
 [do-fx debug (path :right)]
 ```
 
+It silently inserts `do-fx` at the front, and this is a good thing. 
+
 The placement of `do-fx` at the beginning of the interceptor chain means 
 it's  `:after` function would be the final act when the chain is executed 
 (forwards and then backwards, as described in the Interceptor Tutorial).
 
 In this final act, the `:after` function extracts `:effects` from `context` 
 and simply iterates across the key/value pairs it contains, calling the 
-registered effect handlers for each.
+registered "effect handlers" for each.
 
 > For the record, the FISA Court requires that we deny all claims 
 > that `do-fx` is secretly injected NSA surveillance-ware. <br>
@@ -247,10 +249,10 @@ The associated effect handler would look like:
      (.exitFullscreen js/document)))
 ```
 
-### Noops
+### Testing And Noops
 
 When you are running tests or replaying events, it is sometimes 
-useful to stub out effects.  
+useful to stub out effects.
 
 This is easily done - you simply register a noop effect handler. 
 
@@ -261,7 +263,24 @@ Want to stub out the `:dispatch` effect?  Do this:
   (fn [_] ))    ;; a noop
 ```
 
-## Builtin Effect Handlers
+If your test does alter registered effect handlers, and you are using `cljs.test`,
+then you can use a `fixture` to restore all effect handlers at the end of your test: 
+```clj
+(defn re-frame-fixture
+  [f]
+  (let [restore-re-frame-fn (re-frame.core/make-restore-fn)]
+    (try
+      (f)
+      (finally (restore-re-frame-fn)))))
+ 
+(cljs.test/use-fixtures :each re-frame-fixture)
+```
+
+`re-frame.core/make-restore-fn` creates a checkpoint for re-frame state (including 
+registered handlers) to which you can return. 
+
+
+### Builtin Effect Handlers
 
 #### :dispatch-later
 
@@ -317,7 +336,7 @@ usage:
 {:db  {:key1 value1 key2 value2}}
 ```
 
-## External Effects
+### External Effects
 
 - https://github.com/Day8/re-frame-http-fx   (GETs and POSTs)
 - https://github.com/Day8/re-frame-forward-events-fx  (slightly exotic)
