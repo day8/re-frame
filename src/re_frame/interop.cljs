@@ -9,9 +9,11 @@
 
 (def after-render reagent.core/after-render)
 
-;; make sure the Google Closure compiler see this as a boolean constatnt
+;; Make sure the Google Closure compiler sees this as a boolean constatnt,
+;; otherwise Dead Code Elimination won't happen in `:advanced` builds.
+;; Type hints have been liberally sprinkled.
 ;; https://developers.google.com/closure/compiler/docs/js-for-compiler
-(def ^:boolean debug-enabled? "@const  @define {boolean}" js/goog.DEBUG)
+(def ^boolean DEBUG? "@define {boolean}" ^boolean js/goog.DEBUG)
 
 (defn ratom [x]
   (reagent.core/atom x))
