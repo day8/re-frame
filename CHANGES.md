@@ -1,5 +1,5 @@
   
-## 0.8.0  (2016.08.18)
+## 0.8.0  (2016.08.19)
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. 
 Angular's terrifying faceplant is a sobering reminder to us all. 
