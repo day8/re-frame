@@ -121,7 +121,7 @@ to our event handler (`cofx`).
 
 ### `inject-cofx`
 
-`inject-cofx` is part of re-frame API.
+`inject-cofx` is part of the re-frame API.
 
 It is a function which returns an Interceptor whose `:before` function loads 
 a key/value pair into a `context's` `:coeffect` map.
@@ -159,7 +159,7 @@ Each `cofx-id` requires a different action.
 
 This function is also part of the re-frame API.
 
-It allows you associate a`cofx-id` (like `:now` or `:local-store`) with a 
+It allows you to associate a`cofx-id` (like `:now` or `:local-store`) with a 
 handler function that injects the right key/value pair.
 
 The function you register will be passed two arguments:
@@ -227,7 +227,7 @@ registration functions and have them auto insert the DataScript connection.
 
 ### Testing
 
-During testing, you may want to stub out certain coeffets.
+During testing, you may want to stub out certain coeffects.
 
 You may, for example, want to test that an event handler works 
 using a specific `now`, not a true random number. 
@@ -240,7 +240,7 @@ In your test, you'd mock out the cofx handler:
       (assoc coeffects :now (js/Date. 2016 1 1)))   ;; now was then
 ```
 
-If your test does alter  registered coeffect handlers, and you are using `cljs.test`,
+If your test does alter registered coeffect handlers, and you are using `cljs.test`,
 then you can use a `fixture` to restore all coeffects at the end of your test: 
 ```clj
 (defn re-frame-fixture
