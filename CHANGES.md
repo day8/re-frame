@@ -177,7 +177,7 @@ Breaking:
     into the one console group, which could lead to exceptions being hidden (down in a closed group).
 
 Improvements:
-  - added one tick of extra pause when events have `:flush=dom` metadata. Previously, there were odd times when
+  - added one tick of extra pause when events have `:flush-dom` metadata. Previously, there were odd times when
     the pause wasn't long enough to ensure redraws.
   - now compatible with Reagent 0.6.0 (but this not fully tested) while remaining backwards compatible with
     Reagent v0.5.1
