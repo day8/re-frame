@@ -36,7 +36,7 @@ Flowing" story promoted by re-frame.
 So, you'll want to use Interceptors because they solve problems, and help you to write nice code.  
 
 __Second__, under the covers, Interceptors provide the mechanism by which 
-event handlers are executed (when you `dispatch`).  You they are central concept.
+event handlers are executed (when you `dispatch`). They are a central concept.
 
 ### What Do Interceptors Do?
 
@@ -45,7 +45,7 @@ They wrap.
 Specifically, they wrap event handlers. 
 
 Imagine your event handler is like a piece of ham. An interceptor would be
-like bread either side of your ham, which makes a sandwich.
+like bread on either side of your ham, which makes a sandwich.
 
 And two Interceptors, in a chain, would be like you put another 
 pair of bread slices around the outside of the existing sandwich to make 
@@ -55,7 +55,7 @@ Interceptors wrap on both sides of a handler, layer after layer.
 
 ### Wait, I know That Pattern!
 
-Interceptors implement middleware.  But differently.
+Interceptors implement middleware. But differently.
 
 Traditional middleware - often seen in web servers - creates a data 
 processing pipeline via the nested composition of higher order functions. 
@@ -154,7 +154,7 @@ That's it. That's how an event gets handled.
 Some data called a `context` is threaded through all the calls. 
 
 This value is passed as the argument to every `:before` and `:after` 
-function and they returned it, possibly modified. 
+function and it is returned by each function, possibly modified. 
 
 A `context` is a map with this structure: 
 ```clj
@@ -189,7 +189,7 @@ DataScript connection. Interceptors can build up `:coeffects`, via their
 
 Equally, some interceptors in the chain will have `:after` functions
 which process the side effects accumulated into `:effects`
-including but, not limited to, updates to app-db.
+including, but not limited to, updates to app-db.
 
 ### Self Modifying
 
@@ -223,7 +223,7 @@ If our components did this:
 
 We'd have to write this handler: 
 ```clj
-(def-event-db 
+(reg-event-db 
   :delete-item
   (fn 
      [db [_  key-to-delete]]     ;;  <---- Arrgggghhh underscore
@@ -239,7 +239,7 @@ What a relief it would be to get rid of it, but how? We'll write an interceptor:
 
 Once we have written `trim-event`, our registration will change to look like this:
 ```clj
-(def-event-db 
+(reg-event-db 
   :delete-item
   [trim-event]                ;;  <--- interceptor added
   (fn 
