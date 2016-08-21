@@ -108,7 +108,7 @@ And here's more carnage:
 ```
 
 Again, this approach will work. But that dirty great big side-effect doesn't come 
-for free. Its like a muddy monster truck has shown up in our field of white tulips.
+for free. It's like a muddy monster truck has shown up in our field of white tulips.
 
 ### Bad, Why?
 
@@ -353,10 +353,10 @@ data from arguments.
 
 `-db` handlers and `-fx` handlers are conceptually the same. They only differ numerically.
 
-`-db` handlers take ONE coeeffect called `db`, and they return only ONE  effect (db again). 
+`-db` handlers take ONE coeffect called `db`, and they return only ONE  effect (db again). 
 
 Whereas `-fx` handlers take potentially MANY coeffects (a map of them) and they return 
-potentially MANY effects (a map of them).  So, One vs Many. 
+potentially MANY effects (a map of them). So, One vs Many. 
 
 Just to be clear, the following two handlers achieve the same thing:
 ```clj
@@ -381,7 +381,7 @@ can. The `-fx` version is more flexible, so it will sometimes have its place.
 
 90% of the time, simple `-db` handlers are the right tool to use.
 
-But about 10% of the time, our handlers need additional inputs (coeffecs) or they need to 
+But about 10% of the time, our handlers need additional inputs (coeffects) or they need to 
 cause additional side-effects (effects).  That's when you reach for `-fx` handlers. 
 
 `-fx` handlers allow us to return effects, declaratively in data. 
@@ -389,4 +389,3 @@ cause additional side-effects (effects).  That's when you reach for `-fx` handle
 In the next tutorial, we'll shine a light on `interceptors` which are
 the mechanism by which  event handlers are executed. That knowledge will give us a springboard 
 to then, as a next step, better understand coeffects and effects. We'll soon be writing our own.   
-
