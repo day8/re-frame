@@ -56,7 +56,7 @@
   (fn [value]
     (doseq  [{:keys [ms dispatch] :as effect} value]
         (if (or (empty? dispatch) (-> ms number? not))
-          (console :error "re-frame: ignoring bad :dispatch-later value: " effect)
+          (console :error "re-frame: ignoring bad :dispatch-later value:" effect)
           (set-timeout! #(router/dispatch dispatch) ms)))))
 
 
@@ -71,7 +71,7 @@
   :dispatch
   (fn [value]
     (if-not (vector? value)
-      (console :error "re-frame: ignoring bad :dispatch value. Expected a vector, but got: " value)
+      (console :error "re-frame: ignoring bad :dispatch value. Expected a vector, but got:" value)
       (router/dispatch value))))
 
 
@@ -87,7 +87,7 @@
   :dispatch-n
   (fn [value]
     (if-not (sequential? value)
-      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got: " value))
+      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got:" value))
     (doseq [event value] (router/dispatch event))))
 
 

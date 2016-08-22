@@ -28,7 +28,7 @@
    (let [handler (get-handler kind id)]
      (when debug-enabled?
        (when (and required? (nil? handler))
-         (console :error "re-frame: no " (str kind) " handler registered for: " id)))
+         (console :error "re-frame: no " (str kind) " handler registered for:" id)))
      handler)))
 
 
@@ -36,7 +36,7 @@
   [kind id handler-fn]
   (when debug-enabled?
     (when (get-handler kind id false)
-      (console :warn "re-frame: overwriting " (str kind) " handler for: " id)))   ;; allow it, but warn. Happens on figwheel reloads.
+      (console :warn "re-frame: overwriting" (str kind) "handler for:" id)))   ;; allow it, but warn. Happens on figwheel reloads.
   (swap! kind->id->handler assoc-in [kind id] handler-fn)
   handler-fn)    ;; note: returns the just registered handler
 
@@ -53,4 +53,4 @@
    (assert (kinds kind))
    (if (get-handler kind id)
      (swap! kind->id->handler update-in [kind] dissoc id)
-     (console :warn "re-frame: can't clear " (str kind) " handler for  " id ".  Not found."))))
+     (console :warn "re-frame: can't clear" (str kind) "handler for" (str id ". Handler not found.")))))
