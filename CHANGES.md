@@ -45,10 +45,11 @@ Joking aside, this is a substantial release which will change how you use re-fra
     At this point, the todomvc example represents the best tutorial on the subject:
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
 
-  - there's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
+  - re-frame now supports the notion of Event Handlers accepting coeffects and returning effects. <br>
+    There's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
     For a tutorial see: https://github.com/Day8/re-frame/tree/develop/docs  <br>
    
-    For examples, see: 
+    For Effect Handler examples see: 
    
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
