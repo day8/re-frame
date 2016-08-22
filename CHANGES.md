@@ -1,4 +1,10 @@
-  
+## 0.8.1  (2016.08.XX)  Unreleased
+
+
+#### Improvements
+
+  - [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
+
 ## 0.8.0  (2016.08.19)
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. 
