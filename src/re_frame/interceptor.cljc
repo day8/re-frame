@@ -25,7 +25,7 @@
     (if-let [unknown-keys  (seq (clojure.set/difference
                              (-> (dissoc m :name) keys set)         ;; XXX take out name in due course
                              mandatory-interceptor-keys))]
-      (console :error "re-frame: ->interceptor " m " has unknown keys: " unknown-keys)))
+      (console :error "re-frame: ->interceptor " m " has unknown keys:" unknown-keys)))
   {:id     (or id name :unnamed)     ;; XXX remove `name` in due course
    :before before
    :after  after })
