@@ -64,7 +64,7 @@ To make this happen, we first switch to
 using `reg-event-fx` (instead of `reg-event-db`).
 
 Event handlers registered via `reg-event-fx` are slightly 
-different to those registered via `reg-event-fx`. `-fx` handlers 
+different to those registered via `reg-event-db`. `-fx` handlers 
 get two arguments, but the first is not `db`. Instead it 
 is an argument which we will call `cofx` (that's a nice distinct 
 name which will aid communication). 
