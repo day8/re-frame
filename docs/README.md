@@ -1,6 +1,6 @@
 Structuring Your Application
 
-1. [A Larger App](A-Larger-App.md)
+1. [Basic App Structure](Basic-App-Structure.md)
 2. [Navigation](Navigation.md)
 3. [Namespaced Keywords](Namespaced-Keywords.md)
 
