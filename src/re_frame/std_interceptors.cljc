@@ -2,10 +2,11 @@
   "contains re-frame supplied, standard interceptors"
   (:require
     [re-frame.interceptor :refer [->interceptor get-effect get-coeffect assoc-coeffect assoc-effect]]
-    [re-frame.loggers   :refer [console]]
-    [re-frame.registrar :as  registrar]
-    [re-frame.db        :refer [app-db]]
-    [clojure.data       :as data]))
+    [re-frame.loggers :refer [console]]
+    [re-frame.registrar :as registrar]
+    [re-frame.db :refer [app-db]]
+    [clojure.data :as data]
+    [re-frame.cofx :as cofx]))
 
 
 ;; XXX provide a way to set what handler should be called when there is no registered handler.
@@ -33,9 +34,9 @@
               context)
     :after  (fn debug-after
               [context]
-              (let [event          (get-coeffect context :event)
-                    orig-db        (get-coeffect context :db)
-                    new-db         (get-effect   context :db  ::not-found)]
+              (let [event   (get-coeffect context :event)
+                    orig-db (get-coeffect context :db)
+                    new-db  (get-effect   context :db ::not-found)]
                 (if (= new-db ::not-found)
                   (console :log "No :db changes caused by:" event)
                   (let [[only-before only-after] (data/diff orig-db new-db)
@@ -62,10 +63,7 @@
     :id      :trim-v
     :before  (fn trimv-before
                [context]
-               (->>  (get-coeffect context :event)
-                     rest
-                     vec
-                     (assoc-coeffect context :event)))))
+               (update context cofx/kind subvec 1))))
 
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
@@ -91,8 +89,8 @@
     :before (fn db-handler-before
               [context]
               (let [{:keys [db event]} (:coeffects context)]
-                (->>  (handler-fn db event)
-                      (assoc-effect context :db))))))
+                (->> (handler-fn db event)
+                     (assoc-effect context :db))))))
 
 
 (defn fx-handler->interceptor
@@ -153,7 +151,7 @@
   (let [path (flatten args)
         db-store-key :re-frame-path/db-store]    ;; this is where, within `context`, we store the original dbs
     (when (empty? path)
-      (console :error "re-frame: \"path\" interceptor given no params" ))
+      (console :error "re-frame: \"path\" interceptor given no params"))
     (->interceptor
       :id      :path
       :before  (fn
@@ -272,9 +270,9 @@
 
                ;; if one of the inputs has changed, then run 'f'
                (if changed-ins?
-                 (->>  (apply f new-ins)
-                       (assoc-in new-db out-path)
-                       (assoc-effect context :db))
+                 (->> (apply f new-ins)
+                      (assoc-in new-db out-path)
+                      (assoc-effect context :db))
                  context)))))
 
 
