@@ -33,9 +33,9 @@
               context)
     :after  (fn debug-after
               [context]
-              (let [event          (get-coeffect context :event)
-                    orig-db        (get-coeffect context :db)
-                    new-db         (get-effect   context :db  ::not-found)]
+              (let [event   (get-coeffect context :event)
+                    orig-db (get-coeffect context :db)
+                    new-db  (get-effect   context :db ::not-found)]
                 (if (= new-db ::not-found)
                   (console :log "No :db changes caused by:" event)
                   (let [[only-before only-after] (data/diff orig-db new-db)
@@ -62,10 +62,9 @@
     :id      :trim-v
     :before  (fn trimv-before
                [context]
-               (->>  (get-coeffect context :event)
-                     rest
-                     vec
-                     (assoc-coeffect context :event)))))
+               (->> (get-coeffect context :event)
+                    (subvec 1)
+                    (assoc-coeffect context :event)))))
 
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
@@ -91,8 +90,8 @@
     :before (fn db-handler-before
               [context]
               (let [{:keys [db event]} (:coeffects context)]
-                (->>  (handler-fn db event)
-                      (assoc-effect context :db))))))
+                (->> (handler-fn db event)
+                     (assoc-effect context :db))))))
 
 
 (defn fx-handler->interceptor
@@ -153,7 +152,7 @@
   (let [path (flatten args)
         db-store-key :re-frame-path/db-store]    ;; this is where, within `context`, we store the original dbs
     (when (empty? path)
-      (console :error "re-frame: \"path\" interceptor given no params" ))
+      (console :error "re-frame: \"path\" interceptor given no params"))
     (->interceptor
       :id      :path
       :before  (fn
@@ -272,9 +271,9 @@
 
                ;; if one of the inputs has changed, then run 'f'
                (if changed-ins?
-                 (->>  (apply f new-ins)
-                       (assoc-in new-db out-path)
-                       (assoc-effect context :db))
+                 (->> (apply f new-ins)
+                      (assoc-in new-db out-path)
+                      (assoc-effect context :db))
                  context)))))
 
 
