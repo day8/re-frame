@@ -337,7 +337,7 @@ We'd now rewrite that as a pure handler, like this:
 (reg-event-fx             ;; notice the -fx
    :load-localstore
    (fn [cofx  _]          ;; cofx is a map containing inputs
-     (let [defaults (:defaults-key cofx)]  ;; <--  use it here
+     (let [defaults (-> cofx :localstore :defaults-key)]  ;; <--  use it here
        {:db (assoc (:db cofx) :defaults defaults)})))  ;; returns effects map
 ```
 
