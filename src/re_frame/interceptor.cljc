@@ -52,8 +52,8 @@
    (:coeffects context))
   ([context key]
    (get-in context [:coeffects key]))
-  ([context key not-fount]
-   (get-in context [:coeffects key] not-fount)))
+  ([context key not-found]
+   (get-in context [:coeffects key] not-found)))
 
 (defn assoc-coeffect
   [context key value]
@@ -101,9 +101,9 @@
          (let [interceptor (peek queue)   ;; next interceptor to call
                stack (:stack context)]    ;; already completed interceptors
            (recur (-> context
-                      (assoc :queue (pop queue))
-                      (assoc :stack (conj stack interceptor))
-                      (invoke-interceptor-fn interceptor direction)))))))))
+											(assoc :queue (pop queue)
+														 :stack (conj stack interceptor))
+											(invoke-interceptor-fn interceptor direction)))))))))
 
 
 (defn enqueue
