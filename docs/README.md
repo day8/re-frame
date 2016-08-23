@@ -1,4 +1,4 @@
-## Structuring Your Application
+## Structuring Your Application:
 
 1. [Basic App Structure](Basic-App-Structure.md)
 2. [Navigation](Navigation.md)
