@@ -252,7 +252,7 @@ changing the `:event` value within the `:coeffects`.
 
 `:event` will start off as `[:delete-item 42]`, but will end up `[42]`.  `trim-event`  will remove that 
 leading `:delete-item` because, by the time the event is 
-being processed, we already know what id is has.
+being processed, we already know what id it has.
 
 And, here it is: 
 ```clj
