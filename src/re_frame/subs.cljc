@@ -36,7 +36,7 @@
   (let [cache-key [query-v dynv]]
     ;; when this reaction is nolonger being used, remove it from the cache
     (add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
-                            #_(console :log "Removing subscription: " cache-key)))
+                            #_(console :log "Removing subscription:" cache-key)))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction assoc cache-key r)
     r))  ;; return the actual reaction
@@ -60,7 +60,7 @@
            handler-fn (get-handler kind query-id)]
        ;(console :log "Subscription created: " query-v)
        (if-not handler-fn
-         (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
+         (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
        (cache-and-return query-v [] (handler-fn app-db query-v)))))
 
   ([v dynv]
@@ -71,9 +71,9 @@
            handler-fn (get-handler kind query-id)]
        (when debug-enabled?
          (when-let [not-reactive (not-empty (remove ratom? dynv))]
-           (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom: " not-reactive)))
+           (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom:" not-reactive)))
        (if (nil? handler-fn)
-         (console :error "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")
+         (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
          (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
                sub (make-reaction (fn [] (handler-fn app-db v @dyn-vals)))]
            ;; handler-fn returns a reaction which is then wrapped in the sub reaction
@@ -144,7 +144,7 @@
                          ;; a single `inputs` fn
                          1  (let [f (first input-args)]
                               (when-not (fn? f)
-                                (console :error err-header "2nd argument expected to be an inputs function, got: " f))
+                                (console :error err-header "2nd argument expected to be an inputs function, got:" f))
                               f)
 
                          ;; one sugar pair
@@ -158,7 +158,7 @@
                                vecs    (map last pairs)
                                ret-val (map subscribe vecs)]
                            (when-not (every?  vector? vecs)
-                             (console :error err-header "expected pairs of :<- and vectors, got: " pairs))
+                             (console :error err-header "expected pairs of :<- and vectors, got:" pairs))
                            (fn inp-fn
                              ([_] ret-val)
                              ([_ _] ret-val))))]

@@ -1,4 +1,10 @@
-  
+## 0.8.1  (2016.08.XX)  Unreleased
+
+
+#### Improvements
+
+  - [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
+
 ## 0.8.0  (2016.08.19)
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. 
@@ -45,10 +51,11 @@ Joking aside, this is a substantial release which will change how you use re-fra
     At this point, the todomvc example represents the best tutorial on the subject:
     https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs
 
-  - there's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
+  - re-frame now supports the notion of Event Handlers accepting coeffects and returning effects. <br>
+    There's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
     For a tutorial see: https://github.com/Day8/re-frame/tree/develop/docs  <br>
    
-    For examples, see: 
+    For Effect Handler examples see: 
    
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
@@ -177,7 +184,7 @@ Breaking:
     into the one console group, which could lead to exceptions being hidden (down in a closed group).
 
 Improvements:
-  - added one tick of extra pause when events have `:flush=dom` metadata. Previously, there were odd times when
+  - added one tick of extra pause when events have `:flush-dom` metadata. Previously, there were odd times when
     the pause wasn't long enough to ensure redraws.
   - now compatible with Reagent 0.6.0 (but this not fully tested) while remaining backwards compatible with
     Reagent v0.5.1

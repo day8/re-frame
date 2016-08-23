@@ -7,5 +7,5 @@
   [v]
   (if (vector? v)
     (first v)
-    (console :error "re-frame: expected a vector, but got: " v)))
+    (console :error "re-frame: expected a vector, but got:" v)))
 
