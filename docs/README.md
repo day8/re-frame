@@ -1,11 +1,11 @@
-Structuring Your Application
+## Structuring Your Application
 
 1. [Basic App Structure](Basic-App-Structure.md)
 2. [Navigation](Navigation.md)
 3. [Namespaced Keywords](Namespaced-Keywords.md)
 
 
-Understanding Event Handlers:
+## Understanding Event Handlers:
 
 1. [EffectfulEvents](EffectfulEvents.md)  
 2. [Interceptors](Interceptors.md)  
