@@ -35,15 +35,15 @@ Assuming your larger apps has multiple "panels" (or "views") which are relativel
 ```
 src
 ├── panel1
-   ├── db.cljs           <--- schema, validation, etc  (data layer)
-   ├── subs.cljs         <--- subscription handlers  (query layer)
-   ├── views.cljs        <--- reagent components (view layer)
-   └── events.cljs       <--- event handlers (control/update layer)
+│   ├── db.cljs           <--- schema, validation, etc  (data layer)
+│   ├── subs.cljs         <--- subscription handlers  (query layer)
+│   ├── views.cljs        <--- reagent components (view layer)
+│   └── events.cljs       <--- event handlers (control/update layer)
 ├── panel2
-   ├── db.cljs           <--- schema, validation. etc  (data layer)
-   ├── subs.cljs         <--- subscription handlers  (query layer)
-   ├── views.cljs        <--- reagent components (view layer)
-   └── events.cljs       <--- event handlers (control/update layer)
+│   ├── db.cljs           <--- schema, validation. etc  (data layer)
+│   ├── subs.cljs         <--- subscription handlers  (query layer)
+│   ├── views.cljs        <--- reagent components (view layer)
+│   └── events.cljs       <--- event handlers (control/update layer)
 .
 .
 └── panelN
