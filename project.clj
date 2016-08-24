@@ -1,4 +1,4 @@
-(defproject re-frame "0.8.0"
+(defproject re-frame "0.8.1"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
@@ -9,7 +9,7 @@
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[karma-reporter            "0.3.0"]
-                                    [binaryage/devtools        "0.7.2"]]
+                                    [binaryage/devtools        "0.8.1"]]
                      :plugins      [[lein-cljsbuild            "1.1.3"]
                                     [lein-npm                  "0.6.2"]
                                     [lein-figwheel             "0.5.4-7"]
@@ -45,7 +45,9 @@
 
   :cljsbuild {:builds [{:id           "test"
                         :source-paths ["test" "src"]
-                        :compiler     {:output-to     "run/compiled/browser/test.js"
+                        :compiler     {:preloads        [devtools.preload]
+                                       :external-config {:devtools/config {:features-to-install :all}}
+                                       :output-to     "run/compiled/browser/test.js"
                                        :source-map    true
                                        :output-dir    "run/compiled/browser/test"
                                        :optimizations :none
