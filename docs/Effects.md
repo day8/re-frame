@@ -278,6 +278,17 @@ then you can use a `fixture` to restore all effect handlers at the end of your t
 `re-frame.core/make-restore-fn` creates a checkpoint for re-frame state (including 
 registered handlers) to which you can return. 
 
+### Summary 
+
+XXX
+
+
+---
+Previous:  [Interceptors](Interceptors.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Coeffects](Coeffects.md)  
+
+---
 
 ### Builtin Effect Handlers
 
