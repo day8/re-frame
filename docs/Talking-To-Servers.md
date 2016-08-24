@@ -97,19 +97,22 @@ There'd also need to be a handler for the `:bad-response` event too.  Left as an
 
 This approach will work, and it is useful to take time to understand why it 
 would work, but it has a problem:  the event handler isn't pure.  
+
 That `GET` is a side effect, and side effecting functions are like a 
-well salted paper cut. We try very hard to avoid them.
+well salted paper cut. We try hard to avoid them.
 
 ### Version 2 
 
-The solution is, of course, to use an effectful handler. This is discussed in detail 
-in the previous tutorials: [Effectful Handlers](EffectfulHandler.md) and [Effects](Effects.md].  
+The better solution is, of course, to use an effectful handler. This 
+is explained in detail in the previous tutorials: [Effectful Handlers](EffectfulHandler.md) 
+and [Effects](Effects.md].  
 
-We use the alternative registration function, `reg-event-fx` , and we use an 
-effect handler from [https://github.com/Day8/re-frame-http-fx](https://github.com/Day8/re-frame-http-fx)
-You may be tempted to write your own.   
+We use the alternative registration function, `reg-event-fx` , and we'll use an 
+"Effect Handler" supplied this this library 
+[https://github.com/Day8/re-frame-http-fx](https://github.com/Day8/re-frame-http-fx).
+You may soon feel confident enough to write your own.
  
-We'll want . Like this:
+Here's our rewrite:
 ```clj
 (ns my.app.events                  
    (:require
@@ -131,6 +134,5 @@ We'll want . Like this:
 
 Notes:
   1. Our event handler to "describe" a side effect, rather than to "do" the side effect
-  2. The event handler for `:process-response` stays as it was. 
-  
+  2. The event handler for `:process-response` stays as it was.
   

@@ -1,9 +1,3 @@
-## Structuring Your Application:
-
-1. [Basic App Structure](Basic-App-Structure.md)
-2. [Navigation](Navigation.md)
-3. [Namespaced Keywords](Namespaced-Keywords.md)
-
 
 ## Understanding Event Handlers:
 
@@ -12,3 +6,15 @@
 3. [Effects](Effects.md)  
 4. [CoEffects](coeffects.md)  
 
+
+## Structuring Your Application:
+
+1. [Basic App Structure](Basic-App-Structure.md)
+2. [Navigation](Navigation.md)
+3. [Namespaced Keywords](Namespaced-Keywords.md)
+
+
+
+## Tutorials
+
+1. [Talking To Servers](Talking-To-Servers.md)
