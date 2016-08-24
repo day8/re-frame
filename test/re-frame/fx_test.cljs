@@ -7,12 +7,15 @@
 
 ;; ---- FIXTURES ---------------------------------------------------------------
 
-(defn teardown! []
-  ; cleanup up our handlers
-  (doseq [event [::later-test ::watcher]]
-    (re-frame/clear-event event)))
+;; This fixture uses the re-frame.core/make-restore-fn to checkpoint and reset
+;; to cleanup any dynamically registered handlers from our tests.
+(defn fixture-re-frame
+  []
+  (let [restore-re-frame (atom nil)]
+    {:before #(reset! restore-re-frame (re-frame.core/make-restore-fn))
+     :after  #(@restore-re-frame)}))
 
-(use-fixtures :each {:after teardown!})
+(use-fixtures :each (fixture-re-frame))
 
 ;; ---- TESTS ------------------------------------------------------------------
 

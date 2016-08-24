@@ -266,14 +266,13 @@ Want to stub out the `:dispatch` effect?  Do this:
 If your test does alter registered effect handlers, and you are using `cljs.test`,
 then you can use a `fixture` to restore all effect handlers at the end of your test: 
 ```clj
-(defn re-frame-fixture
-  [f]
-  (let [restore-re-frame-fn (re-frame.core/make-restore-fn)]
-    (try
-      (f)
-      (finally (restore-re-frame-fn)))))
- 
-(cljs.test/use-fixtures :each re-frame-fixture)
+(defn fixture-re-frame
+  []
+  (let [restore-re-frame (atom nil)]
+    {:before #(reset! restore-re-frame (re-frame.core/make-restore-fn))
+     :after  #(@restore-re-frame)}))
+
+(use-fixtures :each (fixture-re-frame))   
 ```
 
 `re-frame.core/make-restore-fn` creates a checkpoint for re-frame state (including 
