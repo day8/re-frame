@@ -6,7 +6,7 @@ Some say he appears on high value stamps in Germany and that he once
 punched a horse to the ground. Others say that he loves recursion so much 
 that in his wallet he keeps a photograph of his wallet.
 
-But you should probably take no notice - nature  
+But you should probably take no notice - nature
 fills a vacuum with rumor.
 
 All we know for certain is that he wields [Sketch.app](https://www.sketchapp.com/) like
@@ -19,6 +19,7 @@ speculated the re-frame logo was created as a bifarious rainbow omage to Frank L
 
 ![](Guggenheim.jpg)
 
+<br><br>
 Others scoff and insist he smeared the cljs logo across re-frame's official 
 architecture diagram to form a flowing poststructuralist rebuttal of the tyrannical 
 "OO" adjacency. 
