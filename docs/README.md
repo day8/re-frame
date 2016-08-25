@@ -1,10 +1,10 @@
-
 ## Understanding Event Handlers:
 
-1. [Effectful Handlers](EffectfulHandlers.md)  
-2. [Interceptors](Interceptors.md)  
-3. [Effects](Effects.md)  
-4. [CoEffects](coeffects.md)  
+1. [Pure Event Handlers] TODO - write something good here
+2. [Effectful Handlers](EffectfulHandlers.md)  
+3. [Interceptors](Interceptors.md)  
+4. [Effects](Effects.md)  
+5. [CoEffects](coeffects.md)  
 
 
 ## Structuring Your Application:
@@ -14,7 +14,8 @@
 3. [Namespaced Keywords](Namespaced-Keywords.md)
 
 
+## Populating Your Application Data:
 
-## Tutorials
-
-1. [Talking To Servers](Talking-To-Servers.md)
+1. [Loading Initial Data](Loading-Initial-Data.md)
+2. [Talking To Servers](Talking-To-Servers.md)
+3. [Dealing With Databases] TODO - Update Subscribing to a Database docs
