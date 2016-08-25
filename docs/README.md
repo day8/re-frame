@@ -18,4 +18,4 @@
 
 1. [Loading Initial Data](Loading-Initial-Data.md)
 2. [Talking To Servers](Talking-To-Servers.md)
-3. [Dealing With Databases] TODO - Update Subscribing to a Database docs
+3. [Subscribing to External Data](Subscribing-To-External-Data.md)
