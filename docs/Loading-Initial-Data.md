@@ -1,4 +1,4 @@
-## Bootstrapping Your Application State
+## Bootstrapping Application State
 
 To bootstrap a re-frame application, you need to:
   1. register handlers
@@ -17,7 +17,8 @@ Point 3 is the interesting bit and will be the main focus of this page, but let'
 
 ## 1. Register Handlers 
 
-You declare and registered your handlers in the one step like this: 
+re-frame's multifarious handlers all work in the same way.  You declare 
+and registered your handlers in the one step, like this "event handler" example: 
 ```clj
 (re-frame/reg-event-db       ;; event handler will be registered automatically
   :some-id
@@ -25,8 +26,10 @@ You declare and registered your handlers in the one step like this:
     ...  do some state change based on db and value ))
 ```
 
-As a result, there's nothing further you need to do because, at script (js) load time, the 
-registration happens automatically. 
+As a result, there's nothing further you need to do because 
+handler registration happens as a direct result of loading the code  
+code (presumably via a `<script>`). 
+
 
 ## 2. Kick Start Reagent 
 
@@ -80,18 +83,20 @@ That will require:
 
 ### Getting Data Into `app-db`
 
-Only event handlers can change `app-db`. Those are the rules!! Even initial 
-values must be put in via an event handler. 
+Only event handlers can change `app-db`. Those are the rules!! Indeed, even initial 
+values must be put in `app-db` via an event handler. 
 
 Here's an event handler for that purpose:
 ```Clojure
-
 (re-frame/reg-event-db
   :initialise-db				 ;; usage: (dispatch [:initialise-db])
   (fn [_ _]						 ;; Ignore both params (db and event)
 	 {:display-name "DDATWD"	 ;; return a new value for app-db
 	  :items [1 2 3 4]}))
 ```
+
+You'll notice that this handler does nothing other than to return a ` map`. That map 
+will become the new value within `app-db`.
 
 We'll need to dispatch an `:initialise-db` event to get it to execute. `main` seems like the natural place: 
 ```Clojure
@@ -103,18 +108,20 @@ We'll need to dispatch an `:initialise-db` event to get it to execute. `main` se
 ```
 
 But remember, event handlers execute async. So although there's 
-a `dispatch` within `main`, the handler for `:initialise-db` 
+a `dispatch` within `main`, the event is simply queued, and the 
+handler for `:initialise-db` 
 will not be run until sometime after `main` has finished.
 
 But how long after?  And is there a race condition?  The 
-component `main-panel` (which needs good data) might be 
+component `main-panel` (which assumes good data) might be 
 rendered before the `:initialise-db` event handler has 
 put good data into `app-db`. 
 
-We don't want any rendering (of `main-panel`) until after `app-db` is right. 
+We don't want any rendering (of `main-panel`) until after `app-db` 
+has been correctly initialised. 
 
 Okay, so that's enough of teasing-out the issues. Let's see a 
-quick sketch of the entire pattern. It is very straight-forward:
+quick sketch of the entire pattern. It is very straight-forward.
 
 ## The Pattern
 
@@ -181,7 +188,7 @@ Your `:initialised?` test then becomes more like this sketch:
 
 This assumes boolean flags are set in `app-db` when data was loaded from these services.
 
-## A Cheat - Synchronous Dispatch
+## Cheating - Synchronous Dispatch
 
 In simple cases, you can simplify matters by using `(dispatch-sync [:initialise-db])` in 
 the main entry point function.  The 
@@ -189,19 +196,28 @@ the main entry point function.  The
 and [TodoMVC Example](https://github.com/Day8/re-frame/blob/8cf42f57f50f3ee41e74de1754fdb75f80b31775/examples/todomvc/src/todomvc/core.cljs#L35) 
 both use `dispatch-sync` to initialise the app-db.
 
-`dispatch-sync` acts like a function call 
-and ensures the event is handled immediately, which is useful for initial data load in a 
-simple app - you don't need to guard against uninitialised data - you don't need
-a `top-panel` (introduced above). 
+`dispatch` queues an event for later processing, but `dispatch-sync` acts 
+like a function call and handles an event immediately. That's useful for initial data 
+load we are considering, particularly for simple apps. Using `dispatch-sync` guarantees 
+that initial state will be in place before any views are mounted, so we know they'll 
+subscribe to sensible values.  We don't need a guard like `top-panel` (introduced above). 
 
-But don't get into the habit of using `dispatch-sync`. It is the right 
+But don't get into the habit of using `dispatch-sync` everywhere. It is the right 
 tool in this context and, sometimes, when writing tests, but 
-`dispatch` is the staple to be used everywhere else.
+`dispatch` is the staple you should use everywhere else.
 
 ## Loading Initial Data From Services 
 
-Above,  in our example `main`, we used `dispatch` to request data
-from a backend service.  What would the event handlers look like
-which initiate the GETs?
+Above,  in our example `main`, we imagined using `(re-frame/dispatch [:load-from-service-1])`  to request data
+from a backend services.  How would we write the handler for this event?
  
-Let's go to [Talking to Servers](Talking-To-Servers.md) and find out!
+The next Tutorial will show you how. 
+
+
+
+---
+Previous:  [Interceptors](Interceptors.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Talking To Servers](Talking-To-Servers.md)  
+
+ 
