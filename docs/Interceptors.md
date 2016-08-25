@@ -119,7 +119,7 @@ and inserts its own interceptors
 so ACTUALLY, there's about 5 interceptors in the chain.
 
 So, ultimately, that event registration associates the event id `:some-id` 
-with a chain of interceptors.
+with __just__ a chain of interceptors. Nothing more.
  
 Later, when a `(dispatch [:some-id ...])` happens, that 5-chain of 
 interceptors will be "executed".  And that's how events get handled. 
@@ -216,7 +216,7 @@ designed by the talented
 
 Dunno about you, but I'm easily offended by underscores.
 
-If our components did this: 
+If we had a component which did this: 
 ```clj
 (dispatch [:delete-item 42])
 ```
