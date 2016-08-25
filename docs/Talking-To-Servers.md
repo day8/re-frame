@@ -105,10 +105,10 @@ well salted paper cut. We try hard to avoid them.
 
 The better solution is, of course, to use an effectful handler. This 
 is explained in detail in the previous tutorials: [Effectful Handlers](EffectfulHandler.md) 
-and [Effects](Effects.md].  
+and [Effects](Effects.md).  
 
 We use the alternative registration function, `reg-event-fx` , and we'll use an 
-"Effect Handler" supplied this this library 
+"Effect Handler" supplied by this library 
 [https://github.com/Day8/re-frame-http-fx](https://github.com/Day8/re-frame-http-fx).
 You may soon feel confident enough to write your own.
  
