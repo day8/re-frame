@@ -15,13 +15,19 @@ Bruce Lee wielded nunchucks.
 ## Genesis Theories
 
 While we wouldn't presume to fathom the cavernous depths of Martin's creativity, some have 
-speculated the re-frame logo was created by blending the cljs logo with re-frame's official 
-architecture diagram.
+speculated the re-frame logo was created as a bifarious rainbow omage to Frank Lloyd Wright's Guggenheim.
 
-You be the judge.
+![](Guggenheim.jpg)
+
+Others scoff and insist he smeared the cljs logo across re-frame's official 
+architecture diagram to form a flowing poststructuralist rebuttal of the tyrannical 
+"OO" adjacency. 
+
 
 ![](Genesis.png)
 
+You be the judge. 
+Are we better off never knowing?  Does art require an answer?
 
 ### Instructions 
 
