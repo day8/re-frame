@@ -2,7 +2,7 @@
 
 In [Talking To Servers](Talking-To-Servers.md) we learned how to communicate with servers using both pure
 and effectful handlers. This is great, but what if you want to query external data using subscriptions the 
-same way you query data stored in `app-db`? This tutorial will show you how to  
+same way you query data stored in `app-db`? This tutorial will show you how.
 
 ### There Can Be Only One!!
 
