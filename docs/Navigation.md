@@ -46,4 +46,4 @@ A high level reagent view has a subscription to :active-panel and will switch to
 
 ```
 
-Continue to [Namespaced Keywords](Namespaced-Keywords.md) to reduce clashes on event ids.
+Continue to [Namespaced Keywords](Namespaced-Keywords.md) to reduce clashes on ids.
