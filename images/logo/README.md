@@ -6,9 +6,6 @@ Some say he appears on high value stamps in Germany and that he once
 punched a horse to the ground. Others say that he loves recursion so much 
 that in his wallet he keeps a photograph of his wallet.
 
-But you should probably take no notice - nature
-fills a vacuum with rumor.
-
 All we know for certain is that he wields [Sketch.app](https://www.sketchapp.com/) like
 Bruce Lee wielded nunchucks.
 
