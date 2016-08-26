@@ -30,7 +30,7 @@ We want this handler to:
   2. Update a flag in `app-db` which will trigger a modal "Loading ..." message for the user to see
   
 We're going to create two versions of this event handler.  First, we'll create a
-problematic version of the event handler and then, realising our sins, we'll writes  
+problematic version of the event handler and then, realising our sins, we'll write
 a second version which is a soaring paragon of virtue. Both versions 
 will teach us something.
 
@@ -107,7 +107,7 @@ The better solution is, of course, to use an effectful handler. This
 is explained in detail in the previous tutorials: [Effectful Handlers](EffectfulHandler.md) 
 and [Effects](Effects.md).  
 
-We use the alternative registration function, `reg-event-fx` , and we'll use an 
+In the 2nd version, we use the alternative registration function, `reg-event-fx` , and we'll use an 
 "Effect Handler" supplied by this library 
 [https://github.com/Day8/re-frame-http-fx](https://github.com/Day8/re-frame-http-fx).
 You may soon feel confident enough to write your own.
@@ -133,6 +133,8 @@ Here's our rewrite:
 ```
 
 Notes:
-  1. Our event handler to "describe" a side effect, rather than to "do" the side effect
-  2. The event handler for `:process-response` stays as it was.
+  1. Our event handler "describes" side effects, it does not "do" side effects
+  2. The event handler we wrote for `:process-response` stays as it was
+  
+  
   
