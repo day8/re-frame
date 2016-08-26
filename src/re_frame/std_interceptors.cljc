@@ -2,10 +2,10 @@
   "contains re-frame supplied, standard interceptors"
   (:require
     [re-frame.interceptor :refer [->interceptor get-effect get-coeffect assoc-coeffect assoc-effect]]
-    [re-frame.loggers   :refer [console]]
-    [re-frame.registrar :as  registrar]
-    [re-frame.db        :refer [app-db]]
-    [clojure.data       :as data]))
+    [re-frame.loggers     :refer [console]]
+    [re-frame.registrar   :as  registrar]
+    [re-frame.db          :refer [app-db]]
+    [clojure.data         :as data]))
 
 
 ;; XXX provide a way to set what handler should be called when there is no registered handler.

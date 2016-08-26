@@ -1,15 +1,15 @@
 (ns re-frame.core
   (:require
-    [re-frame.events      :as events]
-		[re-frame.subs        :as subs]
-		[re-frame.interop     :as interop]
-    [re-frame.db          :as db]
-    [re-frame.fx          :as fx]
-    [re-frame.cofx        :as cofx]
-    [re-frame.router      :as router]
-    [re-frame.loggers     :as loggers]
-    [re-frame.registrar   :as registrar]
-    [re-frame.interceptor :as interceptor]
+    [re-frame.events           :as events]
+    [re-frame.subs             :as subs]
+    [re-frame.interop          :as interop]
+    [re-frame.db               :as db]
+    [re-frame.fx               :as fx]
+    [re-frame.cofx             :as cofx]
+    [re-frame.router           :as router]
+    [re-frame.loggers          :as loggers]
+    [re-frame.registrar        :as registrar]
+    [re-frame.interceptor      :as interceptor]
     [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
                                                              fx-handler->interceptor
                                                              ctx-handler->interceptor]]))
@@ -67,7 +67,7 @@
   "Register the given `id`, typically a keyword, with the combination of
   `db-handler` and an interceptor chain.
   `db-handler` is a function: (db event) -> db
-  `interceptors` is a collection of interceptors, possibly nested (needs flattenting).
+  `interceptors` is a collection of interceptors, possibly nested (needs flattening).
   `db-handler` is wrapped in an interceptor and added to the end of the chain, so in the end
    there is only a chain.
    The necessary effects and coeffects handler are added to the front of the
@@ -102,7 +102,7 @@
 (def set-loggers! loggers/set-loggers!)
 
 ;; If you are writing an extension to re-frame, like perhaps
-;; an effeects handler, you may want to use re-frame logging.
+;; an effects handler, you may want to use re-frame logging.
 ;;
 ;; usage:  (console :error "this is bad: " a-variable " and " anotherv)
 ;;         (console :warn "possible breach of containment wall at: " dt)
@@ -137,10 +137,10 @@
       nil)))
 
 
-;; -- Event Procssing Callbacks
+;; -- Event Processing Callbacks
 
 (defn add-post-event-callback
-  "Registers a function `f` to be called after each event is procecessed
+  "Registers a function `f` to be called after each event is processed
    `f` will be called with two arguments:
     - `event`: a vector. The event just processed.
     - `queue`: a PersistentQueue, possibly empty, of events yet to be processed.
@@ -166,7 +166,7 @@
 
 
 ;; --  Deprecation Messages
-;; Assisting the v0.0.7 ->  v0.0.8 tranistion.
+;; Assisting the v0.0.7 ->  v0.0.8 transition.
 (defn register-handler
   [& args]
   (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
