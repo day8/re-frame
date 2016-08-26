@@ -1,7 +1,9 @@
 ## Subscribing to External Data
 
-In [Talking To Servers](Talking-To-Servers.md) we learned how to communicate with servers using both pure
-and effectful handlers. This is great, but what if you want to query external data using subscriptions the 
+In [Talking To Servers](Talking-To-Servers.md) we learned how to 
+communicate with servers using both pure and effectful handlers. 
+This is great, but what if you want to 
+query external data using subscriptions the 
 same way you query data stored in `app-db`? This tutorial will show you how.
 
 ### There Can Be Only One!!
@@ -75,7 +77,7 @@ the Component.
 Right, so let's write the subscription handler. 
 
 There'll be code in a minute but, first, let's describe how the subscription handler
- will work: 
+will work: 
 
    1. Upon being required to provide items, it has to issue 
       a query to the remote database. Perhaps this will be done via a 
@@ -91,12 +93,12 @@ There'll be code in a minute but, first, let's describe how the subscription han
    has some useful information on designing your application for different states that your data might be in.
 
    3. The subscription handler must return something to the Component. It should give back a 
-      reaction to that known, particular path within `app-db`, so that when the query results 
+      `reaction` to that known, particular path within `app-db`, so that when the query results 
       eventually arrive, they will flow through into the Component for display.
 
    4. The subscription handler will detect when the Component is destroyed and no longer requires 
       the subscription. It will then clean up, getting rid of those now-unneeded items, and
-       sorting out any stateful database connection issues. 
+      sorting out any stateful database connection issues. 
       
 Notice what's happening here.  In many respects, `app-db` is still acting as the single source of data.
 The subscription handler is organising for the right remote data to "flow" into `app-db` at a known, 
@@ -121,21 +123,23 @@ Enough fluffing about with words, here's a code sketch for our subscription hand
 
 A few things to notice:
 
-1. You have to write  `issue-items-query!`.  Are you making a Restful GET? 
+1. We are using the low level `reg-sub-raw` registration for our handler (and not `reg-sub`). 
+   This gives us some low level control. `db` will be an atom. We must return a
+   `reaction` (signal). 
+   
+2. You have to write  `issue-items-query!`.  Are you making a Restful GET? 
    Are you writing JSON packets down a websocket?  The query has to be made.
 
-2. We do not issue the query via a `dispatch` because, to me, it isn't an event. But we most certainly 
+3. We do not issue the query via a `dispatch` because, to me, it isn't an event. But we most certainly 
    do handle the arrival of query results via a `dispatch` and associated event handler. That to me 
    is an external event happening to the system. The event handler can curate the arriving data in 
    whatever way makes sense. Maybe it does nothing more than to `assoc` into an `app-db` path, 
    or maybe this is a rethinkdb changefeed subscription and your event handler will have to collate 
    the newly arriving data with what has previously been returned. Do what 
    needs to be done in that event handler, so that the right data to be put into the right path.
-
-3. We use re-frame's `reg-sub-raw`, which requires us to create a Reagent reaction manually. 
  
 3. We use Reagent's `make-reaction` function to create a reaction which will return 
-   that known, particular path within `app-db` where the query results are to be placed. 
+   that known, particular path within `app-db` where the query results are to be placed.
 
 4. We use the `on-dispose` callback on this reaction to do any cleanup work
    when the subscription is no longer needed. Clean up `app-db`?  Clean up the database connection?
@@ -152,31 +156,83 @@ That's easy to do in our cleanup code.
 We can source some data from both PostgreSQL and firebase in the one app, using the same pattern. 
 All remote data access is done in the same way.
 
-Because query results are `dispatched` to an event handler, you have a lot of flexibility about how you process them. 
+Because query results are `dispatched` to an event handler, you have a lot of flexibility 
+about how you process them. 
 
-The whole set of pieces can be arranged and tweaked in many ways.  For example, with a bit of work, we could 
-keep a register of all currently used queries.  And then, if ever we noticed that the app had gone offline, 
-and then back online, we could organise to reissue all the queries  again (with results flowing back into 
+The whole set of pieces can be arranged and tweaked in many ways.  For example, 
+with a bit of work, we could keep a register of all currently used queries.
+And then, if ever we noticed that the app had gone offline, 
+and then back online, we could organise to reissue all the queries  again 
+(with results flowing back into 
 the same known paths), avoiding stale results.
 
-Also, notice that putting ALL interesting data into `app-db` has nice flow on effects. In particular, it means it is 
-available to event handlers, 
+Also, notice that putting ALL interesting data into `app-db` has nice 
+flow on effects. In particular, it means it is available to event handlers, 
 should they need it when servicing events (event handlers get `db` as a parameter, right?).  
-If this item data was held in a separate place, other than `app-db`, it wouldn't be available in this useful way.  
+If this item data was held in a separate place, other than `app-db`, 
+it wouldn't be available in this useful way.  
 
 ### Warning: Undo/Redo
 
-This technique caches remote data in `app-db`.  Be sure to exclude this cache area from any undo/redo operations 
-using [the available configuration options](https://github.com/Day8/re-frame/wiki/Undo-%26-Redo#harvesting-and-re-instating)
+This technique caches remote data in `app-db`.  Be sure to exclude this 
+cache area from any undo/redo operations 
+using [the available configuration options](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
 
 ### Query De-duplication 
 
 In v0.8.0 of re-frame onwards, subscriptions are automatically de-duplicated. 
 
-In prior versions, in cases where the same query is simultaneously issued from multiple places, you'd want to 
-de-duplicate the queries. One possibility is to do this duplication in `issue-items-query!` itself. You can count 
+In prior versions, in cases where the same query is simultaneously issued 
+from multiple places, you'd want to 
+de-duplicate the queries. One possibility is to do this duplication 
+in `issue-items-query!` itself. You can count 
 `count` the duplicate queries and only clear the data when that count goes to 0. 
 
 ### Thanks To
 
 @nidu for his valuable review comments and insights
+
+## The Alternative  Approach
+
+Event handlers do most of the heavy lifting within re-frame apps.
+
+When buttons gets clicked, or items get dragged 'n dropped, or tabs get
+chosen, they know how to transition the app from one state 
+to the next. That's their job. And, when they make such
+a transition, it is quite reasonable to expect them to ALSO 
+source the data needed in the new state. 
+
+So there's definitely a case for NOT using the approach outlined 
+above and, instead, making event handlers source data and 
+plonk it into a certain part of `app-db` for use by subscriptions. 
+
+In effect, there's definitely an argument that 
+subscriptions should only ever source from `app-db` BUT that it is 
+event handlers which start and stop the sourcing of data from 
+remote places.  
+
+Sorry, but you'll have to work out which of these two variations
+works best for you. 
+
+Within this document the first alternative has been given more word count 
+only because there's a few more tricks to make it work, not because it 
+is necessarily preferred. 
+
+## What Not To Do 
+
+Don't get into making views source their data directly using React liefcycle methods. 
+
+Sometimes, because of their background with other JS frameworks, 
+new re-framers feel like the Components themselves (the views) 
+should have the responsibility of sourcing the data they need. 
+
+They then use React lifecycle methods like `:component-did-mount` 
+to load remote data. 
+
+I believe this is absolutely the wrong way to do it. 
+
+In re-frame we want views to be as simple and dumb as possible. They turn 
+data into HTML and nothing more. they absolutely do not do imperative stuff.
+
+Use one of the two alternatives described above.
+ 
