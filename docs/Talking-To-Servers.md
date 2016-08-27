@@ -43,7 +43,7 @@ Here's the event handler:
 ```clj
 (ns my.app.events                   ;; <1>
    (:require [ajax.core :refer [GET]]
-             [re-frame.core :refer [re-event-db]))
+             [re-frame.core :refer [reg-event-db]))
 
 (reg-event-db        ;; <-- register an event handler
   :request-it        ;; <-- the event id
