@@ -44,7 +44,16 @@
 
 
 ;; --  subscriptions
-(def reg-sub-raw         subs/register-raw)
+(defn reg-sub-raw
+  "Associate a `query id` with a given subscription handler fucntion `handler-fn`
+   which is expected to take two arguments: app-db and query vector, and return
+   a `recation`.
+
+  This is a low level, advanced function.  You should probably be using re-sub
+  instead."
+  [query-id handler-fn]
+  (registrar/register-handler subs/kind query-id handler-fn))
+
 (def reg-sub             subs/reg-sub)
 (def subscribe           subs/subscribe)
 

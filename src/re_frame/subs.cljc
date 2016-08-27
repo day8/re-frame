@@ -11,10 +11,7 @@
 (def kind :sub)
 (assert (re-frame.registrar/kinds kind))
 
-(defn register-raw
-  "Register a subscription handler fucntion for an query id"
-  [query-id handler-fn]
-  (register-handler kind query-id handler-fn))
+
 
 
 ;; -- Subscription cache -----------------------------------------------------
@@ -48,7 +45,7 @@
    (get @query->reaction [query-v dyn-v])))
 
 
-;; -- Subscription cache -----------------------------------------------------
+;; -- subscribe -----------------------------------------------------
 
 (defn subscribe
   "Returns a Reagent/reaction which contains a computation"

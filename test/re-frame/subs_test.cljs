@@ -10,7 +10,7 @@
 (deftest test-reg-sub
   (subs/clear-all-handlers!)
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :test-sub
     (fn [db [_]] (reaction (deref db))))
 
@@ -22,15 +22,15 @@
 (deftest test-chained-subs
   (subs/clear-all-handlers!)
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :a-sub
     (fn [db [_]] (reaction (:a @db))))
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :b-sub
     (fn [db [_]] (reaction (:b @db))))
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :a-b-sub
     (fn [db [_]]
       (let [a (subs/subscribe [:a-sub])
@@ -46,7 +46,7 @@
 (deftest test-sub-parameters
   (subs/clear-all-handlers!)
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :test-sub
     (fn [db [_ b]] (reaction [(:a @db) b])))
 
@@ -58,15 +58,15 @@
 (deftest test-sub-chained-parameters
   (subs/clear-all-handlers!)
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :a-sub
     (fn [db [_ a]] (reaction [(:a @db) a])))
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :b-sub
     (fn [db [_ b]] (reaction [(:b @db) b])))
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :a-b-sub
     (fn [db [_ c]]
       (let [a (subs/subscribe [:a-sub c])
@@ -85,7 +85,7 @@
   (subs/clear-all-handlers!)
   (reset! side-effect-atom 0)
 
-  (subs/register-raw
+  (re-frame/reg-sub-raw
     :side-effecting-handler
     (fn side-effect
       [db [_] [_]]
