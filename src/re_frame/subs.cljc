@@ -7,14 +7,10 @@
    [re-frame.registrar :refer [get-handler clear-handlers register-handler]]))
 
 
-;; -- Subscription Handler Lookup and Registration --------------------------------------------------
 (def kind :sub)
 (assert (re-frame.registrar/kinds kind))
 
-
-
-
-;; -- Subscription cache -----------------------------------------------------
+;; -- cache -------------------------------------------------------------------
 ;;
 ;; De-duplicate subscriptions. If two or more equal subscriptions
 ;; are concurrently active, we want only one handler running.
@@ -78,7 +74,7 @@
            ;(console :log "Subscription created: " v dynv)
            (cache-and-return v dynv (make-reaction (fn [] @@sub)))))))))
 
-;; -- Helper code for register-pure -------------------
+;; -- reg-sub -----------------------------------------------------------------
 
 (defn- map-vals
   "Returns a new version of 'm' in which 'f' has been applied to each value.
@@ -95,7 +91,7 @@
     (sequential? signals) (map deref signals)
     (map? signals)        (map-vals deref signals)
     (deref? signals)      @signals
-    :else (console :error "re-frame: the reg-sub for " query-id ", must be wrong. Return value from input-signals function is: " signals)))
+    :else (console :error "re-frame: in the reg-sub for " query-id ", the input-signals function returns: " signals)))
 
 
 (defn reg-sub
