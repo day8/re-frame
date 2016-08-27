@@ -15,13 +15,11 @@
 
 (defn ->interceptor
   "Create an interceptor from named arguments"
-  [& {:as m :keys [name id before after]}]      ;; XXX remove `name` in due course - only in there as a backwards compat thing
+  [& {:as m :keys [id before after]}]
   (when debug-enabled?
-    (if name                                    ;; XXX remove in due course
-      (console :warn  "re-frame.core/->interceptor no longer takes `:name` - has been renamed to `:id`. Please change for " name))
     (if-let [unknown-keys  (seq (clojure.set/difference
-                             (-> (dissoc m :name) keys set)         ;; XXX take out name in due course
-                             mandatory-interceptor-keys))]
+                                  (-> m keys set)
+                                  mandatory-interceptor-keys))]
       (console :error "re-frame: ->interceptor " m " has unknown keys:" unknown-keys)))
   {:id     (or id name :unnamed)     ;; XXX remove `name` in due course
    :before before
