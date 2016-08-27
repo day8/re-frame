@@ -95,7 +95,7 @@
 
 
 (defn reg-sub
-  "Register a given handler function for a given query id.
+  "Associate the given `query id` with a handler function and an optional signal function.
 
   There's 3 ways this function can be called
 
