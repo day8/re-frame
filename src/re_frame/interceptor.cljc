@@ -21,7 +21,7 @@
                                   (-> m keys set)
                                   mandatory-interceptor-keys))]
       (console :error "re-frame: ->interceptor " m " has unknown keys:" unknown-keys)))
-  {:id     (or id name :unnamed)     ;; XXX remove `name` in due course
+  {:id     (or id :unnamed)
    :before before
    :after  after })
 
