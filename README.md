@@ -15,7 +15,7 @@ y'know. Pretty good.
 Either:
 
 1.  You want to develop an [SPA] in ClojureScript, and you are looking for a framework; or
-2.  You believe that, by early 2015, ReactJS had won the JavaScript framework wars and
+2.  You believe that, by early 2015, React had won the JavaScript framework wars and
     you are curious about the bigger implications. Is the combination of
     `reactive programming`, `functional programming` and `immutable data` going to
     **completely change everything**?  And, if so, what would that look like in a language
@@ -108,7 +108,7 @@ __Warning__:  That was the summary. What follows is a long-ish tutorial/explanat
 First, we decided to build our SPA apps with ClojureScript, then we
 choose [Reagent], then we had a problem.
 
-For all its considerable brilliance,  Reagent (+ ReactJS)
+For all its considerable brilliance,  Reagent (+ React)
 delivers only the 'V' part of a traditional MVC framework.
 
 But apps involve much more than V. Where
