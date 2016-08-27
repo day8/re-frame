@@ -13,7 +13,7 @@ Bruce Lee wielded nunchucks.
 
 ## Genesis Theories
 
-Great, unexplained works always encourage fan theories, and the re-frame logo
+Great, unexplained works encourage fan theories, and the re-frame logo
 is no exception.
 
 Some speculate @martinklepsch created it as a bifarious rainbow omage
@@ -29,7 +29,8 @@ duplicate letter adjacency, and Jackson Pollock's Fractal Expressionism.
 
 ![](Genesis.png)
 
-You be the judge.
+For his part, Martin has refused to confirm any theory, teasing us only with tidbits 
+like "Will you please stop emailing me" and "Why did you say I hit a horse?".
 
 ### Instructions 
 
