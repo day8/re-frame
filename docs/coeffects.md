@@ -35,7 +35,7 @@ handler, making this common case easy to program.
 
 But sometimes an event handler needs other data inputs
 to perform its computation.  Things like a random number, or a GUID,
-or the current datetime. It might even need access to a
+or the current datetime. Perhaps it needs access to a
 DataScript connection.
 
 
@@ -50,17 +50,17 @@ This handler obtains data directly from LocalStore:
        (assoc db :defaults val))))
 ```
 
-This works, but there's a cost. 
+This works, but there's a cost.
 
 Because it has directly accessed LocalStore, this event handler is not 
-pure, and impure functions cause well-documented paper cuts. 
+pure, and impure functions cause well-documented paper cuts.
 
 ### How We Want It
 
-Our goal in this tutorial is to rewrite this event handler so 
-that it __only__ uses data from arguments.
+Our goal in this tutorial will be to rewrite this event handler so 
+that it __only__ uses data from arguments. This will take a few steps.
  
-To make this happen, we first switch to
+The first is that we first switch to
 using `reg-event-fx` (instead of `reg-event-db`).
 
 Event handlers registered via `reg-event-fx` are slightly 
@@ -85,8 +85,9 @@ right value. Nice! But how do we make this magic happen?
  
 ### Abracadabra 
 
-Each time an event handler is executed, a brand new `context` is created, and within that 
-`context` is a brand new `:coeffect` map, which is initially totally empty.
+Each time an event handler is executed, a brand new `context` 
+is created, and within that `context` is a brand new `:coeffect` 
+map, which is initially totally empty.
 
 That pristine `context` value (containing a pristine `:coeffect` map) is threaded 
 through a chain of Interceptors before it finally reaches our event handler,
@@ -114,10 +115,10 @@ Something like this (this handler is the same as before, except for one detail):
        {:db (assoc db :defaults val))})) 
 ```
 
-Look at that - my event handler has a new Interceptor!  It is injecting the right key/value pair (`:local-store`)
-into `context's` `:coeffeects`, which then goes on to be the first argument 
+Look at that - my event handler has a new Interceptor!  It is injecting the 
+right key/value pair (`:local-store`)
+into `context's` `:coeffeects`, which itself then goes on to be the first argument 
 to our event handler (`cofx`).
-
 
 ### `inject-cofx`
 

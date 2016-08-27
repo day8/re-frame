@@ -298,7 +298,7 @@ More on side effects in a minute, but let's double back to coeffects.
 
 ### The Coeffects
 
-So far we've written our new style `-fx handlers like this:
+So far we've written our new style `-fx` handlers like this:
 ```clj
 (reg-event-fx
    :my-event
@@ -314,10 +314,11 @@ It is now time to name that first argument:
        { ... }))
 ```
 
-When you use the `-fx` form of registration, the first argument of your handler will be a map of coeffects which we name `cofx`.  
+When you use the `-fx` form of registration, the first argument 
+of your handler will be a map of coeffects which we name `cofx`.  
 
 In that map will be the complete set of "inputs" required by your function.  The complete 
-set of computational resources (data) needed to perform its computation. But how?  
+set of computational resources (data) needed to perform its computation. But how?
 This will be explained in an upcoming tutorial, I promise, but for the moment, 
 take it as a magical given. 
 
@@ -332,7 +333,8 @@ Remember this impure handler from before:
        (assoc db :defaults defaults))))
 ```
 
-We'd now rewrite that as a pure handler, like this:
+It was impure because it obtained an input from other than its arguments. 
+We'd now rewrite it as a pure handler, like this:
 ```clj
 (reg-event-fx             ;; notice the -fx
    :load-localstore
