@@ -200,8 +200,8 @@
   And this duplication check might just be one check among many.
 
   `f` would need to be both adding and removing the duplicate warnings.
-  By applying `f` in middleware, we keep the handlers simple and yet we
-  ensure this important step is not missed."
+  By applying `f` in an `:after` interceptor, we keep the handlers
+  simple and yet we ensure this important step is not missed."
   [f]
   (->interceptor
     :id    :enrich
