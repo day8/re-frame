@@ -35,7 +35,7 @@
   "Associate the given event `id` with the given collection of `interceptors`.
 
    `interceptors` may contain nested collections and there may be nils
-   at any level,so process this sturcuture into a simple, nil-less vector
+   at any level,so process this structure into a simple, nil-less vector
    before registration.
 
    An `event handler` will likely be at the end of the chain (wrapped in an interceptor)."
