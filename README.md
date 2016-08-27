@@ -614,7 +614,7 @@ select * from customers where name="blah"
 ```
 
 In re-frame, that would be done as follows:
-   (subscribe  [:customer-query "blah"])
+   `(subscribe  [:customer-query "blah"])`
 which would return a `ratom` holding the customer state (a value which might change over time!).
 
 So let's now look at how to write and register the subscription handler for `:customer-query`
@@ -627,7 +627,7 @@ So let's now look at how to write and register the subscription handler for `:cu
 
 ;; register our query handler
 (register-sub
-   :customer-query       ;; the id (the name of the query()
+   :customer-query       ;; the id (the name of the query)
    customer-query)       ;; the function which will perform the query
 ```
 
@@ -646,7 +646,7 @@ function and not in the inner render function.  So the following is **wrong** (c
 (defn greet         ;; a Form-1 component - no inner render function
   []
   (let [name-ratom  (subscribe [:name-query])]    ;; Eek! subscription in renderer
-       [:div "Hello" @name-ratom]))
+    [:div "Hello" @name-ratom]))
 ```
 
 Why is this wrong?  Well, this component would be re-rendered every time `app-db` changed, even if the value
@@ -774,7 +774,7 @@ Hideously contrived example, but I hope you get the idea. It is all screamingly 
 
 Summary:
  - you can chain reactions.
- - a reaction will only be re-run when its input Signals test not identical? to previous value.
+ - a reaction will only be re-run when its input Signals test not `identical?` to previous value.
  - As a result, unnecessary Signal propagation is eliminated using highly efficient  checks,
    even for large, deep nested data structures.
 
@@ -1104,8 +1104,8 @@ modify `app-db` themselves.  That is always done in a handler.
  - if you (further) dispatch in a handler, then that will be async too. The associated handler is
    queued for later processing.  Why?  Partially because handlers are given a snapshot of
    the `app-db` and can't be nested.
- - if you kick off an HTTP request in a handler, then organise for the on-success or on-fail handlers
-   to dispatch their outcome.  All events are handled via dispatch. on-success should never ever change
+ - if you kick off an HTTP request in a handler, then organise for the `on-success` or `on-fail` handlers
+   to dispatch their outcome.  All events are handled via dispatch. `on-success` should never ever change
    `app-db`.
 
 The [wiki](https://github.com/Day8/re-frame/wiki/Talking-To-Servers) has more on the subject.
