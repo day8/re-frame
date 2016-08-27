@@ -17,7 +17,7 @@
 
 
 (defn ->interceptor
-  "Create an interceptor from named arguements"
+  "Create an interceptor from named arguments"
   [& {:as m :keys [name id before after]}]      ;; XXX remove `name` in due course - only in there as a backwards compat thing
   (when debug-enabled?
     (if name                                    ;; XXX remove in due course

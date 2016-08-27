@@ -1,5 +1,5 @@
 (ns re-frame.router
-  (:require [re-frame.events :refer [handle]]
+  (:require [re-frame.events  :refer [handle]]
             [re-frame.interop :refer [after-render empty-queue next-tick]]
             [re-frame.loggers :refer [console]]))
 
@@ -8,7 +8,7 @@
 ;;
 ;; A call to "re-frame.core/dispatch" places an event on a queue for processing.
 ;; A short time later, the handler registered to handle this event will be run.
-;; What follows is the implemtation of this process.
+;; What follows is the implementation of this process.
 ;;
 ;; The task is to process queued events in a perpetual loop, one after
 ;; the other, FIFO, calling the registered event-handler for each, being idle when
@@ -32,14 +32,14 @@
 ;;   - maintain a FIFO queue of `dispatched` events.
 ;;   - when a new event arrives, "schedule" processing of this queue using
 ;;     goog.async.nextTick, which means it will happen "very soon".
-;;   - when processing events, one after the other, do ALL the those currently
-;;     queued. Don't stop. Don't yield to the browser. Hog that CPU.
+;;   - when processing events, one after the other, do ALL the currently
+;;     queued events. Don't stop. Don't yield to the browser. Hog that CPU.
 ;;   - but if any new events are dispatched during this cycle of processing,
 ;;     don't do them immediately. Leave them queued. Yield first to the browser,
 ;;     and do these new events in the next processing cycle. That way we drain
 ;;     the queue up to a point, but we never hog the CPU forever. In
 ;;     particular, we handle the case where handling one event will beget
-;;     another event. The freshly begatted event will be handled next cycle,
+;;     another event. The freshly begotten event will be handled next cycle,
 ;;     with yielding in-between.
 ;;   - In some cases, an event should not be handled until after the GUI has been
 ;;     updated, i.e., after the next Reagent animation frame. In such a case,
@@ -118,9 +118,9 @@
   (-fsm-trigger
     [this trigger arg]
 
-    ;; The following "case" impliments the Finite State Machine.
+    ;; The following "case" implements the Finite State Machine.
     ;; Given a "trigger", and the existing FSM state, it computes the
-    ;; new FSM state and the tranistion action (function).
+    ;; new FSM state and the transition action (function).
 
     (let [[new-fsm-state action-fn]
           (case [fsm-state trigger]
@@ -237,7 +237,7 @@
 
 
 (defn dispatch-sync
-  "Sychronously (immediaetly!) process the given event using the registered handler.
+  "Sychronously (immediately!) process the given event using the registered handler.
 
   Generally, you shouldn't use this - you should use `dispatch` instead.  It
   is an error to use `dispatch-sync` within an event handler.

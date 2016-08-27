@@ -1,12 +1,12 @@
 (ns re-frame.fx
   (:require
-    [re-frame.router  :as router]
-    [re-frame.db      :refer [app-db]]
+    [re-frame.router      :as router]
+    [re-frame.db          :refer [app-db]]
     [re-frame.interceptor :refer [->interceptor]]
-    [re-frame.interop  :refer [set-timeout!]]
-    [re-frame.events  :as events]
-    [re-frame.registrar  :refer [get-handler clear-handlers register-handler]]
-    [re-frame.loggers :refer [console]]))
+    [re-frame.interop     :refer [set-timeout!]]
+    [re-frame.events      :as events]
+    [re-frame.registrar   :refer [get-handler clear-handlers register-handler]]
+    [re-frame.loggers     :refer [console]]))
 
 
 ;; -- Registration ------------------------------------------------------------

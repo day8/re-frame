@@ -1,9 +1,9 @@
 (ns re-frame.subs
  (:require
-   [re-frame.db      :refer [app-db]]
-   [re-frame.interop :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref?]]
-   [re-frame.loggers :refer [console]]
-   [re-frame.utils   :refer [first-in-vector]]
+   [re-frame.db        :refer [app-db]]
+   [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref?]]
+   [re-frame.loggers   :refer [console]]
+   [re-frame.utils     :refer [first-in-vector]]
    [re-frame.registrar :refer [get-handler clear-handlers register-handler]]))
 
 
@@ -34,7 +34,7 @@
   "cache the reaction r"
   [query-v dynv r]
   (let [cache-key [query-v dynv]]
-    ;; when this reaction is nolonger being used, remove it from the cache
+    ;; when this reaction is no longer being used, remove it from the cache
     (add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
                             #_(console :log "Removing subscription:" cache-key)))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
@@ -118,7 +118,7 @@
           (subs/subscribe [:b-sub])])
        (fn [[a b] [_]] {:a a :b b}))
 
-  Two functions provided. The 2nd is computation fucntion, as before. The 1st
+  Two functions provided. The 2nd is computation function, as before. The 1st
   is returns what `input signals` should be provided to the computation. The
   `input signals` function is called with two arguments: the query vector
   and the dynamic vector. The return value can be singleton reaction or
@@ -135,7 +135,7 @@
   "
   [query-id & args]
   (let [computation-fn (last args)
-        input-args     (butlast args)    ;; may be empty, or one fn, or pairs of  :<- / vetor
+        input-args     (butlast args)    ;; may be empty, or one fn, or pairs of  :<- / vector
         err-header     (str "re-frame: reg-sub for " query-id ", ")
         inputs-fn      (case (count input-args)
                          ;; no `inputs` function provided - give the default

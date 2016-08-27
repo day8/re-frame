@@ -119,7 +119,7 @@ and inserts its own interceptors
 so ACTUALLY, there's about 5 interceptors in the chain.
 
 So, ultimately, that event registration associates the event id `:some-id` 
-with a chain of interceptors.
+with __just__ a chain of interceptors. Nothing more.
  
 Later, when a `(dispatch [:some-id ...])` happens, that 5-chain of 
 interceptors will be "executed".  And that's how events get handled. 
@@ -216,7 +216,7 @@ designed by the talented
 
 Dunno about you, but I'm easily offended by underscores.
 
-If our components did this: 
+If we had a component which did this: 
 ```clj
 (dispatch [:delete-item 42])
 ```
@@ -252,7 +252,7 @@ changing the `:event` value within the `:coeffects`.
 
 `:event` will start off as `[:delete-item 42]`, but will end up `[42]`.  `trim-event`  will remove that 
 leading `:delete-item` because, by the time the event is 
-being processed, we already know what id is has.
+being processed, we already know what id it has.
 
 And, here it is: 
 ```clj
@@ -337,6 +337,11 @@ __4.__ Interceptors do interesting things:
 
 In the next Tutorial, we'll look at (side) Effects in more depth.  Later again, we'll look at Coeffects.   
  
+---
+Previous:  [Interceptors](Interceptors.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Effects](Effects.md)  
+
 
 ## Appendix
 
