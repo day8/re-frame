@@ -5,10 +5,7 @@
     [re-frame.interop :refer [empty-queue debug-enabled?]]))
 
 
-;; XXX use defrecord ??
-
 (def mandatory-interceptor-keys #{:id :after :before})
-
 
 (defn interceptor?
   [m]
