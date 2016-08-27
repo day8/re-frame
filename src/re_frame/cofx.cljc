@@ -66,23 +66,3 @@
 (def inject-db (inject-cofx :db))
 
 
-;; -- Further Example  --------------------------------------------------------
-
-;; An example coeffect handler, which adds the current datetime under
-;; the `:now` key.
-;;
-;; Example Usage:
-;;   (reg-event-fx                    ;;  `-fx` variant used in registration
-;;     :some-id
-;;     [(coeffect :now) debug]        ;; notice (coeffect :now) is in interceptors
-;;       (fn [coeffects event]        ;; -fx handlers are given the entire coeffect as 1st argument
-;;         (let [dt (:now coeffects)] ;; `:now` is available
-;;            ...)))
-;;
-;; As a further exercise, consider how you would write a `random` interceptor which adds a random
-;; number into a handler's coeffect?
-#_(register
-    :now
-    (fn now-coeffects-handler
-      [coeffects]
-      (assoc coeffects :now (js/Date.))))
