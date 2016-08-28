@@ -118,8 +118,8 @@ So, terminology:
 - `:butterfly` is an "effect key"
 - and the function registered is an "effect handler".
 
-So re-frame has `event handlers` and `effect handlers` and they are 
-different, despite both starting with `e` and ending in `t`!!
+So re-frame has both `event` handlers and `effect` handlers and they are 
+different, despite them both starting with `e` and ending in `t`!!
 
 ### Writing An Effect Handler
 
