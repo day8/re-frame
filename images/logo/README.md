@@ -16,7 +16,7 @@ Bruce Lee wielded nunchucks.
 Great, unexplained works encourage fan theories, and the re-frame logo
 is no exception.
 
-Some speculate @martinklepsch created it as a bifarious rainbow omage
+Some speculate @martinklepsch created it as a bifarious rainbow homage
 to a utilities room in Frank Lloyd Wright's Guggenheim.
 
 ![](Guggenheim.jpg)
