@@ -149,7 +149,7 @@ In my defence, here's the builtin effect handler for `:db`:
     (reset! re-frame.db/app-db value)))
 ```
 
-So, yeah, simple ... and, because of it, I an almost guarantee there's no bug in ... bang, crash, smoke, flames.
+So, yeah, simple ... and, because of it, I can almost guarantee there's no bug in ... bang, crash, smoke, flames.
 
 > Note: the return value of an effect handler is ignored.
 
