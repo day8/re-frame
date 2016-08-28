@@ -22,5 +22,5 @@ which are both unique and descriptive.
 
 ---
 Previous:  [Navigation](Navigation.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Loading Initial Data](Loading-Initial-Data.md)  

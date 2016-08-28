@@ -60,5 +60,5 @@ Continue to [Navigation](Navigation.md) to learn how to switch between panels of
 
 ---
 Previous:  [CoEffects](coeffects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Navigation](Navigation.md)  
