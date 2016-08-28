@@ -50,6 +50,6 @@ A high level reagent view has a subscription to :active-panel and will switch to
 Continue to [Namespaced Keywords](Namespaced-Keywords.md) to reduce clashes on ids.
 
 ---
-Previous:  [Navigation](Navigation.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Previous:  [Basic App Structure](Basic-App-Structure.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Namespaced Keywords](Namespaced-Keywords.md)
