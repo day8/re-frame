@@ -282,30 +282,44 @@ Notes:
 
 We're going well. Let's do an advanced wrapping. 
 
-How would you wrap a handler in an Interceptor?
+Earlier, in the "Handlers Are Interceptors Too" section, I explained that `event handlers` 
+are wrapped in an Interceptor and placed on the end of an Interceptor chain.  
+How does this wrapping happen?
 
-There's two kinds of handler:
+Reminder - there's two kinds of handler:
    - the `-db` variety registered by `reg-event-db`
    - the `-fx` variety registered by `reg-event-fx`
-   
-Let's do a `-db` variety. This is what a `-db` handler looks like:
+
+I'll now show how to wrap the `-db` variety. Here's what a `-db` handler looks like:
 ```clj
 (fn [db event]               ;;  takes two params
   (assoc db :flag true))     ;; returns a new db
 ```
-   
-And here is a function which turns a `-db` handler into an interceptor:  
+
+So, we'll be writing a function which takes a `-db` handler and returns an 
+Interceptor which wraps that handler:
 ```clj
 (defn db-handler->interceptor
   [db-handler-fn]
-  (->interceptor
-    :id     :db-handler
+  (re-frame.core/->interceptor     ;; a utility function supplied by re-frame
+    :id     :db-handler            ;; ids are decorative only
     :before (fn [context]
               (let [{:keys [db event]} (:coeffects context)    ;; extract db and event from coeffects
                     new-db (db-handler-fn db event)]           ;; call the handler 
                  (assoc-in context [:effects :db] new-db)))))) ;; put db back into :effects
 ```
 
+Notes:
+  1.  Notice how this wrapper extracts data from the `context's` `:coeffect` 
+      and then calls the handler with that data  (a handler must be called with `db` and `event`)
+  2.  Equally notice how this wrapping takes the return value from the `-db` 
+      handler and puts it into `context's` `:effect`
+  3.  The modified `context` (it has a new `:coeffect`) is returned
+  3.  This is all done in `:before`.  There is no `:after` (it is a noop).  But this 
+      could have been reversed with the work happening in `:after` and `:before` a noop. Shrug.
+      Remember that this Interceptor will be on the end of a chain. 
+
+Feeling confident?  Try writing the wrapper for `-fx` handlers - it is just a small variation.  
 
 ## Summary
 
