@@ -113,6 +113,7 @@ In the 2nd version, we use the alternative registration function, `reg-event-fx`
 You may soon feel confident enough to write your own.
  
 Here's our rewrite:
+
 ```clj
 (ns my.app.events                  
    (:require
@@ -138,3 +139,6 @@ Notes:
   
   
   
+---
+Previous:  [Talking To Servers](Talking-To-Servers.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -267,3 +267,7 @@ In note form:
   5. We must have previously registered a cofx handler via `reg-cofx`
   
    
+---
+Previous:  [Effects](Effects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Basic App Structure](Basic-App-Structure.md)  
