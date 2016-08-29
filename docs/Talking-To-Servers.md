@@ -113,6 +113,7 @@ In the 2nd version, we use the alternative registration function, `reg-event-fx`
 You may soon feel confident enough to write your own.
  
 Here's our rewrite:
+
 ```clj
 (ns my.app.events                  
    (:require
@@ -138,3 +139,7 @@ Notes:
   
   
   
+---
+Previous:  [Loading Initial Data](Loading-Initial-Data.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Subscribing to External Data](Subscribing-To-External-Data.md)  

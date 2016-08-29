@@ -355,3 +355,8 @@ usage:
 Create a PR to include yours in this list. 
 
 XXX maybe put this list into the Wiki, so editable by all. 
+
+---
+Previous:  [Interceptors](Interceptors.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [CoEffects](coeffects.md)  

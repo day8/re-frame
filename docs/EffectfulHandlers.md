@@ -393,6 +393,6 @@ the mechanism by which  event handlers are executed. That knowledge will give us
 to then, as a next step, better understand coeffects and effects. We'll soon be writing our own.   
 
 ---
-Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Interceptors](Interceptors.md)  
 
