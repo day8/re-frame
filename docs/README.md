@@ -23,6 +23,6 @@
 
 
 ## Miscellaneous:
-1. [FAQs](FAQS/README.md)
+1. [FAQs](FAQs/README.md)
 2. [Using Stateful JS Components](Using-Stateful-JS-Components.md)
 3. [The re-frame Logo](The-ref-frame-logo.md)
