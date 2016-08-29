@@ -24,5 +24,5 @@
 
 ## Miscellaneous:
 
-1. [Using Stateful JS Components.md](Using-Stateful-JS-Components.md)
+1. [Using Stateful JS Components](Using-Stateful-JS-Components.md)
 2. [The re-frame Logo](The-ref-frame-logo.md)

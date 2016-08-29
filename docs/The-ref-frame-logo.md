@@ -18,7 +18,7 @@ Bruce Lee wielded nunchucks.
 Great, unexplained works encourage fan theories, and the re-frame logo
 is no exception.
 
-A noisy bunch think @martinklepsch wanted to `Put the 'f' back into infinity`. They have t-shirts. 
+A noisy bunch think @martinklepsch simply wanted to `Put the 'f' back into infinity`. They have t-shirts. 
 
 Others speculate he created the logo as a bifarious rainbow homage
 to Frank Lloyd Wright's masterpiece, the Guggenheim Museum. A classic case 
