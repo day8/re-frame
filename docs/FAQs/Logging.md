@@ -2,7 +2,7 @@
 
 I use logging method X, how can I make re-frame use my method? 
 
-## Answer
+### Answer
 
 re-frame makes use of the logging functions: `warn`, `log`, `error`, `group` and `groupEnd`.  
 
@@ -22,3 +22,6 @@ override that by providing your own set or subset of these functions using
                               :log   my-log 
                               ...})
 ```
+
+---
+Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -1,9 +1,9 @@
-## Question
+### Question
 
 If I `dispatch` a js event object (from a view), it is nullified 
 by the time it gets to the event-handler. What gives? 
 
-## Answer
+### Answer
 
 So there's two things to say about this:
 - if you want to `dispatch` a js event object to a re-frame 
@@ -15,3 +15,7 @@ So there's two things to say about this:
   and `dispatch` that, rather than the js event object itself. When you 
   `dispatch` pure, simple cljs data (ie. rather than js objects) testing 
   and debugging will become easier. 
+  
+  
+---
+Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

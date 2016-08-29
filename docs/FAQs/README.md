@@ -4,7 +4,6 @@
 2. [How do I use logging method X](Logging.md)
 3. [Dispatched Events Are Null](Null-Dispatched-Events.md)
 4.
-5.
 6.  [Why implement re-frame in `.cljc` files](Why-CLJC.md)
 
 

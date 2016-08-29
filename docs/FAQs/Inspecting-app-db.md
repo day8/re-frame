@@ -1,9 +1,9 @@
 
-## Question
+### Question
 
 How can I inspect the contents of `app-db`?  Perhaps from figwheel.
 
-## Short Answer
+### Short Answer
 
 If at a REPL, inspect:  `re-frame.db/app-db`.  
 
@@ -12,7 +12,7 @@ If at the js console, that's `window.re_frame.db.app_db.state`.
 You are [using clj-devtools](https://github.com/binaryage/cljs-devtools), right? 
 If not, stop everything and immediately make that happen. 
 
-## Better Answer
+### Better Answer
 
 Are you sure you need to?  
 
@@ -55,4 +55,5 @@ or
 You definitely have [clj-devtools](https://github.com/binaryage/cljs-devtools) installed now, right?
 
 
+---
 Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
