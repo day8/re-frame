@@ -18,7 +18,7 @@ wielded nunchucks.
 Great, unexplained works encourage fan theories, and the re-frame <br>
 logo is no exception.
 
-One noisy group think @martinklepsch simply wanted to <br>
+One noisy group thinks @martinklepsch simply wanted to <br>
 `Put the 'f' back into infinity`. They have t-shirts.
 
 Another group speculates that he created the logo as a bifarious  <br>
@@ -36,7 +36,7 @@ Attend one of their parties and you have a 50% chance of arrest.
 
 The Functional Fundamentalists, a stern bunch, see the logo as a <br>
 flowing poststructuralist rebuttal of OO's vowel duplication and <br>
-horizontal adjacency. Their alternative pproach, FF, is apparently <br>
+horizontal adjacency. Their alternative approach, FF, is apparently <br>
 fine because "everyone loves a fricative".
 
 For his part, @martinklepsch has never confirmed any theory, teasing <br>
