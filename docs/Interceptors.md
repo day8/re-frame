@@ -380,3 +380,8 @@ To use them, first require them:
   (:require
     [re-frame.core :refer [debug path]])
 ```
+
+---
+Previous:  [Effectful Handlers](EffectfulHandlers.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Effects](Effects.md)  

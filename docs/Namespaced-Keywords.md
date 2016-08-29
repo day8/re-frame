@@ -19,3 +19,8 @@ fiction. I can have the keyword `:panel1/edit` even though
 
 Naturally, you'll take advantage of this by using keyword namespaces 
 which are both unique and descriptive.
+
+---
+Previous:  [Navigation](Navigation.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Loading Initial Data](Loading-Initial-Data.md)  

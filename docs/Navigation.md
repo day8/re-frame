@@ -19,6 +19,7 @@ When the user does something navigation-ish (selects a tab, a dropdown or someth
 ```
 
 A high level reagent view has a subscription to :active-panel and will switch to the associated panel.
+
 ```clj
 (re-frame/reg-sub
   :active-panel
@@ -43,7 +44,12 @@ A high level reagent view has a subscription to :active-panel and will switch to
        (condp = @active                ;; or you could look up in a map
          :panel1   [panel1]
          :panel2   [panel2])])))
-
 ```
 
+
 Continue to [Namespaced Keywords](Namespaced-Keywords.md) to reduce clashes on ids.
+
+---
+Previous:  [Basic App Structure](Basic-App-Structure.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Namespaced Keywords](Namespaced-Keywords.md)
