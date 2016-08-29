@@ -12,11 +12,11 @@ override that by providing your own set or subset of these functions using
 ```clj
 (defn my-warn
    [& args]      
-   (my-special-warner (apply str args)))
+   (post-warning-somewhere (apply str args)))
 
 (defn my-log
    [& args]
-   (my-special-logger (apply str args)))
+   (write-to-datadog (apply str args)))
 
 (re-frame.core/set-loggers!  {:warn  my-warn   
                               :log   my-log 
