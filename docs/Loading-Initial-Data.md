@@ -135,6 +135,11 @@ quick sketch of the entire pattern. It is very straight-forward.
   :initialised?          ;; usage (subscribe [:initialised?])
   (fn  [db _]
 	(not (empty? db))))  ;; do we have data
+	
+(re-frame/reg-event-db
+   :initialise-db
+   (fn [db _]
+       (assoc db :display-name "Jane Doe")))
 
 (defn main-panel    ;; the top level of our app 
   []
