@@ -1,11 +1,11 @@
 ## Eek! Performance Problems
 
-## 1. Could It Be The `debug` Interceptor
+## 1. Is It The `debug` Interceptor?
 
-First, an easy problem to fix.
+This first one is something of a non-problem. 
 
-Are you are using the `re-frame.core/debug` Interceptor?  
-You should be, it's useful. __But__ you do need to be aware of its possible performance implications. 
+Are you are using the `re-frame.core/debug` Interceptor?
+You should be, it's useful. __But__ you do need to be aware of its possible performance implications.  
  
 `debug` reports what's changed after an event handler has run by using 
 `clojure.data/diff` to do deep, CPU intensive diff on `app-db`. 
