@@ -1,6 +1,6 @@
 (defproject todomvc-re-frame "0.8.0"
   :dependencies [[org.clojure/clojure        "1.8.0"]
-                 [org.clojure/clojurescript  "1.9.89"]
+                 [org.clojure/clojurescript  "1.9.227"]
                  [reagent "0.6.0-rc"]
                  [re-frame "0.8.0"]
                  [binaryage/devtools "0.8.1"]
