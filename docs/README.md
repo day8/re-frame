@@ -22,6 +22,7 @@
 
 ### Miscellaneous
 - [FAQs](FAQs/README.md)
+- [Eek! Performance Problems](Performance-Problems.md)
 - [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
 - [Using Stateful JS Components](Using-Stateful-JS-Components.md)
 - [The re-frame Logo](The-re-frame-logo.md)
