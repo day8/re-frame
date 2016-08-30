@@ -106,6 +106,7 @@ row-data changes; they only generate hiccup when something really has changed?
 Correctly using React `keys` can also make a huge difference to performance.
 
 Some resources:
+
 1. http://stackoverflow.com/questions/27863039/key-property-inside-component-function
 2. http://stackoverflow.com/a/37186230/5215391
 3. https://groups.google.com/d/msg/reagent-project/J1ELaLV20MU/iutebA-JEgAJ
@@ -134,10 +135,11 @@ To work around the problem, lift the function out of the render.  Use a Form-2 f
          [:div {:on-mouse-over  mouse-over-cb}]))
 ```
 
-Now, React will see that `mouse-over-cb` is the same as last time. 
+Now, React will see that `mouse-over-cb` is the same as last time. It won't think 
+the event handler has been replaced. 
 
 But like I say, don't be too paranoid about this, it is unlikely
-to be an issue, unless you have something like a table with a 
+to be an issue unless you have something like a table with a 
 lot of rows. 
 
 
