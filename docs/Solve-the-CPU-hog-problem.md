@@ -20,13 +20,11 @@ We need a means by which long running handlers can hand control
 back for "other" processing every so often, while still continuing 
 on with their computation.
 
-Luckily, re-frame has a solution.
+## The re-frame Solution
 
-## The Solution
-
-__First__, all long running, CPU-hogging processes are put in handlers.  
-Not in subscriptions.  Not in components. This is not hard to do, 
-but worth highlighting. 
+__First__, all long running, CPU-hogging processes are put in event handlers.
+Not in subscriptions.  Not in components. Not hard to do,
+but worth establishing as a rule, right up front. 
 
 __Second__, you must be able to break up that CPU 
 work into chunks. You need a way to do part of the work, pause, 
@@ -77,8 +75,8 @@ Here's an `-fx` handler which counts up to some number in chunks:
 
 ### Why Does A Redispatch Work?
 
-A `dispatched` event is handled asynchronously. It is put on the conveyor 
-belt, and not actioned straight away. 
+A `dispatched` event is handled asynchronously. It is queued
+and not actioned straight away. 
 
 And here's the key: **After handling current events, re-frame yields control
 to the browser**, allowing it to render any pending DOM changes, etc. After 
@@ -92,7 +90,7 @@ When the next dispatch is handled, a next chunk of work will be done, and then a
 after chunk. In 16ms increments if we are very careful (or some small amount 
 of time less than, say, 100ms). But with the browser getting a look-in after each iteration.
 
-### Variation
+### Variations
 
 As we go, the handler could be updating some value in `app-db` which indicates 
 progress, and this state would then be rendered into the UI.
