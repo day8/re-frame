@@ -1,4 +1,4 @@
-## Understanding Event Handlers:
+#### Understanding Event Handlers:
 
 1. [Pure Event Handlers] TODO - write something good here
 2. [Effectful Handlers](EffectfulHandlers.md)  
@@ -7,23 +7,21 @@
 5. [CoEffects](coeffects.md)  
 
 
-## Structuring Your Application:
+#### Structuring Your Application:
 
 1. [Basic App Structure](Basic-App-Structure.md)
 2. [Navigation](Navigation.md)
 3. [Namespaced Keywords](Namespaced-Keywords.md)
 
 
-## Populating Your Application Data:
+#### Populating Your Application Data:
 
 1. [Loading Initial Data](Loading-Initial-Data.md)
 2. [Talking To Servers](Talking-To-Servers.md)
 3. [Subscribing to External Data](Subscribing-To-External-Data.md)
 
 
-
-
-## Miscellaneous:
+#### Miscellaneous:
 1. [FAQs](FAQs/README.md)
 2. [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
 3. [Using Stateful JS Components](Using-Stateful-JS-Components.md)
