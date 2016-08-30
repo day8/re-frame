@@ -234,7 +234,7 @@ You may, for example, want to test that an event handler works
 using a specific `now`, not a true random number. 
 
 In your test, you'd mock out the cofx handler:
-```
+```clj
 (reg-cofx
    :now
    (fn [coeffects _]
