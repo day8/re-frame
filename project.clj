@@ -8,11 +8,12 @@
                  [org.clojure/tools.logging  "0.3.1"]]
 
   :profiles {:debug {:debug true}
-             :dev   {:dependencies [[karma-reporter            "0.3.0"]
+             :dev   {:dependencies [[karma-reporter            "1.0.1"]
                                     [binaryage/devtools        "0.8.1"]]
-                     :plugins      [[lein-cljsbuild            "1.1.3"]
+                     :plugins      [[lein-ancient              "0.6.10"]
+                                    [lein-cljsbuild            "1.1.4"]
                                     [lein-npm                  "0.6.2"]
-                                    [lein-figwheel             "0.5.4-7"]
+                                    [lein-figwheel             "0.5.6"]
                                     [lein-shell                "0.5.0"]]}}
 
   :clean-targets  [:target-path "run/compiled"]
