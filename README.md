@@ -1090,46 +1090,6 @@ step by step towards the exception causing problem.
 This is utterly, utterly perfect for debugging assuming, of course, you are in a position to capture
 a checkpoint, and the events since then.
 
-### Talking To A Server
-
-Some events handlers will need to initiate an async server connection (e.g. GET or POST something).
-
-The initiating event handlers should organise that the `on-success` or `on-fail` handlers for
-these HTTP requests themselves simply dispatch a new event.  They should never attempt to
-modify `app-db` themselves.  That is always done in a handler.
-
-**Notes**:
- - all events are handled via a call to `dispatch`. GUI events, async HTTP events, everything.
- - `dispatch` will cause a handler function to be called. But the process is async. The call is queued.
- - if you (further) dispatch in a handler, then that will be async too. The associated handler is
-   queued for later processing.  Why?  Partially because handlers are given a snapshot of
-   the `app-db` and can't be nested.
- - if you kick off an HTTP request in a handler, then organise for the `on-success` or `on-fail` handlers
-   to dispatch their outcome.  All events are handled via dispatch. `on-success` should never ever change
-   `app-db`.
-
-The [wiki](https://github.com/Day8/re-frame/wiki/Talking-To-Servers) has more on the subject.
-
-## The CPU Hog Problem
-
-Sometimes a handler has a lot of CPU intensive work to do, and getting through it will take a while.
-
-When a handler hogs the CPU, nothing else can happen. Browsers only give us one thread of
-execution and that CPU-hogging handler owns it, and it isn't giving it up. The UI will be
-frozen and there will be
-no processing of any other handlers (e.g. on-success of POSTs), etc., etc. Nothing.
-
-And a frozen UI is a problem.  GUI repaints are not happening. And user interactions are not being processed.
-
-How are we to show progress updates like "Hey, X% completed"?  Or how can we handle the
-user clicking on that "Cancel" button trying to stop this long running process?
-
-We need a means by which long running handlers can hand control
-back for "other" processing every so often, while still continuing on with their
-computation.
-
-Luckily, [re-frame has a solution](https://github.com/Day8/re-frame/wiki/Solve-the-CPU-hog-problem).
-
 
 ### In Summary
 
@@ -1149,20 +1109,16 @@ To build an app using re-frame, you'll have to:
 
 ### Where Do I Go Next?
 
-Your next steps with re-frame should be:
+Next: 
   - look at the examples:  https://github.com/Day8/re-frame/tree/master/examples
+  - read the docs:  https://github.com/Day8/re-frame/blob/master/docs/README.md
+  
+After that:
   - use the lein template:  https://github.com/Day8/re-frame-template
-  - read more in the Wiki:  https://github.com/Day8/re-frame/wiki
 
-You might also be interested in James MacAulay's excellent work (not re-frame!):
-https://github.com/jamesmacaulay/zelkova
-
-If you want reusable layout and widget components, consider this sister project:
+Also, if you want reusable layout and widget components, consider this sister project:
 https://github.com/Day8/re-com
 
-Here are some open source re-frame apps you can look at for more inspiration:
-
-- https://github.com/madvas/fractalify/
 
 ### Licence
 
