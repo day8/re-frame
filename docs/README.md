@@ -1,28 +1,27 @@
-#### Understanding Event Handlers:
-
-1. [Pure Event Handlers] TODO - write something good here
-2. [Effectful Handlers](EffectfulHandlers.md)  
-3. [Interceptors](Interceptors.md)  
-4. [Effects](Effects.md)  
-5. [CoEffects](coeffects.md)  
-
-
-#### Structuring Your Application:
-
-1. [Basic App Structure](Basic-App-Structure.md)
-2. [Navigation](Navigation.md)
-3. [Namespaced Keywords](Namespaced-Keywords.md)
+### Understanding Event Handlers
+- [-db Event Handlers] TODO 
+- [Effectful Handlers](EffectfulHandlers.md)  
+- [Interceptors](Interceptors.md)  
+- [Effects](Effects.md)  
+- [CoEffects](coeffects.md)  
 
 
-#### Populating Your Application Data:
+### Structuring Your Application
 
-1. [Loading Initial Data](Loading-Initial-Data.md)
-2. [Talking To Servers](Talking-To-Servers.md)
-3. [Subscribing to External Data](Subscribing-To-External-Data.md)
+- [Basic App Structure](Basic-App-Structure.md)
+- [Navigation](Navigation.md)
+- [Namespaced Keywords](Namespaced-Keywords.md)
 
 
-#### Miscellaneous:
-1. [FAQs](FAQs/README.md)
-2. [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
-3. [Using Stateful JS Components](Using-Stateful-JS-Components.md)
-4. [The re-frame Logo](The-re-frame-logo.md)
+### Populating Your Application Data
+
+- [Loading Initial Data](Loading-Initial-Data.md)
+- [Talking To Servers](Talking-To-Servers.md)
+- [Subscribing to External Data](Subscribing-To-External-Data.md)
+
+
+### Miscellaneous
+- [FAQs](FAQs/README.md)
+- [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
+- [Using Stateful JS Components](Using-Stateful-JS-Components.md)
+- [The re-frame Logo](The-re-frame-logo.md)
