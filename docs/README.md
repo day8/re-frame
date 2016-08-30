@@ -22,7 +22,9 @@
 
 
 
+
 ## Miscellaneous:
 1. [FAQs](FAQs/README.md)
-2. [Using Stateful JS Components](Using-Stateful-JS-Components.md)
-3. [The re-frame Logo](The-re-frame-logo.md)
+2. [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
+3. [Using Stateful JS Components](Using-Stateful-JS-Components.md)
+4. [The re-frame Logo](The-re-frame-logo.md)
