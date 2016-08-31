@@ -11,20 +11,19 @@ You should be, it's useful. __But__ you do need to be aware of its possible perf
 `clojure.data/diff` to do deep, CPU intensive diff on `app-db`. 
 That diff could be taking a while, and leading to apparent performance problems.
 
-
 The good news is this really isn't a production problem.  `debug` should only be 
 present in an Interceptor Chain at development time, and it should be removed 
 from production using [this technique](https://github.com/Day8/re-frame/blob/be6f49f21e245dea1cd0a857b70dd720bfbe18fd/examples/todomvc/src/todomvc/handlers.cljs#L33).
 
 Also related, anything which writes large data structures, or strings, to the 
-js console, will be slow. So press F12 and have a look at what's happening
-in there. 
+js console, will be slow. So press F12, pull up devtools console, and have a 
+good look at what's happening in there. 
 
 ## 2. `=` On Big Structures
 
 Reagent uses `=` to compare the previous value of a prop with the 
 new value of that prop, when it determines if a component needs 
-rerendering. A [deeper discussion is here](https://github.com/Day8/re-frame/wiki/When-do-components-update%3F). 
+rerendering. [Make sure you have a good understanding of this.](https://github.com/Day8/re-frame/wiki/When-do-components-update%3F). 
 
 In the worst case, if those props are big data structures which differ only in some 
 tiny, leaf aspect, then a lot of CPU cycles will be spent doing 
