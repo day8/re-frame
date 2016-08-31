@@ -17,7 +17,7 @@ This is an interceptors tutorial.
   * [Self Modifying](#self-modifying)
   * [Credit](#credit)
   * [Write An Interceptor](#write-an-interceptor)
-    + [Wrapping Handlers](#wrapping-handlers)
+  * [Wrapping Handlers](#wrapping-handlers)
 - [Summary](#summary)
 - [Appendix](#appendix)
   * [The Builtin Interceptors](#the-builtin-interceptors)
@@ -260,12 +260,8 @@ And, here it is:
   (re-frame.core/->interceptor
     :id      :trim-event
     :before  (fn [context]
-               (let [new-event (-> context 
-                                   :coeffects 
-                                   :event        ;; extra event from coeffects
-                                   rest          ;; remove first element
-                                   vec)          ;; list->vector
-                  (assoc-in context [:coeffects :event] new-event)))))
+               (let [trim-fn (fn [event] (-> event rest vec))]
+                 (update-in context [:coeffects :event] trim-fn)))))
 ```
 
 As you read this, look back to what a `context` looks like.   
@@ -278,7 +274,7 @@ Notes:
      with the backwards processing flow of `:effects`. It is concerned only 
      with `:coeffects` in the forward flow.
       
-#### Wrapping Handlers
+### Wrapping Handlers
 
 We're going well. Let's do an advanced wrapping. 
 
