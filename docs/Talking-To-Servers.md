@@ -104,7 +104,7 @@ well salted paper cut. We try hard to avoid them.
 ### Version 2 
 
 The better solution is, of course, to use an effectful handler. This 
-is explained in detail in the previous tutorials: [Effectful Handlers](EffectfulHandler.md) 
+is explained in detail in the previous tutorials: [Effectful Handlers](EffectfulHandlers.md) 
 and [Effects](Effects.md).  
 
 In the 2nd version, we use the alternative registration function, `reg-event-fx` , and we'll use an 

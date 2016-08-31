@@ -3,7 +3,7 @@
 - [Effectful Handlers](EffectfulHandlers.md)  
 - [Interceptors](Interceptors.md)  
 - [Effects](Effects.md)  
-- [CoEffects](coeffects.md)  
+- [Coeffects](Coeffects.md)  
 
 
 ### Structuring Your Application
