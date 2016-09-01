@@ -326,11 +326,11 @@ One of the keys in `cofx` will likely be `:db` and that will be the value of `ap
 
 Remember this impure handler from before:
 ```clj
-(reg-event-db              ;;  a -db registration
-   :load-localstore
-   (fn [db _]              ;; db first argument 
-     (let [defaults (js->clj (.getItem js/localStorage "defaults-key"))]  ;; <--  Eeek
-       (assoc db :defaults defaults))))
+(reg-event-db            ;;  a -db registration
+ :load-localstore
+ (fn [db _]              ;; db first argument 
+  (let [defaults (js->clj (.getItem js/localStorage "defaults-key"))]  ;; <--  Eeek!!
+    (assoc db :defaults defaults))))
 ```
 
 It was impure because it obtained an input from other than its arguments. 
@@ -339,7 +339,7 @@ We'd now rewrite it as a pure handler, like this:
 (reg-event-fx             ;; notice the -fx
    :load-localstore
    (fn [cofx  _]          ;; cofx is a map containing inputs
-     (let [defaults (:defaults-key cofx)]  ;; <--  use it here
+     (let [defaults (:local-store cofx)]  ;; <--  use it here
        {:db (assoc (:db cofx) :defaults defaults)})))  ;; returns effects map
 ```
 
@@ -355,10 +355,10 @@ data from arguments.
 
 `-db` handlers and `-fx` handlers are conceptually the same. They only differ numerically.
 
-`-db` handlers take ONE coeffect called `db`, and they return only ONE  effect (db again). 
+`-db` handlers take __one__ coeffect called `db`, and they return only __one__  effect (db again). 
 
-Whereas `-fx` handlers take potentially MANY coeffects (a map of them) and they return 
-potentially MANY effects (a map of them). So, One vs Many. 
+Whereas `-fx` handlers take potentially __many__ coeffects (a map of them) and they return 
+potentially __many__ effects (a map of them). So, One vs Many. 
 
 Just to be clear, the following two handlers achieve the same thing:
 ```clj
@@ -390,7 +390,7 @@ cause additional side-effects (effects).  That's when you reach for `-fx` handle
 
 In the next tutorial, we'll shine a light on `interceptors` which are
 the mechanism by which  event handlers are executed. That knowledge will give us a springboard 
-to then, as a next step, better understand coeffects and effects. We'll soon be writing our own.   
+to then, as a next step, better understand coeffects and effects. We'll soon be writing our own.
 
 ---
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
