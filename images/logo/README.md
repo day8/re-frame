@@ -1,7 +1,7 @@
 
 ![logo](/images/logo/re-frame_256w.png?raw=true)
 
-[The background story](/docs/The-re-frame-logo.md)
+[Read the backstory here.](/docs/The-re-frame-logo.md)
 
 Created via [Sketch.app](https://www.sketchapp.com/). See the file `re-frame-logo.sketch`
 
