@@ -97,8 +97,6 @@ __Warning__:  That was the summary. What follows is a long-ish tutorial/explanat
  - [As A Reduce](#as-a-reduce)
  - [Derived Data, Everywhere, flowing](#derived-data-everywhere-flowing)
  - [Logging And Debugging](#logging-and-debugging)
- - [Talking To A Server](#talking-to-a-server)
- - [The CPU Hog Problem](#the-cpu-hog-problem)
  - [In Summary](#in-summary)
  - [Where Do I Go Next](#where-do-i-go-next)
  - [Licence](#licence)
@@ -115,7 +113,7 @@ But apps involve much more than V. Where
 does the control logic go? How is state stored & manipulated? etc.
 
 We read up on [Flux], [Pedestal App],
-[Hoplon], [OM], [Elm], etc and re-frame is the architecture that emerged.
+[Hoplon], [Om], [Elm], etc and re-frame is the architecture that emerged.
 
 re-frame does have M, V, and C parts but they aren't objects, they
 are pure functions (or pure data),
@@ -244,7 +242,7 @@ data in our apps. If you were to use it, you'd have to tweak the reference imple
 
 ### The Benefits Of Data-In-The-One-Place
 
-I'm going to quote verbatim from Elm's website:
+I'm going to quote verbatim from [Elm]'s website:
 
 1. There is a single source of truth. Traditional approaches force you to write a decent amount
 of custom and error prone code to synchronize state between many different stateful components.
