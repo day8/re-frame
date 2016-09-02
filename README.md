@@ -962,9 +962,11 @@ then to register those handlers with the router.
 Here's how we would register our event handler:
 
 ```Clojure
-(reg-event-pure
-  :delete-item         ;; the event id (name)
-  handle-delete)       ;; the handler function for that event
+(reg-event-db
+  :delete-item 			;; the event id (name)
+  (fn [db [_ item]]		;; the handler function for that event
+  ...					
+  )       
 ```
 
 Any arriving event vector which has `:delete-item` as the first element will now be routed to our handler.
