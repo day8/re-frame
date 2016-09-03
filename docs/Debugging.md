@@ -36,7 +36,7 @@ regular environment to understand and debug!
 
 ## Observe The Beast
 
-Bret Victor has explained to us the importance of **observability**.  
+Bret Victor has explained to us the importance of **observability**.
 In which case, when we are debugging re-frame, what do we want to observe?
 
 re-frame's four domino process involves *data values flowing in 
