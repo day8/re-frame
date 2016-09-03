@@ -20,6 +20,10 @@
 - [Subscribing to External Data](Subscribing-To-External-Data.md)
 
 
+### Debugging And Testing 
+
+- [Debugging](Debugging.md)
+
 ### Miscellaneous
 - [FAQs](FAQs/README.md)
 - [External Resources](External-Resources.md)
