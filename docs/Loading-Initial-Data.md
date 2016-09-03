@@ -27,7 +27,7 @@ and registered your handlers in the one step, like this "event handler" example:
 ```
 
 As a result, there's nothing further you need to do because 
-handler registration happens as a direct result of loading the handler registration happens as a direct result of loading the code (presumably via a `<script>` tag in your HTML file).
+handler registration happens as a direct result of loading the code (presumably via a `<script>` tag in your HTML file).
 
 ## 2. Kick Start Reagent 
 
