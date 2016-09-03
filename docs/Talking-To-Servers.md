@@ -118,7 +118,7 @@ Here's our rewrite:
 (ns my.app.events                  
    (:require
       [day8.re-frame.http-fx]  
-      [re-frame.core :refer [re-event-fx]))
+      [re-frame.core :refer [reg-event-fx]))
 
 (reg-event-fx        ;; <-- note the `-fx` extension
   :request-it        ;; <-- the event id
