@@ -14,34 +14,31 @@ If not, stop everything and immediately make that happen.
 
 ### Better Answer
 
-Are you sure you need to?  
+Are you sure you need to?
 
 First, you seldom want to inspect all of `app-db`. 
 And, second, inspecting via figwheel will be clumsy. 
 
-Instead, you probably want to inspect a part of `app-db`. And you probably want 
-to inspect it in the GUI itself.
+Instead, you probably want to inspect a part of `app-db`. __And__ you probably want 
+to inspect it directly in the GUI itself, not off in a REPL. 
 
 Here is a useful technique from @escherize. Add something like this to 
 the hiccup of your view ...
 ```clj
 [:pre (with-out-str (pprint @interesting))] 
 ```
-This assumes that `@interesting` is the value (ratom or subscription) you want to observe (note the @ in front).
+This assumes that `@interesting` is the value (ratom or subscription)
+you want to observe (note the @ in front).
 
 `pprint` output is nice to read, but not compact. For a more compact view, do this: 
 ```clj
-[:pre (pr-str @some-atom)]      ;; using pr-str instead of pprint
+[:pre (pr-str @some-atom)]   ;; NB: using pr-str instead of pprint
 ```
 
-If you choose to use `pprint` then you'll need to `require` it in at the top of your view.cljs:
+If you choose to use `pprint` then you'll need to `require` it within the `ns` of your `view.cljs`:
 ```clj
 [cljs.pprint :refer [pprint]]
 ```
-
-@yogthos' [excellent json-html library](https://github.com/yogthos/json-html) has an 
-even slicker presentation (at the expense of more screen real estate, and the 
-need to include specific CSS).
 
 Finally, combining the short and long answers, you could even do this:
 ```clj
@@ -53,6 +50,15 @@ or
 ```
 
 You definitely have [clj-devtools](https://github.com/binaryage/cljs-devtools) installed now, right?
+
+### Other Inspection Tools
+
+@yogthos' [json-html library](https://github.com/yogthos/json-html) provides 
+a slick presentation, at the expense of more screen real estate, and the 
+need to include specific CSS.
+
+There's also [Data Frisk](https://github.com/Odinodin/data-frisk-reagent) which 
+provides a very nice solution for navigating and inspecting any data structure.
 
 
 ---
