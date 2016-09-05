@@ -220,7 +220,7 @@ is necessarily preferred.
 
 ## What Not To Do 
 
-Don't get into making views source their data directly using React liefcycle methods. 
+Don't get into making views source their data directly using React lifecycle methods. 
 
 Sometimes, because of their background with other JS frameworks, 
 new re-framers feel like the Components themselves (the views) 

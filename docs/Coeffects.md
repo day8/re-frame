@@ -196,7 +196,7 @@ This:
    (fn [coeffects local-store-key]
       (assoc coeffects 
              :local-store
-             (js->clj (.getItem js/localStorage local-store-key))))
+             (js->clj (.getItem js/localStorage local-store-key)))))
 ```
 
 
