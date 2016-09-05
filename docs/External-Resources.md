@@ -18,6 +18,8 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 ### Examples and Applications Using re-frame
 
+* [Elfeed-cljsrn](https://github.com/areina/elfeed-cljsrn) by [Toni Reina] - A mobile client for [Elfeed](https://github.com/skeeto/elfeed) rss reader, built with React Native. Based on re-frame `0.8.0`
+
 * [Memory Hole](https://github.com/yogthos/memory-hole) by [Yogthos] - A small issue tracking app written with Luminus and re-frame. Based on re-frame `0.8.0`
 
 * [Crossed](https://github.com/velveteer/crossed/) by [Velveteer] - A multiplayer crossword puzzle generator. Based on re-frame `0.7.0`
