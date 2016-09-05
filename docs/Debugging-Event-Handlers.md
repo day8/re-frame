@@ -1,9 +1,10 @@
 ## Debugging Event Handlers
 
-This page describes useful techniques for debugging re-frame's event handlers.
+This page describes techniques for debugging re-frame's event handlers.
 
 Event handlers are quite central to a re-frame app.  Only event handlers 
-can update app-db, to "step" an application "forward" from one state to the next.
+can update `app-db`, to "step" an application "forward" from one state
+to the next.
 
 ## The `debug` Interceptor
 
@@ -17,68 +18,94 @@ in this regard. It shows, via `console.log`:
   2. the changes made to `db` by the handler in processing the event.
 
 Regarding point 2, `debug` uses `clojure.data/diff` to compare the 
-state of `db` before and after the handler ran. If you [look at the docs](https://clojuredocs.org/clojure.data/diff), 
-you'll notice that `diff` returns a triple, the first two of which 
-are displayed by `debug` in `console.log` (the 3rd says what hasn't changed 
+state of `db` before and after the handler ran, showing exactly what 
+mutation has happened.
+
+If you [look at the docs for diff](https://clojuredocs.org/clojure.data/diff), 
+you'll notice it returns a triple, the first two of which 
+`debug` will display in `console.log` (the 3rd says what hasn't changed 
 and isn't interesting).
 
-### Interceptors
+The output produced by `clojure.data/diff` can take some getting used to, 
+but you should stick with it -- your effort will be rewarded.
 
-So, now we have two middlewares to put on every handler: `debug` and `log-ex`.
+### Using `debug`
 
-At the top of our `handlers.cljs` we might define:
+So, you will add this interceptor to your event handlers like this:
 ```clj
-(def standard-middlewares  [log-ex debug])
+(re-frame.core/reg-event-db
+   :some-id
+   [debug]         ;;  <----  here! 
+   some-handler-fn)
 ```
 
-And then include this `standard-middlewares` in every handler registration below:
+Except, of course, we need a bit more subtly than that because
+we only want `debug` to be present in development builds.
+So it should be like this:   
 ```clj
-(register-handler 
-    :some-id
-    standard-middlewares      ;;  <----  here!
-    some-handler-fn)
+(re-frame.core/reg-event-db
+   :some-id
+   [(when ^boolean goog.DEBUG debug)]   ;;  <----  conditional! 
+   some-handler-fn)
 ```
 
-No, wait. I don't want this `debug` middleware hanging about in my production version, just at develop time. And we still need those runtime exceptions going to airbrake.
+`goog.DEBUG` is a compile time constant provided by the `Google Closure Compiler`. 
+It will be `true` when the build within `project.clj` is `:optimization :none` and `false`
+otherwise.
 
-So now, we make it:
+Ha! I see a problem, you say.  In production, that `when` is going to 
+leave a `nil` in the interceptor vector.  No problem. re-frame filters out nils. 
+
+### Too Much Repetition - Part 1
+
+Remember that each event handler has its own interceptor stack. 
+All very flexible, but does that mean we have to repeat this `debug` 
+business on every single handler?  Yes, it does.  But there are 
+a couple of ways to make this pretty easy. 
+
+Normally, standard interceptors are defined up the top of the `event.cljs` namespace:
 ```clj
-(def standard-middlewares [ (if ^boolean goog.DEBUG log-ex log-ex-to-airbrake) 
-                            (when ^boolean goog.DEBUG debug)]) 
+(def standard-interceptors  [(when ^boolean goog.DEBUG debug)  other-interceptor])
 ```
 
-Ha! I see a problem, you say.  In production, that `when` is going to leave a `nil` in the vector.  No problem. re-frame filters out nils. 
-
-Ha! Ha! I see another problem, you say.  Some of my handlers have other middleware. One of them looks like this:
-
+And then, any one event handler, would look like:
 ```clj
-(register-handler 
-    :ev-id
-    (path :todos)       ;;  <-- already has middleware
-    todos-fn)
+(re-frame.core/reg-event-db
+   :some-id
+   [standard-interceptors specific-interceptor]
+   some-handler-fn)
 ```
 
-How can I add this `standard-middlewares` where there is already middleware?  
+Wait on! I see a problem, you say.  `standard-interceptors` is a `vector`, and it 
+is within another `vector` allongside `specific-interceptor` - so that's 
+nested vectors of interceptors!  
 
-Like this:
-```clj
-(register-handler 
-    :ev-id
-    [standard-middlewares (path :todos)]       ;;  <--  put both in a vector
-    todos-fn)
-```
-
-But that's a vector in a vector?  Surely, that a problem?.  Actually, no, re-frame will `flatten` any level of vector nesting, and remove `nils` before composing the resulting middleware. 
+No problem, re-frame uses `flatten` to take out all the nesting - the 
+result is a simple chain of interceptors. Also, of course, nils are removed.
 
 ## 3. Checking DB Integrity
 
-I'd recommend always having a schema for your `app-db`, specifically [a Prismatic Schema](https://github.com/Prismatic/schema).  If ever [herbert](https://github.com/miner/herbert) is ported to clojurescript, it might be a good candidate too but, for the moment, a Prismatic Schema. 
+Always have a detailed schema for the data in `app-db`.
 
-Schemas serve as invaluable documentation, **plus ...**
+**First**, schemas serve as invaluable documentation. When I come to 
+a new app, the first thing I want to look at is the underlying 
+information model - the schema of the data.  I hope it is well 
+commented and I expect it to be rigorous and complete, using 
+[Clojure spec](http://clojure.org/about/spec)
+or, perhaps, [a Prismatic Schema](https://github.com/Prismatic/schema).
 
-Once you have a schema for your `app-db`, you can check it is valid at any time. The most obvious time to recheck the integrity of `app-db` is immediately after a handler has changed it. In effect, we want to recheck after **any** handler has run. 
 
-Let's start with a schema and a way to validate a db against that schema. I would typically put this stuff in `db.cljs`.
+**Second** a good spec allows you to assert the integrity and correctness of 
+the data in app-db. 
+
+When? Well, only event handlers can change what's in `app-db`, so only an event handler
+could corrupt it. So, we'd like to recheck the integrity of `app-db` immediately 
+after  **every** event handler has run.
+
+This allows us to catch any errors very early, and easily assign blame (to an event handler).  
+
+Schemas are typically put into `db.cljs`. Here's an example using Prismatic Schema 
+(although a more modern choice would be to use [Clojure spec](http://clojure.org/about/spec)):
 ```clj
 (ns my.namespace.db
   (:require
@@ -101,20 +128,35 @@ Let's start with a schema and a way to validate a db against that schema. I woul
       (.error js/console (str "schema problem: " res)))))
 ```
 
-Now, let's organise for our `app-db` to be validated against the schema after every handler. We'll use the built-in  `after` middleware factory:
+Now, let's organise for `valid-schema?` to be run after every handler. We'll use the built-in  `after` interceptor factory:
 ```clj
-(def standard-middlewares [(if ^boolean goog.DEBUG log-ex log-ex-to-airbrake) 
-                           (when ^boolean goog.DEBUG debug)
+(def standard-interceptors [(when ^boolean goog.DEBUG debug)
                            (when ^boolean goog.DEBUG (after db/valid-schema?))]) ;; <-- new
 ```
 
-BTW, we could have written it without vectors, using `comp`: 
-```clj
-(def standard-middlewares (if ^boolean goog.DEBUG               ;; not a vector
-                            (comp log-ex debug (after db/valid-schema?))  ;; comp used
-                            log-ex-to-airbrake))
-```
 
 Now, the instant a handler messes up the structure of `app-db` you'll be alerted.  But this overhead won't be there in production.
 
-These 3 steps will go a very long way in helping you to debug your event handlers. 
+### Too Much Repetition - Part 2
+
+Above we discussed a way of "factoring out" common interceptors into `standard-interceptors`. 
+But there's a 2nd way to ensure that all event handlers get certain Interceptors: you write a custom registration function, like this:
+```clj 
+(defn my-reg-event-db          ;; alternative to reg-event-db
+  ([id handler-fn] 
+    (my-reg-event-db id nil handler-fn))
+  ([id interceptors handler-fn]
+    (re-frame.core/reg-event-db 
+        id
+        [(when ^boolean goog.DEBUG debug)
+         (when ^boolean goog.DEBUG (after db/valid-schema?)) 
+         interceptors]
+        handler-fn)))
+```
+
+From now on, you can register your event handlers like this:
+```clj
+(my-reg-event-db      ;; <-- adds std interceptors automatically
+  :some-id 
+  some-handler-fn)
+```

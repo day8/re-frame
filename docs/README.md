@@ -22,7 +22,9 @@
 
 ### Debugging And Testing 
 
+- [Debugging-Event-Handlers](Debugging-Event-Handlers.md)
 - [Debugging](Debugging.md)
+
 
 ### Miscellaneous
 - [FAQs](FAQs/README.md)
