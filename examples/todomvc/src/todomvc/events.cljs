@@ -1,7 +1,8 @@
 (ns todomvc.events
   (:require
-    [todomvc.db    :refer [default-value localstore->todos todos->local-store]]
-    [re-frame.core :refer [reg-event-db path trim-v after debug]]
+    [todomvc.db    :refer [default-value todos->local-store]]
+    [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx path trim-v
+                           after debug]]
     [cljs.spec     :as s]))
 
 
@@ -51,11 +52,12 @@
 ;; XXX make localstore a coeffect interceptor
 
                                   ;; usage:  (dispatch [:initialise-db])
-(reg-event-db                     ;; on app startup, create initial state
+(reg-event-fx                     ;; on app startup, create initial state
   :initialise-db                  ;; event id being handled
-  check-spec-interceptor          ;; after the event handler runs, check that app-db matches the spec
-  (fn [_ _]                       ;; the handler being registered
-    (merge default-value (localstore->todos))))  ;; all hail the new state
+  [(inject-cofx :local-store-todos)
+   check-spec-interceptor]                                  ;; after the event handler runs, check that app-db matches the spec
+  (fn [{:keys [db local-store-todos]} _]                       ;; the handler being registered
+    {:db (assoc default-value :todos local-store-todos)}))  ;; all hail the new state
 
 
                                   ;; usage:  (dispatch [:set-showing  :active])
