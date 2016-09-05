@@ -20,6 +20,10 @@ Either:
     `reactive programming`, `functional programming` and `immutable data` going to
     **completely change everything**?  And, if so, what would that look like in a language
     that embraces those paradigms?
+3.  You are curious about a `modern lisp` like Clojure. How could a language THAT 
+    old still be so revered? And what are these whispers I hear about 
+    "Data Oriented" architectures, and leveragable schemas. I want to expand 
+    my mind.
 
 
 ## re-frame
@@ -31,27 +35,28 @@ This repo contains both a **description of this pattern** and a **reference impl
 To quote McCoy: "It's MVC, Jim, but not as we know it".
 
 To build a re-frame app, you:
- - design your app's data structure (data layer)
+ - design your app's information model (data layer)
  - write and register subscription functions (query layer)
- - write Reagent component functions  (view layer)
+ - write Reagent view functions  (view layer)
  - write and register event handler functions  (control layer and/or state transition layer)
 
 Features:
 
 1. The functions you write are pure, so the computational pieces of your app can
-   be described, understood and tested independently.
-   You won't need Dependency Injection to test. Think about that.
-2. These computational parts are composed via reactive data flows - a dynamic,
+   be described, understood and tested independently. Dependency Injection isn't needed.
+2. re-frame looks after the `conveyance of data` - the transport of data between pure
+   functions. 
+3. One half of this "conveyance" involves a reactive data flow - a dynamic,
    unidirectional Signal graph.
-3. The resulting architecture involves "derived data" flowing in a two-stage, reactive loop.
+4. The resulting architecture involves "derived data" flowing in a two-stage, loop.
    Without realising it, you will be explicitly modelling time.
-4. It is fast, straight out of the box. You won't have to go through [this sort of pain](http://blog.scalyr.com/2013/10/angularjs-1200ms-to-35ms/).
-5. The surprising thing about re-frame is how simple it is. Beautifully simple! Our reference
-   implementation is little more than 200 lines of (ClojureScript) code. Learn it in an afternoon.
-6. But it scales up nicely to more complex apps.  Frameworks are just pesky overhead at small
+5. It is fast, straight out of the box. 
+6. The surprising thing about re-frame is how simple it is. The reference
+   implementation is 350 lines of (ClojureScript) code. Learn it in an afternoon.
+7. But it scales up nicely to more complex apps.  Frameworks are just pesky overhead at small
    scale - measure them instead by how they help you tame the complexity of bigger apps.
-7. Re-frame is impressively buzzword compliant: it has FRP-nature,
-   unidirectional data flow, pristinely pure functions, conveyor belts, statechart-friendliness (FSM)
+8. Re-frame is impressively buzzword compliant: it has FRP-nature,
+   unidirectional data flow, pristinely pure functions, interceptors, conveyor belts, statechart-friendliness (FSM)
    and claims an immaculate hammock conception.
    It also has a charming xkcd reference (soon)
    and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
@@ -112,12 +117,14 @@ delivers only the 'V' part of a traditional MVC framework.
 But apps involve much more than V. Where
 does the control logic go? How is state stored & manipulated? etc.
 
-We read up on [Flux], [Pedestal App],
-[Hoplon], [Om], [Elm], etc and re-frame is the architecture that emerged.
+We read up on [Pedestal App], [Flux], 
+[Hoplon], [Om], early [Elm], etc and re-frame is the architecture that
+emerged.  Since that time we have kept a close eye on developments like
+Elm Architecture, Om.Next, BEST, Cycle.js, etc.  They have taught us much.
 
 re-frame does have M, V, and C parts but they aren't objects, they
 are pure functions (or pure data),
-and they are wired together via reactive data flows.  It is sufficiently different in nature
+and they are wired together via data flows.  It is sufficiently different in nature
 from (traditional, Smalltalk) MVC that calling it MVC would be confusing.  I'd
 love an alternative.
 
@@ -138,17 +145,19 @@ his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
 __Second__, we believe in ClojureScript, immutable data and the process of building
 a system out of pure functions.
 
-__Third__, we believe that [FRP] is one honking great idea. You might be tempted to see
-Reagent as simply another of the React wrappers - a sibling to [OM] and
-[quiescent](https://github.com/levand/quiescent).
-But you'll only really "get"
-Reagent when you view it as an FRP-ish library. To put that another way, I think
-that Reagent, at its best, is closer in nature to [Hoplon] or [Elm] than it is OM.
+__Third__, we believe in the primacy of data. Within the Clojure community this view is 
+sometimes captured with aphorisms like "data is the ultimate in late binding" and 
+"data > functions > macros".  There is also talk of Data Oriented Architectures.
 
-__Finally__, we believe in one-way data flow. No two way data binding. We don't
-like read/write `cursors` which
+__Fourth__, we believe that [Reactive Programming] is one honking great idea. 
+But only up to a point. It is a beautiful solution to one half of the 
+data conveyance problem.
+
+__Finally__, we believe in [command-query separation](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation). 
+As a result, we specifically don't like two way data binding or read/write `cursors` which
 promote the two way flow of data. As programs get bigger, we've found that their
-use seems to encourage control logic into all the wrong places.
+use seems to encourage control logic into all the wrong places.  Sadly, each generation of 
+programmers seems to have to rediscover this principle.  
 
 ## FRP Clarifications
 
@@ -186,8 +195,8 @@ More explanation on all these claims soon.
 
 To explain re-frame, I'll incrementally develop a diagram, describing each part as it is added.
 
-Initially, I'll be using [Reagent] at an intermediate to advanced level.  But this is no introductory
-reagent tutorial and you will need to have done one of those before continuing here. Try
+I'll be using [Reagent] at an intermediate level, so you will need to have done some
+introductory Reagent tutorials before going on. Try
 [The Introductory Tutorial](http://reagent-project.github.io/) or
 [this one](https://github.com/jonase/reagent-tutorial) or
 [Building Single Page Apps with Reagent](http://yogthos.net/posts/2014-07-15-Building-Single-Page-Apps-with-Reagent.html).
@@ -205,8 +214,9 @@ Our re-frame diagram starts (very modestly) with  Fogus' ***well-formed data at 
 app-db
 ```
 
-re-frame says that you put your data into one place which we'll call `app-db`. Structure
-the data in that place, of course, and [give it a schema](https://github.com/Prismatic/schema).
+re-frame says that you put your data into one place which we'll 
+call `app-db`.  You should specify an information model for the
+data in this one place, [giving it a powerful schema](http://clojure.org/about/spec).
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right?
 You'd happily put all your well-formed data into PostgreSQL or MySQL.
@@ -218,13 +228,16 @@ spent your life breaking systems into pieces, organised around behaviour and try
 to hide the data.  I still wake up in a sweat some nights thinking about all
 that Clojure data lying around exposed and passive.
 
-But, as Fogus reminds us, data at rest is the easy bit. Believe.
+But, as Fogus reminded us, data at rest is the easy bit. 
 
 From here on in this document, we'll assume `app-db` is one of these:
 
 ```Clojure
 (def app-db  (reagent/atom {}))    ;; a Reagent atom, containing a map
 ```
+
+The reference implementation already creates and manages an internal `app-db` for you, 
+you don't need to declare one yourself.
 
 Although it is a `Reagent atom` (hereafter `ratom`), I'd encourage you to think of it as an in-memory database.
 It will contain structured data. You will need to query that data. You will perform CRUD
@@ -237,34 +250,26 @@ a map.  It could, for example, be a [datascript] database.  In fact, any databas
 (can tell you when it changes) would do.  (We'd love! to be using [datascript] - so damn cool -
 but we had too much
 data in our apps. If you were to use it, you'd have to tweak the reference implementation a bit,
-[perhaps using this inspiration](https://gist.github.com/allgress/11348685)).  The reference implementation already creates and manages an internal `app-db` for you, you don't need to declare one yourself.
+[perhaps using this inspiration](https://gist.github.com/allgress/11348685)).  
 
 
 ### The Benefits Of Data-In-The-One-Place
 
-I'm going to quote verbatim from [Elm]'s website:
+Here's the big one:  because there is a single source of truth, we do not have to write code which 
+synchronizes state between many different stateful components.  I cannot stress too much 
+how significant this is. You end up writing less code
+and an entire class of bugs is eliminated. The simplicity it brings is breathtaking. 
 
-1. There is a single source of truth. Traditional approaches force you to write a decent amount
-of custom and error prone code to synchronize state between many different stateful components.
-(The state of this widget needs to be synced with the application state, which needs to be
-synced with some other widget, etc.) By placing all of your state in one location, you
-eliminate an entire class of bugs in which two components get into inconsistent states. We
-also think you will end up writing much less code. That has been our observation in Elm so far.
-
-2. Save and Undo become quite easy. Many applications would benefit from the ability to save
-all application state and send it off to the server so it can be reloaded at some later date.
-This is extremely difficult when your application state is spread all over the place and
-potentially tied to objects that cannot be serialized. With a central store, this becomes
-very simple. Many applications would also benefit from the ability to easily undo user's
-actions. For example, a painting app is better with Undo. Since everything is immutable in Elm,
-this is also very easy. Saving past states is trivial, and you will automatically get pretty
-good sharing guarantees to keep the size of the snapshots down.
-
-
-To this list, I would briefly add two:  the ability to genuinely model control via FSMs
-and the ability to do time travel debugging, even in a production setting. More on both soon.
-
-[Hoplon] takes the same approach via what they called `stem cells`, which is a root source of data.
+Further benefits also flow:
+  1. Undo/Redo [becomes straight forward to implement](https://github.com/Day8/re-frame-undo). 
+With a central store for state, it is easy 
+ to snapshot and restore. This is particularly the case because the data is immutable.  
+  2. The data in `app-db` has a strong schema so, at any moment, we can validate 
+  all the data in the system. All of it. This enables us to catch errors easily and early. It 
+increases confidence in the way that Types increases confidence, only [schemas can potentially supply more
+leverage than types](https://www.youtube.com/watch?v=nqY4nUMfus8).
+  3. The ability to genuinely model control via FSMs  (discussed later)
+  4. The ability to do time travel debugging, even in a production setting. More soon.   
 
 ## Flow
 
@@ -1099,7 +1104,6 @@ The second one is conceptually FRP, but you do have to squint.
 All the parts are simple. The parts are easy to understand in isolation. The parts are composed so that
 derived data flows in a perpetual reactive loop, through pure functions.
 
-
 To build an app using re-frame, you'll have to:
  - design your app's data structure.
  - write and register subscription functions (query layer).
@@ -1113,7 +1117,7 @@ Next:
   - look at the examples:  https://github.com/Day8/re-frame/tree/master/examples
   - read the docs:  https://github.com/Day8/re-frame/blob/master/docs/README.md
   
-After that:
+Then:
   - use the lein template:  https://github.com/Day8/re-frame-template
 
 Also, if you want reusable layout and widget components, consider this sister project:
