@@ -63,8 +63,9 @@
 (re-frame/reg-cofx
   :local-store-todos
   (fn [cofx _]
-    "Read in todos from localstore, and process into a map we can merge into app-db."
-    (assoc cofx :local-store-todos
-      (some->> (.getItem js/localStorage ls-key)
-               (cljs.reader/read-string)                    ;; stored as an EDN map.
-               (into (sorted-map))))))
+      "Read in todos from localstore, and process into a map we can merge into app-db."
+      (assoc cofx :local-store-todos
+             (into (sorted-map)
+                   (some->> (.getItem js/localStorage ls-key)
+                            (cljs.reader/read-string)       ;; stored as an EDN map.
+                            )))))
