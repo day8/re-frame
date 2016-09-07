@@ -1,6 +1,6 @@
 ## Introduction 
 
-This is an interceptors tutorial.
+This is a tutorial on re-frame Interceptors.
 
 ## Table Of Contents
 
@@ -105,24 +105,24 @@ Using a 3-arity registration function:
 
 ### Handlers Are Interceptors Too
 
-You might see that registration above as associating `:some-id` with two things: (1) a chain of interceptors 
+You might see that registration above as associating `:some-id` with two things: (1) a chain of 2 interceptors `[in1 in2]`
 and (2) a handler.  
  
 Except, the handler is turned into an interceptor too.  (We'll see how shortly) 
  
 So `:some-id` is only associated with one thing: a 3-chain of interceptors, 
-with the handler wrapped in an interceptor and put on the end of the other two.  
+with the handler wrapped in an interceptor, called say `h`, and put on the end of the other two: `[in1 in2 h]`.  
  
 Except, the registration function itself, `reg-event-db`, actually takes this 3-chain 
-and inserts its own interceptors 
-(which do useful things) at the front (more on this soon too), 
-so ACTUALLY, there's about 5 interceptors in the chain.
+and inserts its own standard interceptors, called say `std1` and `std2`
+(which do useful things, more soon) at the front,
+so ACTUALLY, there's about 5 interceptors in the chain: `[std1 std2 in1 in2 h]`
 
 So, ultimately, that event registration associates the event id `:some-id` 
 with __just__ a chain of interceptors. Nothing more.
  
 Later, when a `(dispatch [:some-id ...])` happens, that 5-chain of 
-interceptors will be "executed".  And that's how events get handled. 
+interceptors will be "executed".  And that's how an event gets handled. 
 
 
 ## Executing A Chain
@@ -137,7 +137,13 @@ Each interceptor has this form:
 ```
 
 That's essentially a map of two functions. Now imagine a vector of these maps - that's an  
-an interceptor chain.
+an interceptor chain.  
+
+Above we imagined an interceptor chain of `[std1 std2 in1 in2 h]`. Now we know that this is really
+a vector of 5 maps: `[{...} {...} {...} {...} {...}]`  where each of the 5 maps have 
+a `:before` and `:after` fn.
+
+Sometimes, the `:before` and `:after` fns are noops (think `identity`). 
 
 To "execute" an interceptor chain:
   1. create a `context` (a map, described below)
@@ -232,10 +238,10 @@ We'd have to write this handler:
 
 Do you see it there? In the event destructuring!!! Almost mocking us with that
 passive aggressive, understated thing it has going on!! Co-workers
-have said I'm "being overly sensitive", perhaps even horizontalist, but 
+have said I'm "being overly sensitive", perhaps even pixel-ist, but 
 you can see it, right?  Of course you can.
 
-What a relief it would be to get rid of it, but how? We'll write an interceptor: `trim-event`
+What a relief it would be to not have it there, but how? We'll write an interceptor: `trim-event`
 
 Once we have written `trim-event`, our registration will change to look like this:
 ```clj
@@ -243,11 +249,11 @@ Once we have written `trim-event`, our registration will change to look like thi
   :delete-item
   [trim-event]                ;;  <--- interceptor added
   (fn 
-     [db [key-to-delete]]     ;;  <--- no leading underscore necessary
+     [db [key-to-delete]]     ;;  <---yaaah!  no leading underscore 
      (dissoc db key-to-delete)))
 ```
 
-`trim-event` will need to change the `:coeffects` map (within `context`).  More specifically, it will be 
+`trim-event` will need to change the `:coeffects` map (within `context`).  Specifically, it will be 
 changing the `:event` value within the `:coeffects`. 
 
 `:event` will start off as `[:delete-item 42]`, but will end up `[42]`.  `trim-event`  will remove that 
@@ -279,14 +285,18 @@ Notes:
 We're going well. Let's do an advanced wrapping. 
 
 Earlier, in the "Handlers Are Interceptors Too" section, I explained that `event handlers` 
-are wrapped in an Interceptor and placed on the end of an Interceptor chain.  
-How does this wrapping happen?
+are wrapped in an Interceptor and placed on the end of an Interceptor chain.  Remember the 
+whole `[std1 std2 in1 in2 h]` thing?  
+
+We're now look at the `h` bit. How does an event handler get wrapped to be an Interceptor. 
 
 Reminder - there's two kinds of handler:
    - the `-db` variety registered by `reg-event-db`
    - the `-fx` variety registered by `reg-event-fx`
 
-I'll now show how to wrap the `-db` variety. Here's what a `-db` handler looks like:
+I'll now show how to wrap the `-db` variety. 
+
+Reminder: here's what a `-db` handler looks like:
 ```clj
 (fn [db event]               ;;  takes two params
   (assoc db :flag true))     ;; returns a new db
