@@ -89,8 +89,7 @@ concept, right there.
 
 ### Show Me
 
-At the time when you register an event handler, you can provide an 
-chain of interceptors too. 
+At the time when you register an event handler, you can provide a chain of interceptors too. 
  
 Using a 3-arity registration function:
 ```clj 
@@ -108,7 +107,7 @@ Using a 3-arity registration function:
 You might see that registration above as associating `:some-id` with two things: (1) a chain of 2 interceptors `[in1 in2]`
 and (2) a handler.  
  
-Except, the handler is turned into an interceptor too.  (We'll see how shortly) 
+Except, the handler is turned into an interceptor too (we'll see how shortly).
  
 So `:some-id` is only associated with one thing: a 3-chain of interceptors, 
 with the handler wrapped in an interceptor, called say `h`, and put on the end of the other two: `[in1 in2 h]`.  
@@ -136,8 +135,7 @@ Each interceptor has this form:
  :after   (fn [context] ...)}    ;; `identity` would be a noop
 ```
 
-That's essentially a map of two functions. Now imagine a vector of these maps - that's an  
-an interceptor chain.  
+That's essentially a map of two functions. Now imagine a vector of these maps - that's an interceptor chain.  
 
 Above we imagined an interceptor chain of `[std1 std2 in1 in2 h]`. Now we know that this is really
 a vector of 5 maps: `[{...} {...} {...} {...} {...}]`  where each of the 5 maps have 
@@ -232,14 +230,14 @@ We'd have to write this handler:
 (reg-event-db 
   :delete-item
   (fn 
-     [db [_  key-to-delete]]     ;;  <---- Arrgggghhh underscore
+     [db [_ key-to-delete]]     ;;  <---- Arrgggghhh underscore
      (dissoc db key-to-delete)))
 ```
 
 Do you see it there? In the event destructuring!!! Almost mocking us with that
 passive aggressive, understated thing it has going on!! Co-workers
 have said I'm "being overly sensitive", perhaps even pixel-ist, but 
-you can see it, right?  Of course you can.
+you can see it, right? Of course you can.
 
 What a relief it would be to not have it there, but how? We'll write an interceptor: `trim-event`
 
@@ -298,7 +296,7 @@ I'll now show how to wrap the `-db` variety.
 
 Reminder: here's what a `-db` handler looks like:
 ```clj
-(fn [db event]               ;;  takes two params
+(fn [db event]               ;; takes two params
   (assoc db :flag true))     ;; returns a new db
 ```
 
@@ -341,7 +339,7 @@ __1.__ When you register an event handler, you can supply a collection of interc
 ```
 
 __2.__ When you are registering an event handler, you are associating an event id with a chain of interceptors including:
-  - the ones your supply (optional)
+  - the ones you supply (optional)
   - an extra one on the end, which wraps the handler itself 
   - a couple at the beginning of the chain, put there by the `reg-event-db` or `reg-event-fx`. 
   
