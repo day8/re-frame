@@ -490,7 +490,7 @@ Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two 
      downside is that these are not "designer friendly" HTML templates.
   2. these templates are reactive.  When their input Signals change, they
      are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
-     the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs"
+     the renderer of any `component` is wrapped by a `reaction`.  If any of the "inputs"
      to that render change, the render is rerun.
 
 ### React etc.
