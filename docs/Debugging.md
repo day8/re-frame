@@ -248,8 +248,156 @@ From @mccraigmccraig we get the following (untested by me, but they look great):
 > I finally had enough of all the boilerplate required to use clairvoyant with 
 > re-frame subs & handlers and wrote some code to tidy it up...
 
-> https://www.refheap.com/799f89796b078b6e2459df038
+```clj
+(ns er-webui.re-frame
+  (:require
+   [clojure.string :as str]
+   [clojure.pprint :as pp]
+   [clairvoyant.core]
+   [cljs.analyzer :as analyzer]))
 
-> gives you subs like this - https://www.refheap.com/e80f7f982f2bf75bd36bb1062
+(def expand-macros
+  #{`reaction
+    `regsub
+    `reghandler})
 
-> and handlers like this - https://www.refheap.com/e6a6a3a78eb768de386f54b49
+(defn expand-op?
+  "should the op represented by the sym be expanded...
+   expands the sym to its fully namespaced version and
+   checks against expand-macros"
+  [sym env]
+  (when-let [{var-name :name} (analyzer/resolve-macro-var env sym)]
+    ;; (pp/pprint ["expand-op?" sym var-name] *err*)
+    (expand-macros var-name)))
+
+(defn maybe-expand
+  "recursively descend forms calling macroexpand-1
+   on any forms with a symbol from expand-macros in
+   first position"
+  [form env]
+  (if (and (seq? form)
+           (symbol? (first form)))
+    (let [[op & r] form
+          resolved-op (expand-op? op env)]
+      (if resolved-op
+        (maybe-expand
+         (macroexpand-1 (cons resolved-op r))
+         env)
+        (cons op
+              (doall (for [f r]
+                       (maybe-expand
+                        f
+                        env))))))
+    form))
+
+(defn maybe-expand-forms
+  [forms env]
+  (doall
+   (for [form forms]
+     (let [exp (maybe-expand form env)]
+       (when (not= exp form)
+         ;; (pp/pprint exp *err*)
+         )
+       exp))))
+
+(defn fn-name
+  "make a sensible fn name from
+   a possibly namespaced symbol or keyword"
+  ([k] (fn-name k ""))
+  ([k suffix]
+   (assert (or (keyword? k) (symbol? k)))
+   (-> k
+       (str suffix)
+       (str/replace #"^:" "")
+       (str/replace #"\." "-")
+       (str/replace "/" "--")
+       symbol)))
+
+(defmacro reaction
+  "like reagent.core/reaction except it gives the fn a name
+   which makes for useful tracing"
+  [reaction-name & body]
+  (let [reaction-fn-name# (fn-name reaction-name)]
+    `(reagent.ratom/make-reaction
+      (~'fn ~reaction-fn-name#
+       []
+       ~@body))))
+
+(defmacro regsub
+  "like re-frame.core/register-sub except it creates
+   the fn with a name for better tracing"
+  [sub-key params & body]
+  (assert (vector? params))
+  (let [sub-fn-name# (fn-name sub-key)]
+    `(re-frame.core/register-sub
+      ~sub-key
+      (~'fn ~sub-fn-name#
+       ~params
+       ~@body))))
+
+(defmacro reghandler
+  "like re-frame.core/register-handler except it
+   creates an fn with a name which makes for better tracing"
+  [handler-key middleware-or-params & body]
+  (let [handler-fn-name (fn-name handler-key "-h")
+        middleware (when (and (not (vector? middleware-or-params))
+                              (vector? (first body)))
+                     middleware-or-params)
+        params (if middleware
+                 (first body)
+                 middleware-or-params)
+        body (if middleware
+               (rest body)
+               body)]
+    (assert (vector? params))
+    `(re-frame.core/register-handler
+      ~handler-key
+      ~middleware
+      (~'fn ~handler-fn-name
+        ~params
+        ~@body))))
+
+(defmacro trace-subs
+  [& body]
+  (let [body-forms# (maybe-expand-forms body &env)]
+    `(clairvoyant.core/trace-forms
+      {:tracer (re-frame-tracer.core/tracer :color "brown")}
+
+      ~@body-forms#)))
+
+(defmacro trace-handlers
+  [& body]
+  (let [body-forms# (maybe-expand-forms body &env)]
+    `(clairvoyant.core/trace-forms
+      {:tracer (re-frame-tracer.core/tracer :color "blue")}
+
+      ~@body-forms#)))
+
+(defmacro trace-views
+  [& body]
+  (let [body-forms# (maybe-expand-forms body &env)]
+    `(clairvoyant.core/trace-forms
+      {:tracer (re-frame-tracer.core/tracer :color "green")}
+
+      ~@body-forms#)))
+```
+
+> gives you subs like this - 
+
+```clj
+ (regsub :initialised
+   [db _]
+   (reaction initialised-r
+     (get-in @db [:initialised])))
+```
+
+> and handlers like this - 
+
+```clj
+ (reghandler
+  :after-init
+   er-middleware
+   [db [_]]
+   (code-push/sync)
+   db)
+```
