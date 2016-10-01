@@ -306,11 +306,11 @@ Interceptor which wraps that handler:
 ```
 
 Notes:
-  1.  Notice how this wrapper extracts data from the `context's` `:coeffect` 
+  1.  Notice how this wrapper extracts data from the `context's` `:coeffects` 
       and then calls the handler with that data  (a handler must be called with `db` and `event`)
   2.  Equally notice how this wrapping takes the return value from the `-db` 
       handler and puts it into `context's` `:effect`
-  3.  The modified `context` (it has a new `:coeffect`) is returned
+  3.  The modified `context` (it has a new `:effects`) is returned
   3.  This is all done in `:before`.  There is no `:after` (it is a noop).  But this 
       could have been reversed with the work happening in `:after` and `:before` a noop. Shrug.
       Remember that this Interceptor will be on the end of a chain. 
@@ -331,7 +331,7 @@ __1.__ When you register an event handler, you can supply a collection of interc
 ```
 
 __2.__ When you are registering an event handler, you are associating an event id with a chain of interceptors including:
-  - the ones your supply (optional)
+  - the ones you supply (optional)
   - an extra one on the end, which wraps the handler itself 
   - a couple at the beginning of the chain, put there by the `reg-event-db` or `reg-event-fx`. 
   
