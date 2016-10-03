@@ -351,6 +351,7 @@ usage:
 - https://github.com/Day8/re-frame-http-fx   (GETs and POSTs)
 - https://github.com/Day8/re-frame-forward-events-fx  (slightly exotic)
 - https://github.com/Day8/re-frame-async-flow-fx  (more complicated)
+- https://github.com/madvas/re-frame-web3-fx (Ethereum Web3 API)
 
 Create a PR to include yours in this list. 
 
