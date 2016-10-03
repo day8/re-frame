@@ -38,7 +38,6 @@ Templates, examples, and other resources related to re-frame. For additions or m
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) by [Dhruv Parthasarathy] - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
 
 
-
 ### Videos
 
 *  [A Video Tour of the Source Code of Ninja Tools](https://carouselapps.com/2015/12/02/tour-of-the-source-code-of-ninja-tools/) by [Pupeno]
@@ -69,6 +68,3 @@ Templates, examples, and other resources related to re-frame. For additions or m
 [Toni Reina]: https://github.com/areina
 [Velveteer]: https://github.com/velveteer
 [Yogthos]:http://yogthos.net/index.html
-
-
-	
