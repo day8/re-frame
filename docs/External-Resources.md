@@ -18,6 +18,8 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 ### Examples and Applications Using re-frame
 
+* [How to create decentralised apps with re-frame and Ethereum](https://medium.com/@matus.lestan/how-to-create-decentralised-apps-with-clojurescript-re-frame-and-ethereum-81de24d72ff5#.b9xh9xnis) by [Matus Lestan] - Tutorial with links to code and live example. Based on re-frame `0.8.0`
+
 * [Elfeed-cljsrn](https://github.com/areina/elfeed-cljsrn) by [Toni Reina] - A mobile client for [Elfeed](https://github.com/skeeto/elfeed) rss reader, built with React Native. Based on re-frame `0.8.0`
 
 * [Memory Hole](https://github.com/yogthos/memory-hole) by [Yogthos] - A small issue tracking app written with Luminus and re-frame. Based on re-frame `0.8.0`
@@ -35,7 +37,6 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) by [Dhruv Parthasarathy] - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
 
-* [How to create decentralised apps with re-frame and Ethereum](https://medium.com/@matus.lestan/how-to-create-decentralised-apps-with-clojurescript-re-frame-and-ethereum-81de24d72ff5#.b9xh9xnis). Based on re-frame `0.8.0`
 
 
 ### Videos
