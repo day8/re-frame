@@ -35,6 +35,8 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) by [Dhruv Parthasarathy] - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
 
+* [How to create decentralised apps with re-frame and Ethereum](https://medium.com/@matus.lestan/how-to-create-decentralised-apps-with-clojurescript-re-frame-and-ethereum-81de24d72ff5#.b9xh9xnis). Based on re-frame `0.8.0`
+
 
 ### Videos
 
