@@ -57,7 +57,7 @@ Here's an `-fx` handler which counts up to some number in chunks:
       ;; We are at the beginning, so:
       ;;     - modify db, causing popup of Modal saying "Working ..."
       ;;     - begin iterative dispatch. Give initial version of "so-far"
-      {:disptch 1[:count-to false {:counter 0} finish-at]  ;; dispatch to self
+      {:dispatch [:count-to false {:counter 0} finish-at]  ;; dispatch to self
        :db (assoc db :we-are-working true)}
       (if (> (:counter so-far) finish-at)
         ;; We are finished:
