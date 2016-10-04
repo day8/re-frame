@@ -353,7 +353,7 @@ usage:
 - https://github.com/Day8/re-frame-async-flow-fx  (more complicated)
 - https://github.com/micmarsh/re-frame-youtube-fx (YouTube iframe API wrapper)
 - https://github.com/madvas/re-frame-web3-fx (Ethereum Web3 API)
-- https://github.com/madvas/re-frame-google-analytics-fx (Google Analytis API)
+- https://github.com/madvas/re-frame-google-analytics-fx (Google Analytics API)
 
 Create a PR to include yours in this list. 
 
