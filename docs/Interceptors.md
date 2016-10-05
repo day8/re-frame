@@ -355,12 +355,6 @@ __4.__ Interceptors do interesting things:
 
 In the next Tutorial, we'll look at (side) Effects in more depth.  Later again, we'll look at Coeffects.   
  
----
-Previous:  [Interceptors](Interceptors.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Effects](Effects.md)  
-
-
 ## Appendix
 
 ### The Builtin Interceptors
