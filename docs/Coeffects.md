@@ -160,7 +160,7 @@ Each `cofx-id` requires a different action.
 
 This function is also part of the re-frame API.
 
-It allows you to associate a`cofx-id` (like `:now` or `:local-store`) with a 
+It allows you to associate a `cofx-id` (like `:now` or `:local-store`) with a 
 handler function that injects the right key/value pair.
 
 The function you register will be passed two arguments:
