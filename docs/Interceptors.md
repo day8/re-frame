@@ -211,6 +211,9 @@ and removed from the `:queue` by existing Interceptors.
 
 > All truths are easy to understand once they are discovered <br>
 >   -- Galileo Galilei
+<br>
+> Things always become obvious after the fact <br>
+>   -- Nassim Nicholas Taleb
 
 This elegant and flexible arrangement was originally 
 designed by the talented 
@@ -220,7 +223,7 @@ designed by the talented
 
 Dunno about you, but I'm easily offended by underscores.
 
-If we had a component which did this: 
+If we had a view  which did this: 
 ```clj
 (dispatch [:delete-item 42])
 ```
