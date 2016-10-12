@@ -26,6 +26,7 @@ make side effects a noop in event replays.
     + [:dispatch-later](#dispatch-later)
     + [:dispatch](#dispatch)
     + [:dispatch-n](#dispatch-n)
+    + [:dispatch-debounce](#-dispatch-debounce)
     + [:deregister-event-handler](#deregister-event-handler)
     + [:db](#db)
 
@@ -321,6 +322,37 @@ usage:
 usage:
 ```clj
 {:dispatch-n (list [:do :all] [:three :of] [:these])}
+```
+
+#### :dispatch-debounce
+
+[Debounces](https://css-tricks.com/the-difference-between-throttling-and-debouncing/#article-header-id-1) dispatch events. 
+Will only dispatch the event after `timeout` milliseconds have passed, and no more dispatches for this `:id` have been seen.
+Repeated dispatches will reset the timer. Use this in scenarios where you want to wait for quiescence
+before dispatching.
+
+Expects either a single map, or a sequence of maps.
+
+usage:
+
+```cljs
+{:dispatch-debounce [{:id       ::re-render-markdown
+                      :timeout  250
+                      :dispatch [:re-render :main-section]}]}
+```
+
+Cancel a debounce event. No error will be thrown if the debounced event has already been run (or was never run).
+
+```cljs
+{:dispatch-debounce {:id     ::re-render-markdown
+                     :action :cancel}}
+```
+
+Flush a debounce event. Forces the most recent debounced event to run immediately.
+
+```cljs
+{:dispatch-debounce {:id     ::re-render-markdown
+                     :action :flush}}
 ```
 
 #### :deregister-event-handler
