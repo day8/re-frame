@@ -1,4 +1,4 @@
-(defproject re-frame "0.8.1"
+(defproject re-frame "0.8.1-SNAPSHOT"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
@@ -65,4 +65,5 @@
 
   :aliases {"test-once"   ["do" "clean," "cljsbuild" "once" "test," "shell" "open" "test/test.html"]
             "test-auto"   ["do" "clean," "cljsbuild" "auto" "test,"]
-            "karma-once"  ["do" "clean," "cljsbuild" "once" "karma,"]})
+            "karma-once"  ["do" "clean," "cljsbuild" "once" "karma,"]
+            "karma-auto"  ["do" "clean," "cljsbuild" "auto" "karma,"]})

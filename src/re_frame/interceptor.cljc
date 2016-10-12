@@ -109,7 +109,7 @@
   "Add a collection of `interceptors` to the end of `context's` execution `:queue`.
   Returns the updated `context`.
 
-  In an advanced case, this function would allow an interceptor could add new
+  In an advanced case, this function could allow an interceptor to add new
   interceptors to the `:queue` of a context."
   [context interceptors]
   (update context :queue
