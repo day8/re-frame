@@ -1,9 +1,9 @@
-## 0.8.1  (2016.08.XX)  Unreleased
-
+## 0.8.1 Unreleased
 
 #### Improvements
 
-  - [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
+- [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
+- [#248](https://github.com/Day8/re-frame/pull/200) Provide after interceptor with `db` coeffect, if no `db` effect was produced.
 
 ## 0.8.0  (2016.08.19)
 

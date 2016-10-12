@@ -1,9 +1,10 @@
 (ns re-frame.interceptor-test
   (:require [cljs.test :refer-macros [is deftest]]
-            [reagent.ratom  :refer [atom]]
+            [reagent.ratom :refer [atom]]
             [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect]]
-            [re-frame.std-interceptors :refer [trim-v path on-changes
-                                               db-handler->interceptor fx-handler->interceptor]]))
+            [re-frame.std-interceptors :refer [trim-v path on-changes after
+                                               db-handler->interceptor fx-handler->interceptor]]
+            [re-frame.interceptor :as interceptor]))
 
 (enable-console-print!)
 
@@ -116,4 +117,12 @@
                 (get-effect :db))))))
 
 
-
+(deftest test-after
+  (let [after-db-val (atom nil)]
+    (-> (context [:a :b]
+                 [(after (fn [db] (reset! after-db-val db)))]
+                 {:a 1})
+        (interceptor/invoke-interceptors :before)
+        interceptor/change-direction
+        (interceptor/invoke-interceptors :after))
+    (is (= @after-db-val {:a 1}))))
