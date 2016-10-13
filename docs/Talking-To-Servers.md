@@ -128,6 +128,7 @@ Here's our rewrite:
     ;; we return a map of (side) effects
     {:http-xhrio {:method          :get
                   :uri             "http://json.my-endpoint.com/blah"
+                  :response-format (ajax/json-response-format {:keywords? true})  ;; <-- this is very important, don't forget to require [ajax.core :as ajax]
                   :on-success      [:process-response]
                   :on-failure      [:bad-response]}
      :db  (assoc db :loading? true)}))
