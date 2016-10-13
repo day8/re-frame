@@ -317,7 +317,7 @@ Notes:
   1.  Notice how this wrapper extracts data from the `context's` `:coeffects` 
       and then calls the handler with that data  (a handler must be called with `db` and `event`)
   2.  Equally notice how this wrapping takes the return value from the `-db` 
-      handler and puts it into `context's` `:effect`
+      handler and puts it into `context's` `:effects`
   3.  The modified `context` (it has a new `:effects`) is returned
   3.  This is all done in `:before`.  There is no `:after` (it is a noop).  But this 
       could have been reversed with the work happening in `:after` and `:before` a noop. Shrug.

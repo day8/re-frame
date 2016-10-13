@@ -131,7 +131,7 @@
             ;; So, for example, the next line should be interpreted as:
             ;; if you are in state ":idle" and a trigger ":add-event"
             ;; happens, then move the FSM to state ":scheduled" and execute
-            ;; that two-part "do" fucntion.
+            ;; that two-part "do" function.
             [:idle :add-event] [:scheduled #(do (-add-event this arg)
                                                 (-run-next-tick this))]
 

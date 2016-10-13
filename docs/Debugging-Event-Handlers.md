@@ -95,7 +95,7 @@ So that `specific-interceptor` could be something required for just this one
 event handler, and it can be combined the standard ones.  
 
 Wait on! "I see a problem", you say.  `standard-interceptors` is a `vector`, and it 
-is within another `vector` allong side `specific-interceptor` - so that's 
+is within another `vector` along side `specific-interceptor` - so that's 
 nested vectors of interceptors!  
 
 No problem, re-frame uses `flatten` to take out all the nesting - the 

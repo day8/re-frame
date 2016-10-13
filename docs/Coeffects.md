@@ -86,22 +86,22 @@ right value. Nice! But how do we make this magic happen?
 ### Abracadabra 
 
 Each time an event handler is executed, a brand new `context` 
-is created, and within that `context` is a brand new `:coeffect` 
+is created, and within that `context` is a brand new `:coeffects` 
 map, which is initially totally empty.
 
-That pristine `context` value (containing a pristine `:coeffect` map) is threaded 
+That pristine `context` value (containing a pristine `:coeffects` map) is threaded 
 through a chain of Interceptors before it finally reaches our event handler,
 sitting on the end of a chain, itself wrapped up in an interceptor. We know  
 this story well from a previous tutorial. 
 
 So, all members of the Interceptor chain have the opportunity to add to `:coeffects` 
-via their `:before` function.  This is where `:coeffect` magic happens. This is how 
-new keys can be added to `:coeffect`, so that later our event handler magically finds the 
+via their `:before` function.  This is where `:coeffects` magic happens. This is how 
+new keys can be added to `:coeffects`, so that later our event handler magically finds the 
 right data (like `:local-store`) in its `cofx` argument. It is the Interceptors.
 
 ### Which Interceptors?
 
-If Interceptors put data in `:coeffect`, then we'll need to add the right ones
+If Interceptors put data in `:coeffects`, then we'll need to add the right ones
 when we register our event handler. 
 
 Something like this (this handler is the same as before, except for one detail):    
@@ -125,7 +125,7 @@ to our event handler (`cofx`).
 `inject-cofx` is part of the re-frame API.
 
 It is a function which returns an Interceptor whose `:before` function loads 
-a key/value pair into a `context's` `:coeffect` map.
+a key/value pair into a `context's` `:coeffects` map.
  
 `inject-cofx` takes either one or two arguments. The first is always the `id` of the coeffect 
 required (called a `cofx-id`). The 2nd is an optional addition value. 

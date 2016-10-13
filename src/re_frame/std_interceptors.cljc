@@ -144,7 +144,7 @@
 
   Notes:
     1. cater for `path` appearing more than once in an interceptor chain.
-    2. `:effect` may not contain `:db` effect. Which means no change to
+    2. `:effects` may not contain `:db` effect. Which means no change to
        `:db` should be made.
   "
   [& args]
