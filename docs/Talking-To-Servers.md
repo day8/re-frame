@@ -117,6 +117,7 @@ Here's our rewrite:
 ```clj
 (ns my.app.events                  
    (:require
+      [ajax.core :as ajax]        
       [day8.re-frame.http-fx]  
       [re-frame.core :refer [reg-event-fx]))
 
@@ -128,6 +129,7 @@ Here's our rewrite:
     ;; we return a map of (side) effects
     {:http-xhrio {:method          :get
                   :uri             "http://json.my-endpoint.com/blah"
+                  :response-format (ajax/json-response-format {:keywords? true}) 
                   :on-success      [:process-response]
                   :on-failure      [:bad-response]}
      :db  (assoc db :loading? true)}))
