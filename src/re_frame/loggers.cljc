@@ -44,3 +44,8 @@
   [new-loggers]
   (assert  (empty? (difference (set (keys new-loggers)) (-> @loggers keys set))) "Unknown keys in new-loggers")
   (swap! loggers merge new-loggers))
+
+(defn get-loggers
+  "Get the current logging functions used by re-frame."
+  []
+  @loggers)

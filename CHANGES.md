@@ -4,6 +4,7 @@
 
 - [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
 - [#248](https://github.com/Day8/re-frame/pull/200) Provide after interceptor with `db` coeffect, if no `db` effect was produced.
+- Add re-frame.loggers/get-loggers function to well, you know.
 
 ## 0.8.0  (2016.08.19)
 
