@@ -8,6 +8,7 @@
 
 ;; kinds of handlers
 (def kinds #{:event :fx :cofx :sub})
+(def ^:dynamic *warn-on-overwrite* true)
 
 ;; This atom contains a register of all handlers.
 ;; Contains a map keyed first by `kind` (of handler), and then `id`.
@@ -35,7 +36,7 @@
 (defn register-handler
   [kind id handler-fn]
   (when debug-enabled?                                       ;; This is in a separate when so Closure DCE can run
-    (when (get-handler kind id false)
+    (when (and (get-handler kind id false) *warn-on-overwrite*)
       (console :warn "re-frame: overwriting" (str kind) "handler for:" id)))   ;; allow it, but warn. Happens on figwheel reloads.
   (swap! kind->id->handler assoc-in [kind id] handler-fn)
   handler-fn)    ;; note: returns the just registered handler

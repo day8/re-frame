@@ -17,7 +17,8 @@
                                                   :source-map           true
                                                   :source-map-timestamp true
                                                   :main                 "todomvc.core"}
-                                       :figwheel {:on-jsload "todomvc.core/main"}}}}}
+                                       :figwheel {:before-jsload "todomvc.core/before_reload"
+                                                  :on-jsload "todomvc.core/figwheel_reload"}}}}}
 
              :prod {:cljsbuild
                     {:builds {:client {:compiler {:optimizations :advanced
