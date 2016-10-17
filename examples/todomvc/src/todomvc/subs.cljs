@@ -112,7 +112,7 @@
 ;; Is this a good idea?
 ;; If it is a good idea, is this good syntax?
 ;; Because it is so common to nominate 1 or more input signals,
-;; register-pure-sub provides some macro sugar so you can nominate a very minimal
+;; reg-sub provides some macro sugar so you can nominate a very minimal
 ;; vector of input signals. The 1st function is not needed.
 ;; Here is the example above rewritten using the sugar.
 #_(reg-sub
