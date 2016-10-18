@@ -23,11 +23,11 @@ make side effects a noop in event replays.
   * [Effects With No Data](#effects-with-no-data)
   * [Testing And Noops](#testing-and-noops)
   * [Builtin Effect Handlers](#builtin-effect-handlers)
-    + [:dispatch-later](#-dispatch-later)
-    + [:dispatch](#-dispatch)
-    + [:dispatch-n](#-dispatch-n)
-    + [:deregister-event-handler](#-deregister-event-handler)
-    + [:db](#-db)
+    + [:dispatch-later](#dispatch-later)
+    + [:dispatch](#dispatch)
+    + [:dispatch-n](#dispatch-n)
+    + [:deregister-event-handler](#deregister-event-handler)
+    + [:db](#db)
 
 ### Where Effects Come From
 
