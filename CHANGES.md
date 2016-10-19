@@ -1,4 +1,8 @@
-## 0.8.1 Unreleased
+## 0.9.0 (2016.11.XX)  Unreleased
+
+#### Headline
+
+  - [#233](https://github.com/Day8/re-frame/issues/233) Added a new builtin effect handler for de-bouncing events  
 
 #### Improvements
 
