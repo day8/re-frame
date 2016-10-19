@@ -1,9 +1,24 @@
-# Reagent example app now using re-frame
+# A Simple App
 
-Run "`lein do clean, figwheel`" in a terminal to compile the app, and then open `http://localhost:3449/example.html`.
+This tiny application is meant to provide a quick start of the basics of re-frame.  
 
-Any changes to ClojureScript source files (in `src`) will be reflected in the running page immediately (while "`lein figwheel`" is running).
+All the code is in one namespace `/src/simpleexample/core.cljs` 
 
-Run "`lein do clean, with-profile prod compile`" to compile an optimized version, and then open `resources/public/example.html`.
+### Run It And Change It   
 
-Original reagent example code found at https://github.com/reagent-project/reagent
+Steps:
+
+A. Check out the re-frame repo
+1. Get a command line
+2. `cd` to the root of this sub project (where this README exists)
+3. run "`lein do clean, figwheel`"  to compile the app, 
+4. open `http://localhost:3449/example.html` to see the app
+
+Whileever step 3 is running, any changes you make to the ClojureScript 
+source files (in `src`) will be re-compiled and reflected in the running 
+page immediately.
+
+### Production Version
+
+Run "`lein do clean, with-profile prod compile`" to compile an optimized 
+version, and then open `resources/public/example.html`.
