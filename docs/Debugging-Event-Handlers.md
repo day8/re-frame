@@ -8,30 +8,26 @@ to the next.
 
 ## The `debug` Interceptor
 
-You might wonder: is my event handler making the right changes to the 
-value in `app-db`?  Did it correctly remove that entry? Did it change that 
-value?
+You might wonder: is my event handler making the right changes to `app-db`?  
 
-During development, the built-in `debug` interceptor can be helpful 
-in this regard. It shows, via `console.log`:
+During development, the built-in `debug` interceptor can help. 
+It writes to `console.log`:
   1. the event being processed, for example:   `[:attempt-world-record true]`
   2. the changes made to `db` by the handler in processing the event
 
-Regarding point 2, `debug` uses `clojure.data/diff` to compare the 
-state of `db` before and after the handler ran, showing exactly what 
-mutation has happened.
+`debug` uses `clojure.data/diff` to compare `app-db` 
+before and after the handler ran, showing  what changed. 
 
-If you [look at the docs for diff](https://clojuredocs.org/clojure.data/diff), 
-you'll notice it returns a triple, the first two of which 
-`debug` will display in `console.log` because they show all changes 
-(the 3rd says what hasn't changed and isn't interesting).
+[clojure.data/diff returns a triple](https://clojuredocs.org/clojure.data/diff) 
+, the first two entries of which 
+`debug` will display in `console.log` (the 3rd says what hasn't changed and isn't interesting).
 
 The output produced by `clojure.data/diff` can take some getting used to, 
 but you should stick with it -- your effort will be rewarded.
 
 ### Using `debug`
 
-So, you will add this Interceptor to your event handlers like this:
+So, you will add this Interceptor like this:
 ```clj
 (re-frame.core/reg-event-db
    :some-id
@@ -39,10 +35,10 @@ So, you will add this Interceptor to your event handlers like this:
    some-handler-fn)
 ```
 
-Except, of course, we need a bit more subtly than that because
-we only want `debug` to be present in development builds. We don't 
+Except, of course, we need to be more deft - we only want 
+`debug` in development builds. We don't 
 want the overhead of those `clojure.data/diff` calculations in production.
-So our code should be amended to look like this: 
+So, this is better: 
 ```clj
 (re-frame.core/reg-event-db
    :some-id
