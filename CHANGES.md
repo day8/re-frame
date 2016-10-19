@@ -3,6 +3,7 @@
 #### Headline
 
   - [#233](https://github.com/Day8/re-frame/issues/233) Added a new builtin effect handler for de-bouncing events  
+  - [#218](https://github.com/Day8/re-frame/issues/218) Make it okay to use `subscribe` in Form-1 components 
 
 #### Improvements
 
