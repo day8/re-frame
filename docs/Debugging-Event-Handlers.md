@@ -189,3 +189,29 @@ From now on, you can register your event handlers like this and know that the tw
   :some-id 
   some-handler-fn)
 ```
+
+### What about the -fx variation?
+ 
+Above we created `my-reg-event-db` as a new registration function for `-db` handlers. 
+That's handlers which take `db` and `event` arguments, and return a new `db`.  
+So, they MUST return a new `db` value - which should be validated.  
+
+But what if we tried to do the same for `-fx` handlers, which return instead 
+an `effects` map which may, or may not, contain an `:db`?  Our solution would 
+have to allow for the absence of a new `db` value (by doing no validity check, because nothing 
+was being changed). 
+
+```clj 
+(defn my-reg-event-fx          ;; alternative to reg-event-db
+  ([id handler-fn] 
+    (my-reg-event-db id nil handler-fn))
+  ([id interceptors handler-fn]
+    (re-frame.core/reg-event-fx 
+        id
+        [(when ^boolean goog.DEBUG debug)
+         (when ^boolean goog.DEBUG (after #(if % (db/valid-schema? %))))
+         interceptors]
+        handler-fn)))
+```
+
+Actually, it would probably be better to write an alternative `after` which 
