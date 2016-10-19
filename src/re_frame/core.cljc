@@ -1,5 +1,7 @@
 (ns re-frame.core
+  #?(:cljs (:require-macros [re-frame.macros :refer [defvar]]))
   (:require
+    #?(:clj [re-frame.macros :refer [defvar]])
     [re-frame.events           :as events]
     [re-frame.subs             :as subs]
     [re-frame.interop          :as interop]
@@ -17,9 +19,8 @@
 
 
 ;; --  dispatch
-(def dispatch         router/dispatch)
-(def dispatch-sync    router/dispatch-sync)
-
+(defvar dispatch         router/dispatch)
+(defvar dispatch-sync    router/dispatch-sync)
 
 ;; XXX move API functions up to this core level - to enable code completion and docs
 ;; XXX on figwheel reload, is there a way to not get the re-registration messages.
@@ -27,22 +28,20 @@
 
 ;; -- interceptor related
 ;; useful if you are writing your own interceptors
-(def ->interceptor   interceptor/->interceptor)
-(def enqueue         interceptor/enqueue)
-(def get-coeffect    interceptor/get-coeffect)
-(def get-effect      interceptor/get-effect)
-(def assoc-effect    interceptor/assoc-effect)
-(def assoc-coeffect  interceptor/assoc-coeffect)
-
+(defvar ->interceptor   interceptor/->interceptor)
+(defvar enqueue         interceptor/enqueue)
+(defvar get-coeffect    interceptor/get-coeffect)
+(defvar get-effect      interceptor/get-effect)
+(defvar assoc-effect    interceptor/assoc-effect)
+(defvar assoc-coeffect  interceptor/assoc-coeffect)
 
 ;; --  standard interceptors
-(def debug       std-interceptors/debug)
-(def path        std-interceptors/path)
-(def enrich      std-interceptors/enrich)
-(def trim-v      std-interceptors/trim-v)
-(def after       std-interceptors/after)
-(def on-changes  std-interceptors/on-changes)
-
+(defvar debug       std-interceptors/debug)
+(defvar path        std-interceptors/path)
+(defvar enrich      std-interceptors/enrich)
+(defvar trim-v      std-interceptors/trim-v)
+(defvar after       std-interceptors/after)
+(defvar on-changes  std-interceptors/on-changes)
 
 ;; --  subscriptions
 (defn reg-sub-raw
@@ -55,21 +54,20 @@
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
 
-(def reg-sub             subs/reg-sub)
-(def subscribe           subs/subscribe)
+(defvar reg-sub             subs/reg-sub)
+(defvar subscribe           subs/subscribe)
 
 (def clear-sub    (partial registrar/clear-handlers subs/kind))
 (def clear-subscription-cache! subs/clear-subscription-cache!)
 
 ;; -- effects
-(def reg-fx      fx/register)
-(def clear-fx    (partial registrar/clear-handlers fx/kind))
+(defvar reg-fx      fx/register)
+(def clear-fx       (partial registrar/clear-handlers fx/kind))
 
 ;; -- coeffects
-(def reg-cofx    cofx/register)
-(def inject-cofx cofx/inject-cofx)
-(def clear-cofx (partial registrar/clear-handlers cofx/kind))
-
+(defvar reg-cofx    cofx/register)
+(defvar inject-cofx cofx/inject-cofx)
+(def clear-cofx     (partial registrar/clear-handlers cofx/kind))
 
 ;; --  Events
 (def clear-event (partial registrar/clear-handlers events/kind))
@@ -110,15 +108,14 @@
 ;; Example Usage:
 ;;   (defn my-fn [& args]  (post-it-somewhere (apply str args)))  ;; here is my alternative
 ;;   (re-frame.core/set-loggers!  {:warn my-fn :log my-fn})       ;; override the defaults with mine
-(def set-loggers! loggers/set-loggers!)
+(defvar set-loggers! loggers/set-loggers!)
 
 ;; If you are writing an extension to re-frame, like perhaps
 ;; an effects handler, you may want to use re-frame logging.
 ;;
 ;; usage:  (console :error "this is bad: " a-variable " and " anotherv)
 ;;         (console :warn "possible breach of containment wall at: " dt)
-(def console loggers/console)
-
+(defvar console loggers/console)
 
 ;; -- State Restoration For Unit Tests
 
