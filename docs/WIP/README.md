@@ -69,7 +69,7 @@ Computationally, each iteration of the loop involves the same
 until we are back at the beginning of the loop. Each iteration has the same cascade.
 
 align="right"
-<img align="right" style="width:249;height:176" src="/images/Readme/Dominos.jpg?raw=true">
+<img align="right" src="/images/Readme/Dominos-small.jpg?raw=true">
 
 An `event` acts as the **1st domino**. 
 
