@@ -68,8 +68,7 @@ Computationally, each iteration of the loop involves the same
 5 domino cascade.  One domino triggering the next, which triggers the next, etc, 
 until we are back at the beginning of the loop. Each iteration has the same cascade.
 
-align="right"
-<img align="right" src="/images/Readme/Dominos-small.jpg?raw=true">
+<img align="right" src="/images/Readme/Dominoes-small.jpg?raw=true">
 
 An `event` acts as the **1st domino**. 
 
