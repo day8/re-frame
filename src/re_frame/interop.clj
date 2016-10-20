@@ -71,3 +71,8 @@
   there isn't often much point firing a timed event in a test."
   [f ms]
   (next-tick f))
+
+(defn clearTimeout! [id]
+  "No-op in JVM Clojure, since set-timeout executes immediately in JVM Clojure"
+  true)
+
