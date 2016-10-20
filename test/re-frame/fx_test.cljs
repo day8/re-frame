@@ -3,9 +3,11 @@
     [cljs.test :refer-macros [is deftest async use-fixtures]]
     [re-frame.core :as re-frame]
     [re-frame.fx]
+    [cljs.core.async :as async :refer [<! timeout]]
     [re-frame.interop :refer [set-timeout!]]
     [re-frame.loggers :as log]
-    [clojure.string :as str]))
+    [clojure.string :as str])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 ;; ---- FIXTURES ---------------------------------------------------------------
 
@@ -62,3 +64,148 @@
       (is (= (count @logs) 1))
       (finally
         (log/set-loggers! original-loggers)))))
+
+
+
+(re-frame/reg-event-fx
+ ::throttle-test
+ (fn [world [_ dispatches]]
+   {:dispatch-throttle dispatches}))
+
+(re-frame/reg-event-fx
+ ::type-ahead-search
+ (fn [world [_ event events-seen]]
+   (swap! events-seen conj event)
+   nil))
+
+(deftest dispatch-throttle-only-leading
+  (async done
+         (go
+           (let [seen-events (atom [])
+                 throttled-event (fn[event]
+                                   {:id ::dispatch-throttle-only-leading
+                                    :window-duration 50
+                                    :dispatch [::type-ahead-search event seen-events]})]
+             (re-frame/dispatch [::throttle-test (throttled-event "a")])
+             (<! (timeout 10))
+             (is (= @seen-events ["a"]))
+             (done)))))
+
+(deftest dispatch-throttle-only-trailing
+  (async done
+         (go
+           (let [seen-events (atom [])
+                 throttled-event (fn[event]
+                                   {:id ::dispatch-throttle-only-trailing
+                                    :window-duration 50
+                                    :leading? false
+                                    :trailing? true
+                                    :dispatch [::type-ahead-search event seen-events]})]
+             (re-frame/dispatch [::throttle-test (throttled-event "a")])
+             (<! (timeout 10))
+             (is (= @seen-events []))
+             (<! (timeout 60))
+             (is (= @seen-events ["a"]))
+             (done)))))
+
+
+
+(deftest dispatch-throttle-leading-and-trailing
+  (async done
+         (go
+           (let [seen-events (atom [])
+                 throttled-event (fn[event]
+                                   {:id ::dispatch-throttle-leading-and-trailing
+                                    :window-duration 50
+                                    :leading? true
+                                    :trailing? true
+                                    :dispatch [::type-ahead-search event seen-events]})]
+             (re-frame/dispatch [::throttle-test (throttled-event "a")])
+             (re-frame/dispatch [::throttle-test (throttled-event "b")])
+             (re-frame/dispatch [::throttle-test (throttled-event "c")])
+             (<! (timeout 10))
+             (is (= @seen-events ["a"]))
+             (<! (timeout 50))
+             (is (= @seen-events ["a" "c"]))
+             (done)))))
+
+
+(deftest dispatch-throttle-leading-and-trailing-only-one-event
+  (async done
+         (go
+           (let [seen-events (atom [])
+                 throttled-event (fn[event]
+                                   {:id ::dispatch-throttle-leading-and-trailing-only-one-event
+                                    :window-duration 50
+                                    :leading? true
+                                    :trailing? true
+                                    :dispatch [::type-ahead-search event seen-events]})]
+             (re-frame/dispatch [::throttle-test (throttled-event "a")])
+             (<! (timeout 10))
+             (is (= @seen-events ["a"] ))
+             (<! (timeout 50))
+             (is (= @seen-events ["a"] ))
+             (done)))))
+
+
+(deftest dispatch-throttle-coll-leading-and-trailing
+  (async done
+         (go
+           (let [seen-events (atom [])
+                 throttled-event (fn[event]
+                                   {:id ::dispatch-throttle-coll-leading-and-trailing
+                                    :window-duration 50
+                                    :leading? true
+                                    :trailing? true
+                                    :dispatch [::type-ahead-search event seen-events]})]
+             (re-frame/dispatch [::throttle-test [(throttled-event "a") (throttled-event "b") (throttled-event "c")]] )
+             (<! (timeout 10))
+             (is (= @seen-events ["a"]))
+             (<! (timeout 50))
+             (is (= @seen-events ["a" "c"]))
+             (done)))))
+
+
+(deftest dispatch-throttle-cancel
+  (async done
+         (go
+           (let [seen-events (atom [])
+                 throttled-event (fn[event]
+                                   {:id ::dispatch-throttle-cancel
+                                    :window-duration 50
+                                    :trailing? true
+                                    :leading? false
+                                    :dispatch [::type-ahead-search event seen-events]})]
+             (re-frame/dispatch [::throttle-test [(throttled-event "a") (throttled-event "b") (throttled-event "c")]] )
+             (<! (timeout 10))
+             (re-frame/dispatch [::throttle-test {:action :cancel
+                                                  :id ::dispatch-throttle-cancel}])
+             (<! (timeout 50))
+             (is (= @seen-events []))
+             (done)))))
+
+
+
+(deftest dispatch-throttle-flush
+  (async done
+         (go
+           (let [seen-events (atom [])
+                 throttled-event (fn[event]
+                                   {:id ::dispatch-throttle-flush
+                                    :window-duration 50
+                                    :trailing? true
+                                    :leading? false
+                                    :dispatch [::type-ahead-search event seen-events]})]
+             (re-frame/dispatch [::throttle-test [(throttled-event "a") (throttled-event "b") (throttled-event "c")]] )
+             (<! (timeout 10))
+             (re-frame/dispatch [::throttle-test {:action :flush
+                                                  :id ::dispatch-throttle-flush}])
+
+             (<! (timeout 0))
+             (is (= @seen-events ["c"]))
+             (<! (timeout 50))
+             (is (= @seen-events ["c"]))
+             (done)))))
+
+
+

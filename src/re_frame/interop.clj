@@ -72,7 +72,7 @@
   [f ms]
   (next-tick f))
 
-(defn clearTimeout! [id]
+(defn clear-timeout! [id]
   "No-op in JVM Clojure, since set-timeout executes immediately in JVM Clojure"
   true)
 
