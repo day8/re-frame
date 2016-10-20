@@ -143,20 +143,18 @@
                               f)
 
                          ;; one sugar pair
-                         2  (let [ret-val (subscribe (second input-args))]
-                              (fn inp-fn
-                                ([_] ret-val)
-                                ([_ _] ret-val)))
+                         2 (fn inp-fn
+                             ([_] (subscribe (second input-args)))
+                             ([_ _] (subscribe (second input-args))))
 
                          ;; multiple sugar pairs
                          (let [pairs   (partition 2 input-args)
-                               vecs    (map last pairs)
-                               ret-val (map subscribe vecs)]
+                               vecs    (map last pairs)]
                            (when-not (every?  vector? vecs)
                              (console :error err-header "expected pairs of :<- and vectors, got:" pairs))
                            (fn inp-fn
-                             ([_] ret-val)
-                             ([_ _] ret-val))))]
+                             ([_] (map subscribe vecs))
+                             ([_ _] (map subscribe vecs)))))]
     (register-handler
       kind
       query-id

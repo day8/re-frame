@@ -258,3 +258,35 @@
   (let [test-sub (subs/subscribe [:a-b-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
     (is (= {:a 1 :b 2} @test-sub) )))
+
+(deftest test-registering-subs-doesnt-create-subscription
+  (subs/clear-all-handlers!)
+  (let [sub-called? (atom false)]
+    (with-redefs [subs/subscribe (fn [& args] (reset! sub-called? true))]
+      (subs/reg-sub
+        :a-sub
+        (fn [db [_]] (:a db)))
+
+      (subs/reg-sub
+        :b-sub
+        (fn [db [_]] (:b db)))
+
+      (subs/reg-sub
+        :fn-sub
+        (fn [[_ c] _]
+          [(subs/subscribe [:a-sub c])
+           (subs/subscribe [:b-sub c])])
+        (fn [db [_]] (:b db)))
+
+      (subs/reg-sub
+        :a-sugar-sub
+        :<- [:a-sub]
+        (fn [[a] [_ c]] {:a a}))
+
+      (subs/reg-sub
+        :a-b-sub
+        :<- [:a-sub]
+        :<- [:b-sub]
+        (fn [[a b] [_ c]] {:a a :b b})))
+
+    (is (false? @sub-called?))))
