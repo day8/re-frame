@@ -1,18 +1,24 @@
 ## An Initial Code Walk Through
 
-Now you are armed with a high level, conceptual understanding
-of the 5 domino process, and an understanding of application state, 
-we'll look at some code.
+At this point, you are now armed with both:
+ - a high level understanding of the 5 domino process (the repo README)
+ - an understanding of application state  (the previous ApplicationState doc)
+ 
+You are about 60% the way to understanding re-frame.
 
-All 80 lines of the "simple" example application is given below, 
-in domino order, heavily annotated with explanation.
+In this tutorial, we'll look at some code which will get us to about 80% knowledge.
 
-### What this App Does 
+We'll be looking at real example application from
+this repo. It is only 60 lines of code, but there's
+plenty of surrounding explanation.
 
-This app displays the time at second resolution. It also allows 
-has one input field, into which you can input the colour to 
-use in the display of the time. 
-   
+### What It Does
+
+This app:
+ - displays the current time at second resolution in a nice big font
+ - provides one text input field into which you can type a hex colour code, 
+   like "#CCC", for the time display. 
+      
 XXX screenshot
 
 XXX How to run it
@@ -30,8 +36,8 @@ Within it, we'll need access to both `reagent` and `re-frame`. So, we start like
 ### Data Schema 
 
 I recommended you always write a good quality schema for your application
-state. But, here, I'm going to break my rule to keep things simple and stay 
-focused on the domino code. 
+state. But, here, to keep things simple, I'm going to break my own rule 
+and stay focused on the domino code only. 
 
 Suffice it to say the application state for "simple" looks like this
 map with two keys:
@@ -47,7 +53,7 @@ supplying it to your various handlers when it is needed.
 
 Events are data. You choose the format.
 
-In our re-frame reference implementation we choose a vector 
+In our re-frame reference implementation, we choose a vector 
 format for events. For example:
 ```clj
 [:delete-item 42]
@@ -55,13 +61,13 @@ format for events. For example:
 
 The first element in the vector identifies the kind of event. The
 further elements are optional, additional data associated with the event 
--- the additional value above (42) is presumably the id
+-- the additional value above, `42` is presumably the id
 of the item to delete.
 
-Here are some other example events:
+Here's some other example events:
 ```clj
    [:yes-button-clicked]
-   [:set-spam-wanted false :user-override "hello"]
+   [:set-spam-wanted false :continue-harassment-nevertheless]
    [:some-ns/on-success response] 
 ```
 
@@ -80,12 +86,12 @@ In this "simple" app, a `:timer` event is sent every second:
 (defn dispatch-timer-event
   []
   (let [now (js/Date.)]
-    (rf/dispatch [:timer now])))
+    (rf/dispatch [:timer now])))  ;; <--- dispatch used
 
 ;; call the dispatching function every second
 (defonce time-updater (js/setInterval dispatch-timer-event 1000))
 ```
-This is a little unusual. Normally, it is an app's UI widgets which 
+This arrangement is a little unusual. Normally, it is an app's UI widgets which 
 `dispatch` events (in response to user actions), or an HTTP POST's 
 `on-success` handler, or a web socket which gets a new packet.
 
@@ -94,97 +100,126 @@ This is a little unusual. Normally, it is an app's UI widgets which
 When `dispatch` is passed an event vector, it just puts that 
 event onto a conveyor belt for processing.
 
-The event is not processes synchronously. It happens **later**. 
+So, the event is not processed synchronously, like a function call. The processing
+happens **later** - asynchronously.
 
-The consumer on the end of the conveyor is a `router` which will organise for that
-event to be processed by the right handler.
+The consumer on the end of the `dispatch` conveyor is a `router` which
+will organise for that event to be processed by the right `event handler`.
 
+The `router`:
+1. inspects the 1st element of the arriving event vector
+2. look in its registry for the event handler which is registered for this kind of event
+3. it calls that event handler. 
+
+As a re-frame app developer, your job is to write and register a handler 
+for each kind of event. 
 
 ## Event Handlers (domino 2)
 
 Collectively, event handlers provide the control logic in a re-frame application.
 
-We must next register functions to "handle events". 
+This "simple" application has three events, identified by keywords:
+  `:initialise`
+  `:time-color-change`
+  `:timer`
+  
+Because there's 3 events, below you'll see 3 handler registrations. 
 
-This application has three events, identified by keywords:
-  :initialise
-  :time-color-change
-  :timer
+### reg-event-db
 
-Because there's 3 events, below you'll see 3 calls to `reg-event-db`, 
-each registering a handler for an event, and each occurrence like this:
+For this simple application, we will register handlers using re-frame's `reg-event-db`.
+
+`reg-event-db` is used like this:
 ```clj
 (reg-event-db
   :id-for-the-event
   function-to-handle-the-event)
 ```
+The handler you supply should expect two parameters:
+   - `db` the current application state
+   - `v`  the event vector
+    
+So the function being registered is expected to have a signature like this: `(fn [db v] ...)`. 
 
-An `event handler` registered via `reg-event-db` looks like this
-`(fn [db v] ...)`. 
-It takes two parameters, the current application state `db`
-and the event vector `v` originally dispatched.
-
-re-frame will ensure the right 
-
-An event handler must compute and return the new state of 
-the application, which means it normally returns a  
+It must compute and return the new state of 
+the application, which means it normally returns a
 modified version of `db`. 
 
-Below, you'll sometimes see the event handlers written:
-```clj
-(fn [db [_ something]]  <-- 2nd vec param destructured to get payload value
-  ...)
-``
+### Init
 
-Note: technically, an event handler return `effects`.  We're using
-`reg-event-db` here which assumes the only `effect` required (for this event)
-is a change to application state.  When you need to do other effects,
-like sending emails, or http POSTing, or writing to localstore, you
-would use the more sophisticated `reg-event-fx`  (note the trailing -fx) which
-is described in more advanced tutorials. We're keeping it simple for the moment.
-
+Here's a very simple example: 
 ```clj
 (rf/reg-event-db              ;; sets up initial application state
-  :initialize                 ;; usage:  (dispatch [:initialize])
+  :initialize                 
   (fn [_ _]                   ;; the two parameters are not important here, so use _
     {:time (js/Date.)         ;; What it returns becomes the new application state
      :time-color "#f88"}))    ;; so the application state will initially be a map with two keys
+```
+So, when `(dispatch [:initialize])` happens, the handler function registered above will
+be called. 
 
+This handler `fn` ignores the two parameters (`db` and `v`) and it simply returns 
+a map literal, which will become the first application 
+state. Later, we'll see how we `dispatch` this event early in the app's startup. 
 
-(rf/reg-event-db                ;; usage:  (dispatch [:time-color-change 34562])
-  :time-color-change            ;; dispatched when the user enters a new colour into the UI
-  (fn [db [_ new-color-value]]  ;; -db event handlers given 2 parameters:  current application state and event (a vector)
-    (assoc db :time-color new-color-value)))   ;; compute and return the new application state
+### Another example:
 
+Remember earlier, we set up a timer function to `(dispatch [:timer ...])` every second?
 
+Let's now register the event handler for this `event`:
+```clj
 (rf/reg-event-db                 ;; usage:  (dispatch [:timer a-js-Date])
-  :timer                         ;; every second an event of this kind will be dispatched
-  (fn [db [_ new-time]]          ;; note how the 2nd parameter is desctructure to obtain the data value
+  :timer                         
+  (fn [db [_ new-time]]          ;; <-- de-structure the event vector
     (assoc db :time new-time)))  ;; compute and return the new application state
 ```
 
+Notes:
+  1. the `v` parameter is destructured to extract the `now` value
+  2. the handler computes a new application state, and returns it
+
+
+### And Another
+
+When the user enters a new colour value (via an input text box):
+```clj
+(rf/reg-event-db                
+  :time-color-change            ;; usage:  (dispatch [:time-color-change 34562])
+  (fn [db [_ new-color-value]]  
+    (assoc db :time-color new-color-value)))   ;; compute and return the new application state
+```
+
+
+> **Note**: technically, event handlers return `effects`. `reg-event-db` 
+assumes (1) the only inputs (coeffect) 
+required for the computation are db and v, and (2) the only effect 
+returned are an update to app state. 
+
+> There is a more sophisticated registration method called 
+`reg-event-fx` which allows more varied coeffects and effects to be computed. More later. 
+  
 ## Effect Handlers (domino 3)
 
-Event handlers produce `effects` which have to be actioned. 
+Event handlers produce `effects` and domino 3 is about actioning them. 
 
 In this "simple" application, we're using the simplest kind of 
-event handlers. They produce only one effect "please update application state". 
+event handlers which return only one effect "please update application state". 
 
-This is handled for us automatically by re-frame. Nothing for us to do. 
+This `effect` is actioned for by a re-frame supplied `effect handler`. Nothing for us to do. 
 
-This is not unusual. You'll almost never have to write effect handlers, but 
-we'll understand more about them in a later tutorial. 
+And this is not unusual. You'll seldom have to write `effect handlers`, but 
+we'll understand more about them in a later tutorial.
 
 ## Subscription Handlers (domino 4)
 
 These handlers are given application state as a parameter, and they 
 perform a query (computation) over it, returning a "materialised view" 
-of that state. 
+of that state.
 
-These queries are used in the view functions which need to render 
+The data from these queries are later used in the view functions which need to render 
 DOM.
 
-Now, the examples below are utterly trivial. They just extract part of the application
+Now, the two examples below are utterly trivial. They just extract part of the application
 state and return it. So, virtually no computation. More interesting 
 subscriptions and more explanation can be found in the todomvc example.
 
@@ -196,9 +231,8 @@ subscriptions and more explanation can be found in the todomvc example.
   some-function)      ;; the function which will compute the query
 ```
 If ever a view requests data like this:
-    `(listen [:some-query-id])`   ;; note use of `:some-query-id`
-then `some-function` will be used to perform the query over applciation state
-when a
+    `(listen [:some-query-id])`   ;; note use of `:some-query-id`     XXX using listen
+then `some-function` will be used to perform the query over application state. 
 
 Each time application state changes, `some-function` will be
 called again to compute a new materialised view (a new computation)
@@ -292,3 +326,18 @@ Nothing happens without an `event`.
 When it comes to establishing initial application state, you'll 
 notice the use of `dispatch-sync`, rather than `dispatch`.  This is
 the synchronous 
+
+
+## Summary
+
+**Your job**, when building an app, is to: 
+ - design your app's information model (data and schema layer)
+ - write and register event handler functions  (control and transition layer)  (domino 2)    
+ - (once in a blue moon) write and register effect and coeffect handler 
+   functions (domino 3) which do the mutative dirty work of which we dare not 
+   speak in a pure, immutable functional context. Most of the time, you'll be 
+   using standard, supplied ones.
+ - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
+ - write Reagent view functions  (view layer)  (domino 5)
+ 
+re-frame's job is to XXX

@@ -30,7 +30,7 @@ Perhaps:
     that embraces those paradigms?
 3.  You're taking a [Functional Design and Programming course at San Diego State University](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html)
     and you have to learn re-frame to do an assignment.  You've left it a bit late, right? 
-    Good news, there is a quick start guide shortly. 
+    Good news, there is a quick start guide coming up shortly. 
 4.  You want your framework to exude social proof!!  Luckily, re-frame is impressively 
     buzzword compliant: it has reactivity, unidirectional data flow, pristinely pure functions, 
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
@@ -107,47 +107,58 @@ These two dominoes combine to implement the formula made famous by React: `v = f
 is a function `f` of the app state `s`.  **Over time**, when `s` changes, `f`
 will be called again to compute new `v`, forever keeping `v` up to date with the current `s`.
 
-Given domino 3 changed application state, `s`, dominos 4 and 5 are about re-running `f` so as 
-to produce a new `v` which shows this change.
+In our case, it is domino 3 which changes `s`, the application state, 
+so dominos 4 and 5 are conceptually about re-running `f` so as to produce a new `v`. 
 
-The mechanics of this are as follows (do not be alarmed by the terminology): domino 4 is a 
-de-duplicated signal graph which reactivity queries 
-application state, while domino 5 involves the reactive, declarative rendering 
-of views using React/Reagent. You'll see nice simple code in a minute.
+Except, of course, it is more subtle than that.  There is no one `f` to run, 
+there may be many functions which collectively build the overall DOM, 
+and only part of `s` may change at any one time, so only part of the 
+DOM need be updated.
+ 
+Domino 4 is a novel, simple and efficient de-duplicated signal graph which 
+runs query functions on the application state, `s`, efficiently computing 
+reactive, multi-layered, "materialised views" of `s`. 
+
+And, finally, Domino 5 are view functions (Reagent/React) which turn data 
+into DOM reactively (efficiently & declaratively). The data is supplied 
+by the query functions in domino 4.
+  
+Do not be alarmed by any terminology which isunfamiliar, you'll see how simple
+the code is shortly. 
 
 ### A Dominoes Walk Through
 
-Imagine the following scenario: the user clicks the delete button
-for the 3rd item in a list. In response, what happens within a re-frame app?
+Imagine the following scenario: the user sees a list of items, and 
+clicks the delete button for the 3rd item in a list. In response, 
+what happens within a re-frame app?
 
 The 5 domino cascade:
 
-1. The click handler for that button uses the re-frame supplied function, `dispatch`,
-   to send an `event`, which might look like this `[:delete-item 2]`.  Yes, that's a vector of two elements. 
-2. The `event handler` (function) associated with `:delete-item` (the first element of the event) 
-   is called to compute what the `effect` of the `event` should be. In this case, it computes 
-   that new application state should result (this state will not include the deleted item).
+1. The on-click handler for that button uses the re-frame supplied function, 
+   `dispatch`, to send an `event`, which might look like this `[:delete-item 2]`.
+   Yes, that's a vector of two elements. 
+2. The `event handler` (function) associated with `:delete-item` (the first
+   element of the event) is called to compute what the `effect` of the `event`
+   should be. In this case, it computes that new application state should
+   result (this state will not include the deleted item).
 3. an `effect handler` (function) resets application state to the newly computed value.
 4. a query (function) over the application state is called (reactively), computing a new 
-   result (containing no 3rd item!).
-5. a view (function) is called to re-compute DOM (reactively), because the query state to which 
-   it is subscribed has changed.
+   list of items (result) containing no 3rd item!).
+5. a view (function) is called to re-compute DOM (reactively), because the 
+   query state to which it is subscribed has changed.
    
 At this point, the re-frame app returns to a quiescent state, waiting for the next event. When one comes, a 
 similar 5 domino cascade will happen again.
 
 ### A Simple Loop Of Simple Functions
 
-**Each of these dominoes are simple, pure functions** which can be be described, understood and 
+**Each of the dominoes you supply are simple, pure functions** which can be be described, understood and 
 tested independently (other than domino 3). They take data, transform it and return new data.
 
 The loop itself is utterly predictable and very mechanical in operation.
 So, there's a regularity, simplicity and
 certainty to how a re-frame app goes about its business,
 which leads, in turn, to a great ease in reasoning and debugging.
-
-**At this point you know 50% of re-frame.**  Sure, there's some detail to fill in,  
-but the core concepts are known to you.
 
 ## It Leverages Data
 
@@ -185,30 +196,42 @@ used by a number of companies and individuals to build complex apps.
 
 Frameworks
 are just pesky overhead at small scale - measure them instead by how they help
-you tame the complexity of bigger apps, and in this regard re-frame seems to have
+you tame the complexity of bigger apps, and in this regard re-frame has
 worked out well. Some have even praised it effusively.
 
 Having said that, re-frame remains a work in progress and it falls
-short in a couple of ways - for example it doesn't work as well as we
-want with devcards - we're still
-puzzling over those aspects and we continue tweaking as we go.
+short in a couple of ways - for example it doesn't work as well as we'd
+like with devcards - we're still
+puzzling over some aspects and tweaking as we go. All libraries
+represent a point in the possible design space, with pros and cons.
 
-And, yes, it is fast, straight out of the box. And, yes, it has 
+And, yes, re-frame is fast, straight out of the box. And, yes, it has 
 a good testing story. And, yes, it works in with figwheel to create
-a delightful live-coding development story.
+a delightful hot-loading development story. And, yes, it has 
+a fun specialist tooling, and a community,
+and some 3rd part libraries.
+
 
 ### Where Do I Go Next?
 
-Want to see code? Want more mental models? Read the docs: 
+**At this point you know 50% of re-frame.**  Sure, there's some detail to fill in,
+but the core concepts are now known to you. 
+
+Next, you need to do the code walk through in the docs. This
+will take your knowledge to about 80%. The
+final 20% always comes with use and carefully reading the rest of the 
+docs (of which there's a few). 
+
+Docs: <br>
 https://github.com/Day8/re-frame/blob/master/docs/README.md
 
-Look at the examples:
+Look at the examples: <br>
 https://github.com/Day8/re-frame/tree/master/examples
 
-Use a template to create your own project:
+Use a template to create your own project: <br>
 https://github.com/Day8/re-frame-template
 
-Use these resources:
+Use these resources: <br>
 https://github.com/Day8/re-com
 XXX 
 

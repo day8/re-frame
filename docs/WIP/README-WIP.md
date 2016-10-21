@@ -1,108 +1,5 @@
 
 
-### Some Code
-
-**Your job**, when building an app, is to: 
- - design your app's information model (data and schema layer)
- - write and register event handler functions  (control and transition layer)  (domino 2)    
- - (once in a blue moon) write and register effect and coeffect handler 
-   functions (domino 3) which do the mutative dirty work of which we dare not 
-   speak in a pure, immutable functional context. Most of the time, you'll be 
-   using standard, supplied ones.
- - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
- - write Reagent view functions  (view layer)  (domino 5)
- 
-At this point you need to see some code ... XXXXXX
- 
-
-
-## Finite State Machines
-
-This perspective can be useful ... 
-
-> Any sufficiently complicated GUI contains an ad hoc, 
-> informally-specified, bug-ridden, slow implementation 
-> of a hierarchical FSM  <br>
-> -- my eleventh rule (see [Greenspun's tenth rule](https://en.wikipedia.org/wiki/Greenspun%27s_tenth_rule))
-
-Previously, I commented that `event handlers` (domino 2) collectively 
-represent the "control layer" of the application. They contain logic 
-which interprets arriving events in the context of existing state, 
-and they "step" the application state "forward".
-
-In this way, `events` act like the `triggers` in a finite state machine, and 
-the event handlers act like the rules which govern how a the state machine
-moves from one logical state to the next.
-
-Not every app has lots of logical states, but some do, and if you are implementing 
-one of them, then formally recognising it and using a technique like 
-[State Charts](https://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782)
-will help greatly in getting a clean design and a nice data model.
-
-So, in this section, I'm suggesting that this perspective is useful sometimes:
-  - the first 3 dominoes implement an [Event-driven finite-state machine](https://en.wikipedia.org/wiki/Event-driven_finite-state_machine)
-  - the last 2 dominoes reactively render the current state of this FSM for the user to observe
- 
-Events - that's the way we roll.
-
-
-
-## It Does Physics
-
-Remember this diagram from school? The water cycle.
-Two stages, involving water in different phases, being acted upon
-by different forces: gravity working one way, evaporation/convection the other.
-
-![logo](/images/the-water-cycle.png?raw=true)
-
-To understand re-frame, **imagine data flowing instead of water**. re-frame
-provides the "conveyance" of the data - the gravity, evaporation and convection.
-You design what's flowing and then you hang functions off the loop at
-various points to look after the data's phase changes.
-
-Sure, right now, you're thinking "lazy sods - make a proper Computer Science-y diagram". But, no.
-Joe Armstrong says "don't break the laws of physics" - I'm sure 
-you've seen the videos - and if he says to do something, you do it
-(unless Rich Hickey disagrees, and says to do something else). So,
-this diagram, apart from being a plausible analogy, and bordering on useful,
-is practically PROOF that re-frame is doing physics.
-
-
-
-## Tutorial Table of Contents
-
-
- - [What Problem Does It Solve?](#what-problem-does-it-solve)
- - [Guiding Philosophy](#guiding-philosophy)
- - [FRP Clarifications](#frp-clarifications)
- - [Explaining re-frame](#explaining-re-frame)
- - [On Data](#on-data)
- - [The Big Ratom](#the-big-ratom)
- - [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
- - [Flow](#flow)
- - [How Flow Happens In Reagent](#how-flow-happens-in-reagent)
- - [Components](#components)
- - [Truth Interlude](#truth-interlude)
- - [Components Like Templates?](#components-like-templates)
- - [React etc.](#react-etc)
- - [Subscribe](#subscribe)
- - [Just A Read-Only Cursor?](#just-a-read-only-cursor)
- - [The Signal Graph](#the-signal-graph)
- - [A More Efficient Signal Graph](#a-more-efficient-signal-graph)
- - [The 2nd Flow](#the-2nd-flow)
- - [Event Flow](#event-flow)
- - [What are events?](#what-are-events)
- - [Dispatching Events](#dispatching-events)
- - [Event Handlers](#event-handlers)
- - [Routing](#routing)
- - [Control Via FSM](#control-via-fsm)
- - [As A Reduce](#as-a-reduce)
- - [Derived Data, Everywhere, flowing](#derived-data-everywhere-flowing)
- - [Logging And Debugging](#logging-and-debugging)
- - [In Summary](#in-summary)
- - [Where Do I Go Next](#where-do-i-go-next)
- - [Licence](#licence)
-
 ## What Problem Does It Solve?
 
 First, we decided to build our SPA apps with ClojureScript, then we
@@ -709,22 +606,7 @@ Summary:
 
 ## The 2nd Flow
 
-At the top, I said that re-frame had two data flows.
 
-The data flow from `app-db` to the DOM is the first half of the story. We now need to consider
-the 2nd part of the story: the flow in the opposite direction.
-
-While the first flow has FRP-nature, the 2nd flow does not.  Well, not at first glance anyway.
-
-When I think about these two flows, I imagine one of those school diagrams showing the water cycle.
-
-
-Rivers taking water down to the oceans, and evaporation/clouds/wind taking water back over 
-the mountains to fall again as rain or snow. Repeat.
-
-There is a cycle, but it is handled by two independent flows.
-
-*With re-frame, it is not water that is flowing, it is data.*
 
 ## Event Flow
 
@@ -776,42 +658,6 @@ database analogies.
 
 ### Dispatching Events
 
-Events tend to start in the DOM in response to user actions.  They are `dispatched`.
-
-For example, a button component might be like this:
-
-```Clojure
-   (defn yes-button
-       []
-       [:div  {:class "button-class"
-               :on-click  #(dispatch [:yes-button-clicked])}
-               "Yes"])
-```
-
-Notice the `on-click` DOM handler:
-
-```Clojure
-   #(dispatch [:yes-button-clicked])
-```
-
-With re-frame, we try to keep the DOM as passive as possible. We do not
-want our views containing any control logic. That "on-click" is as simple as we can make it.
-
-There's a single `dispatch` function in the entire framework, and it takes one parameter:
-the event (vector) to be
-dispatched (which is pure simple, lovely data, flowing).
-
-Let's update our diagram to show `dispatch`:
-
-```
-app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
- ^                                                                              |
- |                                                                              v
- handlers <----------------------------------------  (dispatch [event-id  event params])
-```
-
-**Rule**:  `components` are as passive and minimal as possible when it comes to handling events.
-They `dispatch` pure data and nothing more.
 
 ### Event Handlers
 
@@ -842,37 +688,8 @@ handlers pure. As a result, they tend to be easy to test and understand.  Many a
 There's more to event handlers than can be covered here in this introductory tutorial. Read up on
 issues like Middleware [in the Wiki](https://github.com/Day8/re-frame/wiki#handler-middleware).
 
-### Routing
 
 
-```
-app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
- ^                                                                              |
- |                                                                              v
- handlers <-----  router  <-----------------------  (dispatch [event-id  event params])
-```
-
-The `router` will:
-
-1. inspect the 1st element of the arriving vector
-2. look in its registry for the handler which is registered for this kind of event
-3. call that handler with two parameters: (1) the current value in `app-db` and (2) the event vector
-4. reset! the returned value back into `app-db`.
-
-As a re-frame app developer, your job is to write handlers for each kind of event, and
-then to register those handlers with the router.
-
-Here's how we would register our event handler:
-
-```Clojure
-(reg-event-db
-  :delete-item 			;; the event id (name)
-  (fn [db [_ item]]		;; the handler function for that event
-  ...					
-  )       
-```
-
-Any arriving event vector which has `:delete-item` as the first element will now be routed to our handler.
 
 ### Control Via FSM
 

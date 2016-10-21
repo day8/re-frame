@@ -1,10 +1,7 @@
 ## Application State
 
-In our first high level code walk through, there was talk of 
-"application state".  It was supplied to event handlers and there was talk about 
-query functions computing materialised views from it, etc. 
-
-Let's now look at it in more depth.
+Before understanding code, we must understand how re-frame manages 
+application state.
 
 ### On Data
 
@@ -29,7 +26,7 @@ spent your life breaking systems into pieces, organised around behaviour and try
 to hide state.  I still wake up in a sweat some nights thinking about all
 that Clojure data lying around exposed and passive.
 
-But, as Fogus reminded us, data at rest is perfect.
+But, as Fogus reminded us, data at rest is quite perfect.
 
 In re-frame's reference implementation, `app-db` is one of these:
 ```clj
