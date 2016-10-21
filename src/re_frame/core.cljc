@@ -49,7 +49,7 @@
    which is expected to take two arguments: app-db and query vector, and return
    a `reaction`.
 
-  This is a low level, advanced function.  You should probably be using re-sub
+  This is a low level, advanced function.  You should probably be using reg-sub
   instead."
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
