@@ -73,20 +73,21 @@ until we are back at the beginning of the loop. Each iteration has the same casc
 An `event` acts as the **1st domino**. 
 
 An event might be initiated by a user clicking a button, or entering a field, 
-or it might be initiated by another agent, like "a websocket receiving a packet". 
+or it might be caused by another agent, such as a websocket which just
+receiving a new message.
 Without the impulse of a triggering `event`, no 5 domino cascade occurs.
-So, it is only because of `events` that a re-frame app is propelled, loop iteration after loop iteration,
-from one state to the next. 
+So, it is only because of `events` that a re-frame app is propelled, 
+loop iteration after loop iteration, from one state to the next. 
 
 re-frame is `event` driven.
 
-The **2nd domino**, `event handling`, involves computing how the application should 
-respond/change to the new `event` occurrence.
+The **2nd domino**, `event handling`, involves computing how the 
+application should respond/change to the new `event` occurrence.
 
 Event handlers produce `effects` or, more accurately,
 a **description** of `effects`.  These descriptions say how the state of
-an SPA itself should change, and sometimes they also say how the outside world should change
-(localstore, cookies, databases, emails, etc).
+an SPA itself should change, and sometimes they also say how the 
+outside world should change (localstore, cookies, databases, emails, etc).
 
 The **3rd domino** takes these descriptions (of `effects`) and actions them. Makes them real.
 

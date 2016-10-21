@@ -1,12 +1,12 @@
 ## An Initial Code Walk Through
 
-At this point, you are now armed with both:
- - a high level understanding of the 5 domino process (the repo README)
- - an understanding of application state  (the previous ApplicationState doc)
+At this point, you are now armed with:
+ - a high level understanding of the 5 domino process (from the repo README)
+ - an understanding of application state (from the previous Tutorial) 
  
-You are about 60% the way to understanding re-frame.
+You are currently about 60% the way to understanding re-frame.
 
-In this tutorial, we'll look at some code which will get us to about 80% knowledge.
+In this tutorial, we look at code which will get us to about 80% knowledge.
 
 We'll be looking at real example application from
 this repo. It is only 60 lines of code, but there's
@@ -216,8 +216,8 @@ These handlers are given application state as a parameter, and they
 perform a query (computation) over it, returning a "materialised view" 
 of that state.
 
-The data from these queries are later used in the view functions which need to render 
-DOM.
+The data returned by these `query` functions 
+is later used in the `view` functions which render DOM.
 
 Now, the two examples below are utterly trivial. They just extract part of the application
 state and return it. So, virtually no computation. More interesting 
@@ -257,9 +257,28 @@ re-frame will ensure the necessary calls are made, at the right time.
 
 ## View Functions (domino 5)
 
-This is where we render the application's UI using Reagent/React.  
+`view` functions transform application state data 
+into `Hiccup formatted` data.  `view` 
+functions collectively render the entire DOM.
 
-As functions do, these `views` transform data into data. They source 
+`Hiccup` is ClojureScript data structures which represent DOM. 
+Here's a trivial view function:
+ ```clj
+(defn greet
+  []
+  [:div "Hello viewers"])
+```
+
+And if we call it:
+```clj
+(greet)
+;; ==>  [:div "Hello viewers"]
+```
+
+So view functions render a DOM representation of the application state, 
+obtained by subscriptions. 
+
+transform data into data. They source 
 data from subscriptions (queries across application state), and 
 the data they return is hiccup-formatted, which is a proxy for DOM.
 

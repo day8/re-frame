@@ -1,59 +1,5 @@
 
 
-## What Problem Does It Solve?
-
-First, we decided to build our SPA apps with ClojureScript, then we
-choose [Reagent], then we had a problem.
-
-For all its considerable brilliance,  Reagent (+ React)
-delivers only the 'V' part of a traditional MVC framework.
-
-But apps involve much more than V. Where
-does the control logic go? How is state stored & manipulated? etc.
-
-We read up on [Pedestal App], [Flux], 
-[Hoplon], [Om], early [Elm], etc and re-frame is the architecture that
-emerged.  Since then, we've kept a close eye on further developments like the
-Elm Architecture, Om.Next, BEST, Cycle.js, Redux, etc.  They have taught us much
-although we have often made different choices.
-
-re-frame does have M, V, and C parts but they aren't objects.  
-It is sufficiently different in nature
-from (traditional, Smalltalk) MVC that calling it MVC would be confusing.  I'd
-love an alternative.
-
-Perhaps it is a RACES framework - Reactive-Atom Component Event
-Subscription framework (I love the smell of acronym in the morning).
-
-Or, if we distill to pure essence, `DDATWD` - Derived Data All The Way Down.
-
-*TODO:* get acronym down to 3 chars! Get an image of stacked Turtles for `DDATWD`
-insider's joke, conference T-Shirt.
-
-
-## Guiding Philosophy
-
-__First__, above all we believe in the one true [Dan Holmsand], creator of Reagent, and
-his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
-
-__Second__, we believe in ClojureScript, immutable data and the process of building
-a system out of pure functions.
-
-__Third__, we believe in the primacy of data, for the reasons previously given. re-frame 
-implements an infinite loop of Derived data.
-
-__Fourth__, we believe that Reactive Programming is one honking great idea. 
-It is a quite beautiful solution to one half of re-frame's 
-data conveyance needs, but we don't take reactivity as far as, say, cycle.js. 
-It doesn't take over everything in re-frame - it just does part of the job.
-
-__Finally__, many years ago I programmed briefly in Eiffel where I learned 
-about [command-query separation](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation). 
-Each generation of
-programmers seems destined to rediscover this principle - CQRS is a recent re-rendering. 
-And yet we still see read/write `cursors` and two way data binding being promoted as a good thing. 
-Just say no. As programs get bigger, their use will encourage control logic into all the 
-wrong places and you'll end up with a tire fire of an Architecture. IMHO.
 
 
 
@@ -193,6 +139,8 @@ accessible via the `ratom` it returns.
 
 Okay, that was all important background information for what is to follow. Back to the diagram ...
 
+
+
 ## Components
 
 Extending the diagram, we introduce `components`:
@@ -201,7 +149,8 @@ Extending the diagram, we introduce `components`:
 app-db  -->  components  -->  Hiccup
 ```
 
-When using Reagent, your primary job is to write one or more `components`. This is the view layer.
+When using Reagent, your primary job is to write one or more `components`. 
+This is the view layer.
 
 Think about `components` as `pure functions` - data in, Hiccup out.  `Hiccup` is
 ClojureScript data structures which represent DOM. Here's a trivial component:
@@ -604,10 +553,6 @@ Summary:
    even for large, deep nested data structures.
 
 
-## The 2nd Flow
-
-
-
 ## Event Flow
 
 Events are what flow in the opposite direction.
@@ -656,39 +601,6 @@ database. Almost. Stretching it?  We do like our in-memory
 database analogies.
 
 
-### Dispatching Events
-
-
-### Event Handlers
-
-Collectively, event handlers provide the control logic in a re-frame application.
-
-An event handler is a pure function of two parameters:
-
- 1. current value in `app-db`.  Note: that's the map **in** `app-db`, not the atom itself.
- 2. an event (represented as a vector)
-
-It returns the new value which should be reset! into `app-db`.
-
-An example handler:
-```Clojure
-(defn handle-delete
-   [app-state [_ item-id]]          ;; notice how event vector is destructured -- 2nd parameter
-   (dissoc-in app-state [:some :path item-id]))     ;; return a modified version of 'app-state'
-```
-
-Handling an event invariably involves mutating the value in `app-db`
-(which is provided as the first parameter).
-An item is added here, or one is deleted there.  So, often simple CRUD, but sometimes much more,
-and sometimes with async results.
-
-But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!`). That leaves your event
-handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
-
-There's more to event handlers than can be covered here in this introductory tutorial. Read up on
-issues like Middleware [in the Wiki](https://github.com/Day8/re-frame/wiki#handler-middleware).
-
-
 
 
 ### Control Via FSM
@@ -726,36 +638,6 @@ the data is distributed (and synchronized) across many objects. So implementing 
 both possible and natural in re-frame, whereas it is often difficult and contrived to do so in other
 kinds of architecture (in my experience).
 
-### As A Reduce
-
-So here's another way of thinking about what's happening with this data flow - another useful mental model.
-
-First, imagine that all the events ever dispatched by a certain running  app were stored in a collection.
-So, if when the app started, the user clicked on button X then the first item in this collection
-would be the event generated
-by that button, and then, if next the user moved a slider, the associated event would be the
-next item in the collection, and so on and so on. We'd end up with a collection of event vectors.
-
-
-Second, remind yourself that the `combining function` of a `reduce` takes two parameters:
-
-1. the current state of the reduction and
-2. the next collection member to fold in.
-
-Then notice that event handlers take two parameters too:
-
-1. the current state of `app-db`
-2. the next item to fold in.
-
-Which is the same as a `combining function` in a `reduce`!!
-
-So now we can introduce the new mental model:  at any point in time, the value in `app-db` is the result of
-performing a `reduce` over
-the entire `collection` of events dispatched in the app up until that time. The combining function
-for this reduce is the set of handlers.
-
-It is almost like `app-db` is the temporary place where this imagined `perpetual reduce` stores
-its on-going reduction.
 
 ### Derived Data, Everywhere, flowing
 
@@ -783,33 +665,6 @@ and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption 
 repo issue with a suggestion.
 
 Back to the more pragmatic world ...
-
-### Logging And Debugging
-
-How did that exception happen, you wonder, shaking your head?  What did the user do immediately prior
-to the exception?  What state was the app in that this event was so disastrous?
-
-To debug it, you need to know this information:
- 1. the state of the app immediately before the exception
- 2. What final event then caused your app to fall in a screaming mess.
-
-Well, with re-frame you need to record (have available):
- 1. A recent checkpoint of the app state in `app-db` (perhaps the initial state)
- 2. all the events `dispatch`ed since the last checkpoint, up to the point where the exception occurred.
-
-Note: that's all just data. **Pure, lovely loggable data.**
-
-If you have that data, then you can reproduce the exception.
-
-re-frame allows you to time travel. Install the "checkpoint" state into `app-db`
-and then "play forward" through the collection dispatched events.
-
-The only way the app "moves forwards" is via events. "Replaying events" moves you
-step by step towards the exception causing problem.
-
-This is utterly, utterly perfect for debugging assuming, of course, you are in a position to capture
-a checkpoint, and the events since then.
-
 
 
 
