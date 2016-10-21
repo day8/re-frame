@@ -346,6 +346,39 @@ usage:
 {:db  {:key1 value1 key2 value2}}
 ```
 
+#### :dispatch-throttle
+
+This will only dispatch events at most once per every window-duration milliseconds.
+The throttled function can be configured to dispatch on the leading, trailing or both edges of this window.
+
+Note: When both leading and trailing flags are enabled the event will be dispatched on trailing edge only if there are more than one event.
+
+usage:
+
+Expects either a single map, or a sequence of maps.
+
+```clj
+{:dispatch-throttle {:id       ::re-render-markdown
+                     :window-duration  250
+                     :leading? true
+                     :trailing? false
+                     :dispatch [:re-render :main-section]}}
+```
+
+Cancel throttled events
+
+```clj
+{:dispatch-throttle {:id       ::re-render-markdown
+                     :action :cancel}}
+```
+
+Flush latest throttled event
+
+```clj
+{:dispatch-throttle {:id ::re-render-markdown
+                     :action :flush}}
+```
+
 ### External Effects
 
 - https://github.com/Day8/re-frame-http-fx   (GETs and POSTs)
