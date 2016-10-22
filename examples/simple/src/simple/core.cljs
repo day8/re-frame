@@ -7,10 +7,10 @@
 (defn dispatch-timer-event
   []
   (let [now (js/Date.)]
-    (rf/dispatch [:timer now])))
+    (rf/dispatch [:timer now])))  ;; <-- dispatch used
 
-;; an event will be dispatched every second
-(defonce time-updater (js/setInterval dispatch-timer-event 1000))
+;; call the dispatching function every second
+(defonce do-timer (js/setInterval dispatch-timer-event 1000))
 
 
 ;; -- Domino 2 - Event Handlers -----------------------------------------------

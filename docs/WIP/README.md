@@ -23,7 +23,7 @@ y'know. Pretty good.
 Perhaps:
 
 1.  You want to develop an [SPA] in ClojureScript, and you are looking for a framework
-2.  You believe that Facebook did something magnificent when it created React, and
+2.  You believe Facebook did something magnificent when it created React, and
     you are curious about the further implications. Is the combination of
     `reactive programming`, `functional programming` and `immutable data` going to
     **completely change everything**?  And, if so, what would that look like in a language
@@ -31,8 +31,9 @@ Perhaps:
 3.  You're taking a [Functional Design and Programming course at San Diego State University](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html)
     and you have to learn re-frame to do an assignment.  You've left it a bit late, right? 
     Good news, there is a quick start guide coming up shortly. 
-4.  You want your framework to exude social proof!!  Luckily, re-frame is impressively 
-    buzzword compliant: it has reactivity, unidirectional data flow, pristinely pure functions, 
+4.  You like a bit of social proof!!  I can report that 
+    re-frame is impressively buzzword compliant: it has reactivity, 
+    unidirectional data flow, pristinely pure functions, 
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
     and claims an immaculate hammock conception. It also has a charming 
     xkcd reference (soon) and a hilarious, insiders-joke T-shirt, 
@@ -139,21 +140,23 @@ The 5 domino cascade:
    `dispatch`, to send an `event`, which might look like this `[:delete-item 2]`.
    Yes, that's a vector of two elements. 
 2. The `event handler` (function) associated with `:delete-item` (the first
-   element of the event) is called to compute what the `effect` of the `event`
-   should be. In this case, it computes that new application state should
+   element of the event) is called to compute the `effect` of the `event`.
+   In this case, it computes that new application state should
    result (this state will not include the deleted item).
 3. an `effect handler` (function) resets application state to the newly computed value.
 4. a query (function) over the application state is called (reactively), computing a new 
-   list of items (result) containing no 3rd item!).
+   list of items (result) containing no 3rd item!.
 5. a view (function) is called to re-compute DOM (reactively), because the 
    query state to which it is subscribed has changed.
-   
-At this point, the re-frame app returns to a quiescent state, waiting for the next event. When one comes, a 
+
+At this point, the re-frame app returns to a quiescent state, 
+waiting for the next event. When one comes, a 
 similar 5 domino cascade will happen again.
 
 ### A Simple Loop Of Simple Functions
 
-**Each of the dominoes you supply are simple, pure functions** which can be be described, understood and 
+**Each of the dominoes you supply are simple, pure functions** which 
+can be be described, understood and 
 tested independently (other than domino 3). They take data, transform it and return new data.
 
 The loop itself is utterly predictable and very mechanical in operation.
@@ -173,14 +176,13 @@ The functions which later manipulate data, start as data.
 Clojure programmers place particular 
 emphasis on the primacy of data. When they aren't re-watching Rich Hickey videos, 
 and wishing their hair was darker and more curly, 
-they meditate on aphorisms like "Data is the ultimate in late binding"
-and "data > functions > macros".
+they meditate on aphorisms like "Data is the ultimate in late binding".
 
-I cannot stress too much what a big deal this is. It might seem 
-just a syntax curiosity at first but, when the penny drops for 
+I cannot stress too much what a big deal this is. It can seem 
+like a syntax curiosity at first but, when the penny drops for 
 you on this, it tends to be a profound moment. And once you 
 understand the importance of this concept at the language level, 
-you naturally want a similar approach at the library level.
+you naturally want to leverage similar power at the library level.
 
 So, it will come as no surprise, then, to know that re-frame has a 
 data oriented design. Events are data. Effects are data. DOM is data.
@@ -190,10 +192,13 @@ order functions). Etc.
 
 Data - that's the way we roll.
 
-### It is Mature
+### It is both mature and used in the large
 
-re-frame was released early 2015, and it has subsequently been
-used by a number of companies and individuals to build complex apps.
+re-frame was released early 2015, and has subsequently been happily
+used by a number of companies - [large](http://open.mediaexpress.reuters.com/), 
+[medium](https://rokt.com/) and
+[smaller](https://www.fullcontact.com) - as well 
+as individuals to build complex apps which run to 50K lines of code, and beyond.
 
 Frameworks
 are just pesky overhead at small scale - measure them instead by how they help
@@ -215,22 +220,23 @@ and some 3rd part libraries.
 
 ### Where Do I Go Next?
 
-**At this point you know 50% of re-frame.**  Sure, there's some detail to fill in,
-but the core concepts are now known to you. 
+**At this point you already know 40% of re-frame.**  There's detail to fill in,
+but the core concepts are now known to you.
 
 Next, you need to do the code walk through in the docs. This
-will take your knowledge to about 80%. The
+will quickly get your knowledge to about 80%. The
 final 20% always comes with use and carefully reading the rest of the 
 docs (of which there's a few). 
 
-Docs: <br>
+Read these docs: <br>
 https://github.com/Day8/re-frame/blob/master/docs/README.md
 
-Look at the examples: <br>
+Experiment with these examples: <br>
 https://github.com/Day8/re-frame/tree/master/examples
 
 Use a template to create your own project: <br>
-https://github.com/Day8/re-frame-template
+Client only:  https://github.com/Day8/re-frame-template  <br>
+Front and back: http://www.luminusweb.net/
 
 Use these resources: <br>
 https://github.com/Day8/re-com

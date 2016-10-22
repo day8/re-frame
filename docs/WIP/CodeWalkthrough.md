@@ -1,19 +1,19 @@
-## Coding It
+## Code Walk-through
 
-At this point, you are armed with:
+At this point in your reading, you are armed with:
  - a high level understanding of the 5 domino process (from the repo's README)
- - an understanding of application state (from the previous Tutorial) 
+ - an understanding of application state (the previous Tutorial) 
  
-In this tutorial, **we'll write re-frame code**.
+In this tutorial, **we'll look at re-frame code**.
 
 ### What Code?
 
 This repo contains an `/example` application called "simple",
 which has around 70 lines of code. We'll look at every line
-and understand what it does.  
+and understand what it does.
 
-You are currently about 60% the way to understanding re-frame. By the
-end of this tutorial, you'll be at 80%, which is good
+You are currently about 50% the way to understanding re-frame. By the
+end of this tutorial, you'll be at 70%, which is good
 enough to start coding by yourself.
 
 ### What Does It Do?
@@ -32,45 +32,46 @@ XXX path to code
 ### Namespace
 
 Because this example is so "simple", the code is in a single namespace. 
-Within it, we'll need access to both `reagent` and `re-frame`. So, we start like this: 
+Within it, we'll need access to both `reagent` and `re-frame`. 
+So, we start like this: 
 ```clj
 (ns simple.core
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]))
 ```
 
-### Data Schema 
+### Data Schema
 
-Generally, I'd strongly, strongly recommended you always write a quality formal schema 
-for your application state (the data which is stored in `app-db`). But, 
-here, to minimise cognitive load, we'll cut that corner. 
+Generally, I'd strongly recommended you write a quality schema
+for your application state (the data stored in `app-db`). But,
+here, to minimise cognitive load, we'll cut that corner.
 
-But we can't cut it completely. Via informal methods, you'll still 
-need to know how the value in `app-db` is structured.  
-
-Here goes: it is a map with two keys:
+But we can't cut it completely. You'll still need an
+informal description ... for this app `app-db` will contain
+a two-key map like this:
 ```cljs
 {:time       (js/Date.)    ;; current time for display
  :time-color "#f88"}       ;; what colour should the time be shown in
 ```
 
-re-frame holds/manages application state for you (in`app-db`), 
-supplying it to your various handlers when it is needed.
+re-frame itself owns/manages `app-db` (see FAQ #1),
+supplying the value within it (a two-key map in this case)
+to your various handlers as required.
 
 ## Events (domino 1)
 
 Events are data. You choose the format.
 
-The re-frame reference implementation uses a vector 
+The re-frame reference implementation uses a vector
 format for events. For example:
 ```clj
 [:delete-item 42]
 ```
 
-The first element in the vector identifies the kind of event. The
+The first element in the vector identifies the `kind` of `event`. The
 further elements are optional, and can provide additional data 
-associated with the event. The additional value above, `42` is presumably the id
-of the item to delete.
+associated with the event. The additional value above, `42`, is 
+presumably the id of the item to delete.
 
 Here's some other example events:
 ```clj
@@ -79,15 +80,15 @@ Here's some other example events:
 [:some-ns/on-success response] 
 ```
 
-The `kind` of event is always a keywork, and for non-trivial 
-applications it tends to be namespaces.  
+The `kind` of event is always a keyword, and for non-trivial 
+applications it tends to be namespaced.  
 
 **Rule**:  events are pure data. No dirty tricks like putting
 callback functions on the wire. You know who you are.
 
 ### dispatch
 
-To send an event, you call `dispatch` with the event vector as argument: 
+To send an event, call `dispatch` with the event vector as argument: 
 ```clj
    (dispatch [:event-id  value1 value2])
 ```
@@ -97,14 +98,14 @@ In this "simple" app, a `:timer` event is sent every one second:
 (defn dispatch-timer-event
   []
   (let [now (js/Date.)]
-    (rf/dispatch [:timer now])))  ;; <--- dispatch used
+    (rf/dispatch [:timer now])))  ;; <-- dispatch used
 
 ;; call the dispatching function every second
-(defonce time-updater (js/setInterval dispatch-timer-event 1000))
+(defonce do-timer (js/setInterval dispatch-timer-event 1000))
 ```
-This arrangement is a little unusual. Normally, it is an app's UI widgets which 
+This is an unusual source of events. Normally, it is an app's UI widgets which 
 `dispatch` events (in response to user actions), or an HTTP POST's 
-`on-success` handler, or a web socket which gets a new packet.
+`on-success` handler, or a websocket which gets a new packet.
 
 ### After dispatch 
 
@@ -119,7 +120,7 @@ The `router`:
 1. inspects the 1st element of an event vector
 2. looks in a registry for the event handler which is **registered**
    for this kind of event
-3. calls that event handler with the necessary arguments  
+3. calls that event handler with the necessary arguments
 
 As a re-frame app developer, your job then is to write and register a handler 
 for each kind of event. 
