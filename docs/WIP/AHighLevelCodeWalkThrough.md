@@ -1,4 +1,4 @@
-## An Initial Code Walk Through
+## Coding It
 
 At this point, you are armed with:
  - a high level understanding of the 5 domino process (from the repo's README)
@@ -10,18 +10,18 @@ In this tutorial, **we'll write re-frame code**.
 
 This repo contains an `/example` application called "simple",
 which has around 70 lines of code. We'll look at every line
-and understand what they do. 
+and understand what it does.  
 
 You are currently about 60% the way to understanding re-frame. By the
-end of this tutorial, you'll be about at around 80%, which is good
+end of this tutorial, you'll be at 80%, which is good
 enough to start coding by yourself.
 
 ### What Does It Do?
 
 This app:
- - displays the current time at second resolution in a nice big font
- - provides one text input field into which you can type a hex colour code, 
-   like "#CCC", for the time display. 
+ - displays the current time in a nice big font
+ - provides a text input field into which you can type a hex colour code, 
+   like "#CCC", for the time display
       
 XXX screenshot
 
@@ -41,25 +41,27 @@ Within it, we'll need access to both `reagent` and `re-frame`. So, we start like
 
 ### Data Schema 
 
-I recommended you always write a quality schema for your application
-state. But, here, to keep things simple, I'm going to break that rule 
-and stay focused on the domino functions only. 
+Generally, I'd strongly, strongly recommended you always write a quality formal schema 
+for your application state (the data which is stored in `app-db`). But, 
+here, to minimise cognitive load, we'll cut that corner. 
 
-Suffice it to say the application state for "simple" looks like this
-map with two keys:
+But we can't cut it completely. Via informal methods, you'll still 
+need to know how the value in `app-db` is structured.  
+
+Here goes: it is a map with two keys:
 ```cljs
-{:time       (js/Date.)
- :time-color "#f88"}
+{:time       (js/Date.)    ;; current time for display
+ :time-color "#f88"}       ;; what colour should the time be shown in
 ```
 
-re-frame holds/manages application state for you, 
+re-frame holds/manages application state for you (in`app-db`), 
 supplying it to your various handlers when it is needed.
 
 ## Events (domino 1)
 
 Events are data. You choose the format.
 
-In our re-frame reference implementation, we choose a vector 
+The re-frame reference implementation uses a vector 
 format for events. For example:
 ```clj
 [:delete-item 42]
@@ -76,6 +78,9 @@ Here's some other example events:
 [:set-spam-wanted false :continue-harassment-nevertheless-flag]
 [:some-ns/on-success response] 
 ```
+
+The `kind` of event is always a keywork, and for non-trivial 
+applications it tends to be namespaces.  
 
 **Rule**:  events are pure data. No dirty tricks like putting
 callback functions on the wire. You know who you are.
@@ -103,20 +108,18 @@ This arrangement is a little unusual. Normally, it is an app's UI widgets which
 
 ### After dispatch 
 
-When `dispatch` is passed an event vector, it just puts that 
-event into a queue for processing.
+`dispatch` puts an event into a queue for processing.
 
 So, the event is not processed synchronously, like a function call. The processing
 happens **later** - asynchronously. Very soon, but not now.
 
-The consumer on the end of the `dispatch` queue is a `router` which
-will organise for the event to be processed by the right `event handler`.
+The consumer of the queue is a `router` which looks after the event's processing.
 
 The `router`:
 1. inspects the 1st element of an event vector
 2. looks in a registry for the event handler which is **registered**
    for this kind of event
-3. calls that event handler with the right arguments  
+3. calls that event handler with the necessary arguments  
 
 As a re-frame app developer, your job then is to write and register a handler 
 for each kind of event. 
@@ -130,18 +133,17 @@ In this "simple" application, 3 kinds of event are dispatched:
   `:time-color-change`
   `:timer`
   
-Because there's 3 events, below we'll register 3 event handlers.  
+3 events means we'll be registering 3 event handlers.  
 
 ### reg-event-db
 
-We register event 
-handlers using re-frame's `reg-event-db`.
+We register event handlers using re-frame's `reg-event-db`.
 
 `reg-event-db` is used like this:
 ```clj
 (reg-event-db
-  :id-for-the-event
-  function-to-handle-the-event)
+  :the-event-id
+  the-event-handler-fn)
 ```
 The handler function you provide should expect two parameters:
    - `db` the current application state
@@ -149,12 +151,13 @@ The handler function you provide should expect two parameters:
     
 So it will have a signature like this: `(fn [db v] ...)`. 
 
-It must compute and return the new state of 
+Each event handler must compute and return the new state of 
 the application, which means it normally returns a
 modified version of `db`. 
 
-> **Note**: event handlers return `effects`. `reg-event-db` is used 
-when (1) the only inputs (`coeffects`) 
+> **Note**: generally event handlers return `effects`. `reg-event-db` is used 
+to register a certain kind of simple event handler, one where 
+(1) the only inputs (`coeffects`) 
 required for the computation are `db and `v`, and (2) the only `effect` 
 returned is an update to app state. 
 
@@ -162,9 +165,20 @@ returned is an update to app state.
 `reg-event-fx` which allows more varied `coeffects` and `effects`
 to be computed. More on this soon. 
 
-### Init
+### :initialize
 
-Here's a very simple example: 
+On startup, application state must be initialised. We
+want to put a sensible value into `app-db`.
+
+So a `(dispatch [:initialize])` will happen early in the 
+apps life (more on this later), and we need to write an `event handler`
+for it. 
+
+Now this event handler is slightly unusual because it doesn't 
+much care what the original `db` was, it just wants to plonk 
+in a new complete value. 
+
+Like this: 
 ```clj
 (rf/reg-event-db              ;; sets up initial application state
   :initialize                 
@@ -172,19 +186,30 @@ Here's a very simple example:
     {:time (js/Date.)         ;; What it returns becomes the new application state
      :time-color "#f88"}))    ;; so the application state will initially be a map with two keys
 ```
-So, when `(dispatch [:initialize])` happens, the handler function registered above will
-be called. 
 
 This particular handler `fn` ignores the two parameters
 (`db` and `v`) and simply returns 
 a map literal, which becomes the application 
-state. Later, we'll see how to `dispatch` this event early in the app's startup. 
+state.
 
-### Another example:
+Here's an alternative way of writing it: 
+```clj
+(rf/reg-event-db
+  :initialize              
+  (fn [db _]                 ;; we use db this time, so name it        
+    (-> db          
+      (assoc :time (js/Date.))
+      (assoc :time-color "#f88")))
+```
 
-Remember earlier, we set up a timer function to `(dispatch [:timer ...])` every second?
+`app-db` starts off holding a `{}` value. So we assume `db` will be `{}` 
+but, irrespective, we just assoc into it. 
 
-Let's now register the event handler for this `event`:
+### :timer
+
+Earlier, we set up a timer function to `(dispatch [:timer ...])` every second.
+
+Here's how we handle it: 
 ```clj
 (rf/reg-event-db                 ;; usage:  (dispatch [:timer a-js-Date])
   :timer                         
@@ -193,10 +218,11 @@ Let's now register the event handler for this `event`:
 ```
 
 Notes:
-  1. the 2nd `v` parameter is destructured to extract the `new-time` value
+  1. the `event` will be like `[:timer a-time]`, so the 2nd `v` parameter 
+     destructures to extract the `a-time` value
   2. the handler computes a new application state from `db`, and returns it
 
-### And Another
+### :time-color-change
 
 When the user enters a new colour value (via an input text box):
 ```clj
@@ -210,11 +236,11 @@ When the user enters a new colour value (via an input text box):
 
 Domino 3 is about actioning the `effects` returned by event handlers.
 
-In this "simple" application, our event handlers only return 
-one effect: "please update application state". 
+In this "simple" application, our event handlers are implicitly returning 
+only one effect: "please update application state". 
 
 This particular `effect` is actioned by a re-frame supplied 
-`effect handler`. Nothing for us to do. 
+`effect handler`. **So, nothing for us to do.**
 
 And this is not unusual. You'll seldom have to write `effect handlers`, but 
 we'll understand more about them in a later tutorial.
@@ -227,16 +253,18 @@ a "materialised view" of that application state.
 
 Subscription functions must be re-run when the application state changes, to 
 compute new values. But re-frame looks after this for you.  All you need do is
-write the query. 
+write the query function.
 
-The data returned by these `query` functions is used 
-in the `view` functions (Domino 5) which render DOM.
+The data returned by `query` functions is used ultimately
+in the `view` functions (Domino 5). 
+
+Each query is identified by an `id` XXXX
 
 Now, the two examples below are utterly trivial. They just extract part of the application
 state and return it. So, virtually no computation. More interesting 
 subscriptions and more explanation can be found in the todomvc example.
 
-`reg-sub` associates a `query identifier` with a function which computes
+`reg-sub` associates a `query id` with a function which computes
  that query. It's use looks like this: 
 ```clj
 (reg-sub
@@ -256,7 +284,7 @@ to compute new DOM (because it depends on a query value which changed).
 Along this reactive chain, re-frame will ensure the necessary calls are 
 made, at the right time.
 
-Here's teh code:
+Here's the code:
 
 ```clj
 (rf/reg-sub
@@ -275,8 +303,8 @@ Like I said, both of these queries are trivial.
 ## View Functions (domino 5)
 
 `view` functions transform application state  
-into `Hiccup formatted` data.  `view` 
-functions collectively render the entire DOM.
+into `Hiccup formatted` data.  Collectively, `view` 
+functions  render the apps entire DOM.
 
 `hiccup` is data which represent DOM. 
 
@@ -341,6 +369,7 @@ events.
    [color-input]])
 ```
 
+Naming: sub-val ???  
 
 ## Kick Starting The App
 
