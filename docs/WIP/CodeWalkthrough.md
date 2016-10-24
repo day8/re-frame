@@ -1,8 +1,8 @@
 ## Code Walk-through
 
 At this point in your reading, you are armed with:
- - a high level understanding of the 5 domino process (from the repo's README)
- - an understanding of application state (the previous Tutorial) 
+ - a high level understanding of the 5 domino process (from re-frame's README)
+ - an understanding of application state (from the previous tutorial) 
  
 In this tutorial, **we'll look at re-frame code**.
 
@@ -348,7 +348,7 @@ events.
 (defn clock
   []
   [:div.example-clock
-   {:style {:color (rf/listen [:time-color])}}
+   {:style {:color @(rf/subscribe [:time-color])}}
    (-> (rf/listen [:time])
        .toTimeString
        (clojure.string/split " ")
@@ -359,7 +359,7 @@ events.
   [:div.color-input
    "Time color: "
    [:input {:type "text"
-            :value (rf/listen [:time-color])
+            :value @(rf/subscribe [:time-color])
             :on-change #(rf/dispatch [:time-color-change (-> % .-target .-value)])}]])  ;; <---
 
 (defn ui
@@ -370,7 +370,20 @@ events.
    [color-input]])
 ```
 
-Naming: sub-val ???  
+Naming: sub-val ???  sub-r
+
+### Components Like Templates?
+
+A `component` such as `greet` is like the templates you'd find in
+Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
+
+  1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
+     downside is that these are not "designer friendly" HTML templates.
+  2. these templates are reactive.  When their input Signals change, they
+     are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
+     the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs"
+     to that render change, the render is rerun.
+
 
 ## Kick Starting The App
 

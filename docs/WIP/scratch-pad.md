@@ -11,6 +11,17 @@ introductory Reagent tutorials before going on. Try:
   - [this one](https://github.com/jonase/reagent-tutorial) or
   - [Building Single Page Apps with Reagent](http://yogthos.net/posts/2014-07-15-Building-Single-Page-Apps-with-Reagent.html).
 
+##  Implements Reactive Data Flows
+
+This document describes how re-frame implements 
+the reactive data flows in dominoes 4 and 5 (queries and views). 
+
+It explains 
+the low level mechanics of the process which not something you 
+need to know initially. So, you can defer reading and understanding 
+this until later, if you wish.  But you should at some point circle
+back and grok it.  It isn't hard at all. 
+ 
 
 
 
@@ -34,6 +45,8 @@ are not the stuff of which you are made. If that does not make the hair stand up
 your neck, read it again until it does, because it is important.
 
 Steve Grand
+
+## Reactive Programming 
 
 
 
@@ -252,17 +265,6 @@ ratom-nature, so we'll happily continue believing it is a `ratom` and no harm wi
 
 On with the rest of my lies and distortions...
 
-### Components Like Templates?
-
-A `component` such as `greet` is like the templates you'd find in
-Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
-
-  1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
-     downside is that these are not "designer friendly" HTML templates.
-  2. these templates are reactive.  When their input Signals change, they
-     are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
-     the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs"
-     to that render change, the render is rerun.
 
 ### React etc.
 
@@ -553,116 +555,8 @@ Summary:
    even for large, deep nested data structures.
 
 
-## Event Flow
-
-Events are what flow in the opposite direction.
-
-In response to user interaction, a DOM will generate
-events like "clicked delete button on item 42" or
-"unticked the checkbox for 'send me spam'".
-
-These events have to be "handled".  The code doing this handling might
-mutate app state (in `app-db`), or request more data from the server, or POST somewhere and wait for a response, etc.
-
-In fact, all these actions ultimately result in changes to the `app-db`.
-
-An application has many handlers, and collectively
-they represent the **control layer of the application**.
-
-In re-frame, the backwards data flow of events happens via a conveyor belt:
-
-```
-app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
- ^                                                                              |
- |                                                                              v
- handlers <-------------------  events  -----------------------------------------
-                          a "conveyor belt" takes events
-                          from the DOM to the handlers
-```
-
-Generally, when the user manipulates the GUI, the state of the application changes. In our case,
-that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to
-the user is a function of that state.
-
-So that tends to be the cycle:
-
-1. the user clicks something which causes an event to be dispatched
-2. a handler manages the event
-3. and causes `app-db` to change   (mutation happens here!)
-4. which then causes a re-render
-5. the user sees something different
-6. goto #1
-
-That's our water cycle.
-
-Because handlers are that part of the system which does `app-db` mutation, you
-could almost imagine them as a "stored procedures" on a
-database. Almost. Stretching it?  We do like our in-memory
-database analogies.
 
 
-
-
-### Control Via FSM
-
-Above, I commented that event handlers collectively represent the "control layer" of the
-application.  They contain
-logic which interprets arriving events and they "step" the application "forward"
-via mutations to `app-db`.
-
-Our `delete-handler` above is trivial, but as an application grows more features, the logic in many
-handlers will become more complicated, and they will have to query BOTH the current state of the app
-AND the arriving event vector to determine what action to take.
-
-If the app is in logical State A, and event X arrives, then the handler will move the app to logical state B
-(by changing values in `app-db`).
-
-Sound like anything you learned in those [Theory Of Computation](https://www.youtube.com/watch?v=Pt6GBVIifZA)
-lectures?
-
-That's right - as an app becomes more complex, the handlers are likely to be  collectively implementing a
-[Finite State Machine](http://en.wikipedia.org/wiki/Finite-state_machine):
-  - your app is in a certain logical state (defined by the current values in `app-db`)
-  - the arriving event vector represents a `trigger`.
-  - the event handler implements "a transition", subject to BOTH the current logical state and the arriving trigger.
-  - after the handler has run, the transition may have moved the app into a new logical state.
-  - Repeat.
-
-Not every app has lots of logical `states`, but many do, and if you are implementing one of them, then formally
-recognising it and using a technique like
-[state charts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782) will help
-greatly in getting a clean design and a nice datamodel.
-
-The beauty of re-frame from a FSM point of view is that all the data is in one place - unlike OO systems where
-the data is distributed (and synchronized) across many objects. So implementing your control logic as a FSM is
-both possible and natural in re-frame, whereas it is often difficult and contrived to do so in other
-kinds of architecture (in my experience).
-
-
-### Derived Data, Everywhere, flowing
-
-Have you watched that
-[StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) yet?
-I hope so. Database as a stream, right?
-
-If you have then, given the explanation above, you might twig to the idea that `app-db` is
-really a derived value (of the `perpetual reduce`).
-
-And yet, it acts as the authoritative source of state in the app. And yet, it isn't, it is simply
-a piece of derived state.  And
-yet, it is the source.
-
-Hmm. This is an infinite loop of sorts. **Derived data is flowing around the
-loop, reactively, through pure functions.**  There is a pause in the loop whenever we wait
-for a new event, but the moment we get it, it's another iteration of the "derived data" FRP loop.
-
-Derived values, all the way down, forever.
-
-Good news.  If you've read this far,
-your insiders T-shirt will be arriving soon - it
-will feature turtles
-and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption bit. Open a
-repo issue with a suggestion.
 
 Back to the more pragmatic world ...
 

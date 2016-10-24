@@ -7,7 +7,7 @@ possible.
 
 But there's other interesting perspectives on re-frame 
 which will considerably deepen your understanding of its design, 
-and how to get the best from it. 
+and how to get the best from it.
 
 This tutorial is a tour 
 of these ideas, justifications and insights.  It is a little rambling, but I
@@ -168,32 +168,85 @@ Elm Architecture.
 
 ## It does FSM
 
-And this perspective can be useful ... 
-
 > Any sufficiently complicated GUI contains an ad hoc, 
 > informally-specified, bug-ridden, slow implementation 
 > of a hierarchical FSM  <br>
-> -- my eleventh rule (see [Greenspun's tenth rule](https://en.wikipedia.org/wiki/Greenspun%27s_tenth_rule))
+> -- [my eleventh rule](https://en.wikipedia.org/wiki/Greenspun%27s_tenth_rule)
 
-Previously, I commented that `event handlers` (domino 2) collectively 
-represent the "control layer" of the application. They contain logic 
-which interprets arriving events in the context of existing state, 
+`event handlers` collectively 
+implement the "control" part of an application. Their logic 
+interprets arriving events in the context of existing state, 
 and they "step" the application state "forward".
 
-In this way, `events` act like the `triggers` in a finite state machine, and 
-the event handlers act like the rules which govern how a the state machine
+`events` act a bit like the `triggers` in a finite state machine, and 
+the event handlers act like the rules which govern how the state machine
 moves from one logical state to the next.
+
+The "logical state" will be a function over the values in `app-db`. In the simplest
+case `app-db` will contain a single value which represents logical state. 
 
 Not every app has lots of logical states, but some do, and if you are implementing 
 one of them, then formally recognising it and using a technique like 
 [State Charts](https://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782)
-will help greatly in getting a clean design and a nice data model.
+will help greatly in getting a clean design and fewer bugs.
 
-Perspective:
+The beauty of re-frame from a FSM point of view is that all the state is 
+in one place - unlike OO systems where the state is distributed (and synchronized) 
+across many objects. So implementing your control logic as a FSM is
+both possible and natural in re-frame, whereas it is often difficult and 
+contrived to do so in other kinds of architecture (in my experience).
+
+So, members of the jury, I put it to you that:
   - the first 3 dominoes implement an [Event-driven finite-state machine](https://en.wikipedia.org/wiki/Event-driven_finite-state_machine)
-  - the last 2 dominoes reactively render the current state of this FSM for the user to observe
- 
+  - the last 2 dominoes render the current state of this FSM for the user to observe
+
+Depending on your app, this may or may not be a useful mental model,   
+but one thing for sure ... 
+
 Events - that's the way we roll.
+
+## Data Oriented Design 
+
+In the readme ... XXX
+
+Events are data -  `[:delete-item 42]` 
+
+That's almost like a function call `(delete-item 42)`. Kinda. So why prefer data?
+
+Using data gives us:
+  - late binding 
+  - logability and event sourcing
+  - a more flexible version of "partial" (curring)
+
+## Derived Data
+
+There's a video I'd like you to watch from 
+[StrangeLoop](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins, sorry). 
+
+XXX
+
+If you have then, given the explanation above, you might twig to the idea that `app-db` is
+really a derived value (of the `perpetual reduce`).
+
+And yet, it acts as the authoritative source of state in the app. And yet, it isn't, it is simply
+a piece of derived state.  And
+yet, it is the source.
+
+Hmm. This is an infinite loop of sorts. **Derived data is flowing around the
+loop, reactively, through pure functions.**  There is a pause in the loop whenever we wait
+for a new event, but the moment we get it, it's another iteration of the "derived data" FRP loop.
+
+Derived values, all the way down, forever.
+
+
+
+Good news.  If you've read this far,
+your insiders T-shirt will be arriving soon - it
+will feature turtles
+and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption bit. Open a
+repo issue with a suggestion.
+
+
 
 ## Prefer Dumb Views - Part 1
 

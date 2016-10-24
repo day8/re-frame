@@ -9,7 +9,9 @@
   (let [now (js/Date.)]
     (rf/dispatch [:timer now])))  ;; <-- dispatch used
 
-;; call the dispatching function every second
+;; Call the dispatching function every second.
+;; `defonce` is like `def` but it ensures only instance is ever
+;; created in the face of figwheel hot-reloading of this file.
 (defonce do-timer (js/setInterval dispatch-timer-event 1000))
 
 
@@ -37,9 +39,13 @@
 ;; -- Domino 4 - Query  -------------------------------------------------------
 
 (rf/reg-sub
-  :time
+  :time-str
   (fn [db _]     ;; db is current app state. 2nd usused param is query vector
-    (:time db))) ;; return a query computation over the application state
+    (-> db
+        :time
+        .toTimeString
+        (clojure.string/split " ")
+        first)))
 
 (rf/reg-sub
   :time-color
@@ -53,10 +59,7 @@
   []
   [:div.example-clock
    {:style {:color (rf/listen [:time-color])}}
-   (-> (rf/listen [:time])
-       .toTimeString
-       (clojure.string/split " ")
-       first)])
+   (rf/listen [:time-str])])      ;; XXX listen
 
 (defn color-input
   []

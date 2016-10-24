@@ -31,7 +31,7 @@ Perhaps:
 3.  You're taking a [Functional Design and Programming course at San Diego State University](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html)
     and you have to learn re-frame to do an assignment.  You've left it a bit late, right? 
     Good news, there is a quick start guide coming up shortly. 
-4.  You like a bit of social proof!!  I can report that 
+4.  You like social proof!!
     re-frame is impressively buzzword compliant: it has reactivity, 
     unidirectional data flow, pristinely pure functions, 
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
