@@ -4,13 +4,12 @@
 left standing, then that rationality will simply produce another
 factory. If a revolution destroys a government, but the systematic
 patterns of thought that produced that government are left intact,
-then those patterns will repeat themselves. . . . There’s so much talk
-about the system. And so little understanding. <br>
+then those patterns will repeat themselves. <br>
 > -- Robert Pirsig, Zen and the Art of Motorcycle Maintenance
 
 The re-frame docs initially focus on the **domino cascade 
 narrative**. The goal was to efficiently explain the mechanics,
-and get you writing your first app ASAP. 
+and get you reading and writing code ASAP.
 
 **But** there's other interesting perspectives on re-frame 
 which will considerably deepen your understanding of its design, 
@@ -18,7 +17,7 @@ and how to get the best from it.
 
 This tutorial is a tour 
 of these ideas, justifications and insights.  It is a little rambling, but I
-believe you'll be glad you persisted. By the end, I'm hoping you will have had an
+believe you'll be glad you persisted. By the end, I'm hoping you'll have had an
 "Oh, now I get it" moment.
 
 
@@ -208,8 +207,8 @@ So, members of the jury, I put it to you that:
   - the first 3 dominoes implement an [Event-driven finite-state machine](https://en.wikipedia.org/wiki/Event-driven_finite-state_machine)
   - the last 2 dominoes render the current state of this FSM for the user to observe
 
-Depending on your app, this may or may not be a useful mental model,   
-but one thing for sure ... 
+Depending on your app, this may or may not be a useful mental model,
+but one thing is for sure ... 
 
 Events - that's the way we roll.
 

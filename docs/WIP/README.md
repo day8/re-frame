@@ -192,7 +192,7 @@ order functions). Etc.
 
 Data - that's the way we roll.
 
-### It is both mature and used in the large
+### It is both mature and successful in the large
 
 re-frame was released early 2015, and has since been successfully
 [used](https://www.nubank.com.br) 
@@ -219,7 +219,7 @@ And, yes, re-frame is fast, straight out of the box. And, yes, it has
 a good testing story. And, yes, it works in with figwheel to create
 a delightful hot-loading development story. And, yes, it has 
 a fun specialist tooling, and a community,
-and some 3rd part libraries.
+and some 3rd party libraries.
 
 
 ### Where Do I Go Next?
