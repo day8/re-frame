@@ -10,6 +10,7 @@
 - [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
 - [#248](https://github.com/Day8/re-frame/pull/200) Provide after interceptor with `db` coeffect, if no `db` effect was produced.
 - Add re-frame.loggers/get-loggers function to well, you know.
+- [#259](https://github.com/Day8/re-frame/pull/259) Fix a bug where registering a subscription would create and close over dependent subscriptions, meaning that they would never be garbage collected, and doing more work than necessary.
 
 ## 0.8.0  (2016.08.19)
 
