@@ -4,6 +4,7 @@
     <option name="PER_PROJECT_SETTINGS">
       <value>
         <ClojureCodeStyleSettings>{
+  :cljs.core/with-redefs 1
   :cursive.formatting/align-binding-forms true
 }</ClojureCodeStyleSettings>
         <XML>
