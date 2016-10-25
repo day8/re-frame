@@ -194,15 +194,15 @@ Data - that's the way we roll.
 
 ### It is both mature and used in the large
 
-re-frame was released early 2015, and has since been successfully 
+re-frame was released early 2015, and has since been successfully
 [used](https://www.nubank.com.br) 
 [by](https://www.fullcontact.com) 
 [quite](http://open.mediaexpress.reuters.com/)
-[a few](https://rokt.com/) companies and  
-as individuals to build complex apps, many running to 50K lines of 
+[a few](https://rokt.com/) companies and
+individuals to build complex apps, many running to 50K lines of
 ClojureScript code, and beyond.
 
-<img align="right" src="/images/Readme/scale-changes-everything.jpg?raw=true">
+<img align="right" src="/images/scale-changes-everything.jpg?raw=true">
 
 Scale changes everything. Frameworks
 are just pesky overhead at small scale - measure them instead by how they help
