@@ -364,14 +364,14 @@ Just to be clear, the following two handlers achieve the same thing:
 ```clj
 (reg-event-db
    :set-flag
-   (fn [db [_ new-value]
+   (fn [db [_ new-value]]
       (assoc db :flag new-value)))
 ```
 vs
 ```clj
 (reg-event-fx
    :set-flag
-   (fn [cofx [_ new-value]
+   (fn [cofx [_ new-value]]
       {:db (assoc (:db cofx) :flag new-value)}))
 ```
 
