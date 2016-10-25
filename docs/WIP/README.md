@@ -194,13 +194,17 @@ Data - that's the way we roll.
 
 ### It is both mature and used in the large
 
-re-frame was released early 2015, and has subsequently been happily
-used by a number of companies - [large](http://open.mediaexpress.reuters.com/), 
-[medium](https://rokt.com/) and
-[smaller](https://www.fullcontact.com) - as well 
-as individuals to build complex apps which run to 50K lines of code, and beyond.
+re-frame was released early 2015, and has since been successfully 
+[used](https://www.nubank.com.br) 
+[by](https://www.fullcontact.com) 
+[quite](http://open.mediaexpress.reuters.com/)
+[a few](https://rokt.com/) companies and  
+as individuals to build complex apps, many running to 50K lines of 
+ClojureScript code, and beyond.
 
-Frameworks
+<img align="right" src="/images/Readme/scale-changes-everything.jpg?raw=true">
+
+Scale changes everything. Frameworks
 are just pesky overhead at small scale - measure them instead by how they help
 you tame the complexity of bigger apps, and in this regard re-frame has
 worked out well. Some have even praised it effusively.
@@ -225,10 +229,10 @@ but the core concepts are now known to you.
 
 Next, you need to do the code walk through in the docs. This
 will quickly get your knowledge to about 80%. The
-final 20% always comes with use and carefully reading the rest of the 
+final 20% always comes incrementally with use and carefully reading the rest of the 
 docs (of which there's a few). 
 
-Read these docs: <br>
+So, next, go here: <br>
 https://github.com/Day8/re-frame/blob/master/docs/README.md
 
 Experiment with these examples: <br>

@@ -1,4 +1,4 @@
-## Code Walk-through
+## Initial Code Walk-through
 
 At this point in your reading, you are armed with:
  - a high level understanding of the 5 domino process (from re-frame's README)

@@ -1,21 +1,28 @@
 ## Mental Model Omnibus
 
-The re-frame docs initially focus on the "domino cascade" 
-narrative. And that works well for explaining the mechanics,  
-and, hopefully, gets you writing your first app as soon as 
-possible.  
+> If a factory is torn down but the rationality which produced it is
+left standing, then that rationality will simply produce another
+factory. If a revolution destroys a government, but the systematic
+patterns of thought that produced that government are left intact,
+then those patterns will repeat themselves. . . . There’s so much talk
+about the system. And so little understanding. <br>
+> -- Robert Pirsig, Zen and the Art of Motorcycle Maintenance
 
-But there's other interesting perspectives on re-frame 
+The re-frame docs initially focus on the **domino cascade 
+narrative**. The goal was to efficiently explain the mechanics,
+and get you writing your first app ASAP. 
+
+**But** there's other interesting perspectives on re-frame 
 which will considerably deepen your understanding of its design, 
 and how to get the best from it.
 
 This tutorial is a tour 
 of these ideas, justifications and insights.  It is a little rambling, but I
-believe you'll be glad you persisted. By the end, you may have had a 
-couple of "Oh, now I get it" moments. 
+believe you'll be glad you persisted. By the end, I'm hoping you will have had an
+"Oh, now I get it" moment.
 
 
-## What Problem Does It Solve?
+## What is the problem?
 
 First, we decided to build our SPA apps with ClojureScript, then we
 choose [Reagent], then we had a problem. It was mid to late 2014.
@@ -28,7 +35,7 @@ apps. Where does the control logic go? How is state stored & manipulated? etc.
 
 We read up on [Pedestal App], [Flux], 
 [Hoplon], [Om], early [Elm], etc and re-frame is the architecture that
-emerged.  Since then, we've kept a close eye on further developments like the
+emerged.  Since then, we've tried to kept an eye on further developments like the
 Elm Architecture, Om.Next, BEST, Cycle.js, Redux, etc.  They have taught us much
 although we have often made different choices.
 
@@ -53,13 +60,13 @@ his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
 __Second__, we believe in ClojureScript, immutable data and the process of building
 a system out of pure functions.
 
-__Third__, we believe in the primacy of data, for the reasons described in
+__Third__, we believe in the primacy of data, for the reasons already described in
 the main README. re-frame has a data oriented architecture. It 
 implements an infinite loop of Derived data.
 
 __Fourth__, we believe that Reactive Programming is one honking great idea. 
-Wow did we ever live without it. It is a quite beautiful solution to one half of re-frame's 
-data conveyance needs, **but** we're cautious about taking it too far - as far as say cycle.js. 
+How did we ever live without it? It is a quite beautiful solution to one half of re-frame's 
+data conveyance needs, **but** we're cautious about taking it too far - as far as, say, cycle.js. 
 It doesn't take over everything in re-frame - it just does part of the job.
 
 __Finally__, many years ago I programmed briefly in Eiffel where I learned 
@@ -68,7 +75,7 @@ Each generation of
 programmers seems destined to rediscover this principle - CQRS is a recent re-rendering. 
 And yet we still see read/write `cursors` and two way data binding being promoted as a good thing. 
 Just say no. As programs get bigger, their use will encourage control logic into all the 
-wrong places and you'll end up with a tire fire of an Architecture. IMHO.
+wrong places and you'll end up with a tire fire of an Architecture. IMO.
 
 ## It Does Physics
 
@@ -83,26 +90,26 @@ provides the "conveyance" of the data - the gravity, evaporation and convection.
 You design what's flowing and then you hang functions off the loop at
 various points to look after the data's phase changes.
 
-Sure, right now, you're thinking "lazy sods - make a proper Computer Science-y diagram". But, no.
+Sure, right now, you're thinking "lazy sod - make a proper Computer Science-y diagram". But, no.
 Joe Armstrong says "don't break the laws of physics" - I'm sure 
 you've seen the videos - and if he says to do something, you do it
 (unless Rich Hickey disagrees, and says to do something else). So,
-this diagram, apart from being a plausible analogy, and bordering on useful,
-is practically PROOF that re-frame is doing physics.
+this diagram, apart from being a plausible analogy which encourages 
+you to look differently at re-frame, is **practically proof** it does physics.
 
 ## It does Event Sourcing
 
-How did that exception happen, you wonder, shaking your head?  
+How did that exception happen, you puzzle, shaking your head?  
 What did the user do immediately prior to the exception?  What
 state was the app in that this event was so disastrous?
 
 To debug, you need to know this information:
  1. the state of the app immediately before the exception
- 2. What final event then caused your app to fall in a screaming mess.
+ 2. What final `event` then caused your app to fall in a screaming mess
 
 Well, with re-frame you need to record (have available):
- 1. A recent checkpoint of the app state in `app-db` (perhaps the initial state)
- 2. all the events `dispatch`ed since the last checkpoint, up to the point where the exception occurred.
+ 1. A recent checkpoint of the application state in `app-db` (perhaps the initial state)
+ 2. all the events `dispatch`ed since the last checkpoint, up to the point where the exception occurred
 
 Note: that's all just data. **Pure, lovely loggable data.**
 
@@ -116,7 +123,7 @@ The only way the app "moves forwards" is via events. "Replaying events" moves yo
 step by step towards the exception causing problem.
 
 This is perfect for debugging assuming, of course, you are in a position to capture
-a checkpoint, and the events since then.
+an app state checkpoint, and the events since then.
 
 Here's Martin Fowler's [description of Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html).
 
@@ -156,7 +163,8 @@ It is almost like `app-db` is the temporary place where this
 imagined `perpetual reduce` stores its on-going reduction.
 
 Now, in the general case, this perspective breaks down a bit, 
-because using `reg-event-fx`:
+because of `reg-event-fx` (has `-fx` on the end, not `-db`) which 
+allows:
   1. event handlers can produce `effects` beyond just application state 
      changes.
   2. Event handlers sometimes need coeffects (arguments) in addition to `db` and `v`. 
@@ -170,20 +178,20 @@ Elm Architecture.
 
 > Any sufficiently complicated GUI contains an ad hoc, 
 > informally-specified, bug-ridden, slow implementation 
-> of a hierarchical FSM  <br>
+> of a hierarchical Finite State Machine  <br>
 > -- [my eleventh rule](https://en.wikipedia.org/wiki/Greenspun%27s_tenth_rule)
 
 `event handlers` collectively 
 implement the "control" part of an application. Their logic 
 interprets arriving events in the context of existing state, 
-and they "step" the application state "forward".
+and they "step" the application state "forward" via modification of that state.
 
-`events` act a bit like the `triggers` in a finite state machine, and 
+`events` act, then, a bit like the `triggers` in a finite state machine, and 
 the event handlers act like the rules which govern how the state machine
 moves from one logical state to the next.
 
-The "logical state" will be a function over the values in `app-db`. In the simplest
-case `app-db` will contain a single value which represents logical state. 
+The "logical state" will be a function of the value in `app-db`. In the simplest
+case `app-db` will contain a single value which represents logical state.
 
 Not every app has lots of logical states, but some do, and if you are implementing 
 one of them, then formally recognising it and using a technique like 
@@ -205,7 +213,7 @@ but one thing for sure ...
 
 Events - that's the way we roll.
 
-## Data Oriented Design 
+## Data Oriented Design
 
 In the readme ... XXX
 
@@ -289,3 +297,10 @@ So this is bad:
 ```
 
 The view is not simply taking the data supplied by the 
+
+
+## Full Stack
+
+
+Commander Pattern 
+https://www.youtube.com/watch?v=B1-gS0oEtYc 
