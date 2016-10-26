@@ -29,14 +29,13 @@ Perhaps:
     **completely change everything**?  And, if so, what would that look like in a language
     that embraces those paradigms?
 3.  You're taking a [Functional Design and Programming course at San Diego State University](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html)
-    and you have to learn re-frame to do an assignment.  You've left it a bit late, right? 
-    Good news, there is a quick start guide coming up shortly. 
-4.  You like social proof!!
-    re-frame is impressively buzzword compliant: it has reactivity, 
-    unidirectional data flow, pristinely pure functions, 
+    and you have an assignment due.  You've left the reading a bit late, right? I remember those days.
+4.  Cromulent neologisms embiggen social proof!! We all know that. Luckily,
+    re-frame is impressively buzzword compliant: it has reactivity,
+    unidirectional data flow, pristinely pure functions,
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
-    and claims an immaculate hammock conception. It also has a charming 
-    xkcd reference (soon) and a hilarious, insiders-joke T-shirt, 
+    and claims an immaculate hammock conception. It also has a charming
+    xkcd reference (soon) and a hilarious, insiders-joke T-shirt,
     ideal for conferences (in design).  What could possibly go wrong?
 
 ## re-frame
@@ -157,7 +156,7 @@ similar 5 domino cascade will happen again.
 
 **Each of the dominoes you supply are simple, pure functions** which 
 can be be described, understood and 
-tested independently (other than domino 3). They take data, transform it and return new data.
+tested independently. They take data, transform it and return new data. (Other than domino 3)
 
 The loop itself is utterly predictable and very mechanical in operation.
 So, there's a regularity, simplicity and
@@ -194,17 +193,19 @@ Data - that's the way we roll.
 
 ### It is both mature and successful in the large
 
-re-frame was released early 2015, and has since been successfully
+re-frame was released early 2015, and has since [been](https://www.fullcontact.com)
+successfully
 [used](https://www.nubank.com.br) 
-[by](https://www.fullcontact.com) 
+by
 [quite](http://open.mediaexpress.reuters.com/)
-[a few](https://rokt.com/) companies and
+a 
+[few](https://rokt.com/) companies and
 individuals to build complex apps, many running to 50K lines of
 ClojureScript code, and beyond.
 
 <img align="right" src="/images/scale-changes-everything.jpg?raw=true">
 
-Scale changes everything. Frameworks
+**Scale changes everything.** Frameworks
 are just pesky overhead at small scale - measure them instead by how they help
 you tame the complexity of bigger apps, and in this regard re-frame has
 worked out well. Some have even praised it effusively.

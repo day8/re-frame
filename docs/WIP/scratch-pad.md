@@ -70,11 +70,6 @@ going further (certainly read the first two):
 - [presentation (video)](http://www.infoq.com/presentations/ClojureScript-Javelin) by Alan Dipert (co-author of Hoplon)
 - [serious pants Elm thesis](https://www.seas.harvard.edu/sites/default/files/files/archived/Czaplicki.pdf)
 
-And for the love of all that is good, please watch this terrific
-[StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). Watch what happens
-when you re-imagine a database as a stream!! Look at all the problems that are solved.
-Think about that: shared mutable state (the root of all evil),
-re-imagined as a stream!!  Blew my socks off.
 
 
 ### How Flow Happens In Reagent
