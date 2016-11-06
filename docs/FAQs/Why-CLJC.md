@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Question](#question)
+- [Answer](#answer)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### Question
 
 Why is re-frame implemented in `.cljc` files?   Aren't ClojureScript 
@@ -16,5 +25,6 @@ Necessary interop for each platform can be found in
 See also: https://github.com/Day8/re-frame-test
 
 
----
+***
+
 Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

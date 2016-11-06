@@ -4,6 +4,25 @@ This page describes a technique for
 debugging re-frame apps. It proposes a particular combination 
 of tools. By the end, you'll be better at dominos. 
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Know The Beast!](#know-the-beast)
+- [re-frame's Step 3](#re-frames-step-3)
+- [Observe The Beast](#observe-the-beast)
+- [How To Trace?](#how-to-trace)
+- [Your browser](#your-browser)
+- [Your Project](#your-project)
+- [Say No To Anonymous](#say-no-to-anonymous)
+- [IMPORTANT](#important)
+- [The result](#the-result)
+- [Warning](#warning)
+- [React Native](#react-native)
+- [Appendix A - Prior to V0.8.0](#appendix-a---prior-to-v080)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Know The Beast!
 
 re-frame apps are **event driven**.

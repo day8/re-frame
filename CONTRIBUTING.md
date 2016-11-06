@@ -12,7 +12,6 @@ the [ClojureScript mailing list](https://groups.google.com/forum/#!forum/clojure
 
 **Create pull requests to the develop branch**, work will be merged onto master when it is ready to be released.
 
-
 ## Running tests
 
 #### Via Browser/HTML
@@ -60,3 +59,9 @@ If possible provide:
 * Docstrings for functions
 * Documentation examples
 * Add the change to the Unreleased section of [CHANGES.md](CHANGES.md)
+
+## Pull requests for docs
+
+* Make your documentation changes
+* (Optional) Install doctoc with `npm install -g doctoc`
+* (Optional) Regenerate the docs TOC with `bin/doctoc.sh` or `bin/doctoc.bat` depending on your OS

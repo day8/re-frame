@@ -3,27 +3,30 @@
 This tutorial shows you how to implement pure event handlers that side-effect. 
 Yes, a surprising claim.
 
-## Table Of Contents 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
 
-  * [Events Happen](#events-happen)
-  * [Handling The Happening](#handling-the-happening)
-  * [Your Handling](#your-handling)
-  * [90% Solution](#90--solution)
-  * [Bad, Why?](#bad--why-)
-  * [The 2nd Kind Of Problem](#the-2nd-kind-of-problem)
-  * [Effects And Coeffects](#effects-and-coeffects)
-  * [Why Does This Happen?](#why-does-this-happen-)
-  * [Doing vs Causing](#doing-vs-causing)
-  * [Et tu, React?](#et-tu--react-)
-  * [Pattern Structure](#pattern-structure)
-  * [Effects: The Two Step Plan](#effects--the-two-step-plan)
-  * [Step 1 Of Plan](#step-1-of-plan)
-  * [Another Example](#another-example)
-  * [The Coeffects](#the-coeffects)
-  * [Variations On A Theme](#variations-on-a-theme)
-  * [Summary](#summary)
+- [Events Happen](#events-happen)
+- [Handling The Happening](#handling-the-happening)
+- [Your Handling](#your-handling)
+- [90% Solution](#90%25-solution)
+- [Bad, Why?](#bad-why)
+- [The 2nd Kind Of Problem](#the-2nd-kind-of-problem)
+- [Effects And Coeffects](#effects-and-coeffects)
+- [Why Does This Happen?](#why-does-this-happen)
+- [Doing vs Causing](#doing-vs-causing)
+- [Et tu, React?](#et-tu-react)
+- [Pattern Structure](#pattern-structure)
+- [Effects: The Two Step Plan](#effects-the-two-step-plan)
+- [Step 1 Of Plan](#step-1-of-plan)
+- [Another Example](#another-example)
+- [The Coeffects](#the-coeffects)
+- [Variations On A Theme](#variations-on-a-theme)
+- [Summary](#summary)
 
-## Effects
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### Events Happen
 
 Events "happen" when they are dispatched.
@@ -392,7 +395,8 @@ In the next tutorial, we'll shine a light on `interceptors` which are
 the mechanism by which  event handlers are executed. That knowledge will give us a springboard 
 to then, as a next step, better understand coeffects and effects. We'll soon be writing our own.
 
----
+***
+
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Interceptors](Interceptors.md)  
 

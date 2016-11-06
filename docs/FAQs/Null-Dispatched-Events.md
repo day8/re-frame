@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Question](#question)
+- [Answer](#answer)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ### Question
 
 If I `dispatch` a js event object (from a view), it is nullified 
@@ -17,5 +26,6 @@ So there's two things to say about this:
   and debugging will become easier. 
   
   
----
+***
+
 Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
