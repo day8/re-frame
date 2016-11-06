@@ -36,3 +36,8 @@
 
 (defn set-timeout! [f ms]
   (js/setTimeout f ms))
+
+(defn now []
+  (if (exists? js/performance.now)
+    (js/performance.now)
+    (js/Date.now)))
