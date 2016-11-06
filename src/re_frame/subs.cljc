@@ -1,7 +1,7 @@
 (ns re-frame.subs
  (:require
    [re-frame.db        :refer [app-db]]
-   [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref?]]
+   [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref? dispose!]]
    [re-frame.loggers   :refer [console]]
    [re-frame.utils     :refer [first-in-vector]]
    [re-frame.registrar :refer [get-handler clear-handlers register-handler]]))
@@ -17,11 +17,29 @@
 ;; Two subscriptions are "equal" if their query vectors test "=".
 (def query->reaction (atom {}))
 
+(defn clear-subscription-cache!
+  "Runs on-dispose for all subscriptions we have in the subscription cache.
+  Used to force recreation of new subscriptions. Should only be necessary
+  in development.
+
+  The on-dispose functions for the subscriptions will remove themselves from the
+  cache.
+
+  Useful when reloading Figwheel code after a React exception, as React components
+  aren't cleaned up properly. This means subscriptions on-dispose isn't run when the
+  components are destroyed. If a bad subscription caused your exception, then you
+  can't fix it without reloading your browser."
+  []
+  (doseq [[k rxn] @query->reaction]
+    (dispose! rxn))
+  (if (not-empty @query->reaction)
+    (console :warn "Subscription cache should be empty after clearing it.")))
+
 (defn clear-all-handlers!
   "Unregisters all existing subscription handlers"
   []
   (clear-handlers kind)
-  (reset! query->reaction {}))
+  (clear-subscription-cache!))
 
 (defn cache-and-return
   "cache the reaction r"

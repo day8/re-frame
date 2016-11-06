@@ -58,6 +58,7 @@
 (def subscribe           subs/subscribe)
 
 (def clear-sub    (partial registrar/clear-handlers subs/kind))
+(def clear-subscription-cache! subs/clear-subscription-cache!)
 
 ;; -- effects
 (def reg-fx      fx/register)
