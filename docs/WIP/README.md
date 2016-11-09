@@ -1,3 +1,21 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Derived Values, Flowing](#derived-values-flowing)
+- [Why Should You Care?](#why-should-you-care)
+- [re-frame](#re-frame)
+  - [It Is A Loop](#it-is-a-loop)
+  - [It Has 5 Dominoes](#it-has-5-dominoes)
+  - [A Dominoes Walk Through](#a-dominoes-walk-through)
+  - [A Simple Loop Of Simple Functions](#a-simple-loop-of-simple-functions)
+- [It Leverages Data](#it-leverages-data)
+  - [It is both mature and successful in the large](#it-is-both-mature-and-successful-in-the-large)
+  - [Where Do I Go Next?](#where-do-i-go-next)
+  - [Licence](#licence)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 [logo](/images/logo/re-frame_128w.png?raw=true)
 
 ## Derived Values, Flowing

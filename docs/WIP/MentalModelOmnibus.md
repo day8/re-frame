@@ -1,3 +1,22 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Mental Model Omnibus](#mental-model-omnibus)
+- [What is the problem?](#what-is-the-problem)
+- [Guiding Philosophy](#guiding-philosophy)
+- [It Does Physics](#it-does-physics)
+- [It does Event Sourcing](#it-does-event-sourcing)
+- [It does a reduce](#it-does-a-reduce)
+- [It does FSM](#it-does-fsm)
+- [Data Oriented Design](#data-oriented-design)
+- [Derived Data](#derived-data)
+- [Prefer Dumb Views - Part 1](#prefer-dumb-views---part-1)
+- [Prefer Dumb Views - Part 2](#prefer-dumb-views---part-2)
+- [Full Stack](#full-stack)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Mental Model Omnibus
 
 > If a factory is torn down but the rationality which produced it is

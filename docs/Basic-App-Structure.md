@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Simpler Apps](#simpler-apps)
+  - [There's A Small Gotcha](#theres-a-small-gotcha)
+- [Larger Apps](#larger-apps)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Simpler Apps
 
 To build a re-frame app, you:
@@ -58,7 +68,8 @@ src
 
 Continue to [Navigation](Navigation.md) to learn how to switch between panels of a larger app.
 
----
+*** 
+
 Previous:  [CoEffects](coeffects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Navigation](Navigation.md)  

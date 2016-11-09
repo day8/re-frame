@@ -1,3 +1,21 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Implements Reactive Data Flows](#implements-reactive-data-flows)
+- [Flow](#flow)
+- [Reactive Programming](#reactive-programming)
+  - [How Flow Happens In Reagent](#how-flow-happens-in-reagent)
+- [Components](#components)
+  - [Truth Interlude](#truth-interlude)
+  - [React etc.](#react-etc)
+- [Subscribe](#subscribe)
+  - [Just A Read-Only Cursor?](#just-a-read-only-cursor)
+- [The Signal Graph](#the-signal-graph)
+- [A More Efficient Signal Graph](#a-more-efficient-signal-graph)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 
 
