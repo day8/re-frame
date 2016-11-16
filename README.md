@@ -651,10 +651,9 @@ function and not in the inner render function.  So the following is **wrong** (c
   (let [name-ratom  (subscribe [:name-query])]    ;; Eek! subscription in renderer
     [:div "Hello" @name-ratom]))
 ```
-
-Why is this wrong?  Well, this component would be re-rendered every time `app-db` changed, even if the value
-in `name-ratom` (the result of the query) stayed the same. If you were to use a `Form-2` component instead, and put the
-subscription in the outer functions, then there'll be no re-render unless the value queried (i.e. `name-ratom`) changed.
+Why is this wrong? Well, whenever this component is re-rendered, `(subscribe [:name-query])` will be run.
+While not a big deal, it is still redundant. If you were to use a `Form-2` component instead,
+and put the subscription in the outer function, the subscription would only happen once.
 
 
 ### Just A Read-Only Cursor?
@@ -937,7 +936,7 @@ But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!
 handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
 
 There's more to event handlers than can be covered here in this introductory tutorial. Read up on
-issues like Middleware [in the Wiki](https://github.com/Day8/re-frame/wiki#handler-middleware).
+issues like Interceptors [in the Wiki](https://github.com/Day8/re-frame/blob/master/docs/Interceptors.md).
 
 ### Routing
 
