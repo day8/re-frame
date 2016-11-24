@@ -1,6 +1,8 @@
 (ns re-frame.trace
-  "Tracing for re-frame."
+  "Tracing for re-frame.
+  Alpha quality, subject to change/break at any time."
   (:require [re-frame.interop :as interop]
+            [re-frame.loggers :refer [console]]
             [clojure.string :as str]))
 
 
@@ -25,20 +27,20 @@
 (defn start-trace [{:keys [operation op-type tags child-of]}]
   {:id        (next-id)
    :operation operation
-   :type      op-type
+   :op-type   op-type
    :tags      tags
    :child-of  (or child-of (:id *current-trace*))
    :start     (interop/now)})
 
 (defn finish-trace [trace]
   (let [end        (interop/now)
-        duration   (- end (:start trace))
-        add-trace? (not (str/includes? (or (get-in trace [:tags :component-path]) "") "todomvc.views.devtools"))]
-    (when add-trace?
-      (doseq [cb (vals @trace-cbs)]
-        (cb [(assoc trace
-               :duration duration
-               :end (interop/now))])))))
+        duration   (- end (:start trace))]
+    (doseq [[k cb] @trace-cbs]
+      (try (cb [(assoc trace
+                  :duration duration
+                  :end (interop/now))])
+           (catch #?(:cljs :default :clj Exception) e
+             (console :error "Error thrown from trace cb" k "while storing" trace e))))))
 
 #?(:clj (defmacro with-trace
           "Create a trace inside the scope of the with-trace macro
