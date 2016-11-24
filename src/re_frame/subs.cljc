@@ -70,9 +70,9 @@
      (let [query-id   (first-in-vector query-v)
            handler-fn (get-handler kind query-id)]
        ;(console :log "Subscription created: " query-v)
-       (if-not handler-fn
-         (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
-       (cache-and-return query-v [] (handler-fn app-db query-v)))))
+       (if (nil? handler-fn)
+         (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
+         (cache-and-return query-v [] (handler-fn app-db query-v))))))
 
   ([v dynv]
    (if-let [cached (cache-lookup v dynv)]
