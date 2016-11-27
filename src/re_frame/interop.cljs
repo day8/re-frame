@@ -36,3 +36,6 @@
 
 (defn set-timeout! [f ms]
   (js/setTimeout f ms))
+
+(defn clear-timeout! [id]
+  (js/clearTimeout id))
