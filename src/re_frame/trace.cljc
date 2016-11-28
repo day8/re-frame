@@ -2,13 +2,21 @@
   "Tracing for re-frame.
   Alpha quality, subject to change/break at any time."
   (:require [re-frame.interop :as interop]
-            [re-frame.loggers :refer [console]]
-            [clojure.string :as str]))
-
-
+            [re-frame.loggers :refer [console]]))
 
 (def id (atom 0))
 (def ^:dynamic *current-trace* nil)
+
+(defn reset-tracing! []
+  (reset! id 0))
+
+#?(:cljs (goog-define trace-enabled? false)
+   :clj  (def ^boolean trace-enabled? false))
+
+(defn ^boolean is-trace-enabled?
+  "See https://groups.google.com/d/msg/clojurescript/jk43kmYiMhA/IHglVr_TPdgJ for more details"
+  []
+  trace-enabled?)
 
 (def trace-cbs (atom {}))
 
@@ -32,35 +40,37 @@
    :child-of  (or child-of (:id *current-trace*))
    :start     (interop/now)})
 
-(defn finish-trace [trace]
-  (let [end        (interop/now)
-        duration   (- end (:start trace))]
-    (doseq [[k cb] @trace-cbs]
-      (try (cb [(assoc trace
-                  :duration duration
-                  :end (interop/now))])
-           (catch #?(:cljs :default :clj Exception) e
-             (console :error "Error thrown from trace cb" k "while storing" trace e))))))
+#?(:clj (defmacro finish-trace [trace]
+          `(when (is-trace-enabled?)
+             (let [end#      (interop/now)
+                   duration# (- end# (:start ~trace))]
+               (doseq [[k# cb#] @trace-cbs]
+                 (try (cb# [(assoc ~trace
+                              :duration duration#
+                              :end (interop/now))])
+                      #?(:clj (catch Exception e#
+                                (console :error "Error thrown from trace cb" k# "while storing" ~trace e#)))
+                      #?(:cljs (catch :default e#
+                                 (console :error "Error thrown from trace cb" k# "while storing" ~trace e#)))))))))
 
 #?(:clj (defmacro with-trace
           "Create a trace inside the scope of the with-trace macro
 
-          Common keys:
+          Common keys for trace-opts
           :op-type - what kind of operation is this? e.g. :sub/create, :render.
           :operation - identifier for the operation, for an subscription it would be the subscription keyword
           tags - a map of arbitrary kv pairs"
-          ;; TODO: compile it out under normal circumstances
           [{:keys [operation op-type tags child-of] :as trace-opts} & body]
-          `(binding [*current-trace* (start-trace ~trace-opts)]
-             (try ~@body
-                  (finally (finish-trace *current-trace*))))))
+          `(if (is-trace-enabled?)
+             (binding [*current-trace* (start-trace ~trace-opts)]
+               (try ~@body
+                    (finally (finish-trace *current-trace*))))
+             (do ~@body))))
 
-(defn merge-trace! [m]
-  ;; Overwrite keys in tags, and all top level keys.
-  (let [new-trace (-> (update *current-trace* :tags merge (:tags m))
-                      (merge (dissoc m :tags)))]
-    (set! *current-trace* new-trace))
-  nil)
-
-(defn reset-tracing! []
-  (reset! id 0))
+#?(:clj (defmacro merge-trace! [m]
+          ;; Overwrite keys in tags, and all top level keys.
+          `(when (is-trace-enabled?)
+             (let [new-trace# (-> (update *current-trace* :tags merge (:tags ~m))
+                                  (merge (dissoc ~m :tags)))]
+               (set! *current-trace* new-trace#))
+             nil)))

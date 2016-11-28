@@ -61,7 +61,8 @@
                                        :output-dir    "run/compiled/karma/test"
                                        :optimizations :whitespace
                                        :main          "re_frame.test_runner"
-                                       :pretty-print  true}}]}
+                                       :pretty-print  true
+                                       :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}}}]}
 
   :aliases {"test-once"   ["do" "clean," "cljsbuild" "once" "test," "shell" "open" "test/test.html"]
             "test-auto"   ["do" "clean," "cljsbuild" "auto" "test,"]
