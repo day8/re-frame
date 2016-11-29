@@ -310,7 +310,7 @@ Notes:
       and then calls the handler with that data  (a handler must be called with `db` and `event`)
   2.  Equally notice how this wrapping takes the return value from the `-db` 
       handler and puts it into `context's` `:effect`
-  3.  The modified `context` (it has a new `:coeffect`) is returned
+  3.  The modified `context` (it has a new `:effect`) is returned
   3.  This is all done in `:before`.  There is no `:after` (it is a noop).  But this 
       could have been reversed with the work happening in `:after` and `:before` a noop. Shrug.
       Remember that this Interceptor will be on the end of a chain. 
