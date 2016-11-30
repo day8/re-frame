@@ -1,3 +1,19 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Testing](#testing)
+- [Event Handlers - Part 1](#event-handlers---part-1)
+- [Event Handlers - Part 2](#event-handlers---part-2)
+- [Subscription Handlers](#subscription-handlers)
+- [Components- Part 1](#components--part-1)
+- [Components - Part 2A](#components---part-2a)
+- [Components - Part 2B](#components---part-2b)
+- [Components - Part 2C](#components---part-2c)
+- [Summary](#summary)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 > IGNORE THIS DOCUMENT. IT IS WIP
 
 ## Testing

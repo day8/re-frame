@@ -6,7 +6,8 @@
     ;; Test Namespaces -------------------------------
     [re-frame.interceptor-test]
     [re-frame.subs-test]
-    [re-frame.fx-test]))
+    [re-frame.fx-test]
+    [re-frame.trace-test]))
 
 (enable-console-print!)
 
@@ -19,7 +20,8 @@
   (cljs-test/run-tests
     're-frame.interceptor-test
     're-frame.subs-test
-    're-frame.fx-test))
+    're-frame.fx-test
+    're-frame.trace-test))
 
 ;; ---- KARMA  -----------------------------------------------------------------
 
@@ -28,4 +30,5 @@
     karma
     're-frame.interceptor-test
     're-frame.subs-test
-    're-frame.fx-test))
+    're-frame.fx-test
+    're-frame.trace-test))

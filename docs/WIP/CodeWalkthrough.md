@@ -1,3 +1,26 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Initial Code Walk-through](#initial-code-walk-through)
+  - [What Code?](#what-code)
+  - [What Does It Do?](#what-does-it-do)
+  - [Namespace](#namespace)
+  - [Data Schema](#data-schema)
+- [Events (domino 1)](#events-domino-1)
+  - [dispatch](#dispatch)
+  - [After dispatch](#after-dispatch)
+- [Event Handlers (domino 2)](#event-handlers-domino-2)
+  - [reg-event-db](#reg-event-db)
+  - [:initialize](#initialize)
+  - [:timer](#timer)
+  - [:time-color-change](#time-color-change)
+- [Effect Handlers (domino 3)](#effect-handlers-domino-3)
+- [Subscription Handlers (domino 4)](#subscription-handlers-domino-4)
+- [View Functions (domino 5)](#view-functions-domino-5)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Initial Code Walk-through
 
 At this point in your reading, you are armed with:

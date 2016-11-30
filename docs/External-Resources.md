@@ -2,6 +2,16 @@
 
 Templates, examples, and other resources related to re-frame. For additions or modifications, please create an issue with a link and description or submit a pull request.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Templates](#templates)
+- [Examples and Applications Using re-frame](#examples-and-applications-using-re-frame)
+- [Videos](#videos)
+- [Server Side Rendering](#server-side-rendering)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ### Templates
 

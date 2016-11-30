@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Solving The CPU Hog Problem](#solving-the-cpu-hog-problem)
+- [The re-frame Solution](#the-re-frame-solution)
+- [A Sketch](#a-sketch)
+  - [Why Does A Redispatch Work?](#why-does-a-redispatch-work)
+  - [Variations](#variations)
+  - [Cancel Button](#cancel-button)
+  - [Further Notes](#further-notes)
+- [Forcing A One Off Render](#forcing-a-one-off-render)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Solving The CPU Hog Problem
 
 Sometimes a handler has a lot of CPU intensive work to do, and 

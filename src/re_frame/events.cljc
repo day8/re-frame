@@ -4,7 +4,8 @@
             [re-frame.interop     :refer [empty-queue debug-enabled?]]
             [re-frame.registrar   :refer [get-handler register-handler]]
             [re-frame.loggers     :refer [console]]
-            [re-frame.interceptor :as  interceptor]))
+            [re-frame.interceptor :as  interceptor]
+            [re-frame.trace       :as trace :include-macros true]))
 
 
 (def kind :event)
@@ -56,6 +57,9 @@
       (if *handling*
         (console :error (str "re-frame: while handling \"" *handling* "\", dispatch-sync was called for \"" event-v "\". You can't call dispatch-sync within an event handler."))
         (binding [*handling*  event-v]
-          (interceptor/execute event-v interceptors))))))
+          (trace/with-trace {:operation event-id
+                             :op-type   kind
+                             :tags      {:event event-v}}
+            (interceptor/execute event-v interceptors)))))))
 
 

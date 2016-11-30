@@ -13,6 +13,19 @@ thrill of that forbidden fruit.
 
 I won't tell, if you don't.  But careful plans must be made  ... 
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [The overall plan](#the-overall-plan)
+- [Example Using Google Maps](#example-using-google-maps)
+- [Pattern Discovery](#pattern-discovery)
+- [Code Credit](#code-credit)
+- [D3 Examples](#d3-examples)
+- [Advanced Lifecycle Methods](#advanced-lifecycle-methods)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ### The overall plan 
 

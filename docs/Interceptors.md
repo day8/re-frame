@@ -1,26 +1,33 @@
+## re-frame Interceptors
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Introduction](#introduction)
+- [Interceptors](#interceptors)
+  - [Why Interceptors?](#why-interceptors)
+  - [What Do Interceptors Do?](#what-do-interceptors-do)
+  - [Wait, I know That Pattern!](#wait-i-know-that-pattern)
+  - [What's In The Pipeline?](#whats-in-the-pipeline)
+  - [Show Me](#show-me)
+  - [Handlers Are Interceptors Too](#handlers-are-interceptors-too)
+- [Executing A Chain](#executing-a-chain)
+  - [The Links Of The Chain](#the-links-of-the-chain)
+  - [What Is Context?](#what-is-context)
+  - [Self Modifying](#self-modifying)
+  - [Credit](#credit)
+  - [Write An Interceptor](#write-an-interceptor)
+  - [Wrapping Handlers](#wrapping-handlers)
+- [Summary](#summary)
+- [Appendix](#appendix)
+  - [The Builtin Interceptors](#the-builtin-interceptors)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Introduction 
 
 This is a tutorial on re-frame Interceptors.
-
-## Table Of Contents
-
-- [Interceptors](#interceptors)
-  * [Why Interceptors?](#why-interceptors-)
-  * [What Do Interceptors Do?](#what-do-interceptors-do-)
-  * [Wait, I know That Pattern!](#wait--i-know-that-pattern-)
-  * [What's In The Pipeline?](#what-s-in-the-pipeline-)
-  * [Show Me](#show-me)
-  * [Handlers Are Interceptors Too](#handlers-are-interceptors-too)
-- [Executing A Chain](#executing-a-chain)
-  * [The Links Of The Chain](#the-links-of-the-chain)
-  * [What Is Context?](#what-is-context-)
-  * [Self Modifying](#self-modifying)
-  * [Credit](#credit)
-  * [Write An Interceptor](#write-an-interceptor)
-  * [Wrapping Handlers](#wrapping-handlers)
-- [Summary](#summary)
-- [Appendix](#appendix)
-  * [The Builtin Interceptors](#the-builtin-interceptors)
 
 ## Interceptors
 ### Why Interceptors?
@@ -382,7 +389,8 @@ To use them, first require them:
     [re-frame.core :refer [debug path]])
 ```
 
----
+***
+
 Previous:  [Effectful Handlers](EffectfulHandlers.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Effects](Effects.md)  

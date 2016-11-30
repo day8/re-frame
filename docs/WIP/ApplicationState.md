@@ -2,6 +2,17 @@
 
 Let's understand how re-frame manages application state.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [On Data](#on-data)
+- [The Big Ratom](#the-big-ratom)
+- [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
 ### On Data
 
 <blockquote class="twitter-tweet" lang="en"><p>Well-formed Data at rest is as close to perfection in programming as it gets. All the crap that had to happen to put it there however...</p>&mdash; Fogus (@fogus) <a href="https://twitter.com/fogus/status/454582953067438080">April 11, 2014</a></blockquote>

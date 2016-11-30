@@ -1,3 +1,19 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Bootstrapping Application State](#bootstrapping-application-state)
+- [1. Register Handlers](#1-register-handlers)
+- [2. Kick Start Reagent](#2-kick-start-reagent)
+- [3. Loading Initial Data](#3-loading-initial-data)
+  - [Getting Data Into `app-db`](#getting-data-into-app-db)
+- [The Pattern](#the-pattern)
+- [Scales Up](#scales-up)
+- [Cheating - Synchronous Dispatch](#cheating---synchronous-dispatch)
+- [Loading Initial Data From Services](#loading-initial-data-from-services)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Bootstrapping Application State
 
 To bootstrap a re-frame application, you need to:
@@ -218,7 +234,8 @@ The next Tutorial will show you how.
 
 
 
----
+***
+
 Previous:  [Namespaced Keywords](Namespaced-Keywords.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Talking To Servers](Talking-To-Servers.md)  

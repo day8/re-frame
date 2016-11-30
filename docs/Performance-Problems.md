@@ -1,5 +1,19 @@
 ## Eek! Performance Problems
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [1. Is It The `debug` Interceptor?](#1-is-it-the-debug-interceptor)
+- [2. `=` On Big Structures](#2--on-big-structures)
+  - [An Example Of Problem 2](#an-example-of-problem-2)
+  - [Solutions To Problem 2](#solutions-to-problem-2)
+- [3. Are you Using a React `key`?](#3-are-you-using-a-react-key)
+- [4. Callback Functions](#4-callback-functions)
+- [A Weapon](#a-weapon)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 1. Is It The `debug` Interceptor?
 
 This first one is something of a non-problem. 

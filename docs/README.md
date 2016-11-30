@@ -36,3 +36,11 @@
 - [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
 - [Using Stateful JS Components](Using-Stateful-JS-Components.md)
 - [The re-frame Logo](The-re-frame-logo.md)
+
+<!-- DOCTOC SKIP
+ 
+ We put these inside a comment so that they are hidden when rendered on Github.
+ <!-- START doctoc -->
+ <!-- END doctoc -->
+ 
+ -->
