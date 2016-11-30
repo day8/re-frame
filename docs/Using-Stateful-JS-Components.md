@@ -88,7 +88,7 @@ D3 (from @zachcp):
   - Example: http://zachcp.github.io/simplecomponent/
 
 A different take on using D3: 
-https://gadfly.io/2016-10-22-d3-in-reagent.html
+https://gadfly361.github.io/gadfly-blog/2016-10-22-d3-in-reagent.html
 
 ### Advanced Lifecycle Methods
 
