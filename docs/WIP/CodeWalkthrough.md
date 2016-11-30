@@ -1,10 +1,10 @@
 ## Initial Code Walk-through
 
 At this point in your reading, you are armed with:
- - a high level understanding of the 5 domino process (from re-frame's README)
+ - a high level understanding of the 6 domino process (from re-frame's README)
  - an understanding of application state (from the previous tutorial) 
  
-In this tutorial, **we'll look at re-frame code**.
+In this tutorial, **we'll look at re-frame code**. Finally.
 
 ### What Code?
 
@@ -42,11 +42,11 @@ So, we start like this:
 
 ### Data Schema
 
-Generally, I'd strongly recommended you write a quality schema
+Now, normally, I'd strongly recommended you write a quality schema
 for your application state (the data stored in `app-db`). But,
 here, to minimise cognitive load, we'll cut that corner.
 
-But we can't cut it completely. You'll still need an
+But ... we can't cut it completely. You'll still need an
 informal description ... for this app `app-db` will contain
 a two-key map like this:
 ```cljs
@@ -81,9 +81,9 @@ Here's some other example events:
 ```
 
 The `kind` of event is always a keyword, and for non-trivial 
-applications it tends to be namespaced.  
+applications it tends to be namespaced.
 
-**Rule**:  events are pure data. No dirty tricks like putting
+**Rule**:  events are pure data. No sneaky tricks like putting
 callback functions on the wire. You know who you are.
 
 ### dispatch
@@ -93,7 +93,7 @@ To send an event, call `dispatch` with the event vector as argument:
    (dispatch [:event-id  value1 value2])
 ```
 
-In this "simple" app, a `:timer` event is sent every one second:
+In this "simple" app, a `:timer` event is sent every second:
 ```clj
 (defn dispatch-timer-event
   []
@@ -111,7 +111,7 @@ This is an unusual source of events. Normally, it is an app's UI widgets which
 
 `dispatch` puts an event into a queue for processing.
 
-So, the event is not processed synchronously, like a function call. The processing
+So, **an event is not processed synchronously, like a function call**. The processing
 happens **later** - asynchronously. Very soon, but not now.
 
 The consumer of the queue is a `router` which looks after the event's processing.
@@ -150,7 +150,7 @@ The handler function you provide should expect two parameters:
    - `db` the current application state
    - `v`  the event vector
     
-So it will have a signature like this: `(fn [db v] ...)`. 
+So your function will have a signature like this: `(fn [db v] ...)`. 
 
 Each event handler must compute and return the new state of 
 the application, which means it normally returns a
@@ -172,11 +172,11 @@ On startup, application state must be initialised. We
 want to put a sensible value into `app-db`.
 
 So a `(dispatch [:initialize])` will happen early in the 
-apps life (more on this later), and we need to write an `event handler`
+apps life (more on this below), and we need to write an `event handler`
 for it. 
 
 Now this event handler is slightly unusual because it doesn't 
-much care what the original `db` was, it just wants to plonk 
+much care what the value in `db` - it just wants to plonk 
 in a new complete value. 
 
 Like this: 
@@ -189,7 +189,7 @@ Like this:
 ```
 
 This particular handler `fn` ignores the two parameters
-(`db` and `v`) and simply returns 
+(usually called `db` and `v`) and simply returns 
 a map literal, which becomes the application 
 state.
 
@@ -208,7 +208,7 @@ but, irrespective, we just assoc into it.
 
 ### :timer
 
-Earlier, we set up a timer function to `(dispatch [:timer ...])` every second.
+Earlier, we set up a timer function to `(dispatch [:timer now])` every second.
 
 Here's how we handle it: 
 ```clj
@@ -252,7 +252,7 @@ In essence, subscription handlers take application state as an argument,
 and they compute and return a query over it.  So they return something of
 a "materialised view" of that application state.
 
-Subscription functions must be re-run when the application state changes, to 
+Subscription functions are re-run by re-frame when the application state changes, to 
 compute new values. But re-frame looks after this for you.  All you need do is
 write the query function.
 
@@ -262,7 +262,7 @@ in the `view` functions (Domino 5).
 Each query is identified by an `id` XXXX
 
 Now, the two examples below are utterly trivial. They just extract part of the application
-state and return it. So, virtually no computation. More interesting 
+state and return it. So, there's virtually no computation. More interesting 
 subscriptions and more explanation can be found in the todomvc example.
 
 `reg-sub` associates a `query id` with a function which computes

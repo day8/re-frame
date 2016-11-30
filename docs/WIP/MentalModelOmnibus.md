@@ -197,14 +197,17 @@ This is an infinite loop of sorts. An infinite loop of derived data.
 `event handlers` collectively
 implement the "control" part of an application. Their logic
 interprets arriving events in the context of existing state,
-and they "step" the application state "forward" via modification of that state.
+and they compute what the new state of the application.  
 
 `events` act, then, a bit like the `triggers` in a finite state machine, and 
 the event handlers act like the rules which govern how the state machine
 moves from one logical state to the next.
 
-The "logical state" will be a function of the value in `app-db`. In the simplest
-case `app-db` will contain a single value which represents logical state.
+In the simplest
+case, `app-db` will contain a single value which represents the current "logical state".
+For example, there might be a single `:phase` key which can have values like `:loading`, 
+`:not-authenticated` `:waiting`, etc.  Or, the "logical state" could be a function 
+of many values in `app-db`. 
 
 Not every app has lots of logical states, but some do, and if you are implementing 
 one of them, then formally recognising it and using a technique like 
@@ -214,12 +217,12 @@ will help greatly in getting a clean design and fewer bugs.
 The beauty of re-frame from a FSM point of view is that all the state is 
 in one place - unlike OO systems where the state is distributed (and synchronized) 
 across many objects. So implementing your control logic as a FSM is
-both possible and natural in re-frame, whereas it is often difficult and 
-contrived to do so in other kinds of architecture (in my experience).
+fairly natural in re-frame, whereas it is often difficult and 
+contrived in other kinds of architecture (in my experience).
 
 So, members of the jury, I put it to you that:
   - the first 3 dominoes implement an [Event-driven finite-state machine](https://en.wikipedia.org/wiki/Event-driven_finite-state_machine)
-  - the last 2 dominoes render the current state of this FSM for the user to observe
+  - the last 2 dominoes a rendering of the FSM's current state for the user to observe
 
 Depending on your app, this may or may not be a useful mental model,
 but one thing is for sure ... 

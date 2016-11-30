@@ -1,7 +1,6 @@
 ## Application State
 
-Before understanding code, we must understand how re-frame manages 
-application state.
+Let's understand how re-frame manages application state.
 
 ### On Data
 
@@ -13,13 +12,13 @@ application state.
 re-frame puts all your application state into one place, which is
 called `app-db`.
 
-Ideally, you will provide a spec for this data in the one place, 
+Ideally, you will provide a spec for this data-in-the-one-place, 
 [using a powerful and leveragable schema](http://clojure.org/about/spec).
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right?
 You'd happily put all your well-formed data into PostgreSQL.
 
-But within a running application (in memory), there is hesitation. If you have 
+But within a running application (in memory), there can be hesitation. If you have 
 a background in OO, this data-in-one-place
 business is a really, really hard one to swallow.  You've
 spent your life breaking systems into pieces, organised around behaviour and trying
@@ -45,7 +44,7 @@ Further Notes:
 1. `app-state` would probably be a more accurate name, but I choose `app-db` instead because 
     I wanted to convey the database notion as strongly as possible.
 2. In the documentation and code, I make a distinction between `app-db` (the `ratom`) and 
-   `db` which is the (map) `value` currently stored **inside** this `ratom`. 
+   `db` which is the (map) `value` currently stored **inside** this `ratom`. Be aware of that naming.
 3. the reference implementation creates and manages an `app-db` for you, so
    you don't need to declare one yourself (see the 1st FAQ if you want to inspect the value it holds).
 4. `app-db` doesn't actually have to be a `ratom` containing a map.  It could, for example, 
@@ -69,10 +68,10 @@ trying to hide it, which is, when you think about it, quite crazy ... and I did 
 with a single `reset!`, which acts like a transactional commit. There is 
 an instant in which the app goes from one state to the next, never a series 
 of incremental steps which can leave the app in a temporarily inconsistent, intermediate state. 
-Again, this simplicity causes a certain class of bugs or design problems evaporate.
+Again, this simplicity causes a certain class of bugs or design problems to evaporate.
 
 3. The data in `app-db` can be given a strong schema
-so that, at any moment, we can validate all the data in the application. **All of it.** 
+so that, at any moment, we can validate all the data in the application. **All of it!** 
 We do this check after every single "event handler" runs (event handlers compute new state). 
 And this enables us to catch errors early (and accurately). It increases confidence in the way 
 that Types can increase confidence, only [a good schema can provide more
