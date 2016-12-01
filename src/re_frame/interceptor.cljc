@@ -84,7 +84,7 @@
   Returns updated `context`. Ie. the `context` which has been threaded
   through all interceptor functions.
 
-  Generally speaking, an interceptor's `:before` fucntion will (if present)
+  Generally speaking, an interceptor's `:before` function will (if present)
   add to a `context's` `:coeffect`, while it's `:after` function
   will modify the `context`'s `:effect`.  Very approximately.
 
