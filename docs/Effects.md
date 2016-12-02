@@ -306,7 +306,7 @@ Which means: in 200ms do this: `(dispatch [:event-id "param"])` and in 100ms ...
 
 #### :dispatch
 
-`dispatch` one event. Excepts a single vector.
+`dispatch` one event. Expects a single vector.
 
 usage:
 ```clj
