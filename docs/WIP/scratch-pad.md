@@ -1,24 +1,18 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Implements Reactive Data Flows](#implements-reactive-data-flows)
-- [Flow](#flow)
-- [Reactive Programming](#reactive-programming)
-  - [How Flow Happens In Reagent](#how-flow-happens-in-reagent)
-- [Components](#components)
-  - [Truth Interlude](#truth-interlude)
-  - [React etc.](#react-etc)
-- [Subscribe](#subscribe)
-  - [Just A Read-Only Cursor?](#just-a-read-only-cursor)
-- [The Signal Graph](#the-signal-graph)
-- [A More Efficient Signal Graph](#a-more-efficient-signal-graph)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
+## It solves a dilemma
 
+SPAs are fundamentally mutative in nature.
 
+They change the DOM, databases, localstore, cookies, send emails etc. Its a veritable frenzy of mutation. And 
+this is a good thing. Any user of these SPAs wants to be changing the world, 
+right, otherwise what's the point?
+ 
+But we are wide-eyed functional zealots, heroically resisting the 
+entire notion of mutation, and insisting instead on the wonders of pure functions.
+
+re-frame solves this dilemma and allows you 
+compose a mutative application from pure functions.
 
 
 XXX

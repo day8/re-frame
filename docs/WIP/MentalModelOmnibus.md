@@ -36,14 +36,14 @@ and how to get the best from it.
 
 This tutorial is a tour 
 of these ideas, justifications and insights.  It is a little rambling, but I
-believe you'll be glad you persisted. By the end, I'm hoping you'll have had an
+believe you'll be glad you persisted. By the end, I'm hoping you'll have had at least one 
 "Oh, now I get it" moment.
 
 
 ## What is the problem?
 
 First, we decided to build our SPA apps with ClojureScript, then we
-choose [Reagent], then we had a problem. It was mid to late 2014.
+choose [Reagent], then we had a problem. It was August 2014.
 
 For all its considerable brilliance,  Reagent (+ React)
 delivers only the 'V' part of a traditional MVC framework.
@@ -57,7 +57,7 @@ emerged.  Since then, we've tried to kept an eye on further developments like th
 Elm Architecture, Om.Next, BEST, Cycle.js, Redux, etc.  They have taught us much
 although we have often made different choices.
 
-re-frame does have M, V, and C parts but they aren't objects.
+re-frame does have parts which correspond to M, V, and C, but they aren't objects.
 It is sufficiently different in nature
 from (traditional, Smalltalk) MVC that calling it MVC would be confusing.  I'd
 love an alternative.
@@ -95,25 +95,6 @@ And yet we still see read/write `cursors` and two way data binding being promote
 Just say no. As programs get bigger, their use will encourage control logic into all the 
 wrong places and you'll end up with a tire fire of an Architecture. IMO.
 
-## It Does Physics
-
-Remember this diagram from school? The water cycle.
-Two stages, involving water in different phases, being acted upon
-by different forces: gravity working one way, evaporation/convection the other.
-
-![logo](/images/the-water-cycle.png?raw=true)
-
-To understand re-frame, **imagine data flowing instead of water**. re-frame
-provides the "conveyance" of the data - the gravity, evaporation and convection.
-You design what's flowing and then you hang functions off the loop at
-various points to look after the data's phase changes.
-
-Sure, right now, you're thinking "lazy sod - make a proper Computer Science-y diagram". But, no.
-Joe Armstrong says "don't break the laws of physics" - I'm sure
-you've seen the videos - and if he says to do something, you do it
-(unless Rich Hickey disagrees, and says to do something else). So,
-this diagram, apart from being a plausible analogy which encourages
-you to look differently at re-frame, is **practically proof** it does physics.
 
 ## It does Event Sourcing
 

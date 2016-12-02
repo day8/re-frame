@@ -1,21 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Derived Values, Flowing](#derived-values-flowing)
-- [Why Should You Care?](#why-should-you-care)
-- [re-frame](#re-frame)
-  - [It Is A Loop](#it-is-a-loop)
-  - [It Has 5 Dominoes](#it-has-5-dominoes)
-  - [A Dominoes Walk Through](#a-dominoes-walk-through)
-  - [A Simple Loop Of Simple Functions](#a-simple-loop-of-simple-functions)
-- [It Leverages Data](#it-leverages-data)
-  - [It is both mature and successful in the large](#it-is-both-mature-and-successful-in-the-large)
-  - [Where Do I Go Next?](#where-do-i-go-next)
-  - [Licence](#licence)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 [logo](/images/logo/re-frame_128w.png?raw=true)
 
 ## Derived Values, Flowing
@@ -69,20 +51,6 @@ re-frame is a **functional framework**."
 Being a functional framework, it is about data, and the pure functions 
 which transform that data.
 
-## It solves a dilemma
-
-SPAs are fundamentally mutative in nature.
-
-They change the DOM, databases, localstore, cookies, etc. Horrifically mutative. Carnage.
-But this is a good thing. The user of these SPAs wants to be changing the world, 
-right, otherwise what's the point?
- 
-But we are crazed, wide-eyed functional zealots, heroically resisting the 
-entire notion of mutation, and insisting instead on the wonders of pure functions.
-
-This is something of a dilemma.
-
-re-frame's lets you compose a mutative application from pure functions.
 
 ### It is a loop
 
@@ -92,6 +60,27 @@ To build an app, you hang pure functions on certain parts of this loop,
 and re-frame looks after the `conveyance of data` (flow of data) 
 around the loop, into and out of the transforming functions you 
 provide - hence the tag line "Derived Data, Flowing".
+
+## It does Physics
+
+Remember this diagram from school? The water cycle, right?
+
+Two distinct stages, involving water in different phases, being acted upon
+by different forces: gravity working one way, evaporation/convection the other.
+
+<img align="right" src="/images/the-water-cycle.png?raw=true">
+
+To understand re-frame, **imagine data flowing around that loop instead of water**. re-frame
+provides the "conveyance" of the data - the equivalent of gravity, evaporation and convection.
+You design what's flowing and then you hang functions off the loop at
+various points to look after the data's phase changes.
+
+Sure, right now, you're thinking "lazy sod - make a proper Computer Science-y diagram". But, no.
+Joe Armstrong says "don't break the laws of physics" - I'm sure
+you've seen the videos - and if he says to do something, you do it
+(unless Rich Hickey disagrees, and says to do something else). So,
+this diagram, apart from being a plausible analogy which might encourage
+you to look differently at re-frame, is **practically proof** it does physics.
 
 ### It is a 6-domino cascade
 
@@ -140,34 +129,33 @@ never achieving anything.
 So re-frame embraces the protagonist nature of `effects` - the entire, unruly zoo of them - but
 it does so in a controlled, debuggable, auditable, mockable, plugable way.
 
-#### Then what happens, Grandpa?
+#### Then what happens?
 
-That 3rd domino just changed the world and, very often, that involves 
+So, that 3rd domino just changed the world and, very often, that involves 
 **changing the app's state**.
-  
-You'll soon see that re-frame `app state` is held in one place - think of it like you 
+
+re-frame `app state` is held in one place - think of it like you 
 would an in-memory, central database for the app.
 
-While the domino cascade 1-2-3 represents the event handling process, 
-it is not the end of the overall story - it is the first chapter.  When 
-domino 3 changes `app state` it triggers another chapter, involving the 4-5-6 domino cascade.
+When domino 3 changes `app state`, it triggers the next part of the cascade 
+involving dominoes 4-5-6.
 
 #### The view formula 
 
 The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library: 
 `v = f(s)`. A view `v` is a function `f` of the app state `s`.
 
-Said another way: there are functions `f` which compute what DOM nodes, `v`,
-which should be displayed to the user when the application is in a given state, `s`.
+Or, said another way, there are functions `f` which compute what DOM nodes, `v`,
+should be displayed to the user when the application is in a given app state, `s`.
 
 **Over time**, when `s` changes, `f`
 will be called again to compute new `v`, forever keeping `v` up to date with the current `s`.
 
-In our case, it is domino 3 which changes `s`, the application state,
+Now, in our case, it is domino 3 which change `s`, the application state,
 and, in response, dominoes 4-5-6 are about re-running `f` to compute the new `v` 
 shown to the user.
 
-Except, of course, it is more subtle than that.  There is no single `f` to run.
+Except, of course, there's nuance.  For instance, there's no single `f` to run.
 There may be many functions which collectively build the overall DOM, 
 and only part of `s` may change at any one time, so only part of the 
 `v` (DOM) need be re-computed and updated. And some parts of `v` might not 
@@ -196,30 +184,30 @@ More on hiccup soon.
 
 **Domino 6** is not something you need write yourself - instead it is handled for you 
 by Reagent/Rect. I mention it here 
-for completeness in order to fully close the loop. 
+for completeness in order to fully close the loop.
 
 It is the step in which the hiccup-formatted 
-"descriptions of required DOM", returned by Domino 5, is made real. The  
+"descriptions of required DOM", returned by Domino 5, are made real. The  
 browser DOM nodes are mutated by React.
  
-#### Similar cascades
+#### Mastering mutation
 
-Cascades 1-2-3 and 4-5-6 have a similarity.
+The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
 
-The last domino is each is mutative - it does the dirty work.  The step immediately 
-prior computes "descriptions" of the mutations required, and these final dominoes 
-make it real.
+The last domino in each is mutative - it does the dirty work.  The step immediately 
+prior computes "descriptions" of the mutations required, and then these final mutative dominoes 
+make those descriptions real.
 
-But you seldom need to worry about 3 and 6 yourself. It is up to re-frame 
-to look after such mutations for you, allowing you to focus on the pure function 
-part earlier in the chains. That's where your programming work will be done.
+You seldom need worry yourself about 3 and 6. re-frame looks after that. Instead 
+your programming work will be done in the earlier pure-function dominoes.
 
 ### A Dominoes Walk Through
 
-Here's an example. 
+The explanation above was from 60,000 feet. Let's now move down slightly, to 30,000 feet. 
+Still high level, but a wiff more soil.
 
-The UI of an SPA is showing the user a list of items, and 
-they click the "delete" button for the 3rd item in a list. 
+Imagine the UI of an SPA is showing a list of items, and that the user
+clicks the "delete" button for the 3rd item in a list. 
 
 In response, 
 what happens within this re-frame app? Here's a sketch of the 6 domino cascade:
@@ -227,30 +215,33 @@ what happens within this re-frame app? Here's a sketch of the 6 domino cascade:
 1. The `on-click` handler for that delete button uses the re-frame supplied function, 
    `dispatch`, to emit an `event`. That event might be `[:delete-item 2]`.
    Yes, that's a vector of two elements. The first element says what kind of event it is, 
-   and the `rest` are further details of the event.  More detail soon. 
-2. The `event handler` (function) associated with `:delete-item` (the first
-   element of the event) is called to compute what `effect` the `event`
+   and the `rest` are further details of the event.  
+   
+2. The `event handler` (function), associated with `:delete-item` (the first
+   element of the event), is called to compute what `effect` the `event`
    should have.
    In this case, it computes that new application state should
-   result (this new state will not include the deleted item).
+   result and that this new state will not include the to-be-deleted item.
 3. an `effect handler` (function) actions the `effect`, and 
    resets application state to the newly computed value. This is a mutative
    step, facilitated by re-frame, which you won't have to do explicitly.
 4. because the application state changed, a query (function) over the application 
    state is called (reactively), and it computes the list of items (which 
-   now, because of domino 3, nolonger contains the 3rd item)
+   now, because of domino 3, nolonger contains the 3rd item). Because the items 
+   are already stored in app state, there's not a lot to compute in this case. More
+   of an accessor.
 5. because the query function computed a new value, a view (function) which subscribes
    to that value, is called (reactively) to re-compute DOM.  It produces a hiccup-formatted 
-   data structure which describing the DOM nodes required (no DOM nodes for the deleted item, obviously,
+   data structure describing the DOM nodes required (no DOM nodes for the deleted item, obviously,
    but otherwise the same DOM as last time).  
 6. Reagent/React takes the description of required DOM, and makes it real. The DOM "this
    time" is pretty much the same as last time, except fo the absence of the DOM for that
    deleted item. This is 
-   a mutative step, which you don't have to worry about, it happens for you.
+   a mutative step, which you don't have to worry about explicitly. It just happens. 
 
 At this point, the re-frame app returns to a quiescent state, 
 waiting for the next event. When a new one happens, another 
-6 domino cascade will follow. 
+6 domino cascade will follow.
 
 
 ### A Simple Loop Of Simple Functions
@@ -351,16 +342,16 @@ XXX
 ### What Of This Romance?
 
 My job is to be a relentless cheerleader for re-frame, right?
-The gyrations of my Pom Poms should be tectonic,
+The gyrations of my Pom-Poms should be tectonic,
 but the following quote just makes me smile. It should
 be taught in all CompSci courses.
 
 > We begin in admiration and end by organizing our disappointment <br>
 > &nbsp;&nbsp;&nbsp; -- Gaston Bachelard (French philosopher)
 
-Of course, it only applies if you get passionate about your technologies.
+Of course, that only applies if you get passionate about your technologies.
 
-But, no. Those French Philosophers and their pessimism - ignore him!!
+But, no. No! Those French Philosophers and their pessimism - ignore him!!
 Your love for re-frame will be deep, abiding and enriching.
 
 ### Licence
