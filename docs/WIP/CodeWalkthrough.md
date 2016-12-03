@@ -258,29 +258,35 @@ When the user enters a new colour value (via an input text box):
   
 ## Effect Handlers (domino 3)
 
-Domino 3 is about actioning the `effects` returned by event handlers.
+Domino 3 actions/realises the `effects` returned by event handlers.
 
 In this "simple" application, our event handlers are implicitly returning 
-only one effect: "please update application state". 
+only one effect: "update application state". 
 
 This particular `effect` is actioned by a re-frame supplied 
-`effect handler`. **So, nothing for us to do.**
+`effect handler`. **So, there's nothing for us to do for this domino**. We are 
+using a standard re-frame effect handler.
 
 And this is not unusual. You'll seldom have to write `effect handlers`, but 
 we'll understand more about them in a later tutorial.
 
 ## Subscription Handlers (domino 4)
 
-In essence, subscription handlers take application state as an argument, 
-and they compute and return a query over it.  So they return something of
+Subscription handlers take application state as an argument, 
+and they compute a query over it, returning something of
 a "materialised view" of that application state.
 
-Subscription functions are re-run by re-frame when the application state changes, to 
-compute new values. But re-frame looks after this for you.  All you need do is
+When the application state changes, subscription functions are 
+re-run by re-frame, to compute new values. But re-frame looks after this for you.  All you need do is
 write the query function.
 
-The data returned by `query` functions is used ultimately
-in the `view` functions (Domino 5). 
+Ultimately, the data returned by `query` functions is used
+in the `view` functions (Domino 5) but one subscription can 
+source data from other subscriptions. So a tree of dependencies 
+results.
+ 
+The Views (Domino 5) are the leaves.  The root is `app-db` and the 
+intermediate nodes are computations being performed by 
 
 Each query is identified by an `id` XXXX
 
@@ -326,29 +332,38 @@ Like I said, both of these queries are trivial.
 
 ## View Functions (domino 5)
 
-`view` functions transform application state  
-into `Hiccup formatted` data.  Collectively, `view` 
-functions  render the apps entire DOM.
+`view` functions are "State in, Hiccup out". 
 
-`hiccup` is data which represent DOM. 
+Less tersely, they are functions which transform state into DOM. 
+Any SPA will have lots of `view`functions, and collectively, 
+they render the app's entire UI.
+ 
+`Hiccup` is ClojureScript data structures which represent DOM.
 
 Here's a trivial view function:
  ```clj
 (defn greet
   []
-  [:div "Hello viewers"])
+  [:div "Hello viewers"])  ;; means <div>Hello viewers</div>
 ```
 
 And if we call it:
 ```clj
 (greet)
 ;; ==>  [:div "Hello viewers"]
+
+(first (greet))
+;; ==> :div
 ```
 
-XXX sourcing data. 
+Yep, that's a vector with two elements: a keyword and a string. 
 
-So view functions render a DOM representation of the application state, 
-obtained by subscriptions. 
+Now, greet is pretty simple and there's no "Data In", here, just "Hiccup out".
+
+### Sourcing data. 
+
+In order to render a DOM representation of the application state, view functions
+must first obtain that state. This happens via subscriptions.
 
 transform data into data. They source 
 data from subscriptions (queries across application state), and 

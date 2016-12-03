@@ -33,7 +33,7 @@ Events "happen" when they are dispatched.
 
 So, this makes an event happen: 
 ```clj
-(dispatch [:set-flag true])
+(dispatch [:repair-ming-vase true])
 ```
 
 Events are normally triggered by an external agent: the user clicks a button, or a server-pushed 

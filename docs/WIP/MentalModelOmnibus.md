@@ -26,19 +26,18 @@ patterns of thought that produced that government are left intact,
 then those patterns will repeat themselves. <br>
 > -- Robert Pirsig, Zen and the Art of Motorcycle Maintenance
 
-The re-frame docs initially focus on the **domino cascade
-narrative**. The goal was to efficiently explain the mechanics,
+The re-frame tutorials initially focus on the **domino
+narrative**. The goal is to efficiently explain the mechanics,
 and get you reading and writing code ASAP.
 
-**But** there's other interesting perspectives on re-frame
-which will considerably deepen your understanding of its design,
-and how to get the best from it.
+**But** there are other interesting perspectives on re-frame
+which will deepen your understanding of its design,
+and enable you to get the best from it.
 
 This tutorial is a tour 
 of these ideas, justifications and insights.  It is a little rambling, but I
 believe you'll be glad you persisted. By the end, I'm hoping you'll have had at least one 
 "Oh, now I get it" moment.
-
 
 ## What is the problem?
 
@@ -48,12 +47,12 @@ choose [Reagent], then we had a problem. It was August 2014.
 For all its considerable brilliance,  Reagent (+ React)
 delivers only the 'V' part of a traditional MVC framework.
 
-But apps involve much more than V. We tend to build quite complicated
-apps. Where does the control logic go? How is state stored & manipulated? etc.
+But apps involve much more than V. We build quite complicated
+SPAs which can run to 50K lines of code. So, where does the control logic go? How is state stored & manipulated? etc.
 
 We read up on [Pedestal App], [Flux], 
 [Hoplon], [Om], early [Elm], etc and re-frame is the architecture that
-emerged.  Since then, we've tried to kept an eye on further developments like the
+emerged.  Since then, we've tried to keep an eye on further developments like the
 Elm Architecture, Om.Next, BEST, Cycle.js, Redux, etc.  They have taught us much
 although we have often made different choices.
 
@@ -78,11 +77,11 @@ his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
 __Second__, we believe in ClojureScript, immutable data and the process of building
 a system out of pure functions.
 
-__Third__, we believe in the primacy of data, for the reasons already described in
-the main README. re-frame has a data oriented architecture. It 
+__Third__, we believe in the primacy of data, for the reasons described in
+the main README. re-frame has a data oriented functional architecture. It 
 implements an infinite loop of Derived data.
 
-__Fourth__, we believe that Reactive Programming is one honking great idea. 
+__Fourth__, we believe that Reactive Programming is one honking good idea. 
 How did we ever live without it? It is a quite beautiful solution to one half of re-frame's 
 data conveyance needs, **but** we're cautious about taking it too far - as far as, say, cycle.js. 
 It doesn't take over everything in re-frame - it just does part of the job.
@@ -90,10 +89,11 @@ It doesn't take over everything in re-frame - it just does part of the job.
 __Finally__, many years ago I programmed briefly in Eiffel where I learned 
 about [command-query separation](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation). 
 Each generation of
-programmers seems destined to rediscover this principle - CQRS is a recent re-rendering. 
+programmers seems destined to rediscover this principle - CQRS is the recent re-rendering. 
 And yet we still see read/write `cursors` and two way data binding being promoted as a good thing. 
-Just say no. As programs get bigger, their use will encourage control logic into all the 
-wrong places and you'll end up with a tire fire of an Architecture. IMO.
+Please, just say no. As your programs get bigger, the use of these two-way constructs 
+will encourage control logic into all the 
+wrong places and you'll end up with a tire fire of an Architecture.
 
 
 ## It does Event Sourcing
@@ -141,11 +141,11 @@ the collection, and so on and so on. We'd end up with a
 collection of event vectors.
 
 **Second**, remind yourself that the `combining function` 
-of a `reduce` takes two parameters:
+of a `reduce` takes two arguments:
   1. the current state of the reduction and
   2. the next collection member to fold in.
 
-Then notice that `reg-event-db` event handlers take two parameters also:
+Then notice that `reg-event-db` event handlers take two arguments also:
   1. `db` - the current state of `app-db`
   2. `v` - the next event to fold in
 
@@ -174,13 +174,13 @@ Elm Architecture.
 And for the love of all that is good, please watch this terrific
 [StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). 
 See what happens when you re-imagine a database as a stream!! Look at 
-all the problems that are solved.
+all the problems that evaporate.
 Think about that: shared mutable state (the root of all evil),
 re-imagined as a stream!!  Blew my socks off.
 
-If, by chance, you do watched that video, you might twig to 
-the idea that `app-db` is really a derived value .. the video tals 
- a lot about derived values. So, yes, app-db is a derived value of the `perpetual reduce`.
+If, by chance, you have watched that video, you might twig to 
+the idea that `app-db` is really a derived value .. the video talks 
+a lot about derived values. So, yes, app-db is a derived value of the `perpetual reduce`.
 
 And yet, it acts as the authoritative source of state in the app. And yet, 
 it isn't, it is simply a piece of derived state.  And yet, it is the source.
@@ -222,12 +222,28 @@ contrived in other kinds of architecture (in my experience).
 
 So, members of the jury, I put it to you that:
   - the first 3 dominoes implement an [Event-driven finite-state machine](https://en.wikipedia.org/wiki/Event-driven_finite-state_machine)
-  - the last 2 dominoes a rendering of the FSM's current state for the user to observe
+  - the last 3 dominoes a rendering of the FSM's current state for the user to observe
 
 Depending on your app, this may or may not be a useful mental model,
 but one thing is for sure ... 
 
 Events - that's the way we roll.
+
+### What Of This Romance?
+
+My job is to be a relentless cheerleader for re-frame, right?
+The gyrations of my Pom-Poms should be tectonic,
+but the following quote just makes me smile. It should
+be taught in all ComSci courses.
+
+> We begin in admiration and end by organizing our disappointment <br>
+> &nbsp;&nbsp;&nbsp; -- Gaston Bachelard (French philosopher)
+
+Of course, that only applies if you get passionate about a technology.
+
+But, no. No! Those French Philosophers and their pessimism - ignore him!!
+Your love for re-frame will be deep, abiding and enriching.
+
 
 ## Data Oriented Design
 
@@ -252,12 +268,6 @@ for a new event, but the moment we get it, it's another iteration of the "derive
 Derived values, all the way down, forever.
 
 
-
-Good news.  If you've read this far,
-your insiders T-shirt will be arriving soon - it
-will feature turtles
-and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption bit. Open a
-repo issue with a suggestion.
 
 
 

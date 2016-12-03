@@ -51,7 +51,6 @@ re-frame is a **functional framework**."
 Being a functional framework, it is about data, and the pure functions 
 which transform that data.
 
-
 ### It is a loop
 
 Architecturally, re-frame implements "a perpetual loop".
@@ -61,19 +60,19 @@ and re-frame looks after the `conveyance of data` (flow of data)
 around the loop, into and out of the transforming functions you 
 provide - hence the tag line "Derived Data, Flowing".
 
-## It does Physics
+### It does Physics
 
 Remember this diagram from school? The water cycle, right?
+
+<img height="400px" align="right" src="/images/the-water-cycle.png?raw=true">
 
 Two distinct stages, involving water in different phases, being acted upon
 by different forces: gravity working one way, evaporation/convection the other.
 
-<img align="right" src="/images/the-water-cycle.png?raw=true">
-
 To understand re-frame, **imagine data flowing around that loop instead of water**. re-frame
 provides the "conveyance" of the data - the equivalent of gravity, evaporation and convection.
 You design what's flowing and then you hang functions off the loop at
-various points to look after the data's phase changes.
+various points to compute the data's phase changes.
 
 Sure, right now, you're thinking "lazy sod - make a proper Computer Science-y diagram". But, no.
 Joe Armstrong says "don't break the laws of physics" - I'm sure
@@ -104,20 +103,19 @@ re-frame is `event` driven.
 #### 2nd Domino
 
 In response to an `event`, an application must compute 
-its ramification (its ambition, its intent) - what should 
-happen as a result. This is known as `event handling`.
+the implication (the ambition, the intent). This is known as `event handling`.
 
 Event handler functions compute `effects`. Or, more accurately, they compute
-a **description of `effects`**, which is to say they say, declaratively, 
-how the world should change (because of the event). 
+a **description of `effects`**, which means they say, declaratively, 
+how the world should change (because of the event).
 
 Much of the time, only the state of the SPA itself need
-change, but sometimes the outside world too must be effected
+change, but sometimes the outside world must too must be effected
 (localstore, cookies, databases, emails, logs, etc).
 
 #### 3rd Domino
 
-These descriptions of `effects` are actioned. The intent is made real.
+These descriptions of `effects` are actioned. The intent is realised.
 
 Now, to a functional programmer, `effects` are scary in a 
 [xenomorph kind of way](https://www.google.com.au/search?q=xenomorph).
@@ -132,7 +130,7 @@ it does so in a controlled, debuggable, auditable, mockable, plugable way.
 #### Then what happens?
 
 So, that 3rd domino just changed the world and, very often, that involves 
-**changing the app's state**.
+one particular part of the world, namely the **app's internal state**.
 
 re-frame `app state` is held in one place - think of it like you 
 would an in-memory, central database for the app.
@@ -142,16 +140,17 @@ involving dominoes 4-5-6.
 
 #### The view formula 
 
-The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library: 
-`v = f(s)`. A view `v` is a function `f` of the app state `s`.
+The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
+`v = f(s)`  
+A view `v` is a function `f` of the app state `s`.
 
 Or, said another way, there are functions `f` which compute what DOM nodes, `v`,
 should be displayed to the user when the application is in a given app state, `s`.
 
-**Over time**, when `s` changes, `f`
+Or, another way: **over time**, when `s` changes, `f`
 will be called again to compute new `v`, forever keeping `v` up to date with the current `s`.
 
-Now, in our case, it is domino 3 which change `s`, the application state,
+Now, in our case, it is domino 3 which changes `s`, the application state,
 and, in response, dominoes 4-5-6 are about re-running `f` to compute the new `v` 
 shown to the user.
 
@@ -163,86 +162,31 @@ even be showing right now.
 
 #### Domino 4
 
-**Domino 4** is a novel and efficient de-duplicated signal graph which 
+Domino 4 is a novel and efficient de-duplicated signal graph which 
 runs query functions on the app state, `s`, efficiently computing 
 reactive, multi-layered, "materialised views" of `s`.
 
 (Relax about any unfamiliar terminology, you'll soon 
-see how very simple the code actually is)
-
+see how simple the code actually is)
 
 #### Domino 5
 
-**Domino 5** is one or more **view functions** (Reagent) which compute what 
-UI DOM should be displayed for the user. 
+Domino 5 is one or more **view functions** (aka Reagent components) which compute what 
+UI DOM should be displayed for the user.
 
-They take data, delivered reactively by the queries of domino 4, 
-and compute hiccup-formatted data, which is a description of the DOM required. 
+They take data, delivered reactively by the queries of domino 4,
+and compute hiccup-formatted data, which is a description of the DOM required.
 More on hiccup soon.
 
 #### Domino 6
 
-**Domino 6** is not something you need write yourself - instead it is handled for you 
+Domino 6 is not something you need write yourself - instead it is handled for you 
 by Reagent/Rect. I mention it here 
-for completeness in order to fully close the loop.
+for completeness and to fully close the loop.
 
-It is the step in which the hiccup-formatted 
+This is the step in which the hiccup-formatted 
 "descriptions of required DOM", returned by Domino 5, are made real. The  
-browser DOM nodes are mutated by React.
- 
-#### Mastering mutation
-
-The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
-
-The last domino in each is mutative - it does the dirty work.  The step immediately 
-prior computes "descriptions" of the mutations required, and then these final mutative dominoes 
-make those descriptions real.
-
-You seldom need worry yourself about 3 and 6. re-frame looks after that. Instead 
-your programming work will be done in the earlier pure-function dominoes.
-
-### A Dominoes Walk Through
-
-The explanation above was from 60,000 feet. Let's now move down slightly, to 30,000 feet. 
-Still high level, but a wiff more soil.
-
-Imagine the UI of an SPA is showing a list of items, and that the user
-clicks the "delete" button for the 3rd item in a list. 
-
-In response, 
-what happens within this re-frame app? Here's a sketch of the 6 domino cascade:
-
-1. The `on-click` handler for that delete button uses the re-frame supplied function, 
-   `dispatch`, to emit an `event`. That event might be `[:delete-item 2]`.
-   Yes, that's a vector of two elements. The first element says what kind of event it is, 
-   and the `rest` are further details of the event.  
-   
-2. The `event handler` (function), associated with `:delete-item` (the first
-   element of the event), is called to compute what `effect` the `event`
-   should have.
-   In this case, it computes that new application state should
-   result and that this new state will not include the to-be-deleted item.
-3. an `effect handler` (function) actions the `effect`, and 
-   resets application state to the newly computed value. This is a mutative
-   step, facilitated by re-frame, which you won't have to do explicitly.
-4. because the application state changed, a query (function) over the application 
-   state is called (reactively), and it computes the list of items (which 
-   now, because of domino 3, nolonger contains the 3rd item). Because the items 
-   are already stored in app state, there's not a lot to compute in this case. More
-   of an accessor.
-5. because the query function computed a new value, a view (function) which subscribes
-   to that value, is called (reactively) to re-compute DOM.  It produces a hiccup-formatted 
-   data structure describing the DOM nodes required (no DOM nodes for the deleted item, obviously,
-   but otherwise the same DOM as last time).  
-6. Reagent/React takes the description of required DOM, and makes it real. The DOM "this
-   time" is pretty much the same as last time, except fo the absence of the DOM for that
-   deleted item. This is 
-   a mutative step, which you don't have to worry about explicitly. It just happens. 
-
-At this point, the re-frame app returns to a quiescent state, 
-waiting for the next event. When a new one happens, another 
-6 domino cascade will follow.
-
+browser DOM nodes are mutated. 
 
 ### A Simple Loop Of Simple Functions
 
@@ -253,7 +197,128 @@ tested independently. They take data, transform it and return new data.
 The loop itself is utterly predictable and very mechanical in operation.
 So, there's a regularity, simplicity and
 certainty to how a re-frame app goes about its business,
-which leads, in turn, to a great ease in reasoning and debugging.
+which leads, in turn, to an ease in reasoning and debugging.
+
+## Managing mutation
+
+The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
+
+In each cascade, it is the 2nd to last domino which 
+computes "descriptions" of mutations required and it is 
+the last domino which actions these descriptions - it does the dirty work. 
+
+And in both case, you need worry yourself about this dirty work. re-frame looks 
+after those dominoes.
+
+## Code Fragments
+
+Time to understand this 
+dominoes narrative in terms of code fragments. 
+
+> At this point, we're moving from 30,000 feet to say 30 feet. I'm not expecting you
+to fully grok all the code presented. We're still in overview mode here and there's not
+a lot of detail given. Plenty of tutorials and examples to follow.
+
+Imagine: the UI of an SPA shows a list of items. This user 
+clicks the "delete" button next to the 3rd item in a list.
+
+In response, 
+what happens within this imaginary re-frame app? Here's a sketch of the 6 domino cascade:
+
+#### Code For Domino 1
+
+1. The delete button for that 3rd item will have an `on-click` handler (function) which looks
+   like this:  
+   ```clj
+     #(re-frame.core/dispatch [:delete-item 2486])
+   ```
+
+   `dispatch` is the means by which you emit an `event`.  An `event` is a vector and, in this case, 
+   it has 2 elements: `[:delete-item 2486]`. The first element,
+   `:delete-item`, is the kind of event. The `rest` is optional, and is whatever else needs to 
+   be known about the event - in this case, my made-up id, `2486`, of the item to delete.
+
+#### Code For Domino 2
+
+The `event handler`, `h`, associated with 
+`:delete-item` is called to compute the `effect` of this event.
+
+This handler function, `h`, must take two arguments: the state-of-the-world 
+and the event, and it must return an effects map.  Without going into any
+explanations at this early point, here's a sketch of what a handler 
+might look like: 
+```clj
+(defn h 
+ [{:keys [db]} event]                    ;; args:  db from coeffect, event
+ (let [item-id (second event)]           ;; extract id from event vector
+   {:db  (dissoc-in db [:items item-id])})) ;; effect is change db
+```
+
+Sometime earlier, this event handler (function) `h` would have been associated with `:delete-item` in this way:
+```clj
+(re-frame.core/reg-event-fx  :delete-item  h)
+```
+
+#### Code For Domino 3
+
+An `effect handler` (function) actions the `effect`, and 
+resets application state to the newly computed value. This is a mutative
+step, facilitated by re-frame, which you won't have to do explicitly.
+
+#### Code For Domino 4
+
+Because the application state changed, a query (function) over the application 
+state is called automatically (reactively), and it computes the list of items (which 
+now, because of domino 3, no longer contains the deleted item). 
+
+Because the items 
+are already stored in app state, there's not a lot to compute in this case. This 
+subscription acts more like an accessor.
+```clj
+(defn query-fn
+  [db _]         ;; db is current app state
+  (:items db))   ;; not much of materialised view
+```
+
+Such a query-fn must be registered,  (reasons become obvious in the next domino) like this:
+```clj
+(re-frame.core/reg-sub  :query-items  query-fn)
+```
+   
+#### Code For Domino 5
+
+Because the query function computed a new value, a view (function) which subscribes
+to that value, is called automatically (reactively) to re-compute DOM.  It produces 
+a hiccup-formatted data structure describing the DOM nodes required (no DOM nodes 
+for the deleted item, obviously, but otherwise the same DOM as last time).
+
+```clj
+(defn items-view
+  []
+  (let [items  (subscribe [:query-items])]
+    [div: (map item-render @items]))   ;; assume item-render already written
+```
+
+Notice how `items` is "sourced".  A view function uses `subscribe` and the key
+originally used to register a query function.
+   
+#### Code For Domino 6
+
+The computed DOM (hiccup) is made real by Reagent/React. No code required. Just happens.
+
+The DOM "this
+time" is the same as last time, except for the absence of DOM for the
+deleted item.
+
+The key point to understand about 3-4-5-6 is that a change to app state, triggers queries to rerun, 
+which, in turn, triggers views to rerun which, in turn, causes fresh DOM in the broiwser All reactively.  Boom, boom, boom. 
+One domino after the other. But efficiently, with short cuituits. 
+
+#### Aaaaand we're done 
+
+At this point, the re-frame app returns to a quiescent state, 
+waiting for the next event. And, when it happens, another 
+6 domino cascade will follow.
 
 ## It Leverages Data
 
@@ -320,8 +385,8 @@ We haven't yet looked at code, but **at this point you
 already know 40% of re-frame.**  There's detail to fill in, for sure,
 but the core concepts are now known to you.
 
-Next, you need to do the code walk-through in the docs. This
-will quickly get your knowledge to about 70%. The
+Next, you need to do the code walk-through in the tutorial. This
+will get your knowledge to about 70%. The
 final 30% always comes incrementally with use and by reading the rest of the 
 docs (of which there's a few).
 
@@ -339,20 +404,14 @@ Use these resources: <br>
 https://github.com/Day8/re-com
 XXX 
 
-### What Of This Romance?
+###
 
-My job is to be a relentless cheerleader for re-frame, right?
-The gyrations of my Pom-Poms should be tectonic,
-but the following quote just makes me smile. It should
-be taught in all CompSci courses.
+Good news.  If you've read this far,
+your insiders T-shirt will be arriving soon - it
+will feature turtles
+and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption bit. Open a
+repo issue with a suggestion.
 
-> We begin in admiration and end by organizing our disappointment <br>
-> &nbsp;&nbsp;&nbsp; -- Gaston Bachelard (French philosopher)
-
-Of course, that only applies if you get passionate about your technologies.
-
-But, no. No! Those French Philosophers and their pessimism - ignore him!!
-Your love for re-frame will be deep, abiding and enriching.
 
 ### Licence
 
