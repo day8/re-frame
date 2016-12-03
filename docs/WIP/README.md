@@ -132,7 +132,7 @@ it does so in a controlled, debuggable, auditable, mockable, plugable way.
 ### Then what happens?
 
 So, that 3rd domino just changed the world and, very often, that involves 
-one particular part of the world, namely the **app's internal state**.
+one particular part of the world, namely the **app's state**.
 
 re-frame `app state` is held in one place - think of it like you 
 would an in-memory, central database for the app.
@@ -149,8 +149,8 @@ A view `v` is a function `f` of the app state `s`.
 Or, said another way, there are functions `f` which compute what DOM nodes, `v`,
 should be displayed to the user when the application is in a given app state, `s`.
 
-Or, another way: **over time**, when `s` changes, `f`
-will be called again to compute new `v`, forever keeping `v` up to date with the current `s`.
+Or, another way: **over time**, as `s` changes, `f`
+will be called each time to compute new `v`, forever keeping `v` up to date with the current `s`.
 
 Now, in our case, it is domino 3 which changes `s`, the application state,
 and, in response, dominoes 4-5-6 are about re-running `f` to compute the new `v` 
@@ -215,13 +215,14 @@ after those dominoes.
 ## Code Fragments
 
 Time to understand this 
-dominoes narrative in terms of code fragments. 
+domino narrative in terms of code fragments. 
 
-> At this point, we're moving from 30,000 feet to say 30 feet. I'm not expecting you
-to fully grok all the code presented. We're still in overview mode here and there's not
-a lot of detail given. Plenty of tutorials and examples to follow.
+> You shouldn't expect 
+to fully grok all the code presented below. We're still in overview mode, getting 
+the 30,000 foot view, and 
+detail is missing.  Plenty of tutorials and examples to follow.
 
-Imagine: the UI of an SPA shows a list of items. This user 
+**Imagine:** the UI of an SPA shows a list of items. This user 
 clicks the "delete" button next to the 3rd item in a list.
 
 In response, 
@@ -229,16 +230,16 @@ what happens within this imaginary re-frame app? Here's a sketch of the 6 domino
 
 ### Code For Domino 1
 
-1. The delete button for that 3rd item will have an `on-click` handler (function) which looks
-   like this:  
-   ```clj
-     #(re-frame.core/dispatch [:delete-item 2486])
-   ```
+The delete button for that 3rd item will have an `on-click` handler (function) which looks
+like this:  
+```clj
+ #(re-frame.core/dispatch [:delete-item 2486])
+```
 
-   `dispatch` is the means by which you emit an `event`.  An `event` is a vector and, in this case, 
-   it has 2 elements: `[:delete-item 2486]`. The first element,
-   `:delete-item`, is the kind of event. The `rest` is optional, and is whatever else needs to 
-   be known about the event - in this case, my made-up id, `2486`, of the item to delete.
+`dispatch` is the means by which you emit an `event`.  An `event` is a vector and, in this case, 
+it has 2 elements: `[:delete-item 2486]`. The first element,
+`:delete-item`, is the kind of event. The `rest` is optional, and is whatever else needs to 
+be known about the event - in this case, my made-up id, `2486`, for the item to delete.
 
 ### Code For Domino 2
 
@@ -263,18 +264,26 @@ Sometime earlier, this event handler (function) `h` would have been associated w
 
 ### Code For Domino 3
 
-An `effect handler` (function) actions the `effect`, and 
-resets application state to the newly computed value. This is a mutative
+An `effect handler` (function) actions the `effect` returned by the call to `h`. 
+That effect was the map:
+```clj
+{:db  (dissoc-in db [:items item-id])}
+```
+Keys in this map identify the required effect, with the values supplying further details.
+
+A key of `:db` means to update the app state, with the value supplied. 
+
+This is a mutative
 step, facilitated by re-frame, which you won't have to do explicitly.
 
 ### Code For Domino 4
 
-Because the application state changed, a query (function) over the application 
-state is called automatically (reactively), and it computes the list of items (which 
-now, because of domino 3, no longer contains the deleted item). 
+Because the app state changed, a query (function) over this app  
+state is called automatically (reactively), and it computes the list of items (which, 
+because of domino 3, has been updated to no longer contain the deleted item). 
 
 Because the items 
-are already stored in app state, there's not a lot to compute in this case. This 
+are stored in app state, there's not a lot to compute in this case. This 
 subscription acts more like an accessor.
 ```clj
 (defn query-fn
@@ -282,7 +291,7 @@ subscription acts more like an accessor.
   (:items db))   ;; not much of materialised view
 ```
 
-Such a query-fn must be registered,  (reasons become obvious in the next domino) like this:
+Such a query-fn must be registered, (reasons become obvious in the next domino) like this:
 ```clj
 (re-frame.core/reg-sub  :query-items  query-fn)
 ```
@@ -297,30 +306,30 @@ for the deleted item, obviously, but otherwise the same DOM as last time).
 ```clj
 (defn items-view
   []
-  (let [items  (subscribe [:query-items])]
+  (let [items  (subscribe [:query-items])]  ;; source items from app state
     [div: (map item-render @items]))   ;; assume item-render already written
 ```
 
-Notice how `items` is "sourced".  A view function uses `subscribe` and the key
+Notice how `items` is "sourced".  A view function uses `subscribe` with a key
 originally used to register a query function.
    
 ### Code For Domino 6
 
-The computed DOM (hiccup) is made real by Reagent/React. No code required. Just happens.
+The computed DOM (hiccup) is made real by Reagent/React. No code from you required. Just happens.
 
 The DOM "this
 time" is the same as last time, except for the absence of DOM for the
 deleted item.
 
 The key point to understand about 3-4-5-6 is that a change to app state, triggers queries to rerun, 
-which, in turn, triggers views to rerun which, in turn, causes fresh DOM in the broiwser All reactively.  Boom, boom, boom. 
-One domino after the other. But efficiently, with short cuituits. 
+which, in turn, triggers views to rerun which, in turn, causes fresh DOM in the broiwser All reactively.  
+Boom, boom, boom. 
+One domino after the other. But with efficiency short circuits.
 
 ### Aaaaand we're done 
 
 At this point, the re-frame app returns to a quiescent state, 
-waiting for the next event. And, when it happens, another 
-6 domino cascade will follow.
+waiting for the next event.
 
 ## It Leverages Data
 
@@ -417,7 +426,7 @@ repo issue with a suggestion.
 
 ## Licence
 
-Copyright © 2015 Michael Thompson
+Copyright © 2014-2016 Michael Thompson
 
 Distributed under The MIT License (MIT) - See LICENSE.txt
 
