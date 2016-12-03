@@ -29,7 +29,7 @@ Perhaps:
     **completely change everything**?  And, if so, what would that look like in a language
     that embraces those paradigms?
 3.  You're taking a [Functional Design and Programming course at San Diego State University](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html)
-    and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days.
+    and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days. Just.
 4.  re-frame is impressively buzzword compliant: it has reactivity,
     unidirectional data flow, pristinely pure functions,
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
@@ -56,7 +56,7 @@ which transform that data.
 Architecturally, re-frame implements "a perpetual loop".
 
 To build an app, you hang pure functions on certain parts of this loop, 
-and re-frame looks after the `conveyance of data` (flow of data) 
+and re-frame looks after the `conveyance of data` 
 around the loop, into and out of the transforming functions you 
 provide - hence the tag line "Derived Data, Flowing".
 
@@ -64,7 +64,7 @@ provide - hence the tag line "Derived Data, Flowing".
 
 Remember this diagram from school? The water cycle, right?
 
-<img height="400px" align="right" src="/images/the-water-cycle.png?raw=true">
+<img height="350px" align="right" src="/images/the-water-cycle.png?raw=true">
 
 Two distinct stages, involving water in different phases, being acted upon
 by different forces: gravity working one way, evaporation/convection the other.
@@ -78,18 +78,20 @@ Sure, right now, you're thinking "lazy sod - make a proper Computer Science-y di
 Joe Armstrong says "don't break the laws of physics" - I'm sure
 you've seen the videos - and if he says to do something, you do it
 (unless Rich Hickey disagrees, and says to do something else). So,
-this diagram, apart from being a plausible analogy which might encourage
-you to look differently at re-frame, is **practically proof** it does physics.
+this diagram, apart from being a plausible analogy which might help
+you to understand re-frame, is **practically proof** it does physics.
 
 ### It is a 6-domino cascade
 
-Computationally, each iteration of the loop involves a
-6 domino cascade.  One domino triggering the next, which triggers the next, etc,
-until we are back at the beginning of the loop. Each iteration has the same cascade.
-
 <img align="right" src="/images/Readme/Dominoes-small.jpg?raw=true">
 
-#### 1st Domino 
+Computationally, each iteration of the loop involves a
+6 domino cascade.  
+
+One domino triggers the next, which triggers the next, etc,
+until we are back at the beginning of the loop. Each iteration is the same cascade.
+
+### 1st Domino 
 
 An `event` is sent when something happens - the user 
 clicks a button, or a websocket receives a new message.
@@ -100,7 +102,7 @@ loop iteration after loop iteration, from one state to the next.
 
 re-frame is `event` driven.
 
-#### 2nd Domino
+### 2nd Domino
 
 In response to an `event`, an application must compute 
 the implication (the ambition, the intent). This is known as `event handling`.
@@ -113,7 +115,7 @@ Much of the time, only the state of the SPA itself need
 change, but sometimes the outside world must too must be effected
 (localstore, cookies, databases, emails, logs, etc).
 
-#### 3rd Domino
+### 3rd Domino
 
 These descriptions of `effects` are actioned. The intent is realised.
 
@@ -127,7 +129,7 @@ never achieving anything.
 So re-frame embraces the protagonist nature of `effects` - the entire, unruly zoo of them - but
 it does so in a controlled, debuggable, auditable, mockable, plugable way.
 
-#### Then what happens?
+### Then what happens?
 
 So, that 3rd domino just changed the world and, very often, that involves 
 one particular part of the world, namely the **app's internal state**.
@@ -138,7 +140,7 @@ would an in-memory, central database for the app.
 When domino 3 changes `app state`, it triggers the next part of the cascade 
 involving dominoes 4-5-6.
 
-#### The view formula 
+### The view formula 
 
 The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
 `v = f(s)`  
@@ -160,7 +162,7 @@ and only part of `s` may change at any one time, so only part of the
 `v` (DOM) need be re-computed and updated. And some parts of `v` might not 
 even be showing right now.
 
-#### Domino 4
+### Domino 4
 
 Domino 4 is a novel and efficient de-duplicated signal graph which 
 runs query functions on the app state, `s`, efficiently computing 
@@ -169,7 +171,7 @@ reactive, multi-layered, "materialised views" of `s`.
 (Relax about any unfamiliar terminology, you'll soon 
 see how simple the code actually is)
 
-#### Domino 5
+### Domino 5
 
 Domino 5 is one or more **view functions** (aka Reagent components) which compute what 
 UI DOM should be displayed for the user.
@@ -178,7 +180,7 @@ They take data, delivered reactively by the queries of domino 4,
 and compute hiccup-formatted data, which is a description of the DOM required.
 More on hiccup soon.
 
-#### Domino 6
+### Domino 6
 
 Domino 6 is not something you need write yourself - instead it is handled for you 
 by Reagent/Rect. I mention it here 
@@ -188,7 +190,7 @@ This is the step in which the hiccup-formatted
 "descriptions of required DOM", returned by Domino 5, are made real. The  
 browser DOM nodes are mutated. 
 
-### A Simple Loop Of Simple Functions
+## A Simple Loop Of Simple Functions
 
 **Each of the dominoes you supply are simple, pure functions** which 
 can be be described, understood and 
@@ -225,7 +227,7 @@ clicks the "delete" button next to the 3rd item in a list.
 In response, 
 what happens within this imaginary re-frame app? Here's a sketch of the 6 domino cascade:
 
-#### Code For Domino 1
+### Code For Domino 1
 
 1. The delete button for that 3rd item will have an `on-click` handler (function) which looks
    like this:  
@@ -238,7 +240,7 @@ what happens within this imaginary re-frame app? Here's a sketch of the 6 domino
    `:delete-item`, is the kind of event. The `rest` is optional, and is whatever else needs to 
    be known about the event - in this case, my made-up id, `2486`, of the item to delete.
 
-#### Code For Domino 2
+### Code For Domino 2
 
 The `event handler`, `h`, associated with 
 `:delete-item` is called to compute the `effect` of this event.
@@ -259,13 +261,13 @@ Sometime earlier, this event handler (function) `h` would have been associated w
 (re-frame.core/reg-event-fx  :delete-item  h)
 ```
 
-#### Code For Domino 3
+### Code For Domino 3
 
 An `effect handler` (function) actions the `effect`, and 
 resets application state to the newly computed value. This is a mutative
 step, facilitated by re-frame, which you won't have to do explicitly.
 
-#### Code For Domino 4
+### Code For Domino 4
 
 Because the application state changed, a query (function) over the application 
 state is called automatically (reactively), and it computes the list of items (which 
@@ -285,7 +287,7 @@ Such a query-fn must be registered,  (reasons become obvious in the next domino)
 (re-frame.core/reg-sub  :query-items  query-fn)
 ```
    
-#### Code For Domino 5
+### Code For Domino 5
 
 Because the query function computed a new value, a view (function) which subscribes
 to that value, is called automatically (reactively) to re-compute DOM.  It produces 
@@ -302,7 +304,7 @@ for the deleted item, obviously, but otherwise the same DOM as last time).
 Notice how `items` is "sourced".  A view function uses `subscribe` and the key
 originally used to register a query function.
    
-#### Code For Domino 6
+### Code For Domino 6
 
 The computed DOM (hiccup) is made real by Reagent/React. No code required. Just happens.
 
@@ -314,7 +316,7 @@ The key point to understand about 3-4-5-6 is that a change to app state, trigger
 which, in turn, triggers views to rerun which, in turn, causes fresh DOM in the broiwser All reactively.  Boom, boom, boom. 
 One domino after the other. But efficiently, with short cuituits. 
 
-#### Aaaaand we're done 
+### Aaaaand we're done 
 
 At this point, the re-frame app returns to a quiescent state, 
 waiting for the next event. And, when it happens, another 
@@ -348,7 +350,7 @@ order functions). Etc.
 
 Data - that's the way we roll.
 
-### It is mature and proven in the large
+## It is mature and proven in the large
 
 re-frame was released in early 2015, and has since [been](https://www.fullcontact.com)
 successfully
@@ -379,7 +381,7 @@ a delightful hot-loading development story. And, yes, it has
 a fun specialist tooling, and a community,
 and useful 3rd party libraries.
 
-### Where Do I Go Next?
+## Where Do I Go Next?
 
 We haven't yet looked at code, but **at this point you 
 already know 40% of re-frame.**  There's detail to fill in, for sure,
@@ -413,7 +415,7 @@ and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption 
 repo issue with a suggestion.
 
 
-### Licence
+## Licence
 
 Copyright © 2015 Michael Thompson
 
