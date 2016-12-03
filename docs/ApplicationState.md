@@ -2,16 +2,12 @@
 
 Let's understand how re-frame manages application state.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
+
+#### Table Of Contents
 
 - [On Data](#on-data)
 - [The Big Ratom](#the-big-ratom)
 - [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 
 ### On Data
 
@@ -36,7 +32,7 @@ spent your life breaking systems into pieces, organised around behaviour and try
 to hide state.  I still wake up in a sweat some nights thinking about all
 that Clojure data lying around exposed and passive.
 
-But, as Fogus reminded us, data at rest is quite perfect.
+But, as Fogus reminds us, data at rest is quite perfect.
 
 In re-frame's reference implementation, `app-db` is one of these:
 ```clj
@@ -62,7 +58,7 @@ Further Notes:
    be a [datascript](https://github.com/tonsky/datascript database).  In fact, any database which 
    can signal you when it changes would do. We'd love! to be using [datascript](https://github.com/tonsky/datascript database) - so damn cool -
    but we had too much data in our apps. If you were to use it, you'd have to tweak the 
-   reference implementation a bit,  [perhaps using this inspiration](https://gist.github.com/allgress/11348685).
+   reference implementation a bit and use [Posh](https://github.com/mpdairy/posh).
 
 
 ### The Benefits Of Data-In-The-One-Place

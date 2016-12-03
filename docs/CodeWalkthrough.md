@@ -1,39 +1,15 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Initial Code Walk-through](#initial-code-walk-through)
-  - [What Code?](#what-code)
-  - [What Does It Do?](#what-does-it-do)
-  - [Namespace](#namespace)
-  - [Data Schema](#data-schema)
-- [Events (domino 1)](#events-domino-1)
-  - [dispatch](#dispatch)
-  - [After dispatch](#after-dispatch)
-- [Event Handlers (domino 2)](#event-handlers-domino-2)
-  - [reg-event-db](#reg-event-db)
-  - [:initialize](#initialize)
-  - [:timer](#timer)
-  - [:time-color-change](#time-color-change)
-- [Effect Handlers (domino 3)](#effect-handlers-domino-3)
-- [Subscription Handlers (domino 4)](#subscription-handlers-domino-4)
-- [View Functions (domino 5)](#view-functions-domino-5)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Initial Code Walk-through
 
 At this point in your reading, you are armed with:
  - a high level understanding of the 6 domino process (from re-frame's README)
  - an understanding of application state (from the previous tutorial) 
- 
+
 In this tutorial, **we'll look at re-frame code**. Finally.
 
 ### What Code?
 
 This repo contains an `/example` application called "simple",
-which has around 70 lines of code. We'll look at every line
-and understand what it does.
+which has around 70 lines of code. We'll look at every line.
 
 You are currently about 50% the way to understanding re-frame. By the
 end of this tutorial, you'll be at 70%, which is good
@@ -70,15 +46,15 @@ for your application state (the data stored in `app-db`). But,
 here, to minimise cognitive load, we'll cut that corner.
 
 But ... we can't cut it completely. You'll still need an
-informal description ... for this app `app-db` will contain
+informal description, and here it is ... for this app `app-db` will contain
 a two-key map like this:
 ```cljs
-{:time       (js/Date.)    ;; current time for display
- :time-color "#f88"}       ;; what colour should the time be shown in
+{:time       (js/Date.)  ;; current time for display
+ :time-color "#f88"}     ;; the colour in which the time should be be shown
 ```
 
-re-frame itself owns/manages `app-db` (see FAQ #1),
-supplying the value within it (a two-key map in this case)
+re-frame itself owns/manages `app-db` (see FAQ #1), and it will
+supply the value within it (a two-key map in this case)
 to your various handlers as required.
 
 ## Events (domino 1)
@@ -145,7 +121,7 @@ The `router`:
    for this kind of event
 3. calls that event handler with the necessary arguments
 
-As a re-frame app developer, your job then is to write and register a handler 
+As a re-frame app developer, your job, then, is to write and register a handler 
 for each kind of event. 
 
 ## Event Handlers (domino 2)
@@ -173,7 +149,7 @@ The handler function you provide should expect two parameters:
    - `db` the current application state
    - `v`  the event vector
     
-So your function will have a signature like this: `(fn [db v] ...)`. 
+So, your function will have a signature like this: `(fn [db v] ...)`. 
 
 Each event handler must compute and return the new state of 
 the application, which means it normally returns a
@@ -192,14 +168,15 @@ to be computed. More on this soon.
 ### :initialize
 
 On startup, application state must be initialised. We
-want to put a sensible value into `app-db`.
+want to put a sensible value into `app-db` which will 
+otherwise contain `{}`.
 
 So a `(dispatch [:initialize])` will happen early in the 
 apps life (more on this below), and we need to write an `event handler`
 for it. 
 
 Now this event handler is slightly unusual because it doesn't 
-much care what the value in `db` - it just wants to plonk 
+much care about the existing value in `db` - it just wants to plonk 
 in a new complete value. 
 
 Like this: 
@@ -216,7 +193,7 @@ This particular handler `fn` ignores the two parameters
 a map literal, which becomes the application 
 state.
 
-Here's an alternative way of writing it: 
+Here's an alternative way of writing it which does pay attention to the existing value of `db`: 
 ```clj
 (rf/reg-event-db
   :initialize              
@@ -226,8 +203,6 @@ Here's an alternative way of writing it:
       (assoc :time-color "#f88")))
 ```
 
-`app-db` starts off holding a `{}` value. So we assume `db` will be `{}` 
-but, irrespective, we just assoc into it. 
 
 ### :timer
 
@@ -286,27 +261,25 @@ source data from other subscriptions. So a tree of dependencies
 results.
  
 The Views (Domino 5) are the leaves.  The root is `app-db` and the 
-intermediate nodes are computations being performed by 
-
-Each query is identified by an `id` XXXX
+intermediate nodes are computations being performed by Domino 4 query functions.
 
 Now, the two examples below are utterly trivial. They just extract part of the application
-state and return it. So, there's virtually no computation. More interesting 
+state and return it. So, there's virtually no computation. More interesting, layered 
 subscriptions and more explanation can be found in the todomvc example.
 
 `reg-sub` associates a `query id` with a function which computes
  that query. It's use looks like this: 
 ```clj
 (reg-sub
-  :some-query-id      ;; query identifier
-  some-function)      ;; the function which will compute the query
+  :some-query-id  ;; query id (used later in subscribe)
+  a-query-fn)     ;; the function which will compute the query
 ```
 If, later, we see a view function requesting data like this:
-    `(listen [:some-query-id])`   ;; note use of `:some-query-id`     XXX using listen
-then `some-function` will be used to perform the query over application state. 
+    `(subscribe [:some-query-id])`   ;; note use of `:some-query-id`
+then `a-query-fn` will be used to perform the query over application state. 
 
-Each time application state changes, `some-function` will be
-called again to compute a new materialised view (a new computation)
+Each time application state changes, `a-query-fn` will be
+called again to compute a new materialised view (a new computation over app state)
 and that new value will be given to any view function which is subscribed
 to `:some-query-id`. The view function itself will then also be called again
 to compute new DOM (because it depends on a query value which changed).
@@ -328,7 +301,7 @@ Here's the code:
     (:time-color db)))
 ```
 
-Like I said, both of these queries are trivial.
+Like I said, both of these queries are trivial. See todomvc for more interesting ones.
 
 ## View Functions (domino 5)
 
@@ -358,12 +331,16 @@ And if we call it:
 
 Yep, that's a vector with two elements: a keyword and a string. 
 
-Now, greet is pretty simple and there's no "Data In", here, just "Hiccup out".
+Now,`greet` is pretty simple and there's no "Data In", here, just "Hiccup out".
 
-### Sourcing data. 
+### Sourcing data
 
 In order to render a DOM representation of the application state, view functions
 must first obtain that state. This happens via subscriptions.
+
+> XXX  This particular document is a WIP ... it peters out after this ... I wouldn't read any more. 
+
+-----
 
 transform data into data. They source 
 data from subscriptions (queries across application state), and 
@@ -459,5 +436,4 @@ the synchronous
    using standard, supplied ones.
  - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
  - write Reagent view functions  (view layer)  (domino 5)
- 
-re-frame's job is to XXX
+

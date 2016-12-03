@@ -1,4 +1,10 @@
-### [re-frame Introduction](../README.md)
+### Introduction 
+This section contains a WIP rewrite of the existing README 
+into a number of smaller documents, with a different way of explaining re-frame. 
+- [re-frame's New README (soon)](NewREADME.md)
+- [App State](ApplicationState.md)
+- [Code Walk-Through](CodeWalkThrough.md)
+- [Mental Model Omnibus](MentalModelOmnibus.md)
 
 
 ### Understanding Event Handlers

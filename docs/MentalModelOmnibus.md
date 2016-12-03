@@ -32,7 +32,7 @@ and get you reading and writing code ASAP.
 
 **But** there are other interesting perspectives on re-frame
 which will deepen your understanding of its design,
-and enable you to get the best from it.
+and help you to get the best from it.
 
 This tutorial is a tour 
 of these ideas, justifications and insights.  It is a little rambling, but I
@@ -48,7 +48,8 @@ For all its considerable brilliance,  Reagent (+ React)
 delivers only the 'V' part of a traditional MVC framework.
 
 But apps involve much more than V. We build quite complicated
-SPAs which can run to 50K lines of code. So, where does the control logic go? How is state stored & manipulated? etc.
+SPAs which can run to 50K lines of code. So, I wanted to know: 
+where does the control logic go? How is state stored & manipulated? etc.
 
 We read up on [Pedestal App], [Flux], 
 [Hoplon], [Om], early [Elm], etc and re-frame is the architecture that
@@ -78,8 +79,7 @@ __Second__, we believe in ClojureScript, immutable data and the process of build
 a system out of pure functions.
 
 __Third__, we believe in the primacy of data, for the reasons described in
-the main README. re-frame has a data oriented functional architecture. It 
-implements an infinite loop of Derived data.
+the main README. re-frame has a data oriented, functional architecture.
 
 __Fourth__, we believe that Reactive Programming is one honking good idea. 
 How did we ever live without it? It is a quite beautiful solution to one half of re-frame's 
@@ -122,7 +122,7 @@ The only way the app "moves forwards" is via events. "Replaying events" moves yo
 step by step towards the error causing problem.
 
 This is perfect for debugging assuming, of course, you are in a position to capture
-an app state checkpoint, and the events since then.
+a checkpoint of `app-db`, and the events since then.
 
 Here's Martin Fowler's [description of Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html).
 
@@ -167,8 +167,8 @@ allows:
   2. Event handlers sometimes need coeffects (arguments) in addition to `db` and `v`. 
 
 But, even if it isn't the full picture, it is a very useful 
-and interesting mental model. We first saw it in Elm's early use 
-of `foldp` (fold from the past), which was later enshrined in the 
+and interesting mental model. We were first exposed to this idea
+via Elm's early use of `foldp` (fold from the past), which was later enshrined in the 
 Elm Architecture.
 
 And for the love of all that is good, please watch this terrific
@@ -178,21 +178,21 @@ all the problems that evaporate.
 Think about that: shared mutable state (the root of all evil),
 re-imagined as a stream!!  Blew my socks off.
 
-If, by chance, you have watched that video, you might twig to 
-the idea that `app-db` is really a derived value .. the video talks 
+If, by chance, you ever watched that video (you should!), you might then twig to 
+the idea that `app-db` is really a derived value ... the video talks 
 a lot about derived values. So, yes, app-db is a derived value of the `perpetual reduce`.
 
 And yet, it acts as the authoritative source of state in the app. And yet, 
-it isn't, it is simply a piece of derived state.  And yet, it is the source.
+it isn't, it is simply a piece of derived state.  And yet, it is the source. Etc.
 
-This is an infinite loop of sorts. An infinite loop of derived data.
+This is an infinite loop of sorts - an infinite loop of derived data.
 
 ## It does FSM
 
 > Any sufficiently complicated GUI contains an ad hoc, 
 > informally-specified, bug-ridden, slow implementation 
 > of a hierarchical Finite State Machine  <br>
-> -- [my 11th rule](https://en.wikipedia.org/wiki/Greenspun%27s_tenth_rule)
+> -- [me failing to impress my two twitter followers] 
 
 `event handlers` collectively
 implement the "control" part of an application. Their logic
@@ -233,13 +233,14 @@ Events - that's the way we roll.
 
 My job is to be a relentless cheerleader for re-frame, right?
 The gyrations of my Pom-Poms should be tectonic,
-but the following quote just makes me smile. It should
+but the following quote makes me smile. It should
 be taught in all ComSci courses.
 
 > We begin in admiration and end by organizing our disappointment <br>
 > &nbsp;&nbsp;&nbsp; -- Gaston Bachelard (French philosopher)
 
-Of course, that only applies if you get passionate about a technology.
+Of course, that only applies if you get passionate about a technology
+(a flaw of mine).
 
 But, no. No! Those French Philosophers and their pessimism - ignore him!!
 Your love for re-frame will be deep, abiding and enriching.
@@ -259,63 +260,15 @@ Using data gives us:
   - logability and event sourcing
   - a more flexible version of "partial" (curring)
 
-## Derived Data
-
- **Derived data is flowing around the
-loop, reactively, through pure functions.**  There is a pause in the loop whenever we wait
-for a new event, but the moment we get it, it's another iteration of the "derived data" FRP loop.
-
-Derived values, all the way down, forever.
-
-
-
-
-
-## Prefer Dumb Views - Part 1
-
-Many events are dispatched by the DOM in response to user actions.
-
-For example, a button view might be like this:
-```clj
-(defn yes-button
-  []
-  [:div  {:class "button-class"
-          :on-click  #(dispatch [:yes-button-clicked])}
-          "Yes"])
-```
-
-Notice that `on-click` DOM handler:
-```clj
-  #(dispatch [:yes-button-clicked])
-```
-
-With re-frame, we want the DOM as passive as possible. We do 
-not want our views containing any imperative control logic. 
-All of that should be computed by event handlers.
-
-We want that "on-click" as simple as we can make it.
-
-**Rule**:  `views` are as passive and minimal as possible when it 
-comes to handling events. They `dispatch` pure data and nothing more.
-
-## Prefer Dumb Views - Part 2
-
-Neither do we want views computing the data they render.  
-That's the job of a subscription:
-
-So this is bad:
-```clj
-(defn show-items
-  []
-  (let [sorted-items (sort @(subscribe [:items]))]  ;; <--
-    (into [:div] (for [i sorted-items] [item-view i]))))
-```
-
-The view is not simply taking the data supplied by the 
-
 
 ## Full Stack
 
+If you like re-frame and want to take the principles full-stack, then
+these resource might be interesting:
 
-Commander Pattern 
+Commander Pattern  
 https://www.youtube.com/watch?v=B1-gS0oEtYc 
+
+Datalog All The Way Down 
+https://www.youtube.com/watch?v=aI0zVzzoK_E
+
