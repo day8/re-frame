@@ -56,14 +56,14 @@
   :initialise-db                  ;; event id being handled
   [(inject-cofx :local-store-todos)
    check-spec-interceptor]                                  ;; after the event handler runs, check that app-db matches the spec
-  (fn [{:keys [db local-store-todos]} _]                       ;; the handler being registered
+  (fn [{:keys [db local-store-todos]} _]                    ;; the handler being registered
     {:db (assoc default-value :todos local-store-todos)}))  ;; all hail the new state
 
 
                                   ;; usage:  (dispatch [:set-showing  :active])
 (reg-event-db                     ;; this handler changes the todo filter
   :set-showing                    ;; event-id
-  [check-spec-interceptor (path :showing) trim-v]    ;; this colelction of interceptors wrap wrap the handler
+  [check-spec-interceptor (path :showing) trim-v]    ;; this collection of interceptors wrap the handler
 
   ;; Because of the path interceptor above, the 1st parameter to
   ;; the handler below won't be the entire 'db', and instead will
@@ -74,7 +74,7 @@
     new-filter-kw))                  ;; return new state for the path
 
 
-                                  ;; usage:  (dispatch [:add-todo  "Finsih comments"])
+                                  ;; usage:  (dispatch [:add-todo  "Finish comments"])
 (reg-event-db                     ;; given the text, create a new todo
   :add-todo
   todo-interceptors
