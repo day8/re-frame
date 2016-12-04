@@ -459,6 +459,14 @@ structure exists in `app-db` before any subscriptions or event handlers run.
  - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
  - write Reagent view functions  (view layer)  (domino 5)
 
-## Next 
+## Further 
 
 You should look at the todomvc example.  
+
+
+*** 
+
+Previous:  [app-db (Application State)](ApplicationState.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Mental Model Omnibus](MentalModelOmnibus.md)
+

@@ -1,1145 +1,467 @@
-![logo](/images/logo/re-frame_512w.png?raw=true)
+[logo](/images/logo/re-frame_128w.png?raw=true)
 
 ## Derived Values, Flowing
 
 > This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
 sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the
-metalwork, a little refreshing of the ornamentation . . . but is this not the nine hundred-year-old
+metalwork, a little refreshing of the ornamentation ... but is this not the nine hundred-year-old
 axe of my family? And because it has changed gently over time, it is still a pretty good axe,
 y'know. Pretty good.
 
-> -- Terry Pratchett, The Fifth Elephant
-
-## Why Should You Care?
-
-Either:
-
-1.  You want to develop an [SPA] in ClojureScript, and you are looking for a framework; or
-2.  You believe that, by early 2015, React had won the JavaScript framework wars and
-    you are curious about the bigger implications. Is the combination of
-    `reactive programming`, `functional programming` and `immutable data` going to
-    **completely change everything**?  And, if so, what would that look like in a language
-    that embraces those paradigms?
-3.  You are curious about a `modern lisp` like Clojure. How could a language THAT 
-    old still be so revered? And what are these whispers I hear about 
-    "Data Oriented" architectures, and leveragable schemas. I want to expand 
-    my mind.
-
-
-## re-frame
-
-re-frame is a pattern for writing [SPAs] in ClojureScript, using [Reagent].
-
-This repo contains both a **description of this pattern** and a **reference implementation**.
-
-To quote McCoy: "It's MVC, Jim, but not as we know it".
-
-To build a re-frame app, you:
- - design your app's information model (data layer)
- - write and register subscription functions (query layer)
- - write Reagent view functions  (view layer)
- - write and register event handler functions  (control layer and/or state transition layer)
-
-Features:
-
-1. The functions you write are pure, so the computational pieces of your app can
-   be described, understood and tested independently. Dependency Injection isn't needed.
-2. re-frame looks after the `conveyance of data` - the transport of data between pure
-   functions. 
-3. One half of this "conveyance" involves a reactive data flow - a dynamic,
-   unidirectional Signal graph.
-4. The resulting architecture involves "derived data" flowing in a two-stage, loop.
-   Without realising it, you will be explicitly modelling time.
-5. It is fast, straight out of the box. 
-6. The surprising thing about re-frame is how simple it is. The reference
-   implementation is 350 lines of (ClojureScript) code. Learn it in an afternoon.
-7. But it scales up nicely to more complex apps.  Frameworks are just pesky overhead at small
-   scale - measure them instead by how they help you tame the complexity of bigger apps.
-8. Re-frame is impressively buzzword compliant: it has FRP-nature,
-   unidirectional data flow, pristinely pure functions, interceptors, conveyor belts, statechart-friendliness (FSM)
-   and claims an immaculate hammock conception.
-   It also has a charming xkcd reference (soon)
-   and a hilarious, insiders-joke T-shirt, ideal for conferences (in design).
-   What could possibly go wrong?
+> -- Terry Pratchett, The Fifth Elephant <br>
+> &nbsp;&nbsp;&nbsp; Reflecting on identity, flow and derived values
 
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
 [![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
 [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/develop)
 [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/master)
-[![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/Day8/re-frame/tree/master/examples)
-
-
-__Warning__:  That was the summary. What follows is a long-ish tutorial/explanation.
-
-## Tutorial Table of Contents
-
-
- - [What Problem Does It Solve?](#what-problem-does-it-solve)
- - [Guiding Philosophy](#guiding-philosophy)
- - [FRP Clarifications](#frp-clarifications)
- - [Explaining re-frame](#explaining-re-frame)
- - [On Data](#on-data)
- - [The Big Ratom](#the-big-ratom)
- - [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
- - [Flow](#flow)
- - [How Flow Happens In Reagent](#how-flow-happens-in-reagent)
- - [Components](#components)
- - [Truth Interlude](#truth-interlude)
- - [Components Like Templates?](#components-like-templates)
- - [React etc.](#react-etc)
- - [Subscribe](#subscribe)
- - [Just A Read-Only Cursor?](#just-a-read-only-cursor)
- - [The Signal Graph](#the-signal-graph)
- - [A More Efficient Signal Graph](#a-more-efficient-signal-graph)
- - [The 2nd Flow](#the-2nd-flow)
- - [Event Flow](#event-flow)
- - [What are events?](#what-are-events)
- - [Dispatching Events](#dispatching-events)
- - [Event Handlers](#event-handlers)
- - [Routing](#routing)
- - [Control Via FSM](#control-via-fsm)
- - [As A Reduce](#as-a-reduce)
- - [Derived Data, Everywhere, flowing](#derived-data-everywhere-flowing)
- - [Logging And Debugging](#logging-and-debugging)
- - [In Summary](#in-summary)
- - [Where Do I Go Next](#where-do-i-go-next)
- - [Licence](#licence)
-
-## What Problem Does It Solve?
-
-First, we decided to build our SPA apps with ClojureScript, then we
-choose [Reagent], then we had a problem.
 
-For all its considerable brilliance,  Reagent (+ React)
-delivers only the 'V' part of a traditional MVC framework.
-
-But apps involve much more than V. Where
-does the control logic go? How is state stored & manipulated? etc.
-
-We read up on [Pedestal App], [Flux], 
-[Hoplon], [Om], early [Elm], etc and re-frame is the architecture that
-emerged.  Since that time we have kept a close eye on developments like
-Elm Architecture, Om.Next, BEST, Cycle.js, etc.  They have taught us much.
 
-re-frame does have M, V, and C parts but they aren't objects, they
-are pure functions (or pure data),
-and they are wired together via data flows.  It is sufficiently different in nature
-from (traditional, Smalltalk) MVC that calling it MVC would be confusing.  I'd
-love an alternative.
-
-Perhaps it is a RACES framework - Reactive-Atom Component Event
-Subscription framework (I love the smell of acronym in the morning).
+## Why Should You Care?
 
-Or, if we distill to pure essence, `DDATWD` - Derived Data All The Way Down.
+Perhaps:
 
-*TODO:* get acronym down to 3 chars! Get an image of stacked Turtles for `DDATWD`
-insider's joke, conference T-Shirt.
+1.  You want to develop an [SPA] in ClojureScript, and you are looking for a framework
+2.  You believe Facebook did something magnificent when it created React, and
+    you are curious about the further implications. Is the combination of
+    `reactive programming`, `functional programming` and `immutable data` going to
+    **completely change everything**?  And, if so, what would that look like in a language
+    that embraces those paradigms?
+3.  You're taking a [Functional Design and Programming course at San Diego State University](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html)
+    and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days. Just.
+4.  re-frame is impressively buzzword compliant: it has reactivity,
+    unidirectional data flow, pristinely pure functions,
+    interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
+    and claims an immaculate hammock conception. It also has a charming
+    xkcd reference (soon) and a hilarious, insiders-joke T-shirt,
+    ideal for conferences (in design).  What could possibly go wrong?
 
+## re-frame
 
-## Guiding Philosophy
+re-frame is a pattern for writing [SPAs] in ClojureScript, using [Reagent].
 
-__First__, above all we believe in the one true [Dan Holmsand], creator of Reagent, and
-his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
+This repo contains both a **description of this pattern** and 
+a **reference implementation**.
 
-__Second__, we believe in ClojureScript, immutable data and the process of building
-a system out of pure functions.
-
-__Third__, we believe in the primacy of data. Within the Clojure community this view is 
-sometimes captured with aphorisms like "data is the ultimate in late binding" and 
-"data > functions > macros".  There is also talk of Data Oriented Architectures.
-
-__Fourth__, we believe that [Reactive Programming] is one honking great idea. 
-But only up to a point. It is a beautiful solution to one half of the 
-data conveyance problem.
-
-__Finally__, we believe in [command-query separation](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation). 
-As a result, we specifically don't like two way data binding or read/write `cursors` which
-promote the two way flow of data. As programs get bigger, we've found that their
-use seems to encourage control logic into all the wrong places.  Sadly, each generation of 
-programmers seems to have to rediscover this principle.  
+McCoy might report "It's MVC, Jim, but not as we know it".  And you would respond 
+"McCoy, you damn trouble maker, why even mention an OO pattern? 
+re-frame is a **functional framework**."
 
-## FRP Clarifications
+Being a functional framework, it is about data, and the pure functions 
+which transform that data.
 
-We'll get to the meat in a second, I promise, but first one final, useful diversion ...
+### It is a loop
 
-Terminology in the FRP world seems to get people hot under the collar. Those who believe in continuous-time
-semantics might object to me describing re-frame as having FRP-nature. They'd claim that it does something
-different from pure FRP, which is true.
-
-But, these days, FRP seems to have become a
-["big tent"](http://soft.vub.ac.be/Publications/2012/vub-soft-tr-12-13.pdf)
-(a broad church?).
-Broad enough perhaps that re-frame can be in the far, top, left paddock of the tent, via a series of
-qualifications: re-frame has "discrete, dynamic, asynchronous, push FRP-ish-nature" without "glitch free" guarantees.
-(Surprisingly, "glitch" has specific meaning in FRP).
-
-**If you are new to FRP, or reactive programming generally**, browse these resources before
-going further (certainly read the first two):
-- [Creative Explanation](http://paulstovell.com/blog/reactive-programming)
-- [Reactive Programming Backgrounder](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754)
-- [presentation (video)](http://www.infoq.com/presentations/ClojureScript-Javelin) by Alan Dipert (co-author of Hoplon)
-- [serious pants Elm thesis](https://www.seas.harvard.edu/sites/default/files/files/archived/Czaplicki.pdf)
+Architecturally, re-frame implements "a perpetual loop".
 
-And for the love of all that is good, please watch this terrific
-[StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). Watch what happens
-when you re-imagine a database as a stream!! Look at all the problems that are solved.
-Think about that: shared mutable state (the root of all evil),
-re-imagined as a stream!!  Blew my socks off.
+To build an app, you hang pure functions on certain parts of this loop, 
+and re-frame looks after the `conveyance of data` 
+around the loop, into and out of the transforming functions you 
+provide - which is why the tag line is "Derived Values, Flowing".
 
-re-frame tries to be `Derived Data everywhere, flowing`. Or perhaps,
-`Derived Data All The Way Down` (an infinite loop of Derived Data).
-More explanation on all these claims soon.
+### It does Physics
 
-## Explaining re-frame
+Remember this diagram from school? The water cycle, right?
 
-To explain re-frame, I'll incrementally develop a diagram, describing each part as it is added.
+<img height="350px" align="right" src="/images/the-water-cycle.png?raw=true">
 
-I'll be using [Reagent] at an intermediate level, so you will need to have done some
-introductory Reagent tutorials before going on. Try
-[The Introductory Tutorial](http://reagent-project.github.io/) or
-[this one](https://github.com/jonase/reagent-tutorial) or
-[Building Single Page Apps with Reagent](http://yogthos.net/posts/2014-07-15-Building-Single-Page-Apps-with-Reagent.html).
+Two distinct stages, involving water in different phases, being acted upon
+by different forces: gravity working one way, evaporation/convection the other.
 
-### On Data
+To understand re-frame, **imagine data flowing around that loop instead of water**. 
 
-<blockquote class="twitter-tweet" lang="en"><p>Well-formed Data at rest is as close to perfection in programming as it gets. All the crap that had to happen to put it there however...</p>&mdash; Fogus (@fogus) <a href="https://twitter.com/fogus/status/454582953067438080">April 11, 2014</a></blockquote>
-<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+re-frame
+provides the conveyance of the data around the loop - the equivalent of gravity, evaporation and convection.
+You design what's flowing and then you hang functions off the loop at
+various points to compute the data's phase changes.
 
-### The Big Ratom
+Sure, right now, you're thinking "lazy sod - make a proper Computer Science-y diagram". But, no.
+Joe Armstrong says "don't break the laws of physics" - I'm sure
+you've seen the videos - and if he says to do something, you do it
+(unless Rich Hickey disagrees, and says to do something else). So,
+this diagram, apart from being a plausible analogy which might help
+you to understand re-frame, is **practically proof** it does physics.
 
-Our re-frame diagram starts (very modestly) with  Fogus' ***well-formed data at rest*** bit:
+### It is a 6-domino cascade
 
-```
-app-db
-```
+<img align="right" src="/images/Readme/Dominoes-small.jpg?raw=true">
 
-re-frame says that you put your data into one place which we'll 
-call `app-db`.  You should specify an information model for the
-data in this one place, [giving it a powerful schema](http://clojure.org/about/spec).
+Computationally, each iteration of the loop involves a
+6 domino cascade.
 
-Now, this advice is not the slightest bit controversial for 'real' databases, right?
-You'd happily put all your well-formed data into PostgreSQL or MySQL.
+One domino triggers the next, which triggers the next, etc,
+until we are back at the beginning of the loop. Each iteration is the same cascade.
 
-But within a running
-application (in memory), it is different. If you have a background in OO, this data-in-one-place
-business is a really, really hard one to swallow.  You've
-spent your life breaking systems into pieces, organised around behaviour and trying
-to hide the data.  I still wake up in a sweat some nights thinking about all
-that Clojure data lying around exposed and passive.
+Here are the 6 dominoes ...
 
-But, as Fogus reminded us, data at rest is the easy bit. 
+### 1st Domino
 
-From here on in this document, we'll assume `app-db` is one of these:
+An `event` is sent when something happens - the user 
+clicks a button, or a websocket receives a new message.
 
-```Clojure
-(def app-db  (reagent/atom {}))    ;; a Reagent atom, containing a map
-```
+Without the impulse of a triggering `event`, no 6 domino cascade occurs.
+It is only because of `events` that a re-frame app is propelled,
+loop iteration after loop iteration, from one state to the next.
 
-The reference implementation already creates and manages an internal `app-db` for you, 
-you don't need to declare one yourself.
+re-frame is `event` driven.
 
-Although it is a `Reagent atom` (hereafter `ratom`), I'd encourage you to think of it as an in-memory database.
-It will contain structured data. You will need to query that data. You will perform CRUD
-and other transformations on it. You'll often want to transact on this
-database atomically, etc.  So "in-memory database"
-seems a more useful paradigm than plain old map-in-atom.
+### 2nd Domino
 
-A clarification:  `app-db` doesn't actually have to be a reagent/atom containing
-a map.  It could, for example, be a [datascript] database.  In fact, any database which is reactive
-(can tell you when it changes) would do.  (We'd love! to be using [datascript] - so damn cool -
-but we had too much
-data in our apps. If you were to use it, you'd have to tweak the reference implementation a bit,
-[perhaps using this inspiration](https://gist.github.com/allgress/11348685)).  
+In response to an `event`, an application must compute 
+its implication (the ambition, the intent). This is known as `event handling`.
 
+Event handler functions compute `effects` or, more accurately, 
+a **description of `effects`**. So they compute a data structure 
+which says, declaratively, how the world should change (because of the event).
 
-### The Benefits Of Data-In-The-One-Place
+Much of the time, only the "app state" of the SPA itself need
+change, but sometimes the outside world must also be effected
+(localstore, cookies, databases, emails, logs, etc).
 
-Here's the big one:  because there is a single source of truth, we do not have to write code which 
-synchronizes state between many different stateful components.  I cannot stress too much 
-how significant this is. You end up writing less code
-and an entire class of bugs is eliminated. The simplicity it brings is breathtaking. 
+### 3rd Domino
 
-Further benefits also flow:
-  1. Undo/Redo [becomes straight forward to implement](https://github.com/Day8/re-frame-undo). 
-With a central store for state, it is easy 
- to snapshot and restore. This is particularly the case because the data is immutable.  
-  2. The data in `app-db` has a strong schema so, at any moment, we can validate 
-  all the data in the system. All of it. This enables us to catch errors easily and early. It 
-increases confidence in the way that Types increases confidence, only [schemas can potentially supply more
-leverage than types](https://www.youtube.com/watch?v=nqY4nUMfus8).
-  3. The ability to genuinely model control via FSMs  (discussed later)
-  4. The ability to do time travel debugging, even in a production setting. More soon.   
+These descriptions of `effects` are actioned. The intent is realised.
 
-## Flow
+Now, to a functional programmer, `effects` are scary in a 
+[xenomorph kind of way](https://www.google.com.au/search?q=xenomorph).
+Nothing messes with functional purity
+quite like the need for effects and coeffects. But, on the other hand, `effects` are equally 
+marvelous because they take the app forward. Without them, an app stays stuck in one state forever,
+never achieving anything.
 
-Arguments from authority ...
+So re-frame embraces the protagonist nature of `effects` - the entire, unruly zoo of them - but
+it does so in a controlled, debuggable, auditable, mockable, plugable way.
 
-> Everything flows, nothing stands still.   (Panta rhei)
+### Then what happens?
 
-> No man ever steps in the same river twice for it's not the same river and he's not the same man.
+So, that 3rd domino just changed the world and, very often,
+one particular part of the world, namely the **app's state**.
 
-[Heraclitus 500 BC](http://en.wikiquote.org/wiki/Heraclitus). Who, being Greek, had never seen a frozen river. [alt version](http://farm6.static.flickr.com/5213/5477602206_ecb78559ed.jpg).
+re-frame's `app state` is held in one place - think of it like you 
+would an in-memory, central database for the app.
 
+When domino 3 changes this `app state`, it triggers the next part of the cascade 
+involving dominoes 4-5-6.
 
-> Think of an experience from your childhood. Something you remember clearly, something you can see,
-feel, maybe even smell, as if you were really there. After all you really were there at the time,
-weren’t you? How else could you remember it? But here is the bombshell: you weren’t there. Not a
-single atom that is in your body today was there when that event took place .... Matter flows
-from place to place and momentarily comes together to be you. Whatever you are, therefore, you
-are not the stuff of which you are made. If that does not make the hair stand up on the back of
-your neck, read it again until it does, because it is important.
+### The view formula 
 
-Steve Grand
+The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
+  `v = f(s)`  
 
+A view `v` is a function `f` of the app state `s`.
 
-### How Flow Happens In Reagent
+Or, said another way, there are functions `f` which compute what DOM nodes, `v`,
+should be displayed to the user when the application is in a given app state, `s`.
 
-To implement FRP, Reagent provides a `ratom` and a `reaction`.
-re-frame uses both of these
-building blocks, so let's now make sure we understand them.
+Or, another way: **over time**, as `s` changes, `f`
+will be re-run each time to compute new `v`, forever keeping `v` up to date with the current `s`.
 
-`ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.
+Now, in our case, it is domino 3 which changes `s`, the application state,
+and, in response, dominoes 4-5-6 are about re-running `f` to compute the new `v` 
+shown to the user.
 
-From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame
-perspective, we'll tweak that paradigm slightly and **view a `ratom` as having a value that
-changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
-`ratom` as a Signal. [Pause and read this](http://elm-lang.org:1234/guide/reactivity).
+Except, of course, there's nuances.  For instance, there's no single `f` to run.
+There may be many functions which collectively build the overall DOM, 
+and only part of `s` may change at any one time, so only part of the 
+`v` (DOM) need be re-computed and updated. And some parts of `v` might not 
+even be showing right now.
 
-The 2nd building block, `reaction`, acts a bit like a function. It's a macro which wraps some
-`computation` (a block of code) and returns a `ratom` holding the result of that `computation`.
+### Domino 4
 
-The magic thing about a `reaction` is that the `computation` it wraps will be automatically
-re-run  whenever 'its inputs' change, producing a new output (return) value.
+Domino 4 is about extracting data from "app state".  The right data, 
+in the right format, for view functions (Domino 5).
 
-Eh, how?
+Domino 4 is a novel and efficient de-duplicated signal graph which 
+runs query functions on the app state, `s`, efficiently computing 
+reactive, multi-layered, "materialised views" of `s`.
 
-Well, the `computation` is just a block of code, and if that code dereferences one or
-more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any
-of these dereferenced `ratoms` change.
+(Relax about any unfamiliar terminology, you'll soon 
+see how simple the code actually is)
 
-To put that yet another way, a `reaction` detects a `computation's` input Signals (aka input `ratoms`)
-and it will `watch` them, and when, later, it detects a change in one of them,  it will re-run that
-computation, and it will `reset!` the new result of that computation into the `ratom` originally returned.
+### Domino 5
 
-So, the `ratom` returned by a `reaction` is itself a Signal. Its value will change over time when
-the `computation` is re-run.
+Domino 5 is one or more **view functions** (aka Reagent components) which compute what 
+UI DOM should be displayed for the user.
 
-So, via the interplay between `ratoms` and `reactions`,  values 'flow' into computations and out
-again, and then into further computations, etc.  "Values" flow (propagate) through the Signal graph.
+They take data, delivered reactively by the queries of domino 4,
+and compute hiccup-formatted data, which is a description of the DOM required.
 
-But this Signal graph must be without cycles, because cycles cause mayhem!  re-frame achieves
-a unidirectional flow.
+### Domino 6
 
-While the mechanics are different, `reaction` has the intent of `map` in [Elm] and `defc=` in [Hoplon].
+Domino 6 is not something you need write yourself - instead it is handled for you 
+by Reagent/Rect. I mention it here 
+for completeness and to fully close the loop.
 
-Right, so that was a lot of words. Some code to clarify:
+This is the step in which the hiccup-formatted 
+"descriptions of required DOM", returned by Domino 5, are made real. The  
+browser DOM nodes are mutated. 
 
-```Clojure
-(ns example1
- (:require-macros [reagent.ratom :refer [reaction]])  ;; reaction is a macro
- (:require        [reagent.core  :as    reagent]))
+## A Cascade Of Simple Functions
 
-(def app-db  (reagent/atom {:a 1}))           ;; our root ratom  (signal)
+**Each of the dominoes you write are simple, pure functions** which 
+can be be described, understood and 
+tested independently. They take data, transform it and return new data.
 
-(def ratom2  (reaction {:b (:a @app-db)}))    ;; reaction wraps a computation, returns a signal
-(def ratom3  (reaction (condp = (:b @ratom2)  ;; reaction wraps another computation
-                             0 "World"
-                             1 "Hello")))
+The loop itself is very mechanical in operation.
+So, there's a regularity, simplicity and
+certainty to how a re-frame app goes about its business,
+which leads, in turn, to an ease in reasoning and debugging.
 
-;; Notice that both computations above involve de-referencing a ratom:
-;;   - app-db in one case
-;;   - ratom2 in the other
-;; Notice that both reactions above return a ratom.
-;; Those returned ratoms hold the (time varying) value of the computations.
+## Managing mutation
 
-(println @ratom2)    ;; ==>  {:b 1}       ;; a computed result, involving @app-db
-(println @ratom3)    ;; ==> "Hello"       ;; a computed result, involving @ratom2
+The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
 
-(reset!  app-db  {:a 0})       ;; this change to app-db, triggers re-computation
-                               ;; of ratom2
-                               ;; which, in turn, causes a re-computation of ratom3
+In each, it is the 2nd last domino which 
+computes "descriptions" of mutations required, and it is 
+the last domino which does the dirty work and realises these descriptions. 
 
-(println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is result of {:b (:a @app-db)}
-(println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated too.
+And in both cases, you don't need to worry yourself about this dirty work. re-frame looks 
+after those dominoes.
+
+## Code Fragments
+
+Let's now understand this 
+domino narrative in terms of code fragments.
+
+> You shouldn't expect 
+to completely grok the code presented below. We're still in overview mode, getting 
+the 30,000 foot view. There are later tutorials for the details.
+
+**Imagine:** the UI of an SPA shows a list of items. This user 
+clicks the "delete" button next to the 3rd item in a list.
+
+In response, 
+what happens within this imaginary re-frame app? Here's a sketch of the 6 domino cascade:
+
+### Code For Domino 1
+
+The delete button for that 3rd item will have an `on-click` handler (function) which looks
+like this:  
+```clj
+ #(re-frame.core/dispatch [:delete-item 2486])
 ```
 
-So, in FRP-ish terms, a `reaction` will produce a "stream" of values over time (it is a Signal),
-accessible via the `ratom` it returns.
+`dispatch` is the means by which you emit an `event`.  An `event` is a vector and, in this case, 
+it has 2 elements: `[:delete-item 2486]`. The first element,
+`:delete-item`, is the kind of event. The `rest` is optional, further data about the 
+`event` - in this case, my made-up id, `2486`, for the item to delete.
 
+### Code For Domino 2
 
-Okay, that was all important background information for what is to follow. Back to the diagram ...
+The `event handler`, `h`, associated with 
+`:delete-item` is called to compute the `effect` of this event.
 
-## Components
-
-Extending the diagram, we introduce `components`:
-
+This handler function, `h`, must take two arguments: the state-of-the-world 
+and the event, and it must return an effects map.  Without going into any
+explanations at this early point, here's a sketch of what a handler 
+might look like:
+```clj
+(defn h 
+ [{:keys [db]} event]                    ;; args:  db from coeffect, event
+ (let [item-id (second event)]           ;; extract id from event vector
+   {:db  (dissoc-in db [:items item-id])})) ;; effect is change db
 ```
-app-db  -->  components  -->  Hiccup
+
+On program starup, this event handler (function) `h` would have been 
+associated with `:delete-item` `events` in this way:
+```clj
+(re-frame.core/reg-event-fx  :delete-item  h)
 ```
 
-When using Reagent, your primary job is to write one or more `components`. This is the view layer.
+### Code For Domino 3
 
-Think about `components` as `pure functions` - data in, Hiccup out.  `Hiccup` is
-ClojureScript data structures which represent DOM. Here's a trivial component:
+An `effect handler` (function) actions the `effect` returned by the call to `h`.
+That `effect` was the map:
+```clj
+{:db  (dissoc-in db [:items item-id])}
+```
+Keys in this map identify the required `effect`, and the values of the map 
+supplying further details.
 
-```Clojure
-(defn greet
+A key of `:db` means to update the app state, with the new computed value.
+
+The update of "app state", which re-frame manages for you, 
+is a mutative step, facilitated by re-frame itself 
+when it sees a `:db` effect. 
+
+Why the name `:db`?  re-frame sees "app state" as something of an in-memory 
+database.
+
+### Code For Domino 4
+
+Because a new version of "app state" has been computed and installed, 
+a query (function) over this app state is called automatically (reactively), 
+itself computing the list of items. 
+
+Because the items 
+are stored in app state, there's not a lot to compute in this case. This 
+subscription acts more like an accessor.
+```clj
+(defn query-fn
+  [db _]         ;; db is current app state
+  (:items db))   ;; not much of a materialised view
+```
+
+On program startup, such a query-fn must be registered, 
+(for reasons obvious in the next domino) like this:
+```clj
+(re-frame.core/reg-sub  :query-items  query-fn)
+```
+   
+### Code For Domino 5
+
+Because the query function re-computed a new value, a view (function) which subscribes
+to "items", is called automatically (reactively) to re-compute DOM.  It produces 
+a hiccup-formatted data structure describing the DOM nodes required (no DOM nodes 
+for the deleted item, obviously, but otherwise the same DOM as last time).
+
+```clj
+(defn items-view
   []
-  [:div "Hello ratoms and reactions"])
+  (let [items  (subscribe [:query-items])]  ;; source items from app state
+    [div: (map item-render @items]))   ;; assume item-render already written
 ```
 
-And if we call it:
+Notice how `items` is "sourced" from "app state".  View function use `subscribe` with a key
+originally used to register a query function.
+   
+### Code For Domino 6
 
-```Clojure
-(greet)
-;; ==>  [:div "Hello ratoms and reactions"]
-```
+The computed DOM (hiccup) is made real by Reagent/React. No code from you required. Just happens.
+
+The DOM "this
+time" is the same as last time, except for the absence of DOM for the
+deleted item.
+
+### 3-4-5-6 Summary
 
-You'll notice that our component is a regular Clojure function, nothing special. In this case, it takes
-no parameters and it returns a ClojureScript vector (formatted as Hiccup).
+The key point to understand about our 3-4-5-6 example is:
+  - a change to app state ...
+  - triggers query functions to rerun ...
+  - which triggers view functions to rerun
+  - which causes new DOM 
+
+Boom, boom, boom go the dominoes.
 
-Here is a slightly more interesting (parameterised) component (function):
+It is a reactive data flow. 
 
-```Clojure
-(defn greet                    ;; greet has a parameter now
-  [name]                       ;; 'name' is a ratom  holding a string
-  [:div "Hello "  @name])      ;; dereference 'name' to extract the contained value
+### Aaaaand we're done 
 
-;; create a ratom, containing a string
-(def n (reagent/atom "re-frame"))
+At this point, the re-frame app returns to a quiescent state, 
+waiting for the next event.
 
-;; call our `component` function, passing in a ratom
-(greet n)
-;; ==>  [:div "Hello " "re-frame"]    returns a vector
-```
+## So, your job is ... 
 
-So components are easy - at core they are a render function which turns data into
-Hiccup (which will later become DOM).
+When building a re-frame app, you will: 
+ - design your app's information model (data and schema layer)
+ - write and register event handler functions  (control and transition layer)  (domino 2)    
+ - (once in a blue moon) write and register effect and coeffect handler 
+   functions (domino 3) which do the mutative dirty work of which we dare not 
+   speak. 
+ - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
+ - write Reagent view functions  (view layer)  (domino 5)
 
-Now, let's introduce `reaction` into this mix.  On the one hand, I'm complicating things
-by doing this, because Reagent allows you to be ignorant of the mechanics I'm about to show
-you. (It invisibly wraps your components in a `reaction` allowing you to be blissfully
-ignorant of how the magic happens.)
+## It Leverages Data
 
-On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired,
-because in a minute, when we get to `subscriptions`, we'll be directly using `reaction`, so we
-might as well bite the bullet here and now ... and, anyway, it is pretty easy...
+You might already know that ClojureScript is a modern lisp, and that
+lisps are **homoiconic**.  If not, you do now.
 
-```Clojure
-(defn greet                ;; a component - data in, Hiccup out.
-  [name]                   ;; name is a ratom
-  [:div "Hello "  @name])  ;; dereference name here, to extract the value within
+The homoiconic bit is significant. It means you program in a lisp by creating and
+assembling lisp data structures. Think about that. You are **programming in data**. 
+The functions which later manipulate data, start as data.
 
-(def n (reagent/atom "re-frame"))
+Clojure programmers place particular 
+emphasis on the primacy of data. When they aren't re-watching Rich Hickey videos, 
+and wishing their hair was darker and more curly, 
+they meditate on aphorisms like "Data is the ultimate in late binding".
 
-;; The computation '(greet n)' returns Hiccup which is stored into 'hiccup-ratom'
-(def hiccup-ratom  (reaction (greet n)))    ;; <-- use of reaction !!!
+I cannot stress too much what a big deal this is. It can seem 
+like a syntax curiosity at first but, when the penny drops for 
+you on this, it tends to be a profound moment. And once you 
+understand the importance of this concept at the language level, 
+you naturally want to leverage similar power at the library level.
 
-;; what is the result of the initial computation ?
-(println @hiccup-ratom)
-;; ==>  [:div "Hello " "re-frame"]    ;; returns hiccup  (a vector of stuff)
+So, it will come as no surprise, then, to know that re-frame has a 
+data oriented design. Events are data. Effects are data. DOM is data.
+The functions which transform data are registered and looked up via 
+data. Interceptors (data) are preferred over middleware (higher 
+order functions). Etc.
 
-;; now change 'n'
-;; 'n' is an input Signal for the reaction above.
-;; Warning: 'n' is not an input signal because it is a parameter. Rather, it is
-;; because 'n' is dereferenced within the execution of the reaction's computation.
-;; reaction notices what ratoms are dereferenced in its computation, and watches
-;; them for changes.
-(reset! n "blah")            ;;    n changes
+Data - that's the way we roll.
 
-;; The reaction above will notice the change to 'n' ...
-;; ... and will re-run its computation ...
-;; ... which will have a new "return value"...
-;; ... which will be "reset!" into "hiccup-ratom"
-(println @hiccup-ratom)
-;; ==>   [:div "Hello " "blah"]    ;; yep, there's the new value
-```
+## It is mature and proven in the large
 
-So, as `n` changes value over time (via a `reset!`), the output of the computation `(greet n)`
-changes, which in turn means that the value in `hiccup-ratom` changes. Both `n` and
-`hiccup-ratom` are FRP Signals. The Signal graph we created causes data to flow from
-`n` into `hiccup-ratom`.
+re-frame was released in early 2015, and has since [been](https://www.fullcontact.com)
+successfully
+[used](https://www.nubank.com.br) 
+by
+[quite](http://open.mediaexpress.reuters.com/)
+a 
+[few](https://rokt.com/) companies and
+individuals to build complex apps, many running beyond 40K lines of
+ClojureScript.
 
-Derived Data, flowing.
+<img align="right" src="/images/scale-changes-everything.jpg?raw=true">
 
+**Scale changes everything.** Frameworks
+are just pesky overhead at small scale - measure them instead by how they help
+you tame the complexity of bigger apps, and in this regard re-frame has
+worked out well. Some have been effusive in their praise.
 
-### Truth Interlude
+Having said that, re-frame remains a work in progress and it falls
+short in a couple of ways - for example it doesn't work as well as we'd
+like with devcards, because it is a framework, rather than a library. 
+We're still puzzling over some aspects and tweaking as we go. All designs
+represent a point in the possible design space, with pros and cons.
 
-I haven't been entirely straight with you:
+And, yes, re-frame is fast, straight out of the box. And, yes, it has 
+a good testing story (unit and behavioural). And, yes, it works in with figwheel to create
+a delightful hot-loading development story. And, yes, it has 
+a fun specialist tooling, and a community,
+and useful 3rd party libraries.
 
- 1. Reagent re-runs `reactions` (re-computations) via requestAnimationFrame. So a
-re-computation happens about 16ms after an input Signals change is detected, or after the
-current thread of processing finishes, whichever is the greater. So if you are in a bREPL
-and you run the lines of code above one after the other too quickly,  you might not see the
-re-computation done immediately after `n` gets reset!, because the next animationFrame
-hasn't run (yet).  But you could add a `(reagent.core/flush)` after the reset! to force
-re-computation to happen straight away.
+## Where Do I Go Next?
 
- 2. `reaction` doesn't actually return a `ratom`.  But it returns something that has
-ratom-nature, so we'll happily continue believing it is a `ratom` and no harm will come to us.
+We haven't yet looked at code much, but **at this point you 
+already know 50% of re-frame.**  There's detail to fill in, for sure,
+but the core concepts, and basic coding techniques, are now known to you.
 
-On with the rest of my lies and distortions...
+Next, you need to do the code walk-through in the tutorial. This
+will get your knowledge to about 70%. The
+final 30% always comes incrementally with use, and by reading the the 
+tutorials (of which there's a few).
 
-### Components Like Templates?
+So, next, read more here: <br>
+https://github.com/Day8/re-frame/blob/master/docs/README.md
 
-A `component` such as `greet` is like the templates you'd find in
-Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
+Experiment with these examples: <br>
+https://github.com/Day8/re-frame/tree/master/examples
 
-  1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
-     downside is that these are not "designer friendly" HTML templates.
-  2. these templates are reactive.  When their input Signals change, they
-     are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
-     the renderer of any `component` is wrapped by a `reaction`.  If any of the "inputs"
-     to that render change, the render is rerun.
+Use a template to create your own project: <br>
+Client only:  https://github.com/Day8/re-frame-template  <br>
+Full Stack: http://www.luminusweb.net/
 
-### React etc.
+Use these resources: <br>
+https://github.com/Day8/re-frame/blob/develop/docs/External-Resources.md
 
-Okay, so we have some unidirectional, dynamic, async, discrete FRP-ish data flow happening here.
-
-Question: To which ocean does this river of data flow?  Answer: The DOM ocean.
-
-The full picture:
-```
-app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  --> DOM
-```
-
-Best to imagine this process as a pipeline of 3 functions.  Each
-function takes data from the
-previous step, and produces (derived!) data for the next step.  In the next
-diagram, the three functions are marked (f1, f2, f3). The unmarked nodes are derived data,
-produced by one step, to be input to the following step.  Hiccup,
-VDOM and DOM are all various forms of HTML markup (in our world that's data).
-
-```
-app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
-               f1                           f2                      f3
-```
-
-In abstract ClojureScript syntax terms, you could squint and imagine the process as:
-
-```Clojure
-(-> app-db
-   components    ;; produces Hiccup
-   Reagent       ;; produces VDOM   (virtual DOM that React understands)
-   React         ;; produces HTML   (which magically and efficiently appears on the page).
-   Browser       ;; produces pixels
-   Monitor)      ;; produces photons?
-```
-
-
-Via the interplay between `ratom` and `reaction`, changes to `app-db` stream into the pipeline, where it
-undergoes successive transformations, until pixels colour the monitor you to see.
-
-Derived Data, flowing.  Every step is acting like a pure function and turning data into new data.
-
-All well and good, and nice to know, but we don't have to bother ourselves with most of the pipeline.
-We just write the `components`
-part and Reagent/React will look after the rest.  So back we go to that part of the picture ...
-
-
-## Subscribe
-
-`components` render the app's state as hiccup.
-
-```
-app-db  -->  components
-```
-
-
-`components` (view layer) need to query aspects of `app-db` (data layer).
-
-But how?
-
-Let's pause to consider **our dream solution** for this part of the flow. `components` would:
-  * obtain data from `app-db`  (their job is to turn this data into hiccup).
-  * obtain this data via a (possibly parameterised) query over `app-db`. Think database kind of  query.
-  * automatically recompute their hiccup output, as the data returned by the query changes, over time
-  * use declarative queries. Components should know as little as possible about the structure of `app-db`. SQL?  Datalog?
-
-re-frame's `subscriptions` are an attempt to live this dream. As you'll see, they fall short on the declarative
-query part, but they comfortably meet the other requirements.
-
-As a re-frame app developer, your job will be to write and register one or more
-"subscription handlers" - functions that do a named query.
-
-Your subscription functions must return a value that changes over time (a Signal). I.e. they'll
-be returning a reaction or, at least, the `ratom` produced by a `reaction`.
-
-Rules:
- - `components` never source data directly from `app-db`, and instead, they use a subscription.
- - subscriptions are only ever used by components  (they are never used in, say, event handlers).
-
-Here's a component using a subscription:
-
-```Clojure
-(defn greet         ;; outer, setup function, called once
-  []
-  (let [name-ratom  (subscribe [:name-query])]    ;; <---- subscribing happens here
-     (fn []        ;; the inner, render function, potentially called many times.
-         [:div "Hello" @name-ratom])))
-```
-
-First, note this is a [Form-2](https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components#form-2--a-function-returning-a-function)
-`component` ([there are 3 forms](https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components)).
-
-Previously in this document, we've used the simplest, `Form-1` components (no setup was required, just render).
-With `Form-2` components, there's a function returning a function:
-- the returned function is the render function. Behind the scenes, Reagent will wrap this render function
- in a `reaction` to make it produce new Hiccup when its input Signals change.  In our example above, that
- means it will rerun every time `name-ratom` changes.
-- the outer function is a setup function, called once for each instance of the component. Notice the use of
- 'subscribe' with the parameter `:name-query`. That creates a Signal through which new values are supplied
- over time; each new value causing the returned function (the actual renderer) to be run.
-
->It is important to distinguish between a new instance of the component versus the same instance of a component reacting to a new value. Simplistically, a new component is returned for every unique value the setup function (i.e. the outer function) is called with. This allows subscriptions based on initialisation values to be created, for example:
-``` Clojure
-  (defn my-cmp [row-id]
-    (let [row-state (subscribe [row-id])]
-      (fn [row-id]
-        [:div (str "Row: " row-id " is " @row-state)])))
-```
-In this example, `[my-cmp 1][my-cmp 2]` will create two instances of `my-cmp`. Each instance will re-render when its internal `row-state` signal changes.
-
-`subscribe` is always called like this:
-
-```Clojure
-   (subscribe  [query-id some optional query parameters])
-```
-
-There is only one (global) `subscribe` function and it takes one parameter, assumed to be a vector.
-
-The first element in the vector (shown as `query-id` above) identifies/names the query and the other elements are optional
-query parameters. With a traditional database a query might be:
-
-```
-select * from customers where name="blah"
-```
-
-In re-frame, that would be done as follows:
-   `(subscribe  [:customer-query "blah"])`
-which would return a `ratom` holding the customer state (a value which might change over time!).
-
-So let's now look at how to write and register the subscription handler for `:customer-query`
-
-```Clojure
-(defn customer-query     ;; a query over 'app-db' which returns a customer
-   [db, [sid cid]]      ;; query fns are given 'app-db', plus vector given to subscribe
-   (assert (= sid :customer-query))   ;; subscription id was the first element in the vector
-   (reaction (get-in @db [:path :to :a :map cid])))    ;; re-runs each time db changes
-
-;; register our query handler
-(register-sub
-   :customer-query       ;; the id (the name of the query)
-   customer-query)       ;; the function which will perform the query
-```
-
-Notice how the handler is registered to handle `:customer-query` subscriptions.
-
-**Rules and Notes**:
- - you'll be writing one or more handlers, and you will need to register each one.
- - handlers are functions which take two parameters:  the db atom, and the vector given to subscribe.
- - `components` tend to be organised into a hierarchy, often with data flowing from parent to child via
-parameters. So not every component needs a subscription. Very often the values passed in from a parent component
-are sufficient.
- - subscriptions can only be used in `Form-2` components and the subscription must be in the outer setup
-function and not in the inner render function.  So the following is **wrong** (compare to the correct version above)
-
-```Clojure
-(defn greet         ;; a Form-1 component - no inner render function
-  []
-  (let [name-ratom  (subscribe [:name-query])]    ;; Eek! subscription in renderer
-    [:div "Hello" @name-ratom]))
-```
-
-Why is this wrong?  Well, this component would be re-rendered every time `app-db` changed, even if the value
-in `name-ratom` (the result of the query) stayed the same. If you were to use a `Form-2` component instead, and put the
-subscription in the outer functions, then there'll be no re-render unless the value queried (i.e. `name-ratom`) changed.
-
-
-### Just A Read-Only Cursor?
-
-Subscriptions are different to read-only cursors.
-
-Yes, `subscriptions` abstract away (hide) the data source, like a Cursor, but they also allow
-for computation. To put that another way, they can create
-derived data from `app-db` (a Materialised View of  `app-db`).
-
-Imagine that our `app-db` contained `:items` - a vector of maps. And imagine that we wanted to
-display these items sorted by one of their attributes.  And that we only want to display the top 20 items.
-
-This is the sort of "derived data" which a subscription can deliver.
-(And as we'll see, more efficiently than a Cursor).
-
-## The Signal Graph
-
-Let's sketch out the situation described above ...
-
-
-`app-db` would be a bit like this (`items` is a vector of maps):
-```Clojure
-(def L  [{:name "a" :val 23 :flag "y"}
-        {:name "b" :val 81 :flag "n"}
-        {:name "c" :val 23 :flag "y"}])
-
-(def  app-db (reagent/atom  {:items L
-                            :sort-by :name}))     ;; sorted by the :name attribute
-```
-
-The subscription-handler might be written:
-
-```Clojure
-(register-sub
- :sorted-items      ;; the query id  (the name of the query)
- (fn [db [_]]       ;; the handler for the subscription
-   (reaction
-      (let [items      (get-in @db [:items])     ;; extract items from db
-            sort-attr  (get-in @db [:sort-by])]  ;; extract sort key from db
-          (sort-by sort-attr items)))))          ;; return them sorted
-```
-
-
-Subscription handlers are given two parameters:
-
-  1. `app-db` - that's a reagent/atom which holds ALL the app's state. This is the "database"
-     on which we perform the "query".
-  2. the vector originally supplied to `subscribe`.  In our case, we ignore it.
-
-In the example above, notice that the `reaction` depends on the input Signal:  `db`.
-If `db` changes, the query is re-run.
-
-In a component, we could use this query via `subscribe`:
-
-```Clojure
-(defn items-list         ;; Form-2 component - outer, setup function, called once
-  []
-  (let [items   (subscribe [:sorted-items])   ;; <--   subscribe called with name
-        num     (reaction (count @items))     ;; Woh! a reaction based on the subscription
-        top-20  (reaction (take 20 @items))]  ;; Another dependent reaction
-     (fn []
-       [:div
-           (str "there's " @num " of these suckers. Here's top 20")     ;; rookie mistake to leave off the @
-           (into [:div ] (map item-render @top-20))])))   ;; item-render is another component, not shown
-```
-
-There's a bit going on in that `let`, most of it tortuously contrived, just so I can show off chained
-reactions. Okay, okay, all I wanted really was an excuse to use the phrase "chained reactions".
-
-The calculation of `num` is done by a `reaction` which has `items` as an input Signal. And,
-as we saw, `items` is itself a reaction over two other signals (one of them the `app-db`).
-
-So this is a Signal Graph. Data is flowing through computation into renderer, which produce Hiccup, etc.
-
-## A More Efficient Signal Graph
-
-But there is a small problem. The approach above might get inefficient, if `:items` gets long.
-
-Every time `app-db` changes, the `:sorted-items` query is
-going to be re-run and it's going to re-sort `:items`.  But `:items` might not have changed. Some other
-part of `app-db` may have changed.
-
-We don't want to perform this computationally expensive re-sort
-each time something unrelated in `app-db` changes.
-
-Luckily, we can easily fix that up by tweaking our subscription function so
-that it chains `reactions`:
-
-```Clojure
-(register-sub
- :sorted-items             ;; the query id
- (fn [db [_]]
-   (let [items      (reaction (get-in @db [:some :path :to :items]))]  ;; reaction #1
-         sort-attr  (reaction (get-in @db [:sort-by]))]                ;; reaction #2
-       (reaction (sort-by @sort-attr @items)))))                       ;; reaction #3
-```
-
-The original version had only one `reaction` which would be re-run completely each time `app-db` changed.
-This new version, has chained reactions.
-The 1st and 2nd reactions just extract from `db`.  They will run each time `app-db` changes.
-But they are cheap. The 3rd one does the expensive
-computation using the result from the first two.
-
-That 3rd, expensive reaction will be re-run when either one of its two input Signals change, right?  Not quite.
-`reaction` will only re-run the computation when one of the inputs has **changed in value**.
-
-`reaction` compares the old input Signal value with the new Signal value using `identical?`. Because we're
-using immutable data structures
-(thank you ClojureScript), `reaction` can perform near instant checks for change on even
-deeply nested and complex
-input Signals. And `reaction` will then stop unneeded propagation of `identical?` values through the
-Signal graph.
-
-In the example above, reaction #3 won't re-run until `:items` or `:sort-by` are different
-(do not test `identical?`
-to their previous value), even though `app-db` itself has changed (presumably somewhere else).
-
-Hideously contrived example, but I hope you get the idea. It is all screamingly efficient.
-
-Summary:
- - you can chain reactions.
- - a reaction will only be re-run when its input Signals test not `identical?` to previous value.
- - As a result, unnecessary Signal propagation is eliminated using highly efficient  checks,
-   even for large, deep nested data structures.
-
-
-## The 2nd Flow
-
-At the top, I said that re-frame had two data flows.
-
-The data flow from `app-db` to the DOM is the first half of the story. We now need to consider
-the 2nd part of the story: the flow in the opposite direction.
-
-While the first flow has FRP-nature, the 2nd flow does not.  Well, not at first glance anyway.
-
-When I think about these two flows, I imagine one of those school diagrams showing the water cycle.
-
-![logo](/images/the-water-cycle.png?raw=true)
-
-Rivers taking water down to the oceans, and evaporation/clouds/wind taking water back over 
-the mountains to fall again as rain or snow. Repeat.
-
-There is a cycle, but it is handled by two independent flows.
-
-*With re-frame, it is not water that is flowing, it is data.*
-
-## Event Flow
-
-Events are what flow in the opposite direction.
-
-In response to user interaction, a DOM will generate
-events like "clicked delete button on item 42" or
-"unticked the checkbox for 'send me spam'".
-
-These events have to be "handled".  The code doing this handling might
-mutate app state (in `app-db`), or request more data from the server, or POST somewhere and wait for a response, etc.
-
-In fact, all these actions ultimately result in changes to the `app-db`.
-
-An application has many handlers, and collectively
-they represent the **control layer of the application**.
-
-In re-frame, the backwards data flow of events happens via a conveyor belt:
-
-```
-app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
- ^                                                                              |
- |                                                                              v
- handlers <-------------------  events  -----------------------------------------
-                          a "conveyor belt" takes events
-                          from the DOM to the handlers
-```
-
-Generally, when the user manipulates the GUI, the state of the application changes. In our case,
-that means the `app-db` will change.  After all, it **is** the state.  And the DOM presented to
-the user is a function of that state.
-
-So that tends to be the cycle:
-
-1. the user clicks something which causes an event to be dispatched
-2. a handler manages the event
-3. and causes `app-db` to change   (mutation happens here!)
-4. which then causes a re-render
-5. the user sees something different
-6. goto #1
-
-That's our water cycle.
-
-Because handlers are that part of the system which does `app-db` mutation, you
-could almost imagine them as a "stored procedures" on a
-database. Almost. Stretching it?  We do like our in-memory
-database analogies.
-
-### What are events?
-
-Events are data. You choose the format.
-
-In our reference implementation we choose a vector format. For example:
-
-   [:delete-item 42]
-
-The first item in the vector identifies the event and
-the rest of the vector is the optional parameters -- in the example above, the id (42) of the item to delete.
-
-Here are some other example events:
-
-```Clojure
-   [:yes-button-clicked]
-   [:set-spam-wanted false]
-   [[:complicated :multi :part :key] "a parameter" "another one"  45.6]
-```
-
-**Rule**:  events are pure data. No dirty tricks like putting callback functions on the wire.
-You know who you are.
-
-### Dispatching Events
-
-Events tend to start in the DOM in response to user actions.  They are `dispatched`.
-
-For example, a button component might be like this:
-
-```Clojure
-   (defn yes-button
-       []
-       [:div  {:class "button-class"
-               :on-click  #(dispatch [:yes-button-clicked])}
-               "Yes"])
-```
-
-Notice the `on-click` DOM handler:
-
-```Clojure
-   #(dispatch [:yes-button-clicked])
-```
-
-With re-frame, we try to keep the DOM as passive as possible. We do not
-want our views containing any control logic. That "on-click" is as simple as we can make it.
-
-There's a single `dispatch` function in the entire framework, and it takes one parameter:
-the event (vector) to be
-dispatched (which is pure simple, lovely data, flowing).
-
-Let's update our diagram to show `dispatch`:
-
-```
-app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
- ^                                                                              |
- |                                                                              v
- handlers <----------------------------------------  (dispatch [event-id  event params])
-```
-
-**Rule**:  `components` are as passive and minimal as possible when it comes to handling events.
-They `dispatch` pure data and nothing more.
-
-### Event Handlers
-
-Collectively, event handlers provide the control logic in a re-frame application.
-
-An event handler is a pure function of two parameters:
-
- 1. current value in `app-db`.  Note: that's the map **in** `app-db`, not the atom itself.
- 2. an event (represented as a vector)
-
-It returns the new value which should be reset! into `app-db`.
-
-An example handler:
-```Clojure
-(defn handle-delete
-   [app-state [_ item-id]]          ;; notice how event vector is destructured -- 2nd parameter
-   (dissoc-in app-state [:some :path item-id]))     ;; return a modified version of 'app-state'
-```
-
-Handling an event invariably involves mutating the value in `app-db`
-(which is provided as the first parameter).
-An item is added here, or one is deleted there.  So, often simple CRUD, but sometimes much more,
-and sometimes with async results.
-
-But the `app-db` mutation is ultimately handled by re-frame (it does the `reset!`). That leaves your event
-handlers pure. As a result, they tend to be easy to test and understand.  Many are almost trivial.
-
-There's more to event handlers than can be covered here in this introductory tutorial. Read up on
-issues like Middleware [in the Wiki](https://github.com/Day8/re-frame/wiki#handler-middleware).
-
-### Routing
-
-When `dispatch` is passed an event vector, it just puts that event onto a conveyor belt.
-
-The consumer on the end of the conveyor is a `router` which will organise for that
-event to be processed by the right handler.
-
-
-```
-app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
- ^                                                                              |
- |                                                                              v
- handlers <-----  router  <-----------------------  (dispatch [event-id  event params])
-```
-
-The `router` will:
-
-1. inspect the 1st element of the arriving vector
-2. look in its registry for the handler which is registered for this kind of event
-3. call that handler with two parameters: (1) the current value in `app-db` and (2) the event vector
-4. reset! the returned value back into `app-db`.
-
-As a re-frame app developer, your job is to write handlers for each kind of event, and
-then to register those handlers with the router.
-
-Here's how we would register our event handler:
-
-```Clojure
-(reg-event-db
-  :delete-item 			;; the event id (name)
-  (fn [db [_ item]]		;; the handler function for that event
-  ...					
-  )       
-```
-
-Any arriving event vector which has `:delete-item` as the first element will now be routed to our handler.
-
-### Control Via FSM
-
-Above, I commented that event handlers collectively represent the "control layer" of the
-application.  They contain
-logic which interprets arriving events and they "step" the application "forward"
-via mutations to `app-db`.
-
-Our `delete-handler` above is trivial, but as an application grows more features, the logic in many
-handlers will become more complicated, and they will have to query BOTH the current state of the app
-AND the arriving event vector to determine what action to take.
-
-If the app is in logical State A, and event X arrives, then the handler will move the app to logical state B
-(by changing values in `app-db`).
-
-Sound like anything you learned in those [Theory Of Computation](https://www.youtube.com/watch?v=Pt6GBVIifZA)
-lectures?
-
-That's right - as an app becomes more complex, the handlers are likely to be  collectively implementing a
-[Finite State Machine](http://en.wikipedia.org/wiki/Finite-state_machine):
-  - your app is in a certain logical state (defined by the current values in `app-db`)
-  - the arriving event vector represents a `trigger`.
-  - the event handler implements "a transition", subject to BOTH the current logical state and the arriving trigger.
-  - after the handler has run, the transition may have moved the app into a new logical state.
-  - Repeat.
-
-Not every app has lots of logical `states`, but many do, and if you are implementing one of them, then formally
-recognising it and using a technique like
-[state charts](http://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782) will help
-greatly in getting a clean design and a nice datamodel.
-
-The beauty of re-frame from a FSM point of view is that all the data is in one place - unlike OO systems where
-the data is distributed (and synchronized) across many objects. So implementing your control logic as a FSM is
-both possible and natural in re-frame, whereas it is often difficult and contrived to do so in other
-kinds of architecture (in my experience).
-
-### As A Reduce
-
-So here's another way of thinking about what's happening with this data flow - another useful mental model.
-
-First, imagine that all the events ever dispatched by a certain running  app were stored in a collection.
-So, if when the app started, the user clicked on button X then the first item in this collection
-would be the event generated
-by that button, and then, if next the user moved a slider, the associated event would be the
-next item in the collection, and so on and so on. We'd end up with a collection of event vectors.
-
-
-Second, remind yourself that the `combining function` of a `reduce` takes two parameters:
-
-1. the current state of the reduction and
-2. the next collection member to fold in.
-
-Then notice that event handlers take two parameters too:
-
-1. the current state of `app-db`
-2. the next item to fold in.
-
-Which is the same as a `combining function` in a `reduce`!!
-
-So now we can introduce the new mental model:  at any point in time, the value in `app-db` is the result of
-performing a `reduce` over
-the entire `collection` of events dispatched in the app up until that time. The combining function
-for this reduce is the set of handlers.
-
-It is almost like `app-db` is the temporary place where this imagined `perpetual reduce` stores
-its on-going reduction.
-
-### Derived Data, Everywhere, flowing
-
-Have you watched that
-[StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) yet?
-I hope so. Database as a stream, right?
-
-If you have then, given the explanation above, you might twig to the idea that `app-db` is
-really a derived value (of the `perpetual reduce`).
-
-And yet, it acts as the authoritative source of state in the app. And yet, it isn't, it is simply
-a piece of derived state.  And
-yet, it is the source.
-
-Hmm. This is an infinite loop of sorts. **Derived data is flowing around the
-loop, reactively, through pure functions.**  There is a pause in the loop whenever we wait
-for a new event, but the moment we get it, it's another iteration of the "derived data" FRP loop.
-
-Derived values, all the way down, forever.
+### T-Shirt Unlocked
 
 Good news.  If you've read this far,
 your insiders T-shirt will be arriving soon - it
-will feature turtles
-and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption bit. Open a
+will feature turtles, 
+[xkcd](http://xkcd.com/1416/) and something indicating "data all the way down". 
+But we're still working on the hilarious caption bit. Open a
 repo issue with a suggestion.
 
-Back to the more pragmatic world ...
 
-### Logging And Debugging
+## Licence
 
-How did that exception happen, you wonder, shaking your head?  What did the user do immediately prior
-to the exception?  What state was the app in that this event was so disastrous?
-
-To debug it, you need to know this information:
- 1. the state of the app immediately before the exception
- 2. What final event then caused your app to fall in a screaming mess.
-
-Well, with re-frame you need to record (have available):
- 1. A recent checkpoint of the app state in `app-db` (perhaps the initial state)
- 2. all the events `dispatch`ed since the last checkpoint, up to the point where the exception occurred.
-
-Note: that's all just data. **Pure, lovely loggable data.**
-
-If you have that data, then you can reproduce the exception.
-
-re-frame allows you to time travel. Install the "checkpoint" state into `app-db`
-and then "play forward" through the collection dispatched events.
-
-The only way the app "moves forwards" is via events. "Replaying events" moves you
-step by step towards the exception causing problem.
-
-This is utterly, utterly perfect for debugging assuming, of course, you are in a position to capture
-a checkpoint, and the events since then.
-
-
-### In Summary
-
-re-frame has two distinct flows, and I claim they are BOTH FRP in nature.  The first is clearly FRP.
-The second one is conceptually FRP, but you do have to squint.
-
-All the parts are simple. The parts are easy to understand in isolation. The parts are composed so that
-derived data flows in a perpetual reactive loop, through pure functions.
-
-To build an app using re-frame, you'll have to:
- - design your app's data structure.
- - write and register subscription functions (query layer).
- - write component functions  (view layer).
- - write and register event handler functions  (control layer and/or state transition layer).
-
-
-### Where Do I Go Next?
-
-Next: 
-  - look at the examples:  https://github.com/Day8/re-frame/tree/master/examples
-  - read the docs:  https://github.com/Day8/re-frame/blob/master/docs/README.md
-  
-Then:
-  - use the lein template:  https://github.com/Day8/re-frame-template
-
-Also, if you want reusable layout and widget components, consider this sister project:
-https://github.com/Day8/re-com
-
-
-### Licence
-
-Copyright © 2015 Michael Thompson
+Copyright © 2014-2016 Michael Thompson
 
 Distributed under The MIT License (MIT) - See LICENSE.txt
+
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
 [SPA]:http://en.wikipedia.org/wiki/Single-page_application
 [Reagent]:http://reagent-project.github.io/
-[Dan Holmsand]:https://twitter.com/holmsand
-[Flux]:http://facebook.github.io/flux/docs/overview.html#content
-[Hiccup]:https://github.com/weavejester/hiccup
-[FRP]:https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
-[Elm]:http://elm-lang.org/
-[OM]:https://github.com/swannodette/om
-[Prismatic Schema]:https://github.com/Prismatic/schema
-[datascript]:https://github.com/tonsky/datascript
-[Hoplon]:http://hoplon.io/
-[Pedestal App]:https://github.com/pedestal/pedestal-app

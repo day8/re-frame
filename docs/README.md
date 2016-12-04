@@ -1,28 +1,27 @@
-### Introduction 
-This first section contains a WIP rewrite of the existing README 
-into a number of smaller documents, with a different way of explaining re-frame. 
-- [re-frame's New README (soon)](NewREADME.md)
-- [App State](ApplicationState.md)
-- [Code Walk-Through](CodeWalkThrough.md)
+### Introduction
+ 
+- [This Repo's README](../README.md)
+- [app-db (Application State)](ApplicationState.md)
+- [First Code Walk-Through](CodeWalkThrough.md)
 - [Mental Model Omnibus](MentalModelOmnibus.md)
 
 
-### Understanding Event Handlers
-- [-db Event Handlers] TODO 
+### Event Handlers
+
 - [Effectful Handlers](EffectfulHandlers.md)  
 - [Interceptors](Interceptors.md)  
 - [Effects](Effects.md)  
 - [Coeffects](Coeffects.md)  
 
 
-### Structuring Your Application
+### App Structure
 
 - [Basic App Structure](Basic-App-Structure.md)
 - [Navigation](Navigation.md)
 - [Namespaced Keywords](Namespaced-Keywords.md)
 
 
-### Populating Your Application Data
+### App Data
 
 - [Loading Initial Data](Loading-Initial-Data.md)
 - [Talking To Servers](Talking-To-Servers.md)
