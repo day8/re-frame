@@ -58,7 +58,7 @@ Architecturally, re-frame implements "a perpetual loop".
 To build an app, you hang pure functions on certain parts of this loop, 
 and re-frame looks after the `conveyance of data` 
 around the loop, into and out of the transforming functions you 
-provide - which is why the tag line is "Derived Data, Flowing".
+provide - which is why the tag line is "Derived Values, Flowing".
 
 ### It does Physics
 
@@ -70,7 +70,7 @@ Two distinct stages, involving water in different phases, being acted upon
 by different forces: gravity working one way, evaporation/convection the other.
 
 To understand re-frame, **imagine data flowing around that loop instead of water**. re-frame
-provides the conveyance of the data - the equivalent of gravity, evaporation and convection.
+provides the conveyance of the data around the loop - the equivalent of gravity, evaporation and convection.
 You design what's flowing and then you hang functions off the loop at
 various points to compute the data's phase changes.
 
@@ -114,7 +114,7 @@ a **description of `effects`**. So they compute a data structure
 which says, declaratively, how the world should change (because of the event).
 
 Much of the time, only the "app state" of the SPA itself need
-change, but sometimes the outside world must too must be effected
+change, but sometimes the outside world must also be effected
 (localstore, cookies, databases, emails, logs, etc).
 
 ### 3rd Domino
@@ -159,7 +159,7 @@ Now, in our case, it is domino 3 which changes `s`, the application state,
 and, in response, dominoes 4-5-6 are about re-running `f` to compute the new `v` 
 shown to the user.
 
-Except, of course, there's nuance.  For instance, there's no single `f` to run.
+Except, of course, there's nuances.  For instance, there's no single `f` to run.
 There may be many functions which collectively build the overall DOM, 
 and only part of `s` may change at any one time, so only part of the 
 `v` (DOM) need be re-computed and updated. And some parts of `v` might not 
@@ -168,7 +168,7 @@ even be showing right now.
 ### Domino 4
 
 Domino 4 is about extracting data from "app state".  The right data, 
-in the right format for view functions (Domino 5). 
+in the right format, for view functions (Domino 5).
 
 Domino 4 is a novel and efficient de-duplicated signal graph which 
 runs query functions on the app state, `s`, efficiently computing 
@@ -184,7 +184,6 @@ UI DOM should be displayed for the user.
 
 They take data, delivered reactively by the queries of domino 4,
 and compute hiccup-formatted data, which is a description of the DOM required.
-More on hiccup soon.
 
 ### Domino 6
 
@@ -213,7 +212,7 @@ The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
 
 In each, it is the 2nd last domino which 
 computes "descriptions" of mutations required, and it is 
-the last domino which does rthe dirty work and realises these descriptions. 
+the last domino which does the dirty work and realises these descriptions. 
 
 And in both case, you don't need to worry yourself about this dirty work. re-frame looks 
 after those dominoes.
@@ -243,8 +242,8 @@ like this:
 
 `dispatch` is the means by which you emit an `event`.  An `event` is a vector and, in this case, 
 it has 2 elements: `[:delete-item 2486]`. The first element,
-`:delete-item`, is the kind of event. The `rest` is optional, further data about the `event` 
-- in this case, my made-up id, `2486`, for the item to delete.
+`:delete-item`, is the kind of event. The `rest` is optional, further data about the 
+`event` - in this case, my made-up id, `2486`, for the item to delete.
 
 ### Code For Domino 2
 
@@ -311,7 +310,7 @@ On program startup, such a query-fn must be registered,
 ### Code For Domino 5
 
 Because the query function re-computed a new value, a view (function) which subscribes
-to that value, is called automatically (reactively) to re-compute DOM.  It produces 
+to "items", is called automatically (reactively) to re-compute DOM.  It produces 
 a hiccup-formatted data structure describing the DOM nodes required (no DOM nodes 
 for the deleted item, obviously, but otherwise the same DOM as last time).
 
@@ -350,7 +349,7 @@ It is a reactive data flow.
 At this point, the re-frame app returns to a quiescent state, 
 waiting for the next event.
 
-## Your Job 
+## So, your job is ... 
 
 When building a re-frame app, you will: 
  - design your app's information model (data and schema layer)
@@ -410,8 +409,8 @@ worked out well. Some have been effusive in their praise.
 
 Having said that, re-frame remains a work in progress and it falls
 short in a couple of ways - for example it doesn't work as well as we'd
-like with devcards (which is a library vs framework issue) - we're still
-puzzling over some aspects and tweaking as we go. All libraries
+like with devcards, because it is a framework, rather than a library. 
+We're still puzzling over some aspects and tweaking as we go. All designs
 represent a point in the possible design space, with pros and cons.
 
 And, yes, re-frame is fast, straight out of the box. And, yes, it has 
@@ -422,16 +421,16 @@ and useful 3rd party libraries.
 
 ## Where Do I Go Next?
 
-We haven't yet looked at code, but **at this point you 
-already know 40% of re-frame.**  There's detail to fill in, for sure,
-but the core concepts are now known to you.
+We haven't yet looked at much code, but **at this point you 
+already know 50% of re-frame.**  There's detail to fill in, for sure,
+but the core concepts, and basic coding techniques, are now known to you.
 
 Next, you need to do the code walk-through in the tutorial. This
 will get your knowledge to about 70%. The
-final 30% always comes incrementally with use and by reading the rest of the 
-docs (of which there's a few).
+final 30% always comes incrementally with use, and by reading the the 
+tutorials (of which there's a few).
 
-So, next, go here: <br>
+So, next, read more here: <br>
 https://github.com/Day8/re-frame/blob/master/docs/README.md
 
 Experiment with these examples: <br>
@@ -444,12 +443,13 @@ Front and back: http://www.luminusweb.net/
 Use these resources: <br>
 https://github.com/Day8/re-frame/blob/develop/docs/External-Resources.md
 
-###
+### T-Shirt Reward
 
 Good news.  If you've read this far,
 your insiders T-shirt will be arriving soon - it
-will feature turtles
-and [xkcd](http://xkcd.com/1416/). We're still working on the hilarious caption bit. Open a
+will feature turtles, 
+[xkcd](http://xkcd.com/1416/) and something about "data all the way down". 
+We're still working on the hilarious caption bit. Open a
 repo issue with a suggestion.
 
 

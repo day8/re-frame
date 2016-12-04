@@ -1,5 +1,5 @@
 ### Introduction 
-This section contains a WIP rewrite of the existing README 
+This first section contains a WIP rewrite of the existing README 
 into a number of smaller documents, with a different way of explaining re-frame. 
 - [re-frame's New README (soon)](NewREADME.md)
 - [App State](ApplicationState.md)

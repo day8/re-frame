@@ -303,11 +303,6 @@ part and Reagent/React will look after the rest.  So back we go to that part of 
 
 ## Subscribe
 
-`components` render the app's state as hiccup.
-
-```
-app-db  -->  components
-```
 
 
 `components` (view layer) need to query aspects of `app-db` (data layer).
@@ -420,24 +415,9 @@ in `name-ratom` (the result of the query) stayed the same. If you were to use a 
 subscription in the outer functions, then there'll be no re-render unless the value queried (i.e. `name-ratom`) changed.
 
 
-### Just A Read-Only Cursor?
-
-Subscriptions are different to read-only cursors.
-
-Yes, `subscriptions` abstract away (hide) the data source, like a Cursor, but they also allow
-for computation. To put that another way, they can create
-derived data from `app-db` (a Materialised View of  `app-db`).
-
-Imagine that our `app-db` contained `:items` - a vector of maps. And imagine that we wanted to
-display these items sorted by one of their attributes.  And that we only want to display the top 20 items.
-
-This is the sort of "derived data" which a subscription can deliver.
-(And as we'll see, more efficiently than a Cursor).
-
 ## The Signal Graph
 
 Let's sketch out the situation described above ...
-
 
 `app-db` would be a bit like this (`items` is a vector of maps):
 ```Clojure

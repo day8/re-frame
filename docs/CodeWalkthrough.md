@@ -6,7 +6,7 @@ At this point in your reading, you are armed with:
 
 In this tutorial, **we'll look at re-frame code**. Finally.
 
-### What Code?
+## What Code?
 
 This repo contains an `/example` application called "simple",
 which has around 70 lines of code. We'll look at every line.
@@ -15,7 +15,7 @@ You are currently about 50% the way to understanding re-frame. By the
 end of this tutorial, you'll be at 70%, which is good
 enough to start coding by yourself.
 
-### What Does It Do?
+## What Does It Do?
 
 This app:
  - displays the current time in a nice big font
@@ -28,7 +28,7 @@ XXX How to run it
 
 XXX path to code
 
-### Namespace
+## Namespace
 
 Because this example is so "simple", the code is in a single namespace. 
 Within it, we'll need access to both `reagent` and `re-frame`. 
@@ -39,7 +39,7 @@ So, we start like this:
             [re-frame.core :as rf]))
 ```
 
-### Data Schema
+## Data Schema
 
 Now, normally, I'd strongly recommended you write a quality schema
 for your application state (the data stored in `app-db`). But,
@@ -252,43 +252,47 @@ and they compute a query over it, returning something of
 a "materialised view" of that application state.
 
 When the application state changes, subscription functions are 
-re-run by re-frame, to compute new values. But re-frame looks after this for you.  All you need do is
-write the query function.
+re-run by re-frame, to compute new values (a new materialised view). 
 
 Ultimately, the data returned by `query` functions is used
-in the `view` functions (Domino 5) but one subscription can 
-source data from other subscriptions. So a tree of dependencies 
-results.
+in the `view` functions (Domino 5). 
  
-The Views (Domino 5) are the leaves.  The root is `app-db` and the 
-intermediate nodes are computations being performed by Domino 4 query functions.
+One subscription can 
+source data from other subscriptions. So it is possible to 
+create a tree of dependencies. 
+ 
+The Views (Domino 5) are the leaves of this tree  The tree's 
+root is `app-db` and the intermediate nodes between the two 
+are computations being performed by the query functions of Domino 4.
 
-Now, the two examples below are utterly trivial. They just extract part of the application
-state and return it. So, there's virtually no computation. More interesting, layered 
-subscriptions and more explanation can be found in the todomvc example.
+Now, the two examples below are trivial. They just extract part of the application
+state and return it. So, there's virtually no computation. A more interesting tree
+of subscriptions and more explanation can be found in the todomvc example.
 
-`reg-sub` associates a `query id` with a function which computes
- that query. It's use looks like this: 
+### reg-sub 
+
+`reg-sub` associates a `query id` with a function that computes
+ that query, like this:
 ```clj
 (reg-sub
   :some-query-id  ;; query id (used later in subscribe)
   a-query-fn)     ;; the function which will compute the query
 ```
-If, later, we see a view function requesting data like this:
+If, later, a view function subscribes to a query like this:
     `(subscribe [:some-query-id])`   ;; note use of `:some-query-id`
-then `a-query-fn` will be used to perform the query over application state. 
+then `a-query-fn` will be used to perform the query over application state
+and deliver a stream of values.
 
 Each time application state changes, `a-query-fn` will be
 called again to compute a new materialised view (a new computation over app state)
 and that new value will be given to any view function which is subscribed
-to `:some-query-id`. The view function itself will then also be called again
+to `:some-query-id`. This view function, itself, will then also be called again
 to compute new DOM (because it depends on a query value which changed).
 
-Along this reactive chain, re-frame will ensure the necessary calls are 
-made, at the right time.
+Along this reactive chain of dependencies, re-frame will ensure the 
+necessary calls are made, at the right time.
 
 Here's the code:
-
 ```clj
 (rf/reg-sub
   :time
@@ -301,19 +305,20 @@ Here's the code:
     (:time-color db)))
 ```
 
-Like I said, both of these queries are trivial. See todomvc for more interesting ones.
+Like I said, both of these queries are trivial. See `todomvc.subs.clj` for more interesting ones.
 
 ## View Functions (domino 5)
 
-`view` functions are "State in, Hiccup out". 
+`view` functions turn data into DOM.  They are "State in, Hiccup out" and they are Reagent components. 
 
-Less tersely, they are functions which transform state into DOM. 
 Any SPA will have lots of `view`functions, and collectively, 
 they render the app's entire UI.
  
-`Hiccup` is ClojureScript data structures which represent DOM.
+### Hiccup 
 
-Here's a trivial view function:
+`Hiccup` is a data format for representing DOM.
+
+Here's a trivial view function which returns hiccup-formatted data:
  ```clj
 (defn greet
   []
@@ -329,54 +334,69 @@ And if we call it:
 ;; ==> :div
 ```
 
-Yep, that's a vector with two elements: a keyword and a string. 
+Yep, that's a vector with two elements: a keyword and a string.
 
-Now,`greet` is pretty simple and there's no "Data In", here, just "Hiccup out".
+Now,`greet` is pretty simple because it only has the "Hiccup Out" part.  There's no "Data In".
 
-### Sourcing data
+### Subscribing
 
-In order to render a DOM representation of the application state, view functions
-must first obtain that state. This happens via subscriptions.
+To render the DOM representation of some-part-of app state, view functions must query 
+for that part of `app-db`, and that means using `subscribe`.
 
-> XXX  This particular document is a WIP ... it peters out after this ... I wouldn't read any more. 
+`subscribe` is always called like this:
+```Clojure
+   (subscribe  [query-id some optional query parameters])
+```
+There's only one (global) `subscribe` function and it takes one argument, assumed to be a vector.
 
------
+The first element in the vector (shown above as `query-id`) identifies/names the query 
+and the other elements are optional
+query parameters. With a traditional database a query might be:
+```
+select * from customers where name="blah"
+```
 
-transform data into data. They source 
-data from subscriptions (queries across application state), and 
-the data they return is hiccup-formatted, which is a proxy for DOM.
+In re-frame, that would be done as follows:
+   `(subscribe  [:customer-query "blah"])`
+which would return a `ratom` holding the customer state (a value which might change over time!).
 
-Data -> HTML
+> Because subscriptions return a ratom, they must always be dereferenced to 
+obtain the value. This is a recurring trap for newbies.
 
-They source data from:
-  1. arguments   (aka props in the React world)
-  2. queries which obtain data from the application state
+### The View Functions 
 
-Because of the 2nd source, these functions are not pure. XXX
-
-Notice that color-input below does a `dispatch`. It is very common for UI widgets 
-to be event-dispatching. The user interacting with the GUI is a major source of 
-events.
- 
-
+This view function renders the clock:
 ```clj
 (defn clock
   []
   [:div.example-clock
    {:style {:color @(rf/subscribe [:time-color])}}
-   (-> (rf/listen [:time])
+   (-> @(rf/subscribe [:time])
        .toTimeString
        (clojure.string/split " ")
        first)])
+```
+As you can see, it uses `subscribe` twice to obtain two pieces of data from `app-db`. 
+If either change, re-frame will re-run this view function.
 
+And this view function renders the input field:
+```clj
 (defn color-input
   []
   [:div.color-input
    "Time color: "
    [:input {:type "text"
-            :value @(rf/subscribe [:time-color])
+            :value @(rf/subscribe [:time-color])        ;; subscribe
             :on-change #(rf/dispatch [:time-color-change (-> % .-target .-value)])}]])  ;; <---
+```
 
+Notice how it does BOTH a `subscribe` to obtain the current value AND a `dispatch` to say when it has changed. 
+
+It is very common for view functions to render event-dispatching functions. The user's interaction with 
+the UI is usually the largest source of events.
+
+And then something more standard:
+```clj
 (defn ui
   []
   [:div
@@ -385,12 +405,16 @@ events.
    [color-input]])
 ```
 
-Naming: sub-val ???  sub-r
+Note: `view` functions tend to be organised into a hierarchy, often with data flowing from parent to child via
+parameters. So, not every view function needs a subscription. Very often the values passed in from a parent component
+are sufficient.
+
+Note: a view function should never directly access `app-db`. Data is only ever sourced via 
 
 ### Components Like Templates?
 
-A `component` such as `greet` is like the templates you'd find in
-Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two massive differences:
+`view` functions are like the templates you'd find in
+Django, Rails, Handlebars or Mustache -- they maps data to HTML -- except for two massive differences:
 
   1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
      downside is that these are not "designer friendly" HTML templates.
@@ -398,7 +422,6 @@ Django, Rails, Handlebars or Mustache -- it maps data to HTML -- except for two 
      are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
      the renderer of any `component` is wrapped by a `reaction`.  If any of the the "inputs"
      to that render change, the render is rerun.
-
 
 ## Kick Starting The App
 
@@ -421,9 +444,8 @@ After `run` is called, the app passively waits for events.
 Nothing happens without an `event`.
 
 When it comes to establishing initial application state, you'll 
-notice the use of `dispatch-sync`, rather than `dispatch`.  This is
-the synchronous 
-
+notice the use of `dispatch-sync`, rather than `dispatch`. This ensures a correct
+structure exists in `app-db` before any subscriptions or event handlers run. 
 
 ## Summary
 
@@ -437,3 +459,6 @@ the synchronous
  - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
  - write Reagent view functions  (view layer)  (domino 5)
 
+## Next 
+
+You should look at the todomvc example.  

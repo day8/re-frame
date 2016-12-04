@@ -1,7 +1,7 @@
 ## Flow
 
 This tutorial focuses mainly on how data flows between dominoes 3-4-5-6.
-We'll look at the underlying mechanism reactive mechanism.
+We'll look at the underlying reactive mechanism.
  
 BUT we'll start by looking at the overall picture ...
 
@@ -16,7 +16,8 @@ In the case of re-frame, dominoes are the parts, so, tick, yes, we have
 looked at them first.  But, if the parts are functions, what then of 
 the **interconnections**?  
 
-What does it even mean to talk about **interconnections between functions?** To answer that question, I'll rephrase it as:  
+What does it even mean to talk about **interconnections between functions?** 
+To answer that question, I'll rephrase it as:  
 how are the domino functions **composed**.  How does `f ∘ g` happen?
 
 At the language level, we know how function composition works. 
@@ -38,7 +39,7 @@ Sometimes, we'd rewrite the code above as:
 When we arrange our code like this, we talk of "threading" data 
 through functions. It somehow helps comprehension to frame function composition as a data flow. 
 
-In a similar spirit, you can almost see re-frame 6 domino cascade like this:
+In a similar spirit, you can almost see re-frame's 6 domino cascade like this:
 ```clj 
 (->>  event                 ;; domino 1
      event-handler          ;; 2
@@ -58,7 +59,8 @@ this too much, re-frame looks
 after it for you. It will thread (convey) data from one domino function to the next.
 It will call your functions at the right time, with the right (data) arguments.
 
-My second answer is: the method varies from domino to domino. Read on. 
+My second answer is: the method varies from domino to domino. Read on. But our 
+main focus is on the reactive flow of 3-4-5-6. 
 
 ## 1 -> 2
 
@@ -97,3 +99,4 @@ are not the stuff of which you are made. If that does not make the hair stand up
 your neck, read it again until it does, because it is important.
 
 Steve Grand
+
