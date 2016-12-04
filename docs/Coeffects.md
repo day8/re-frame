@@ -62,7 +62,7 @@ pure, and impure functions cause well-documented paper cuts.
 Our goal in this tutorial will be to rewrite this event handler so 
 that it __only__ uses data from arguments. This will take a few steps.
  
-The first is that we first switch to
+The first is that we switch to
 using `reg-event-fx` (instead of `reg-event-db`).
 
 Event handlers registered via `reg-event-fx` are slightly 
