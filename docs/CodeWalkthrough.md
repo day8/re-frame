@@ -8,8 +8,8 @@ In this tutorial, **we'll look at re-frame code**. Finally.
 
 ## What Code?
 
-This repo contains an `/example` application called "simple",
-which has around 70 lines of code. We'll look at every line.
+This repo contains an example application called ["simple"](https://github.com/Day8/re-frame/tree/develop/examples/simple),
+which has around 70 lines of code. We'll look at every line of the [file](https://github.com/Day8/re-frame/blob/develop/examples/simple/src/simple/core.cljs).
 
 You are currently about 50% the way to understanding re-frame. By the
 end of this tutorial, you'll be at 70%, which is good
@@ -30,7 +30,7 @@ XXX path to code
 
 ## Namespace
 
-Because this example is so "simple", the code is in a single namespace. 
+Because this example is so small, the code is in a single namespace. 
 Within it, we'll need access to both `reagent` and `re-frame`. 
 So, we start like this: 
 ```clj
@@ -72,7 +72,8 @@ further elements are optional, and can provide additional data
 associated with the event. The additional value above, `42`, is 
 presumably the id of the item to delete.
 
-Here's some other example events:
+Here are some other example events:
+
 ```clj
 [:yes-button-clicked]
 [:set-spam-wanted false :continue-harassment-nevertheless-flag]
@@ -116,6 +117,7 @@ happens **later** - asynchronously. Very soon, but not now.
 The consumer of the queue is a `router` which looks after the event's processing.
 
 The `router`:
+
 1. inspects the 1st element of an event vector
 2. looks in a registry for the event handler which is **registered**
    for this kind of event
@@ -128,7 +130,7 @@ for each kind of event.
 
 Collectively, event handlers provide the control logic in a re-frame application.
 
-In this "simple" application, 3 kinds of event are dispatched: 
+In this application, 3 kinds of event are dispatched: 
   `:initialise`
   `:time-color-change`
   `:timer`
@@ -158,7 +160,7 @@ modified version of `db`.
 > **Note**: generally event handlers return `effects`. `reg-event-db` is used 
 to register a certain kind of simple event handler, one where 
 (1) the only inputs (`coeffects`) 
-required for the computation are `db and `v`, and (2) the only `effect` 
+required for the computation are `db` and `v`, and (2) the only `effect` 
 returned is an update to app state. 
 
 > There is a more sophisticated registration function called 
@@ -315,7 +317,7 @@ they render the app's entire UI.
  
 ### Hiccup 
 
-`Hiccup` is a data format for representing DOM.
+`Hiccup` is a data format for representing HTML.
 
 Here's a trivial view function which returns hiccup-formatted data:
  ```clj
@@ -413,7 +415,7 @@ Note: a view function should never directly access `app-db`. Data is only ever s
 ### Components Like Templates?
 
 `view` functions are like the templates you'd find in
-Django, Rails, Handlebars or Mustache -- they maps data to HTML -- except for two massive differences:
+Django, Rails, Handlebars or Mustache -- they map data to HTML -- except for two massive differences:
 
   1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
      downside is that these are not "designer friendly" HTML templates.
@@ -461,7 +463,7 @@ structure exists in `app-db` before any subscriptions or event handlers run.
 
 ## Further 
 
-You should look at the todomvc example.  
+You should look at the [todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).  
 
 
 *** 

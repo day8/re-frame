@@ -149,9 +149,9 @@ involving dominoes 4-5-6.
 The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
   `v = f(s)`  
 
-A view, `v`, is a fun,ction, `f`, of the app state, `s`.
+A view, `v`, is a function, `f`, of the app state, `s`.
 
-Or, said another way, there are functions `f` which compute what DOM nodes, `v`,
+Or, said another way, there are functions `f` that compute which DOM nodes, `v`,
 should be displayed to the user when the application is in a given app state, `s`.
 
 Or, another way: **over time**, as `s` changes, `f`
@@ -161,7 +161,7 @@ In our case, domino 3 changes `s`, the application state,
 and, in response, dominoes 4-5-6 are concerned with re-running `f` to compute the new `v` 
 shown to the user.
 
-Except, of course, there's nuances.  For instance, there's no single `f` to run.
+Except, of course, there are nuances.  For instance, there's no single `f` to run.
 There may be many functions which collectively build the overall DOM, 
 and only part of `s` may change at any one time, so only part of the 
 `v` (DOM) need be re-computed and updated. And some parts of `v` might not 
@@ -169,8 +169,8 @@ even be showing right now.
 
 ### Domino 4 - Query 
 
-Domino 4 is about extracting data from "app state".  The right data, 
-in the right format, for view functions (which are Domino 5).
+Domino 4 is about extracting data from "app state", and providing it 
+in the right format for view functions (which are Domino 5).
 
 Domino 4 is a novel and efficient de-duplicated signal graph which 
 runs query functions on the app state, `s`, efficiently computing 
@@ -181,17 +181,17 @@ see how simple the code actually is)
 
 ### Domino 5 - View
 
-Domino 5 is one or more **view functions** (aka Reagent components) which compute what 
-UI DOM should be displayed for the user.
+Domino 5 is one or more **view functions** (aka Reagent components) that compute the 
+UI DOM that should be displayed to the user.
 
 To render the right UI, they need to source application state, which is
-delivered reactively via the queries of Domino 4 .They 
+delivered reactively via the queries of Domino 4. They 
 compute hiccup-formatted data, which is a description of the DOM required.
 
 ### Domino 6 - DOM
 
 You don't write Domino 6 - it is handled for you 
-by Reagent/Rect. I mention it here 
+by Reagent/React. I mention it here 
 for completeness and to fully close the loop.
 
 This is the step in which the hiccup-formatted 
@@ -215,11 +215,11 @@ straightforward.
 
 The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
 
-In each, it is the 2nd last domino which 
+In each, it is the second to last domino which 
 computes "descriptions" of mutations required, and it is 
 the last domino which does the dirty work and realises these descriptions. 
 
-And in both cases, you don't need to worry yourself about this dirty work. re-frame looks 
+In both cases, you don't need to worry yourself about this dirty work. re-frame looks 
 after those dominoes.
 
 ## Code Fragments
@@ -245,9 +245,9 @@ like this:
 
 `dispatch` emits an `event`.  
 
-An re-frame `event` is a vector and, in this case, 
+A re-frame `event` is a vector and, in this case, 
 it has 2 elements: `[:delete-item 2486]`. The first element,
-`:delete-item`, is the kind of event. The `rest` is optional, further data about the 
+`:delete-item`, is the kind of event. The rest is optional, further data about the 
 `event` - in this case, my made-up id, `2486`, for the item to delete.
 
 ### Code For Domino 2
@@ -279,12 +279,11 @@ An `effect handler` (function) actions the `effects` returned by `h`:
 {:db  (dissoc-in db [:items item-id])}
 ```
 So that's a map. The keys identify the required kind of `effect`, and the values 
-supplying further details.
+supply further details.
 
 A key of `:db` means to update the app state, with the new computed value.
 
-This update of "app state", which re-frame manages for you, 
-is a mutative step, facilitated by re-frame itself 
+This update of "app state" is a mutative step, facilitated by re-frame
 when it sees a `:db` effect. 
 
 Why the name `:db`?  re-frame sees "app state" as something of an in-memory 
@@ -305,7 +304,7 @@ subscription acts more like an accessor.
   (:items db))   ;; not much of a materialised view
 ```
 
-On program startup, such a query-fn must associated with a key, 
+On program startup, such a query-fn must be associated with a key, 
 (for reasons obvious in the next domino) like this:
 ```clj
 (re-frame.core/reg-sub  :query-items  query-fn)
@@ -319,11 +318,12 @@ to "items", is called automatically (reactively) to re-compute DOM.
 It produces 
 a hiccup-formatted data structure describing the DOM nodes required (no DOM nodes 
 for the deleted item, obviously, but otherwise the same DOM as last time).
+
 ```clj
 (defn items-view
   []
   (let [items  (subscribe [:query-items])]  ;; source items from app state
-    [div: (map item-render @items]))   ;; assume item-render already written
+    [:div (map item-render @items]))   ;; assume item-render already written
 ```
 
 Notice how `items` is "sourced" from "app state" via `subscribe`. It is called with a query key
@@ -379,7 +379,7 @@ emphasis on the primacy of data. When they aren't re-watching Rich Hickey videos
 and wishing their hair was darker and more curly, 
 they meditate on aphorisms like "Data is the ultimate in late binding".
 
-I cannot stress too much what a big deal this is. It can seem 
+I cannot stress enough what a big deal this is. It can seem 
 like a syntax curiosity at first but, when the penny drops for 
 you on this, it tends to be a profound moment. And once you 
 understand the importance of this concept at the language level, 
@@ -421,7 +421,7 @@ represent a point in the possible design space, with pros and cons.
 And, yes, re-frame is fast, straight out of the box. And, yes, it has 
 a good testing story (unit and behavioural). And, yes, it works in with figwheel to create
 a delightful hot-loading development story. And, yes, it has 
-a fun specialist tooling, and a community,
+fun specialist tooling, and a community,
 and useful 3rd party libraries.
 
 ## Where Do I Go Next?
@@ -432,7 +432,7 @@ but the core concepts, and basic coding techniques, are now known to you.
 
 Next, you need to do the code walk-through in the tutorial. This
 will get your knowledge to about 70%. The
-final 30% always comes incrementally with use, and by reading the the 
+final 30% will come incrementally with use, and by reading the 
 tutorials (of which there's a few).
 
 So, next, read more here: <br>
