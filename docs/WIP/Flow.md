@@ -44,9 +44,9 @@ In a similar spirit, you can almost see re-frame's 6 domino cascade like this:
 (->>  event                 ;; domino 1
      event-handler          ;; 2
      effect-handler         ;; 3
-     -- app state ---       ;; 
+     -- app state ---       ;; pivot
      queries                ;; 4
-     view-fns               ;; 5
+     views                  ;; 5
      React)                 ;; 6
 ```
 
@@ -59,25 +59,25 @@ this too much, re-frame looks
 after it for you. It will thread (convey) data from one domino function to the next.
 It will call your functions at the right time, with the right (data) arguments.
 
-My second answer is: the method varies from domino to domino. Read on. But our 
+My second answer is: the method/transport varies from domino to domino. Read on. But our 
 main focus is on the reactive flow of 3-4-5-6. 
 
 ## 1 -> 2
 
-`dispatch` queues events and they are not immediately processed. So event handling is done async.
+`dispatch` queues events and they are not immediately processed. Event handling is done async.
  
-A router reads events from this queue, looks up the right handler and calls it.
-xxx 
+A router reads events from this queue, looks up the associated handler and calls it.
 
 ## 2 -> 3
 
-Except I lied in the previous section. The router doesn't really look up a single "handler". Instead it looks up an interceptor chain (described later). 
-
-That interceptor chain is a pipeline of functions. The last of them  
-xxx
+Except I lied in the previous section. The router doesn't really look 
+up a single "handler". Instead it looks up an interceptor chain. The method by which 
+an Interceptor chain is executed is discussed in great detail shortly. 
+ 
  
 ## 3->4->5->6
 
+So now we are at the meat and potatoes. The real subject of this tutorial. 
 
 ## On Flow
 
@@ -99,4 +99,80 @@ are not the stuff of which you are made. If that does not make the hair stand up
 your neck, read it again until it does, because it is important.
 
 Steve Grand
+
+
+### How Flow Happens In Reagent
+
+To implement a reactive flow, Reagent provides a `ratom` and a `reaction`.
+re-frame uses both of these
+building blocks, so let's now make sure we understand them.
+
+`ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.
+
+From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame
+perspective, we'll tweak that paradigm slightly and **view a `ratom` as having a value that
+changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
+`ratom` as a Signal. [Pause and read this](http://elm-lang.org:1234/guide/reactivity).
+
+The 2nd building block, `reaction`, acts a bit like a function. It's a macro which wraps some
+`computation` (a block of code) and returns a `ratom` holding the result of that `computation`.
+
+The magic thing about a `reaction` is that the `computation` it wraps will be automatically
+re-run  whenever 'its inputs' change, producing a new output (return) value.
+
+Eh, how?
+
+Well, the `computation` is just a block of code, and if that code dereferences one or
+more `ratoms`, it will be automatically re-run (recomputing a new return value) whenever any
+of these dereferenced `ratoms` change.
+
+To put that yet another way, a `reaction` detects a `computation's` input Signals (aka input `ratoms`)
+and it will `watch` them, and when, later, it detects a change in one of them,  it will re-run that
+computation, and it will `reset!` the new result of that computation into the `ratom` originally returned.
+
+So, the `ratom` returned by a `reaction` is itself a Signal. Its value will change over time when
+the `computation` is re-run.
+
+So, via the interplay between `ratoms` and `reactions`,  values 'flow' into computations and out
+again, and then into further computations, etc.  "Values" flow (propagate) through the Signal graph.
+
+But this Signal graph must be without cycles, because cycles cause mayhem!  re-frame achieves
+a unidirectional flow.
+
+Right, so that was a lot of words. Some code to clarify:
+
+```Clojure
+(ns example1
+ (:require-macros [reagent.ratom :refer [reaction]])  ;; reaction is a macro
+ (:require        [reagent.core  :as    reagent]))
+
+(def app-db  (reagent/atom {:a 1}))           ;; our root ratom  (signal)
+
+(def ratom2  (reaction {:b (:a @app-db)}))    ;; reaction wraps a computation, returns a signal
+(def ratom3  (reaction (condp = (:b @ratom2)  ;; reaction wraps another computation
+                             0 "World"
+                             1 "Hello")))
+
+;; Notice that both computations above involve de-referencing a ratom:
+;;   - app-db in one case
+;;   - ratom2 in the other
+;; Notice that both reactions above return a ratom.
+;; Those returned ratoms hold the (time varying) value of the computations.
+
+(println @ratom2)    ;; ==>  {:b 1}       ;; a computed result, involving @app-db
+(println @ratom3)    ;; ==> "Hello"       ;; a computed result, involving @ratom2
+
+(reset!  app-db  {:a 0})       ;; this change to app-db, triggers re-computation
+                               ;; of ratom2
+                               ;; which, in turn, causes a re-computation of ratom3
+
+(println @ratom2)    ;; ==>  {:b 0}    ;; ratom2 is result of {:b (:a @app-db)}
+(println @ratom3)    ;; ==> "World"    ;; ratom3 is automatically updated too.
+```
+
+So, in FRP-ish terms, a `reaction` will produce a "stream" of values over time (it is a Signal),
+accessible via the `ratom` it returns.
+
+
+Okay, that was all important background information for what is to follow. 
 

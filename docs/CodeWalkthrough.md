@@ -280,8 +280,7 @@ of subscriptions and more explanation can be found in the todomvc example.
 ```
 If, later, a view function subscribes to a query like this:
     `(subscribe [:some-query-id])`   ;; note use of `:some-query-id`
-then `a-query-fn` will be used to perform the query over application state
-and deliver a stream of values.
+then `a-query-fn` will be used to perform the query over the application state.
 
 Each time application state changes, `a-query-fn` will be
 called again to compute a new materialised view (a new computation over app state)
@@ -425,12 +424,12 @@ Django, Rails, Handlebars or Mustache -- they maps data to HTML -- except for tw
 
 ## Kick Starting The App
 
-Below, `run` is the function called when the HTML loads. It kicks off the
-application.
+Below, `run` is the called when the HTML page has loaded 
+to kick off the application.
 
 It has two tasks:
   1. load the initial application state
-  2. "mount" the GUI on an existing DOM element. Causes an initial render.
+  2. "mount" the GUI onto an existing DOM element. 
 
 ```clj
 (defn ^:export run
@@ -444,7 +443,8 @@ After `run` is called, the app passively waits for events.
 Nothing happens without an `event`.
 
 When it comes to establishing initial application state, you'll 
-notice the use of `dispatch-sync`, rather than `dispatch`. This ensures a correct
+notice the use of `dispatch-sync`, rather than `dispatch`. This is something of 
+cheat which ensures a correct
 structure exists in `app-db` before any subscriptions or event handlers run. 
 
 ## Summary
