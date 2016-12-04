@@ -1,21 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Mental Model Omnibus](#mental-model-omnibus)
-- [What is the problem?](#what-is-the-problem)
-- [Guiding Philosophy](#guiding-philosophy)
-- [It Does Physics](#it-does-physics)
-- [It does Event Sourcing](#it-does-event-sourcing)
-- [It does a reduce](#it-does-a-reduce)
-- [It does FSM](#it-does-fsm)
-- [Data Oriented Design](#data-oriented-design)
-- [Derived Data](#derived-data)
-- [Prefer Dumb Views - Part 1](#prefer-dumb-views---part-1)
-- [Prefer Dumb Views - Part 2](#prefer-dumb-views---part-2)
-- [Full Stack](#full-stack)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Mental Model Omnibus
 
@@ -26,8 +8,8 @@ patterns of thought that produced that government are left intact,
 then those patterns will repeat themselves. <br>
 > -- Robert Pirsig, Zen and the Art of Motorcycle Maintenance
 
-The re-frame tutorials initially focus on the **domino
-narrative**. The goal is to efficiently explain the mechanics,
+The tutorials initially focus on the **domino
+narrative**. The goal is to efficiently explain the mechanics of re-frame,
 and get you reading and writing code ASAP.
 
 **But** there are other interesting perspectives on re-frame
@@ -35,9 +17,23 @@ which will deepen your understanding of its design,
 and help you to get the best from it.
 
 This tutorial is a tour 
-of these ideas, justifications and insights.  It is a little rambling, but I
-believe you'll be glad you persisted. By the end, I'm hoping you'll have had at least one 
-"Oh, now I get it" moment.
+of these ideas, justifications and insights.  It is a little rambling, but 
+I'm hoping you'll have had at least one "Oooh, I see" moment before the end.
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+### Table Of Contents
+
+- [What is the problem?](#what-is-the-problem-)
+- [Guiding Philosophy](#guiding-philosophy)
+- [It does Event Sourcing](#it-does-event-sourcing)
+- [It does a reduce](#it-does-a-reduce)
+- [Derived Data All The Way Down](#derived-data-all-the-way-down)
+- [It does FSM](#it-does-fsm)
+- [Full Stack](#full-stack)
+- [What Of This Romance?](#what-of-this-romance-)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## What is the problem?
 
@@ -143,7 +139,7 @@ collection of event vectors.
 **Second**, remind yourself that the `combining function` 
 of a `reduce` takes two arguments:
   1. the current state of the reduction and
-  2. the next collection member to fold in.
+  2. the next collection member to fold in
 
 Then notice that `reg-event-db` event handlers take two arguments also:
   1. `db` - the current state of `app-db`
@@ -171,7 +167,9 @@ and interesting mental model. We were first exposed to this idea
 via Elm's early use of `foldp` (fold from the past), which was later enshrined in the 
 Elm Architecture.
 
-And for the love of all that is good, please watch this terrific
+## Derived Data All The Way Down
+
+For the love of all that is good, please watch this terrific
 [StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). 
 See what happens when you re-imagine a database as a stream!! Look at 
 all the problems that evaporate.
@@ -192,7 +190,7 @@ This is an infinite loop of sorts - an infinite loop of derived data.
 > Any sufficiently complicated GUI contains an ad hoc, 
 > informally-specified, bug-ridden, slow implementation 
 > of a hierarchical Finite State Machine  <br>
-> -- [me failing to impress my two twitter followers] 
+> -- me, trying too hard to impress my two twitter followers
 
 `event handlers` collectively
 implement the "control" part of an application. Their logic
@@ -229,7 +227,18 @@ but one thing is for sure ...
 
 Events - that's the way we roll.
 
-### What Of This Romance?
+## Full Stack
+
+If you like re-frame and want to take the principles full-stack, then
+these resource might be interesting to you:
+
+Commander Pattern  
+https://www.youtube.com/watch?v=B1-gS0oEtYc 
+
+Datalog All The Way Down  
+https://www.youtube.com/watch?v=aI0zVzzoK_E
+
+## What Of This Romance?
 
 My job is to be a relentless cheerleader for re-frame, right?
 The gyrations of my Pom-Poms should be tectonic,
@@ -245,36 +254,8 @@ Of course, that only applies if you get passionate about a technology
 But, no. No! Those French Philosophers and their pessimism - ignore him!!
 Your love for re-frame will be deep, abiding and enriching.
 
-
-## Data Oriented Design
-
-In the readme ... XXX
-
-Events are data -  `[:delete-item 42]` 
-
-That's almost like a function call `(delete-item 42)`. Kinda. So why prefer data?
-
-Using data gives us:
-  - easier hot reloading ??
-  - late binding 
-  - logability and event sourcing
-  - a more flexible version of "partial" (curring)
-
-
-## Full Stack
-
-If you like re-frame and want to take the principles full-stack, then
-these resource might be interesting:
-
-Commander Pattern  
-https://www.youtube.com/watch?v=B1-gS0oEtYc 
-
-Datalog All The Way Down 
-https://www.youtube.com/watch?v=aI0zVzzoK_E
-
-
 *** 
 
-Previous:  [This Repo's README](../README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Previous:  [First Code Walk-Through](CodeWalkthrough.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [First Code Walk-Through](CodeWalkThrough.md)
+Next:  [Effectful Handlers](EffectfulHandlers.md)  

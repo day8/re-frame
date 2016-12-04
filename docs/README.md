@@ -2,7 +2,7 @@
  
 - [This Repo's README](../README.md)
 - [app-db (Application State)](ApplicationState.md)
-- [First Code Walk-Through](CodeWalkThrough.md)
+- [First Code Walk-Through](CodeWalkthrough.md)
 - [Mental Model Omnibus](MentalModelOmnibus.md)
 
 
