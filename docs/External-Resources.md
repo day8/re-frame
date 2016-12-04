@@ -36,7 +36,7 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 * [Crossed](https://github.com/velveteer/crossed/) by [Velveteer] - A multiplayer crossword puzzle generator. Based on re-frame `0.7.0`
 
-* [imperimetric](https://github.com/Dexterminator/imperimetric) by [Dexter Gramfors] - Webapp for converting texts with some system of measurement to another, such as imperial to metric. Based on re-frame `0.7.0`
+* [imperimetric](https://github.com/Dexterminator/imperimetric) by [Dexter Gramfors] - Webapp for converting texts with some system of measurement to another, such as imperial to metric. Based on re-frame `0.8.0`
 
 * [Brave Clojure Open Source](https://github.com/braveclojure/open-source) by [Daniel Higginbotham]. A site using re-frame, liberator, boot and more to display active github projects that powers [http://open-source.braveclojure.com](http://open-source.braveclojure.com). Based on re-frame `0.6.0`
 
@@ -78,3 +78,6 @@ Templates, examples, and other resources related to re-frame. For additions or m
 [Toni Reina]: https://github.com/areina
 [Velveteer]: https://github.com/velveteer
 [Yogthos]:http://yogthos.net/index.html
+
+
+	

@@ -56,7 +56,7 @@
   :initialise-db                  ;; event id being handled
   [(inject-cofx :local-store-todos)
    check-spec-interceptor]                                  ;; after the event handler runs, check that app-db matches the spec
-  (fn [{:keys [db local-store-todos]} _]                       ;; the handler being registered
+  (fn [{:keys [db local-store-todos]} _]                    ;; the handler being registered
     {:db (assoc default-value :todos local-store-todos)}))  ;; all hail the new state
 
 
