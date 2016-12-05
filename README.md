@@ -85,31 +85,31 @@ you to understand re-frame, is **practically proof** it does physics.
 <img align="right" src="/images/Readme/Dominoes-small.jpg?raw=true">
 
 Computationally, each iteration of the loop involves a
-6 domino cascade.
+six domino cascade.
 
-One domino triggers the next, which triggers the next, etc,
-until we are back at the beginning of the loop. Each iteration is the same cascade.
+One domino triggers the next, which triggers the next, et cetera,
+until all the dominoes are knocked over. Then re-frame stands the dominoes up 
+so the loop can repeat again. Each iteration is the same cascade, like a really boring OK Go video.
 
-Here are the 6 dominoes ...
+Here are the six dominoes ...
 
 ### 1st Domino - Event Initiation
 
 An `event` is sent when something happens - the user 
 clicks a button, or a websocket receives a new message.
 
-Without the impulse of a triggering `event`, no 6 domino cascade occurs.
-It is only because of `events` that a re-frame app is propelled,
+Without the impulse of a triggering `event`, no six domino cascade occurs.
+It is only because of `event`s that a re-frame app is propelled,
 loop iteration after loop iteration, from one state to the next.
 
 re-frame is `event` driven.
 
 ### 2nd Domino - Event Handling
 
-In response to an `event`, an application must compute 
-its implication (the ambition, the intent). This is known as `event handling`.
+In response to an `event`, an application must decide what action to take. This is known as `event handling`.
 
-Event handler functions compute `effects` or, more accurately, 
-a **description of `effects`**. So they compute a data structure 
+Event handler functions compute side effects (known in re-frame simply as `effects`). More accurately, they compute 
+a **description of `effects`**. This description is a data structure 
 which says, declaratively, how the world should change (because of the event).
 
 Much of the time, only the "app state" of the SPA itself need
@@ -118,17 +118,17 @@ change, but sometimes the outside world must also be effected
 
 ### 3rd Domino - Effect Handling
 
-These descriptions of `effects` are realised (actioned). 
+The descriptions of `effects` are realised (actioned). This is where the mutation happens.
 
 Now, to a functional programmer, `effects` are scary in a 
 [xenomorph kind of way](https://www.google.com.au/search?q=xenomorph).
 Nothing messes with functional purity
-quite like the need for effects and coeffects. But, on the other hand, `effects` are equally 
-marvelous because they take the app forward. Without them, an app stays stuck in one state forever,
+quite like the need for side effects. But, on the other hand, `effects` are equally 
+marvelous because they move the app forward. Without them, an app stays stuck in one state forever,
 never achieving anything.
 
 So re-frame embraces the protagonist nature of `effects` - the entire, unruly zoo of them - but
-it does so in a controlled, debuggable, auditable, mockable, plugable way.
+it does so in a controlled, debuggable, auditable, mockable, pluggable way.
 
 ### A Pivot Point
 
@@ -136,7 +136,7 @@ The world has just changed and, very often,
 one particular part of the world, namely the **app's state**.
 
 re-frame's `app state` is held in one place - think of it like you 
-would an in-memory, central database for the app. (Much more details later)
+would an in-memory, central database for the app (Much more details later).
 
 When domino 3 changes this `app state`, it triggers the next part of the cascade 
 involving dominoes 4-5-6.
@@ -144,14 +144,14 @@ involving dominoes 4-5-6.
 ### The view formula 
 
 The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
-  `v = f(s)`  
+  `v = f(s)`
 
 A view, `v`, is a function, `f`, of the app state, `s`.
 
-Or, said another way, there are functions `f` that compute which DOM nodes, `v`,
+Said another way, there are functions `f` that compute which DOM nodes, `v`,
 should be displayed to the user when the application is in a given app state, `s`.
 
-Or, another way: **over time**, as `s` changes, `f`
+Or, differently: **over time**, as `s` changes, `f`
 will be re-run each time to compute new `v`, forever keeping `v` up to date with the current `s`.
 
 In our case, domino 3 changes `s`, the application state,
@@ -162,7 +162,7 @@ Except, of course, there are nuances.  For instance, there's no single `f` to ru
 There may be many functions which collectively build the overall DOM, 
 and only part of `s` may change at any one time, so only part of the 
 `v` (DOM) need be re-computed and updated. And some parts of `v` might not 
-even be showing right now.
+be showing right now.
 
 ### Domino 4 - Query 
 
@@ -192,8 +192,13 @@ by Reagent/React. I mention it here
 for completeness and to fully close the loop.
 
 This is the step in which the hiccup-formatted 
-"descriptions of required DOM", returned by the view functions of Domino 5, are made real. The  
-browser DOM nodes are mutated. 
+"descriptions of required DOM", returned by the view functions of Domino 5, are made real.
+The browser DOM nodes are mutated. 
+
+### Whew! A reprieve
+
+After the six dominoes have fallen, re-frame (metaphorically) stands them up. 
+Your re-frame app is poised lithely, ready for the next `event` to trigger the cycle again. 
 
 ## A Cascade Of Simple Functions
 
@@ -221,26 +226,27 @@ after those dominoes.
 
 ## Code Fragments
 
-Let's take this domino narrative one step further and introduce some code fragments.
+Let's take this domino narrative one step further and introduce some code fragments. 
+We're going to be working on a SPA with a list of items.
+
+![Example SPA todo list]("/images/Readme/todolist.png?raw=true")
+
+**Imagine:** You have just clicked the "delete" button next to the 3rd item in the list.
+
+In response, what happens within this imaginary re-frame app? Here's a sketch of the six domino cascade:
 
 > Don't expect 
 to completely grok the terse code presented below. We're still at 30,000 feet. Details later. 
- 
-**Imagine:** the UI of an SPA shows a list of items. This user 
-clicks the "delete" button next to the 3rd item in a list.
-
-In response, 
-what happens within this imaginary re-frame app? Here's a sketch of the 6 domino cascade:
 
 ### Code For Domino 1
 
 The delete button for that 3rd item will have an `on-click` handler (function) which looks
-like this:  
+like this:
 ```clj
  #(re-frame.core/dispatch [:delete-item 2486])
 ```
 
-`dispatch` emits an `event`.  
+`dispatch` emits an `event`.
 
 A re-frame `event` is a vector and, in this case, 
 it has 2 elements: `[:delete-item 2486]`. The first element,
@@ -306,11 +312,11 @@ On program startup, such a query-fn must be associated with a key,
 ```clj
 (re-frame.core/reg-sub  :query-items  query-fn)
 ```
-   
+
 ### Code For Domino 5
 
 Because the query function re-computed a new value, a view (function) which subscribes
-to "items", is called automatically (reactively) to re-compute DOM.  
+to "items", is called automatically (reactively) to re-compute DOM.
 
 It produces 
 a hiccup-formatted data structure describing the DOM nodes required (no DOM nodes 
@@ -325,7 +331,7 @@ for the deleted item, obviously, but otherwise the same DOM as last time).
 
 Notice how `items` is "sourced" from "app state" via `subscribe`. It is called with a query key
 to identify what data it needs, which should make a prior registration. 
-   
+
 ### Code For Domino 6
 
 The computed DOM (hiccup) is made real by Reagent/React. No code from you required. Just happens.
@@ -355,7 +361,7 @@ waiting for the next event.
 
 When building a re-frame app, you will: 
  - design your app's information model (data and schema layer)
- - write and register event handler functions  (control and transition layer)  (domino 2)    
+ - write and register event handler functions  (control and transition layer)  (domino 2)
  - (once in a blue moon) write and register effect and coeffect handler 
    functions (domino 3) which do the mutative dirty work of which we dare not 
    speak. 
@@ -423,19 +429,21 @@ and useful 3rd party libraries.
 
 ## Where Do I Go Next?
 
-We haven't yet looked at code much, but **at this point you 
-already know 50% of re-frame.**  There's detail to fill in, for sure,
+We haven't looked at much code yet, but **at this point you 
+already know 50% of re-frame.** There's detail to fill in, for sure,
 but the core concepts, and basic coding techniques, are now known to you.
 
-Next, you need to do the code walk-through in the tutorial. This
-will get your knowledge to about 70%. The
+Next you need to read read the other three articles in the documentation [Introduction section](/docs#introduction):
+
+* [Application State](/docs/ApplicationState.md)
+* [Code Walkthrough](/docs/CodeWalkthrough.md)
+* [Mental Model Omnibus](/docs/MentalModelOmnibus.md)
+
+This will get your knowledge to about 70%. The
 final 30% will come incrementally with use, and by reading the 
 tutorials (of which there's a few).
 
-So, next, read more here: <br>
-https://github.com/Day8/re-frame/blob/master/docs/README.md
-
-Experiment with these examples: <br>
+You can also experiment with these examples: <br>
 https://github.com/Day8/re-frame/tree/master/examples
 
 Use a template to create your own project: <br>
@@ -448,19 +456,16 @@ https://github.com/Day8/re-frame/blob/develop/docs/External-Resources.md
 ### T-Shirt Unlocked
 
 Good news.  If you've read this far,
-your insiders T-shirt will be arriving soon - it
-will feature turtles, 
+your insiders T-shirt will be arriving soon - it will feature turtles, 
 [xkcd](http://xkcd.com/1416/) and something indicating "data all the way down". 
 But we're still working on the hilarious caption bit. Open a
 repo issue with a suggestion.
-
 
 ## Licence
 
 Copyright © 2014-2016 Michael Thompson
 
 Distributed under The MIT License (MIT) - See LICENSE.txt
-
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
 [SPA]:http://en.wikipedia.org/wiki/Single-page_application
