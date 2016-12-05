@@ -41,9 +41,6 @@ Perhaps:
 
 re-frame is a pattern for writing [SPAs] in ClojureScript, using [Reagent].
 
-This repo contains both a **description of this pattern** and 
-a **reference implementation**.
-
 McCoy might report "It's MVC, Jim, but not as we know it".  And you would respond 
 "McCoy, you damn trouble maker, why even mention an OO pattern? 
 re-frame is a **functional framework**."

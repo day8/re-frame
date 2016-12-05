@@ -34,7 +34,7 @@ that Clojure data lying around exposed and passive.
 
 But, as Fogus reminds us, data at rest is quite perfect.
 
-In re-frame's reference implementation, `app-db` is one of these:
+In re-frame, `app-db` is one of these:
 ```clj
 (def app-db  (reagent/atom {}))    ;; a Reagent atom, containing a map
 ```
@@ -52,13 +52,12 @@ Further Notes:
     I wanted to convey the database notion as strongly as possible.
 2. In the documentation and code, I make a distinction between `app-db` (the `ratom`) and 
    `db` which is the (map) `value` currently stored **inside** this `ratom`. Be aware of that naming.
-3. the reference implementation creates and manages an `app-db` for you, so
+3. re-frame creates and manages an `app-db` for you, so
    you don't need to declare one yourself (see the 1st FAQ if you want to inspect the value it holds).
 4. `app-db` doesn't actually have to be a `ratom` containing a map.  It could, for example, 
    be a [datascript](https://github.com/tonsky/datascript database).  In fact, any database which 
    can signal you when it changes would do. We'd love! to be using [datascript](https://github.com/tonsky/datascript database) - so damn cool -
-   but we had too much data in our apps. If you were to use it, you'd have to tweak the 
-   reference implementation a bit and use [Posh](https://github.com/mpdairy/posh).
+   but we had too much data in our apps. If you were to use it, you'd have to tweak re-frame a bit and use [Posh](https://github.com/mpdairy/posh).
 
 
 ### The Benefits Of Data-In-The-One-Place

@@ -61,7 +61,7 @@ to your various handlers as required.
 
 Events are data. You choose the format.
 
-The re-frame reference implementation uses a vector
+re-frame uses a vector
 format for events. For example:
 ```clj
 [:delete-item 42]
