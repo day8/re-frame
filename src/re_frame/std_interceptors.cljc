@@ -133,7 +133,7 @@
 
 (defn path
   "An interceptor factory which supplies a sub-path of `:db` to the handler.
-  It's action is somewhat annologous to `update-in`. It grafts the return
+  It's action is somewhat analogous to `update-in`. It grafts the return
   value from the handler back into db.
 
   Usage:

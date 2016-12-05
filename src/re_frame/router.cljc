@@ -86,7 +86,7 @@
   (-exception [this ex])
   (-pause [this later-fn])
   (-resume [this])
-  (-call-post-event-callbacks[this event]))
+  (-call-post-event-callbacks [this event]))
 
 
 ;; Concrete implementation of IEventQueue
