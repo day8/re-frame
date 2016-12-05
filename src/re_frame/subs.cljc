@@ -26,9 +26,9 @@
   cache.
 
   Useful when reloading Figwheel code after a React exception, as React components
-  aren't cleaned up properly. This means subscriptions on-dispose isn't run when the
-  components are destroyed. If a bad subscription caused your exception, then you
-  can't fix it without reloading your browser."
+  aren't cleaned up properly. This means a subscription's on-dispose function isn't
+  run when the components are destroyed. If a bad subscription caused your exception,
+  then you can't fix it without reloading your browser."
   []
   (doseq [[k rxn] @query->reaction]
     (dispose! rxn))
