@@ -13,6 +13,9 @@
 
 ## Flow
 
+It is time to talk of the reactive flow through dominoes 3-4-5-6. through dominoes It is time to talk about de-duplicated signal graphs. 
+
+
 This tutorial focuses mainly on how data flows between dominoes 3-4-5-6.
 We'll look at the underlying reactive mechanism.
  
