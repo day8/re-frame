@@ -12,8 +12,8 @@
 1. [How can I Inspect app-db?](Inspecting-app-db.md)
 2. [How do I use logging method X](Logging.md)
 3. [Dispatched Events Are Null](Null-Dispatched-Events.md)
-4.
-6.  [Why implement re-frame in `.cljc` files](Why-CLJC.md)
+4. [Why implement re-frame in `.cljc` files](Why-CLJC.md)
+5. [Why do we need to clear the subscription cache when reloading with Figwheel?](Why-Clear-Sub-Cache.md)
 
 
 
