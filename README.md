@@ -28,7 +28,7 @@ Perhaps:
     `reactive programming`, `functional programming` and `immutable data` going to
     **completely change everything**?  And, if so, what would that look like in a language
     that embraces those paradigms?
-3.  You're taking a [Functional Design and Programming course at San Diego State University](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html)
+3.  You're taking a [Functional Design and Programming course](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html) at San Diego State University
     and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days.
 4.  re-frame is impressively buzzword compliant: it has reactivity,
     unidirectional data flow, pristinely pure functions,
@@ -88,7 +88,7 @@ Computationally, each iteration of the loop involves a
 six domino cascade.
 
 One domino triggers the next, which triggers the next, et cetera, until we are 
-back at the beginning of the loop, whereupoon the dominoes all spring to attention 
+back at the beginning of the loop, whereupon the dominoes all spring to attention 
 again, ready for the next iteration of the same cascade.
 
 Here are the six dominoes ...
@@ -118,12 +118,12 @@ change, but sometimes the outside world must also be effected
 
 ### 3rd Domino - Effect Handling
 
-The descriptions of `effects` are realised (actioned). This is where the mutation happens.
+The descriptions of `effects` are realised (actioned). This is where mutations happens.
 
 Now, to a functional programmer, `effects` are scary in a 
 [xenomorph kind of way](https://www.google.com.au/search?q=xenomorph).
 Nothing messes with functional purity
-quite like the need for side effects. But, on the other hand, `effects` are equally 
+quite like the need for side effects. On the other hand, `effects` are 
 marvelous because they move the app forward. Without them, an app stays stuck in one state forever,
 never achieving anything.
 
@@ -140,7 +140,7 @@ would an in-memory, central database for the app (more details later).
 When domino 3 changes this `app state`, it triggers the next part of the cascade 
 involving dominoes 4-5-6.
 
-### There's a formula for it  
+### There's a formula  
 
 The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
   `v = f(s)`
@@ -209,7 +209,7 @@ The loop itself is very mechanical in operation.
 So, there's a regularity, simplicity and
 certainty to how a re-frame app goes about its business,
 which leads, in turn, to an ease in reasoning and debugging. This is 
-key to why re-frame is so pleasing to work with - it is just so 
+key to why re-frame is pleasing to work with - it is just so 
 straightforward.
 
 ## Managing mutation
@@ -218,7 +218,7 @@ The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
 
 In each, it is the second to last domino which 
 computes "descriptions" of mutations required, and it is 
-the last domino which does the dirty work and realises these descriptions. 
+the last domino which does the dirty work and realises these descriptions.
 
 In both cases, you don't need to worry yourself about this dirty work. re-frame looks 
 after those dominoes.
@@ -255,12 +255,12 @@ it has 2 elements: `[:delete-item 2486]`. The first element,
 ### Code For Domino 2
 
 The `event handler`, `h`, associated with 
-`:delete-item` is called to compute the `effect` of this event.
+`:delete-item`, is called to compute the `effect` of this event.
 
-This handler function, `h`, must take two arguments: the state-of-the-world 
-and the event, and it must return an effects map.  Without going into any
-explanations at this early point, here's a sketch of what a handler 
-might look like:
+This handler function, `h`, takes two arguments: a `coeffects` map 
+which holds the current state of the world (including app state),   
+and the `event`. It must return a map of `effects` - a description 
+of how the world should change. Here's a sketch (we are at 30,000 feet):
 ```clj
 (defn h 
  [{:keys [db]} event]                    ;; args:  db from coeffect, event
@@ -268,11 +268,18 @@ might look like:
    {:db  (dissoc-in db [:items item-id])})) ;; effect is change db
 ```
 
+There are mechanisms in re-frame (beyond us here) whereby you can place
+all necessary aspects of the world into that first `coeffects` argument, on a 
+per event-kind basis (different events need to know different things 
+in order to get their job done). The current application state, `db`, 
+is one aspect of the world which is invariably needed. 
+
 On program startup, `h` would have been 
 associated with `:delete-item` `events` like this:
 ```clj
 (re-frame.core/reg-event-fx  :delete-item  h)
 ```
+Which says "when you see a `:delete-item` event, use `h` to handle it".
 
 ### Code For Domino 3
 
@@ -280,13 +287,13 @@ An `effect handler` (function) actions the `effects` returned by `h`:
 ```clj
 {:db  (dissoc-in db [:items item-id])}
 ```
-So that's a map. The keys identify the required kind of `effect`, and the values 
-supply further details.
+So that's a map. The keys identify the required kinds of `effect`, and the values 
+supply further details. This map only has one key, so there's only one effect.  
 
-A key of `:db` means to update the app state, with the new computed value.
+A key of `:db` means to update the app state with the key's value.
 
 This update of "app state" is a mutative step, facilitated by re-frame
-when it sees a `:db` effect. 
+which has a built in effects handler for the `:db` effect. 
 
 Why the name `:db`?  re-frame sees "app state" as something of an in-memory 
 database.
@@ -311,6 +318,7 @@ On program startup, such a query-fn must be associated with an id,
 ```clj
 (re-frame.core/reg-sub  :query-items  query-fn)
 ```
+Which says "when you see a query (subscribe) for `:query-items`, use `query-fn` to handle it".
 
 ### Code For Domino 5
 
@@ -329,8 +337,7 @@ for the deleted item, obviously, but otherwise the same DOM as last time).
 ```
 
 Notice how `items` is "sourced" from "app state" via `subscribe`. It is called with a query id
-to identify what data it needs - in Domino 4 we associated the query id `:query-items` with 
-the function for that computation).  
+to identify what data it needs.   
 
 ### Code For Domino 6
 
@@ -471,13 +478,13 @@ represent a point in the possible design space, with pros and cons.
 
 And, yes, re-frame is fast, straight out of the box. And, yes, it has 
 a good testing story (unit and behavioural). And, yes, it works in with figwheel to create
-a delightful hot-loading development story. And, yes, it has 
+a powerful hot-loading development story. And, yes, it has 
 fun specialist tooling, and a community,
 and useful 3rd party libraries.
 
 ## Where Do I Go Next?
 
-We haven't looked at much code yet, but **at this point you 
+**At this point you 
 already know 50% of re-frame.** There's detail to fill in, for sure,
 but the core concepts, and even basic coding techniques, are now known to you.
 

@@ -1,6 +1,16 @@
+
+
+## Initial Code Walk-through
+
+At this point in your reading, you are armed with:
+ - a high level understanding of the 6 domino process (from re-frame's README)
+ - an understanding of application state (from the previous tutorial) 
+
+In this tutorial, **we'll look at re-frame code**.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
+### Table Of Contents
 
 - [Initial Code Walk-through](#initial-code-walk-through)
 - [What Code?](#what-code)
@@ -23,14 +33,6 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Initial Code Walk-through
-
-At this point in your reading, you are armed with:
- - a high level understanding of the 6 domino process (from re-frame's README)
- - an understanding of application state (from the previous tutorial) 
-
-In this tutorial, **we'll look at re-frame code**. Finally.
-
 ## What Code?
 
 This repo contains an example application called ["simple"](https://github.com/Day8/re-frame/tree/develop/examples/simple),
@@ -43,15 +45,25 @@ enough to start coding by yourself.
 ## What Does It Do?
 
 This app:
- - displays the current time in a nice big font
+ - displays the current time in a nice big, colourful font
  - provides a text input field into which you can type a hex colour code, 
    like "#CCC", for the time display
       
 XXX screenshot
 
-XXX How to run it
+To run the code:
+A. Install Java 8  (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+B. Install leiningen  (http://leiningen.org/#install)
 
-XXX path to code
+1. git clone https://github.com/Day8/re-frame.git
+2. cd re-frame/examples/simple
+3. lein do clean, figwheel
+4. open http://localhost:3449/example.html
+
+
+The source file we'll be reviewing is:
+https://github.com/Day8/re-frame/blob/master/examples/simple/src/simpleexample/core.cljs
+
 
 ## Namespace
 
