@@ -371,7 +371,7 @@ When building a re-frame app, you will:
 
 Ask a Systems Theorist, and they'll tell you that a system has **parts** and **interconnections**. 
 
-Human brains tend to focus first on the **parts**, and then, later, maybe
+Human brains tend to focus first on the **parts**, and then, later, maybe on
 **interconnections**. But we know better, right? We 
 know interconnections are often critical to a system.
 "Focus on the lines between the boxes" we lecture anyone kind enough to listen (in my case, glassy-eyed family members).
