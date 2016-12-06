@@ -461,9 +461,9 @@ structure exists in `app-db` before any subscriptions or event handlers run.
  - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
  - write Reagent view functions  (view layer)  (domino 5)
 
-## Further 
+## Further Code
 
-You should look at the [todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).  
+You should also look at the [todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).  
 
 
 *** 

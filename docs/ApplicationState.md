@@ -100,6 +100,17 @@ source of data is elsewhere.
 6. The ability to do time travel debugging, even in a production setting. More soon.
 
 
+### Get You A Leveragable Schema
+
+You, really do need a schema for `app-db`.  Yes, it is optional, and I breezed past this 
+earlier, but now I'm thumping the table and my face is red with intensity. You need one.
+
+The todomvc example (in this repo) shows how to check `app-db` against your schema 
+after every single event has been processed. 
+
+This is good: <br>
+https://www.youtube.com/watch?v=VNTQ-M_uSo8
+
 *** 
 
 Previous:  [This Repo's README](../README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

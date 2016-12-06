@@ -42,7 +42,7 @@ Perhaps:
 re-frame is a pattern for writing [SPAs] in ClojureScript, using [Reagent].
 
 McCoy might report "It's MVC, Jim, but not as we know it".  And you would respond 
-"McCoy, you damn trouble maker, why even mention an OO pattern? 
+"McCoy, you trouble maker, why even mention an OO pattern? 
 re-frame is a **functional framework**."
 
 Being a functional framework, it is about data, and the pure functions 
@@ -55,7 +55,7 @@ Architecturally, re-frame implements "a perpetual loop".
 To build an app, you hang pure functions on certain parts of this loop, 
 and re-frame looks after the `conveyance of data` 
 around the loop, into and out of the transforming functions you 
-provide - which is why the tag line is "Derived Values, Flowing".
+provide - hence a tag line of "Derived Values, Flowing".
 
 ### It does Physics
 
@@ -66,7 +66,7 @@ Remember this diagram from school? The water cycle, right?
 Two distinct stages, involving water in different phases, being acted upon
 by different forces: gravity working one way, evaporation/convection the other.
 
-To understand re-frame, **imagine data flowing around that loop instead of water**. 
+To understand re-frame, **imagine data flowing around that loop instead of water**.
 
 re-frame
 provides the conveyance of the data around the loop - the equivalent of gravity, evaporation and convection.
@@ -87,13 +87,13 @@ you to understand re-frame, is **practically proof** it does physics.
 Computationally, each iteration of the loop involves a
 six domino cascade.
 
-One domino triggers the next, which triggers the next, et cetera,
-until all the dominoes are knocked over. Then re-frame stands the dominoes up 
-so the loop can repeat again. Each iteration is the same cascade, like a really boring OK Go video.
+One domino triggers the next, which triggers the next, et cetera, until we are 
+back at the beginning of the loop, whereupoon the dominoes all spring to attention 
+again, ready for the next iteration of the same cascade.
 
 Here are the six dominoes ...
 
-### 1st Domino - Event Initiation
+### 1st Domino - Event Dispatch
 
 An `event` is sent when something happens - the user 
 clicks a button, or a websocket receives a new message.
@@ -112,7 +112,7 @@ Event handler functions compute side effects (known in re-frame simply as `effec
 a **description of `effects`**. This description is a data structure 
 which says, declaratively, how the world should change (because of the event).
 
-Much of the time, only the "app state" of the SPA itself need
+Much of the time, only the "application state" of the SPA itself need
 change, but sometimes the outside world must also be effected
 (localstore, cookies, databases, emails, logs, etc).
 
@@ -128,20 +128,19 @@ marvelous because they move the app forward. Without them, an app stays stuck in
 never achieving anything.
 
 So re-frame embraces the protagonist nature of `effects` - the entire, unruly zoo of them - but
-it does so in a controlled, debuggable, auditable, mockable, pluggable way.
+it does so in a largely hidden way, and in a manner which is debuggable, auditable, mockable and pluggable.
 
 ### A Pivot Point
 
-The world has just changed and, very often,
-one particular part of the world, namely the **app's state**.
+The world just changed and, very often, one particular part of it: the **application state**.
 
 re-frame's `app state` is held in one place - think of it like you 
-would an in-memory, central database for the app (Much more details later).
+would an in-memory, central database for the app (more details later).
 
 When domino 3 changes this `app state`, it triggers the next part of the cascade 
 involving dominoes 4-5-6.
 
-### The view formula 
+### There's a formula for it  
 
 The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
   `v = f(s)`
@@ -164,7 +163,7 @@ and only part of `s` may change at any one time, so only part of the
 `v` (DOM) need be re-computed and updated. And some parts of `v` might not 
 be showing right now.
 
-### Domino 4 - Query 
+### Domino 4 - Query
 
 Domino 4 is about extracting data from "app state", and providing it 
 in the right format for view functions (which are Domino 5).
@@ -296,7 +295,7 @@ database.
 
 Because a new version of "app state" has been computed and installed, 
 a query (function) over this app state is called automatically (reactively), 
-itself computing the list of items. 
+itself computing the list of items.
 
 Because the items 
 are stored in app state, there's not a lot to compute in this case. This 
@@ -307,7 +306,7 @@ subscription acts more like an accessor.
   (:items db))   ;; not much of a materialised view
 ```
 
-On program startup, such a query-fn must be associated with a key, 
+On program startup, such a query-fn must be associated with an id, 
 (for reasons obvious in the next domino) like this:
 ```clj
 (re-frame.core/reg-sub  :query-items  query-fn)
@@ -329,8 +328,9 @@ for the deleted item, obviously, but otherwise the same DOM as last time).
     [:div (map item-render @items]))   ;; assume item-render already written
 ```
 
-Notice how `items` is "sourced" from "app state" via `subscribe`. It is called with a query key
-to identify what data it needs, which should make a prior registration. 
+Notice how `items` is "sourced" from "app state" via `subscribe`. It is called with a query id
+to identify what data it needs - in Domino 4 we associated the query id `:query-items` with 
+the function for that computation).  
 
 ### Code For Domino 6
 
@@ -348,9 +348,7 @@ The key point to understand about our 3-4-5-6 example is:
   - which triggers view functions to rerun
   - which causes new DOM 
 
-Boom, boom, boom go the dominoes.
-
-It is a reactive data flow. 
+Boom, boom, boom go the dominoes. It is a reactive data flow. 
 
 ### Aaaaand we're done 
 
@@ -367,6 +365,56 @@ When building a re-frame app, you will:
    speak. 
  - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
  - write Reagent view functions  (view layer)  (domino 5)
+
+
+## Interconnections
+
+Ask a Systems Theorist, and they'll tell you that a system has **parts** and **interconnections**. 
+
+Human brains tend to focus first on the **parts**, and then, later, maybe
+**interconnections**. But we know better, right? We 
+know interconnections are often critical to a system.   
+"Focus on the lines between the boxes" we lecture anyone kind enough to listen (in my case, glassy-eyed family members).
+
+In the case of re-frame, dominoes are the **parts**, so, tick, yes, we have
+looked at them first. Our brains are happy. But what about the **interconnections**?
+
+If the **parts** are functions, what does it even mean to talk about **interconnections between functions?** 
+To answer that question, I'll rephrase it as:  
+how are the domino functions **composed**?
+
+At the language level, 
+Uncle Alonzo and Uncle John tell us how a function like `count` composes:   
+```clj
+(str (count (filter odd?  [1 2 3 4 5])))
+```
+We know when `count` is called, and with what 
+argument, and how the value it computes becomes the arg for a further function. 
+We know how data "flows" into and out of the functions.
+
+Sometimes, we'd rewrite this code as: 
+```clj
+(->>  [1 2 3 4 5]
+      (filter odd?)
+      count
+      str)
+```
+With this arrangement, we talk of "threading" data 
+through functions. **It seems to help our comprehension to frame function 
+composition in terms of data flow**.
+
+re-frame delivers architecture 
+by supplying the interconnections - it threads the data - it composes the dominoes - it is the lines between the boxes. 
+
+But re-frame has no universal method for this. The technique it uses varies from one domino neighbour 
+pair to the next. Between 1 and 2 it is a queue & router, 
+between 2 and 3 it is an interceptor pipeline, and along the 3-4-5-6 domino axis there's a reactive signal graph.  The right 
+tool for the job in each case, I'd argue.
+
+While interconnections are critical to how **re-frame works**, 
+you can happily **use re-frame** for a long time and be mostly ignorant of their details.
+
+Which is a good thing - back we go to happy brains focusing on the **parts**.
 
 ## It Leverages Data
 
@@ -431,16 +479,16 @@ and useful 3rd party libraries.
 
 We haven't looked at much code yet, but **at this point you 
 already know 50% of re-frame.** There's detail to fill in, for sure,
-but the core concepts, and basic coding techniques, are now known to you.
+but the core concepts, and even basic coding techniques, are now known to you.
 
-Next you need to read read the other three articles in the documentation [Introduction section](/docs#introduction):
+Next you need to read read the other three articles in the [Introduction section](/docs#introduction):
 
 * [Application State](/docs/ApplicationState.md)
 * [Code Walkthrough](/docs/CodeWalkthrough.md)
 * [Mental Model Omnibus](/docs/MentalModelOmnibus.md)
 
 This will get your knowledge to about 70%. The
-final 30% will come incrementally with use, and by reading the 
+final 30% will come incrementally with use, and by reading the other
 tutorials (of which there's a few).
 
 You can also experiment with these examples: <br>
@@ -457,7 +505,7 @@ https://github.com/Day8/re-frame/blob/develop/docs/External-Resources.md
 
 Good news.  If you've read this far,
 your insiders T-shirt will be arriving soon - it will feature turtles, 
-[xkcd](http://xkcd.com/1416/) and something indicating "data all the way down". 
+[xkcd](http://xkcd.com/1416/) and something about "data all the way down". 
 But we're still working on the hilarious caption bit. Open a
 repo issue with a suggestion.
 

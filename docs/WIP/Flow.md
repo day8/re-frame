@@ -5,65 +5,7 @@ We'll look at the underlying reactive mechanism.
  
 BUT we'll start by looking at the overall picture ...
 
-## Interconnections
 
-Ask a Systems Theorist, and they'll tell you that a system has **parts** and **interconnections**. 
-
-Human brains tend to focus first on **parts**, and then, later,
-**interconnections**. But we Software Architect might focus on
-the interconnections earlier because they're so often critical to an understanding of the system. 
-"Focus on the lines between the boxes" we might lecture anyone kind enough to listen. 
-
-In the case of re-frame, dominoes are the **parts**, so, tick, yes, we have
-looked at them first. So, I hope your brain is happy. But, let's now 
-indulge our inner Systems Architect and think more about **interconnections**.
-
-So, if the **parts** are functions, what then are 
-the **interconnections**?
-
-What does it even mean to talk about **interconnections between functions?** 
-To answer that question, I'll rephrase it as:  
-how are the domino functions **composed**?
-
-At the language level, 
-Uncle Alonzo and Uncle John say a function such as `count` composes like this:  
-```clj
-(str (count (filter odd?  [1 2 3 4 5])))
-```
-Clojure's semantics tell us when `count` is called, and with what 
-argument, and how the value it computes becomes the arg for a further function. 
-We know how data "flows" into and out of the functions.
-
-Sometimes, we'd rewrite the code above as: 
-```clj
-(->>  [1 2 3 4 5]
-      (filter odd?)
-      count
-      str)
-```
-When we arrange our code like this, we talk of "threading" data 
-through functions. **It seems to help our comprehension to frame function 
-composition in terms of data flow**.
-
-re-frame delivers architecture 
-by supplying the interconnections - it threads the data - it lives in the gaps.
-
-But there's no one method of threading. The flow varies from one domino neighbour pair to the next. One time it is a queue, 
-another a pipeline, and along the 3-4-5-6 axis there's a reactive signal graph. 
-
-Fine. So how, then, does data get threaded through the domino functions of re-frame?
-How does data flow out of one function (domino) 
-into the next?  What theory of computation is driving this bus?
-
-My first, weak answer is:  how wonderful is it that you don't need to worry about
-this too much, re-frame looks
-after it for you. It will thread (convey) data from one domino function to the next.
-It will call your functions at the right time, with the right (data) arguments.
-
-My second, equally unsatisfactory answer is: the method/transport varies 
-from one domino pair to the next.  There's no one method. You'll need to read the further docs on "Flow". 
-
-At this point, my goal was to start you thinking about "the lines between the boxes". That's where re-frame lives. 
 
 ## 1 -> 2
 

@@ -18,7 +18,7 @@ and help you to get the best from it.
 
 This tutorial is a tour 
 of these ideas, justifications and insights.  It is a little rambling, but 
-I'm hoping you'll have had at least one "Oooh, I see" moment before the end.
+I'm hoping you'll have had at least one "Aaaah, I see" moment before the end.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -220,7 +220,7 @@ contrived in other kinds of architecture (in my experience).
 
 So, members of the jury, I put it to you that:
   - the first 3 dominoes implement an [Event-driven finite-state machine](https://en.wikipedia.org/wiki/Event-driven_finite-state_machine)
-  - the last 3 dominoes a rendering of the FSM's current state for the user to observe
+  - the last 3 dominoes render of the FSM's current state for the user to observe
 
 Depending on your app, this may or may not be a useful mental model,
 but one thing is for sure ... 
@@ -259,3 +259,17 @@ Your love for re-frame will be deep, abiding and enriching.
 Previous:  [First Code Walk-Through](CodeWalkthrough.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Effectful Handlers](EffectfulHandlers.md)  
+
+
+[SPAs]:http://en.wikipedia.org/wiki/Single-page_application
+[SPA]:http://en.wikipedia.org/wiki/Single-page_application
+[Reagent]:http://reagent-project.github.io/
+[Dan Holmsand]:https://twitter.com/holmsand
+[Flux]:http://facebook.github.io/flux/docs/overview.html#content
+[Hiccup]:https://github.com/weavejester/hiccup
+[FRP]:https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
+[Elm]:http://elm-lang.org/
+[OM]:https://github.com/swannodette/om
+[Prismatic Schema]:https://github.com/Prismatic/schema
+[Hoplon]:http://hoplon.io/
+[Pedestal App]:https://github.com/pedestal/pedestal-app
