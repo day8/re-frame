@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Flow](#flow)
+- [1 -> 2](#1---2)
+- [2 -> 3](#2---3)
+- [3->4->5->6](#3-4-5-6)
+- [On Flow](#on-flow)
+  - [How Flow Happens In Reagent](#how-flow-happens-in-reagent)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Flow
 
 This tutorial focuses mainly on how data flows between dominoes 3-4-5-6.

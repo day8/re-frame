@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [It solves a dilemma](#it-solves-a-dilemma)
+- [Implements Reactive Data Flows](#implements-reactive-data-flows)
+- [Flow](#flow)
+- [Reactive Programming](#reactive-programming)
+- [Components](#components)
+  - [Truth Interlude](#truth-interlude)
+  - [React etc.](#react-etc)
+- [Subscribe](#subscribe)
+- [The Signal Graph](#the-signal-graph)
+- [A More Efficient Signal Graph](#a-more-efficient-signal-graph)
+- [](#)
+- [Prefer Dumb Views - Part 1](#prefer-dumb-views---part-1)
+- [Prefer Dumb Views - Part 2](#prefer-dumb-views---part-2)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 
 ## It solves a dilemma

@@ -22,16 +22,16 @@ I'm hoping you'll have had at least one "Aaaah, I see" moment before the end.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-### Table Of Contents
+## Table Of Contents
 
-- [What is the problem?](#what-is-the-problem-)
+- [What is the problem?](#what-is-the-problem)
 - [Guiding Philosophy](#guiding-philosophy)
 - [It does Event Sourcing](#it-does-event-sourcing)
 - [It does a reduce](#it-does-a-reduce)
 - [Derived Data All The Way Down](#derived-data-all-the-way-down)
 - [It does FSM](#it-does-fsm)
 - [Full Stack](#full-stack)
-- [What Of This Romance?](#what-of-this-romance-)
+- [What Of This Romance?](#what-of-this-romance)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

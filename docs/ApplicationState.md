@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Application State](#application-state)
+    - [Table Of Contents](#table-of-contents)
+  - [On Data](#on-data)
+  - [The Big Ratom](#the-big-ratom)
+  - [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
+  - [Get You A Leveragable Schema](#get-you-a-leveragable-schema)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Application State
 
 How does re-frame manage application state?
