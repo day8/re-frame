@@ -373,14 +373,14 @@ Ask a Systems Theorist, and they'll tell you that a system has **parts** and **i
 
 Human brains tend to focus first on the **parts**, and then, later, maybe
 **interconnections**. But we know better, right? We 
-know interconnections are often critical to a system.   
+know interconnections are often critical to a system.
 "Focus on the lines between the boxes" we lecture anyone kind enough to listen (in my case, glassy-eyed family members).
 
 In the case of re-frame, dominoes are the **parts**, so, tick, yes, we have
 looked at them first. Our brains are happy. But what about the **interconnections**?
 
 If the **parts** are functions, what does it even mean to talk about **interconnections between functions?** 
-To answer that question, I'll rephrase it as:  
+To answer that question, I'll rephrase it as:
 how are the domino functions **composed**?
 
 At the language level, 
