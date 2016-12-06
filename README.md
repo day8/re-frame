@@ -29,7 +29,7 @@ Perhaps:
     **completely change everything**?  And, if so, what would that look like in a language
     that embraces those paradigms?
 3.  You're taking a [Functional Design and Programming course at San Diego State University](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html)
-    and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days. Just.
+    and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days.
 4.  re-frame is impressively buzzword compliant: it has reactivity,
     unidirectional data flow, pristinely pure functions,
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
