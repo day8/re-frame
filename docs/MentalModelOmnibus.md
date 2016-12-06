@@ -170,7 +170,7 @@ Elm Architecture.
 ## Derived Data All The Way Down
 
 For the love of all that is good, please watch this terrific
-[StrangeLoop presentation ](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). 
+[StrangeLoop presentation](https://www.youtube.com/watch?v=fU9hR3kiOK0) (40 mins). 
 See what happens when you re-imagine a database as a stream!! Look at 
 all the problems that evaporate.
 Think about that: shared mutable state (the root of all evil),

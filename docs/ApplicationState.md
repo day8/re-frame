@@ -20,7 +20,7 @@ re-frame puts all your application state into one place, which is
 called `app-db`.
 
 Ideally, you will provide a spec for this data-in-the-one-place, 
-[using a powerful and leveragable schema](http://clojure.org/about/spec).
+[using a powerful and leverageable schema](http://clojure.org/about/spec).
 
 Now, this advice is not the slightest bit controversial for 'real' databases, right?
 You'd happily put all your well-formed data into PostgreSQL.
@@ -64,9 +64,9 @@ Further Notes:
 
 1. Here's the big one:  because there is a single source of truth, we write no
 code to synchronize state between many different stateful components.  I 
-cannot stress too much how significant this is. You end up writing less code
+cannot stress enough how significant this is. You end up writing less code
 and an entire class of bugs is eliminated.
-(This mindset very different to OO which involves
+(This mindset is very different to OO which involves
 distributing state across objects, and then ensuring that state is synchronized, all the while 
 trying to hide it, which is, when you think about it, quite crazy ... and I did it for years).
 
@@ -88,7 +88,7 @@ It is easy to snapshot and restore one central value. Immutable data structures 
 feature called `structural sharing` which means it doesn't cost much RAM to keep the last, say, 200  
 snapshots. All very efficient. 
 For certain categories of applications (eg: drawing applications) this feature is borderline magic. 
-Instead of undo/redo being hard, disruptive and error prone, it becomes virtually trivial. 
+Instead of undo/redo being hard, disruptive and error prone, it becomes trivial. 
 **But,** many web applications are not self contained 
 data-wise and, instead, are dominated by data sourced from an authoritative remote database. 
 For these applications, re-frame's `app-db` is mostly a local caching 
