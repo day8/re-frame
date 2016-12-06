@@ -509,11 +509,6 @@ your insiders T-shirt will be arriving soon - it will feature turtles,
 But we're still working on the hilarious caption bit. Open a
 repo issue with a suggestion.
 
-## Licence
-
-Copyright © 2014-2016 Michael Thompson
-
-Distributed under The MIT License (MIT) - See LICENSE.txt
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
 [SPA]:http://en.wikipedia.org/wiki/Single-page_application
