@@ -13,13 +13,107 @@
 
 ## Flow
 
-It is time to talk of the reactive flow through dominoes 3-4-5-6. through dominoes It is time to talk about de-duplicated signal graphs. 
+It is time to talk of the reactive flow through dominoes 4-5-6. through dominoes It is time to talk about de-duplicated signal graphs. 
 
 
 This tutorial focuses mainly on how data flows between dominoes 3-4-5-6.
 We'll look at the underlying reactive mechanism.
  
 BUT we'll start by looking at the overall picture ...
+
+
+## Interconnections
+
+Ask a Systems Theorist, and they'll tell you that a system has **parts** and **interconnections**. 
+
+Human brains tend to focus first on the **parts**, and then, later, maybe on
+**interconnections**. But we know better, right? We 
+know interconnections are often critical to a system.
+"Focus on the lines between the boxes" we lecture anyone kind enough to listen (in my case, glassy-eyed family members).
+
+In the case of re-frame, dominoes are the **parts**, so, tick, yes, we have
+looked at them first. Our brains are happy. But what about the **interconnections**?
+
+If the **parts** are functions, what does it even mean to talk about **interconnections between functions?** 
+To answer that question, I'll rephrase it as:
+how are the domino functions **composed**?
+
+At the language level, 
+Uncle Alonzo and Uncle John tell us how a function like `count` composes:   
+```clj
+(str (count (filter odd?  [1 2 3 4 5])))
+```
+We know when `count` is called, and with what 
+argument, and how the value it computes becomes the arg for a further function. 
+We know how data "flows" into and out of the functions.
+
+Sometimes, we'd rewrite this code as: 
+```clj
+(->>  [1 2 3 4 5]
+      (filter odd?)
+      count
+      str)
+```
+With this arrangement, we talk of "threading" data 
+through functions. **It seems to help our comprehension to frame function 
+composition in terms of data flow**.
+
+re-frame delivers architecture 
+by supplying the interconnections - it threads the data - it composes the dominoes - it is the lines between the boxes. 
+
+But re-frame has no universal method for this. The technique it uses varies from one domino neighbour 
+pair to the next. 
+
+## Between 1 and 2
+
+There's a queue. 
+
+When you `dispatch`, the `event` vector is put into a FIFO queue to be processed "vey soon". 
+
+It is important to the design of re-frame that event processing is  async. It is more declarative 
+and it loosens up the coupling.
+
+On the end of the queue, is a `router` which (very soon) will:
+ - pick up events one after the other
+ - for each, it extracts `kind` of event (first element of the event vector)
+ - for each, it looks up the associated event handler and called it
+  
+ 
+## Between 2 and 3
+
+I lied above.
+
+I said the `router` called the event handler associated with an event.  This is a 
+useful simplification but we'll see in future tutorials that there's more going on.
+
+I'll wave my hands about now and give you a sense of the real story. 
+
+Instead of there being a single handler function, there's actually a pipeline of functions which 
+we call an interceptor chain. 
+
+This pipeline manages three things things:
+  - it prepares the `coeffect` for the event handler (the set of inputs required by the handler)
+  - it calls the handlerevent 
+  - it handles the `effects` produced by the 
+ 
+
+The router actually looks up the associated "interceptor chain", which happens to have the handler wrapped on the end. 
+
+And then it processes the interceptor chain. Which is to say it calls a 
+
+
+There's 
+ - calls the handler , looks at their first , looks at their 
+first element, and runs the associated 
+
+Between 1 and 2 it is a queue & router, 
+between 2 and 3 it is an interceptor pipeline, and along the 3-4-5-6 domino axis there's a reactive signal graph.  The right 
+tool for the job in each case, I'd argue.
+
+While interconnections are critical to how **re-frame works**, 
+you can happily **use re-frame** for a long time and be mostly ignorant of their details.
+
+Which is a good thing - back we go to happy brains focusing on the **parts**.
 
 
 

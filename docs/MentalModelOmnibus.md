@@ -227,6 +227,8 @@ but one thing is for sure ...
 
 Events - that's the way we roll.
 
+
+
 ## Full Stack
 
 If you like re-frame and want to take the principles full-stack, then
