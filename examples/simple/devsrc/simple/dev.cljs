@@ -1,5 +1,5 @@
-(ns simpleexample.dev
-  (:require [simpleexample.core :as example]
+(ns simple.dev
+  (:require [simple.core :as example]
             [figwheel.client :as fw]))
 
 (fw/start {:on-jsload example/run

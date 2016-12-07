@@ -11,7 +11,7 @@
 
   :profiles {:dev {:cljsbuild
                    {:builds {:client {:source-paths ["devsrc"]
-                                      :compiler     {:main "simpleexample.dev"
+                                      :compiler     {:main "simple.dev"
                                                      :asset-path "js"
                                                      :optimizations :none
                                                      :source-map true

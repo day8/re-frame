@@ -39,13 +39,10 @@
 ;; -- Domino 4 - Query  -------------------------------------------------------
 
 (rf/reg-sub
-  :time-str
+  :time
   (fn [db _]     ;; db is current app state. 2nd usused param is query vector
     (-> db
-        :time
-        .toTimeString
-        (clojure.string/split " ")
-        first)))
+        :time)))
 
 (rf/reg-sub
   :time-color
@@ -58,15 +55,18 @@
 (defn clock
   []
   [:div.example-clock
-   {:style {:color (rf/listen [:time-color])}}
-   (rf/listen [:time-str])])      ;; XXX listen
+   {:style {:color @(rf/subscribe [:time-color])}}
+   (-> @(rf/subscribe [:time])
+       .toTimeString
+       (clojure.string/split " ")
+       first)])
 
 (defn color-input
   []
   [:div.color-input
    "Time color: "
    [:input {:type "text"
-            :value (rf/listen [:time-color])
+            :value @(rf/subscribe [:time-color])
             :on-change #(rf/dispatch [:time-color-change (-> % .-target .-value)])}]])  ;; <---
 
 (defn ui
@@ -80,7 +80,7 @@
 
 (defn ^:export run
   []
-  (dispatch-sync [:initialize])     ;; puts a value into application state
+  (rf/dispatch-sync [:initialize])     ;; puts a value into application state
   (reagent/render [ui]              ;; mount the application's ui into '<div id="app" />'
                   (js/document.getElementById "app")))
 
