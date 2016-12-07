@@ -47,6 +47,7 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) by [Dhruv Parthasarathy] - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
 
+* [Stately: State Machines](https://github.com/nodename/stately) also https://www.youtube.com/watch?v=klqorRUPluw
 
 ### Videos
 
