@@ -7,7 +7,8 @@
     [re-frame.interceptor-test]
     [re-frame.subs-test]
     [re-frame.fx-test]
-    [re-frame.trace-test]))
+    [re-frame.trace-test]
+    [re-frame.restore-test]))
 
 (enable-console-print!)
 
@@ -21,7 +22,8 @@
     're-frame.interceptor-test
     're-frame.subs-test
     're-frame.fx-test
-    're-frame.trace-test))
+    're-frame.trace-test
+    're-frame.restore-test))
 
 ;; ---- KARMA  -----------------------------------------------------------------
 
@@ -31,4 +33,5 @@
     're-frame.interceptor-test
     're-frame.subs-test
     're-frame.fx-test
-    're-frame.trace-test))
+    're-frame.trace-test
+    're-frame.restore-test))
