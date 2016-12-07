@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Question](#question)
+- [Answer](#answer)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ### Question
 
@@ -10,12 +19,3 @@ A suggested solution can be found in [this issue](https://github.com/Day8/re-fra
 ***
 
 Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-
-<!-- DOCTOC SKIP
- 
- We put these inside a comment so that they are hidden when rendered on Github.
- <!-- START doctoc -->
- <!-- END doctoc -->
- 
- -->

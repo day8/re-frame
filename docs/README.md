@@ -1,5 +1,5 @@
 ### Introduction
- 
+
 - [This Repo's README](../README.md)
 - [app-db (Application State)](ApplicationState.md)
 - [First Code Walk-Through](CodeWalkthrough.md)
@@ -8,10 +8,10 @@
 
 ### Event Handlers
 
-- [Effectful Handlers](EffectfulHandlers.md)  
-- [Interceptors](Interceptors.md)  
-- [Effects](Effects.md)  
-- [Coeffects](Coeffects.md)  
+- [Effectful Handlers](EffectfulHandlers.md)
+- [Interceptors](Interceptors.md)
+- [Effects](Effects.md)
+- [Coeffects](Coeffects.md)
 
 
 ### App Structure
@@ -28,7 +28,7 @@
 - [Subscribing to External Data](Subscribing-To-External-Data.md)
 
 
-### Debugging And Testing 
+### Debugging And Testing
 
 - [Debugging Event Handlers](Debugging-Event-Handlers.md)
 - [Debugging](Debugging.md)
@@ -42,10 +42,7 @@
 - [Using Stateful JS Components](Using-Stateful-JS-Components.md)
 - [The re-frame Logo](The-re-frame-logo.md)
 
-<!-- DOCTOC SKIP
- 
- We put these inside a comment so that they are hidden when rendered on Github.
+<!--  We put these at the end so that there is nothing for doctoc to generate. -->
  <!-- START doctoc -->
  <!-- END doctoc -->
- 
- -->
+
