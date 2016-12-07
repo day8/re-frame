@@ -33,8 +33,8 @@ Point 3 is the interesting bit and will be the main focus of this page, but let'
 
 ## 1. Register Handlers 
 
-re-frame's multifarious handlers all work in the same way.  You declare 
-and registered your handlers in the one step, like this "event handler" example: 
+re-frame's various handlers all work in the same way.  You declare 
+and register your handlers in the one step, like this "event handler" example: 
 ```clj
 (re-frame/reg-event-db       ;; event handler will be registered automatically
   :some-id
@@ -81,8 +81,7 @@ And now we use that subscription:
 (defn main-panel 
   []
   (let [name  (re-frame/subscribe [:name])]  ;; <--- a subscription  <---
-    (fn []
-      [:div "Hello " @name]))))   ;; <--- use the result of the subscription
+      [:div "Hello " @name])))   ;; <--- use the result of the subscription
 ```
 
 The user of our app will see funny things 
@@ -158,16 +157,14 @@ quick sketch of the entire pattern. It is very straight-forward.
 (defn main-panel    ;; the top level of our app 
   []
   (let [name  (re-frame/subscribe :name)]   ;; we need there to be good data
-    (fn []
-      [:div "Hello " @name]))))
+    [:div "Hello " @name])))
 
 (defn top-panel    ;; this is new
   []
   (let [ready?  (re-frame/subscribe [:initialised?])]
-    (fn []
-      (if-not @ready?         ;; do we have good data?
-        [:div "Initialising ..."]   ;; tell them we are working on it
-        [main-panel]))))      ;; all good, render this component
+    (if-not @ready?         ;; do we have good data?
+      [:div "Initialising ..."]   ;; tell them we are working on it
+      [main-panel])))      ;; all good, render this component
 
 (defn ^:export main     ;; call this to bootstrap your app
   []
@@ -209,11 +206,10 @@ This assumes boolean flags are set in `app-db` when data was loaded from these s
 
 ## Cheating - Synchronous Dispatch
 
-In simple cases, you can simplify matters by using `(dispatch-sync [:initialise-db])` in 
-the main entry point function.  The 
-[Simple Example](https://github.com/Day8/re-frame/blob/8cf42f57f50f3ee41e74de1754fdb75f80b31775/examples/simple/src/simpleexample/core.cljs#L110) 
-and [TodoMVC Example](https://github.com/Day8/re-frame/blob/8cf42f57f50f3ee41e74de1754fdb75f80b31775/examples/todomvc/src/todomvc/core.cljs#L35) 
-both use `dispatch-sync` to initialise the app-db.
+In simple cases, you can simplify matters by using `dispatch-sync` (instead of `dispatch`) in 
+the main function.  
+
+This technique can be seen in the [TodoMVC Example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/core.cljs#L35).
 
 `dispatch` queues an event for later processing, but `dispatch-sync` acts 
 like a function call and handles an event immediately. That's useful for initial data 
@@ -230,7 +226,7 @@ tool in this context and, sometimes, when writing tests, but
 Above,  in our example `main`, we imagined using `(re-frame/dispatch [:load-from-service-1])`  to request data
 from a backend services.  How would we write the handler for this event?
  
-The next Tutorial will show you how. 
+The next Tutorial will show you how.
 
 
 
