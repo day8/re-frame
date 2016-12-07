@@ -48,7 +48,8 @@ This app:
  - provides a text input field into which you can type a hex colour code, 
    like "#CCC", for the time display
       
-XXX screenshot
+
+![Example App image](../images/example_app.png)
 
 To run the code:
  * Install Java 8  (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
