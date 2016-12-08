@@ -10,8 +10,8 @@
   :hooks [leiningen.cljsbuild]
 
   :profiles {:dev {:cljsbuild
-                   {:builds {:client {:source-paths ["devsrc"]
-                                      :compiler     {:main "simpleexample.dev"
+                   {:builds {:client {:figwheel     {:on-jsload "simple.core/run"}
+                                      :compiler     {:main "simple.core"
                                                      :asset-path "js"
                                                      :optimizations :none
                                                      :source-map true

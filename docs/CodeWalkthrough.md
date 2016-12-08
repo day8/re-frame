@@ -48,15 +48,17 @@ This app:
  - provides a text input field into which you can type a hex colour code, 
    like "#CCC", for the time display
       
-XXX screenshot
+
+![Example App image](../images/example_app.png)
 
 To run the code:
-A. Install Java 8  (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-B. Install leiningen  (http://leiningen.org/#install)
+ * Install Java 8  (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+ * Install leiningen  (http://leiningen.org/#install)
 
-1. git clone https://github.com/Day8/re-frame.git
-2. cd re-frame/examples/simple
-3. lein do clean, figwheel
+Then:
+1. `git clone https://github.com/Day8/re-frame.git`
+2. `cd re-frame/examples/simple`
+3. `lein do clean, figwheel`
 4. open http://localhost:3449/example.html
 
 
@@ -472,7 +474,7 @@ It has two tasks:
 ```clj
 (defn ^:export run
   []
-  (dispatch-sync [:initialize])     ;; puts a value into application state
+  (rf/dispatch-sync [:initialize])     ;; puts a value into application state
   (reagent/render [ui]              ;; mount the application's ui into '<div id="app" />'
                   (js/document.getElementById "app")))
 ```

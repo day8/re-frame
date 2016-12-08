@@ -12,7 +12,6 @@
 #### Improvements
 
 - [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
-- [#248](https://github.com/Day8/re-frame/pull/248) Provide after interceptor with `db` coeffect, if no `db` effect was produced.
 - Add `re-frame.loggers/get-loggers` function to well, you know.
 - Added `clear-subscription-cache!` function. This should be used when hot reloading code to ensure that any bad subscriptions that cause rendering exceptions are removed. See [reagent-project/reagent#272](https://github.com/reagent-project/reagent/issues/272) for more details.
 - Added experimental tracing features. These are subject to change and remain undocumented at the moment. By default they are disabled, and will be completely compiled out by advanced optimisations. To enable them, set a [`:closure-defines`](https://www.martinklepsch.org/posts/parameterizing-clojurescript-builds.html) key to `{"re_frame.trace.trace_enabled_QMARK_" true}`
@@ -22,6 +21,8 @@
 
 - [#259](https://github.com/Day8/re-frame/pull/259) Fix a bug where registering a subscription would create and close over dependent subscriptions, meaning that they would never be garbage collected, and doing more work than necessary.
 - Fix a bug where subscribing to a subscription that didn't exist would throw an exception, instead of returning nil.
+- [#248](https://github.com/Day8/re-frame/pull/248) Provide after interceptor with `db` coeffect, if no `db` effect was produced.
+- [#278](https://github.com/Day8/re-frame/issues/278) Provide enrich interceptor with `db` coeffect, if no `db` effect was produced.
 
 ## 0.8.0  (2016.08.19)
 
