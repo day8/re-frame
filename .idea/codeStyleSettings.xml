@@ -6,6 +6,7 @@
         <ClojureCodeStyleSettings>{
   :cljs.core/with-redefs 1
   :cursive.formatting/align-binding-forms true
+  :cursive.formatting/comment-align-column 0
   :re-frame.trace/register-trace-cb :only-indent
   :re-frame.trace/with-trace 1
 }</ClojureCodeStyleSettings>
@@ -15,6 +16,5 @@
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
-    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Default (2)" />
   </component>
 </project>
