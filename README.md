@@ -22,7 +22,7 @@ y'know. Pretty good.
 
 Perhaps:
 
-1.  You want to develop an [SPA] in ClojureScript, and you are looking for a framework
+1.  You want to develop an [SPA] in ClojureScript, and you are looking for a framework.
 2.  You believe Facebook did something magnificent when it created React, and
     you are curious about the further implications. Is the combination of
     `reactive programming`, `functional programming` and `immutable data` going to
