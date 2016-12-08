@@ -108,17 +108,17 @@ For these applications, re-frame's `app-db` is mostly a local caching
 point, and being able to do undo/redo its state is meaningless because the authoritative
 source of data is elsewhere.
 
-5. The ability to genuinely model control via FSMs  (discussed later)
+5. The ability to genuinely model control via FSMs (discussed later).
 
 6. The ability to do time travel debugging, even in a production setting. More soon.
 
 
 ### Get You A Leveragable Schema
 
-You, really do need a schema for `app-db`.  Yes, it is optional, and I breezed past this 
+You really do need a schema for `app-db`.  Yes, it is optional, and I breezed past this 
 earlier, but now I'm thumping the table and my face is red with intensity. You need one.
 
-The todomvc example (in this repo) shows how to check `app-db` against your schema 
+The [todomvc example](https://github.com/Day8/re-frame/tree/master/examples/todomvc) (in this repo) shows how to check `app-db` against your schema 
 after every single event has been processed. 
 
 This is good: <br>
