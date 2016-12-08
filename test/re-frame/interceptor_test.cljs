@@ -8,10 +8,13 @@
 (enable-console-print!)
 
 (deftest test-trim-v
-  (let [c  (-> (context [:a :b :c] [])
-               ((:before trim-v)))]
+  (let [ctx (context [:a :b :c] [])
+        c  ((:before trim-v) ctx)]
     (is (= (get-coeffect c :event)
-           [:b :c]))))
+           [:b :c]))
+
+    (let [c-after ((:after trim-v) c)]
+      (is (= c-after ctx)))))
 
 
 (deftest test-one-level-path
@@ -114,6 +117,3 @@
                 ((:before change-handler-i))       ;; cause change to :a
                 ((:after change-i))
                 (get-effect :db))))))
-
-
-
