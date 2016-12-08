@@ -68,10 +68,9 @@ pair to the next.
 
 There's a queue. 
 
-When you `dispatch`, the `event` vector is put into a FIFO queue to be processed "vey soon". 
+When you `dispatch` an event, it is put into a FIFO queue to be processed "vey soon". 
 
-It is important to the design of re-frame that event processing is  async. It is more declarative 
-and it loosens up the coupling.
+It is important to the design of re-frame that event processing is async. 
 
 On the end of the queue, is a `router` which (very soon) will:
  - pick up events one after the other

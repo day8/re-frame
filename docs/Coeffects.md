@@ -32,7 +32,7 @@ to perform its computation.
 
 Because the majority of event handlers only need `db` and 
 `event`, there's a specific registration function, called `reg-event-db`, 
-which delivers these two coeffects as arguments to an event 
+which delivers ONLY these two coeffects as arguments to an event 
 handler, making this common case easy to program.
 
 But sometimes an event handler needs other data inputs

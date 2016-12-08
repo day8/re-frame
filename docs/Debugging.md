@@ -2,7 +2,7 @@
 
 This page describes a technique for 
 debugging re-frame apps. It proposes a particular combination 
-of tools. By the end, you'll be better at dominos. 
+of tools.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -78,8 +78,8 @@ as luck would have it, ClojureScript is a lisp and it is readily **traceable**.
 ##  How To Trace?
 
 Below, I suggest a particular combination of technologies which, working together,
- will write a trace to the devtools console. Sorry, but there's no fancy 
- SVG dashboard.  We said simple, right?
+will write a trace to the devtools console. Sorry, but there's no fancy 
+SVG dashboard.  We said simple, right?
 
 First, use clairvoyant to trace function calls and data flow. We've had 
 a couple of Clairvoyant PRs accepted, and they make it work well for us.
