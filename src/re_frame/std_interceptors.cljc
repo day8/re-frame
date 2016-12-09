@@ -63,7 +63,14 @@
     :id      :trim-v
     :before  (fn trimv-before
                [context]
-               (update-in context [:coeffects :event] subvec 1))))
+               (-> context
+                   (update-in [:coeffects :event] subvec 1)
+                   (assoc-in [:coeffects ::untrimmed-event] (get-coeffect context :event))))
+    :after   (fn trimv-after
+               [context]
+               (-> context
+                   (assoc-in [:coeffects :event] (get-coeffect context ::untrimmed-event))
+                   (update :coeffects dissoc ::untrimmed-event)))))
 
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
@@ -279,5 +286,3 @@
                       (assoc-in new-db out-path)
                       (assoc-effect context :db))
                  context)))))
-
-
