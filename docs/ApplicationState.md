@@ -115,13 +115,18 @@ source of data is elsewhere.
 
 ### Get You A Leveragable Schema
 
-You really do need a schema for `app-db`.  Yes, it is optional, and I breezed past this 
-earlier, but now I'm thumping the table and my face is red with intensity. You need one.
+You really need a schema for `app-db`.
 
-The [todomvc example](https://github.com/Day8/re-frame/tree/master/examples/todomvc) (in this repo) shows how to check `app-db` against your schema 
-after every single event has been processed. 
+Of course, that means you'll have to learn [spec](http://clojure.org/about/spec) and there's
+some overhead in that, so maybe, just maybe, in your initial experiments, you can 
+get away without one. But not for long.  Promise me you'll write a `spec`.  Good.
 
-This is good: <br>
+The [todomvc example](https://github.com/Day8/re-frame/tree/master/examples/todomvc)
+shows how to use a spec.  Look in `src/db.cljs` for the spec itself, and then in `src/events.cljs` for
+how to write code which checks `app-db` against this spec after every single event has been 
+processed. 
+
+Specs are leveragable. Watch how: <br>
 https://www.youtube.com/watch?v=VNTQ-M_uSo8
 
 *** 

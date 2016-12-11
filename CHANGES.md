@@ -2,8 +2,8 @@
 
 #### Headline
 
-  - Docs: a rewritten README and a new "Introduction" section in `/docs`
-  - [#218](https://github.com/Day8/re-frame/issues/218) Make it okay to use `subscribe` in Form-1 components 
+  - The README and `/docs` have been substantially reworked.
+  - [#218](https://github.com/Day8/re-frame/issues/218) Make it okay to use `subscribe` in Form-1 components. This is a big deal.
 
 #### Breaking
 

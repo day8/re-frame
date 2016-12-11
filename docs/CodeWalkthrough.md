@@ -2,11 +2,15 @@
 
 ## Initial Code Walk-through
 
-At this point in your reading, you are armed with:
+At this point, you are about 50% of the way to understanding re-frame.  You are armed with:
  - a high level understanding of the 6 domino process (from re-frame's README)
  - an understanding of application state (from the previous tutorial) 
 
+By the end of this tutorial, you'll be at 70%, which is good
+enough to start coding by yourself.
+
 In this tutorial, **we'll look at re-frame code**.
+
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -35,42 +39,34 @@ In this tutorial, **we'll look at re-frame code**.
 ## What Code?
 
 This repo contains an example application called ["simple"](https://github.com/Day8/re-frame/tree/develop/examples/simple),
-which has around 70 lines of code. We'll look at every line of the [file](https://github.com/Day8/re-frame/blob/develop/examples/simple/src/simple/core.cljs).
-
-You are currently about 50% the way to understanding re-frame. By the
-end of this tutorial, you'll be at 70%, which is good
-enough to start coding by yourself.
-
-## What Does It Do?
+which has around 70 lines of code. We'll look at every line of [the file](https://github.com/Day8/re-frame/blob/develop/examples/simple/src/simple/core.cljs).
 
 This app:
  - displays the current time in a nice big, colourful font
- - provides a text input field into which you can type a hex colour code, 
-   like "#CCC", for the time display
+ - provides a single text input field, into which you can type a hex colour code, 
+   like "#CCC", used for the time display
       
-
+Here's what it looks like:
 ![Example App image](../images/example_app.png)
 
-To run the code:
- * Install Java 8  (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+To run the code: 
+ * Install Java 8 
  * Install leiningen  (http://leiningen.org/#install)
 
 Then:
-1. `git clone https://github.com/Day8/re-frame.git`
-2. `cd re-frame/examples/simple`
-3. `lein do clean, figwheel`
-4. open http://localhost:3449/example.html
-
-
-The source file we'll be reviewing is:
-https://github.com/Day8/re-frame/blob/master/examples/simple/src/simpleexample/core.cljs
+  1. `git clone https://github.com/Day8/re-frame.git`
+  2. `cd re-frame/examples/simple`
+  3. `lein do clean, figwheel`
+  4. open http://localhost:3449/example.html
 
 
 ## Namespace
 
-Because this example is so small, the code is in a single namespace. 
-Within it, we'll need access to both `reagent` and `re-frame`. 
-So, we start like this: 
+Because this example is tiny, the code is in a single namespace which you can find here:
+https://github.com/Day8/re-frame/blob/master/examples/simple/src/simpleexample/core.cljs
+
+Within this namespace, we'll need access to both `reagent` and `re-frame`. 
+So, at the top, we start like this: 
 ```clj
 (ns simple.core
   (:require [reagent.core :as reagent]

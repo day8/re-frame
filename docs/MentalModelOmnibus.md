@@ -8,6 +8,9 @@ patterns of thought that produced that government are left intact,
 then those patterns will repeat themselves. <br>
 > -- Robert Pirsig, Zen and the Art of Motorcycle Maintenance
 
+
+<img height="350px" align="right" src="/images/mental-model-omnibus.jpg?raw=true">
+
 The tutorials initially focus on the **domino
 narrative**. The goal is to efficiently explain the mechanics of re-frame,
 and get you reading and writing code ASAP.
@@ -16,9 +19,9 @@ and get you reading and writing code ASAP.
 which will deepen your understanding of its design,
 and help you to get the best from it.
 
-This tutorial is a tour 
-of these ideas, justifications and insights.  It is a little rambling, but 
-I'm hoping you'll have had at least one "Aaaah, I see" moment before the end.
+This tutorial is a tour of these ideas, justifications and insights.  
+It is a little rambling, but I'm hoping it will deliver for you 
+at least one "Aaaah, I see" moment before the end.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -94,6 +97,7 @@ wrong places and you'll end up with a tire fire of an Architecture.
 
 ## It does Event Sourcing
 
+
 How did that error happen, you puzzle, shaking your head ruefully?
 What did the user do immediately prior?  What
 state was the app in that this event was so problematic?
@@ -123,6 +127,7 @@ a checkpoint of `app-db`, and the events since then.
 Here's Martin Fowler's [description of Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html).
 
 ## It does a reduce 
+
 
 Here's an interesting way of thinking about the re-frame 
 data flow ...
