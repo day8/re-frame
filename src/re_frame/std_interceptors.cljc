@@ -6,7 +6,8 @@
     [re-frame.registrar :as registrar]
     [re-frame.db :refer [app-db]]
     [clojure.data :as data]
-    [re-frame.cofx :as cofx]))
+    [re-frame.cofx :as cofx]
+    [re-frame.utils :as utils]))
 
 
 ;; XXX provide a way to set what handler should be called when there is no registered handler.
@@ -69,8 +70,8 @@
     :after   (fn trimv-after
                [context]
                (-> context
-                   (assoc-in [:coeffects :event] (get-coeffect context ::untrimmed-event))
-                   (update :coeffects dissoc ::untrimmed-event)))))
+                   (utils/dissoc-in [:coeffects ::untrimmed-event])
+                   (assoc-in [:coeffects :event] (get-coeffect context ::untrimmed-event))))))
 
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------

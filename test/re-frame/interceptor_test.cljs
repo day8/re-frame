@@ -9,13 +9,14 @@
 (enable-console-print!)
 
 (deftest test-trim-v
-  (let [ctx (context [:a :b :c] [])
-        c  ((:before trim-v) ctx)]
-    (is (= (get-coeffect c :event)
+  (let [ctx           (context [:event-id :b :c] [])
+        ctx-trimmed   ((:before trim-v) ctx)
+        ctx-untrimmed ((:after trim-v) ctx-trimmed)]
+    (is (= (get-coeffect ctx-trimmed :event)
            [:b :c]))
-
-    (let [c-after ((:after trim-v) c)]
-      (is (= c-after ctx)))))
+    (is (= (get-coeffect ctx-untrimmed :event)
+           [:event-id :b :c]))
+    (is (= ctx-untrimmed ctx))))
 
 
 (deftest test-one-level-path
