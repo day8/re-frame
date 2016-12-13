@@ -75,7 +75,7 @@ It is important to the design of re-frame that event processing is async.
 On the end of the queue, is a `router` which (very soon) will:
  - pick up events one after the other
  - for each, it extracts `kind` of event (first element of the event vector)
- - for each, it looks up the associated event handler and called it
+ - for each, it looks up the associated event handler and calls it
   
  
 ## Between 2 and 3
@@ -83,17 +83,17 @@ On the end of the queue, is a `router` which (very soon) will:
 I lied above.
 
 I said the `router` called the event handler associated with an event.  This is a 
-useful simplification but we'll see in future tutorials that there's more going on.
+useful simplification, but we'll see in future tutorials that there's more going on.
 
 I'll wave my hands about now and give you a sense of the real story. 
 
 Instead of there being a single handler function, there's actually a pipeline of functions which 
-we call an interceptor chain. 
+we call an interceptor chain. The handler you write is inserted into the middle of this pipeline.
 
-This pipeline manages three things things:
+This function pipeline manages three things:
   - it prepares the `coeffect` for the event handler (the set of inputs required by the handler)
-  - it calls the handlerevent 
-  - it handles the `effects` produced by the 
+  - it calls the event handler (Domino 2)
+  - it handles the `effects` produced by the event handler  (Domino 3)
  
 
 The router actually looks up the associated "interceptor chain", which happens to have the handler wrapped on the end. 

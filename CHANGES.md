@@ -1,8 +1,10 @@
 ## 0.9.0 (2016.12.DD)  Unreleased
 
+Dr Ford has created a new re-frame narrative, and Bernard some infographics. Anyone seen Delores?
+
 #### Headline
 
-  - The README and `/docs` have been substantially reworked.
+  - The [README](README.md) and [/docs](/docs/README.md) have been substantially reworked.
   - [#218](https://github.com/Day8/re-frame/issues/218) Make it okay to use `subscribe` in Form-1 components. This is a big deal.
 
 #### Breaking

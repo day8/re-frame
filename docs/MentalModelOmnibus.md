@@ -15,9 +15,8 @@ The tutorials initially focus on the **domino
 narrative**. The goal is to efficiently explain the mechanics of re-frame,
 and get you reading and writing code ASAP.
 
-**But** there are other interesting perspectives on re-frame
-which will deepen your understanding of its design,
-and help you to get the best from it.
+**But** there are other perspectives on re-frame
+which will deepen your understanding.
 
 This tutorial is a tour of these ideas, justifications and insights.  
 It is a little rambling, but I'm hoping it will deliver for you 
@@ -41,7 +40,7 @@ at least one "Aaaah, I see" moment before the end.
 ## What is the problem?
 
 First, we decided to build our SPA apps with ClojureScript, then we
-choose [Reagent], then we had a problem. It was August 2014.
+choose [Reagent], then we had a problem. It was mid 2014.
 
 For all its considerable brilliance,  Reagent (+ React)
 delivers only the 'V' part of a traditional MVC framework.
