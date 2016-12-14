@@ -397,6 +397,7 @@ to then, as a next step, better understand coeffects and effects. We'll soon be 
 
 ***
 
+Previous:  [Infographic Overview](EventHandlingInfographic.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Interceptors](Interceptors.md)  
 

@@ -194,10 +194,11 @@ This is the step in which the hiccup-formatted
 "descriptions of required DOM", returned by the view functions of Domino 5, are made real.
 The browser DOM nodes are mutated. 
 
-### Whew! A reprieve
+### As A Picture
 
-After the six dominoes have fallen, re-frame (metaphorically) stands them up. 
-Your re-frame app is poised lithely, ready for the next `event` to trigger the cycle again. 
+
+[]("/images/Readme/6dominoes.png?raw=true")
+
 
 ## A Cascade Of Simple Functions
 
@@ -223,7 +224,7 @@ the last domino which does the dirty work and realises these descriptions.
 In both cases, you don't need to worry yourself about this dirty work. re-frame looks 
 after those dominoes.
 
-## Code Fragments
+## As Code Fragments
 
 Let's take this domino narrative one step further and introduce some code fragments. 
 We're going to be working on a SPA with a list of items.

@@ -1,26 +1,18 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Application State](#application-state)
-    - [Table Of Contents](#table-of-contents)
-  - [On Data](#on-data)
-  - [The Big Ratom](#the-big-ratom)
-  - [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
-  - [Get You A Leveragable Schema](#get-you-a-leveragable-schema)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-## Application State
-
-How does re-frame manage application state?
+- [On Data](#on-data)
+- [The Big Ratom](#the-big-ratom)
+- [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
 
 
 #### Table Of Contents
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 - [On Data](#on-data)
 - [The Big Ratom](#the-big-ratom)
 - [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ### On Data
 
@@ -126,7 +118,7 @@ shows how to use a spec.  Look in `src/db.cljs` for the spec itself, and then in
 how to write code which checks `app-db` against this spec after every single event has been 
 processed. 
 
-Specs are leveragable. Watch how: <br>
+Specs are more leveragable than types. Watch how: <br>
 https://www.youtube.com/watch?v=VNTQ-M_uSo8
 
 *** 
