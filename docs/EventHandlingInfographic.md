@@ -1,9 +1,11 @@
 ## An Infographic View Of Event Handling
 
-Three diagrams are provided. The first is a beginners view, 
-the second is a useful schematic, and the third is accurate and detailed.  
+Three diagrams are provided:
+  - a beginners view
+  - a useful, intermediate schematic
+  - advanced, accurate and detailed  
 
-View them in conjunction with a reading of the written tutorials. 
+Should be viewed in conjunction with a reading of the written tutorials. 
 
 <img src="/images/event-handlers.png?raw=true">
 
