@@ -109,12 +109,12 @@ presumably the id of the item to delete.
 Here are some other example events:
 
 ```clj
-[:yes-button-clicked]
+[:admit-to-being-satoshi false]
 [:set-spam-wanted false :continue-harassment-nevertheless-flag]
-[:some-ns/on-success response] 
+[:some-ns/on-GET-success response] 
 ```
 
-The `kind` of event is always a keyword, and for non-trivial 
+The `kind` of event is always a keyword, and for non-trivial
 applications it tends to be namespaced.
 
 **Rule**:  events are pure data. No sneaky tricks like putting
@@ -127,7 +127,7 @@ To send an event, call `dispatch` with the event vector as argument:
    (dispatch [:event-id  value1 value2])
 ```
 
-In this "simple" app, a `:timer` event is sent every second:
+In this "simple" app, a `:timer` event is dispatched every second:
 ```clj
 (defn dispatch-timer-event
   []
@@ -171,6 +171,22 @@ In this application, 3 kinds of event are dispatched:
   
 3 events means we'll be registering 3 event handlers.  
 
+### Two ways To register
+
+Event handlers can be registered via either `reg-event-db`
+or `reg-event-fx`  (`-db` vs `-fx`).
+
+Handler functions take coeffects (input args) and return `effects`, 
+however `reg-event-db` allows you to write simpler handlers. 
+The 
+handler functions it registers  
+(1) take just one coeffect - the current app state and (2) return only one `effect` - 
+ the updated app state. 
+ 
+Whereas `reg-event-fx` registered handlers are more flexible. 
+
+Because of its simplicity, we'll be using the former here. 
+
 ### reg-event-db
 
 We register event handlers using re-frame's `reg-event-db`.
@@ -182,7 +198,7 @@ We register event handlers using re-frame's `reg-event-db`.
   the-event-handler-fn)
 ```
 The handler function you provide should expect two parameters:
-   - `db` the current application state
+   - `db` the current application state  (contents of `app-db`)
    - `v`  the event vector
     
 So, your function will have a signature like this: `(fn [db v] ...)`. 
@@ -190,16 +206,6 @@ So, your function will have a signature like this: `(fn [db v] ...)`.
 Each event handler must compute and return the new state of 
 the application, which means it normally returns a
 modified version of `db`. 
-
-> **Note**: generally event handlers return `effects`. `reg-event-db` is used 
-to register a certain kind of simple event handler, one where 
-(1) the only inputs (`coeffects`) 
-required for the computation are `db` and `v`, and (2) the only `effect` 
-returned is an update to app state. 
-
-> There is a more sophisticated registration function called 
-`reg-event-fx` which allows more varied `coeffects` and `effects`
-to be computed. More on this soon. 
 
 ### :initialize
 

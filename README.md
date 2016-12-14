@@ -226,14 +226,15 @@ after those dominoes.
 
 ## As Code Fragments
 
-Let's take this domino narrative one step further and introduce some code fragments. 
+Let's take this domino narrative further and introduce code fragments.
 We're going to be working on a SPA with a list of items.
 
-![Example SPA todo list]("/images/Readme/todolist.png?raw=true")
+<img src="/images/Readme/todolist.png?raw=true">
 
 **Imagine:** You have just clicked the "delete" button next to the 3rd item in the list.
 
-In response, what happens within this imaginary re-frame app? Here's a sketch of the six domino cascade:
+In response, what happens within this imaginary re-frame app? Here's a sketch 
+of the six domino cascade:
 
 > Don't expect 
 to completely grok the terse code presented below. We're still at 30,000 feet. Details later. 
