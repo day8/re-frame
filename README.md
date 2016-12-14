@@ -194,10 +194,10 @@ This is the step in which the hiccup-formatted
 "descriptions of required DOM", returned by the view functions of Domino 5, are made real.
 The browser DOM nodes are mutated. 
 
-### As A Picture
+## As A Picture
 
+<img src="/images/Readme/6dominoes.png?raw=true">
 
-[]("/images/Readme/6dominoes.png?raw=true")
 
 
 ## A Cascade Of Simple Functions
