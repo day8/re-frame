@@ -11,16 +11,18 @@ then those patterns will repeat themselves. <br>
 
 <img height="350px" align="right" src="/images/mental-model-omnibus.jpg?raw=true">
 
-The tutorials initially focus on the **domino
+The re-frame tutorials initially focus on the **domino
 narrative**. The goal is to efficiently explain the mechanics of re-frame,
 and get you reading and writing code ASAP.
 
-**But** there are other perspectives on re-frame
+But **there are other perspectives** on re-frame
 which will deepen your understanding.
 
 This tutorial is a tour of these ideas, justifications and insights.  
 It is a little rambling, but I'm hoping it will deliver for you 
 at least one "Aaaah, I see" moment before the end.
+
+> All models are wrong, but some are useful
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

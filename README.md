@@ -260,7 +260,7 @@ The `event handler`, `h`, associated with
 `:delete-item`, is called to compute the `effect` of this event.
 
 This handler function, `h`, takes two arguments: a `coeffects` map 
-which holds the current state of the world (including app state),   
+which holds the current state of the world (including app state),
 and the `event`. It must return a map of `effects` - a description 
 of how the world should change. Here's a sketch (we are at 30,000 feet):
 ```clj
