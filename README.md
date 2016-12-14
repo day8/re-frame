@@ -9,7 +9,7 @@ axe of my family? And because it has changed gently over time, it is still a pre
 y'know. Pretty good.
 
 > -- Terry Pratchett, The Fifth Elephant <br>
-> &nbsp;&nbsp;&nbsp; Reflecting on identity, flow and derived values
+> &nbsp;&nbsp;&nbsp; apparently reflecting on identity, flow and derived values
 
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
