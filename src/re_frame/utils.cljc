@@ -1,7 +1,7 @@
 (ns re-frame.utils
   (:require
     [re-frame.loggers :refer [console]]
-    [reagent.ratom :as ratom]))
+    #?(:cljs [reagent.ratom :as ratom])))
 
 (defn dissoc-in
   "Dissociates an entry from a nested associative structure returning a new
