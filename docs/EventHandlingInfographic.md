@@ -5,7 +5,7 @@ the second is a useful schematic, and the third is accurate and detailed.
 
 View them in conjunction with a reading of the written tutorials. 
 
-[]("/images/event-handlers.png?raw=true")
+<img src="/images/event-handlers.png?raw=true">
 
 *** 
 
