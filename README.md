@@ -163,9 +163,10 @@ and only part of `s` may change at any one time, so only part of the
 `v` (DOM) need be re-computed and updated. And some parts of `v` might not 
 be showing right now.
 
-<img align="right" src="/images/Readme/6dominoes.png?raw=true">
 
 ### Domino 4 - Query
+
+<img align="right" src="/images/Readme/6dominoes.png?raw=true">
 
 Domino 4 is about extracting data from "app state", and providing it 
 in the right format for view functions (which are Domino 5).
