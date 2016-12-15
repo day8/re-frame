@@ -224,12 +224,12 @@ after those dominoes.
 
 ## As Code Fragments
 
+<img align="right" src="/images/Readme/todolist.png?raw=true">
+
 Let's take this domino narrative further and introduce code fragments.
-We're going to be working on a SPA with a list of items.
 
-<img src="/images/Readme/todolist.png?raw=true">
-
-**Imagine:** You have just clicked the "delete" button next to the 3rd item in the list.
+**Imagine:** We're working on a SPA which displays a list of items. You have 
+just clicked the "delete" button next to the 3rd item in the list.
 
 In response, what happens within this imaginary re-frame app? Here's a sketch 
 of the six domino cascade:
