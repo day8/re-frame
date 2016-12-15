@@ -1,7 +1,6 @@
 (ns re-frame.utils
   (:require
-    [re-frame.loggers :refer [console]]
-    #?(:cljs [reagent.ratom :as ratom])))
+    [re-frame.loggers :refer [console]]))
 
 (defn dissoc-in
   "Dissociates an entry from a nested associative structure returning a new
@@ -23,16 +22,3 @@
   (if (vector? v)
     (first v)
     (console :error "re-frame: expected a vector, but got:" v)))
-
-(defn reagent-id
-  "Produces an id for reactive Reagent values
-  e.g. reactions, ratoms, cursors."
-  [reactive-val]
-  #?(:cljs (when (implements? ratom/IReactiveAtom reactive-val)
-             (str (condp instance? reactive-val
-                    ratom/RAtom "ra"
-                    ratom/RCursor "rc"
-                    ratom/Reaction "rx"
-                    ratom/Track "tr"
-                    "other")
-                  (hash reactive-val)))))

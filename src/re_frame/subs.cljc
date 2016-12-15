@@ -1,9 +1,9 @@
 (ns re-frame.subs
  (:require
    [re-frame.db        :refer [app-db]]
-   [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref? dispose!]]
+   [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref? dispose! reagent-id]]
    [re-frame.loggers   :refer [console]]
-   [re-frame.utils     :refer [first-in-vector reagent-id]]
+   [re-frame.utils     :refer [first-in-vector]]
    [re-frame.registrar :refer [get-handler clear-handlers register-handler]]
    [re-frame.trace     :as trace :include-macros true]))
 
