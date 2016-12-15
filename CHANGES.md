@@ -12,11 +12,14 @@ and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen 
 
 - Due to the new tracing features using `goog-define` (described below), re-frame now requires ClojureScript 1.7.48 or above. See [Parameterizing ClojureScript Builds](https://www.martinklepsch.org/posts/parameterizing-clojurescript-builds.html) for more information.
 
+#### Migrating
+
+- Added `clear-subscription-cache!` function. You should call this when you are hot reloading code to ensure that any bad subscriptions that cause rendering exceptions are removed. See [Why do we call `clear-subscription-cache!`?](docs/FAQs/Why-Clear-Sub-Cache.md) and [reagent-project/reagent#272](https://github.com/reagent-project/reagent/issues/272) for more details.
+
 #### Improvements
 
 - [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
 - Add `re-frame.loggers/get-loggers` function to well, you know.
-- Added `clear-subscription-cache!` function. This should be used when hot reloading code to ensure that any bad subscriptions that cause rendering exceptions are removed. See [reagent-project/reagent#272](https://github.com/reagent-project/reagent/issues/272) for more details.
 - Added experimental tracing features. These are subject to change and remain undocumented at the moment. By default they are disabled, and will be completely compiled out by advanced optimisations. To enable them, set a [`:closure-defines`](https://www.martinklepsch.org/posts/parameterizing-clojurescript-builds.html) key to `{"re_frame.trace.trace_enabled_QMARK_" true}`
 - [#223](https://github.com/Day8/re-frame/issues/223) When using `make-restore-fn`, dispose of any subscriptions that were created after the restore function was created.
 - [#283](https://github.com/Day8/re-frame/pull/283) Make trim-v interceptor symmetrical, so it adds the missing event id back on to the `:event` coeffect in the `:after` function.
