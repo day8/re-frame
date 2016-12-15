@@ -34,9 +34,9 @@ Perhaps:
 4.  You know Redux, Elm, cycle.js or pux and you're  
     interested in a ClojureScript implementation, with a data oriented design. 
     In this space, re-frame is very old, hopefully in a Gandalf kind of way. 
-    First designed in Nov/Dec 2014, it slightly pre-dates the official Elm Architecture, and
-    although influenced by early-Elm concepts like `foldp` and `lift`, we took a slightly 
-    different path, over time pioneering such concepts as event handler middleware, 
+    First designed in Dec 2014, it pre-dates the official Elm Architecture, and
+    although thankfully influenced by early-Elm concepts like `foldp` and `lift`, we took a slightly
+    different path and, over time, pioneering concepts like event handler middleware, 
     coeffect accretion, and deduplicated signal graphs.
 5.  Which brings us to the most important point. re-frame is impressively buzzword compliant: it has reactivity,
     unidirectional data flow, pristinely pure functions,
