@@ -1,11 +1,11 @@
 ## Event Handling Infographics
 
 Three diagrams are provided:
-  - a beginners romp
-  - a useful, intermediate schematic depiction
-  - an advanced, accurate and detailed view
+  - a beginner's romp
+  - an intermediate schematic depiction
+  - an advanced, full detail rendering
 
-They should be reviewed in conjunction with a reading of the written tutorials. 
+They should be reviewed in conjunction with the written tutorials. 
 
 <img src="/images/event-handlers.png?raw=true">
 

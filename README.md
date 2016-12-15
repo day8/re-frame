@@ -163,6 +163,8 @@ and only part of `s` may change at any one time, so only part of the
 `v` (DOM) need be re-computed and updated. And some parts of `v` might not 
 be showing right now.
 
+<img align="right" src="/images/Readme/6dominoes.png?raw=true">
+
 ### Domino 4 - Query
 
 Domino 4 is about extracting data from "app state", and providing it 
@@ -193,11 +195,6 @@ for completeness and to fully close the loop.
 This is the step in which the hiccup-formatted 
 "descriptions of required DOM", returned by the view functions of Domino 5, are made real.
 The browser DOM nodes are mutated. 
-
-## As A Picture
-
-<img src="/images/Readme/6dominoes.png?raw=true">
-
 
 
 ## A Cascade Of Simple Functions
