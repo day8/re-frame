@@ -1,7 +1,7 @@
-## 0.9.0 (2016.12.DD)  Unreleased
+## 0.9.0 (2016.12.15)
 
-Dr Ford has created a new [6-part narrative](README.md), 
-and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen Delores?
+Welcome Guests. Dr Ford has created a new [6-part narrative](README.md), 
+and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen Dolores?
 
 #### Headline
 
