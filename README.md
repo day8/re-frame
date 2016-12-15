@@ -1,5 +1,5 @@
 
-<img align="right" src="/images/logo/re-frame_128w.png?raw=true">
+<img src="/images/logo/re-frame_128w.png?raw=true">
 
 ## Derived Values, Flowing
 
