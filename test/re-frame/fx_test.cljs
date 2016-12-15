@@ -3,7 +3,9 @@
     [cljs.test :refer-macros [is deftest async use-fixtures]]
     [re-frame.core :as re-frame]
     [re-frame.fx]
-    [re-frame.interop :refer [set-timeout!]]))
+    [re-frame.interop :refer [set-timeout!]]
+    [re-frame.loggers :as log]
+    [clojure.string :as str]))
 
 ;; ---- FIXTURES ---------------------------------------------------------------
 
@@ -43,3 +45,20 @@
         1000)
       ;; kick off main handler
       (re-frame/dispatch [::later-test]))))
+
+(re-frame/reg-event-fx
+  ::missing-handler-test
+  (fn [_world _event-v]
+    {:fx-not-exist [:nothing :here]}))
+
+(deftest report-missing-handler
+  (let [logs             (atom [])
+        log-fn           (fn [& args] (swap! logs conj (str/join args)))
+        original-loggers (log/get-loggers)]
+    (try
+      (log/set-loggers! {:error log-fn})
+      (re-frame/dispatch-sync [::missing-handler-test])
+      (is (re-matches #"re-frame: no :fx handler registered for::fx-not-exist" (first @logs)))
+      (is (= (count @logs) 1))
+      (finally
+        (log/set-loggers! original-loggers)))))

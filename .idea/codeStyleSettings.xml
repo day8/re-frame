@@ -4,7 +4,11 @@
     <option name="PER_PROJECT_SETTINGS">
       <value>
         <ClojureCodeStyleSettings>{
+  :cljs.core/with-redefs 1
   :cursive.formatting/align-binding-forms true
+  :cursive.formatting/comment-align-column 0
+  :re-frame.trace/register-trace-cb :only-indent
+  :re-frame.trace/with-trace 1
 }</ClojureCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />

@@ -10,24 +10,30 @@ make side effects a noop in event replays.
 > &nbsp; &nbsp;  -- @stuarthalloway
 
 
-## Table Of Contexts
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
 
-  * [Where Effects Come From](#where-effects-come-from)
-  * [The Effects Map](#the-effects-map)
-  * [Infinite Effects](#infinite-effects)
-  * [Extensible Side Effects](#extensible-side-effects)
-  * [Writing An Effect Handler](#writing-an-effect-handler)
-  * [:db Not Always Needed](#-db-not-always-needed)
-  * [What Makes This Work?](#what-makes-this-work-)
-  * [Order Of Effects?](#order-of-effects-)
-  * [Effects With No Data](#effects-with-no-data)
-  * [Testing And Noops](#testing-and-noops)
-  * [Builtin Effect Handlers](#builtin-effect-handlers)
-    + [:dispatch-later](#-dispatch-later)
-    + [:dispatch](#-dispatch)
-    + [:dispatch-n](#-dispatch-n)
-    + [:deregister-event-handler](#-deregister-event-handler)
-    + [:db](#-db)
+- [Where Effects Come From](#where-effects-come-from)
+- [The Effects Map](#the-effects-map)
+- [Infinite Effects](#infinite-effects)
+- [Extensible Side Effects](#extensible-side-effects)
+- [Writing An Effect Handler](#writing-an-effect-handler)
+- [:db Not Always Needed](#db-not-always-needed)
+- [What Makes This Work?](#what-makes-this-work)
+- [Order Of Effects?](#order-of-effects)
+- [Effects With No Data](#effects-with-no-data)
+- [Testing And Noops](#testing-and-noops)
+- [Summary](#summary)
+- [Builtin Effect Handlers](#builtin-effect-handlers)
+  - [:dispatch-later](#dispatch-later)
+  - [:dispatch](#dispatch)
+  - [:dispatch-n](#dispatch-n)
+  - [:deregister-event-handler](#deregister-event-handler)
+  - [:db](#db)
+- [External Effects](#external-effects)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ### Where Effects Come From
 
@@ -283,13 +289,6 @@ registered handlers) to which you can return.
 XXX
 
 
----
-Previous:  [Interceptors](Interceptors.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](Readme.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Coeffects](Coeffects.md)  
-
----
-
 ### Builtin Effect Handlers
 
 #### :dispatch-later
@@ -307,7 +306,7 @@ Which means: in 200ms do this: `(dispatch [:event-id "param"])` and in 100ms ...
 
 #### :dispatch
 
-`dispatch` one event. Excepts a single vector.
+`dispatch` one event. Expects a single vector.
 
 usage:
 ```clj
@@ -351,12 +350,16 @@ usage:
 - https://github.com/Day8/re-frame-http-fx   (GETs and POSTs)
 - https://github.com/Day8/re-frame-forward-events-fx  (slightly exotic)
 - https://github.com/Day8/re-frame-async-flow-fx  (more complicated)
+- https://github.com/micmarsh/re-frame-youtube-fx (YouTube iframe API wrapper)
+- https://github.com/madvas/re-frame-web3-fx (Ethereum Web3 API)
+- https://github.com/madvas/re-frame-google-analytics-fx (Google Analytics API)
 
 Create a PR to include yours in this list. 
 
 XXX maybe put this list into the Wiki, so editable by all. 
 
----
+***
+
 Previous:  [Interceptors](Interceptors.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Coeffects](Coeffects.md)  

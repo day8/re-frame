@@ -1,12 +1,26 @@
 ## Eek! Performance Problems
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [1. Is It The `debug` Interceptor?](#1-is-it-the-debug-interceptor)
+- [2. `=` On Big Structures](#2--on-big-structures)
+  - [An Example Of Problem 2](#an-example-of-problem-2)
+  - [Solutions To Problem 2](#solutions-to-problem-2)
+- [3. Are you Using a React `key`?](#3-are-you-using-a-react-key)
+- [4. Callback Functions](#4-callback-functions)
+- [A Weapon](#a-weapon)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## 1. Is It The `debug` Interceptor?
 
 This first one is something of a non-problem. 
 
 Are you are using the `re-frame.core/debug` Interceptor?
 You should be, it's useful. __But__ you do need to be aware of its possible performance implications.  
- 
+
 `debug` reports what's changed after an event handler has run by using 
 `clojure.data/diff` to do deep, CPU intensive diff on `app-db`. 
 That diff could be taking a while, and leading to apparent performance problems.
@@ -119,7 +133,7 @@ Look at this `div`:
 ```
 
 Every time it is rendered, that `:on-mouse-over` function will be regenerated, 
-and it will NOT test equal to the last time it rendered.  It will appear to be a new function. 
+and it will NOT test `=` to the last time it rendered.  It will appear to be a new function. 
 It will appear to React that it has to replace the event handler. 
   
 Most of the time, this is not an issue.  But if you are generating a LOT of DOM

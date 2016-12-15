@@ -6,7 +6,8 @@
     [re-frame.registrar :as registrar]
     [re-frame.db :refer [app-db]]
     [clojure.data :as data]
-    [re-frame.cofx :as cofx]))
+    [re-frame.cofx :as cofx]
+    [re-frame.utils :as utils]))
 
 
 ;; XXX provide a way to set what handler should be called when there is no registered handler.
@@ -63,7 +64,14 @@
     :id      :trim-v
     :before  (fn trimv-before
                [context]
-               (update-in context [:coeffects :event] subvec 1))))
+               (-> context
+                   (update-in [:coeffects :event] subvec 1)
+                   (assoc-in [:coeffects ::untrimmed-event] (get-coeffect context :event))))
+    :after   (fn trimv-after
+               [context]
+               (-> context
+                   (utils/dissoc-in [:coeffects ::untrimmed-event])
+                   (assoc-in [:coeffects :event] (get-coeffect context ::untrimmed-event))))))
 
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
@@ -133,7 +141,7 @@
 
 (defn path
   "An interceptor factory which supplies a sub-path of `:db` to the handler.
-  It's action is somewhat annologous to `update-in`. It grafts the return
+  It's action is somewhat analogous to `update-in`. It grafts the return
   value from the handler back into db.
 
   Usage:
@@ -144,7 +152,7 @@
 
   Notes:
     1. cater for `path` appearing more than once in an interceptor chain.
-    2. `:effect` may not contain `:db` effect. Which means no change to
+    2. `:effects` may not contain `:db` effect. Which means no change to
        `:db` should be made.
   "
   [& args]
@@ -208,7 +216,9 @@
     :after (fn enrich-after
              [context]
              (let [event (get-coeffect context :event)
-                   db    (get-effect context :db)]
+                   db    (or (get-effect context :db)
+                             ;; If no db effect is returned, we provide the original coeffect.
+                             (get-coeffect context :db))]
                (->> (f db event)
                     (assoc-effect context :db))))))
 
@@ -218,8 +228,9 @@
   "Interceptor factory which runs a given function `f` in the \"after\"
   position, presumably for side effects.
 
-  `f` is called with two arguments: the `effects` value of `:db` and the event. It's return
-  value is ignored so `f` can only side-effect.
+  `f` is called with two arguments: the `effects` value of `:db`
+  (or the `coeffect` value of db if no db effect is returned) and the event.
+   Its return value is ignored so `f` can only side-effect.
 
   Example use:
      - `f` runs schema validation (reporting any errors found)
@@ -229,7 +240,9 @@
     :id    :after
     :after (fn after-after
              [context]
-             (let [db    (get-effect context :db)
+             (let [db    (or (get-effect context :db)
+                             ;; If no db effect is returned, we provide the original coeffect.
+                             (get-coeffect context :db))
                    event (get-coeffect context :event)]
                (f db event)    ;; call f for side effects
                context))))     ;; context is unchanged
@@ -274,5 +287,3 @@
                       (assoc-in new-db out-path)
                       (assoc-effect context :db))
                  context)))))
-
-

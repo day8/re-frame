@@ -1,9 +1,32 @@
-## 0.8.1  (2016.08.XX)  Unreleased
+## 0.9.0 (2016.12.15)
 
+Welcome Guests. Dr Ford has created a new [6-part narrative](README.md), 
+and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen Dolores?
+
+#### Headline
+
+  - The [README](README.md) and [/docs](/docs/README.md) have been substantially reworked.
+  - [#218](https://github.com/Day8/re-frame/issues/218) Make it okay to use `subscribe` in Form-1 components. This is a big deal.
+
+#### Breaking
+
+- Due to the new tracing features using `goog-define` (described below), re-frame now requires ClojureScript 1.7.48 or above. See [Parameterizing ClojureScript Builds](https://www.martinklepsch.org/posts/parameterizing-clojurescript-builds.html) for more information.
 
 #### Improvements
 
-  - [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
+- [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
+- Add `re-frame.loggers/get-loggers` function to well, you know.
+- Added `clear-subscription-cache!` function. This should be used when hot reloading code to ensure that any bad subscriptions that cause rendering exceptions are removed. See [reagent-project/reagent#272](https://github.com/reagent-project/reagent/issues/272) for more details.
+- Added experimental tracing features. These are subject to change and remain undocumented at the moment. By default they are disabled, and will be completely compiled out by advanced optimisations. To enable them, set a [`:closure-defines`](https://www.martinklepsch.org/posts/parameterizing-clojurescript-builds.html) key to `{"re_frame.trace.trace_enabled_QMARK_" true}`
+- [#223](https://github.com/Day8/re-frame/issues/223) When using `make-restore-fn`, dispose of any subscriptions that were created after the restore function was created.
+- [#283](https://github.com/Day8/re-frame/pull/283) Make trim-v interceptor symmetrical, so it adds the missing event id back on to the `:event` coeffect in the `:after` function.
+
+#### Fixes
+
+- [#259](https://github.com/Day8/re-frame/pull/259) Fix a bug where registering a subscription would create and close over dependent subscriptions, meaning that they would never be garbage collected, and doing more work than necessary.
+- Fix a bug where subscribing to a subscription that didn't exist would throw an exception, instead of returning nil.
+- [#248](https://github.com/Day8/re-frame/pull/248) Provide after interceptor with `db` coeffect, if no `db` effect was produced.
+- [#278](https://github.com/Day8/re-frame/issues/278) Provide enrich interceptor with `db` coeffect, if no `db` effect was produced.
 
 ## 0.8.0  (2016.08.19)
 
@@ -67,7 +90,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     Reagent available). But you can debug your event handler tests using full JVM tooling goodness.
     
     @samroberton and @escherize have provided the thought leadership and drive here.  They converted 
-    re-frame to `.cljc`, supplying plugable interop for both the `js` and `jvm` platforms.
+    re-frame to `.cljc`, supplying pluggable interop for both the `js` and `jvm` platforms.
 
     Further, they have worked with @danielcompton to create a library of testing utilities which 
     will hopefully evolve into a nice step forward on both platforms: <br>
@@ -93,7 +116,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     successful part of the framework.  We thought we were happy.
     
     But recently @steveb8n gave a cljsyd talk on 
-    Pedistal's Interceptor pattern which suddenly transformed them from 
+    Pedestal's Interceptor pattern which suddenly transformed them from 
     arcane to delightfully simple in 20 mins. Interceptors are 
     really "middleware via data" rather than "middleware via higher order functions".  
     So it is another way of doing the same thing, but thanks to @steveb8n 
@@ -176,7 +199,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
 Breaking:
   - removed middleware `log-ex`. It is no longer needed because browsers now correctly report the
-    throw site of re-thown exceptions.  In the unlikely event that you absolutely still need it,
+    throw site of re-thrown exceptions.  In the unlikely event that you absolutely still need it,
     the source for `log-ex` is still in `middleware.cljs`, commented out.  Just transfer it to your project.
 
   - `debug` middleware now produces slightly different output (to console). So no code will need to change,
@@ -197,8 +220,8 @@ Fixed:
 
 New API:
   - [#118](https://github.com/Day8/re-frame/pull/118) - Add `add-post-event-callback` to the API.
-    @pupeno is developing [preprender](https://carouselapps.com/prerenderer) which looks pretty neat.
-    Support this effort by adding a way for preprender to hook event processing.
+    @pupeno is developing [prerenderer](https://carouselapps.com/prerenderer) which looks pretty neat.
+    Support this effort by adding a way for prerenderer to hook event processing.
 
   - `on-changes` middleware now official. No longer experimental.
 
@@ -250,7 +273,7 @@ Headline:
       - mean apps, in production, stand a chance of reporting UHE
         to the user, and can perhaps even recover to a sane state.
   - #53 Fix Logging And Error Reporting
-    You can now provide your own logging fucntions.
+    You can now provide your own logging functions.
     Further explanation [here](https://github.com/Day8/re-frame/wiki/FAQ#3-can-re-frame-use-my-logging-functions).
 
 Deprecated:

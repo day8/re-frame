@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Solving The CPU Hog Problem](#solving-the-cpu-hog-problem)
+- [The re-frame Solution](#the-re-frame-solution)
+- [A Sketch](#a-sketch)
+  - [Why Does A Redispatch Work?](#why-does-a-redispatch-work)
+  - [Variations](#variations)
+  - [Cancel Button](#cancel-button)
+  - [Further Notes](#further-notes)
+- [Forcing A One Off Render](#forcing-a-one-off-render)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Solving The CPU Hog Problem
 
 Sometimes a handler has a lot of CPU intensive work to do, and 
@@ -57,7 +72,7 @@ Here's an `-fx` handler which counts up to some number in chunks:
       ;; We are at the beginning, so:
       ;;     - modify db, causing popup of Modal saying "Working ..."
       ;;     - begin iterative dispatch. Give initial version of "so-far"
-      {:disptch 1[:count-to false {:counter 0} finish-at]  ;; dispatch to self
+      {:dispatch [:count-to false {:counter 0} finish-at]  ;; dispatch to self
        :db (assoc db :we-are-working true)}
       (if (> (:counter so-far) finish-at)
         ;; We are finished:

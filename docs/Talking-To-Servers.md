@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Talking To Servers](#talking-to-servers)
+- [Triggering The Request](#triggering-the-request)
+- [The Event Handler](#the-event-handler)
+  - [Version 1](#version-1)
+  - [Successful GET](#successful-get)
+  - [Problems In Paradise?](#problems-in-paradise)
+  - [Version 2](#version-2)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Talking To Servers 
 
 This page describes how a re-frame app might "talk" to a backend HTTP server.
@@ -117,6 +131,7 @@ Here's our rewrite:
 ```clj
 (ns my.app.events                  
    (:require
+      [ajax.core :as ajax]        
       [day8.re-frame.http-fx]  
       [re-frame.core :refer [reg-event-fx]))
 
@@ -128,6 +143,7 @@ Here's our rewrite:
     ;; we return a map of (side) effects
     {:http-xhrio {:method          :get
                   :uri             "http://json.my-endpoint.com/blah"
+                  :response-format (ajax/json-response-format {:keywords? true}) 
                   :on-success      [:process-response]
                   :on-failure      [:bad-response]}
      :db  (assoc db :loading? true)}))
@@ -139,7 +155,8 @@ Notes:
   
   
   
----
+***
+
 Previous:  [Loading Initial Data](Loading-Initial-Data.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Subscribing to External Data](Subscribing-To-External-Data.md)  

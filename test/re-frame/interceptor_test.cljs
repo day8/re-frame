@@ -1,17 +1,22 @@
 (ns re-frame.interceptor-test
-  (:require [cljs.test :refer-macros [is deftest]]
-            [reagent.ratom  :refer [atom]]
+  (:require [cljs.test :refer-macros [is deftest testing]]
+            [reagent.ratom :refer [atom]]
             [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect]]
-            [re-frame.std-interceptors :refer [trim-v path on-changes
-                                               db-handler->interceptor fx-handler->interceptor]]))
+            [re-frame.std-interceptors :refer [debug trim-v path enrich after on-changes
+                                               db-handler->interceptor fx-handler->interceptor]]
+            [re-frame.interceptor :as interceptor]))
 
 (enable-console-print!)
 
 (deftest test-trim-v
-  (let [c  (-> (context [:a :b :c] [])
-               ((:before trim-v)))]
-    (is (= (get-coeffect c :event)
-           [:b :c]))))
+  (let [ctx           (context [:event-id :b :c] [])
+        ctx-trimmed   ((:before trim-v) ctx)
+        ctx-untrimmed ((:after trim-v) ctx-trimmed)]
+    (is (= (get-coeffect ctx-trimmed :event)
+           [:b :c]))
+    (is (= (get-coeffect ctx-untrimmed :event)
+           [:event-id :b :c]))
+    (is (= ctx-untrimmed ctx))))
 
 
 (deftest test-one-level-path
@@ -47,13 +52,22 @@
                  ((:after p))
                  (get-effect :db))))
 
-      ;; test #2 - set dbto nil
+      ;; test #2 - set db to nil
       (is (= {:1 {:2 nil}}
              (-> b4
                  (assoc-effect :db nil)   ;; <-- db becomes nil
                  ((:after p))
                  (get-effect :db)))))))
 
+(deftest path-with-no-db-returned
+  (let [path-interceptor (path :a)]
+    (-> (context [] [path-interceptor] {:a 1})
+        (interceptor/invoke-interceptors :before)
+        interceptor/change-direction
+        (interceptor/invoke-interceptors :after)
+        (get-effect :db)
+        (nil?)                                              ;; We don't expect an effect to be added.
+        (is))))
 
 (deftest test-db-handler-interceptor
   (let [event   [:a :b]
@@ -115,5 +129,19 @@
                 ((:after change-i))
                 (get-effect :db))))))
 
+(deftest test-after
+  (testing "when no db effect is returned"
+    (let [after-db-val (atom nil)]
+      (-> (context [:a :b]
+                   [(after (fn [db] (reset! after-db-val db)))]
+                   {:a 1})
+          (interceptor/invoke-interceptors :before)
+          interceptor/change-direction
+          (interceptor/invoke-interceptors :after))
+      (is (= @after-db-val {:a 1})))))
 
-
+(deftest test-enrich
+  (testing "when no db effect is returned"
+    (let [ctx (context [] [] {:a 1})]
+      (is (= ::not-found (get-effect ctx :db ::not-found)))
+      (-> ctx (:after (enrich (fn [db] (is (= db {:a 1})))))))))

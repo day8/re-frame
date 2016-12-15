@@ -1,4 +1,4 @@
-(defproject re-frame "0.8.1"
+(defproject re-frame "0.9.0-SNAPSHOT"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
@@ -47,7 +47,7 @@
   :cljsbuild {:builds [{:id           "test"
                         :source-paths ["test" "src"]
                         :compiler     {:preloads        [devtools.preload]
-                                       :external-config {:devtools/config {:features-to-install :all}}
+                                       :external-config {:devtools/config {:features-to-install [:formatters :hints]}}
                                        :output-to     "run/compiled/browser/test.js"
                                        :source-map    true
                                        :output-dir    "run/compiled/browser/test"
@@ -61,8 +61,10 @@
                                        :output-dir    "run/compiled/karma/test"
                                        :optimizations :whitespace
                                        :main          "re_frame.test_runner"
-                                       :pretty-print  true}}]}
+                                       :pretty-print  true
+                                       :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}}}]}
 
   :aliases {"test-once"   ["do" "clean," "cljsbuild" "once" "test," "shell" "open" "test/test.html"]
             "test-auto"   ["do" "clean," "cljsbuild" "auto" "test,"]
-            "karma-once"  ["do" "clean," "cljsbuild" "once" "karma,"]})
+            "karma-once"  ["do" "clean," "cljsbuild" "once" "karma,"]
+            "karma-auto"  ["do" "clean," "cljsbuild" "auto" "karma,"]})

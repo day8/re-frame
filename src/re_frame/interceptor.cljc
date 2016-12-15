@@ -84,9 +84,9 @@
   Returns updated `context`. Ie. the `context` which has been threaded
   through all interceptor functions.
 
-  Generally speaking, an interceptor's `:before` fucntion will (if present)
-  add to a `context's` `:coeffect`, while it's `:after` function
-  will modify the `context`'s `:effect`.  Very approximately.
+  Generally speaking, an interceptor's `:before` function will (if present)
+  add to a `context's` `:coeffects`, while it's `:after` function
+  will modify the `context`'s `:effects`.  Very approximately.
 
   But because all interceptor functions are given `context`, and can
   return a modified version of it, the way is clear for an interceptor
@@ -109,7 +109,7 @@
   "Add a collection of `interceptors` to the end of `context's` execution `:queue`.
   Returns the updated `context`.
 
-  In an advanced case, this function would allow an interceptor could add new
+  In an advanced case, this function could allow an interceptor to add new
   interceptors to the `:queue` of a context."
   [context interceptors]
   (update context :queue
@@ -179,7 +179,7 @@
    The first few interceptors in a chain will likely have `:before`
    functions which \"prime\" the `context` by adding the event, and
    the current state of app-db into `:coeffects`. But interceptors can
-   add whatever they want to `:coeffect` - perhaps the event handler needs
+   add whatever they want to `:coeffects` - perhaps the event handler needs
    some information from localstore, or a random number, or access to
    a DataScript connection.
 

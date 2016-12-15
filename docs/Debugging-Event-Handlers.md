@@ -6,42 +6,52 @@ Event handlers are quite central to a re-frame app.  Only event handlers
 can update `app-db`, to "step" an application "forward" from one state
 to the next.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [The `debug` Interceptor](#the-debug-interceptor)
+  - [Using `debug`](#using-debug)
+  - [Too Much Repetition - Part 1](#too-much-repetition---part-1)
+- [3. Checking DB Integrity](#3-checking-db-integrity)
+  - [Too Much Repetition - Part 2](#too-much-repetition---part-2)
+  - [What about the -fx variation?](#what-about-the--fx-variation)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## The `debug` Interceptor
 
-You might wonder: is my handler making the right changes to the 
-value in `app-db`?  Does it remove that entry? Does it increment that 
-value?
+You might wonder: is my event handler making the right changes to `app-db`?  
 
-During development, the built-in `debug` interceptor can be helpful 
-in this regard. It shows, via `console.log`:
+During development, the built-in `debug` interceptor can help. 
+It writes to `console.log`:
   1. the event being processed, for example:   `[:attempt-world-record true]`
-  2. the changes made to `db` by the handler in processing the event.
+  2. the changes made to `db` by the handler in processing the event
 
-Regarding point 2, `debug` uses `clojure.data/diff` to compare the 
-state of `db` before and after the handler ran, showing exactly what 
-mutation has happened.
+`debug` uses `clojure.data/diff` to compare `app-db` 
+before and after the handler ran, showing  what changed. 
 
-If you [look at the docs for diff](https://clojuredocs.org/clojure.data/diff), 
-you'll notice it returns a triple, the first two of which 
-`debug` will display in `console.log` (the 3rd says what hasn't changed 
-and isn't interesting).
+[clojure.data/diff returns a triple](https://clojuredocs.org/clojure.data/diff) 
+, the first two entries of which 
+`debug` will display in `console.log` (the 3rd says what hasn't changed and isn't interesting).
 
 The output produced by `clojure.data/diff` can take some getting used to, 
 but you should stick with it -- your effort will be rewarded.
 
 ### Using `debug`
 
-So, you will add this interceptor to your event handlers like this:
+So, you will add this Interceptor like this:
 ```clj
 (re-frame.core/reg-event-db
    :some-id
-   [debug]         ;;  <----  here! 
+   [debug]         ;;  <----  added here! 
    some-handler-fn)
 ```
 
-Except, of course, we need a bit more subtly than that because
-we only want `debug` to be present in development builds.
-So it should be like this:   
+Except, of course, we need to be more deft - we only want 
+`debug` in development builds. We don't 
+want the overhead of those `clojure.data/diff` calculations in production.
+So, this is better: 
 ```clj
 (re-frame.core/reg-event-db
    :some-id
@@ -54,38 +64,58 @@ It will be `true` when the build within `project.clj` is `:optimization :none` a
 otherwise.
 
 Ha! I see a problem, you say.  In production, that `when` is going to 
-leave a `nil` in the interceptor vector.  No problem. re-frame filters out nils. 
+leave a `nil` in the interceptor vector. So the Interceptor vector will be `[nil]`.  
+Surely that's a problem?  
+
+Well, actually, no it isn't. re-frame filters out `nil`. 
 
 ### Too Much Repetition - Part 1
 
-Remember that each event handler has its own interceptor stack. 
-All very flexible, but does that mean we have to repeat this `debug` 
-business on every single handler?  Yes, it does.  But there are 
-a couple of ways to make this pretty easy. 
+Each event handler has its own interceptor stack. 
 
-Normally, standard interceptors are defined up the top of the `event.cljs` namespace:
+That might be all very flexible, but does that mean we have to put this `debug` 
+business on every single handler?  That would be very repetitive. 
+
+Yes, you will have to put it on each handler.  And, yes, that could be repetitive,  unless 
+you take some steps.
+
+One thing you an do is to define standard interceptors the top of the `event.cljs` namespace:
 ```clj
-(def standard-interceptors  [(when ^boolean goog.DEBUG debug)  other-interceptor])
+(def standard-interceptors  [(when ^boolean goog.DEBUG debug)  another-interceptor])
 ```
 
-And then, any one event handler, would look like:
+And then, for any one event handler, the code would look like:
 ```clj
 (re-frame.core/reg-event-db
    :some-id
-   [standard-interceptors specific-interceptor]
+   standard-interceptors        ;; <--- use the common definition
    some-handler-fn)
 ```
 
-Wait on! I see a problem, you say.  `standard-interceptors` is a `vector`, and it 
-is within another `vector` allongside `specific-interceptor` - so that's 
+or perhaps:
+```clj
+(re-frame.core/reg-event-db
+   :some-id
+   [standard-interceptors specific-interceptor]  ;; mix with something specific
+   some-handler-fn)
+```
+
+So that `specific-interceptor` could be something required for just this one 
+event handler, and it can be combined the standard ones.  
+
+Wait on! "I see a problem", you say.  `standard-interceptors` is a `vector`, and it 
+is within another `vector` along side `specific-interceptor` - so that's 
 nested vectors of interceptors!  
 
 No problem, re-frame uses `flatten` to take out all the nesting - the 
-result is a simple chain of interceptors. Also, of course, nils are removed.
+result is a simple chain of interceptors. And also, as we have discussed,  
+nils are removed.
 
 ## 3. Checking DB Integrity
 
-Always have a detailed schema for the data in `app-db`.
+Always have a detailed schema for the data in `app-db`!
+
+Why?
 
 **First**, schemas serve as invaluable documentation. When I come to 
 a new app, the first thing I want to look at is the underlying 
@@ -96,15 +126,20 @@ or, perhaps, [a Prismatic Schema](https://github.com/Prismatic/schema).
 
 
 **Second** a good spec allows you to assert the integrity and correctness of 
-the data in app-db. 
+the data in `app-db`.  Because all the data is in one place, that means you 
+are asserting the integrity of ALL the data in your app, at one time. 
 
-When? Well, only event handlers can change what's in `app-db`, so only an event handler
-could corrupt it. So, we'd like to recheck the integrity of `app-db` immediately 
-after  **every** event handler has run.
+When should we do this?  Ideally every time a change is made!  
 
-This allows us to catch any errors very early, and easily assign blame (to an event handler).  
+Well, it turns out that only event handlers can change the value in 
+`app-db`, so only an event handler could corrupt it. So, we'd like to 
+**recheck the integrity of `app-db` immediately 
+after *every* event handler has run**.
 
-Schemas are typically put into `db.cljs`. Here's an example using Prismatic Schema 
+This allows us to catch any errors very early, easily assigning blame (to the rouge event handler).  
+
+Schemas are typically put into `db.cljs` (see the todomvc example in the re-frame repo). Here's 
+an example using Prismatic Schema 
 (although a more modern choice would be to use [Clojure spec](http://clojure.org/about/spec)):
 ```clj
 (ns my.namespace.db
@@ -119,7 +154,10 @@ Schemas are typically put into `db.cljs`. Here's an example using Prismatic Sche
        :c s/Int}
    :d [{:e s/Keyword
         :f [s/Num]}]})
+```
 
+And a function which will check a db value against that schema:
+```clj
 (defn valid-schema?
   "validate the given db, writing any problems to console.error"
   [db]
@@ -128,19 +166,21 @@ Schemas are typically put into `db.cljs`. Here's an example using Prismatic Sche
       (.error js/console (str "schema problem: " res)))))
 ```
 
-Now, let's organise for `valid-schema?` to be run after every handler. We'll use the built-in  `after` interceptor factory:
+Now, let's organise for `valid-schema?` to be run **after** every handler. 
+We'll use the built-in  `after` Interceptor factory function:
 ```clj
 (def standard-interceptors [(when ^boolean goog.DEBUG debug)
                            (when ^boolean goog.DEBUG (after db/valid-schema?))]) ;; <-- new
 ```
-
 
 Now, the instant a handler messes up the structure of `app-db` you'll be alerted.  But this overhead won't be there in production.
 
 ### Too Much Repetition - Part 2
 
 Above we discussed a way of "factoring out" common interceptors into `standard-interceptors`. 
-But there's a 2nd way to ensure that all event handlers get certain Interceptors: you write a custom registration function, like this:
+
+But there's a 2nd way to ensure that all event handlers get certain Interceptors: 
+you write a custom registration function -- a replacement for `reg-event-db` -- like this:
 ```clj 
 (defn my-reg-event-db          ;; alternative to reg-event-db
   ([id handler-fn] 
@@ -154,9 +194,37 @@ But there's a 2nd way to ensure that all event handlers get certain Interceptors
         handler-fn)))
 ```
 
-From now on, you can register your event handlers like this:
+Notice that it inserts our two standard Interceptors. 
+
+From now on, you can register your event handlers like this and know that the two standard Interceptors have been inserted:
 ```clj
 (my-reg-event-db      ;; <-- adds std interceptors automatically
   :some-id 
   some-handler-fn)
 ```
+
+### What about the -fx variation?
+ 
+Above we created `my-reg-event-db` as a new registration function for `-db` handlers. 
+That's handlers which take `db` and `event` arguments, and return a new `db`.  
+So, they MUST return a new `db` value - which should be validated.  
+
+But what if we tried to do the same for `-fx` handlers, which return instead 
+an `effects` map which may, or may not, contain an `:db`?  Our solution would 
+have to allow for the absence of a new `db` value (by doing no validity check, because nothing 
+was being changed). 
+
+```clj 
+(defn my-reg-event-fx          ;; alternative to reg-event-db
+  ([id handler-fn] 
+    (my-reg-event-db id nil handler-fn))
+  ([id interceptors handler-fn]
+    (re-frame.core/reg-event-fx 
+        id
+        [(when ^boolean goog.DEBUG debug)
+         (when ^boolean goog.DEBUG (after #(if % (db/valid-schema? %))))
+         interceptors]
+        handler-fn)))
+```
+
+Actually, it would probably be better to write an alternative `after` which 

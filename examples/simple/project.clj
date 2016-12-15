@@ -1,4 +1,4 @@
-(defproject simple-re-frame "0.8.0"
+(defproject simple "0.8.0"
   :dependencies [[org.clojure/clojure        "1.8.0"]
                  [org.clojure/clojurescript  "1.9.227"]
                  [reagent  "0.6.0-rc"]
@@ -10,8 +10,8 @@
   :hooks [leiningen.cljsbuild]
 
   :profiles {:dev {:cljsbuild
-                   {:builds {:client {:source-paths ["devsrc"]
-                                      :compiler     {:main "simpleexample.dev"
+                   {:builds {:client {:figwheel     {:on-jsload "simple.core/run"}
+                                      :compiler     {:main "simple.core"
                                                      :asset-path "js"
                                                      :optimizations :none
                                                      :source-map true

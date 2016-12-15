@@ -33,7 +33,7 @@
 
    Given an `id`, and an optional value, lookup the registered coeffect
    handler (previously registered via `reg-cofx`) and it with two arguments:
-   the current value of `:coeffect` and, optionally, the value. The registered handler
+   the current value of `:coeffects` and, optionally, the value. The registered handler
    is expected to return a modified coeffect.
    "
   ([id]

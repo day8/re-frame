@@ -4,24 +4,26 @@ This tutorial explains `coeffects`.
 
 It explains what they are, how they can be "injected", and how 
 to manage them in tests.
-
-## Table Of Contexts
  
-  * [What Are They?](#what-are-they-)
-  * [An Example](#an-example)
-  * [How We Want It](#how-we-want-it)
-  * [Abracadabra](#abracadabra)
-  * [Which Interceptors?](#which-interceptors-)
-  * [`inject-cofx`](#-inject-cofx-)
-  * [More `inject-cofx`](#more--inject-cofx-)
-  * [Meet `reg-cofx`](#meet--reg-cofx-)
-  * [Example Of `reg-cofx`](#example-of--reg-cofx-)
-  * [Another Example Of `reg-cofx`](#another-example-of--reg-cofx-)
-  * [Secret Interceptors](#secret-interceptors)
-  * [Testing](#testing)
-  * [The 5 Point Summary](#the-5-point-summary)
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
 
-## Coeffects
+- [What Are They?](#what-are-they)
+- [An Example](#an-example)
+- [How We Want It](#how-we-want-it)
+- [Abracadabra](#abracadabra)
+- [Which Interceptors?](#which-interceptors)
+- [`inject-cofx`](#inject-cofx)
+- [More `inject-cofx`](#more-inject-cofx)
+- [Meet `reg-cofx`](#meet-reg-cofx)
+- [Example Of `reg-cofx`](#example-of-reg-cofx)
+- [Another Example Of `reg-cofx`](#another-example-of-reg-cofx)
+- [Secret Interceptors](#secret-interceptors)
+- [Testing](#testing)
+- [The 5 Point Summary](#the-5-point-summary)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
  
 ### What Are They?
 
@@ -30,7 +32,7 @@ to perform its computation.
 
 Because the majority of event handlers only need `db` and 
 `event`, there's a specific registration function, called `reg-event-db`, 
-which delivers these two coeffects as arguments to an event 
+which delivers ONLY these two coeffects as arguments to an event 
 handler, making this common case easy to program.
 
 But sometimes an event handler needs other data inputs
@@ -60,7 +62,7 @@ pure, and impure functions cause well-documented paper cuts.
 Our goal in this tutorial will be to rewrite this event handler so 
 that it __only__ uses data from arguments. This will take a few steps.
  
-The first is that we first switch to
+The first is that we switch to
 using `reg-event-fx` (instead of `reg-event-db`).
 
 Event handlers registered via `reg-event-fx` are slightly 
@@ -86,22 +88,22 @@ right value. Nice! But how do we make this magic happen?
 ### Abracadabra 
 
 Each time an event handler is executed, a brand new `context` 
-is created, and within that `context` is a brand new `:coeffect` 
+is created, and within that `context` is a brand new `:coeffects` 
 map, which is initially totally empty.
 
-That pristine `context` value (containing a pristine `:coeffect` map) is threaded 
+That pristine `context` value (containing a pristine `:coeffects` map) is threaded 
 through a chain of Interceptors before it finally reaches our event handler,
 sitting on the end of a chain, itself wrapped up in an interceptor. We know  
 this story well from a previous tutorial. 
 
 So, all members of the Interceptor chain have the opportunity to add to `:coeffects` 
-via their `:before` function.  This is where `:coeffect` magic happens. This is how 
-new keys can be added to `:coeffect`, so that later our event handler magically finds the 
+via their `:before` function.  This is where `:coeffects` magic happens. This is how 
+new keys can be added to `:coeffects`, so that later our event handler magically finds the 
 right data (like `:local-store`) in its `cofx` argument. It is the Interceptors.
 
 ### Which Interceptors?
 
-If Interceptors put data in `:coeffect`, then we'll need to add the right ones
+If Interceptors put data in `:coeffects`, then we'll need to add the right ones
 when we register our event handler. 
 
 Something like this (this handler is the same as before, except for one detail):    
@@ -125,7 +127,7 @@ to our event handler (`cofx`).
 `inject-cofx` is part of the re-frame API.
 
 It is a function which returns an Interceptor whose `:before` function loads 
-a key/value pair into a `context's` `:coeffect` map.
+a key/value pair into a `context's` `:coeffects` map.
  
 `inject-cofx` takes either one or two arguments. The first is always the `id` of the coeffect 
 required (called a `cofx-id`). The 2nd is an optional addition value. 
@@ -160,7 +162,7 @@ Each `cofx-id` requires a different action.
 
 This function is also part of the re-frame API.
 
-It allows you to associate a`cofx-id` (like `:now` or `:local-store`) with a 
+It allows you to associate a `cofx-id` (like `:now` or `:local-store`) with a 
 handler function that injects the right key/value pair.
 
 The function you register will be passed two arguments:
@@ -267,7 +269,8 @@ In note form:
   5. We must have previously registered a cofx handler via `reg-cofx`
   
    
----
+***
+
 Previous:  [Effects](Effects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Basic App Structure](Basic-App-Structure.md)  

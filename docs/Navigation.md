@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [What About Navigation?](#what-about-navigation)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ## What About Navigation?
 
@@ -49,7 +57,8 @@ A high level reagent view has a subscription to :active-panel and will switch to
 
 Continue to [Namespaced Keywords](Namespaced-Keywords.md) to reduce clashes on ids.
 
----
+***
+
 Previous:  [Basic App Structure](Basic-App-Structure.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Namespaced Keywords](Namespaced-Keywords.md)

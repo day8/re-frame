@@ -71,3 +71,13 @@
   there isn't often much point firing a timed event in a test."
   [f ms]
   (next-tick f))
+
+(defn now []
+  ;; currentTimeMillis may count backwards in some scenarios, but as this is used for tracing
+  ;; it is preferable to the slower but more accurate System.nanoTime.
+  (System/currentTimeMillis))
+
+(defn reagent-id
+  "Doesn't make sense in a Clojure context currently."
+  [reactive-val]
+  nil)

@@ -36,3 +36,21 @@
 
 (defn set-timeout! [f ms]
   (js/setTimeout f ms))
+
+(defn now []
+  (if (exists? js/performance.now)
+    (js/performance.now)
+    (js/Date.now)))
+
+(defn reagent-id
+  "Produces an id for reactive Reagent values
+  e.g. reactions, ratoms, cursors."
+  [reactive-val]
+  (when (implements? reagent.ratom/IReactiveAtom reactive-val)
+    (str (condp instance? reactive-val
+           reagent.ratom/RAtom "ra"
+           reagent.ratom/RCursor "rc"
+           reagent.ratom/Reaction "rx"
+           reagent.ratom/Track "tr"
+           "other")
+         (hash reactive-val))))

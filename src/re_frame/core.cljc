@@ -12,7 +12,8 @@
     [re-frame.interceptor      :as interceptor]
     [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
                                                              fx-handler->interceptor
-                                                             ctx-handler->interceptor]]))
+                                                             ctx-handler->interceptor]]
+    [clojure.set               :as set]))
 
 
 ;; --  dispatch
@@ -45,11 +46,11 @@
 
 ;; --  subscriptions
 (defn reg-sub-raw
-  "Associate a given `query id` with a given subscription handler fucntion `handler-fn`
+  "Associate a given `query id` with a given subscription handler function `handler-fn`
    which is expected to take two arguments: app-db and query vector, and return
    a `reaction`.
 
-  This is a low level, advanced function.  You should probably be using re-sub
+  This is a low level, advanced function.  You should probably be using reg-sub
   instead."
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
@@ -58,6 +59,7 @@
 (def subscribe           subs/subscribe)
 
 (def clear-sub    (partial registrar/clear-handlers subs/kind))
+(def clear-subscription-cache! subs/clear-subscription-cache!)
 
 ;; -- effects
 (def reg-fx      fx/register)
@@ -133,14 +135,14 @@
     (fn []
 			;; call `dispose!` on all current subscriptions which
 			;; didn't originally exist.
-			#_(->> subs/query->reaction
-					 vals
-					 (remove (set (vals subs-cache)))   ;;
-					 (map interop/dispose!)
-					 (doall))
+      (let [original-subs (set (vals subs-cache))
+            current-subs  (set (vals @subs/query->reaction))]
+        (doseq [sub (set/difference current-subs original-subs)]
+          (interop/dispose! sub)))
 
-			;; reset the atoms
-      (reset! subs/query->reaction subs-cache)
+      ;; Reset the atoms
+      ;; We don't need to reset subs/query->reaction, as
+      ;; disposing of the subs removes them from the cache anyway
       (reset! registrar/kind->id->handler handlers)
       (reset! db/app-db app-db)
       nil)))
