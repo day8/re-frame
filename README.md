@@ -31,8 +31,14 @@ Perhaps:
     that embraces those paradigms?
 3.  You're taking a [Functional Design and Programming course](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html) at San Diego State University
     and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days.
-4.  You've taken interest in cycle.js, reactive streams/rxjs, elm, or pux (purescript) and want to use those same patterns with clojurescript.
-5.  re-frame is impressively buzzword compliant: it has reactivity,
+4.  You know Redux, Elm, cycle.js or pux and you're  
+    interested in a ClojureScript implementation, with a data oriented design. 
+    In this space, re-frame is very old, hopefully in a Gandalf kind of way. 
+    First designed in Nov/Dec 2014, it slightly pre-dates the official Elm Architecture, and
+    although influenced by early-Elm concepts like `foldp` and `lift`, we took a slightly 
+    different path, over time pioneering such concepts as event handler middleware, 
+    coeffect accretion, and deduplicated signal graphs.
+5.  Which brings us to the most important point. re-frame is impressively buzzword compliant: it has reactivity,
     unidirectional data flow, pristinely pure functions,
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
     and claims an immaculate hammock conception. It also has a charming
@@ -47,7 +53,7 @@ McCoy might report "It's MVC, Jim, but not as we know it".  And you would respon
 "McCoy, you trouble maker, why even mention an OO pattern? 
 re-frame is a **functional framework**."
 
-Being a functional framework, it is about data, and the pure functions 
+Being a functional framework, it is about data, and the (pure) functions 
 which transform that data.
 
 ### It is a loop
