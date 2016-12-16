@@ -7,6 +7,7 @@ Templates, examples, and other resources related to re-frame. For additions or m
 ## Table Of Contents
 
 - [Templates](#templates)
+- [Tools](#tools)
 - [Examples and Applications Using re-frame](#examples-and-applications-using-re-frame)
 - [Videos](#videos)
 - [Server Side Rendering](#server-side-rendering)
@@ -25,6 +26,9 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 * [Celibidache](https://github.com/velveteer/celibidache/) by [Velveteer] - An opinionated starter for re-frame applications using Boot. Based on re-frame `0.7.0`
 
+### Tools
+
+* [re-frisk](https://github.com/flexsurfer/re-frisk) by [Andrey Shovkoplyas] - A library for visualizing re-frame data and events.
 
 ### Examples and Applications Using re-frame
 
@@ -51,8 +55,9 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 ### Videos
 
-*  [A Video Tour of the Source Code of Ninja Tools](https://carouselapps.com/2015/12/02/tour-of-the-source-code-of-ninja-tools/) by [Pupeno]
+* [re-frame your ClojureScript applications](https://youtu.be/cDzjlx6otCU) by [Shaun Mahood] - re-frame presentation given at Clojure/Conj 2016
 
+*  [A Video Tour of the Source Code of Ninja Tools](https://carouselapps.com/2015/12/02/tour-of-the-source-code-of-ninja-tools/) by [Pupeno]
 
 ### Server Side Rendering
 
@@ -66,6 +71,7 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 * [Rendering Reagent on the Server Using Hiccup](http://yogthos.net/posts/2015-11-24-Serverside-Reagent.html) by [Yogthos] - Blog post on rendering Reagent with Clojure.
 
+[Andrey Shovkoplyas]:https://github.com/flexsurfer
 [Artūr Girenko]:https://github.com/drapanjanas
 [Day8]:https://github.com/Day8
 [Daniel Higginbotham]:http://www.braveclojure.com
@@ -76,9 +82,7 @@ Templates, examples, and other resources related to re-frame. For additions or m
 [Kristian Mandrup]:https://github.com/kristianmandrup
 [Matus Lestan]:https://github.com/madvas
 [Pupeno]:https://pupeno.com
+[Shaun Mahood]:https://github.com/smahood
 [Toni Reina]: https://github.com/areina
 [Velveteer]: https://github.com/velveteer
 [Yogthos]:http://yogthos.net/index.html
-
-
-	
