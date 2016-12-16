@@ -129,4 +129,4 @@ https://vimeo.com/195711510
 
 Previous:  [This Repo's README](../README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [First Code Walk-Through](CodeWalkThrough.md)
+Next:  [First Code Walk-Through](CodeWalkthrough.md)
