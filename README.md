@@ -31,12 +31,12 @@ Perhaps:
     that embraces those paradigms?
 3.  You're taking a [Functional Design and Programming course](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html) at San Diego State University
     and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days.
-4.  You know Redux, Elm, cycle.js or pux and you're  
-    interested in a ClojureScript implementation, with a data oriented design. 
-    In this space, re-frame is very old, hopefully in a Gandalf kind of way. 
-    First designed in Dec 2014, it pre-dates the official Elm Architecture, and
-    although thankfully influenced by early-Elm concepts like `foldp` and `lift`, we took a slightly
-    different path and, over time, pioneered concepts like event handler middleware, 
+4.  You know Redux, Elm, cycle.js or pux and you're
+    interested in a ClojureScript implementation, with a data oriented design.
+    In this space, re-frame is very old, hopefully in a Gandalf kind of way.
+    First designed in Dec 2014, it even slightly pre-dates the official Elm Architecture,
+    although thankfully we were influenced by early-Elm concepts like `foldp` and `lift`.  We took a slightly
+    different path and, over time, re-frame pioneered concepts like event handler middleware,
     coeffect accretion, and de-duplicated signal graphs.
 5.  Which brings us to the most important point: re-frame is impressively buzzword compliant. It has reactivity,
     unidirectional data flow, pristinely pure functions,
