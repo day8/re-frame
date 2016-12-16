@@ -19,6 +19,8 @@ Templates, examples, and other resources related to re-frame. For additions or m
 
 * [re-frisk](https://github.com/flexsurfer/re-frisk) by [Andrey Shovkoplyas] - A library for visualizing re-frame data and events.
 
+* [re-thread](https://github.com/yetanalytics/re-thread) by [Milt Reder] - A library for running re-frame applications in Web Workers.
+
 ### Examples and Applications Using re-frame
 
 * [How to create decentralised apps with re-frame and Ethereum](https://medium.com/@matus.lestan/how-to-create-decentralised-apps-with-clojurescript-re-frame-and-ethereum-81de24d72ff5#.b9xh9xnis) by [Matus Lestan] - Tutorial with links to code and live example. 
@@ -70,6 +72,7 @@ Templates, examples, and other resources related to re-frame. For additions or m
 [Jakub Elżbieciak]:https://elzbieciak.pl
 [Kristian Mandrup]:https://github.com/kristianmandrup
 [Matus Lestan]:https://github.com/madvas
+[Milt Reder]:https://github.com/yetanalytics
 [Pupeno]:https://pupeno.com
 [Shaun Mahood]:https://github.com/smahood
 [Toni Reina]: https://github.com/areina
