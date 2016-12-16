@@ -36,9 +36,9 @@ Perhaps:
     In this space, re-frame is very old, hopefully in a Gandalf kind of way. 
     First designed in Dec 2014, it pre-dates the official Elm Architecture, and
     although thankfully influenced by early-Elm concepts like `foldp` and `lift`, we took a slightly
-    different path and, over time, pioneering concepts like event handler middleware, 
-    coeffect accretion, and deduplicated signal graphs.
-5.  Which brings us to the most important point. re-frame is impressively buzzword compliant: it has reactivity,
+    different path and, over time, pioneered concepts like event handler middleware, 
+    coeffect accretion, and de-duplicated signal graphs.
+5.  Which brings us to the most important point: re-frame is impressively buzzword compliant. It has reactivity,
     unidirectional data flow, pristinely pure functions,
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
     and claims an immaculate hammock conception. It also has a charming

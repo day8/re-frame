@@ -105,21 +105,25 @@ source of data is elsewhere.
 6. The ability to do time travel debugging, even in a production setting. More soon.
 
 
-### Get You A Leveragable Schema
+### Create A Leveragable Schema
 
-You really need a schema for `app-db`.
+You really need a `spec` schema for `app-db`. The derived power is immense.
 
 Of course, that means you'll have to learn [spec](http://clojure.org/about/spec) and there's
 some overhead in that, so maybe, just maybe, in your initial experiments, you can 
-get away without one. But not for long.  Promise me you'll write a `spec`.  Good.
+get away without one. But not for long.  Promise me you'll write a `spec`.  Promise me.  Okay, good.
 
 The [todomvc example](https://github.com/Day8/re-frame/tree/master/examples/todomvc)
 shows how to use a spec.  Look in `src/db.cljs` for the spec itself, and then in `src/events.cljs` for
 how to write code which checks `app-db` against this spec after every single event has been 
 processed. 
 
-Specs are more leveragable than types. Watch how: <br>
+Specs are more leveragable than types. This is a big interesting idea which is not yet mainstream. 
+Watch how: <br>
 https://www.youtube.com/watch?v=VNTQ-M_uSo8
+
+Also, the mighty Rich Hickey (poor audio):<br>
+https://vimeo.com/195711510
 
 *** 
 
