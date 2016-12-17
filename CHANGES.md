@@ -1,6 +1,6 @@
-## 0.9.0 (2016.12.15)
+## 0.9.0 (2016.12.15) - The Dolores Release
 
-Welcome, Guests. Dr Ford has created a new [6-part narrative](README.md), 
+Welcome, board members.  Dr Ford has created a new [6-part narrative](README.md), 
 and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen Dolores?
 
 #### Headline
@@ -31,7 +31,7 @@ and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen 
 - [#248](https://github.com/Day8/re-frame/pull/248) Provide after interceptor with `db` coeffect, if no `db` effect was produced.
 - [#278](https://github.com/Day8/re-frame/issues/278) Provide enrich interceptor with `db` coeffect, if no `db` effect was produced.
 
-## 0.8.0  (2016.08.19)
+## 0.8.0  (2016.08.19) - The Walnuts Release
 
 Staying on the leading edge of new buzzwords is obviously critical for any framework. 
 Angular's terrifying faceplant is a sobering reminder to us all. 

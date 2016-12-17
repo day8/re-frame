@@ -30,16 +30,16 @@ Perhaps:
     **completely change everything**?  And, if so, what would that look like in a language
     that embraces those paradigms?
 3.  You're taking a [Functional Design and Programming course](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html) at San Diego State University
-    and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days.
-4.  You know Redux, Elm, cycle.js or pux and you're
+    and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right?
+4.  You know Redux, Elm, Cycle.js or Pux and you're
     interested in a ClojureScript implementation, **with a data oriented design**.
     In this space, re-frame is very old, hopefully in a Gandalf kind of way.
     First designed in Dec 2014, it even slightly pre-dates the official Elm Architecture,
     although thankfully we were influenced by early-Elm concepts like `foldp` and `lift`, as well as 
-    terrific Clojure projects like [Pedestal App], [Om] and [Hoplon]. Since then,  
+    terrific Clojure projects like [Pedestal App], [Om] and [Hoplon]. Since then,
     re-frame has pioneered ideas like event handler middleware,
     coeffect accretion, and de-duplicated signal graphs.
-5.  Which brings us to the most important point: re-frame is impressively buzzword compliant. It has reactivity,
+5.  Which is a lovely segue into the most important point: **re-frame is impressively buzzword compliant**. It has reactivity,
     unidirectional data flow, pristinely pure functions,
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
     and claims an immaculate hammock conception. It also has a charming
@@ -101,10 +101,10 @@ Computationally, each iteration of the loop involves a
 six domino cascade.
 
 One domino triggers the next, which triggers the next, et cetera, until we are 
-back at the beginning of the loop, whereupon the dominoes all spring to attention 
+back at the beginning of the loop, whereupon the dominoes spring to attention 
 again, ready for the next iteration of the same cascade.
 
-Here are the six dominoes ...
+The six dominoes are ...
 
 ### 1st Domino - Event Dispatch
 
