@@ -212,7 +212,7 @@ know how to inject a `:blah`.
 ### Secret Interceptors
 
 In a previous tutorial we learned that `reg-events-db` 
-and `reg-events-fx` add Interceptors to front of any chain 
+and `reg-events-fx` add Interceptors to the front of any chain 
 during registration. We found they inserted an Interceptor called `do-fx`. 
 
 I can now reveal that 
