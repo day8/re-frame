@@ -111,7 +111,7 @@ https://vimeo.com/195711510
 
 ### How do I inspect it?
 
-See FAQ #1
+See [FAQ #1](FAQs/Inspecting-app-db.md)
 
 *** 
 
