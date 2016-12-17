@@ -53,7 +53,7 @@ websocket message. Without mutation, an app would just sit there, stuck.
 State change is how an application "moves forward" - how it does its job.  Useful!
 
 On the other hand, control logic and state mutation tend to be the most 
-complex and error prone of part of an app.
+complex and error prone part of an app.
 
 ### Your Handling
 
@@ -131,7 +131,7 @@ Regarding the 3rd point above, a re-frame application proceeds step by step, lik
   
 Such a collection of events is replay-able which is a dream for debugging and testing. But only
 when all the handlers are pure. Handlers with side-effects (like that HTTP GET, or the `dispatch`) pollute the 
-replay, inserting extra events into it, etc, which ruins the process. 
+replay, inserting extra events into it, etc., which ruins the process. 
 
 
 ### The 2nd Kind Of Problem
@@ -176,7 +176,7 @@ which *do side-effects*, we'll instead get them to *cause side-effects*.
 
 ### Doing vs Causing
 
-Above, I proudly claimed that this event handler was pure:
+I proudly claim that this event handler is pure:
 ```clj
 (reg-event-db
    :my-event
@@ -259,7 +259,7 @@ Here it is re-written so as to be pure:
 Notes: <br>
 *<1>* we're using `reg-event-fx` instead of `reg-event-db` to register  (that's `-db` vs `-fx`) <br>
 *<2>* the first parameter is no longer just `db`.  It is a map from which 
-[we are destructuring db](http://clojure.org/guides/destructuring). Ie. 
+[we are destructuring db](http://clojure.org/guides/destructuring), i.e.
 it is a map which contains a `:db` key. <br>
 *<3>* The handler is returning a data structure (map) which describes two side-effects:
   - a change to application state, via the `:db` key

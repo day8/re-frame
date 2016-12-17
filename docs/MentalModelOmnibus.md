@@ -13,7 +13,7 @@ then those patterns will repeat themselves. <br>
 
 The re-frame tutorials initially focus on the **domino
 narrative**. The goal is to efficiently explain the mechanics of re-frame,
-and get you reading and writing code ASAP.
+and to get you reading and writing code ASAP.
 
 But **there are other perspectives** on re-frame
 which will deepen your understanding.
@@ -42,7 +42,7 @@ at least one "Aaaah, I see" moment before the end.
 ## What is the problem?
 
 First, we decided to build our SPA apps with ClojureScript, then we
-choose [Reagent], then we had a problem. It was mid 2014.
+chose [Reagent], then we had a problem. It was mid 2014.
 
 For all its considerable brilliance,  Reagent (+ React)
 delivers only the 'V' part of a traditional MVC framework.
@@ -52,7 +52,7 @@ SPAs which can run to 50K lines of code. So, I wanted to know:
 where does the control logic go? How is state stored & manipulated? etc.
 
 We read up on [Pedestal App], [Flux], 
-[Hoplon], [Om], early [Elm], etc and re-frame is the architecture that
+[Hoplon], [Om], early [Elm], etc., and re-frame is the architecture that
 emerged.  Since then, we've tried to keep an eye on further developments like the
 Elm Architecture, Om.Next, BEST, Cycle.js, Redux, etc.  They have taught us much
 although we have often made different choices.
@@ -72,8 +72,8 @@ insider's joke, conference T-Shirt.
 
 ## Guiding Philosophy
 
-__First__, above all we believe in the one true [Dan Holmsand], creator of Reagent, and
-his divine instrument the `ratom`.  We genuflect towards Sweden once a day.
+__First__, above all, we believe in the one true [Dan Holmsand], creator of Reagent, and
+his divine instrument: the `ratom`.  We genuflect towards Sweden once a day.
 
 __Second__, we believe in ClojureScript, immutable data and the process of building
 a system out of pure functions.
@@ -117,7 +117,7 @@ If you have that data, then you can reproduce the error.
 
 re-frame allows you to time travel, even in a production setting. 
 Install the "checkpoint" state into `app-db`
-and then "play forward" through the collection dispatched events.
+and then "play forward" through the collection of dispatched events.
 
 The only way the app "moves forwards" is via events. "Replaying events" moves you
 step by step towards the error causing problem.
@@ -164,9 +164,9 @@ imagined `perpetual reduce` stores its on-going reduction.
 Now, in the general case, this perspective breaks down a bit, 
 because of `reg-event-fx` (has `-fx` on the end, not `-db`) which 
 allows:
-  1. event handlers can produce `effects` beyond just application state 
+  1. Event handlers to produce `effects` beyond just application state 
      changes.
-  2. Event handlers sometimes need coeffects (arguments) in addition to `db` and `v`. 
+  2. Event handlers to have `coeffects` (arguments) in addition to `db` and `v`. 
 
 But, even if it isn't the full picture, it is a very useful 
 and interesting mental model. We were first exposed to this idea
@@ -201,10 +201,10 @@ This is an infinite loop of sorts - an infinite loop of derived data.
 `event handlers` collectively
 implement the "control" part of an application. Their logic
 interprets arriving events in the context of existing state,
-and they compute what the new state of the application.  
+and they compute the new state of the application.  
 
-`events` act, then, a bit like the `triggers` in a finite state machine, and 
-the event handlers act like the rules which govern how the state machine
+`events` act a bit like the `triggers` in a finite state machine, and
+the `event handlers` act like the rules which govern how the state machine
 moves from one logical state to the next.
 
 In the simplest
@@ -218,7 +218,7 @@ one of them, then formally recognising it and using a technique like
 [State Charts](https://www.amazon.com/Constructing-User-Interface-Statecharts-Horrocks/dp/0201342782)
 will help greatly in getting a clean design and fewer bugs.
 
-The beauty of re-frame from a FSM point of view is that all the state is 
+The beauty of re-frame, from a FSM point of view, is that all the state is 
 in one place - unlike OO systems where the state is distributed (and synchronized) 
 across many objects. So implementing your control logic as a FSM is
 fairly natural in re-frame, whereas it is often difficult and 

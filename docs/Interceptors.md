@@ -296,7 +296,7 @@ Earlier, in the "Handlers Are Interceptors Too" section, I explained that `event
 are wrapped in an Interceptor and placed on the end of an Interceptor chain.  Remember the 
 whole `[std1 std2 in1 in2 h]` thing?  
 
-We're now look at the `h` bit. How does an event handler get wrapped to be an Interceptor. 
+We'll now look at the `h` bit. How does an event handler get wrapped to be an Interceptor?
 
 Reminder - there's two kinds of handler:
    - the `-db` variety registered by `reg-event-db`
@@ -367,9 +367,9 @@ In the next Tutorial, we'll look at (side) Effects in more depth.  Later again, 
  
 ## Appendix
 
-### The Builtin Interceptors
+### The Built-in Interceptors
 
-re-frame comes with some builtin Interceptors:
+re-frame comes with some built-in Interceptors:
   - __debug__: log each event as it is processed. Shows incremental [`clojure.data/diff`](https://clojuredocs.org/clojure.data/diff) reports.
   - __trim-v__:  a convenience. More readable handlers.  
 
