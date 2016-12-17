@@ -346,7 +346,7 @@ Here's the code:
     (:time-color db)))
 ```
 
-Like I said, both of these queries are trivial. See [todomvc.subs.clj](https://github.com/Day8/re-frame/blob/develop/examples/todomvc/src/todomvc/subs.cljs) for more interesting ones.
+Like I said, both of these queries are trivial. See [todomvc.subs.clj](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs) for more interesting ones.
 
 ## View Functions (domino 5)
 
