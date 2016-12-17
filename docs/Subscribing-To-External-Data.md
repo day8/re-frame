@@ -100,7 +100,7 @@ There'll be code in a minute but, first, let's describe how the subscription han
 will work: 
 
    1. Upon being required to provide items, it has to issue 
-      a query to the remote database. Perhaps this will be done via a 
+      a query to the remote database. Perhaps this will be done via
       a RESTful GET. Or via a firebase connection. Or by pushing a JSON 
       representation of the query down a websocket. Something. And it is the 
       subscription handler's job to know how it is done.  
@@ -156,7 +156,7 @@ A few things to notice:
    whatever way makes sense. Maybe it does nothing more than to `assoc` into an `app-db` path, 
    or maybe this is a rethinkdb changefeed subscription and your event handler will have to collate 
    the newly arriving data with what has previously been returned. Do what 
-   needs to be done in that event handler, so that the right data to be put into the right path.
+   needs to be done in that event handler, so that the right data will be put into the right path.
  
 3. We use Reagent's `make-reaction` function to create a reaction which will return 
    that known, particular path within `app-db` where the query results are to be placed.
@@ -205,7 +205,7 @@ In v0.8.0 of re-frame onwards, subscriptions are automatically de-duplicated.
 In prior versions, in cases where the same query is simultaneously issued 
 from multiple places, you'd want to 
 de-duplicate the queries. One possibility is to do this duplication 
-in `issue-items-query!` itself. You can count 
+in `issue-items-query!` itself. You can
 `count` the duplicate queries and only clear the data when that count goes to 0. 
 
 ### Thanks To
@@ -216,7 +216,7 @@ in `issue-items-query!` itself. You can count
 
 Event handlers do most of the heavy lifting within re-frame apps.
 
-When buttons gets clicked, or items get dragged 'n dropped, or tabs get
+When buttons get clicked, or items get dragged 'n dropped, or tabs get
 chosen, they know how to transition the app from one state 
 to the next. That's their job. And, when they make such
 a transition, it is quite reasonable to expect them to ALSO 
