@@ -3,7 +3,7 @@
 This page describes techniques for debugging re-frame's event handlers.
 
 Event handlers are quite central to a re-frame app.  Only event handlers 
-can update `app-db`, to "step" an application "forward" from one state
+can update `app-db` to "step" an application "forward" from one state
 to the next.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -79,7 +79,7 @@ business on every single handler?  That would be very repetitive.
 Yes, you will have to put it on each handler.  And, yes, that could be repetitive,  unless 
 you take some steps.
 
-One thing you an do is to define standard interceptors the top of the `event.cljs` namespace:
+One thing you can do is to define standard interceptors at the top of the `event.cljs` namespace:
 ```clj
 (def standard-interceptors  [(when ^boolean goog.DEBUG debug)  another-interceptor])
 ```
@@ -210,7 +210,7 @@ That's handlers which take `db` and `event` arguments, and return a new `db`.
 So, they MUST return a new `db` value - which should be validated.  
 
 But what if we tried to do the same for `-fx` handlers, which return instead 
-an `effects` map which may, or may not, contain an `:db`?  Our solution would 
+an `effects` map which may, or may not, contain a `:db`?  Our solution would 
 have to allow for the absence of a new `db` value (by doing no validity check, because nothing 
 was being changed). 
 
@@ -227,4 +227,5 @@ was being changed).
         handler-fn)))
 ```
 
-Actually, it would probably be better to write an alternative `after` which 
+Actually, it would probably be better to write an alternative `after` which XXX
+TODO: finish thought

@@ -88,7 +88,7 @@ X, Y or Z?
 The list of effects is long and varied, with everyone needing to use a 
 different combination.
 
-So effect handling has to be extensible. You need to a way to define 
+So effect handling has to be extensible. You need a way to define 
 your own side effects.
 
 ### Extensible Side Effects
@@ -147,7 +147,7 @@ cognitive overhead as possible for the eventual readers of your effectful code.
 
 This advice coming from the guy who named effects `fx` ... Oh, the hypocrisy.
 
-In my defence, here's the builtin effect handler for `:db`:
+In my defence, here's the built-in effect handler for `:db`:
 ```clj
 (reg-fx
   :db
