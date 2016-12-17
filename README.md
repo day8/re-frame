@@ -10,7 +10,7 @@ axe of my family? And because it has changed gently over time, it is still a pre
 y'know. Pretty good.
 
 > -- Terry Pratchett, The Fifth Elephant <br>
-> &nbsp;&nbsp;&nbsp; apparently reflecting on identity, flow and derived values
+> &nbsp;&nbsp;&nbsp; reflecting on identity, flow and derived values
 
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
@@ -32,11 +32,12 @@ Perhaps:
 3.  You're taking a [Functional Design and Programming course](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html) at San Diego State University
     and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right? I remember those days.
 4.  You know Redux, Elm, cycle.js or pux and you're
-    interested in a ClojureScript implementation, with a data oriented design.
+    interested in a ClojureScript implementation, **with a data oriented design**.
     In this space, re-frame is very old, hopefully in a Gandalf kind of way.
     First designed in Dec 2014, it even slightly pre-dates the official Elm Architecture,
-    although thankfully we were influenced by early-Elm concepts like `foldp` and `lift`.  We took a slightly
-    different path and, over time, re-frame pioneered concepts like event handler middleware,
+    although thankfully we were influenced by early-Elm concepts like `foldp` and `lift`, as well as 
+    terrific Clojure projects like [Pedestal App], [Om] and [Hoplon]. Since then,  
+    re-frame has pioneered ideas like event handler middleware,
     coeffect accretion, and de-duplicated signal graphs.
 5.  Which brings us to the most important point: re-frame is impressively buzzword compliant. It has reactivity,
     unidirectional data flow, pristinely pure functions,
@@ -44,6 +45,10 @@ Perhaps:
     and claims an immaculate hammock conception. It also has a charming
     xkcd reference (soon) and a hilarious, insiders-joke T-shirt,
     ideal for conferences (in design).  What could possibly go wrong?
+
+[OM]:https://github.com/swannodette/om
+[Hoplon]:http://hoplon.io/
+[Pedestal App]:https://github.com/pedestal/pedestal-app
 
 ## re-frame
 

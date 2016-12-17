@@ -1,6 +1,4 @@
-- [On Data](#on-data)
-- [The Big Ratom](#the-big-ratom)
-- [The Benefits Of Data-In-The-One-Place](#the-benefits-of-data-in-the-one-place)
+## Application State
 
 
 #### Table Of Contents
@@ -54,9 +52,9 @@ seems a more useful paradigm than plain old map-in-atom.
 Further Notes:
 
 1. `app-state` would probably be a more accurate name, but I choose `app-db` instead because 
-    I wanted to convey the database notion as strongly as possible.
+    I wanted to convey the in-memory database notion as strongly as possible.
 2. In the documentation and code, I make a distinction between `app-db` (the `ratom`) and 
-   `db` which is the (map) `value` currently stored **inside** this `ratom`. Be aware of that naming.
+   `db` which is the (map) `value` currently stored **inside** this `ratom`. Be aware of that naming as you read code.
 3. re-frame creates and manages an `app-db` for you, so
    you don't need to declare one yourself (see the 1st FAQ if you want to inspect the value it holds).
 4. `app-db` doesn't actually have to be a `ratom` containing a map.  It could, for example, 
@@ -95,7 +93,7 @@ snapshots. All very efficient.
 For certain categories of applications (eg: drawing applications) this feature is borderline magic. 
 Instead of undo/redo being hard, disruptive and error prone, it becomes trivial. 
 **But,** many web applications are not self contained 
-data-wise and, instead, are dominated by data sourced from an authoritative remote database. 
+data-wise and, instead, are dominated by data sourced from an authoritative, remote database. 
 For these applications, re-frame's `app-db` is mostly a local caching 
 point, and being able to do undo/redo its state is meaningless because the authoritative
 source of data is elsewhere.
@@ -124,6 +122,10 @@ https://www.youtube.com/watch?v=VNTQ-M_uSo8
 
 Also, the mighty Rich Hickey (poor audio):<br>
 https://vimeo.com/195711510
+
+### How do I inspect it?
+
+See FAQ #1
 
 *** 
 
