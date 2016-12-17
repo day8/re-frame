@@ -63,7 +63,7 @@ Then:
 ## Namespace
 
 Because this example is tiny, the code is in a single namespace which you can find here:
-https://github.com/Day8/re-frame/blob/master/examples/simple/src/simpleexample/core.cljs
+https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs
 
 Within this namespace, we'll need access to both `reagent` and `re-frame`. 
 So, at the top, we start like this: 
@@ -124,7 +124,7 @@ callback functions on the wire. You know who you are.
 
 To send an event, call `dispatch` with the event vector as argument: 
 ```clj
-   (dispatch [:event-id  value1 value2])
+   (rf/dispatch [:event-id  value1 value2])
 ```
 
 In this "simple" app, a `:timer` event is dispatched every second:
@@ -176,11 +176,11 @@ In this application, 3 kinds of event are dispatched:
 Event handlers can be registered via either `reg-event-db`
 or `reg-event-fx`  (`-db` vs `-fx`).
 
-Handler functions take coeffects (input args) and return `effects`, 
+Handler functions take `coeffects` (input args) and return `effects`, 
 however `reg-event-db` allows you to write simpler handlers. 
 The 
 handler functions it registers  
-(1) take just one coeffect - the current app state and (2) return only one `effect` - 
+(1) take just one `coeffect` - the current app state, and (2) return only one `effect` - 
  the updated app state. 
  
 Whereas `reg-event-fx` registered handlers are more flexible. 
@@ -193,7 +193,7 @@ We register event handlers using re-frame's `reg-event-db`.
 
 `reg-event-db` is used like this:
 ```clj
-(reg-event-db
+(rf/reg-event-db
   :the-event-id
   the-event-handler-fn)
 ```
@@ -252,7 +252,7 @@ Earlier, we set up a timer function to `(dispatch [:timer now])` every second.
 
 Here's how we handle it: 
 ```clj
-(rf/reg-event-db                 ;; usage:  (dispatch [:timer a-js-Date])
+(rf/reg-event-db                 ;; usage:  (rf/dispatch [:timer a-js-Date])
   :timer                         
   (fn [db [_ new-time]]          ;; <-- de-structure the event vector
     (assoc db :time new-time)))  ;; compute and return the new application state
@@ -268,7 +268,7 @@ Notes:
 When the user enters a new colour value (via an input text box):
 ```clj
 (rf/reg-event-db                
-  :time-color-change            ;; usage:  (dispatch [:time-color-change 34562])
+  :time-color-change            ;; usage:  (rf/dispatch [:time-color-change 34562])
   (fn [db [_ new-color-value]]  
     (assoc db :time-color new-color-value)))   ;; compute and return the new application state
 ```
@@ -316,12 +316,12 @@ of subscriptions and more explanation can be found in the todomvc example.
 `reg-sub` associates a `query id` with a function that computes
  that query, like this:
 ```clj
-(reg-sub
+(rf/reg-sub
   :some-query-id  ;; query id (used later in subscribe)
   a-query-fn)     ;; the function which will compute the query
 ```
 If, later, a view function subscribes to a query like this:
-    `(subscribe [:some-query-id])`   ;; note use of `:some-query-id`
+    `(subscribe [:some-query-id])`.  Note use of `:some-query-id`
 then `a-query-fn` will be used to perform the query over the application state.
 
 Each time application state changes, `a-query-fn` will be
@@ -346,7 +346,7 @@ Here's the code:
     (:time-color db)))
 ```
 
-Like I said, both of these queries are trivial. See `todomvc.subs.clj` for more interesting ones.
+Like I said, both of these queries are trivial. See [todomvc.subs.clj](https://github.com/Day8/re-frame/blob/develop/examples/todomvc/src/todomvc/subs.cljs) for more interesting ones.
 
 ## View Functions (domino 5)
 
@@ -386,7 +386,7 @@ for that part of `app-db`, and that means using `subscribe`.
 
 `subscribe` is always called like this:
 ```Clojure
-   (subscribe  [query-id some optional query parameters])
+   (rf/subscribe  [query-id some optional query parameters])
 ```
 There's only one (global) `subscribe` function and it takes one argument, assumed to be a vector.
 
@@ -446,11 +446,11 @@ And then something more standard:
    [color-input]])
 ```
 
-Note: `view` functions tend to be organised into a hierarchy, often with data flowing from parent to child via
+Note: `view` functions tend to be organized into a hierarchy, often with data flowing from parent to child via
 parameters. So, not every view function needs a subscription. Very often the values passed in from a parent component
 are sufficient.
 
-Note: a view function should never directly access `app-db`. Data is only ever sourced via 
+Note: `view` functions should never directly access `app-db`. Data is only ever sourced via subscriptions.
 
 ### Components Like Templates?
 
