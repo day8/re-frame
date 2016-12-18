@@ -156,7 +156,7 @@ quick sketch of the entire pattern. It is very straight-forward.
 
 (defn main-panel    ;; the top level of our app 
   []
-  (let [name  (re-frame/subscribe :name)]   ;; we need there to be good data
+  (let [name  (re-frame/subscribe [:name])]   ;; we need there to be good data
     [:div "Hello " @name])))
 
 (defn top-panel    ;; this is new
