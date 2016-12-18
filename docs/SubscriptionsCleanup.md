@@ -60,7 +60,56 @@ Which, in turn, means we must write this `time-str` subscription handler:
 Much better. 
 
 You'll notice this new subscription handler belongs to the "Level 3" 
-layer of the reactive flow.  See the [Infographic](SubscriptionInfographic.md).  
+layer of the reactive flow.  See the [Infographic](SubscriptionInfographic.md). 
+
+### Another technique
+
+Above I suggested this:
+```clj
+(defn clock
+  []
+  [:div.example-clock
+   {:style {:color @(rf/subscribe [:time-color])}}
+   @(rf/subscribe [:time-str])])
+```
+
+That may offend your aesthetics. Too much noise with those `@`? 
+
+How about we define a `listen` function to clean it up.
+
+```clj
+(defn listen 
+  [query-v]
+  @(rf/subscribe v))
+```
+
+Then we can re-write like this:
+```clj
+(defn clock
+  []
+  [:div.example-clock
+   {:style {:color (listen [:time-color])}}
+   (listen [:time-str])])
+```
+At the cost of your own function, `listen`, the code is slightly less noisy 
+AND there's less chance of forgetting an `@` (which can lead to odd problems). 
+
+### Say It Again
+
+If, in code review, you saw this view function:
+```clj
+(defn show-items
+  []
+  (let [sorted-items (sort @(subscribe [:items]))]  
+    (into [:div] (for [i sorted-items] [item-view i]))))
+```
+What would you object to?
+
+That `sort`, right?  Computation in the view. Instead we want the right data 
+delivered to the view - its job is to simply make `hiccup`. 
+
+The solution is to create a subscription that delivers sorted 
+items.
 
 
 *** 
