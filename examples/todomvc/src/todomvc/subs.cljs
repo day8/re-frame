@@ -1,12 +1,12 @@
 (ns todomvc.subs
   (:require [re-frame.core :refer [reg-sub subscribe]]))
 
-;; Using `reg-sub`, you can write subscription handlers without ever
-;; using `reaction` directly.
-;; This is how you would register a simple handler.
+;; -------------------------------------------------------------------------------------
+;; Layer 2  (see the infographic for meaning)
+;;
 (reg-sub
   :showing
-  (fn [db _]        ;; db is the value in app-db
+  (fn [db _]        ;; db is the (map) value in app-db
     (:showing db))) ;; I repeat:  db is a value. Not a ratom.  And this fn does not return a reaction, just a value.
 
 ;; so that `fn` is a pure function
@@ -20,7 +20,7 @@
 (reg-sub :sorted-todos sorted-todos)
 
 ;; -------------------------------------------------------------------------------------
-;; Beyond Simple Handlers
+;; Layer 3  (see the infographic for meaning)
 ;;
 ;; A subscription handler is a function which is re-run when its input signals
 ;; change. Each time it is rerun, it produces a new output (return value).
