@@ -70,6 +70,6 @@ Continue to [Navigation](Navigation.md) to learn how to switch between panels of
 
 *** 
 
-Previous:  [CoEffects](coeffects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Previous:  [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Navigation](Navigation.md)  

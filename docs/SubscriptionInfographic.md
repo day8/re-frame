@@ -9,4 +9,4 @@ annotated subscription code [in the todomvc example](https://github.com/Day8/re-
 
 Previous:  [Coeffects](Coeffects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Basic App Structure](Basic-App-Structure.md)  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:  [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
