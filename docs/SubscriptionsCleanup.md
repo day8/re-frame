@@ -15,7 +15,7 @@ structure, ready for use in hiccup generation.
 
 ### Just Look 
 
-Here be the horror: 
+Here be the horrors: 
 ```clj
 (defn clock
   []
@@ -88,7 +88,7 @@ Then, we can re-write like this:
    {:style {:color (listen [:time-color])}}
    (listen [:time-str])])
 ```
-At the cost of your own function, `listen`, the code is now slightly less noisy 
+At the cost of writing your own function, `listen`, the code is now less noisy 
 AND there's less chance of us forgetting an `@` (which can lead to odd problems).
 
 ### Say It Again
@@ -128,25 +128,24 @@ Although to make that testing easier you may do this:
 (reg-sub 
    :sorted-items 
    (fn [_ _]  (subscribe [:items]))
-   item-sorter
+   item-sorter)
 ```
 
 Now it is easy to test `item-sorter` independently (assuming it was a bit more complicated).  
-
 
 ### And There's Another Benefit
 
 re-frame de-duplicates signal graph nodes.  
 
 If, for example, two views wanted to `(subscribe [:sorted-items])` only the one node 
-(in the signal) graph would be created.  Only one node would be doing that 
+(in the signal graph) would be created.  Only one node would be doing that 
 potentially expensive sorting operation (when items changed) and values from 
 it would be flowing through to both views.
 
 That sort of efficiency can't happen if this views themselves are doing the `sort`. 
 
  
-### de-duplication 
+### de-duplication
 
 As I described above, two, or more, concurrent subscriptions for the same query will source 
 reactive updates from the one executing handler - from the one node in the signal graph.
@@ -156,11 +155,8 @@ are the same if their query vectors test `=` to each other.
 
 So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even
 though they involve the same event id, `:some-event`, the query vectors do not test `=`.
-though they involve the same event id, `:some-event`, the query vectors do not test `=`.
 
 This feature shakes out nicely because re-frame has a data oriented design. 
-
- 
 
 *** 
 
