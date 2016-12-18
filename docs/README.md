@@ -16,7 +16,9 @@
 
 ### Subscriptions
 
+
 - [TodoMVC annotated example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs)
+- [Infographic](SubscriptionInfographic.md)
 
 ### App Structure
 
