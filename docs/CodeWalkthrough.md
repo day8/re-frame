@@ -47,6 +47,7 @@ This app:
    like "#CCC", used for the time display
       
 Here's what it looks like:
+
 ![Example App image](../images/example_app.png)
 
 To run the code: 
@@ -178,10 +179,9 @@ or `reg-event-fx`  (`-db` vs `-fx`).
 
 Handler functions take `coeffects` (input args) and return `effects`, 
 however `reg-event-db` allows you to write simpler handlers. 
-The 
-handler functions it registers  
-(1) take just one `coeffect` - the current app state, and (2) return only one `effect` - 
- the updated app state. 
+The handler functions it registers (1) take just one `coeffect` - 
+the current app state, and (2) return only one `effect` - 
+the updated app state. 
  
 Whereas `reg-event-fx` registered handlers are more flexible. 
 
@@ -219,7 +219,7 @@ for it.
 
 Now this event handler is slightly unusual because it doesn't 
 much care about the existing value in `db` - it just wants to plonk 
-in a new complete value. 
+a completely new value. 
 
 Like this: 
 ```clj
