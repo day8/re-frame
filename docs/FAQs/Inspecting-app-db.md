@@ -1,15 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Question](#question)
-- [Short Answer](#short-answer)
-- [Better Answer](#better-answer)
-- [Other Inspection Tools](#other-inspection-tools)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-
 ### Question
 
 How can I inspect the contents of `app-db`?  Perhaps from figwheel.
@@ -75,3 +63,8 @@ provides a very nice solution for navigating and inspecting any data structure.
 ***
 
 Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

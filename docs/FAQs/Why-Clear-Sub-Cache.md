@@ -1,12 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Question](#question)
-- [Answer](#answer)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ### Question
 
 Why do we call `clear-subscription-cache!` when reloading code with Figwheel?
@@ -74,3 +65,8 @@ to be created after reloading.
 ***
 
 Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
