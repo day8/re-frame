@@ -1,38 +1,99 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [It solves a dilemma](#it-solves-a-dilemma)
-- [Implements Reactive Data Flows](#implements-reactive-data-flows)
-- [Flow](#flow)
-- [Reactive Programming](#reactive-programming)
-- [Components](#components)
-  - [Truth Interlude](#truth-interlude)
-  - [React etc.](#react-etc)
-- [Subscribe](#subscribe)
-- [The Signal Graph](#the-signal-graph)
-- [A More Efficient Signal Graph](#a-more-efficient-signal-graph)
-- [](#)
-- [Prefer Dumb Views - Part 1](#prefer-dumb-views---part-1)
-- [Prefer Dumb Views - Part 2](#prefer-dumb-views---part-2)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
+## Interconnections
 
-## It solves a dilemma
+Ask a Systems Theorist, and they'll tell you that a system has **parts** and **interconnections**. 
 
-SPAs are fundamentally mutative in nature.
+Human brains tend to focus first on the **parts**, and then, later, maybe on
+**interconnections**. But we know better, right? We 
+know interconnections are often critical to a system.
+"Focus on the lines between the boxes" we lecture anyone kind enough to listen (in my case, glassy-eyed family members).
 
-They change the DOM, databases, localstore, cookies, send emails etc. Its a veritable frenzy of mutation. And 
-this is a good thing. Any user of these SPAs wants to be changing the world, 
-right, otherwise what's the point?
+In the case of re-frame, dominoes are the **parts**, so, tick, yes, we have
+looked at them first. Our brains are happy. But what about the **interconnections**?
+
+If the **parts** are functions, what does it even mean to talk about **interconnections between functions?** 
+To answer that question, I'll rephrase it as:
+how are the domino functions **composed**?
+
+At the language level, 
+Uncle Alonzo and Uncle John tell us how a function like `count` composes:   
+```clj
+(str (count (filter odd?  [1 2 3 4 5])))
+```
+We know when `count` is called, and with what 
+argument, and how the value it computes becomes the arg for a further function. 
+We know how data "flows" into and out of the functions.
+
+Sometimes, we'd rewrite this code as: 
+```clj
+(->>  [1 2 3 4 5]
+      (filter odd?)
+      count
+      str)
+```
+With this arrangement, we talk of "threading" data 
+through functions. **It seems to help our comprehension to frame function 
+composition in terms of data flow**.
+
+re-frame delivers architecture 
+by supplying the interconnections - it threads the data - it composes the dominoes - it is the lines between the boxes. 
+
+But re-frame has no universal method for this. The technique it uses varies from one domino neighbour 
+pair to the next. 
+
+## Between 1 and 2
+
+There's a queue. 
+
+When you `dispatch` an event, it is put into a FIFO queue to be processed "vey soon". 
+
+It is important to the design of re-frame that event processing is async. 
+
+On the end of the queue, is a `router` which (very soon) will:
+ - pick up events one after the other
+ - for each, it extracts `kind` of event (first element of the event vector)
+ - for each, it looks up the associated event handler and calls it
+  
  
-But we are wide-eyed functional zealots, heroically resisting the 
-entire notion of mutation, and insisting instead on the wonders of pure functions.
+## Between 2 and 3
 
-re-frame solves this dilemma and allows you 
-compose a mutative application from pure functions.
+I lied above.
+
+I said the `router` called the event handler associated with an event.  This is a 
+useful simplification, but we'll see in future tutorials that there's more going on.
+
+I'll wave my hands about now and give you a sense of the real story. 
+
+Instead of there being a single handler function, there's actually a pipeline of functions which 
+we call an interceptor chain. The handler you write is inserted into the middle of this pipeline.
+
+This function pipeline manages three things:
+  - it prepares the `coeffect` for the event handler (the set of inputs required by the handler)
+  - it calls the event handler (Domino 2)
+  - it handles the `effects` produced by the event handler  (Domino 3)
+ 
+
+The router actually looks up the associated "interceptor chain", which happens to have the handler wrapped on the end. 
+
+And then it processes the interceptor chain. Which is to say it calls a 
+
+
+There's 
+ - calls the handler , looks at their first , looks at their 
+first element, and runs the associated 
+
+Between 1 and 2 it is a queue & router, 
+between 2 and 3 it is an interceptor pipeline, and along the 3-4-5-6 domino axis there's a reactive signal graph.  The right 
+tool for the job in each case, I'd argue.
+
+While interconnections are critical to how **re-frame works**, 
+you can happily **use re-frame** for a long time and be mostly ignorant of their details.
+
+Which is a good thing - back we go to happy brains focusing on the **parts**.
+
+
+-----
 
 
 XXX
@@ -88,98 +149,6 @@ going further (certainly read the first two):
 
 
 
-## Components
-
-Extending the diagram, we introduce `components`:
-
-```
-app-db  -->  components  -->  Hiccup
-```
-
-When using Reagent, your primary job is to write one or more `components`. 
-This is the view layer.
-
-Think about `components` as `pure functions` - data in, Hiccup out.  `Hiccup` is
-ClojureScript data structures which represent DOM. Here's a trivial component:
-
-```Clojure
-(defn greet
-  []
-  [:div "Hello ratoms and reactions"])
-```
-
-And if we call it:
-```Clojure
-(greet)
-;; ==>  [:div "Hello ratoms and reactions"]
-```
-
-You'll notice that our component is a regular Clojure function, nothing special. In this case, it takes
-no parameters and it returns a ClojureScript vector (formatted as Hiccup).
-
-Here is a slightly more interesting (parameterised) component (function):
-
-```Clojure
-(defn greet                    ;; greet has a parameter now
-  [name]                       ;; 'name' is a ratom  holding a string
-  [:div "Hello "  @name])      ;; dereference 'name' to extract the contained value
-
-;; create a ratom, containing a string
-(def n (reagent/atom "re-frame"))
-
-;; call our `component` function, passing in a ratom
-(greet n)
-;; ==>  [:div "Hello " "re-frame"]    returns a vector
-```
-
-So components are easy - at core they are a render function which turns data into
-Hiccup (which will later become DOM).
-
-Now, let's introduce `reaction` into this mix.  On the one hand, I'm complicating things
-by doing this, because Reagent allows you to be ignorant of the mechanics I'm about to show
-you. (It invisibly wraps your components in a `reaction` allowing you to be blissfully
-ignorant of how the magic happens.)
-
-On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired,
-because in a minute, when we get to `subscriptions`, we'll be directly using `reaction`, so we
-might as well bite the bullet here and now ... and, anyway, it is pretty easy...
-
-```Clojure
-(defn greet                ;; a component - data in, Hiccup out.
-  [name]                   ;; name is a ratom
-  [:div "Hello "  @name])  ;; dereference name here, to extract the value within
-
-(def n (reagent/atom "re-frame"))
-
-;; The computation '(greet n)' returns Hiccup which is stored into 'hiccup-ratom'
-(def hiccup-ratom  (reaction (greet n)))    ;; <-- use of reaction !!!
-
-;; what is the result of the initial computation ?
-(println @hiccup-ratom)
-;; ==>  [:div "Hello " "re-frame"]    ;; returns hiccup  (a vector of stuff)
-
-;; now change 'n'
-;; 'n' is an input Signal for the reaction above.
-;; Warning: 'n' is not an input signal because it is a parameter. Rather, it is
-;; because 'n' is dereferenced within the execution of the reaction's computation.
-;; reaction notices what ratoms are dereferenced in its computation, and watches
-;; them for changes.
-(reset! n "blah")            ;;    n changes
-
-;; The reaction above will notice the change to 'n' ...
-;; ... and will re-run its computation ...
-;; ... which will have a new "return value"...
-;; ... which will be "reset!" into "hiccup-ratom"
-(println @hiccup-ratom)
-;; ==>   [:div "Hello " "blah"]    ;; yep, there's the new value
-```
-
-So, as `n` changes value over time (via a `reset!`), the output of the computation `(greet n)`
-changes, which in turn means that the value in `hiccup-ratom` changes. Both `n` and
-`hiccup-ratom` are FRP Signals. The Signal graph we created causes data to flow from
-`n` into `hiccup-ratom`.
-
-Derived Data, flowing.
 
 
 ### Truth Interlude
@@ -490,3 +459,8 @@ Back to the more pragmatic world ...
 [Pedestal App]:https://github.com/pedestal/pedestal-app
 
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

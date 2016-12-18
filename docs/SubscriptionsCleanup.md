@@ -7,17 +7,15 @@ There's a problem and we need to fix it.
 
 The simple example, used in the earlier code walk through, is not idomatic re-frame. It has a flaw. 
 
-The [code is here](https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs). 
-
-You'll notice that it does not obey the re-frame rule:  **keep views as dumb as possible**.
+It does not obey the re-frame rule:  **keep views as dumb as possible**.
  
-A view should never do any computation on input data. Its job is just to compute hiccup.
-The subscriptions they use should deliver the data already in the right 
-structure, ready for use. 
+A view shouldn't do any computation on input data. Its job is just to compute hiccup.
+The subscriptions it uses should deliver the data already in the right 
+structure, ready for use in hiccup generation.
 
 ### Just Look 
 
-Just look at the horror of it:
+Here be the horror: 
 ```clj
 (defn clock
   []
@@ -60,11 +58,11 @@ Which, in turn, means we must write this `time-str` subscription handler:
 Much better. 
 
 You'll notice this new subscription handler belongs to the "Level 3" 
-layer of the reactive flow.  See the [Infographic](SubscriptionInfographic.md). 
+layer of the reactive flow.  See the [Infographic](SubscriptionInfographic.md).
 
 ### Another technique
 
-Above I suggested this:
+Above, I suggested this:
 ```clj
 (defn clock
   []
@@ -73,17 +71,16 @@ Above I suggested this:
    @(rf/subscribe [:time-str])])
 ```
 
-That may offend your aesthetics. Too much noise with those `@`? 
+But that may offend your aesthetics. Too much noise with those `@`? 
 
 How about we define a `listen` function to clean it up.
-
 ```clj
 (defn listen 
   [query-v]
-  @(rf/subscribe v))
+  @(rf/subscribe query-v))
 ```
 
-Then we can re-write like this:
+Then, we can re-write like this:
 ```clj
 (defn clock
   []
@@ -91,12 +88,12 @@ Then we can re-write like this:
    {:style {:color (listen [:time-color])}}
    (listen [:time-str])])
 ```
-At the cost of your own function, `listen`, the code is slightly less noisy 
-AND there's less chance of forgetting an `@` (which can lead to odd problems). 
+At the cost of your own function, `listen`, the code is now slightly less noisy 
+AND there's less chance of us forgetting an `@` (which can lead to odd problems).
 
 ### Say It Again
 
-If, in code review, you saw this view function:
+So, if, in code review, you saw this view function:
 ```clj
 (defn show-items
   []
@@ -105,12 +102,65 @@ If, in code review, you saw this view function:
 ```
 What would you object to?
 
-That `sort`, right?  Computation in the view. Instead we want the right data 
+That `sort`, right?  Computation in the view. Instead, we want the right data 
 delivered to the view - its job is to simply make `hiccup`. 
 
-The solution is to create a subscription that delivers sorted 
-items.
+The solution is to create a subscription that delivers items already sorted. 
+```clj
+(reg-sub 
+   :sorted-items 
+   (fn [_ _]  (subscribe [:items]))
+   (fn [items _]
+      (sort items))
+```
 
+Now, in this case the computation is a bit trivial, but the moment it is
+a little tricky, you'll want to test it.  So separating it out from the 
+view will make that easier. 
+
+Although to make that testing easier you may do this:
+
+```clj
+(defn item-sorter
+  [items _]
+  (sort items))
+  
+(reg-sub 
+   :sorted-items 
+   (fn [_ _]  (subscribe [:items]))
+   item-sorter
+```
+
+Now it is easy to test `item-sorter` independently (assuming it was a bit more complicated).  
+
+
+### And There's Another Benefit
+
+re-frame de-duplicates signal graph nodes.  
+
+If, for example, two views wanted to `(subscribe [:sorted-items])` only the one node 
+(in the signal) graph would be created.  Only one node would be doing that 
+potentially expensive sorting operation (when items changed) and values from 
+it would be flowing through to both views.
+
+That sort of efficiency can't happen if this views themselves are doing the `sort`. 
+
+ 
+### de-duplication 
+
+As I described above, two, or more, concurrent subscriptions for the same query will source 
+reactive updates from the one executing handler - from the one node in the signal graph.
+
+How do we know if two subscriptions are "the same"?  Answer: two subscriptions
+are the same if their query vectors test `=` to each other.
+
+So, these two subscriptions are *not* "the same":  `[:some-event 42]`  `[:some-event "blah"]`. Even
+though they involve the same event id, `:some-event`, the query vectors do not test `=`.
+though they involve the same event id, `:some-event`, the query vectors do not test `=`.
+
+This feature shakes out nicely because re-frame has a data oriented design. 
+
+ 
 
 *** 
 
