@@ -1,3 +1,9 @@
+## 0.9.1 (2016.12.20)
+
+#### Fixes
+
+- [#296](https://github.com/Day8/re-frame/issues/296) Dynamic subscriptions weren't working in re-frame 0.9.0. This has been rectified. The hosts responsible have been taken underground for reprocessing.
+
 ## 0.9.0 (2016.12.15) - The Dolores Release
 
 Welcome, board members.  Dr Ford has created a new [6-part narrative](README.md), 
