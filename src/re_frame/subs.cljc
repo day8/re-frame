@@ -102,9 +102,9 @@
          (when debug-enabled?
            (when-let [not-reactive (not-empty (remove ratom? dynv))]
              (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom:" not-reactive)))
-         (when-not handler-fn
-           (trace/merge-trace! {:error true})
-           (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
+         (if (nil? handler-fn)
+           (do (trace/merge-trace! {:error true})
+               (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
            (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
                  sub      (make-reaction (fn [] (handler-fn app-db v @dyn-vals)))]
              ;; handler-fn returns a reaction which is then wrapped in the sub reaction

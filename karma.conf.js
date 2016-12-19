@@ -15,6 +15,8 @@ module.exports = function (config) {
             args: ['re_frame.test_runner.run_karma']
         },
 
+        autoWatchBatchDelay: 500,
+
         // the default configuration
         junitReporter: {
             outputDir: junitOutputDir + '/karma', // results will be saved as $outputDir/$browserName.xml

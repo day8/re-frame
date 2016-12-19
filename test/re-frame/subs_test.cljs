@@ -1,6 +1,6 @@
 (ns re-frame.subs-test
-  (:require [cljs.test         :as test :refer-macros [is deftest]]
-            [reagent.ratom     :refer-macros [reaction]]
+  (:require [cljs.test         :as test :refer-macros [is deftest testing]]
+            [reagent.ratom     :as r :refer-macros [reaction]]
             [re-frame.subs     :as subs]
             [re-frame.db       :as db]
             [re-frame.core     :as re-frame]))
@@ -268,3 +268,18 @@
         (fn [[a b] [_ c]] {:a a :b b})))
 
     (is (false? @sub-called?))))
+
+;; Dynamic subscriptions
+
+(deftest test-dynamic-subscriptions
+  (subs/reg-sub
+    :dyn-sub
+    (fn [db ev dynv]
+      (first dynv)))
+
+  (testing "happy case"
+    (is (= 1 @(subs/subscribe [:dyn-sub] [(r/atom 1)]))))
+  (testing "subscription that doesn't exist"
+    (is (nil? (subs/subscribe [:non-existent] [(r/atom 1)]))))
+  (testing "Passing a non-reactive value to a dynamic subscription"
+    (is (thrown-with-msg? js/Error #"No protocol method IDeref" @(subs/subscribe [:dyn-sub] [1])))))
