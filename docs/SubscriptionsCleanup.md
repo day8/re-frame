@@ -160,7 +160,5 @@ This feature shakes out nicely because re-frame has a data oriented design.
 *** 
 
 Previous:  [Infographic](SubscriptionInfographic.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Basic App Structure](Basic-App-Structure.md)  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-
+Up:        [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:      [Flow Mechanics](SubscriptionFlow.md) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

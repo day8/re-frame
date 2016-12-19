@@ -1,15 +1,13 @@
 ## Flow Mechanics
 
-This tutorial is advanced and can be skipped. It explains at the underlying reactive 
-mechanism for dominoes 4-5-6.
+This tutorial is advanced and can be skipped. It provides background. 
+It explains at the underlying reactive mechanism for dominoes 4-5-6.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
+### Table Of Contents
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
- 
 ## On Flow
 
 Arguments from authority ...
@@ -207,4 +205,12 @@ re-computation to happen straight away.
 ratom-nature, so we'll happily continue believing it is a `ratom` and no harm will come to us.
 
 On with the rest of my lies and distortions...
+
+
+*** 
+
+Previous: [Flow Mechanics](SubscriptionFlow.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Up:       [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:     [Basic App Structure](Basic-App-Structure.md) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
