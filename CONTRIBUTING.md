@@ -36,6 +36,7 @@ if you're on Windows then you need to install Visual Studio Community Edition,
 and the C++ compiler dependencies.
 
 ```sh
+npm install karma-cli -g # Install the Karma CLI runner
 lein deps       # runs lein-npm, installs Karma & other node dependencies. Only needed the first time.
 lein karma-once # to build re-frame tests
 karma start     # to run the tests with an auto watcher
