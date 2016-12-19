@@ -1,7 +1,7 @@
 ## Flow Mechanics
 
-This tutorial is advanced and can be skipped. It looks at the underlying reactive 
-mechanism for dominoes 3-4-5-6.
+This tutorial is advanced and can be skipped. It explains at the underlying reactive 
+mechanism for dominoes 4-5-6.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -43,7 +43,9 @@ building blocks, so let's now make sure we understand them.
 From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame
 perspective, we'll tweak that paradigm slightly and **view a `ratom` as having a value that
 changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
-`ratom` as a Signal. [Pause and read this](http://elm-lang.org:1234/guide/reactivity).
+`ratom` as a Signal. 
+
+A Signal is a value that changes over time.  So it is a stream of values. 
 
 The 2nd building block, `reaction`, acts a bit like a function. It's a macro which wraps some
 `computation` (a block of code) and returns a `ratom` holding the result of that `computation`.
@@ -128,7 +130,6 @@ You'll notice that our component is a regular Clojure function, nothing special.
 no parameters and it returns a ClojureScript vector (formatted as Hiccup).
 
 Here is a slightly more interesting (parameterised) component (function):
-
 ```Clojure
 (defn greet                    ;; greet has a parameter now
   [name]                       ;; 'name' is a ratom  holding a string
@@ -150,9 +151,7 @@ by doing this, because Reagent allows you to be ignorant of the mechanics I'm ab
 you. (It invisibly wraps your components in a `reaction` allowing you to be blissfully
 ignorant of how the magic happens.)
 
-On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired,
-because in a minute, when we get to `subscriptions`, we'll be directly using `reaction`, so we
-might as well bite the bullet here and now ... and, anyway, it is pretty easy...
+On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired. 
 
 ```Clojure
 (defn greet                ;; a component - data in, Hiccup out.
@@ -190,3 +189,22 @@ changes, which in turn means that the value in `hiccup-ratom` changes. Both `n` 
 `n` into `hiccup-ratom`.
 
 Derived Data, flowing.
+
+
+### Truth Interlude
+
+I haven't been entirely straight with you:
+
+ 1. Reagent re-runs `reactions` (re-computations) via requestAnimationFrame. So a
+re-computation happens about 16ms after an input Signals change is detected, or after the
+current thread of processing finishes, whichever is the greater. So if you are in a bREPL
+and you run the lines of code above one after the other too quickly,  you might not see the
+re-computation done immediately after `n` gets reset!, because the next animationFrame
+hasn't run (yet).  But you could add a `(reagent.core/flush)` after the reset! to force
+re-computation to happen straight away.
+
+ 2. `reaction` doesn't actually return a `ratom`.  But it returns something that has
+ratom-nature, so we'll happily continue believing it is a `ratom` and no harm will come to us.
+
+On with the rest of my lies and distortions...
+

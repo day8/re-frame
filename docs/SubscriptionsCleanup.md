@@ -27,8 +27,8 @@ Here be the horrors:
        first)])
 ```
 
-That view obtains data from a `[:time]` subscription and then it goes to town
-massaging that data into the form it needs for use in the hiccup.  We don't like that. 
+That view obtains data from a `[:time]` subscription and then it 
+massages that data into the form it needs for use in the hiccup.  We don't like that. 
 
 ### The Solution
 
@@ -60,7 +60,7 @@ Much better.
 You'll notice this new subscription handler belongs to the "Level 3" 
 layer of the reactive flow.  See the [Infographic](SubscriptionInfographic.md).
 
-### Another technique
+### Another Technique
 
 Above, I suggested this:
 ```clj
@@ -73,14 +73,14 @@ Above, I suggested this:
 
 But that may offend your aesthetics. Too much noise with those `@`? 
 
-How about we define a `listen` function to clean it up.
+To clean this up, we can define a new `listen` function: 
 ```clj
 (defn listen 
   [query-v]
   @(rf/subscribe query-v))
 ```
 
-Then, we can re-write like this:
+And then rewrite: 
 ```clj
 (defn clock
   []
@@ -88,7 +88,7 @@ Then, we can re-write like this:
    {:style {:color (listen [:time-color])}}
    (listen [:time-str])])
 ```
-At the cost of writing your own function, `listen`, the code is now less noisy 
+So, at the cost of writing your own function, `listen`, the code is now less noisy 
 AND there's less chance of us forgetting an `@` (which can lead to odd problems).
 
 ### Say It Again
@@ -100,7 +100,7 @@ So, if, in code review, you saw this view function:
   (let [sorted-items (sort @(subscribe [:items]))]  
     (into [:div] (for [i sorted-items] [item-view i]))))
 ```
-What would you object to?
+What would you (supportively) object to?
 
 That `sort`, right?  Computation in the view. Instead, we want the right data 
 delivered to the view - its job is to simply make `hiccup`. 
@@ -118,8 +118,7 @@ Now, in this case the computation is a bit trivial, but the moment it is
 a little tricky, you'll want to test it.  So separating it out from the 
 view will make that easier. 
 
-Although to make that testing easier you may do this:
-
+To make it testable, you may structure like this:
 ```clj
 (defn item-sorter
   [items _]
@@ -131,7 +130,7 @@ Although to make that testing easier you may do this:
    item-sorter)
 ```
 
-Now it is easy to test `item-sorter` independently (assuming it was a bit more complicated).  
+Now it is easy to test `item-sorter` independently.  
 
 ### And There's Another Benefit
 

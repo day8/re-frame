@@ -1,46 +1,5 @@
 
-
-## Interconnections
-
-Ask a Systems Theorist, and they'll tell you that a system has **parts** and **interconnections**. 
-
-Human brains tend to focus first on the **parts**, and then, later, maybe on
-**interconnections**. But we know better, right? We 
-know interconnections are often critical to a system.
-"Focus on the lines between the boxes" we lecture anyone kind enough to listen (in my case, glassy-eyed family members).
-
-In the case of re-frame, dominoes are the **parts**, so, tick, yes, we have
-looked at them first. Our brains are happy. But what about the **interconnections**?
-
-If the **parts** are functions, what does it even mean to talk about **interconnections between functions?** 
-To answer that question, I'll rephrase it as:
-how are the domino functions **composed**?
-
-At the language level, 
-Uncle Alonzo and Uncle John tell us how a function like `count` composes:   
-```clj
-(str (count (filter odd?  [1 2 3 4 5])))
-```
-We know when `count` is called, and with what 
-argument, and how the value it computes becomes the arg for a further function. 
-We know how data "flows" into and out of the functions.
-
-Sometimes, we'd rewrite this code as: 
-```clj
-(->>  [1 2 3 4 5]
-      (filter odd?)
-      count
-      str)
-```
-With this arrangement, we talk of "threading" data 
-through functions. **It seems to help our comprehension to frame function 
-composition in terms of data flow**.
-
-re-frame delivers architecture 
-by supplying the interconnections - it threads the data - it composes the dominoes - it is the lines between the boxes. 
-
-But re-frame has no universal method for this. The technique it uses varies from one domino neighbour 
-pair to the next. 
+----------------
 
 ## Between 1 and 2
 
@@ -151,22 +110,6 @@ going further (certainly read the first two):
 
 
 
-### Truth Interlude
-
-I haven't been entirely straight with you:
-
- 1. Reagent re-runs `reactions` (re-computations) via requestAnimationFrame. So a
-re-computation happens about 16ms after an input Signals change is detected, or after the
-current thread of processing finishes, whichever is the greater. So if you are in a bREPL
-and you run the lines of code above one after the other too quickly,  you might not see the
-re-computation done immediately after `n` gets reset!, because the next animationFrame
-hasn't run (yet).  But you could add a `(reagent.core/flush)` after the reset! to force
-re-computation to happen straight away.
-
- 2. `reaction` doesn't actually return a `ratom`.  But it returns something that has
-ratom-nature, so we'll happily continue believing it is a `ratom` and no harm will come to us.
-
-On with the rest of my lies and distortions...
 
 
 ### React etc.
