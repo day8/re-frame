@@ -55,7 +55,7 @@
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction assoc cache-key r)
     (trace/merge-trace! {:tags {:reaction (reagent-id r)}})
-    r))  ;; return the actual reaction
+    r)) ;; return the actual reaction
 
 (defn cache-lookup
   ([query-v]
@@ -72,44 +72,44 @@
    (trace/with-trace {:operation (first-in-vector query-v)
                       :op-type   :sub/create
                       :tags      {:query-v query-v}}
-   (if-let [cached (cache-lookup query-v)]
+     (if-let [cached (cache-lookup query-v)]
        (do
          (trace/merge-trace! {:tags {:cached?  true
                                      :reaction (reagent-id cached)}})
          cached)
 
-     (let [query-id   (first-in-vector query-v)
-           handler-fn (get-handler kind query-id)]
-       (trace/merge-trace! {:tags {:cached? false}})
-       (if (nil? handler-fn)
-         (do (trace/merge-trace! {:error true})
-             (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
-         (cache-and-return query-v [] (handler-fn app-db query-v)))))))
+       (let [query-id   (first-in-vector query-v)
+             handler-fn (get-handler kind query-id)]
+         (trace/merge-trace! {:tags {:cached? false}})
+         (if (nil? handler-fn)
+           (do (trace/merge-trace! {:error true})
+               (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
+           (cache-and-return query-v [] (handler-fn app-db query-v)))))))
 
   ([v dynv]
    (trace/with-trace {:operation (first-in-vector v)
                       :op-type   :sub/create
                       :tags      {:query-v v
                                   :dyn-v   dynv}}
-   (if-let [cached (cache-lookup v dynv)]
+     (if-let [cached (cache-lookup v dynv)]
        (do
          (trace/merge-trace! {:tags {:cached?  true
                                      :reaction (reagent-id cached)}})
          cached)
-     (let [query-id   (first-in-vector v)
-           handler-fn (get-handler kind query-id)]
+       (let [query-id   (first-in-vector v)
+             handler-fn (get-handler kind query-id)]
          (trace/merge-trace! {:tags {:cached? false}})
-       (when debug-enabled?
-         (when-let [not-reactive (not-empty (remove ratom? dynv))]
-           (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom:" not-reactive)))
+         (when debug-enabled?
+           (when-let [not-reactive (not-empty (remove ratom? dynv))]
+             (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom:" not-reactive)))
          (when-not handler-fn
            (trace/merge-trace! {:error true})
-         (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
-         (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
+           (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription."))
+           (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
                  sub      (make-reaction (fn [] (handler-fn app-db v @dyn-vals)))]
-           ;; handler-fn returns a reaction which is then wrapped in the sub reaction
-           ;; need to double deref it to get to the actual value.
-           ;(console :log "Subscription created: " v dynv)
+             ;; handler-fn returns a reaction which is then wrapped in the sub reaction
+             ;; need to double deref it to get to the actual value.
+             ;(console :log "Subscription created: " v dynv)
              (cache-and-return v dynv (make-reaction (fn [] @@sub))))))))))
 
 ;; -- reg-sub -----------------------------------------------------------------
@@ -126,7 +126,7 @@
 (defn- deref-input-signals
   [signals query-id]
   (let [signals (cond
-    (sequential? signals) (map deref signals)
+                  (sequential? signals) (map deref signals)
                   (map? signals) (map-vals deref signals)
                   (deref? signals) @signals
                   :else (console :error "re-frame: in the reg-sub for " query-id ", the input-signals function returns: " signals))]
@@ -168,19 +168,19 @@
   "
   [query-id & args]
   (let [computation-fn (last args)
-        input-args     (butlast args)    ;; may be empty, or one fn, or pairs of  :<- / vector
+        input-args     (butlast args) ;; may be empty, or one fn, or pairs of  :<- / vector
         err-header     (str "re-frame: reg-sub for " query-id ", ")
         inputs-fn      (case (count input-args)
                          ;; no `inputs` function provided - give the default
-                         0  (fn
-                              ([_] app-db)
-                              ([_ _] app-db))
+                         0 (fn
+                             ([_] app-db)
+                             ([_ _] app-db))
 
                          ;; a single `inputs` fn
-                         1  (let [f (first input-args)]
-                              (when-not (fn? f)
-                                (console :error err-header "2nd argument expected to be an inputs function, got:" f))
-                              f)
+                         1 (let [f (first input-args)]
+                             (when-not (fn? f)
+                               (console :error err-header "2nd argument expected to be an inputs function, got:" f))
+                             f)
 
                          ;; one sugar pair
                          2 (fn inp-fn
@@ -188,9 +188,9 @@
                              ([_ _] (subscribe (second input-args))))
 
                          ;; multiple sugar pairs
-                         (let [pairs   (partition 2 input-args)
-                               vecs    (map last pairs)]
-                           (when-not (every?  vector? vecs)
+                         (let [pairs (partition 2 input-args)
+                               vecs  (map last pairs)]
+                           (when-not (every? vector? vecs)
                              (console :error err-header "expected pairs of :<- and vectors, got:" pairs))
                            (fn inp-fn
                              ([_] (map subscribe vecs))
