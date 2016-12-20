@@ -11,10 +11,9 @@ enough to start coding by yourself.
 
 In this tutorial, **we'll look at re-frame code**.
 
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
+### Table Of Contents
 
 - [What Code?](#what-code)
 - [What Does It Do?](#what-does-it-do)

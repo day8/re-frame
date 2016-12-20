@@ -7,7 +7,7 @@ to manage them in tests.
  
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
+### Table Of Contents
 
 - [What Are They?](#what-are-they)
 - [An Example](#an-example)

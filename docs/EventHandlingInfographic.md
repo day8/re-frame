@@ -1,6 +1,6 @@
 ## Event Handling Infographics
 
-Three diagrams are provided:
+Three diagrams are provided below:
   - a beginner's romp
   - an intermediate schematic depiction
   - an advanced, full detail rendering
