@@ -11,6 +11,6 @@ They should be reviewed in conjunction with the written tutorials.
 
 *** 
 
-
+Previous:  [Mental Model Omnibus](MentalModelOmnibus.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Effectful Handlers](EffectfulHandlers.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

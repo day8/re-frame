@@ -209,7 +209,7 @@ On with the rest of my lies and distortions...
 
 *** 
 
-Previous: [Flow Mechanics](SubscriptionFlow.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Previous: [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:       [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:     [Basic App Structure](Basic-App-Structure.md) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 

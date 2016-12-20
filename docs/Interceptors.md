@@ -1,8 +1,10 @@
 ## re-frame Interceptors
 
+This is a tutorial on re-frame Interceptors. It explains exactly how events get handled.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
+### Table Of Contents
 
 - [Introduction](#introduction)
 - [Interceptors](#interceptors)
@@ -25,12 +27,8 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Introduction 
 
-This is a tutorial on re-frame Interceptors.
-
-## Interceptors
-### Why Interceptors?
+## Why Interceptors?
 
 Two reasons.
 
@@ -45,7 +43,7 @@ So, you'll want to use Interceptors because they solve problems, and help you to
 __Second__, under the covers, Interceptors provide the mechanism by which 
 event handlers are executed (when you `dispatch`). They are a central concept.
 
-### What Do Interceptors Do?
+## What Do Interceptors Do?
 
 They wrap. 
 
@@ -60,7 +58,7 @@ a sandwich of the sandwich. Now it is a very thick sandwich.
 
 Interceptors wrap on both sides of a handler, layer after layer.
 
-### Wait, I know That Pattern!
+## Wait, I know That Pattern!
 
 Interceptors implement middleware. But differently.
 
@@ -77,7 +75,7 @@ and then backwards along the same chain.
 Because the interceptor pipeline is composed via data, rather than 
 higher order functions, it is a more flexible arrangement.  
 
-### What's In The Pipeline?
+## What's In The Pipeline?
 
 Data. It flows through the pipeline being progressively transformed. 
 
@@ -94,7 +92,7 @@ In re-frame, the forwards sweep progressively creates the `coeffects`
 I'll pause while you read that sentence again. That's the key 
 concept, right there. 
 
-### Show Me
+## Show Me
 
 At the time when you register an event handler, you can provide a chain of interceptors too. 
  
@@ -109,20 +107,22 @@ Using a 3-arity registration function:
 
 > Each Event Handler can have its own tailored interceptor chain, provided at registration-time. 
 
-### Handlers Are Interceptors Too
+## Handlers Are Interceptors Too
 
-You might see that registration above as associating `:some-id` with two things: (1) a chain of 2 interceptors `[in1 in2]`
+You might see that registration above as associating `:some-id` with 
+two things: (1) a chain of 2 interceptors `[in1 in2]`
 and (2) a handler.  
  
 Except, the handler is turned into an interceptor too (we'll see how shortly).
  
 So `:some-id` is only associated with one thing: a 3-chain of interceptors, 
-with the handler wrapped in an interceptor, called say `h`, and put on the end of the other two: `[in1 in2 h]`.  
+with the handler wrapped in an interceptor, called say `h`, and put on the 
+end of the other two: `[in1 in2 h]`.  
  
 Except, the registration function itself, `reg-event-db`, actually takes this 3-chain 
 and inserts its own standard interceptors, called say `std1` and `std2`
 (which do useful things, more soon) at the front,
-so ACTUALLY, there's about 5 interceptors in the chain: `[std1 std2 in1 in2 h]`
+so **ACTUALLY**, there's about 5 interceptors in the chain: `[std1 std2 in1 in2 h]`
 
 So, ultimately, that event registration associates the event id `:some-id` 
 with __just__ a chain of interceptors. Nothing more.

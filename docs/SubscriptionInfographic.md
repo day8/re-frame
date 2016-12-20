@@ -1,7 +1,11 @@
-## Subscription Infographics
+## Subscription Infographic
 
-Before studying this infographic, be sure you have read the 
+There's two things to do here. 
+
+**First**, please read through the 
 annotated subscription code [in the todomvc example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs).
+
+**Then**, look at this Infographic:
 
 <img src="/images/subscriptions.png?raw=true">
 

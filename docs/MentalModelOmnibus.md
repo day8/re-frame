@@ -307,7 +307,7 @@ Your love for re-frame will be deep, abiding and enriching.
 
 Previous:  [First Code Walk-Through](CodeWalkthrough.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Effectful Handlers](EffectfulHandlers.md)  
+Next:  [Infographic Overview](EventHandlingInfographic.md)
 
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
