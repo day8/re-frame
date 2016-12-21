@@ -51,6 +51,8 @@ Please add to this list by submitting a pull request.
 
 ### Libraries
 
+* [re-frame-datatable](https://github.com/kishanov/re-frame-datatable) - DataTable UI component built for use with re-frame. 
+
 * [Stately: State Machines](https://github.com/nodename/stately) also https://www.youtube.com/watch?v=klqorRUPluw
 
 ### Videos
