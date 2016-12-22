@@ -1,4 +1,8 @@
 
+> In a rush? You can get away with skipping this page on the first pass. <br>
+> But remember to cycle back to it later. It contains useful insights.<br>
+> Next page: [Effectful Handlers](EffectfulHandlers.md)
+
 ## Mental Model Omnibus
 
 > If a factory is torn down but the rationality which produced it is
@@ -23,6 +27,8 @@ It is a little rambling, but I'm hoping it will deliver for you
 at least one "Aaaah, I see" moment before the end.
 
 > All models are wrong, but some are useful
+<br>
+
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
