@@ -16,7 +16,7 @@ If not, stop everything and immediately make that happen.
 Are you sure you need to?
 
 First, you seldom want to inspect all of `app-db`. 
-And, second, inspecting via figwheel will be clumsy. 
+And, second, inspecting via a REPL might be clumsy. 
 
 Instead, you probably want to inspect a part of `app-db`. __And__ you probably want 
 to inspect it directly in the GUI itself, not off in a REPL. 
@@ -52,13 +52,12 @@ You definitely have [clj-devtools](https://github.com/binaryage/cljs-devtools) i
 
 ### Other Inspection Tools
 
+Another very strong tool is [re-Frisk](https://github.com/flexsurfer/re-frisk) which 
+provides a nice solution for navigating and inspecting your re-frame data structures.
+
 @yogthos' [json-html library](https://github.com/yogthos/json-html) provides 
 a slick presentation, at the expense of more screen real estate, and the 
 need to include specific CSS.
-
-There's also [Data Frisk](https://github.com/Odinodin/data-frisk-reagent) which 
-provides a very nice solution for navigating and inspecting any data structure.
-
 
 ***
 
