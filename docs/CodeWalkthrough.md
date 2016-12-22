@@ -500,10 +500,16 @@ structure exists in `app-db` before any subscriptions or event handlers run.
  - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
  - write Reagent view functions  (view layer)  (domino 5)
 
-## Further Code
+## Next Steps
 
-You should also look at the [todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).  
+You should now take time to carefully review the [todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).  
 
+After that, you'll be ready to write your own code.  Perhaps you will use a
+template to create your own project: <br>
+Client only:  https://github.com/Day8/re-frame-template  <br>
+Full Stack: http://www.luminusweb.net/
+
+Obviously you should also go on to read the further documentation.
 
 *** 
 
