@@ -22,7 +22,9 @@ Please add to this list by submitting a pull request.
 * [cookie-fx](https://github.com/SMX-LTD/re-frame-cookie-fx) - set and get cookies
 * [document-fx](https://github.com/SMX-LTD/re-frame-document-fx) - set and get on `js/document` attributes
 
-### Tools
+### Tools And Techniques
+
+* Animation using `react-flip-move`: http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html
 
 * [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
 
