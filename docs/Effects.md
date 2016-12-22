@@ -54,18 +54,18 @@ Like this:
 
 An effects map contains instructions.
 
-Each key/value pair in the map is one instruction - the `key` uniquely identifies 
-the particular side effect required, and the `value` for that `key` provides 
-further data. The structure of `value` is different for each side-effect. 
+Each key/value pair in the map is one instruction - the `key` uniquely identifies
+the particular side effect required, and the `value` for that `key` provides
+further data. The structure of `value` is different for each side-effect.
 
-Here's the two instructions from the example above: 
+Here's the two instructions from the example above:
 ```cljs 
 {:db       (assoc db :flag  a)         ;; side effect on app-db
  :dispatch [:do-something-else 3]}     ;; dispatch this event
 ```
 
 The `:db` `key` instructs that "app-db" should be `reset!` to the
-`value` supplied.  
+`value` supplied.
 
 And the `:dispatch` `key` instructs that an event should be
 dispatched. The `value` is the vector to dispatch.
@@ -73,19 +73,19 @@ dispatched. The `value` is the vector to dispatch.
 There's many other possible
 effects, like for example `:dispatch-later` or `:set-local-store`. 
 
-And so on. And so on. Which brings us to a problem. 
+And so on. And so on. Which brings us to a problem.
 
 ### Infinite Effects
 
-While re-frame supplies a number of builtin effects, the set of 
+While re-frame supplies a number of builtin effects, the set of
 possible effects is open ended.
 
-What if you use PostgreSQL and want an effect which issues mutating 
+What if you use PostgreSQL and want an effect which issues mutating
 queries?  Or what if you want to send logs to Logentries or metrics to DataDog.
 Or write values to windows.location. And what happens if your database is
 X, Y or Z?
 
-The list of effects is long and varied, with everyone needing to use a 
+The list of effects is long and varied, with everyone needing to use a
 different combination.
 
 So effect handling has to be extensible. You need a way to define 

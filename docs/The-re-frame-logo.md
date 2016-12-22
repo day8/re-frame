@@ -1,14 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [The re-frame Logo](#the-re-frame-logo)
-  - [Who](#who)
-  - [Genesis Theories](#genesis-theories)
-  - [Assets Where?](#assets-where)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## The re-frame Logo
 
 ![logo](/images/logo/re-frame_256w.png?raw=true)
@@ -57,5 +46,11 @@ and "Why did you say I hit a horse?".
 ### Assets Where?
 
 Within this repo, look in `/images/logo/`
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 
