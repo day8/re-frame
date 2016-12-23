@@ -1,12 +1,7 @@
 ## Flow Mechanics
 
-This tutorial is advanced and can be skipped. It provides background. 
-It explains at the underlying reactive mechanism for dominoes 4-5-6.
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-### Table Of Contents
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+This tutorial can be skipped. It provides advanced, background information. 
+It explains Reagent's underlying reactive mechanism used in dominoes 4-5-6.
 
 ## On Flow
 
@@ -33,8 +28,7 @@ Steve Grand
 ### How Flow Happens In Reagent
 
 To implement a reactive flow, Reagent provides a `ratom` and a `reaction`.
-re-frame uses both of these
-building blocks, so let's now make sure we understand them.
+re-frame uses both of these building blocks, so let's now make sure we understand them.
 
 `ratoms` behave just like normal ClojureScript atoms. You can `swap!` and `reset!` them, `watch` them, etc.
 
@@ -43,7 +37,8 @@ perspective, we'll tweak that paradigm slightly and **view a `ratom` as having a
 changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
 `ratom` as a Signal. 
 
-A Signal is a value that changes over time.  So it is a stream of values. 
+A Signal is a value that changes over time.  So it is a stream of values. Each time a ratom gets
+`reset!` that's a new value in the stream. 
 
 The 2nd building block, `reaction`, acts a bit like a function. It's a macro which wraps some
 `computation` (a block of code) and returns a `ratom` holding the result of that `computation`.
@@ -214,3 +209,6 @@ Up:       [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:     [Basic App Structure](Basic-App-Structure.md) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

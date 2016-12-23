@@ -110,8 +110,7 @@ Here are some other example events:
 
 ```clj
 [:admit-to-being-satoshi false]
-[:set-spam-wanted false :continue-harassment-nevertheless-flag]
-[:some-ns/on-GET-success response] 
+[:dressing/put-pants-on  "velour flares" {:method :left-leg-first :belt false}]
 ```
 
 The `kind` of event is always a keyword, and for non-trivial
