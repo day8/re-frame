@@ -347,16 +347,8 @@ usage:
 
 ### External Effects
 
-- https://github.com/Day8/re-frame-http-fx   (GETs and POSTs)
-- https://github.com/Day8/re-frame-forward-events-fx  (slightly exotic)
-- https://github.com/Day8/re-frame-async-flow-fx  (more complicated)
-- https://github.com/micmarsh/re-frame-youtube-fx (YouTube iframe API wrapper)
-- https://github.com/madvas/re-frame-web3-fx (Ethereum Web3 API)
-- https://github.com/madvas/re-frame-google-analytics-fx (Google Analytics API)
+Please see the [External-Resources document](External-Resources.md) for a list of 3rd part Effect Handlers.
 
-Create a PR to include yours in this list. 
-
-XXX maybe put this list into the Wiki, so editable by all. 
 
 ***
 

@@ -5,7 +5,7 @@ Please add to this list by submitting a pull request.
 
 ### Templates
 
-* [re-frame-template](https://github.com/Day8/re-frame-template) - Generates just the client side SPA 
+* [re-frame-template](https://github.com/Day8/re-frame-template) - Generates the client side SPA 
 
 * [Luminus](http://www.luminusweb.net) - Generates SPA plus server side. 
 
@@ -15,20 +15,6 @@ Please add to this list by submitting a pull request.
 
 * [Celibidache](https://github.com/velveteer/celibidache/) - An opinionated starter for re-frame applications using Boot. Based on re-frame `0.7.0`
 
-### Effect and CoEffect Handlers
-
-* [async-flow-fx](https://github.com/Day8/re-frame-async-flow-fx) - manage a boot process dominated by async  
-* [http-fx](https://github.com/Day8/re-frame-http-fx) - performing Ajax tasks (via cljs-ajax)
-* [cookie-fx](https://github.com/SMX-LTD/re-frame-cookie-fx) - set and get cookies
-* [document-fx](https://github.com/SMX-LTD/re-frame-document-fx) - set and get on `js/document` attributes
-
-### Tools And Techniques
-
-* Animation using `react-flip-move`: http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html
-
-* [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
-
-* [re-thread](https://github.com/yetanalytics/re-thread) - A library for running re-frame applications in Web Workers.
 
 ### Examples and Applications Using re-frame
 
@@ -51,10 +37,24 @@ Please add to this list by submitting a pull request.
 
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
 
-### Libraries
 
+### Effect and CoEffect Handlers
+
+* [async-flow-fx](https://github.com/Day8/re-frame-async-flow-fx) - manage a boot process dominated by async  
+* [http-fx](https://github.com/Day8/re-frame-http-fx) - performing Ajax tasks (via cljs-ajax)
+* [re-frame-forward-events-fx](https://github.com/Day8/re-frame-forward-events-fx) - slightly exotic
+* [cookie-fx](https://github.com/SMX-LTD/re-frame-cookie-fx) - set and get cookies
+* [document-fx](https://github.com/SMX-LTD/re-frame-document-fx) - set and get on `js/document` attributes
+* [re-frame-youtube-fx](https://github.com/micmarsh/re-frame-youtube-fx) - YouTube iframe API wrapper
+* [re-frame-web3-fx](https://github.com/madvas/re-frame-web3-fx) - Ethereum Web3 API
+* [re-frame-google-analytics-fx](https://github.com/madvas/re-frame-google-analytics-fx) - Google Analytics API
+
+### Tools And Techniques
+
+* Animation using `react-flip-move`: http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html
+* [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
+* [re-thread](https://github.com/yetanalytics/re-thread) - A library for running re-frame applications in Web Workers.
 * [re-frame-datatable](https://github.com/kishanov/re-frame-datatable) - DataTable UI component built for use with re-frame. 
-
 * [Stately: State Machines](https://github.com/nodename/stately) also https://www.youtube.com/watch?v=klqorRUPluw
 
 ### Videos
@@ -66,16 +66,16 @@ Please add to this list by submitting a pull request.
 ### Server Side Rendering
 
 * [Prerenderer](https://github.com/pupeno/prerenderer) - Server pre-rendering library using NodeJS that works with re-frame `0.6.0` (later versions untested)
-	*  [Rationale Part 1](https://carouselapps.com/2015/09/14/isomorphic-clojurescriptjavascript-for-pre-rendering-single-page-applications-part-2/)
-	*  [Rationale Part 2](https://carouselapps.com/2015/09/14/isomorphic-clojurescriptjavascript-for-pre-rendering-single-page-applications-part-2/)
-	*  [Rationale Part 3](https://pupeno.com/2015/10/02/isomorphic-javascript-with-clojurescript-for-pre-rendering-single-page-applications-part-3/)
-	*  [Release Announcement](https://pupeno.com/2015/12/13/prerenderer-0-2-0-released/)
+   Rationale [Part 1](https://carouselapps.com/2015/09/14/isomorphic-clojurescriptjavascript-for-pre-rendering-single-page-applications-part-2/)
+   [Part 2](https://carouselapps.com/2015/09/14/isomorphic-clojurescriptjavascript-for-pre-rendering-single-page-applications-part-2/)
+   [Part 3](https://pupeno.com/2015/10/02/isomorphic-javascript-with-clojurescript-for-pre-rendering-single-page-applications-part-3/)
+   [Release Announcement](https://pupeno.com/2015/12/13/prerenderer-0-2-0-released/)
 
 * [Server Side Rendering with re-frame](http://davidtanzer.net/server_side_rendering_with_re_frame) - Blog post on rendering re-frame views with Clojure.
 
 * [Rendering Reagent on the Server Using Hiccup](http://yogthos.net/posts/2015-11-24-Serverside-Reagent.html)- Blog post on rendering Reagent with Clojure.
 
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
