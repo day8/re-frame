@@ -131,7 +131,7 @@ change, but sometimes the outside world must also be effected
 
 ### 3rd Domino - Effect Handling
 
-The descriptions of `effects` are realised (actioned). This is where mutations happens.
+The descriptions of `effects` are realised (actioned).
 
 Now, to a functional programmer, `effects` are scary in a 
 [xenomorph kind of way](https://www.google.com.au/search?q=xenomorph).
@@ -143,17 +143,17 @@ never achieving anything.
 So re-frame embraces the protagonist nature of `effects` - the entire, unruly zoo of them - but
 it does so in a largely hidden way, and in a manner which is debuggable, auditable, mockable and pluggable.
 
-### A Pivot Point
+### We're At A Pivot Point
 
 The world just changed and, very often, one particular part of it: the **application state**.
 
 re-frame's `app state` is held in one place - think of it like you 
-would an in-memory, central database for the app (more details later).
+would an in-memory, central database for the app (details later).
 
 When domino 3 changes this `app state`, it triggers the next part of the cascade 
 involving dominoes 4-5-6.
 
-### There's a formula  
+### There's a Formula  
 
 The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
   `v = f(s)`

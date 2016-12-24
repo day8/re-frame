@@ -49,13 +49,15 @@ Please add to this list by submitting a pull request.
 * [re-frame-web3-fx](https://github.com/madvas/re-frame-web3-fx) - Ethereum Web3 API
 * [re-frame-google-analytics-fx](https://github.com/madvas/re-frame-google-analytics-fx) - Google Analytics API
 
-### Tools And Techniques
+### Tools, Techniques & Libraries
 
-* Animation using `react-flip-move`: http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html
+* [re-frame-undo](https://github.com/Day8/re-frame-undo) - An undo library for re-frame
+* Animation using `react-flip-move` - http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html
 * [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
 * [re-thread](https://github.com/yetanalytics/re-thread) - A library for running re-frame applications in Web Workers.
 * [re-frame-datatable](https://github.com/kishanov/re-frame-datatable) - DataTable UI component built for use with re-frame. 
 * [Stately: State Machines](https://github.com/nodename/stately) also https://www.youtube.com/watch?v=klqorRUPluw
+* [re-frame-test](https://github.com/Day8/re-frame-test) - Integration Testing (not documented)
 
 ### Videos
 

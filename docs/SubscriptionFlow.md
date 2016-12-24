@@ -1,7 +1,7 @@
 ## Flow Mechanics
 
-This tutorial can be skipped. It provides advanced, background information. 
-It explains Reagent's underlying reactive mechanism used in dominoes 4-5-6.
+If you are in a hurry, this tutorial can be skipped. It provides advanced, background information. 
+It explains the underlying reactive mechanism used in dominoes 4-5-6.
 
 ## On Flow
 
