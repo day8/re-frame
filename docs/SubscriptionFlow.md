@@ -250,15 +250,18 @@ ability to attach an `:on-dispose` handler to the returned reaction, allowing yo
 
 ### Example reg-sub-raw 
 
-The following use of `reg-sub` can be found in [the todomvc example]():
+The following use of `reg-sub` can be found in [the todomvc example](https://github.com/Day8/re-frame/blob/develop/examples/todomvc/src/todomvc/subs.cljs):
 ```clj
 (reg-sub
   :visible-todos
-  (fn [query-v _]           ;; returns a vector of two signals.
+  
+  ;; signal function - returns a vector of two input signals
+  (fn [query-v _]     
     [(subscribe [:todos])
      (subscribe [:showing])])
 
-  (fn [[todos showing] _]   ;; that 1st parameter is a 2-vector of values
+  ;; the computation function - 1st arg is a 2-vector of values
+  (fn [[todos showing] _]   
     (let [filter-fn (case showing
                       :active (complement :done)
                       :done   :done
@@ -266,20 +269,24 @@ The following use of `reg-sub` can be found in [the todomvc example]():
       (filter filter-fn todos))))
 ```
 
-we could rewrite that using `reg-sub-raw` like this:
+we could rewrite this use of `reg-sub` using `reg-sub-raw` like this:
 ```clj
 (reg-sub-raw 
   :visible-todos
-  (fn [app-db event]     ;; app-db not used, shown for clarity
-    (rection 
-      (let [todos @(subscribe [:todos])
-	        showing @(subscribe [:showing])
+  (fn [app-db event]  ;; app-db not used, name shown for clarity
+    (reaction         ;; wrap the computation in a reaction
+      (let [todos   @(subscribe [:todos])   ;; input signal #1
+	        showing @(subscribe [:showing]) ;; input signal #2 
 		    filter-fn (case showing
                         :active (complement :done)
                         :done   :done
                         :all    identity)]
 	    (filter filter-fn todos))))
 ```
+
+Any other part of the app, which needed to do `(subscribe [:visible-todos])` need never know which of the two variations above was used. Same result.
+
+
 
 *** 
 
