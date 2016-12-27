@@ -248,6 +248,39 @@ Instead of using `reaction` (a macro), you can use `reagent/make-reaction` (a ut
 ability to attach an `:on-dispose` handler to the returned reaction, allowing you to do cleanup work when the subscription is no longer needed. 
 [See an example of using `:on-dispose` here](Subscribing-To-External-Data.md)
 
+### Example reg-sub-raw 
+
+The following use of `reg-sub` can be found in [the todomvc example]():
+```clj
+(reg-sub
+  :visible-todos
+  (fn [query-v _]           ;; returns a vector of two signals.
+    [(subscribe [:todos])
+     (subscribe [:showing])])
+
+  (fn [[todos showing] _]   ;; that 1st parameter is a 2-vector of values
+    (let [filter-fn (case showing
+                      :active (complement :done)
+                      :done   :done
+                      :all    identity)]
+      (filter filter-fn todos))))
+```
+
+we could rewrite that using `reg-sub-raw` like this:
+```clj
+(reg-sub-raw 
+  :visible-todos
+  (fn [app-db event]     ;; app-db not used, shown for clarity
+    (rection 
+      (let [todos @(subscribe [:todos])
+	        showing @(subscribe [:showing])
+		    filter-fn (case showing
+                        :active (complement :done)
+                        :done   :done
+                        :all    identity)]
+	    (filter filter-fn todos))))
+```
+
 *** 
 
 Previous: [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
