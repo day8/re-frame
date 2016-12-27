@@ -244,7 +244,7 @@ registered subscription would belong to "Level 3" of the signal graph (discussed
 
 Remember to deref any use of `app-db` and `subscribe`.  It is a rookie mistake to forget. I do it regularly.
 
-Instead of returning a `reaction` (a macro), you can use `reagent/make-reaction` (a utility function) which gives you the additional 
+Instead of using `reaction` (a macro), you can use `reagent/make-reaction` (a utility function) which gives you the additional 
 ability to attach an `:on-dispose` handler to the returned reaction, allowing you to do cleanup work when the subscription is no longer needed. 
 [See an example of using `:on-dispose` here](Subscribing-To-External-Data.md)
 
