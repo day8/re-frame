@@ -202,6 +202,51 @@ ratom-nature, so we'll happily continue believing it is a `ratom` and no harm wi
 On with the rest of my lies and distortions...
 
 
+### reg-sub-raw
+
+It provides a low level way to register a subscription handler - so the intent is similar to `reg-sub`.
+
+Use is re-frame standard:
+```clj
+(reg-sub-raw
+  :query-id     ;; later use (subscribe [:query-id])
+  some-fn)      ;; this function provides the reactive stream
+```
+
+The interesting bit is how `some-fn` is written. Here's an example:
+```clj
+(defn some-fn 
+   [app-db event]    ;; app-db is not a value, it is a reagent/atom
+   (reaction (get-in @app-db [:some :path)))  ;; returns a reaction
+```
+Notice:
+  1. `app-db` is the first argument and it is not a value, it is a reagent/atom  (different to reg-sub!)
+  2. it returns a `reaction` which does a computation, not a value (different to reg-sub!)
+  3. Within that `reaction` `app-db` is deref-ed (see use of `@`) 
+  
+As a result of point 3, each time `app-db` changes, the `reaction` will rerun. `app-db` is an input signal to that `reaction`. 
+
+Unlike `reg-sub`, there is no 3-arity version of `reg-sub-raw`, so you con't provide an input signals function. 
+Instead, you just use a `subscribe` within the `reaction` itself. For example:
+```clj
+(defn some-fn
+   [app-db event]
+   (reaction
+     (let [a-path-element @(subscribe [:get-path-part])]   ;; <-- subscribe used here
+       get-in @app-db [:some a-path-element])))
+```
+So now this `reaction` has two input signals: `app-db` and `(subscribe [:get-path-part])`.  If either changes, 
+the `reaction` will rerun.
+
+In some cases, the `reaction` might not even
+use `app-db` and use only `subscribe` to provide input signals.
+
+Remember to deref any use of `app-db` and `subscribe`.  It is a rookie mistake to forget. I do it all the time.
+
+Instead of returning a `reaction` (a macro) you can use `reagent/make-reaction` (a function) which gives you the additional 
+ability to attach an `:on-dispose` handler to a reaction, allowing you to do comething when the subscription is no longer needed. 
+[See an example of using `:on-dispose` here](Subscribing-To-External-Data.md)
+
 *** 
 
 Previous: [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

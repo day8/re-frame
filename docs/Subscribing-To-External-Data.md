@@ -144,8 +144,8 @@ Enough fluffing about with words, here's a code sketch for our subscription hand
 A few things to notice:
 
 1. We are using the low level `reg-sub-raw` registration for our handler (and not `reg-sub`). 
-   This gives us some low level control. `db` will be an atom. We must return a
-   `reaction` (signal). 
+   This gives us some low level control. `app-db` will be an atom. We must return a
+   `reaction` (signal).  [See the `reg-sub-raw` docs at the end of this tutorial](SubscriptionFlow.md)
    
 2. You have to write  `issue-items-query!`.  Are you making a Restful GET? 
    Are you writing JSON packets down a websocket?  The query has to be made.
@@ -164,47 +164,6 @@ A few things to notice:
 4. We use the `on-dispose` callback on this reaction to do any cleanup work
    when the subscription is no longer needed. Clean up `app-db`?  Clean up the database connection?
 
-### A Brief Introduction To reg-sub-raw
-
-It provides a low level way to register a subscription handler - so the intent is similar to `reg-sub`, 
-but the semantics are different.
-
-Usage is fairly re-frame standard:
-```clj
-(reg-sub-raw
-  :query-id     ;; later use (subscribe [:query-id])
-  some-fn)
-```
-
-Here's an example `some-fn`: 
-```clj
-(defn some-fn 
-   [app-db event]    ;; app-db is not a value, it is a reagent/atom
-   (reaction (get-in @app-db [:some :path)))  ;; returns a reaction
-```
-Notice:
-  1. `app-db` is the first argument and it is not a value, it is a reagent/atom 
-  2. it must return a `reaction` 
-  3. Within that `reaction` `app-db` is deref-ed (see use of `@`) 
-  
-Each time `app-db` changes, this reaction will rerun. `app-db` is an input signal to the reaction. 
-To understand `reaction`, [please read the docs here](SubscriptionFlow.md)
-
-There is no arity of `reg-sub-raw` which allows you to provide an input signals function, so it is different to `reg-sub`.
-The first argument to `some-fn` is always `app-db` and, to use other input signals, you 
-must use a  `subscription` within the `reaction` itself. For example:
-```clj
-(defn some-fn 
-   [app-db event]    
-   (reaction 
-     (let [a-path-element @(subscribe [:get-path-part])]   ;; <-- subscribe used here
-       get-in @app-db [:some a-path-element])))  
-```
-So now there are two input signals: `app-db` and `(subscribe [:get-path-part])`.  In some cases you might not even 
-use `app-db` and use only `subscribes` as inputs signals. 
-
-Of course, above in our `:items` handler, we are not using `reaction`, and instead we are using `make-reaction` 
-so we can attach an `:on-dispose` handler, but the process is the same.
 
 ### Any Good?
 
