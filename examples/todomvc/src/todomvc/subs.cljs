@@ -2,18 +2,18 @@
   (:require [re-frame.core :refer [reg-sub subscribe]]))
 
 ;; -------------------------------------------------------------------------------------
-;; Layer 2  (see the infographic for meaning)
+;; Layer 2  (see the Subscriptions Infographic for meaning)
 ;;
 (reg-sub
   :showing
   (fn [db _]        ;; db is the (map) value in app-db
     (:showing db))) ;; I repeat:  db is a value. Not a ratom.  And this fn does not return a reaction, just a value.
 
-;; so that `fn` is a pure function
+;; that `fn` is a pure function
 
 ;; Next, the registration of a similar handler is done in two steps.
 ;; First, we `defn` a pure handler function.  Then, we use `reg-sub` to register it.
-;; Two steps. This is different to the first registration, which was done in one step.
+;; Two steps. This is different to that first registration, above, which was done in one step.
 (defn sorted-todos
   [db _]
   (:todos db))
@@ -79,10 +79,14 @@
 ;;   - the second function (which is the computation, destructures this 2-vector as its first parameter)
 (reg-sub
   :visible-todos
-  (fn [query-v _]           ;; returns a vector of two signals.
+
+  ;; signal function
+  ;; returns a vector of two input signals
+  (fn [query-v _]
     [(subscribe [:todos])
      (subscribe [:showing])])
 
+  ;; computation function
   (fn [[todos showing] _]   ;; that 1st parameter is a 2-vector of values
     (let [filter-fn (case showing
                       :active (complement :done)
@@ -109,8 +113,6 @@
 ;; Now for some syntactic sugar...
 ;; The purpose of the sugar is to remove boilerplate noise. To distill to the essential
 ;; in 90% of cases.
-;; Is this a good idea?
-;; If it is a good idea, is this good syntax?
 ;; Because it is so common to nominate 1 or more input signals,
 ;; reg-sub provides some macro sugar so you can nominate a very minimal
 ;; vector of input signals. The 1st function is not needed.

@@ -8,12 +8,9 @@
 
 ;; -- Interceptors --------------------------------------------------------------
 ;;
-;; XXX Add URL for docs here
-;; XXX figure out first time spec error
-;; XXX seems to be a bug if you refresh the page, and other than "All" is selected.
 
 (defn check-and-throw
-  "throw an exception if db doesn't match the spec."
+  "throw an exception if db doesn't match the spec"
   [a-spec db]
   (when-not (s/valid? a-spec db)
     (throw (ex-info (str "spec check failed: " (s/explain-str a-spec db)) {}))))
@@ -28,8 +25,10 @@
 ;; we attach it to each event handler which could update todos
 (def ->local-store (after todos->local-store))
 
-
-;; the chain of interceptors we use for all handlers that manipulate todos
+;; Each event handler can have its own set of interceptors (middleware)
+;; But we use the same set of interceptors for all event habdlers related
+;; to manipulating todos.
+;; A chain of interceptors is a vector.
 (def todo-interceptors [check-spec-interceptor               ;; ensure the spec is still valid
                         (path :todos)                        ;; 1st param to handler will be the value from this path
                         ->local-store                        ;; write todos to localstore
@@ -49,22 +48,23 @@
 
 ;; -- Event Handlers ----------------------------------------------------------
 
-;; XXX make localstore a coeffect interceptor
-
-                                  ;; usage:  (dispatch [:initialise-db])
+;; usage:  (dispatch [:initialise-db])
 (reg-event-fx                     ;; on app startup, create initial state
   :initialise-db                  ;; event id being handled
-  [(inject-cofx :local-store-todos)
+  [(inject-cofx :local-store-todos)  ;; obtain todos from localstore
    check-spec-interceptor]                                  ;; after the event handler runs, check that app-db matches the spec
   (fn [{:keys [db local-store-todos]} _]                    ;; the handler being registered
     {:db (assoc default-value :todos local-store-todos)}))  ;; all hail the new state
 
 
-                                  ;; usage:  (dispatch [:set-showing  :active])
+;; usage:  (dispatch [:set-showing  :active])
 (reg-event-db                     ;; this handler changes the todo filter
   :set-showing                    ;; event-id
-  [check-spec-interceptor (path :showing) trim-v]    ;; this collection of interceptors wrap the handler
 
+  ;; this chain of two interceptors wrap the handler
+  [check-spec-interceptor (path :showing) trim-v]
+
+  ;; The event handler
   ;; Because of the path interceptor above, the 1st parameter to
   ;; the handler below won't be the entire 'db', and instead will
   ;; be the value at a certain path within db, namely :showing.
@@ -74,11 +74,18 @@
     new-filter-kw))                  ;; return new state for the path
 
 
-                                  ;; usage:  (dispatch [:add-todo  "Finish comments"])
+;; usage:  (dispatch [:add-todo  "Finish comments"])
 (reg-event-db                     ;; given the text, create a new todo
   :add-todo
+
+  ;; The standard set of interceptors, defined above, which we
+  ;; apply to all todos-modifiing event handlers. Looks after
+  ;; writing todos to local store, etc.
   todo-interceptors
-  (fn [todos [text]]              ;; the "path" interceptor in `todo-interceptors` means 1st parameter is :todos
+
+  ;; The event handler function.
+  ;; The "path" interceptor in `todo-interceptors` means 1st parameter is :todos
+  (fn [todos [text]]
     (let [id (allocate-next-id todos)]
       (assoc todos id {:id id :title text :done false}))))
 

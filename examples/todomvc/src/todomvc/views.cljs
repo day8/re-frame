@@ -49,42 +49,38 @@
 
 (defn task-list
   []
-  (let [visible-todos (subscribe [:visible-todos])
-        all-complete? (subscribe [:all-complete?])]
-    (fn []
+  (let [visible-todos @(subscribe [:visible-todos])
+        all-complete? @(subscribe [:all-complete?])]
       [:section#main
         [:input#toggle-all
           {:type "checkbox"
-           :checked @all-complete?
-           :on-change #(dispatch [:complete-all-toggle (not @all-complete?)])}]
+           :checked all-complete?
+           :on-change #(dispatch [:complete-all-toggle (not all-complete?)])}]
         [:label
           {:for "toggle-all"}
           "Mark all as complete"]
         [:ul#todo-list
-          (for [todo  @visible-todos]
-            ^{:key (:id todo)} [todo-item todo])]])))
+          (for [todo  visible-todos]
+            ^{:key (:id todo)} [todo-item todo])]]))
 
 
 (defn footer-controls
   []
-  (let [footer-stats (subscribe [:footer-counts])
-        showing       (subscribe [:showing])]
-    (fn []
-      (let [[active done] @footer-stats
-            a-fn (fn [filter-kw txt]
-                        [:a {:class (when (= filter-kw @showing) "selected")
+  (let [[active done] @(subscribe [:footer-counts])
+        showing       @(subscribe [:showing])
+        a-fn          (fn [filter-kw txt]
+                        [:a {:class (when (= filter-kw showing) "selected")
                              :href (str "#/" (name filter-kw))} txt])]
-        [:footer#footer
-
-          [:span#todo-count
-            [:strong active] " " (case active 1 "item" "items") " left"]
-          [:ul#filters
-            [:li (a-fn :all    "All")]
-            [:li (a-fn :active "Active")]
-            [:li (a-fn :done   "Completed")]]
-          (when (pos? done)
-            [:button#clear-completed {:on-click #(dispatch [:clear-completed])}
-              "Clear completed"])]))))
+    [:footer#footer
+     [:span#todo-count
+      [:strong active] " " (case active 1 "item" "items") " left"]
+     [:ul#filters
+      [:li (a-fn :all    "All")]
+      [:li (a-fn :active "Active")]
+      [:li (a-fn :done   "Completed")]]
+     (when (pos? done)
+       [:button#clear-completed {:on-click #(dispatch [:clear-completed])}
+        "Clear completed"])]))
 
 
 (defn task-entry
@@ -99,13 +95,11 @@
 
 (defn todo-app
   []
-  (let [todos  (subscribe [:todos])]
-    (fn []
-      [:div
-        [:section#todoapp
-          [task-entry]
-          (when (seq @todos)
-            [task-list])
-          [footer-controls]]
-        [:footer#info
-          [:p "Double-click to edit a todo"]]])))
+  [:div
+   [:section#todoapp
+    [task-entry]
+    (when (seq @(subscribe [:todos]))
+      [task-list])
+    [footer-controls]]
+   [:footer#info
+    [:p "Double-click to edit a todo"]]])
