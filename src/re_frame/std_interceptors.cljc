@@ -270,7 +270,7 @@
   "
   [f out-path & in-paths]
   (->interceptor
-    :id    :enrich
+    :id    :on-changes
     :after (fn on-change-after
              [context]
              (let [new-db   (get-effect context :db)
