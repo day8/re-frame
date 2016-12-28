@@ -5,7 +5,7 @@
 
 ## Mental Model Omnibus
 
-<img height="350px" align="right" src="/images/mental-model-omnibus.jpg?raw=true">
+<img height="450px" align="right" src="/images/mental-model-omnibus.jpg?raw=true">
 
 > All models are wrong, but some are useful
 
