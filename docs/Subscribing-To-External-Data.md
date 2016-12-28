@@ -143,9 +143,9 @@ Enough fluffing about with words, here's a code sketch for our subscription hand
 
 A few things to notice:
 
-1. We are using the low level `reg-sub-raw` registration for our handler (and not `reg-sub`). 
-   This gives us some low level control. `app-db` will be an atom. We must return a
-   `reaction` (signal).  [See the `reg-sub-raw` docs at the end of this tutorial](SubscriptionFlow.md)
+1. We are using the low level `reg-sub-raw` to register our handler (and not the more normal `reg-sub`)
+   so we can get an `:on-dispose` callback when the subscription is no longer needed.
+   [See the `reg-sub-raw` docs at the end of this tutorial](SubscriptionFlow.md)
    
 2. You have to write  `issue-items-query!`.  Are you making a Restful GET? 
    Are you writing JSON packets down a websocket?  The query has to be made.
@@ -239,12 +239,10 @@ Within this document the first alternative has been given more word count
 only because there's a few more tricks to make it work, not because it 
 is necessarily preferred. 
 
-## What Not To Do 
-
-Don't get into making views source their data directly using React lifecycle methods. 
+## Absolutely Never Do This  
 
 Sometimes, because of their background with other JS frameworks, 
-new re-framers feel like the Components themselves (the views) 
+new re-framians feel like the Components themselves (the views) 
 should have the responsibility of sourcing the data they need. 
 
 They then use React lifecycle methods like `:component-did-mount` 
@@ -252,7 +250,7 @@ to load remote data.
 
 I believe this is absolutely the wrong way to do it. 
 
-In re-frame we want views to be as simple and dumb as possible. They turn 
+In re-frame, we want views to be as simple and dumb as possible. They turn 
 data into HTML and nothing more. they absolutely do not do imperative stuff.
 
 Use one of the two alternatives described above.
