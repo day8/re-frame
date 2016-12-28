@@ -1,7 +1,9 @@
+> In a rush? You can get away with skipping this page on the first pass. <br>
+> Next page: [Basic App Structure](Basic-App-Structure.md)
+
 ## Flow Mechanics
 
-If you are in a hurry, this tutorial can be skipped. It provides advanced, background information. 
-It explains the underlying reactive mechanism used in dominoes 4-5-6.
+This tutorial explains the underlying reactive mechanism used in dominoes 4-5-6. It goes on to introduce `re-frame.core/reg-sub-raw`.
 
 ## On Flow
 
