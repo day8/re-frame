@@ -250,7 +250,8 @@ know interconnections are often critical to a system.
 In the case of re-frame, dominoes are the **parts**, so, tick, yes, we have
 looked at them first. Our brains are happy. But what about the **interconnections**?
 
-If the **parts** are functions, what does it even mean to talk about **interconnections between functions?** 
+If the **parts** are functions, as is the case with re-frame, 
+what does it even mean to talk about **interconnections between functions?** 
 To answer that question, I'll rephrase it as:
 how are the domino functions **composed**?
 
@@ -277,8 +278,10 @@ composition in terms of data flow**.
 re-frame delivers architecture 
 by supplying the interconnections - it threads the data - it composes the dominoes - it is the lines between the boxes. 
 
-But re-frame has no universal method for this. The technique it uses varies from one domino neighbour 
-pair to the next. 
+But it has no universal method for this. The technique it uses varies from one domino neighbour 
+pair to the next.  Initially, it uses a queue/router, then a pipeline of interceptors 
+and finally a Signal Graph.
+
 
 ## Full Stack
 
