@@ -6,10 +6,6 @@ This tutorial explains how side effects are actioned,
 how you can create your own side effects, and how you can 
 make side effects a noop in event replays.
 
-> imperative programming is a big pile of do  <br>
-> &nbsp; &nbsp;  -- @stuarthalloway
-
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table Of Contents

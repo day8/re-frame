@@ -9,19 +9,19 @@ to manage them in tests.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table Of Contents
 
-- [What Are They?](#what-are-they)
-- [An Example](#an-example)
-- [How We Want It](#how-we-want-it)
-- [Abracadabra](#abracadabra)
-- [Which Interceptors?](#which-interceptors)
-- [`inject-cofx`](#inject-cofx)
-- [More `inject-cofx`](#more-inject-cofx)
-- [Meet `reg-cofx`](#meet-reg-cofx)
-- [Example Of `reg-cofx`](#example-of-reg-cofx)
-- [Another Example Of `reg-cofx`](#another-example-of-reg-cofx)
-- [Secret Interceptors](#secret-interceptors)
-- [Testing](#testing)
-- [The 5 Point Summary](#the-5-point-summary)
+* [What Are They?](#what-are-they-)
+* [An Example](#an-example)
+* [How We Want It](#how-we-want-it)
+* [Abracadabra](#abracadabra)
+* [Which Interceptors?](#which-interceptors-)
+* [`inject-cofx`](#-inject-cofx-)
+* [More `inject-cofx`](#more--inject-cofx-)
+* [Meet `reg-cofx`](#meet--reg-cofx-)
+* [Example Of `reg-cofx`](#example-of--reg-cofx-)
+* [Another Example Of `reg-cofx`](#another-example-of--reg-cofx-)
+* [Secret Interceptors](#secret-interceptors)
+* [Testing](#testing)
+* [The 5 Point Summary](#the-5-point-summary)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
  

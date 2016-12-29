@@ -3,18 +3,18 @@
 ## Table Of Contents
 
 - [Subscribing to External Data](#subscribing-to-external-data)
-  - [There Can Be Only One!!](#there-can-be-only-one)
-  - [Components Don't Know, Don't Care](#components-dont-know-dont-care)
-  - [A 2nd Source](#a-2nd-source)
-  - [Via A Subscription](#via-a-subscription)
-  - [The Subscription Handler's Job](#the-subscription-handlers-job)
-  - [Some Code](#some-code)
-  - [Any Good?](#any-good)
-  - [Warning: Undo/Redo](#warning-undoredo)
-  - [Query De-duplication](#query-de-duplication)
-  - [Thanks To](#thanks-to)
-- [The Alternative  Approach](#the-alternative--approach)
-- [What Not To Do](#what-not-to-do)
+  * [There Can Be Only One!!](#there-can-be-only-one--)
+  * [Components Don't Know, Don't Care](#components-don-t-know--don-t-care)
+  * [A 2nd Source](#a-2nd-source)
+  * [Via A Subscription](#via-a-subscription)
+  * [The Subscription Handler's Job](#the-subscription-handler-s-job)
+  * [Some Code](#some-code)
+  * [Any Good?](#any-good-)
+  * [Warning: Undo/Redo](#warning--undo-redo)
+  * [Query De-duplication](#query-de-duplication)
+  * [Thanks To](#thanks-to)
+- [The Alternative Approach](#the-alternative-approach)
+- [Absolutely Never Do This](#absolutely-never-do-this)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -213,7 +213,7 @@ in `issue-items-query!` itself. You can
 
 @nidu for his valuable review comments and insights
 
-## The Alternative  Approach
+## The Alternative Approach
 
 Event handlers do most of the heavy lifting within re-frame apps.
 

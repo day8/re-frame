@@ -20,32 +20,24 @@ In this tutorial, **we'll look at re-frame code**.
 - [Namespace](#namespace)
 - [Data Schema](#data-schema)
 - [Events (domino 1)](#events-domino-1)
-  - [dispatch](#dispatch)
-  - [After dispatch](#after-dispatch)
 - [Event Handlers (domino 2)](#event-handlers-domino-2)
-  - [reg-event-db](#reg-event-db)
-  - [:initialize](#initialize)
-  - [:timer](#timer)
-  - [:time-color-change](#time-color-change)
 - [Effect Handlers (domino 3)](#effect-handlers-domino-3)
 - [Subscription Handlers (domino 4)](#subscription-handlers-domino-4)
-  - [reg-sub](#reg-sub)
 - [View Functions (domino 5)](#view-functions-domino-5)
-  - [Hiccup](#hiccup)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## What Code?
 
-This repo contains an example application called ["simple"](https://github.com/Day8/re-frame/tree/develop/examples/simple),
-which has around 70 lines of code. We'll look at every line of [the file](https://github.com/Day8/re-frame/blob/develop/examples/simple/src/simple/core.cljs).
+This repo contains an `/examples` application called ["simple"](https://github.com/Day8/re-frame/tree/develop/examples/simple),
+which contains 70 lines of code. We'll look at every line of [the file](https://github.com/Day8/re-frame/blob/develop/examples/simple/src/simple/core.cljs).
 
 This app:
  - displays the current time in a nice big, colourful font
  - provides a single text input field, into which you can type a hex colour code, 
    like "#CCC", used for the time display
       
-Here's what it looks like:
+When it is running, here's what it looks like:
 
 ![Example App image](../images/example_app.png)
 
@@ -93,7 +85,7 @@ to your various handlers as required.
 
 ## Events (domino 1)
 
-Events are data. You choose the format.
+Events are data.
 
 re-frame uses a vector
 format for events. For example:
@@ -107,14 +99,13 @@ associated with the event. The additional value above, `42`, is
 presumably the id of the item to delete.
 
 Here are some other example events:
-
 ```clj
 [:admit-to-being-satoshi false]
 [:dressing/put-pants-on  "velour flares" {:method :left-leg-first :belt false}]
 ```
 
-The `kind` of event is always a keyword, and for non-trivial
-applications it tends to be namespaced.
+The `kind` of event is a keyword, and for non-trivial
+applications it will be namespaced.
 
 **Rule**:  events are pure data. No sneaky tricks like putting
 callback functions on the wire. You know who you are.
