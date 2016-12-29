@@ -2,14 +2,13 @@
 
 ## Initial Code Walk-through
 
-At this point, you are about 50% of the way to understanding re-frame.  You are armed with:
- - a high level understanding of the 6 domino process (from re-frame's README)
- - an understanding of application state (from the previous tutorial) 
+At this point, you are about 50% of the way to understanding re-frame.  You have:
+ - an overview of the 6 domino process [from this repo's README](../README.md)
+ - an understanding of app state ([from the previous tutorial)](ApplicationState.md))
 
-By the end of this tutorial, you'll be at 70%, which is good
+In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 70% knowledge, which is good
 enough to start coding by yourself.
 
-In this tutorial, **we'll look at re-frame code**.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -41,7 +40,7 @@ When it is running, here's what it looks like:
 
 ![Example App image](../images/example_app.png)
 
-To run the code: 
+To run the code yourself: 
  * Install Java 8 
  * Install leiningen  (http://leiningen.org/#install)
 
@@ -49,7 +48,12 @@ Then:
   1. `git clone https://github.com/Day8/re-frame.git`
   2. `cd re-frame/examples/simple`
   3. `lein do clean, figwheel`
-  4. open http://localhost:3449/example.html
+  4. wait a minute and then open `http://localhost:3449/example.html`
+  
+So, what's just happened?  The ClojureScript code under `src` has been compiled across to `javascript` and
+put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML you just openned)
+ 
+Figwheel provides for hot-loading, so you can edit the source and watch the loaded HTML change.  
 
 
 ## Namespace

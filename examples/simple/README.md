@@ -2,6 +2,9 @@
 
 This tiny application is meant to provide a quick start of the basics of re-frame.  
 
+A detailed source code walk-through is provided in the docs:
+https://github.com/Day8/re-frame/blob/master/docs/CodeWalkthrough.md
+
 All the code is in one namespace `/src/simpleexample/core.cljs` 
 
 ### Run It And Change It   

@@ -2,6 +2,9 @@
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]))
 
+;; A detailed walk-through of this source code is provied in the docs:
+;; https://github.com/Day8/re-frame/blob/master/docs/CodeWalkthrough.md
+
 ;; -- Domino 1 - Event Dispatch -----------------------------------------------
 
 (defn dispatch-timer-event
@@ -25,7 +28,7 @@
 
 
 (rf/reg-event-db                ;; usage:  (dispatch [:time-color-change 34562])
-  :time-color-change            ;; dispatched when the user enters a new colour into the UI
+  :time-color-change            ;; dispatched when the user enters a new colour into the UI text field
   (fn [db [_ new-color-value]]  ;; -db event handlers given 2 parameters:  current application state and event (a vector)
     (assoc db :time-color new-color-value)))   ;; compute and return the new application state
 
