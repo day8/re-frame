@@ -293,13 +293,16 @@ With this focus on interconnections, we have been looking on the "forces"  part 
 ## Full Stack
 
 If you like re-frame and want to take the principles full-stack, then
-these resource might be interesting to you:
+these resources might be interesting to you:
 
 Commander Pattern  
 https://www.youtube.com/watch?v=B1-gS0oEtYc 
 
 Datalog All The Way Down  
 https://www.youtube.com/watch?v=aI0zVzzoK_E
+
+Reactive PostgreSQL:
+https://yogthos.net/posts/2016-11-05-LuminusPostgresNotifications.html
 
 ## What Of This Romance?
 
@@ -329,10 +332,7 @@ Next:  [Infographic Overview](EventHandlingInfographic.md)
 [Reagent]:http://reagent-project.github.io/
 [Dan Holmsand]:https://twitter.com/holmsand
 [Flux]:http://facebook.github.io/flux/docs/overview.html#content
-[Hiccup]:https://github.com/weavejester/hiccup
-[FRP]:https://gist.github.com/staltz/868e7e9bc2a7b8c1f754
 [Elm]:http://elm-lang.org/
 [OM]:https://github.com/swannodette/om
-[Prismatic Schema]:https://github.com/Prismatic/schema
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
