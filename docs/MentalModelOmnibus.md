@@ -92,14 +92,14 @@ How did we ever live without it? It is a quite beautiful solution to one half of
 data conveyance needs, **but** we're cautious about taking it too far - as far as, say, cycle.js. 
 It doesn't take over everything in re-frame - it just does part of the job.
 
-__Finally__, many years ago I programmed briefly in Eiffel where I learned 
+__Finally__, a long time ago in a galaxy far far away I programmed briefly in Eiffel where I learned 
 about [command-query separation](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation). 
 Each generation of
-programmers seems destined to rediscover this principle - CQRS is the rendering de Jour, [resources here](http://www.baeldung.com/cqrs-event-sourced-architecture-resources). 
-And yet we still see read/write `cursors` and two way data binding being promoted as a good thing. 
+programmers seems destined to rediscover this principle, with CQRS as the latest iteration [see resources here](http://www.baeldung.com/cqrs-event-sourced-architecture-resources). 
+And yet, even today, we still see read/write `cursors` and two-way data binding being promoted as a good thing. 
 Please, just say no. As your programs get bigger, the use of these two-way constructs 
 will encourage control logic into all the 
-wrong places and you'll end up with a tire fire of an Architecture.
+wrong places and you'll end up with a tire-fire of an Architecture. IMO.
 
 
 ## It does Event Sourcing
