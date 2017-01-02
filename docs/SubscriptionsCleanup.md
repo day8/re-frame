@@ -157,6 +157,57 @@ though they involve the same event id, `:some-event`, the query vectors do not t
 
 This feature shakes out nicely because re-frame has a data oriented design. 
 
+### A Final FAQ
+
+The following issues comes up a bit. 
+
+You will likely end up with a bunch of level 1 `reg-sub` which look the same (they directly extract a path within `app-db`):
+```clj
+(reg-sub 
+   :a 
+   (fn [db _] 
+     (:a db)))
+```
+
+```clj
+(reg-sub 
+   :b 
+   (fn [db _] 
+     (-> db :top :b)))
+```
+
+Lot's of them the same. Same pattern over and over.
+ 
+Now, you are a person who thinks abstractly, and that repetition will feel uncomfortable. It will 
+call to you like a Siren: "refaaaaactoooor meeeee".
+So here's my tip:  you will have to actively resist the urge to "refactor" out this common pattern.
+The repetition is fine. It is serving a purpose. It is deliberate. Take a deep breath. 
+
+The very WORST thing you can do is to flex your magnificent abstraction muscles and create something like this:
+```clj
+(reg-sub 
+   :extract-any-path
+   (fn [db path]
+     (get-in db path))
+```
+
+Genius!, you think to yourself.  Now I only need one direct `reg-sub` and I supply a path to it. 
+A read-only cursor of sorts.  Look at the code I can delete.
+ 
+Neat and minimal it might be, but genius it isn't. IMO. You are now asking the code USING the subscription 
+to provide the path.
+ 
+The view which subscribes using `(subscribe [:extract-any-path [:a]])` now "knows" about the 
+structure of `app-db`.  
+
+What happens when you restructure `app-db` slightly and put that `:a` path under 
+another high level branch of `app-db`?  You will have to run around all the views,
+looking for the paths supplied, knowing which to alter and which to leave alone. Fragile. 
+
+No!  We want our views to declarative ask for data, but they should have 
+no idea where it comes from. 
+
+
 *** 
 
 Previous:  [Infographic](SubscriptionInfographic.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
