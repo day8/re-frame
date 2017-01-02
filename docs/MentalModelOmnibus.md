@@ -95,7 +95,7 @@ It doesn't take over everything in re-frame - it just does part of the job.
 __Finally__, many years ago I programmed briefly in Eiffel where I learned 
 about [command-query separation](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation). 
 Each generation of
-programmers seems destined to rediscover this principle - CQRS is the recent re-rendering. 
+programmers seems destined to rediscover this principle - CQRS is the rendering de Jour, [resources here](http://www.baeldung.com/cqrs-event-sourced-architecture-resources). 
 And yet we still see read/write `cursors` and two way data binding being promoted as a good thing. 
 Please, just say no. As your programs get bigger, the use of these two-way constructs 
 will encourage control logic into all the 
@@ -277,12 +277,17 @@ With this arrangement, we talk of "threading" data
 through functions. **It seems to help our comprehension to frame function 
 composition in terms of data flow**.
 
-re-frame delivers architecture 
+re-frame delivers architecture
 by supplying the interconnections - it threads the data - it composes the dominoes - it is the lines between the boxes. 
 
-But it has no universal method for this. The technique it uses varies from one domino neighbour 
-pair to the next.  Initially, it uses a queue/router, then a pipeline of interceptors 
-and finally a Signal Graph.
+But it doesn't have a universal method for this "composition". The technique it uses varies from one domino 
+neighbour-pair to the next.  Initially, it uses a queue/router, then a pipeline of interceptors 
+and, finally, a Signal Graph.
+
+Remember back in the original README?  Our analogy for re-frame was the water cycle - water flowing around the loop, 
+compelled by different kinds of forces at different times (gravity, convection, etc), going through phase changes.
+  
+With this focus on interconnections, we have been looking on the "forces"  part of the loop.  The transport. 
 
 
 ## Full Stack

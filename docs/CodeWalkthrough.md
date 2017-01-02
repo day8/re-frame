@@ -4,10 +4,9 @@
 
 At this point, you are about 50% of the way to understanding re-frame.  You have:
  - an overview of the 6 domino process [from this repo's README](../README.md)
- - an understanding of app state ([from the previous tutorial)](ApplicationState.md))
+ - an understanding of app state ([from the previous tutorial](ApplicationState.md))
 
-In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 70% knowledge, which is good
-enough to start coding by yourself.
+In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 70% knowledge, and ready to start coding.
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
