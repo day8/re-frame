@@ -204,7 +204,7 @@ What happens when you restructure `app-db` slightly and put that `:a` path under
 another high level branch of `app-db`?  You will have to run around all the views,
 looking for the paths supplied, knowing which to alter and which to leave alone. Fragile. 
 
-No!  We want our views to declarative ask for data, but they should have 
+No!  We want our views to declaratively ask for data, but they should have 
 no idea where it comes from. 
 
 
