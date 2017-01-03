@@ -189,30 +189,42 @@
   return a modified `db`.
 
   Unlike the `after` inteceptor which is only about side effects, `enrich`
-  expects f to process and alter the given `db` coeffect in some useful way,
+  expects `f` to process and alter the given `db` coeffect in some useful way,
   contributing to the derived data, flowing vibe.
 
   Example Use:
+  ------------
 
   Imagine that todomvc needed to do duplicate detection - if any two todos had
   the same text, then highlight their background, and report them in a warning
   down the bottom of the panel.
 
-  Almost any action (edit text, add new todo, remove a todo) requires a
+  Almost any user action (edit text, add new todo, remove a todo) requires a
   complete reassesment of duplication errors and warnings. Eg: that edit
   just made might have introduced a new duplicate, or removed one. Same with
-  any todo removal.
+  any todo removal. So we need to re-calculate warnings after any CRUD events
+  associated with the todos list.
 
-  And, to perform this enrichment, a function has to inspect all the todos,
-  possibly set flags on each, and calculate some overall list of duplicates
-  (displayed at the bottom?). And this duplication check might just be one
-  check among many.
+  Unless we are careful, we might end up coding subtly different checks
+  for each kind of CRUD operation.  The duplicates check made after
+  'delete todo' event might be subtly different to that done after an
+  eddting operation. Nice and efficient, but fiddly. A bug generator
+  approach.
 
-  `f` would need to be both adding and removing the duplicate warnings.
-  It would need to completely recompute all warnings, from scratch every time.
-  By applying `f` in an `:enrich` interceptor, we keep the handlers
-  simple and yet we ensure this important step (of getting warnings right)
-  is not missed on any change."
+  So, instead, we create an `f` which recalcualtes warnings from scratch
+  every time there is ANY change. It will inspect all the todos, and
+  reset ALL FLAGS every time (overwriting what was there previously)
+  and fully recalculate the list of duplicates (displayed at the bottom?).
+
+  By applying `f` in an `:enrich` interceptor, after every CRUD event,
+  we keep the handlers simple and yet we ensure this important step
+  (of getting warnings right) is not missed on any change.
+
+  We can test `f` easily - it is a pure fucntions - independently of
+  any CRUD operation.
+
+  This brings huge simplicity at the enpense of some re-computation
+  each time. This made be a very satisfactory tradeoff for many cases."
   [f]
   (->interceptor
     :id    :enrich
