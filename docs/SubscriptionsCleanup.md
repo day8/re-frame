@@ -161,7 +161,8 @@ This feature shakes out nicely because re-frame has a data oriented design.
 
 The following issue comes up a bit. 
 
-You will likely end up with a bunch of level 1 `reg-sub` which look the same (they directly extract a path within `app-db`):
+You'll likely end up with a bunch of level 1 `reg-sub` which
+look the same (they directly extract a path within `app-db`):
 ```clj
 (reg-sub 
    :a 
@@ -176,14 +177,15 @@ You will likely end up with a bunch of level 1 `reg-sub` which look the same (th
      (-> db :top :b)))
 ```
 
-Lot's of them the same, over and over.
+Lot's of them, the same.
  
-Now, you are a person who thinks abstractly, and that repetition will feel uncomfortable. It will 
-call to you like a Siren: "refaaaaactoooor meeeee".
-So here's my tip:  you will have to actively resist the urge to "refactor" out this common pattern.
-The repetition is fine. It is serving a purpose. It is deliberate. Take a deep breath. 
+Now, you think and design abstractly for a living, and that repetition will feel uncomfortable. It will
+call to you like a Siren: "refaaaaactoooor meeeee". "Maaaake it DRY".
+So here's my tip:  actively resist the Siren's urge. The repetition is fine. It is serving a purpose.
+Take a deep breath and move on.
 
-The very WORST thing you can do is to flex your magnificent abstraction muscles and create something like this:
+The very WORST thing you can do is to flex your magnificent abstraction muscles 
+and create something like this:
 ```clj
 (reg-sub 
    :extract-any-path
@@ -196,14 +198,15 @@ A read-only cursor of sorts.  Look at the code I can delete.
  
 Neat and minimal it most certainly is, but genius it isn't, IMO. You are now asking the 
 code USING the subscription to provide the path.  You have traded some innocuous 
-repetition for longer term fragility and that isn't a good trade.
+repetition for longer term fragility, and that's not a good trade.
 
 What fragility? Well, the view which subscribes using `(subscribe [:extract-any-path [:a]])` 
-now "knows" about (depends on) the structure of `app-db`.  
+now "knows" about (depends on) the structure of `app-db`.
 
-What happens when you restructure `app-db` slightly and put that `:a` path under 
+What happens when you inevitably restructure `app-db` and put that `:a` path under
 another high level branch of `app-db`?  You will have to run around all the views,
-looking for the paths supplied, knowing which to alter and which to leave alone. Fragile. 
+looking for the paths supplied, knowing which to alter and which to leave alone. 
+Fragile. 
 
 We want our views to declaratively ask for data, but they should have 
 no idea where it comes from. 
