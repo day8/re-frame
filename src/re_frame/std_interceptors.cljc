@@ -200,16 +200,19 @@
 
   Almost any action (edit text, add new todo, remove a todo) requires a
   complete reassesment of duplication errors and warnings. Eg: that edit
-  update might have introduced a new duplicate or removed one. Same with a
-  todo removal.
+  just made might have introduced a new duplicate, or removed one. Same with
+  any todo removal.
 
-  And to perform this enrichment, a function has to inspect all the todos,
-  possibly set flags on each, and set some overall list of duplicates.
-  And this duplication check might just be one check among many.
+  And, to perform this enrichment, a function has to inspect all the todos,
+  possibly set flags on each, and calculate some overall list of duplicates
+  (displayed at the bottom?). And this duplication check might just be one
+  check among many.
 
   `f` would need to be both adding and removing the duplicate warnings.
-  By applying `f` in an `:after` interceptor, we keep the handlers
-  simple and yet we ensure this important step is not missed."
+  It would need to completely recompute all warnings, from scratch every time.
+  By applying `f` in an `:enrich` interceptor, we keep the handlers
+  simple and yet we ensure this important step (of getting warnings right)
+  is not missed on any change."
   [f]
   (->interceptor
     :id    :enrich

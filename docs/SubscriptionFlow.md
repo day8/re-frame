@@ -206,10 +206,10 @@ On with the rest of my lies and distortions...
 
 ### reg-sub-raw
 
-This low level part of the API, provides a way to register a subscription handler - so 
+This low level part of the API provides a way to register a subscription handler - so 
 the intent is similar to `reg-sub`.
 
-You use it like you do other registration functions: 
+You use it like other registration functions: 
 ```clj
 (re-frame.core/reg-sub-raw   ;; it is part of the API
   :query-id     ;; later use (subscribe [:query-id])
@@ -231,7 +231,7 @@ As a result of point 3, each time `app-db` changes, the wrapped `reaction` will 
 `app-db` is an input signal to that `reaction`. 
 
 Unlike `reg-sub`, there is no 3-arity version of `reg-sub-raw`, so there's no way for you to provide an input signals function.
-Instead, even simpler, you can use `subscribe` within the `reaction` itself. For example:
+Instead, even simpler, you can just use `subscribe` within the `reaction` itself. For example:
 ```clj
 (defn some-fn
    [app-db event]
