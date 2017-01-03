@@ -7,7 +7,7 @@ There's a problem and we need to fix it.
 
 The simple example, used in the earlier code walk through, is not idomatic re-frame. It has a flaw. 
 
-It does not obey the re-frame rule:  **keep views as dumb as possible**.
+It does not obey the re-frame rule:  **keep views as simple as possible**.
  
 A view shouldn't do any computation on input data. Its job is just to compute hiccup.
 The subscriptions it uses should deliver the data already in the right 
@@ -159,9 +159,9 @@ This feature shakes out nicely because re-frame has a data oriented design.
 
 ### A Final FAQ
 
-The following issue comes up a bit. 
+The following issue comes up a bit.
 
-You'll likely end up with a bunch of level 1 `reg-sub` which
+You will end up with a bunch of level 1 `reg-sub` which
 look the same (they directly extract a path within `app-db`):
 ```clj
 (reg-sub 
@@ -176,13 +176,11 @@ look the same (they directly extract a path within `app-db`):
    (fn [db _] 
      (-> db :top :b)))
 ```
-
-Lot's of them, the same.
  
 Now, you think and design abstractly for a living, and that repetition will feel uncomfortable. It will
-call to you like a Siren: "refaaaaactoooor meeeee". "Maaaake it DRY".
-So here's my tip:  actively resist the Siren's urge. The repetition is fine. It is serving a purpose.
-Take a deep breath and move on.
+call to you like a Siren: "refaaaaactoooor meeeee". "Maaaake it DRYYYY".
+So here's my tip:  tie yourself to the mast and sail on. That repetition is fine. It is serving a purpose.
+Just sail on.
 
 The very WORST thing you can do is to flex your magnificent abstraction muscles 
 and create something like this:
@@ -193,15 +191,15 @@ and create something like this:
      (get-in db path))
 ```
 
-Genius!, you think to yourself.  Now I only need one direct `reg-sub` and I supply a path to it. 
-A read-only cursor of sorts.  Look at the code I can delete.
+"Genius!", you think to yourself.  "Now I only need one direct `reg-sub` and I supply a path to it. 
+A read-only cursor of sorts.  Look at the code I can delete."
  
-Neat and minimal it most certainly is, but genius it isn't, IMO. You are now asking the 
+Neat and minimal it most certainly is, yes, but genius it isn't. You are now asking the 
 code USING the subscription to provide the path.  You have traded some innocuous 
 repetition for longer term fragility, and that's not a good trade.
 
-What fragility? Well, the view which subscribes using `(subscribe [:extract-any-path [:a]])` 
-now "knows" about (depends on) the structure of `app-db`.
+What fragility? Well, the view which subscribes using, say, `(subscribe [:extract-any-path [:a]])` 
+now "knows" about (depends on) the structure within `app-db`.
 
 What happens when you inevitably restructure `app-db` and put that `:a` path under
 another high level branch of `app-db`?  You will have to run around all the views,
@@ -209,7 +207,10 @@ looking for the paths supplied, knowing which to alter and which to leave alone.
 Fragile. 
 
 We want our views to declaratively ask for data, but they should have 
-no idea where it comes from. 
+no idea where it comes from. It is the job of a subscription to know where data comes from. 
+
+Remember our rule at the top:  **keep views as simple as possible**. 
+Don't give them knowledge or tasks outside their remit.
 
 
 *** 
