@@ -223,8 +223,8 @@
   We can test `f` easily - it is a pure fucntions - independently of
   any CRUD operation.
 
-  This brings huge simplicity at the enpense of some re-computation
-  each time. This made be a very satisfactory tradeoff for many cases."
+  This brings huge simplicity at the expense of some re-computation
+  each time. This may be a very satisfactory tradeoff in many cases."
   [f]
   (->interceptor
     :id    :enrich
