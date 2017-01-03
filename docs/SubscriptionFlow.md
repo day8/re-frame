@@ -206,9 +206,10 @@ On with the rest of my lies and distortions...
 
 ### reg-sub-raw
 
-Provides a low level way to register a subscription handler - so the intent is similar to `reg-sub`.
+This low level part of the API, provides a way to register a subscription handler - so 
+the intent is similar to `reg-sub`.
 
-Use is re-frame standard:
+You use it like you do other registration functions: 
 ```clj
 (re-frame.core/reg-sub-raw   ;; it is part of the API
   :query-id     ;; later use (subscribe [:query-id])
@@ -222,14 +223,15 @@ The interesting bit is how `some-fn` is written. Here's an example:
   (reaction (get-in @app-db [:some :path])))  ;; returns a reaction
 ```
 Notice:
-  1. `app-db` is the first argument and it is NOT a value, it is a reagent/atom  (different to `reg-sub`!)
-  2. it returns a `reaction` which does a computation, not a value (different to `reg-sub`!)
+  1. `app-db` is a reagent/atom. It is not a value like `reg-sub` gets.
+  2. it returns a `reaction` which does a computation. It does not return a value like `reg-sub` does.
   3. Within that `reaction` `app-db` is deref-ed (see use of `@`) 
   
-As a result of point 3, each time `app-db` changes, the `reaction` will rerun. `app-db` is an input signal to that `reaction`. 
+As a result of point 3, each time `app-db` changes, the wrapped `reaction` will rerun.
+`app-db` is an input signal to that `reaction`. 
 
 Unlike `reg-sub`, there is no 3-arity version of `reg-sub-raw`, so there's no way for you to provide an input signals function.
-Instead, even simplier, you can use any `subscribe` you want within the `reaction` itself. For example:
+Instead, even simpler, you can use `subscribe` within the `reaction` itself. For example:
 ```clj
 (defn some-fn
    [app-db event]
@@ -237,7 +239,7 @@ Instead, even simplier, you can use any `subscribe` you want within the `reactio
      (let [a-path-element @(subscribe [:get-path-part])]   ;; <-- subscribe used here
        get-in @app-db [:some a-path-element])))
 ```
-So now this `reaction` has two input signals: `app-db` and `(subscribe [:get-path-part])`.  If either changes, 
+As you can see, this `reaction` has two input signals: `app-db` and `(subscribe [:get-path-part])`.  If either changes, 
 the `reaction` will rerun.
 
 In some cases, the returned `reaction` might not even
@@ -286,7 +288,8 @@ we could rewrite this use of `reg-sub` using `reg-sub-raw` like this:
 	    (filter filter-fn todos))))
 ```
 
-Any other part of the app, which needed to do `(subscribe [:visible-todos])` need never know which of the two variations above was used. Same result.
+A view could do `(subscribe [:visible-todos])` and never know which of 
+the two variations above was used. Same result delivered.
 
 
 

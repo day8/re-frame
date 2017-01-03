@@ -179,10 +179,10 @@ look the same (they directly extract a path within `app-db`):
  
 Now, you think and design abstractly for a living, and that repetition will feel uncomfortable. It will
 call to you like a Siren: "refaaaaactoooor meeeee". "Maaaake it DRYYYY".
-So here's my tip:  tie yourself to the mast and sail on. That repetition is fine. It is serving a purpose.
+So here's my tip:  tie yourself to the mast and sail on. That repetition is good. It is serving a purpose.
 Just sail on.
 
-The very WORST thing you can do is to flex your magnificent abstraction muscles 
+The WORST thing you can do is to flex your magnificent abstraction muscles 
 and create something like this:
 ```clj
 (reg-sub 
