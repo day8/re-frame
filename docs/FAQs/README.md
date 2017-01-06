@@ -1,6 +1,7 @@
 ## Frequently Asked Questions
 
 1. [How can I Inspect app-db?](Inspecting-app-db.md)
+2. [How can I use a subscription in an Event Handler](UseASubscriptionInAnEventHandler.md)
 2. [How do I use logging method X](Logging.md)
 3. [Dispatched Events Are Null](Null-Dispatched-Events.md)
 4. [Why implement re-frame in `.cljc` files](Why-CLJC.md)
