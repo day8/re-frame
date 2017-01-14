@@ -276,9 +276,9 @@ and the `event`. It must return a map of `effects` - a description
 of how the world should change. Here's a sketch (we are at 30,000 feet):
 ```clj
 (defn h 
- [{:keys [db]} event]                    ;; args:  db from coeffect, event
- (let [item-id (second event)]           ;; extract id from event vector
-   {:db  (dissoc-in db [:items item-id])})) ;; effect is change db
+ [{:keys [db]}  ;; args:  db from coeffect, event,
+   [_ item-id]] ;; extract id from event vector       
+   {:db  (dissoc-in db [:items item-id])}) ;; effect is change db
 ```
 
 There are mechanisms in re-frame (beyond us here) whereby you can place
