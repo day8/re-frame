@@ -126,7 +126,7 @@ a **description of `effects`**. This description is a data structure
 which says, declaratively, how the world should change (because of the event).
 
 Much of the time, only the "application state" of the SPA itself need
-change, but sometimes the outside world must also be effected
+change, but sometimes the outside world must also be affected
 (localstore, cookies, databases, emails, logs, etc).
 
 ### 3rd Domino - Effect Handling
@@ -296,7 +296,7 @@ Which says "when you see a `:delete-item` event, use `h` to handle it".
 
 ### Code For Domino 3
 
-An `effect handler` (function) actions the `effects` returned by `h`:
+An `effect handler` (function) puts into action the `effects` returned by `h`:
 ```clj
 {:db  (dissoc-in db [:items item-id])}
 ```
