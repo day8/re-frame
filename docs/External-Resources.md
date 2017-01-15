@@ -37,7 +37,6 @@ Please add to this list by submitting a pull request.
 
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
 
-
 ### Effect and CoEffect Handlers
 
 * [async-flow-fx](https://github.com/Day8/re-frame-async-flow-fx) - manage a boot process dominated by async
@@ -48,6 +47,10 @@ Please add to this list by submitting a pull request.
 * [re-frame-youtube-fx](https://github.com/micmarsh/re-frame-youtube-fx) - YouTube iframe API wrapper
 * [re-frame-web3-fx](https://github.com/madvas/re-frame-web3-fx) - Ethereum Web3 API
 * [re-frame-google-analytics-fx](https://github.com/madvas/re-frame-google-analytics-fx) - Google Analytics API
+
+### Routing
+
+* (Bidirectional using Silk and Pushy)[https://pupeno.com/2015/08/18/no-hashes-bidirectional-routing-in-re-frame-with-silk-and-pushy/]
 
 ### Tools, Techniques & Libraries
 
