@@ -214,7 +214,7 @@ The browser DOM nodes are mutated.
 ## A Cascade Of Simple Functions
 
 **Each of the dominoes you write are simple, pure functions** which 
-can be be described, understood and 
+can be described, understood and 
 tested independently. They take data, transform it and return new data.
 
 The loop itself is very mechanical in operation.
