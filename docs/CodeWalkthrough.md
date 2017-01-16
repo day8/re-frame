@@ -52,7 +52,7 @@ Then:
 So, what's just happened?  The ClojureScript code under `src` has been compiled across to `javascript` and
 put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML you just openned)
  
-Figwheel provides for hot-loading, so you can edit the source and watch the loaded HTML change.  
+Figwheel provides for hot-loading, so you can edit the source and watch the loaded HTML change.
 
 
 ## Namespace
@@ -162,7 +162,7 @@ In this application, 3 kinds of event are dispatched:
   `:time-color-change`
   `:timer`
   
-3 events means we'll be registering 3 event handlers.  
+3 events means we'll be registering 3 event handlers.
 
 ### Two ways To register
 
@@ -216,7 +216,7 @@ a completely new value.
 Like this: 
 ```clj
 (rf/reg-event-db              ;; sets up initial application state
-  :initialize                 
+  :initialize
   (fn [_ _]                   ;; the two parameters are not important here, so use _
     {:time (js/Date.)         ;; What it returns becomes the new application state
      :time-color "#f88"}))    ;; so the application state will initially be a map with two keys
@@ -230,9 +230,9 @@ state.
 Here's an alternative way of writing it which does pay attention to the existing value of `db`: 
 ```clj
 (rf/reg-event-db
-  :initialize              
-  (fn [db _]                 ;; we use db this time, so name it        
-    (-> db          
+  :initialize
+  (fn [db _]                 ;; we use db this time, so name it
+    (-> db
       (assoc :time (js/Date.))
       (assoc :time-color "#f88")))
 ```
@@ -245,7 +245,7 @@ Earlier, we set up a timer function to `(dispatch [:timer now])` every second.
 Here's how we handle it: 
 ```clj
 (rf/reg-event-db                 ;; usage:  (rf/dispatch [:timer a-js-Date])
-  :timer                         
+  :timer
   (fn [db [_ new-time]]          ;; <-- de-structure the event vector
     (assoc db :time new-time)))  ;; compute and return the new application state
 ```
@@ -259,9 +259,9 @@ Notes:
 
 When the user enters a new colour value (via an input text box):
 ```clj
-(rf/reg-event-db                
+(rf/reg-event-db
   :time-color-change            ;; usage:  (rf/dispatch [:time-color-change 34562])
-  (fn [db [_ new-color-value]]  
+  (fn [db [_ new-color-value]]
     (assoc db :time-color new-color-value)))   ;; compute and return the new application state
 ```
   
@@ -485,7 +485,7 @@ structure exists in `app-db` before any subscriptions or event handlers run.
 
 **Your job**, when building an app, is to: 
  - design your app's information model (data and schema layer)
- - write and register event handler functions  (control and transition layer)  (domino 2)    
+ - write and register event handler functions  (control and transition layer)  (domino 2)
  - (once in a blue moon) write and register effect and coeffect handler 
    functions (domino 3) which do the mutative dirty work of which we dare not 
    speak in a pure, immutable functional context. Most of the time, you'll be 
@@ -495,7 +495,7 @@ structure exists in `app-db` before any subscriptions or event handlers run.
 
 ## Next Steps
 
-You should now take time to carefully review the [todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).  
+You should now take time to carefully review the [todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).
 
 After that, you'll be ready to write your own code.  Perhaps you will use a
 template to create your own project: <br>
