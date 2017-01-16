@@ -4,17 +4,17 @@ This is a tutorial on re-frame Interceptors. It explains exactly how events get 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-### Table Of Contents
+## Table Of Contents
 
-- [Why Interceptors?](#why-interceptors-)
-- [What Do Interceptors Do?](#what-do-interceptors-do-)
-- [Wait, I know That Pattern!](#wait--i-know-that-pattern-)
-- [What's In The Pipeline?](#what-s-in-the-pipeline-)
+- [Why Interceptors?](#why-interceptors)
+- [What Do Interceptors Do?](#what-do-interceptors-do)
+- [Wait, I know That Pattern!](#wait-i-know-that-pattern)
+- [What's In The Pipeline?](#whats-in-the-pipeline)
 - [Show Me](#show-me)
 - [Handlers Are Interceptors Too](#handlers-are-interceptors-too)
 - [Executing A Chain](#executing-a-chain)
   - [The Links Of The Chain](#the-links-of-the-chain)
-  - [What Is Context?](#what-is-context-)
+  - [What Is Context?](#what-is-context)
   - [Self Modifying](#self-modifying)
   - [Credit](#credit)
   - [Write An Interceptor](#write-an-interceptor)
