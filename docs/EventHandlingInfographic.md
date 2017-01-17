@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+
+- [Event Handling Infographics](#event-handling-infographics)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Event Handling Infographics
 
 Three diagrams are provided below:
