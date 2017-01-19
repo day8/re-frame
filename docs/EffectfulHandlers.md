@@ -65,7 +65,7 @@ with a function to do the handling:
 ```clj
 (re-frame.core/reg-event-db        ;; <-- call this to register a handler
     :set-flag                      ;; this is an event id 
-   (fn [db [_ new-value]           ;; this function does the handling 
+   (fn [db [_ new-value]]          ;; this function does the handling 
       (assoc db :flag new-value)))
 ```
 
