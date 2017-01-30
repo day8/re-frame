@@ -165,7 +165,7 @@ It is inevitable that, say, 10% of your event handlers have effects and coeffect
 
 They have to implement the control logic of your re-frame app, which 
 means dealing with the outside, mutative world of servers, databases, 
-windows.location, LocalStore, cookies, etc.
+window.location, LocalStore, cookies, etc.
 
 There's just no getting away from living in a mutative world,  
 which sounds pretty ominous. Is that it? Are we doomed to impurity?
