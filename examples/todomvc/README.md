@@ -60,7 +60,7 @@ src
 ├── db.cljs           <--- data related  (data layer)
 ├── subs.cljs         <--- subscription handlers  (query layer)
 ├── views.cljs        <--- reagent  components (view layer)
-└── handlers.cljs     <--- event handlers (control/update layer)
+└── events.cljs     <--- event handlers (control/update layer)
 ```
 
 ## Notes

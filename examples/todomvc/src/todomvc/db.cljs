@@ -37,7 +37,7 @@
 ;; -- Default app-db Value  ---------------------------------------------------
 ;;
 ;; When the application first starts, this will be the value put in app-db
-;; Unless, or course, there are todos in the LocalStore (see further below)
+;; Unless, of course, there are todos in the LocalStore (see further below)
 ;; Look in `core.cljs` for  "(dispatch-sync [:initialise-db])"
 ;;
 
