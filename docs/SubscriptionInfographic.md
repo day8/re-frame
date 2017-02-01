@@ -1,11 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Subscription Infographic](#subscription-infographic)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Subscription Infographic
 
 There's two things to do here. 
@@ -22,3 +14,9 @@ annotated subscription code [in the todomvc example](https://github.com/Day8/re-
 Previous:  [Coeffects](Coeffects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
