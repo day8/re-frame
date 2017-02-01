@@ -8,7 +8,7 @@ make side effects a noop in event replays.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-### Table Of Contents
+## Table Of Contents
 
 - [Where Effects Come From](#where-effects-come-from)
 - [The Effects Map](#the-effects-map)
