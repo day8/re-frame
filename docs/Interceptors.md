@@ -1,6 +1,11 @@
 ## re-frame Interceptors
 
-This is a tutorial on re-frame Interceptors. It explains exactly how events get handled.
+This tutorial explains re-frame Interceptors. By the end, you'll much
+better understand the mechanics of event handling. 
+
+As you read this, refer back to the 3rd panel of the 
+[Infographic](EventHandlingInfographic.md).
+
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
