@@ -1,4 +1,4 @@
-.idea/**/*
+**/.idea/**/*
 !.idea/codeStyleSettings.xml
 *.iml
 *.log
