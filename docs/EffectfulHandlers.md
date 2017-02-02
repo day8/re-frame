@@ -167,8 +167,7 @@ They have to implement the control logic of your re-frame app, which
 means dealing with the outside, mutative world of servers, databases, 
 window.location, LocalStore, cookies, etc.
 
-There's just no getting away from living in a mutative world,  
-which sounds pretty ominous. Is that it? Are we doomed to impurity?
+There's just no getting away from living in a mutative world, which sounds pretty ominous. Is that it? Are we doomed to impurity?
 
 Well, luckily a small twist in the tale makes a profound difference. We 
 will look at side-effects first. Instead of creating event handlers
