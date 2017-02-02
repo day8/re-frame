@@ -86,7 +86,7 @@ So, at the top, we start like this:
 
 Now, normally, I'd strongly recommended you write a quality schema
 for your application state (the data stored in `app-db`). But,
-here, to minimize cognitive load, we'll cut that corner.
+here, to minimise cognitive load, we'll cut that corner.
 
 But ... we can't cut it completely. You'll still need an
 informal description, and here it is ... for this app `app-db` will contain
@@ -277,7 +277,7 @@ When the user enters a new colour value (via an input text box):
   
 ## Effect Handlers (domino 3)
 
-Domino 3 realizes/puts into action the `effects` returned by event handlers.
+Domino 3 realises/puts into action the `effects` returned by event handlers.
 
 In this "simple" application, our event handlers are implicitly returning 
 only one effect: "update application state". 
@@ -293,10 +293,10 @@ tutorial we'll show you more about how to do so when you need to.
 
 Subscription handlers, or `query` functions, take application state as an argument 
 and run a query over it, returning something called
-a "materialized view" of that application state.
+a "materialised view" of that application state.
 
 When the application state changes, subscription functions are 
-re-run by re-frame, to compute new values (new materialized views). 
+re-run by re-frame, to compute new values (new materialised views). 
 
 Ultimately, the data returned by `query` functions is used
 in the `view` functions (Domino 5). 
@@ -327,7 +327,7 @@ Then later, a view function subscribes to a query like this:
 to perform the query over the application state.
 
 Each time application state changes, `a-query-fn` will be
-called again to compute a new materialized view (a new computation over app state)
+called again to compute a new materialised view (a new computation over app state)
 and that new value will be given to all `view` functions which are subscribed
 to `:some-query-id`. These `view` functions will then be called to compute the 
 new DOM state (because the views depend on query results which have changed).

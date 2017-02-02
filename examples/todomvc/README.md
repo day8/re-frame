@@ -29,7 +29,7 @@ A [re-frame](https://github.com/Day8/re-frame) implementation of [TodoMVC](http:
    ```
 
 
-## Compile an optimized version
+## Compile an optimised version
 
 1. Compile
    ```
