@@ -35,7 +35,7 @@
 
 (rf/reg-event-db                 ;; usage:  (dispatch [:timer a-js-Date])
   :timer                         ;; every second an event of this kind will be dispatched
-  (fn [db [_ new-time]]          ;; note how the 2nd parameter is desctructure to obtain the data value
+  (fn [db [_ new-time]]          ;; note how the 2nd parameter is destructured to obtain the data value
     (assoc db :time new-time)))  ;; compute and return the new application state
 
 
@@ -43,7 +43,7 @@
 
 (rf/reg-sub
   :time
-  (fn [db _]     ;; db is current app state. 2nd usused param is query vector
+  (fn [db _]     ;; db is current app state. 2nd unused param is query vector
     (-> db
         :time)))
 
