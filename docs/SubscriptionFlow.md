@@ -237,7 +237,7 @@ Instead, even simpler, you can just use `subscribe` within the `reaction` itself
    [app-db event]
    (reaction
      (let [a-path-element @(subscribe [:get-path-part])]   ;; <-- subscribe used here
-       get-in @app-db [:some a-path-element])))
+       (get-in @app-db [:some a-path-element]))))
 ```
 As you can see, this `reaction` has two input signals: `app-db` and `(subscribe [:get-path-part])`.  If either changes, 
 the `reaction` will rerun.
