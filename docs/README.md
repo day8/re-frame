@@ -47,6 +47,7 @@
 - [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
 - [Using Stateful JS Components](Using-Stateful-JS-Components.md)
 - [The re-frame Logo](The-re-frame-logo.md)
+- [Code Of Conduct](Code-Of-Conduct.md)
 
 <!--  We put these at the end so that there is nothing for doctoc to generate. -->
  <!-- START doctoc -->

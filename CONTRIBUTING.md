@@ -1,6 +1,6 @@
 # Contributing to re-frame
 
-Thank you for taking the time to contribute!
+Thank you for taking the time to contribute! Please note that re-frame follows a [code of conduct](code-of-conduct.md).
 
 ## Support questions
 
