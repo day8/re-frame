@@ -1,3 +1,15 @@
+## 0.9.2 (2016.02.09)
+
+#### Improvements
+
+- Update dependency on reagent from `0.6.0-rc` to `0.6.0`.
+- A truckload of tweaks, spelling fixes, and general improvements to the docs. A big thanks to everyone who contributed!
+
+#### Fixes
+
+- Use `:devDependencies` instead of `:dependencies` for the lein-npm Karma dependencies. This stops consumers of re-frame with the lein-npm plugin from having to install Karma and friends.
+- Correct `:id` of on-changes interceptor from `:enrich` to `:on-changes`
+
 ## 0.9.1 (2016.12.20)
 
 #### Fixes
