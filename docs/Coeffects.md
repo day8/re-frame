@@ -233,7 +233,7 @@ registration functions and have them auto insert the DataScript connection.
 During testing, you may want to stub out certain coeffects.
 
 You may, for example, want to test that an event handler works 
-using a specific `now`, not a true random number. 
+using a specific `now`. 
 
 In your test, you'd mock out the cofx handler:
 ```clj
