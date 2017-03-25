@@ -157,11 +157,11 @@
 (deftest exceptions-test
   (let [handles (->interceptor :id :handles
                                :error (fn [context]
-                                        (let [error (:error context)]
+                                        (let [error-data (ex-data (:error context))
+                                              original-exception (:exception error-data)]
                                           (-> context
-                                              (dissoc :error)
-                                              (update-coeffect :db assoc :handled-error-data (ex-data error))
-                                              (update-coeffect :db assoc :handled-error-message (ex-message error))))))
+                                              (update-coeffect :db assoc :handled-error-data (ex-data original-exception))
+                                              (update-coeffect :db assoc :handled-error-message (ex-message original-exception))))))
         increments (->interceptor :id :increments
                                   :after (fn [context]
                                            (update-coeffect context :db update :a inc)))
@@ -173,14 +173,25 @@
                                                (throw (ex-info "Thrown from interceptor" {:thrown true}))))]
     (testing "error handler with an exception in a :before interceptor"
       (let [context (-> (context [] [handles throws-before increments] {:a 1})
-                        (interceptor/execute-chain))]
+                        (interceptor/execute-chain))
+            error (:error context)]
+        (is (= #{:stage :interceptor :exception} (set (keys (ex-data error)))))
+        (is (re-find #"^Interceptor Exception: \#error .*Thrown from interceptor" (ex-message error)))
+        (is (= {:stage :before
+                :interceptor :throws-before}
+               (select-keys (ex-data error) [:stage :interceptor])))
         (is (= {:a 1
                 :handled-error-message "Thrown from interceptor"
                 :handled-error-data {:thrown true}}
                (get-coeffect context :db)))))
     (testing "error handler with an exception in an :after interceptor"
       (let [context (-> (context [] [handles throws-after increments] {:a 1})
-                        (interceptor/execute-chain))]
+                        (interceptor/execute-chain))
+            error (:error context)]
+        (is (= #{:stage :interceptor :exception} (set (keys (ex-data error)))))
+        (is (= {:stage :after
+                :interceptor :throws-after}
+               (select-keys (ex-data error) [:stage :interceptor])))
         (is (= {:a 2
                 :handled-error-message "Thrown from interceptor"
                 :handled-error-data {:thrown true}}

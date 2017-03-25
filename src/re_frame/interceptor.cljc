@@ -64,6 +64,11 @@
 
 ;; -- Execute Interceptor Chain  ------------------------------------------------------------------
 
+(defn- exception->ex-info [e interceptor stage]
+  (ex-info (str "Interceptor Exception: " e)
+           {:stage stage
+            :interceptor (:id interceptor)
+            :exception e}))
 
 (defn- invoke-interceptor-fn
   [context interceptor stage]
@@ -73,7 +78,7 @@
       (catch #?(:clj Throwable
                 :cljs :default) e
         (-> context
-            (assoc :error e)
+            (assoc :error (exception->ex-info e interceptor stage))
             (cond->
               (= :before stage) (update :queue empty))))) ; do not run the rest of the chain when in :before stage
     context))
