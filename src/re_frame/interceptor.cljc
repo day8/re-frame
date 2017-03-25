@@ -6,6 +6,9 @@
 
 
 (def mandatory-interceptor-keys #{:id :after :before})
+(def optional-interceptor-keys #{:error})
+(def known-interceptor-keys (clojure.set/union mandatory-interceptor-keys
+                                               optional-interceptor-keys))
 
 (defn interceptor?
   [m]
@@ -15,15 +18,16 @@
 
 (defn ->interceptor
   "Create an interceptor from named arguments"
-  [& {:as m :keys [id before after]}]
+  [& {:as m :keys [id before after error]}]
   (when debug-enabled?
     (if-let [unknown-keys  (seq (clojure.set/difference
                                   (-> m keys set)
-                                  mandatory-interceptor-keys))]
+                                  known-interceptor-keys))]
       (console :error "re-frame: ->interceptor " m " has unknown keys:" unknown-keys)))
   {:id     (or id :unnamed)
    :before before
-   :after  after })
+   :after  after
+   :error  error})
 
 ;; -- Effect Helpers  -----------------------------------------------------------------------------
 
@@ -64,7 +68,14 @@
 (defn- invoke-interceptor-fn
   [context interceptor direction]
   (if-let [f (get interceptor direction)]
-    (f context)
+    (try
+      (f context)
+      (catch #?(:clj Throwable
+                :cljs :default) e
+        (-> context
+            (assoc :error e)
+            (cond->
+              (= :before direction) (update :queue empty))))) ; do not run the rest of the chain when in :before direction
     context))
 
 
@@ -98,12 +109,15 @@
        (if (empty? queue)
          context
          (let [interceptor (peek queue)   ;; next interceptor to call
-               stack (:stack context)]    ;; already completed interceptors
-           (recur (-> context
-                      (assoc :queue (pop queue)
-                             :stack (conj stack interceptor))
-                      (invoke-interceptor-fn interceptor direction)))))))))
-
+               stack (:stack context)     ;; already completed interceptors
+               direction (if (:error context) ;; TODO: find better name for direction
+                           :error
+                           direction)
+               next-context (-> context
+                                (assoc :queue (pop queue)
+                                       :stack (conj stack interceptor))
+                                (invoke-interceptor-fn interceptor direction))]
+           (recur next-context)))))))
 
 (defn enqueue
   "Add a collection of `interceptors` to the end of `context's` execution `:queue`.
@@ -141,6 +155,12 @@
       (dissoc :queue)
       (enqueue (:stack context))))
 
+(defn execute-chain
+  [context]
+  (-> context
+      (invoke-interceptors :before)
+      change-direction
+      (invoke-interceptors :after)))
 
 (defn execute
   "Executes the given chain (coll) of interceptors.
@@ -193,7 +213,4 @@
    functions through which the context is threaded."
   [event-v interceptors]
   (-> (context event-v interceptors)
-      (invoke-interceptors :before)
-      change-direction
-      (invoke-interceptors :after)))
-
+      (execute-chain)))

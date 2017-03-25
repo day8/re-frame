@@ -1,7 +1,8 @@
 (ns re-frame.interceptor-test
   (:require [cljs.test :refer-macros [is deftest testing]]
             [reagent.ratom :refer [atom]]
-            [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect update-coeffect]]
+            [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect
+                                          update-coeffect ->interceptor]]
             [re-frame.std-interceptors :refer [debug trim-v path enrich after on-changes
                                                db-handler->interceptor fx-handler->interceptor]]
             [re-frame.interceptor :as interceptor]))
@@ -152,3 +153,43 @@
     (is (= {:effects {:db {:a 1}}
             :coeffects {:db {:a 2}}}
          (update-coeffect context :db update :a inc)))))
+
+(deftest exceptions-test
+  (let [handles (->interceptor :id :handles
+                               :error (fn [context]
+                                        (let [error (:error context)]
+                                          (-> context
+                                              (dissoc :error)
+                                              (update-coeffect :db assoc :handled-error-data (ex-data error))
+                                              (update-coeffect :db assoc :handled-error-message (ex-message error))))))
+        increments (->interceptor :id :increments
+                                  :after (fn [context]
+                                           (update-coeffect context :db update :a inc)))
+        throws-before (->interceptor :id :throws-before
+                                     :before (fn [_]
+                                               (throw (ex-info "Thrown from interceptor" {:thrown true}))))
+        throws-after (->interceptor :id :throws-after
+                                     :after (fn [_]
+                                               (throw (ex-info "Thrown from interceptor" {:thrown true}))))]
+    (testing "error handler with an exception in a :before interceptor"
+      (let [context (-> (context [] [handles throws-before increments] {:a 1})
+                        (interceptor/execute-chain))]
+        (is (= {:a 1
+                :handled-error-message "Thrown from interceptor"
+                :handled-error-data {:thrown true}}
+               (get-coeffect context :db)))))
+    (testing "error handler with an exception in an :after interceptor"
+      (let [context (-> (context [] [handles throws-after increments] {:a 1})
+                        (interceptor/execute-chain))]
+        (is (= {:a 2
+                :handled-error-message "Thrown from interceptor"
+                :handled-error-data {:thrown true}}
+               (get-coeffect context :db)))))
+    (testing "error handler with an exception in an :after interceptor, skips non error handler"
+      (let [context (-> (context [] [handles increments throws-after] {:a 1})
+                        (interceptor/execute-chain))]
+        (is (= {:a 1
+                :handled-error-message "Thrown from interceptor"
+                :handled-error-data {:thrown true}}
+               (get-coeffect context :db)))))
+    ))
