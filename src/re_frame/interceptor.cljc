@@ -117,12 +117,11 @@
                stack (:stack context)     ;; already completed interceptors
                stage (if (:error context)
                            :error
-                           direction)
-               next-context (-> context
-                                (assoc :queue (pop queue)
-                                       :stack (conj stack interceptor))
-                                (invoke-interceptor-fn interceptor stage))]
-           (recur next-context)))))))
+                           direction)]
+           (recur (-> context
+                      (assoc :queue (pop queue)
+                             :stack (conj stack interceptor))
+                      (invoke-interceptor-fn interceptor stage)))))))))
 
 (defn enqueue
   "Add a collection of `interceptors` to the end of `context's` execution `:queue`.
