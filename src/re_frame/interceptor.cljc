@@ -66,8 +66,8 @@
 
 
 (defn- invoke-interceptor-fn
-  [context interceptor direction]
-  (if-let [f (get interceptor direction)]
+  [context interceptor stage]
+  (if-let [f (get interceptor stage)]
     (try
       (f context)
       (catch #?(:clj Throwable
@@ -75,7 +75,7 @@
         (-> context
             (assoc :error e)
             (cond->
-              (= :before direction) (update :queue empty))))) ; do not run the rest of the chain when in :before direction
+              (= :before stage) (update :queue empty))))) ; do not run the rest of the chain when in :before stage
     context))
 
 
@@ -110,13 +110,13 @@
          context
          (let [interceptor (peek queue)   ;; next interceptor to call
                stack (:stack context)     ;; already completed interceptors
-               direction (if (:error context) ;; TODO: find better name for direction
+               stage (if (:error context)
                            :error
                            direction)
                next-context (-> context
                                 (assoc :queue (pop queue)
                                        :stack (conj stack interceptor))
-                                (invoke-interceptor-fn interceptor direction))]
+                                (invoke-interceptor-fn interceptor stage))]
            (recur next-context)))))))
 
 (defn enqueue
