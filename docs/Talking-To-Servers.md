@@ -143,6 +143,7 @@ Here's our rewrite:
     ;; we return a map of (side) effects
     {:http-xhrio {:method          :get
                   :uri             "http://json.my-endpoint.com/blah"
+                  :format          (ajax/json-request-format)
                   :response-format (ajax/json-response-format {:keywords? true}) 
                   :on-success      [:process-response]
                   :on-failure      [:bad-response]}
