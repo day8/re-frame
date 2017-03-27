@@ -154,7 +154,49 @@
             :coeffects {:db {:a 2}}}
          (update-coeffect context :db update :a inc)))))
 
-(deftest exceptions-test
+(deftest test-exception->ex-info
+  (let [exception->ex-info #'re-frame.interceptor/exception->ex-info] ; reference to the private fn
+    (let [e (js/Error. "Ooops!")
+          interceptor {:id :some-interceptor :before identity}
+          result (exception->ex-info e interceptor :after)]
+      (is (= {:exception e
+              :stage :after
+              :interceptor :some-interceptor}
+             (ex-data result)))
+      (is (= "Interceptor Exception: Error: Ooops!" (ex-message result))))))
+
+(deftest test-invoke-interceptor-fn
+  (let [invoke-interceptor-fn #'re-frame.interceptor/invoke-interceptor-fn] ; reference to the private fn
+    (testing "returns context when there's no stage fn"
+      (is (= {:a 1}
+             (invoke-interceptor-fn {:a 1} {:before #(update % :a inc)} :after))))
+    (testing "returns result of applying stage fn to context"
+      (is (= {:a 2}
+             (invoke-interceptor-fn {:a 1} {:before #(update % :a inc)} :before))))
+    
+    (testing "assocs (exception->ex-info e) under :error, empties queue when in before stage"
+      (let [interceptor {:id :throws
+                         :before #(throw "Oopsie")}
+            context {:a 1
+                     :queue [:interceptor-2 :interceptor-3]}]
+        (with-redefs [re-frame.interceptor/exception->ex-info (fn [e] (str e))]
+          (is (= {:a 1
+                  :queue []
+                  :error "Oopsie"}
+                 (invoke-interceptor-fn context interceptor :before))))))
+
+    (testing "assocs (exception->ex-info e) under :error, keeps queue unmodified when in :after stage"
+      (let [interceptor {:id :throws
+                         :after #(throw "Oopsie in after")}
+            context {:a 1
+                     :queue [:interceptor-2 :interceptor-3]}]
+        (with-redefs [re-frame.interceptor/exception->ex-info (fn [e] (str e))]
+          (is (= {:a 1
+                  :queue [:interceptor-2 :interceptor-3]
+                  :error "Oopsie in after"}
+                 (invoke-interceptor-fn context interceptor :after))))))))
+
+(deftest test-exceptions
   (let [handles (->interceptor :id :handles
                                :error (fn [context]
                                         (let [error-data (ex-data (:error context))
@@ -176,7 +218,6 @@
                         (interceptor/execute-chain))
             error (:error context)]
         (is (= #{:stage :interceptor :exception} (set (keys (ex-data error)))))
-        (is (re-find #"^Interceptor Exception: \#error .*Thrown from interceptor" (ex-message error)))
         (is (= {:stage :before
                 :interceptor :throws-before}
                (select-keys (ex-data error) [:stage :interceptor])))
@@ -202,5 +243,4 @@
         (is (= {:a 1
                 :handled-error-message "Thrown from interceptor"
                 :handled-error-data {:thrown true}}
-               (get-coeffect context :db)))))
-    ))
+               (get-coeffect context :db)))))))
