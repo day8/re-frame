@@ -221,7 +221,7 @@ and removed from the `:queue` by existing Interceptors.
 
 > All truths are easy to understand once they are discovered <br>
 >   -- Galileo Galilei
-<br>
+
 > Things always become obvious after the fact <br>
 >   -- Nassim Nicholas Taleb
 
