@@ -1,7 +1,7 @@
 (ns re-frame.interceptor-test
   (:require [cljs.test :refer-macros [is deftest testing]]
             [reagent.ratom :refer [atom]]
-            [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect]]
+            [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect update-coeffect]]
             [re-frame.std-interceptors :refer [debug trim-v path enrich after on-changes
                                                db-handler->interceptor fx-handler->interceptor]]
             [re-frame.interceptor :as interceptor]))
@@ -145,3 +145,10 @@
     (let [ctx (context [] [] {:a 1})]
       (is (= ::not-found (get-effect ctx :db ::not-found)))
       (-> ctx (:after (enrich (fn [db] (is (= db {:a 1})))))))))
+
+(deftest test-update-coeffect
+  (let [context {:effects {:db {:a 1}}
+                 :coeffects {:db {:a 1}}}]
+    (is (= {:effects {:db {:a 1}}
+            :coeffects {:db {:a 2}}}
+         (update-coeffect context :db update :a inc)))))

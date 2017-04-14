@@ -6,18 +6,6 @@ Event handlers are quite central to a re-frame app.  Only event handlers
 can update `app-db` to "step" an application "forward" from one state
 to the next.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [The `debug` Interceptor](#the-debug-interceptor)
-  - [Using `debug`](#using-debug)
-  - [Too Much Repetition - Part 1](#too-much-repetition---part-1)
-- [3. Checking DB Integrity](#3-checking-db-integrity)
-  - [Too Much Repetition - Part 2](#too-much-repetition---part-2)
-  - [What about the -fx variation?](#what-about-the--fx-variation)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## The `debug` Interceptor
 
@@ -229,3 +217,9 @@ was being changed).
 
 Actually, it would probably be better to write an alternative `after` which XXX
 TODO: finish thought
+
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

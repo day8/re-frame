@@ -35,3 +35,9 @@ To the extent possible under law, the Day8 team has waived all copyright and rel
 [bundler]: http://bundler.io/conduct.html
 [jsconf]: http://jsconf.com/codeofconduct.html
 [contributor]: http://contributor-covenant.org/
+
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

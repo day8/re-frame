@@ -56,7 +56,7 @@
 
 (defn update-coeffect
   [context key f & args]
-  (apply update context key f args))
+  (apply update-in context [:coeffects key] f args))
 
 ;; -- Execute Interceptor Chain  ------------------------------------------------------------------
 

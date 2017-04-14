@@ -1,3 +1,9 @@
+## Unreleased
+
+#### Fixes
+
+- `re-frame.interceptor/update-coeffect` has been fixed. [#328](https://github.com/Day8/re-frame/pull/328)
+
 ## 0.9.2 (2016.02.09)
 
 #### Improvements

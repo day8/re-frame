@@ -13,20 +13,6 @@ thrill of that forbidden fruit.
 
 I won't tell, if you don't.  But careful plans must be made  ... 
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [The overall plan](#the-overall-plan)
-- [Example Using Google Maps](#example-using-google-maps)
-- [Pattern Discovery](#pattern-discovery)
-- [Code Credit](#code-credit)
-- [D3 Examples](#d3-examples)
-- [Advanced Lifecycle Methods](#advanced-lifecycle-methods)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-
 ### The overall plan 
 
 To use a stateful js component, you'll need to write two Reagent components:
@@ -107,3 +93,9 @@ https://gadfly361.github.io/gadfly-blog/2016-10-22-d3-in-reagent.html
 
 If you mess around with lifecycle methods, you'll probably want to read Martin's explanations:
 https://www.martinklepsch.org/posts/props-children-and-component-lifecycle-in-reagent.html
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
