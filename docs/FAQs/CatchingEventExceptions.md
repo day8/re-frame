@@ -1,5 +1,3 @@
-
-
 ### Question
 
 How can I detect exceptions in Event Handlers?

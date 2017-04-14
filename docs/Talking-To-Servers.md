@@ -1,16 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Talking To Servers](#talking-to-servers)
-- [Triggering The Request](#triggering-the-request)
-- [The Event Handler](#the-event-handler)
-  - [Version 1](#version-1)
-  - [Successful GET](#successful-get)
-  - [Problems In Paradise?](#problems-in-paradise)
-  - [Version 2](#version-2)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Talking To Servers 
 
@@ -160,3 +147,9 @@ Notes:
 Previous:  [Loading Initial Data](Loading-Initial-Data.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Subscribing to External Data](Subscribing-To-External-Data.md)  
+
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

@@ -8,37 +8,6 @@ At this point, you are about 50% of the way to understanding re-frame.  You have
 
 In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 70% knowledge, and ready to start coding.
 
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [What Code?](#what-code)
-- [Namespace](#namespace)
-- [Data Schema](#data-schema)
-- [Events (domino 1)](#events-domino-1)
-  - [dispatch](#dispatch)
-  - [After dispatch](#after-dispatch)
-- [Event Handlers (domino 2)](#event-handlers-domino-2)
-  - [Two ways To register](#two-ways-to-register)
-  - [reg-event-db](#reg-event-db)
-  - [:initialize](#initialize)
-  - [:timer](#timer)
-  - [:time-color-change](#time-color-change)
-- [Effect Handlers (domino 3)](#effect-handlers-domino-3)
-- [Subscription Handlers (domino 4)](#subscription-handlers-domino-4)
-  - [reg-sub](#reg-sub)
-- [View Functions (domino 5)](#view-functions-domino-5)
-  - [Hiccup](#hiccup)
-  - [Subscribing](#subscribing)
-  - [The View Functions](#the-view-functions)
-  - [Components Like Templates?](#components-like-templates)
-- [Kick Starting The App](#kick-starting-the-app)
-- [Summary](#summary)
-- [Next Steps](#next-steps)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## What Code?
 
 This repo contains an `/examples` application called ["simple"](https://github.com/Day8/re-frame/tree/develop/examples/simple),
@@ -518,3 +487,8 @@ Previous:  [app-db (Application State)](ApplicationState.md)&nbsp;&nbsp;&nbsp;&n
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Mental Model Omnibus](MentalModelOmnibus.md)
 
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
