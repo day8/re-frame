@@ -87,24 +87,25 @@ right value. Nice! But how do we make this magic happen?
  
 ### Abracadabra 
 
-Each time an event handler is executed, a brand new `context` 
-is created, and within that `context` is a brand new `:coeffects` 
-map, which is initially totally empty.
+Each time an event handler is executed, a brand new `context` (map)
+is created, and within that `context` is a `:coeffects` key which 
+is a further map (initially empty). 
 
 That pristine `context` value (containing a pristine `:coeffects` map) is threaded 
 through a chain of Interceptors before it finally reaches our event handler,
-sitting on the end of a chain, itself wrapped up in an interceptor. We know  
+which sits on the end of the chain, itself wrapped up in an interceptor. We know  
 this story well from a previous tutorial. 
 
-So, all members of the Interceptor chain have the opportunity to add to `:coeffects` 
-via their `:before` function.  This is where `:coeffects` magic happens. This is how 
-new keys can be added to `:coeffects`, so that later our event handler magically finds the 
-right data (like `:local-store`) in its `cofx` argument. It is the Interceptors.
+So, all members of the Interceptor chain have the opportunity to `assoc` into `:coeffects` 
+within their `:before` function, cumulatively building up what it holds.  Later, our event handler, 
+which sits on the end of the chain, magically finds just the 
+right data (like a value for the key `:local-store`) in its first `cofx` argument. 
+So, it is the event handler's Interceptors which put it there.
 
 ### Which Interceptors?
 
 If Interceptors put data in `:coeffects`, then we'll need to add the right ones
-when we register our event handler. 
+when we register our event handler.
 
 Something like this (this handler is the same as before, except for one detail):    
 ```clj

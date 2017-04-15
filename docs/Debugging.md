@@ -29,7 +29,7 @@ re-frame apps are **event driven**.
 
 Event driven apps have this core, perpetual loop:
    1. your app is in some quiescent state, patiently waiting for the next event
-   2. an event arrives (user presses a button, a websocket gets data, etc)
+   2. an event arrives (because the user presses a button, a websocket gets data, etc)
    3. computation/processing follows as the event is handled, leading to changes in app state, the UI, etc
    4. Goto 1
 
@@ -49,7 +49,7 @@ With re-frame, step 3 happens like this:
   
 Every single event is processed in the same way.  Every single one. 
 
-It is like a **four domino sequence**: an event arrives and 
+It is like a **domino sequence**: an event arrives and 
 then bang, bang, bang, one domino triggers the next. A delightfully 
 regular environment to understand and debug!
 
@@ -81,7 +81,7 @@ Below, I suggest a particular combination of technologies which, working togethe
 will write a trace to the devtools console. Sorry, but there's no fancy 
 SVG dashboard.  We said simple, right?
 
-First, use clairvoyant to trace function calls and data flow. We've had 
+First, use `clairvoyant` to trace function calls and data flow. We've had 
 a couple of Clairvoyant PRs accepted, and they make it work well for us.
 We've also written a specific Clairvoyant tracer tuned for our re-frame 
 needs. https://clojars.org/day8/re-frame-tracer. 
@@ -172,7 +172,7 @@ And name those event handlers:
 
 You must throw a compile-time switch for tracing to be included into development builds. 
 
-If you are using lein, do this in your `project.clj` file:
+If you are using `lein`, do this in your `project.clj` file:
 
 ```clj
 :cljsbuild {:builds [{:id "dev"            ;; for the development build, turn on tracing
@@ -198,7 +198,7 @@ Do you see the dominos?
 
 If the functions you are tracing take large data-structures as parameters, or 
 return large values, then you will be asking clairvoyant to push/log a LOT 
-of data into the js/console. This can take a while and might mean devtools 
+of data into the `js/console`. This can take a while and might mean devtools 
 takes a lot of RAM.  
 
 For example, if your `app-db` was big and complicated, you might use `path` 
