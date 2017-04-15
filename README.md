@@ -220,9 +220,7 @@ tested independently. They take data, transform it and return new data.
 The loop itself is very mechanical in operation.
 So, there's a regularity, simplicity and
 certainty to how a re-frame app goes about its business,
-which leads, in turn, to an ease in reasoning and debugging. This is 
-key to why re-frame is pleasing to work with - it is just so 
-straightforward.
+which leads, in turn, to an ease in reasoning and debugging.
 
 ## Managing mutation
 
@@ -235,13 +233,14 @@ the last domino which does the dirty work and realises these descriptions.
 In both cases, you don't need to worry yourself about this dirty work. re-frame looks 
 after those dominoes.
 
-## As Code Fragments
+## Code Fragments For The Dominos
 
 <img align="right" src="/images/Readme/todolist.png?raw=true">
 
-Let's take this domino narrative further and introduce code fragments.
+So that was the view of re-frame from 60,000 feet. We'll now shift to 30,000 feet 
+and look again at each domino, but this time with code fragments. 
 
-**Imagine:** We're working on a SPA which displays a list of items. You have 
+**Imagine:** we're working on a SPA which displays a list of items. You have 
 just clicked the "delete" button next to the 3rd item in the list.
 
 In response, what happens within this imaginary re-frame app? Here's a sketch 
@@ -268,7 +267,7 @@ it has 2 elements: `[:delete-item 2486]`. The first element,
 ### Code For Domino 2
 
 The `event handler`, `h`, associated with 
-`:delete-item`, is called to compute the `effect` of this event.
+`:delete-item`, is called to compute the `effect` of this dispatched event.
 
 This handler function, `h`, takes two arguments: a `coeffects` map 
 which holds the current state of the world (including app state),
@@ -283,7 +282,7 @@ of how the world should change. Here's a sketch (we are at 30,000 feet):
 
 There are mechanisms in re-frame (beyond us here) whereby you can place
 all necessary aspects of the world into that first `coeffects` argument, on a 
-per event-kind basis (different events need to know different things 
+per kind-of-event basis (different events need to know different things 
 in order to get their job done). The current application state, `db`, 
 is one aspect of the world which is invariably needed. 
 
@@ -301,7 +300,7 @@ An `effect handler` (function) puts into action the `effects` returned by `h`:
 {:db  (dissoc-in db [:items item-id])}
 ```
 So that's a map. The keys identify the required kinds of `effect`, and the values 
-supply further details. This map only has one key, so there's only one effect.  
+supply further details. This map only has one key, so there's only one effect.
 
 A key of `:db` means to update the app state with the key's value.
 
@@ -331,7 +330,7 @@ On program startup, such a query-fn must be associated with an id,
 ```clj
 (re-frame.core/reg-sub  :query-items  query-fn)
 ```
-Which says "when you see a query (subscribe) for `:query-items`, use `query-fn` to handle it".
+Which says "when you see a query (subscribe) for `:query-items`, use `query-fn` to compute it".
 
 ### Code For Domino 5
 
@@ -350,7 +349,7 @@ for the deleted item, obviously, but otherwise the same DOM as last time).
 ```
 
 Notice how `items` is "sourced" from "app state" via `subscribe`. It is called with a query id
-to identify what data it needs.   
+to identify what data it needs.
 
 ### Code For Domino 6
 
@@ -377,16 +376,14 @@ waiting for the next event.
 
 ## So, your job is ... 
 
-When building a re-frame app, you will: 
+When building a re-frame app, you will:
  - design your app's information model (data and schema layer)
  - write and register event handler functions  (control and transition layer)  (domino 2)
- - (once in a blue moon) write and register effect and coeffect handler 
-   functions (domino 3) which do the mutative dirty work of which we dare not 
+ - (once in a blue moon) write and register effect and coeffect handler
+   functions (domino 3) which do the mutative dirty work of which we dare not
    speak. 
  - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
  - write Reagent view functions  (view layer)  (domino 5)
-
-
 
 ## It Leverages Data
 
@@ -418,12 +415,10 @@ Data - that's the way we roll.
 
 ## It is mature and proven in the large
 
-re-frame was released in early 2015, and has since [been](https://www.fullcontact.com)
-successfully
-[used](https://www.nubank.com.br) 
-by
-[quite](http://open.mediaexpress.reuters.com/)
-a 
+re-frame was released in early 2015, and has since 
+[been](https://www.fullcontact.com) successfully
+[used](https://www.nubank.com.br) by
+[quite](http://open.mediaexpress.reuters.com/) a 
 [few](https://rokt.com/) companies and
 individuals to build complex apps, many running beyond 40K lines of
 ClojureScript.
