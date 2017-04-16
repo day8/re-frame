@@ -93,7 +93,7 @@ you've seen the videos - and if he says to do something, you do it
 this diagram, apart from being a plausible analogy which might help
 you to understand re-frame, is **practically proof** it does physics.
 
-### It is a 6-domino cascade
+## It is a 6-domino cascade
 
 <img align="right" src="/images/Readme/Dominoes-small.jpg?raw=true">
 
@@ -268,8 +268,8 @@ it has 2 elements: `[:delete-item 2486]`. The first element,
 
 ### Code For Domino 2
 
-In this step, an `event handler` (function), `h`, is called to 
-compute the `effect` of this dispatched event.
+An `event handler` (function), `h`, is called to 
+compute the `effect` of the event `[:delete-item 2486]`.
 
 Earlier, on program startup, `h` would have been 
 registered for handling `:delete-item` `events` like this:
@@ -278,10 +278,9 @@ registered for handling `:delete-item` `events` like this:
   :delete-item                ;; the kind of event
   h)                          ;; the handler function for this kind of event
 ```
-Which says "when you see a `:delete-item` event, use `h` to handle it".
 
-This handler function, `h`, takes two arguments: 
-  1. a `coeffects` map which holds the current state of the world (including app state),
+`h` is written to take two arguments: 
+  1. a `coeffects` map which contains the current state of the world (including app state)
   2. the `event`
   
 It returns a map of `effects` - a description 
@@ -295,48 +294,46 @@ Here's a sketch (we are at 30,000 feet):
    {:db  (dissoc-in db [:items item-id])})) ;; effect is change db
 ```
 
-There are mechanisms in re-frame (beyond us here) whereby you can place
-all necessary aspects of the world into that first `coeffects` argument (map), on a 
-per kind-of-event basis (different events need to know different things 
-in order to get their job done). Current "application state"
+re-frame has ways (beyond us here) to inject necessary aspects
+of the world into that first `coeffects` argument (map). Different 
+event handlers need to know different things about the world 
+in order to get their job done. But current "application state"
 is one aspect of the world which is invariably needed, and it is made 
-available via the `:db` key.
-
-In summary:  `h` is provided with the current application state, and it 
-computes an effect which says to replace application state (with 
-a new state that has an item removed).    
+available by default in the `:db` key.
 
 ### Code For Domino 3
 
-An `effect handler` (function) actions the `effects` returned by `h`:
+An `effect handler` (function) actions the `effects` returned by `h`.
+
+Here's what was returned:
 ```clj
 {:db  (dissoc-in db [:items item-id])}
 ```
-So that's a map of effects. Each key in the map identifies one kind 
+Each key of the map identifies one kind 
 of `effect`, and the value for that key supplies further details. 
 The map returned by `h` only has one key, so there's only one effect.
 
 A key of `:db` means to update the app state with the key's value.
 
 This update of "app state" is a mutative step, facilitated by re-frame
-which has a built in `effects handler` for the `:db` effect.
+which has a built-in `effects handler` for the `:db` effect.
 
 Why the name `:db`?  re-frame sees "app state" as something of an in-memory 
-database. More on this soon.
+database. More on that soon.
 
 Just to be clear, if `h` had returned: 
 ```clj
 {:wear  "velour flares"
  :walk  [:like :an :Egyptian]}
 ```
-Then the two effects handlers registered for `:wear` and `:walk` would have
-been called to action those two effects. And, no, re-frame does not supply 
-standard effect handlers for them, so you would have had 
-to have written them yourself (see how in a later tutorial).  
+Then the two effects handlers registered for `:wear` and `:walk` would 
+be called in this domino to action those two effects. And, no, re-frame 
+does not supply standard effect handlers for them, so you would have had 
+to have written them yourself (see how in a later tutorial).
 
 ### Code For Domino 4
 
-Because an effect handler just established a new "app state",
+Because an effect handler just updated "app state",
 a query (function) over this app state is called automatically (reactively), 
 itself computing the list of items.
 
@@ -349,7 +346,7 @@ query function acts more like an extractor or accessor:
   (:items db))   ;; not much of a materialised view
 ```
 
-On program startup, such a query-fn must be associated with a query-id, 
+On program startup, such a `query-fn` must be associated with a `query-id`, 
 (for reasons obvious in the next domino) like this:
 ```clj
 (re-frame.core/reg-sub  ;; part of the re-frame API
@@ -362,12 +359,12 @@ use `query-fn` to compute it".
 ### Code For Domino 5
 
 Because the query function for `:query-items` just re-computed a new value, 
-any view (function) which subscribes to `query-items` 
+any view (function) which subscribes to `:query-items` 
 is called automatically (reactively) to re-compute DOM.
 
 View functions compute a data structure, in hiccup format, describing 
-the DOM nodes required. In this case, no DOM nodes 
-for the deleted item, obviously, but otherwise the same DOM as last time.
+the DOM nodes required. In this case, there will be no DOM nodes 
+for the now-deleted item, obviously, but otherwise the same DOM as last time.
 
 ```clj
 (defn items-view
@@ -477,17 +474,17 @@ and useful 3rd party libraries.
 already know 50% of re-frame.** There's detail to fill in, for sure,
 but the core concepts, and even basic coding techniques, are now known to you.
 
-Next you need to read read the other three articles in the [Introduction section](/docs#introduction):
+Next you need to read the other three articles in the [Introduction section](/docs#introduction):
 
 * [Application State](/docs/ApplicationState.md)
 * [Code Walkthrough](/docs/CodeWalkthrough.md)
 * [Mental Model Omnibus](/docs/MentalModelOmnibus.md)
 
-This will get your knowledge to about 70%. The
+This will push your knowledge to about 70%. The
 final 30% will come incrementally with use, and by reading the other
 tutorials (of which there's a few).
 
-You can also experiment with these examples: <br>
+You can also experiment with these two examples: <br>
 https://github.com/Day8/re-frame/tree/master/examples
 
 Use a template to create your own project: <br>
