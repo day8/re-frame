@@ -119,9 +119,11 @@ re-frame is `event` driven.
 
 ### 2nd Domino - Event Handling
 
-In response to an `event`, an application must decide what action to take. This is known as `event handling`.
+In response to an `event`, an application must decide what action to take. 
+This is known as `event handling`.
 
-Event handler functions compute side effects (known in re-frame simply as `effects`). More accurately, they compute 
+Event handler functions compute side effects (known in re-frame simply as `effects`). 
+More accurately, they compute 
 a **description of `effects`**. This description is a data structure 
 which says, declaratively, how the world should change (because of the event).
 
@@ -137,8 +139,8 @@ Now, to a functional programmer, `effects` are scary in a
 [xenomorph kind of way](https://www.google.com.au/search?q=xenomorph).
 Nothing messes with functional purity
 quite like the need for side effects. On the other hand, `effects` are 
-marvelous because they move the app forward. Without them, an app stays stuck in one state forever,
-never achieving anything.
+marvelous because they move the app forward. Without them, 
+an app stays stuck in one state forever, never achieving anything.
 
 So re-frame embraces the protagonist nature of `effects` - the entire, unruly zoo of them - but
 it does so in a largely hidden way, and in a manner which is debuggable, auditable, mockable and pluggable.
@@ -280,9 +282,10 @@ Which says "when you see a `:delete-item` event, use `h` to handle it".
 
 This handler function, `h`, takes two arguments: 
   1. a `coeffects` map which holds the current state of the world (including app state),
-  2. the `event`. 
+  2. the `event`
+  
 It returns a map of `effects` - a description 
-of how the world should change. 
+of how the world should be changed by the event. 
 
 Here's a sketch (we are at 30,000 feet):
 ```clj
@@ -295,13 +298,13 @@ Here's a sketch (we are at 30,000 feet):
 There are mechanisms in re-frame (beyond us here) whereby you can place
 all necessary aspects of the world into that first `coeffects` argument (map), on a 
 per kind-of-event basis (different events need to know different things 
-in order to get their job done). The current "application state"
-is one aspect of the world which is invariably needed, and is made 
+in order to get their job done). Current "application state"
+is one aspect of the world which is invariably needed, and it is made 
 available via the `:db` key.
 
 In summary:  `h` is provided with the current application state, and it 
 computes an effect which says to replace application state (with 
-a state that has an item removed).    
+a new state that has an item removed).    
 
 ### Code For Domino 3
 
@@ -309,9 +312,9 @@ An `effect handler` (function) actions the `effects` returned by `h`:
 ```clj
 {:db  (dissoc-in db [:items item-id])}
 ```
-So that's a map of effects. Each map key identifies one kind 
+So that's a map of effects. Each key in the map identifies one kind 
 of `effect`, and the value for that key supplies further details. 
-This map returned by `h` only has one key, so there's only one effect.
+The map returned by `h` only has one key, so there's only one effect.
 
 A key of `:db` means to update the app state with the key's value.
 
@@ -319,48 +322,52 @@ This update of "app state" is a mutative step, facilitated by re-frame
 which has a built in `effects handler` for the `:db` effect.
 
 Why the name `:db`?  re-frame sees "app state" as something of an in-memory 
-database.
+database. More on this soon.
 
-Just to be clear, if `h` had returned two effects:
+Just to be clear, if `h` had returned: 
 ```clj
 {:wear  "velour flares"
  :walk  [:like :an :Egyptian]}
 ```
 Then the two effects handlers registered for `:wear` and `:walk` would have
 been called to action those two effects. And, no, re-frame does not supply 
-standard effect handlers for these two effects, so you would have had 
+standard effect handlers for them, so you would have had 
 to have written them yourself (see how in a later tutorial).  
 
 ### Code For Domino 4
 
-Because a Domino 3 effect handler just installed a new version of "app state",  
+Because an effect handler just established a new "app state",
 a query (function) over this app state is called automatically (reactively), 
 itself computing the list of items.
 
-Because the items 
-are stored in app state, there's not a lot to compute in this case. This 
-subscription acts more like an extractor or accessor.
+Because the items are stored in app state, there's not a lot 
+to compute in this case. This 
+query function acts more like an extractor or accessor:
 ```clj
 (defn query-fn
   [db _]         ;; db is current app state
   (:items db))   ;; not much of a materialised view
 ```
 
-On program startup, such a query-fn must be associated with an id, 
+On program startup, such a query-fn must be associated with a query-id, 
 (for reasons obvious in the next domino) like this:
 ```clj
-(re-frame.core/reg-sub  :query-items  query-fn)
+(re-frame.core/reg-sub  ;; part of the re-frame API
+   :query-items         ;; query id  
+   query-fn)            ;; query fn
 ```
-Which says "if you see a query (subscribe) for `:query-items`, use `query-fn` to compute it".
+Which says "if you see a query (subscribe) for `:query-items`, 
+use `query-fn` to compute it".
 
 ### Code For Domino 5
 
-Because the query function re-computed a new value, a view (function) which subscribes
-to "items", is called automatically (reactively) to re-compute DOM.
+Because the query function for `:query-items` just re-computed a new value, 
+any view (function) which subscribes to `query-items` 
+is called automatically (reactively) to re-compute DOM.
 
-It computes a data structure, in hiccup format, describing the DOM nodes 
-required (no DOM nodes 
-for the deleted item, obviously, but otherwise the same DOM as last time).
+View functions compute a data structure, in hiccup format, describing 
+the DOM nodes required. In this case, no DOM nodes 
+for the deleted item, obviously, but otherwise the same DOM as last time.
 
 ```clj
 (defn items-view
@@ -369,13 +376,13 @@ for the deleted item, obviously, but otherwise the same DOM as last time).
     [:div (map item-render @items]))   ;; assume item-render already written
 ```
 
-Notice how `items` is "sourced" from "app state" via `subscribe`. It is called with a query id
-to identify what data it needs.
+Notice how `items` is "sourced" from "app state" via `subscribe`. 
+It is called with a query id to identify what data it needs.
 
 ### Code For Domino 6
 
-The computed DOM (hiccup) is made real by Reagent/React. No code 
-from you required. Just happens.
+The DOM (hiccup) returned by the view function 
+is made real by Reagent/React. No code from you required. Just happens.
 
 The DOM computed "this
 time" will be the same as last time, **except** for the absence of DOM for the
@@ -497,7 +504,6 @@ your insiders T-shirt will be arriving soon - it will feature turtles,
 [xkcd](http://xkcd.com/1416/) and something about "data all the way down". 
 But we're still working on the hilarious caption bit. Open a
 repo issue with a suggestion.
-
 
 [SPAs]:http://en.wikipedia.org/wiki/Single-page_application
 [SPA]:http://en.wikipedia.org/wiki/Single-page_application
