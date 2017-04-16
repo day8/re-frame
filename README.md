@@ -211,7 +211,7 @@ This is the step in which the hiccup-formatted
 The browser DOM nodes are mutated. 
 
 
-## A Cascade Of Simple Functions
+### A Cascade Of Simple Functions
 
 **Each of the dominoes you write are simple, pure functions** which 
 can be described, understood and 
@@ -222,7 +222,7 @@ So, there's a regularity, simplicity and
 certainty to how a re-frame app goes about its business,
 which leads, in turn, to an ease in reasoning and debugging.
 
-## Managing mutation
+### Managing mutation
 
 The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
 
@@ -266,13 +266,25 @@ it has 2 elements: `[:delete-item 2486]`. The first element,
 
 ### Code For Domino 2
 
-The `event handler`, `h`, associated with 
-`:delete-item`, is called to compute the `effect` of this dispatched event.
+In this step, an `event handler` (function), `h`, is called to 
+compute the `effect` of this dispatched event.
 
-This handler function, `h`, takes two arguments: a `coeffects` map 
-which holds the current state of the world (including app state),
-and the `event`. It must return a map of `effects` - a description 
-of how the world should change. Here's a sketch (we are at 30,000 feet):
+Earlier, on program startup, `h` would have been 
+registered for handling `:delete-item` `events` like this:
+```clj
+(re-frame.core/reg-event-fx   ;; a part of the re-frame API
+  :delete-item                ;; the kind of event
+  h)                          ;; the handler function for this kind of event
+```
+Which says "when you see a `:delete-item` event, use `h` to handle it".
+
+This handler function, `h`, takes two arguments: 
+  1. a `coeffects` map which holds the current state of the world (including app state),
+  2. the `event`. 
+It returns a map of `effects` - a description 
+of how the world should change. 
+
+Here's a sketch (we are at 30,000 feet):
 ```clj
 (defn h 
  [{:keys [db]} event]                    ;; args:  db from coeffect, event
@@ -281,44 +293,53 @@ of how the world should change. Here's a sketch (we are at 30,000 feet):
 ```
 
 There are mechanisms in re-frame (beyond us here) whereby you can place
-all necessary aspects of the world into that first `coeffects` argument, on a 
+all necessary aspects of the world into that first `coeffects` argument (map), on a 
 per kind-of-event basis (different events need to know different things 
-in order to get their job done). The current application state, `db`, 
-is one aspect of the world which is invariably needed. 
+in order to get their job done). The current "application state"
+is one aspect of the world which is invariably needed, and is made 
+available via the `:db` key.
 
-On program startup, `h` would have been 
-associated with `:delete-item` `events` like this:
-```clj
-(re-frame.core/reg-event-fx  :delete-item  h)
-```
-Which says "when you see a `:delete-item` event, use `h` to handle it".
+In summary:  `h` is provided with the current application state, and it 
+computes an effect which says to replace application state (with 
+a state that has an item removed).    
 
 ### Code For Domino 3
 
-An `effect handler` (function) puts into action the `effects` returned by `h`:
+An `effect handler` (function) actions the `effects` returned by `h`:
 ```clj
 {:db  (dissoc-in db [:items item-id])}
 ```
-So that's a map. The keys identify the required kinds of `effect`, and the values 
-supply further details. This map only has one key, so there's only one effect.
+So that's a map of effects. Each map key identifies one kind 
+of `effect`, and the value for that key supplies further details. 
+This map returned by `h` only has one key, so there's only one effect.
 
 A key of `:db` means to update the app state with the key's value.
 
 This update of "app state" is a mutative step, facilitated by re-frame
-which has a built in effects handler for the `:db` effect. 
+which has a built in `effects handler` for the `:db` effect.
 
 Why the name `:db`?  re-frame sees "app state" as something of an in-memory 
 database.
 
+Just to be clear, if `h` had returned two effects:
+```clj
+{:wear  "velour flares"
+ :walk  [:like :an :Egyptian]}
+```
+Then the two effects handlers registered for `:wear` and `:walk` would have
+been called to action those two effects. And, no, re-frame does not supply 
+standard effect handlers for these two effects, so you would have had 
+to have written them yourself (see how in a later tutorial).  
+
 ### Code For Domino 4
 
-Because a new version of "app state" has been computed and installed, 
+Because a Domino 3 effect handler just installed a new version of "app state",  
 a query (function) over this app state is called automatically (reactively), 
 itself computing the list of items.
 
 Because the items 
 are stored in app state, there's not a lot to compute in this case. This 
-subscription acts more like an accessor.
+subscription acts more like an extractor or accessor.
 ```clj
 (defn query-fn
   [db _]         ;; db is current app state
@@ -330,15 +351,15 @@ On program startup, such a query-fn must be associated with an id,
 ```clj
 (re-frame.core/reg-sub  :query-items  query-fn)
 ```
-Which says "when you see a query (subscribe) for `:query-items`, use `query-fn` to compute it".
+Which says "if you see a query (subscribe) for `:query-items`, use `query-fn` to compute it".
 
 ### Code For Domino 5
 
 Because the query function re-computed a new value, a view (function) which subscribes
 to "items", is called automatically (reactively) to re-compute DOM.
 
-It produces 
-a hiccup-formatted data structure describing the DOM nodes required (no DOM nodes 
+It computes a data structure, in hiccup format, describing the DOM nodes 
+required (no DOM nodes 
 for the deleted item, obviously, but otherwise the same DOM as last time).
 
 ```clj
@@ -353,10 +374,11 @@ to identify what data it needs.
 
 ### Code For Domino 6
 
-The computed DOM (hiccup) is made real by Reagent/React. No code from you required. Just happens.
+The computed DOM (hiccup) is made real by Reagent/React. No code 
+from you required. Just happens.
 
-The DOM "this
-time" is the same as last time, except for the absence of DOM for the
+The DOM computed "this
+time" will be the same as last time, **except** for the absence of DOM for the
 deleted item, so the mutation will be to remove some DOM nodes.
 
 ### 3-4-5-6 Summary
@@ -367,7 +389,7 @@ The key point to understand about our 3-4-5-6 example is:
   - which triggers view functions to rerun
   - which causes new DOM 
 
-Boom, boom, boom go the dominoes. It is a reactive data flow. 
+Boom, boom, boom go the dominoes. It is a reactive data flow.
 
 ### Aaaaand we're done 
 
@@ -376,7 +398,7 @@ waiting for the next event.
 
 ## So, your job is ... 
 
-When building a re-frame app, you will:
+When building a re-frame app, you:
  - design your app's information model (data and schema layer)
  - write and register event handler functions  (control and transition layer)  (domino 2)
  - (once in a blue moon) write and register effect and coeffect handler
