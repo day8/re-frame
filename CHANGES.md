@@ -1,5 +1,9 @@
 ## Unreleased
 
+#### Breaking
+
+- - `reg-sub` enforces using `:<-` to indicate subscription inputs. Previously any keyword would have worked here. While using anything other than `:<-` was undefined behaviour previously, this could possibly break some code when upgrading. Thanks to [@Sohalt](https://github.com/Sohalt) [#336](https://github.com/Day8/re-frame/pull/336).
+
 #### Fixes
 
 - `re-frame.interceptor/update-coeffect` has been fixed. [#328](https://github.com/Day8/re-frame/pull/328)
