@@ -37,6 +37,8 @@ Please add to this list by submitting a pull request.
 
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
 
+* [Braid](https://github.com/braidchat/braid) - A new approach to group chat, designed around conversations and tags instead of rooms.
+
 ### Effect and CoEffect Handlers
 
 * [async-flow-fx](https://github.com/Day8/re-frame-async-flow-fx) - manage a boot process dominated by async
