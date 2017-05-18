@@ -1,5 +1,9 @@
 ## Unreleased
 
+
+
+## 0.9.3 (2017.05.15)
+
 #### Breaking (previously undefined behaviour)
 
 - `reg-sub` enforces using `:<-` to indicate subscription inputs. Previously any keyword would have worked here. While using anything other than `:<-` was undefined behaviour previously, this could possibly break some code when upgrading. Thanks to [@Sohalt](https://github.com/Sohalt) [#336](https://github.com/Day8/re-frame/pull/336).
@@ -10,7 +14,7 @@
 - Fix ns form in `re-frame.interceptor`. Thanks to [@ggeoffrey](https://github.com/ggeoffrey). [#338](https://github.com/Day8/re-frame/pull/338)
 - Even more spelling fixes.
 
-## 0.9.2 (2016.02.09)
+## 0.9.2 (2017.02.09)
 
 #### Improvements
 
@@ -30,7 +34,7 @@
 
 ## 0.9.0 (2016.12.15) - The Dolores Release
 
-Welcome, board members.  Dr Ford has created a new [6-part narrative](README.md), 
+Welcome, board members.  Dr Ford has created a new [6-part narrative](README.md),
 and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen Dolores?
 
 #### Headline
@@ -48,7 +52,7 @@ and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen 
 
 #### Improvements
 
-- [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging 
+- [#200](https://github.com/Day8/re-frame/pull/200) Remove trailing spaces from console logging
 - Add `re-frame.loggers/get-loggers` function to well, you know.
 - Added experimental tracing features. These are subject to change and remain undocumented at the moment. By default they are disabled, and will be completely compiled out by advanced optimisations. To enable them, set a [`:closure-defines`](https://www.martinklepsch.org/posts/parameterizing-clojurescript-builds.html) key to `{"re_frame.trace.trace_enabled_QMARK_" true}`
 - [#223](https://github.com/Day8/re-frame/issues/223) When using `make-restore-fn`, dispose of any subscriptions that were created after the restore function was created.
@@ -63,8 +67,8 @@ and Bernard [some infographics](/docs/EventHandlingInfographic.md). Anyone seen 
 
 ## 0.8.0  (2016.08.19) - The Walnuts Release
 
-Staying on the leading edge of new buzzwords is obviously critical for any framework. 
-Angular's terrifying faceplant is a sobering reminder to us all. 
+Staying on the leading edge of new buzzwords is obviously critical for any framework.
+Angular's terrifying faceplant is a sobering reminder to us all.
 With this release, re-frame's already impressive buzzword muscles
 bulge further with new walnuts like "effects", "coeffects", "interceptors"
 and "de-duplicated signal graph".  I know, right?
@@ -110,57 +114,57 @@ Joking aside, this is a substantial release which will change how you use re-fra
   - re-frame now supports the notion of Event Handlers accepting coeffects and returning effects. <br>
     There's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
     For a tutorial see: https://github.com/Day8/re-frame/tree/develop/docs  <br>
-   
-    For Effect Handler examples see: 
-   
+
+    For Effect Handler examples see:
+
       1. https://github.com/Day8/re-frame-http-fx
       2. https://github.com/Day8/re-frame-forward-events-fx
       3. https://github.com/Day8/re-frame-async-flow-fx
 
   - You can now run and debug re-frame tests on the JVM.
-  
-    Just to be clear: this does not mean you can run re-frame apps on the JVM (there's no React or 
+
+    Just to be clear: this does not mean you can run re-frame apps on the JVM (there's no React or
     Reagent available). But you can debug your event handler tests using full JVM tooling goodness.
-    
-    @samroberton and @escherize have provided the thought leadership and drive here.  They converted 
+
+    @samroberton and @escherize have provided the thought leadership and drive here.  They converted
     re-frame to `.cljc`, supplying pluggable interop for both the `js` and `jvm` platforms.
 
-    Further, they have worked with @danielcompton to create a library of testing utilities which 
+    Further, they have worked with @danielcompton to create a library of testing utilities which
     will hopefully evolve into a nice step forward on both platforms: <br>
     https://github.com/Day8/re-frame-test
-    
-    Work is ongoing in this area. 
 
-  - the undo/redo features buried in re-frame has been factored out into 
+    Work is ongoing in this area.
+
+  - the undo/redo features buried in re-frame has been factored out into
    [a standalone library](https://github.com/Day8/re-frame-undo).
-  
+
     undo and redo have been a part of re-frame from the beginning, but they have never officially  
-    been made a part of the API, and have not been documented. So it nice to see it available, and fully 
-    documented. 
-    
+    been made a part of the API, and have not been documented. So it nice to see it available, and fully
+    documented.
+
     This new library includes [various enhancements](https://github.com/Day8/re-frame-undo#harvesting-and-re-instating)
     over that which previously existed, and it works in with effectful handlers described above.
-    
-  - Middleware is dead, long live Interceptors. 
-  
-    Up until now, re-frame has allowed you to decorate event handlers with 
+
+  - Middleware is dead, long live Interceptors.
+
+    Up until now, re-frame has allowed you to decorate event handlers with
     middleware which looked after the cross cutting concerns of
-    tracing, undo/redo, validation, etc. This has proved a neat and 
+    tracing, undo/redo, validation, etc. This has proved a neat and
     successful part of the framework.  We thought we were happy.
-    
-    But recently @steveb8n gave a cljsyd talk on 
-    Pedestal's Interceptor pattern which suddenly transformed them from 
-    arcane to delightfully simple in 20 mins. Interceptors are 
+
+    But recently @steveb8n gave a cljsyd talk on
+    Pedestal's Interceptor pattern which suddenly transformed them from
+    arcane to delightfully simple in 20 mins. Interceptors are
     really "middleware via data" rather than "middleware via higher order functions".  
-    So it is another way of doing the same thing, but thanks to @steveb8n 
-    Interceptors appear a more flexible base, and simpler. 
-    
-    Interceptors also dovetail really nicely with the effects and coeffects 
-    story which has emerged in re-frame through this 0.8.0 release. 
-    
+    So it is another way of doing the same thing, but thanks to @steveb8n
+    Interceptors appear a more flexible base, and simpler.
+
+    Interceptors also dovetail really nicely with the effects and coeffects
+    story which has emerged in re-frame through this 0.8.0 release.
+
     Docs:  https://github.com/Day8/re-frame/tree/develop/docs
-    
-  - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no 
+
+  - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no
     good deed ever goes unpunished - we'll be pestering you every time from now on :-)
 
 #### Breaking
@@ -169,30 +173,30 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
   - `re-frame.core/register-handler` has been renamed `re-frame.core/reg-event-db`. There's now
     three kinds of event-handlers, `-db`, `-fx` and `-ctx`. Event handlers of the 2nd and 3rd kinds
-    should be registered via the new registration functions `re-frame.core/reg-event-fx` and 
+    should be registered via the new registration functions `re-frame.core/reg-event-fx` and
     `re-frame.core/reg-event-ctx`
 
   - `re-frame.core/register-sub` has been renamed `re-frame.core/reg-sub-raw`.  This is to indicate that
     this kind of registration is now considered the low level, close to the metal way to
     create subscriptions handlers.  This release introduced `reg-sub` which becomes the preferred way
     to register subscription handlers.
-     
-  - middlewares have been replaced by Interceptors. In day to day use, there's a good 
-    chance you won't notice the change UNLESS: 
-    
+
+  - middlewares have been replaced by Interceptors. In day to day use, there's a good
+    chance you won't notice the change UNLESS:
+
     1. You have written your own middleware.  If so, you'll have to rewrite it.
-       See how [the builtin interceptors are done](https://github.com/Day8/re-frame/blob/develop/src/re_frame/std_interceptors.cljc). 
-       
-    2. You explicitly use `comp` to compose middleware like this: 
+       See how [the builtin interceptors are done](https://github.com/Day8/re-frame/blob/develop/src/re_frame/std_interceptors.cljc).
+
+    2. You explicitly use `comp` to compose middleware like this:
        ```clj
-       (reg-event-db 
+       (reg-event-db
            :some-id
            (comp debug tim-v)    ;; <-- change to [debug trim-v]
-           (fn [db event] 
+           (fn [db event]
                ...))
        ```
-    
-  - if you have previously used the undo/redo capabilities buried in re-frame, be aware they have 
+
+  - if you have previously used the undo/redo capabilities buried in re-frame, be aware they have
     extracted into a sibling library: https://github.com/Day8/re-frame-undo.
 
   - By default, re-frame uses `js/console` functions like `error` and `warn` when logging, but you can
@@ -217,7 +221,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
 #### Improvements
 
   - Bug fix: `post-event-callbacks` were not called when `dispatch-sync` was called.
-  - added new API `re-frame.core/clear-post-event-callback` which de-registers a callback 
+  - added new API `re-frame.core/clear-post-event-callback` which de-registers a callback
     previously added by `re-frame.core/add-post-event-callback`
   - when an event-handler makes no change to `app-db`, the `debug` middleware now logs a
     single line saying so, rather than a "group".  Makes it slightly easier to grok
@@ -427,5 +431,3 @@ call it, like this `(undoable "Some explanation")`
 The `explanation` provided to undoable must be either a `string` (static
 explanation) or a function  `(db event) -> string`, allowing you to customize
 the undo message based on details of the event.
-
-
