@@ -106,14 +106,15 @@
                     (get-effect))]
     (is (= e {:db 5 :dispatch [:a]}))))
 
-
-
 (deftest test-on-changes
   (let [change-handler-i  (->  (fn [db v] (assoc db :a 10))
                                db-handler->interceptor)
 
         no-change-handler-i  (->  (fn [db v] db)
                                db-handler->interceptor)
+
+        no-db-handler-i (-> (fn [ctx v] {})
+                            fx-handler->interceptor)
 
         change-i   (on-changes + [:c] [:a] [:b])
         orig-db    {:a 0 :b 2}]
@@ -127,7 +128,13 @@
             (-> (context [] [] orig-db)
                 ((:before change-handler-i))       ;; cause change to :a
                 ((:after change-i))
-                (get-effect :db))))))
+                (get-effect :db))))
+
+    (is (=  ::not-found
+            (-> (context [] [] orig-db)
+                ((:before no-db-handler-i))       ;; no db effect in context
+                ((:after change-i))
+                (get-effect :db ::not-found))))))
 
 (deftest test-after
   (testing "when no db effect is returned"
