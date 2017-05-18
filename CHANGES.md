@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Fix `re-frame.std-interceptors/on-changes` to work even if effect handler does not set `:db`. [#341](https://github.com/Day8/re-frame/pull/341)
+
 #### Breaking (previously undefined behaviour)
 
 - `reg-sub` enforces using `:<-` to indicate subscription inputs. Previously any keyword would have worked here. While using anything other than `:<-` was undefined behaviour previously, this could possibly break some code when upgrading. Thanks to [@Sohalt](https://github.com/Sohalt) [#336](https://github.com/Day8/re-frame/pull/336).
