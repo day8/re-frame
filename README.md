@@ -370,7 +370,7 @@ for the now-deleted item, obviously, but otherwise the same DOM as last time.
 (defn items-view
   []
   (let [items  (subscribe [:query-items])]  ;; source items from app state
-    [:div (map item-render @items]))   ;; assume item-render already written
+    [:div (map item-render @items)]))   ;; assume item-render already written
 ```
 
 Notice how `items` is "sourced" from "app state" via `subscribe`. 
