@@ -289,9 +289,9 @@ of how the world should be changed by the event.
 Here's a sketch (we are at 30,000 feet):
 ```clj
 (defn h 
- [{:keys [db]} event]                    ;; args:  db from coeffect, event
- (let [item-id (second event)]           ;; extract id from event vector
-   {:db  (dissoc-in db [:items item-id])})) ;; effect is change db
+ [{:keys [db]}  ;; args:  db from coeffect, event,
+   [_ item-id]] ;; extract id from event vector       
+   {:db  (dissoc-in db [:items item-id])}) ;; effect is change db
 ```
 
 re-frame has ways (beyond us here) to inject necessary aspects
