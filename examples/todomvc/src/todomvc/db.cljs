@@ -13,7 +13,7 @@
 ;; can change the value in app-db so, after each event handler
 ;; has run, we re-check app-db for correctness (compliance with the Schema).
 ;;
-;; How is this done? Look in events.cljs and you'll notice that all handers
+;; How is this done? Look in events.cljs and you'll notice that all handlers
 ;; have an "after" interceptor which does the spec re-check.
 ;;
 ;; None of this is strictly necessary. It could be omitted. But we find it
