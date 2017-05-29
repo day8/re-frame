@@ -38,6 +38,7 @@
 
 - [Debugging Event Handlers](Debugging-Event-Handlers.md)
 - [Debugging](Debugging.md)
+- [Testing](Testing.md)
 
 
 ### Miscellaneous
