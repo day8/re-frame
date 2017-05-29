@@ -1,6 +1,10 @@
 ## Unreleased
 
+## Unreleased
 
+#### Improvements
+
+- re-frame now supports self-hosted ClojureScript at an alpha/unofficial/experimental level. It may be removed in the future if it causes problems elsewhere. [#325](https://github.com/Day8/re-frame/pull/325)
 
 ## 0.9.3 (2017.05.15)
 
