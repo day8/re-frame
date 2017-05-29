@@ -63,7 +63,7 @@ The functions which later manipulate data, start as data.
 Clojure programmers place particular 
 emphasis on the primacy of data. When they aren't re-watching Rich Hickey videos, 
 and wishing their hair was darker and more curly, 
-they meditate on aphorisms like "Data is the ultimate in late binding".
+they meditate on aphorisms like **Data is the ultimate in late binding**.
 
 I cannot stress enough what a big deal this is. It can seem 
 like a syntax curiosity at first but, when the penny drops for 
@@ -77,9 +77,9 @@ The functions which transform data are registered and looked up via
 data. Interceptors (data) are preferred over middleware (higher 
 order functions). Etc.
 
-Data - that's the way we roll.
+**Data - that's the way we roll.**
 
-If you have a background in OO, which seeks to hide data, this  
+If you have a background in OO, which seeks to hide data, this
 will be utterly shocking and clearly insane.  And, yet, I can assure you it isn't. 
 It will do your brain no end of good to explore the concept, I promise. 
 
