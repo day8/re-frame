@@ -32,7 +32,7 @@ Perhaps:
 3.  You're taking a [Functional Design and Programming course](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html) at San Diego State University
     and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right?
 4.  You know Redux, Elm, Cycle.js or Pux and you're
-    interested in a ClojureScript implementation, **with a data oriented design**.
+    interested in a ClojureScript implementation.
     In this space, re-frame is very old, hopefully in a Gandalf kind of way.
     First designed in Dec 2014, it even slightly pre-dates the official Elm Architecture,
     although thankfully we were influenced by early-Elm concepts like `foldp` and `lift`, as well as 
@@ -49,6 +49,39 @@ Perhaps:
 [OM]:https://github.com/swannodette/om
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
+
+
+## It Leverages Data
+
+You might already know that ClojureScript is a modern lisp, and that
+lisps are **homoiconic**.  If not, you do now.
+
+The homoiconic bit is significant. It means you program in a lisp by creating and
+assembling lisp data structures. Dwell on that for a moment. You are **programming in data**. 
+The functions which later manipulate data, start as data.
+
+Clojure programmers place particular 
+emphasis on the primacy of data. When they aren't re-watching Rich Hickey videos, 
+and wishing their hair was darker and more curly, 
+they meditate on aphorisms like "Data is the ultimate in late binding".
+
+I cannot stress enough what a big deal this is. It can seem 
+like a syntax curiosity at first but, when the penny drops for 
+you on this, it tends to be a profound moment. And once you 
+understand the importance of this concept at the language level, 
+you naturally want to leverage similar power at the library level.
+
+So, it will come as no surprise, then, to know that re-frame has a 
+data oriented design. Events are data. Effects are data. DOM is data.
+The functions which transform data are registered and looked up via 
+data. Interceptors (data) are preferred over middleware (higher 
+order functions). Etc.
+
+Data - that's the way we roll.
+
+If you have a background in OO, which seeks to hide data, this  
+will be utterly shocking and clearly insane.  And, yet, I can assure you it isn't. 
+It will do your brain no end of good to explore the concept, I promise. 
 
 ## re-frame
 
@@ -411,33 +444,6 @@ When building a re-frame app, you:
  - write and register query functions which implement nodes in a signal graph (query layer) (domino 4)
  - write Reagent view functions  (view layer)  (domino 5)
 
-## It Leverages Data
-
-You might already know that ClojureScript is a modern lisp, and that
-lisps are **homoiconic**.  If not, you do now.
-
-The homoiconic bit is significant. It means you program in a lisp by creating and
-assembling lisp data structures. Think about that. You are **programming in data**. 
-The functions which later manipulate data, start as data.
-
-Clojure programmers place particular 
-emphasis on the primacy of data. When they aren't re-watching Rich Hickey videos, 
-and wishing their hair was darker and more curly, 
-they meditate on aphorisms like "Data is the ultimate in late binding".
-
-I cannot stress enough what a big deal this is. It can seem 
-like a syntax curiosity at first but, when the penny drops for 
-you on this, it tends to be a profound moment. And once you 
-understand the importance of this concept at the language level, 
-you naturally want to leverage similar power at the library level.
-
-So, it will come as no surprise, then, to know that re-frame has a 
-data oriented design. Events are data. Effects are data. DOM is data.
-The functions which transform data are registered and looked up via 
-data. Interceptors (data) are preferred over middleware (higher 
-order functions). Etc.
-
-Data - that's the way we roll.
 
 ## It is mature and proven in the large
 
