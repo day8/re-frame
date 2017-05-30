@@ -176,9 +176,9 @@ marvelous because they move the app forward. Without them,
 an app stays stuck in one state forever, never achieving anything.
 
 So re-frame embraces the protagonist nature of `effects` - the entire, unruly zoo of them - but
-it does so in a largely hidden way, and in a manner which is debuggable, auditable, mockable and pluggable.
+it does so in a controlled and largely hidden way, and in a manner which is debuggable, auditable, mockable and pluggable.
 
-### We're At A Pivot Point
+### We're Now At A Pivot Point
 
 The world just changed and, very often, one particular part of it: the **application state**.
 
@@ -188,7 +188,7 @@ would an in-memory, central database for the app (details later).
 When domino 3 changes this `app state`, it triggers the next part of the cascade 
 involving dominoes 4-5-6.
 
-### There's a Formula  
+### There's a Formula For It 
 
 The 4-5-6 domino cascade implements the formula made famous by Facebook's ground-breaking React library:  
   `v = f(s)`
@@ -198,8 +198,10 @@ A view, `v`, is a function, `f`, of the app state, `s`.
 Said another way, there are functions `f` that compute which DOM nodes, `v`,
 should be displayed to the user when the application is in a given app state, `s`.
 
-Or, differently: **over time**, as `s` changes, `f`
+Or, to capture the dynamics we'd say: **over time**, as `s` changes, `f`
 will be re-run each time to compute new `v`, forever keeping `v` up to date with the current `s`.
+
+Or, with yet another emphasis: **over time** what is presented to the user changes in response to application state changes. 
 
 In our case, domino 3 changes `s`, the application state,
 and, in response, dominoes 4-5-6 are concerned with re-running `f` to compute the new `v` 
@@ -262,7 +264,7 @@ which leads, in turn, to an ease in reasoning and debugging.
 The two sub-cascades 1-2-3 and 4-5-6 have a similar structure.
 
 In each, it is the second to last domino which 
-computes "descriptions" of mutations required, and it is 
+computes "data descriptions" of mutations required, and it is 
 the last domino which does the dirty work and realises these descriptions.
 
 In both cases, you don't need to worry yourself about this dirty work. re-frame looks 
@@ -316,7 +318,7 @@ registered for handling `:delete-item` `events` like this:
   1. a `coeffects` map which contains the current state of the world (including app state)
   2. the `event`
   
-It returns a map of `effects` - a description 
+`h` returns a map of `effects` - a description 
 of how the world should be changed by the event. 
 
 Here's a sketch (we are at 30,000 feet):
@@ -338,7 +340,7 @@ available by default in the `:db` key.
 
 An `effect handler` (function) actions the `effects` returned by `h`.
 
-Here's what was returned:
+Here's what `h` returned:
 ```clj
 {:db  (dissoc-in db [:items item-id])}
 ```
@@ -351,7 +353,7 @@ A key of `:db` means to update the app state with the key's value.
 This update of "app state" is a mutative step, facilitated by re-frame
 which has a built-in `effects handler` for the `:db` effect.
 
-Why the name `:db`?  re-frame sees "app state" as something of an in-memory 
+Why the name `:db`?  Well, re-frame sees "app state" as something of an in-memory 
 database. More on that soon.
 
 Just to be clear, if `h` had returned: 
