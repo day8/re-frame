@@ -39,7 +39,7 @@ Perhaps:
     terrific Clojure projects like [Pedestal App], [Om] and [Hoplon]. Since then,
     re-frame has pioneered ideas like event handler middleware,
     coeffect accretion, and de-duplicated signal graphs.
-5.  Which is a lovely segue into the most important point: **re-frame is impressively buzzword compliant**. It has reactivity,
+5.  Which leads us to the most important point: **re-frame is impressively buzzword compliant**. It has reactivity,
     unidirectional data flow, pristinely pure functions,
     interceptors, coeffects, conveyor belts, statechart-friendliness (FSM)
     and claims an immaculate hammock conception. It also has a charming
@@ -56,16 +56,16 @@ Perhaps:
 You might already know that ClojureScript is a modern lisp, and that
 lisps are **homoiconic**.  If not, you do now.
 
-The homoiconic bit is significant. It means you program in a lisp by creating and
+That homoiconic bit is significant. It means you program in a lisp by creating and
 assembling lisp data structures. Dwell on that for a moment. You are **programming in data**. 
-The functions which later manipulate data, start as data.
+The functions which later transform data, themselves start as data.
 
 Clojure programmers place particular 
 emphasis on the primacy of data. When they aren't re-watching Rich Hickey videos, 
 and wishing their hair was darker and more curly, 
 they meditate on aphorisms like **Data is the ultimate in late binding**.
 
-I cannot stress enough what a big deal this is. It can seem 
+I cannot stress enough what a big deal this is. It may seem 
 like a syntax curiosity at first but, when the penny drops for 
 you on this, it tends to be a profound moment. And once you 
 understand the importance of this concept at the language level, 
@@ -79,9 +79,6 @@ order functions). Etc.
 
 **Data - that's the way we roll.**
 
-If you have a background in OO, which seeks to hide data, this
-will be utterly shocking and clearly insane.  And, yet, I can assure you it isn't. 
-It will do your brain no end of good to explore the concept, I promise. 
 
 ## re-frame
 
@@ -91,7 +88,7 @@ McCoy might report "It's MVC, Jim, but not as we know it".  And you would respon
 "McCoy, you trouble maker, why even mention an OO pattern? 
 re-frame is a **functional framework**."
 
-Being a functional framework, it is about data, and the (pure) functions 
+Being a functional framework, it is about data, and the functions 
 which transform that data.
 
 ### It is a loop
@@ -180,12 +177,12 @@ it does so in a controlled and largely hidden way, and in a manner which is debu
 
 ### We're Now At A Pivot Point
 
-The world just changed and, very often, one particular part of it: the **application state**.
+Domino 3 just changed the world and, very often, one particular part of it: the **application state**.
 
 re-frame's `app state` is held in one place - think of it like you 
 would an in-memory, central database for the app (details later).
 
-When domino 3 changes this `app state`, it triggers the next part of the cascade 
+Any changes to `app state` trigger the next part of the cascade 
 involving dominoes 4-5-6.
 
 ### There's a Formula For It 
@@ -358,12 +355,12 @@ database. More on that soon.
 
 Just to be clear, if `h` had returned: 
 ```clj
-{:wear  "velour flares"
- :walk  [:like :an :Egyptian]}
+{:wear  {:pants "velour flares"  :belt false}
+ :tweet "Okay, yes, I am Satoshi. #coverblown"}
 ```
-Then the two effects handlers registered for `:wear` and `:walk` would 
+Then the two effects handlers registered for `:wear` and `:tweet` would 
 be called in this domino to action those two effects. And, no, re-frame 
-does not supply standard effect handlers for them, so you would have had 
+does not supply standard effect handlers for either, so you would have had 
 to have written them yourself (see how in a later tutorial).
 
 ### Code For Domino 4
