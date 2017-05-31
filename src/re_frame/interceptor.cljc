@@ -2,8 +2,7 @@
   (:require
    [re-frame.loggers :refer [console]]
    [re-frame.interop :refer [ratom? empty-queue debug-enabled?]]
-   [clojure.set :as set]
-   ))
+   [clojure.set :as set]))
 
 
 (def mandatory-interceptor-keys #{:id :after :before})
