@@ -6,37 +6,24 @@ Please add to this list by submitting a pull request.
 ### Templates
 
 * [re-frame-template](https://github.com/Day8/re-frame-template) - Generates the client side SPA
-
 * [Luminus](http://www.luminusweb.net) - Generates SPA plus server side.
-
 * [re-natal](https://github.com/drapanjanas/re-natal) - React Native apps.
-
-* [Slush-reframe](https://github.com/kristianmandrup/slush-reframe) - A scaffolding generator for re-frame run using NodeJS. Should work wih re-frame `0.7.0` if used on a project started from the `0.7.0` version of re-frame-template.
-
+* [Slush-reframe](https://github.com/kristianmandrup/slush-reframe) - A scaffolding generator for re-frame run using NodeJS. Based on re-frame `0.7.0`
 * [Celibidache](https://github.com/velveteer/celibidache/) - An opinionated starter for re-frame applications using Boot. Based on re-frame `0.7.0`
 
 
 ### Examples and Applications Using re-frame
 
 * [How to create decentralised apps with re-frame and Ethereum](https://medium.com/@matus.lestan/how-to-create-decentralised-apps-with-clojurescript-re-frame-and-ethereum-81de24d72ff5#.b9xh9xnis) - Tutorial with links to code and live example.
-
 * [Elfeed-cljsrn](https://github.com/areina/elfeed-cljsrn) - A mobile client for [Elfeed](https://github.com/skeeto/elfeed) rss reader, built with React Native.
-
 * [Memory Hole](https://github.com/yogthos/memory-hole) - A small issue tracking app written with Luminus and re-frame.
-
 * [Crossed](https://github.com/velveteer/crossed/) - A multiplayer crossword puzzle generator. Based on re-frame `0.7.0`
-
 * [imperimetric](https://github.com/Dexterminator/imperimetric) - Webapp for converting texts with some system of measurement to another, such as imperial to metric.
-
 * [Brave Clojure Open Source](https://github.com/braveclojure/open-source) A site using re-frame, liberator, boot and more to display active github projects that powers [http://open-source.braveclojure.com](http://open-source.braveclojure.com). Based on re-frame `0.6.0`
-
-* [flux-challenge with re-frame](https://github.com/staltz/flux-challenge/tree/master/submissions/jelz) -  flux-challenge is "a frontend challenge to test UI architectures and solutions". This is a ClojureScript + re-frame version. Based on re-frame `0.5.0`
-
+* [flux-challenge with re-frame](https://github.com/staltz/flux-challenge/tree/master/submissions/jelz) -  flux-challenge is "a frontend challenge to test UI architectures and solutions". re-frame `0.5.0`
 * [fractalify](https://github.com/madvas/fractalify/)  -
   An entertainment and educational webapp for creating & sharing fractal images that powers [fractalify.com](http://fractalify.com). Based on re-frame `0.4.1`
-
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
-
 * [Braid](https://github.com/braidchat/braid) - A new approach to group chat, designed around conversations and tags instead of rooms.
 
 ### Effect and CoEffect Handlers
@@ -57,13 +44,13 @@ Please add to this list by submitting a pull request.
 ### Tools, Techniques & Libraries
 
 * [re-frame-undo](https://github.com/Day8/re-frame-undo) - An undo library for re-frame
-* Animation using `react-flip-move` - http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html
+* [re-frame-test](https://github.com/Day8/re-frame-test) - Advanced testing utilities
+* [Animation](http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html) using `react-flip-move`
 * [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
 * [re-thread](https://github.com/yetanalytics/re-thread) - A library for running re-frame applications in Web Workers.
 * [re-frame-datatable](https://github.com/kishanov/re-frame-datatable) - DataTable UI component built for use with re-frame.
 * [Stately: State Machines](https://github.com/nodename/stately) also https://www.youtube.com/watch?v=klqorRUPluw
-* [re-frame-test](https://github.com/Day8/re-frame-test) - Integration Testing (not documented)
-* [re-learn](https://github.com/oliyh/re-learn) - Data driven tutorials for educating users of your reagent / re-frame app, built with re-frame
+* [re-learn](https://github.com/oliyh/re-learn) - Data driven tutorials for educating users of your reagent / re-frame app
 
 ### Videos
 

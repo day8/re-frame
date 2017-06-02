@@ -18,6 +18,16 @@ y'know. Pretty good.
 [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/develop)
 [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/master)
 
+## re-frame
+
+re-frame is a pattern for writing [SPAs] in ClojureScript, using [Reagent].
+
+McCoy might report "It's MVC, Jim, but not as we know it".  And you would respond 
+"McCoy, you trouble maker, why even mention an OO pattern? 
+re-frame is a **functional framework**."
+
+Being a functional framework, it is about data, and the functions 
+which transform that data.
 
 ## Why Should You Care?
 
@@ -80,18 +90,7 @@ order functions). Etc.
 **Data - that's the way we roll.**
 
 
-## re-frame
-
-re-frame is a pattern for writing [SPAs] in ClojureScript, using [Reagent].
-
-McCoy might report "It's MVC, Jim, but not as we know it".  And you would respond 
-"McCoy, you trouble maker, why even mention an OO pattern? 
-re-frame is a **functional framework**."
-
-Being a functional framework, it is about data, and the functions 
-which transform that data.
-
-### It is a loop
+## It is a loop
 
 Architecturally, re-frame implements "a perpetual loop".
 
