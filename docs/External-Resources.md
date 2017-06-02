@@ -36,6 +36,7 @@ Please add to this list by submitting a pull request.
 * [re-frame-youtube-fx](https://github.com/micmarsh/re-frame-youtube-fx) - YouTube iframe API wrapper
 * [re-frame-web3-fx](https://github.com/madvas/re-frame-web3-fx) - Ethereum Web3 API
 * [re-frame-google-analytics-fx](https://github.com/madvas/re-frame-google-analytics-fx) - Google Analytics API
+* [re-frame-storage](https://github.com/akiroz/re-frame-storage) - Local Storage based persistence
 
 ### Routing
 
