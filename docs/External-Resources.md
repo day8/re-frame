@@ -18,9 +18,9 @@ Please add to this list by submitting a pull request.
 * [Elfeed-cljsrn](https://github.com/areina/elfeed-cljsrn) - A mobile client for [Elfeed](https://github.com/skeeto/elfeed) rss reader, built with React Native.
 * [Memory Hole](https://github.com/yogthos/memory-hole) - A small issue tracking app written with Luminus and re-frame.
 * [Crossed](https://github.com/velveteer/crossed/) - A multiplayer crossword puzzle generator. Based on re-frame `0.7.0`
-* [imperimetric](https://github.com/Dexterminator/imperimetric) - Webapp for converting texts with some system of measurement to another, such as imperial to metric.
+* [mperimetric](https://github.com/Dexterminator/imperimetric) - Webapp for converting texts with some system of measurement to another, such as imperial to metric.
 * [Brave Clojure Open Source](https://github.com/braveclojure/open-source) A site using re-frame, liberator, boot and more to display active github projects that powers [http://open-source.braveclojure.com](http://open-source.braveclojure.com). Based on re-frame `0.6.0`
-* [flux-challenge with re-frame](https://github.com/staltz/flux-challenge/tree/master/submissions/jelz) -  flux-challenge is "a frontend challenge to test UI architectures and solutions". re-frame `0.5.0`
+* [flux-challenge with re-frame](https://github.com/staltz/flux-challenge/tree/master/submissions/jelz) - "a frontend challenge to test UI architectures and solutions". re-frame `0.5.0`
 * [fractalify](https://github.com/madvas/fractalify/)  -
   An entertainment and educational webapp for creating & sharing fractal images that powers [fractalify.com](http://fractalify.com). Based on re-frame `0.4.1`
 * [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
@@ -39,7 +39,7 @@ Please add to this list by submitting a pull request.
 
 ### Routing
 
-* (Bidirectional using Silk and Pushy)[https://pupeno.com/2015/08/18/no-hashes-bidirectional-routing-in-re-frame-with-silk-and-pushy/]
+* [Bidirectional using Silk and Pushy](https://pupeno.com/2015/08/18/no-hashes-bidirectional-routing-in-re-frame-with-silk-and-pushy/)
 
 ### Tools, Techniques & Libraries
 
@@ -55,7 +55,6 @@ Please add to this list by submitting a pull request.
 ### Videos
 
 * [re-frame your ClojureScript applications](https://youtu.be/cDzjlx6otCU) - re-frame presentation given at Clojure/Conj 2016
-
 * [A Video Tour of the Source Code of Ninja Tools](https://carouselapps.com/2015/12/02/tour-of-the-source-code-of-ninja-tools/)
 
 ### Server Side Rendering
