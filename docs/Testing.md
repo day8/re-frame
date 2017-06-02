@@ -1,35 +1,147 @@
 ## Testing
 
-This is an introductory, simple exploration of testing re-frame apps. If you want some more help see [re-frame-test](https://github.com/Day8/re-frame-test)
+This is an introduction to testing re-frame apps.
+ 
+## What To Test
 
-With a re-frame app, there's principally three things to test:
- 1.  Event handlers
- 2.  Subscription handlers
- 3.  View functions
+For any re-frame app, there's three things to test:
 
-## Event Handlers - Part 1
+  - **Event Handlers** - most of your focus goes here because its where 
+    most of the logic lives
+    
+  - **Subscription Handlers** - often not a lot to test
+  
+  - **View functions** - I don't tend to write tests for views. There, I said it.
+    Hey, its mean to look at someone with that level of disapproval. I have my reasons.  
+    In my experience with the re-frame architecture, the View Functions
+    tend to be an unlikely source of bugs. And every line of code you write is
+    like a ball & chain you must forevermore drag about, so I hate maintaining 
+    tests which don't deliver good bang for buck.
+    
+Yes, in theory there are also `Effect Handlers` (Domino 3) to test, 
+but you'll hardly ever write one, and 
+anyway, by nature, they are messy, mutative by design and all different, 
+so I've got no good general insight to offer, 
+other than make them small and simple, and do your best testing them.
 
-Event Handlers are pure functions and consequently easy to test.      
+## Test Terminology
 
-First, create an event handler like this:
+Let's establish some terminology. Every unittest has 3 parts: 
+  1. **setup** initial conditions
+  2. **execute** the thing-under-test
+  3. **verify** that the thing-under-test did the right thing
+
+Below, I'll be referring to those 3 parts.
+
+## Event Handlers
+
+Event Handlers are pure functions and consequently should be easy to test.
+
+First, create the event handler via `defn` like this:
 ```clj
-(defn my-db-handler
-  [db v]
+(defn select-triangle
+  [db [_ triangle-id]
   ... return a modified version of db)
 ```
 
-Then, register it in a separate step:
+Then, register this handler in a separate step:
 ```clj
 (re-frame.core/reg-event-db  
-  :some-id   
+  :select-triangle   
   [some-interceptors]
-  my-db-handler)
+  select-triangle)    ;; <--- defn above. don't use an annonomous fn
 ```
 
-With this setup, `my-db-handler` is available for direct testing.
+This arrangement is good because it means the event handler function 
+`select-triangle` is readily available to be unittested.
 
-Your unittests will pass in certain values for `db` and `v`, 
-and then ensure it returns the right (modified version of) `db`. 
+## Event Handlers - Setup - Part 1
+
+To test `select-triangle`, a unittest must pass in values for the two arguments 
+`db` and `v`. And, so, our **setup** would have to construct the necessary
+`db` and `event` values.
+
+But how to create a `db` value?  
+
+`db` is a map of a certain structure, so one way would be to `assoc` values 
+into a map at certain paths to simulate a production `db` value, or just use 
+a map literal, like this:
+
+```cljs
+;; a test
+(let [
+      ;; setup 
+      db      {:some 42  :thing "hello"}   ; a literal
+      event   [:select-triange :other :stuff]
+      
+      ;; execute
+      db'     (select-triange db event)] 
+   ;; validate that db' is correct)
+```
+
+While this works in theory, in practice, 
+unless we are very careful, constructing the `db` 
+value in the **setup** phase could:
+  * be manual and time consuming 
+  * tie tests to the internal structure of `app-db`
+
+Every test would end up with knowledge about the internal structure
+of `app-db` and any change in that structure (which is inevitable over time) 
+would result in a lot busy work re-coding the **setup** code in every test.
+
+So, we'll need a better way of handling the **setup** ...
+
+## Event Handlers - Setup - Part 2
+
+In a re-frame app, the `db` value (stored in `app-db`) is created by the cumulative 
+actions of successive event handlers.
+
+So, in **setup** we could "build up" a `db` value by calling multiple event handlers to
+cumulatively create the required state.  Then our test does not have to know much about
+app-db's structure. 
+```clj
+(let [
+      ;; setup - cummulatively build up db by threading it through event handlers
+      db (-> {}    ;; empty db 
+             (initialise-db [:initialise-db])
+             (clear-panel   [:clear-panel])
+             (draw-triangle [:draw-triangle 1 2 3]))
+      event  [:select-triange :other :stuff]
+      
+      ;; execute
+      db'    (select-triange db event)]
+   ;; validate that db' is correct)
+```
+
+This approach works so long as all the event handlers are
+of the `-db` kind, but it gets messy when some event handlers are of the `-fx` kind, because
+`db` can't be neatly threaded.  (The `-fx` handlers take a coeffect argument and 
+return effects). 
+
+## Event Handlers - Setup - Part 3
+
+So now we now to the final variation of **setup**, and probably the best.
+
+Instead of calling the 
+
+XXXX use duispatch 
+
+XXX this won't work because dispatch happens shortly
+XXX so tehn use dispatch-sync
+
+XXX still problem is 
+
+XXX how to look at the results ?  Reach into app-db ?
+
+XXX 
+
+For your `-fx` event handlers, you'll use the same strategy as that 
+outlined above for `-db` handlers. The arguments change to be `coeffects` and `v`, 
+and the return value is a map of `effects`, but the overall strategy
+is the same.
+
+And, if you want to get more advanced, see the utilities in
+[re-frame-test](https://github.com/Day8/re-frame-test).
 
 ## Subscription Handlers 
 
@@ -74,7 +186,7 @@ We could split the computation function from its registration, like this:
   visible-todos)     ;; <--- computation function used here
 ```
 
-That makes `visible-todos` available for direct unit testing.  
+That makes `visible-todos` available for direct unit testing.
 
 ## View Functions - Part 1
 
@@ -83,10 +195,13 @@ Components/views are slightly more tricky. There's a few options.
 First, I have to admit an ugly secret. I don't tend to write tests for my views. 
 Hey, don't give me that disproving frown!  I have my reasons. 
 
-Remember that every line of code you write is a liability.  So tests have to earn 
-their keep - they have to deliver a good cost / benefit ratio.  And, in my experience 
-with the re-frame architecture, the Reagent view components tend to be an unlikely 
-source of bugs. There's just not much logic in them for me to get wrong.
+**My Reasons:** every line of code you write is a liability. So tests have 
+to earn their keep by delivering a good cost / benefit ratio. 
+And, in my experience with the re-frame architecture, the View Functions 
+tend to be an unlikely source of bugs. There's just not much logic in 
+them for me to get wrong because the re-frame philosophy is very much to 
+keep view functions as dumb as possible.
+
 
 Okay, fine, don't believe me, then!!
 
@@ -171,10 +286,11 @@ The trick here is to create an outer and inner component.  The outer sources the
 As a result, the inner component, which does the testable work, is pure and 
 easily tested. The outer is fairly trivial.
 
-To get a more concrete idea, I'll direct you to another page on this Wiki 
+To get a more concrete idea, I'll direct you to another page in the docs 
 which has nothing to do with testing, but it does use this `simple-outer-subscribe-with-complicated-inner-render` 
-pattern for a different purpose: [[Using-Stateful-JS-Components]]
-
+pattern for a different purpose: 
+[Using Stateful JS Components](Using-Stateful-JS-Components.md)
+ 
 Note this technique could be made simple and almost invisible via the 
 use of macros. (Contribute one if you have it).
 
