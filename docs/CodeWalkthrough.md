@@ -30,7 +30,7 @@ Then:
   1. `git clone https://github.com/Day8/re-frame.git`
   2. `cd re-frame/examples/simple`
   3. `lein do clean, figwheel`
-  4. wait a minute and then open `http://localhost:3449/example.html`
+  4. wait a minute and then open <http://localhost:3449/example.html>
   
 So, what's just happened?  The ClojureScript code under `/src` has been compiled into `javascript` and
 put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML you just opened)
