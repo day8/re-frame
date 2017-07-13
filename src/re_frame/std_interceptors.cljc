@@ -211,7 +211,7 @@
   eddting operation. Nice and efficient, but fiddly. A bug generator
   approach.
 
-  So, instead, we create an `f` which recalcualtes warnings from scratch
+  So, instead, we create an `f` which recalculates warnings from scratch
   every time there is ANY change. It will inspect all the todos, and
   reset ALL FLAGS every time (overwriting what was there previously)
   and fully recalculate the list of duplicates (displayed at the bottom?).
