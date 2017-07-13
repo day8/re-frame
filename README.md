@@ -338,7 +338,7 @@ An `effect handler` (function) actions the `effects` returned by `h`.
 
 Here's what `h` returned:
 ```clj
-{:db  (dissoc-in db [:items item-id])}
+{:db  (dissoc-in db [:items 2486])}
 ```
 Each key of the map identifies one kind 
 of `effect`, and the value for that key supplies further details. 
