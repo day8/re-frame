@@ -104,13 +104,11 @@ Sincerely, The Self-appointed President of the Cursor Skeptic's Society.
 
 `Events` are central to re-frame's architecture. Nothing happens without a dispatched event.
 
-Every app will have a different set of `Events`, indeed, part of your job will be to
-design exactly the right set of them. For your app, Events will be the "language of the system". 
-They capture intent - most often user intent. They provide the eloquence.
+Every app will have a different `events`, indeed, part of your job will be to
+design exactly the right set of them. For your app,`events` will be the "language of the system". 
+They capture intent (generally the user's intent). They provide the eloquence.
 
 And they are data.
-
-And they have to be "executed". 
 
 Here's a collection of events from a drawing app:
 ```cljs
@@ -124,17 +122,18 @@ Here's a collection of events from a drawing app:
   ])
 ```
 
-I'd like you to look upon that collection as you would the following assembler code:
+I'd like you to look upon that collection as you would the following assembler:
 ```asm
 mov eax, ebx
 sub eax, 216
 mov BYTE PTR [ebx], 2
 ```
 
-Assembler instructions are data, right?  They have to be "executed" by a machine. 
+Assembler instructions are data, right?  They have to be "executed" by a machine. I'd 
+like you to look back at the collection of events above the same way.
 
 > Events are the assembly language of your app.  They are instructions. These instructions 
- are data. One after another gets executed by your functioning app.  
+ are data. One after another gets executed by your functioning app.
  
 > Collectively, the events you design form a Domain Specific Language (DSL). The language of your system.
 
