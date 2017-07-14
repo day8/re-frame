@@ -1,9 +1,14 @@
 ## Unreleased
 
+#### New
+
+  - improved [testing docs](https://github.com/Day8/re-frame/blob/master/docs/Testing.md)
+  - added [a new mental model](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#dsls-and-vms)
+  
 #### Fixes
 
- - #357
- - #340
+ - [#357](https://github.com/Day8/re-frame/pull/357)
+ - [#340](https://github.com/Day8/re-frame/pull/340)
  
 ## 0.9.4 (2017.06.01)
 

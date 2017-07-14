@@ -104,7 +104,7 @@ Sincerely, The Self-appointed President of the Cursor Skeptic's Society.
 
 `Events` are central to re-frame's architecture. Nothing happens without a dispatched event.
 
-Every app will have a different `events`, indeed, part of your job will be to
+Every app will have a different `events`. Indeed, part of your job will be to
 design exactly the right set of them. For your app,`events` will be the "language of the system". 
 They capture intent (generally the user's intent). They provide the eloquence.
 
@@ -132,15 +132,13 @@ mov BYTE PTR [ebx], 2
 Assembler instructions are data, right?  They have to be "executed" by a machine. I'd 
 like you to look back at the collection of events above the same way.
 
-> Events are the assembly language of your app.  They are instructions. These instructions 
- are data. One after another gets executed by your functioning app.
- 
-> Collectively, the events you design form a Domain Specific Language (DSL). The language of your system.
+Mental Model:
+  - Events are the assembly language of your app.  They are instructions. 
+  - These instructions are data. One after another gets executed by your functioning app.
+  - Collectively, the events you design form a Domain Specific Language (DSL). The language of your system.
+  - And, collectively, the Event Handlers you register create the Virtual Machine (VM) on which this DSL executes. 
 
-> And, collectively, the Event 
-Handlers you register create the Virtual Machine on which this DSL executes. 
-
-> Data is executed by the VM you create. All very Clojure.
+> So, data is executed by the re-frame VM you create. Which is all data oriented and Clojurian.
 
 I find James Reeves' talks to be excellent (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
 
