@@ -100,6 +100,51 @@ will encourage control logic into all the
 wrong places and you'll end up with a tire-fire of an Architecture. <br>
 Sincerely, The Self-appointed President of the Cursor Skeptic's Society.
 
+## DSLs and VMs 
+
+`Events` are central to re-frame's architecture. Nothing happens without a dispatched event.
+
+Every app will have a different set of `Events`, indeed, part of your job will be to
+design exactly the right set of them. For your app, Events will be the "language of the system". 
+They capture intent - most often user intent. They provide the eloquence.
+
+And they are data.
+
+And they have to be "executed". 
+
+Here's a collection of events from a drawing app:
+```cljs
+(def events
+  [
+     [:clear]
+     [:new :triangle 1 2 3]
+     [:select-object 23]
+     [:delete-selected]
+     ....
+  ])
+```
+
+I'd like you to look upon that collection as you would the following assembler code:
+```asm
+mov eax, ebx
+sub eax, 216
+mov BYTE PTR [ebx], 2
+```
+
+Assembler instructions are data, right?  They have to be "executed" by a machine. 
+
+> Events are the assembly language of your app.  They are instructions. These instructions 
+ are data. One after another gets executed by your functioning app.  
+ 
+> Collectively, the events you design form a Domain Specific Language (DSL). The language of your system.
+
+> And, collectively, the Event 
+Handlers you register create the Virtual Machine on which this DSL executes. 
+
+> Data (events) are executed. All very Clojure.
+
+I find James Reeves' talks to be a delight (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
+
 ## It does Event Sourcing
 
 
