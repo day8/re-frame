@@ -1,7 +1,10 @@
 ## Unreleased
 
-## Unreleased
+#### Fixes
 
+ - #357
+ - #340
+ 
 ## 0.9.4 (2017.06.01)
 
 #### Improvements
