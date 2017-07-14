@@ -140,7 +140,7 @@ like you to look back at the collection of events above the same way.
 > And, collectively, the Event 
 Handlers you register create the Virtual Machine on which this DSL executes. 
 
-> Data (events) are executed by the VM you create. All very Clojure.
+> Data is executed by the VM you create. All very Clojure.
 
 I find James Reeves' talks to be excellent (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
 
