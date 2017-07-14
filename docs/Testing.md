@@ -20,7 +20,7 @@ For any re-frame app, there's three things to test:
     tend to be an unlikely source of bugs. And every line of code you write is
     like a ball & chain you must forevermore drag about, so I dislike maintaining 
     tests which don't deliver good bang for buck.
-    
+
 And, yes, in theory there's also `Effect Handlers` (Domino 3) to test, 
 but you'll hardly ever write one, and, anyway, each one is different, so 
 I've got no good general insight to offer you for them. They will be ignored
@@ -36,7 +36,7 @@ tutorial.  Every unittest has 3 steps:
 
 ## Exposing Event Handlers For Test
 
-Event Handlers are pure functions and are consequently easy to test.
+Event Handlers are pure functions which should make them easy to test, right?
 
 First, create a named event handler using `defn` like this:
 ```clj
@@ -98,9 +98,6 @@ So, this approach doesn't quite work.
 > In re-frame, `Events` are central. They are the "language of the system". They 
 provide the eloquence.  
  
-> In your app, events are the
-assembly language of your architecture. And, collectively, your Event 
-Handlers are the hardware for computing this assembly language.
 
 The `db` value (stored in `app-db`) is the cumulative result
 of many event handlers running.
@@ -170,6 +167,9 @@ Notes:
 
 If this method appeals to you, you should ABSOLUTELY review the utilities in this helper library:
 [re-frame-test](https://github.com/Day8/re-frame-test).
+
+In summary, event handlers should be easy to test because they are pure functions. The interesting
+part is the unittest "setup" where we need to establishing an initial value for `db`. 
 
 ## Subscription Handlers 
 
@@ -250,7 +250,7 @@ of certain values and structures? Or do it more manually.
 
 ## View Functions - Part 2A
 
-But what if the View Function has a subscription (via a [Form-2](https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components#form-2--a-function-returning-a-function) structure)? 
+But what if the View Function has a subscription?  
 
 ```clj
 (defn my-view
@@ -259,10 +259,10 @@ But what if the View Function has a subscription (via a [Form-2](https://github.
      [:div .... using @val in here])))
 ```
 
-There's no immediately obvious way to test this as a lovely pure function. Er, because it is not pure.
+The use of `subscribe` makes the function impure (it obtains data from places other than its args).
 
-Of course, less pure ways are very possible. For example, a plan might be: 
-  1. setup  `app-db` with some values in the right places  (for the subscription)
+A testing plan might be: 
+  1. setup  `app-db` with some values in the right places  (via dispatch of events?)
   2. call `my-view` (with a parameter) which will return hiccup
   3. check the hiccup structure for correctness. 
    
@@ -271,17 +271,12 @@ Continuing on, in a second phase you could then:
   6. call view functions again (hiccup returned). 
   7. check that the hiccup 
 
-Which is all possible, if a little messy, and with one gotcha. After you change the 
-value in `app-db` the subscription won't hold the new value straight away.
-It won't get calculated until the next animationFrame.  And the next animationFrame 
-won't happen until you hand back control to the browser. I think.  Untested. 
-Please report back here if you try. And you might also be able to use `reagent.core/flush` to force the view to be updated.  
+Which is all possible, if a little messy. 
 
 ## View Functions - Part 2B
 
-You can also use `with-redefs` 
-on `subscribe` to stub out re-frame altogether:
-
+There is a very pragmatic method available to handle the impurity: use `with-redefs` 
+to stub out `subscribe`.  Like this:
 ```clj
 (defn subscription-stub [x]
   (atom
@@ -290,8 +285,8 @@ on `subscribe` to stub out re-frame altogether:
 
 (deftest some-test
   (with-redefs [re-frame/subscribe (subscription-stub)]
-    (testing "some rendering"
-      ..... somehow call or render the component and check the output)))
+    (testing "some some view which does a subscribe"
+      ..... call the view function and the hiccup output)))
 ```
 
 For more integration level testing, you can use `with-mounted-component` 
@@ -300,13 +295,13 @@ to render the component in the browser and validate the generated DOM.
 
 ## View Functions - Part 2C
 
-Or ... you can structure in the first place for easier testing and pure functions. 
+Or ... there is another option: you can structure in the first place for pure view functions. 
 
 The trick here is to create an outer and inner component.  The outer sources the data 
-(via a subscription), and passes it onto the inner as props (parameters). 
+(via a subscription), and passes it onto the inner as props (parameters).
 
 As a result, the inner component, which does the testable work, is pure and 
-easily tested. The outer is fairly trivial.
+easily tested. The outer is impure but fairly trivial.
 
 To get a more concrete idea, I'll direct you to another page in the docs 
 which has nothing to do with testing, but it does use this `simple-outer-subscribe-with-complicated-inner-render` 
@@ -322,7 +317,7 @@ it is called the [Container/Component pattern](https://medium.com/@learnreact/co
 
 ## Summary
 
-Most of your testing needs to happen in event handlers. Remember to review the utilities in
+Event handlers will be your primary focus when testing. Remember to review the utilities in
 [re-frame-test](https://github.com/Day8/re-frame-test).
 
 
