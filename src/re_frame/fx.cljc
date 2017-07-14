@@ -85,8 +85,8 @@
   :dispatch-n
   (fn [value]
     (if-not (sequential? value)
-      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got:" value))
-    (doseq [event value] (router/dispatch event))))
+      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got:" value)
+      (doseq [event value] (router/dispatch event)))))
 
 
 ;; :deregister-event-handler
@@ -104,8 +104,8 @@
   (fn [value]
     (let [clear-event (partial clear-handlers events/kind)]
       (if (sequential? value)
-        (doseq [event (if (sequential? value) value [value])]
-          (clear-event event))))))
+        (doseq [event value] (clear-event event))
+        (clear-event value)))))
 
 
 ;; :db
