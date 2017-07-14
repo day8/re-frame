@@ -1,7 +1,7 @@
 (ns re-frame.interceptor
   (:require
     [re-frame.loggers :refer [console]]
-    [re-frame.interop :refer [ratom? empty-queue debug-enabled?]]))
+    [re-frame.interop :refer [empty-queue debug-enabled?]]))
 
 
 (def mandatory-interceptor-keys #{:id :after :before})
