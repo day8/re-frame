@@ -338,7 +338,7 @@ An `effect handler` (function) actions the `effects` returned by `h`.
 
 Here's what `h` returned:
 ```clj
-{:db  (dissoc-in db [:items item-id])}
+{:db  (dissoc-in db [:items 2486])}
 ```
 Each key of the map identifies one kind 
 of `effect`, and the value for that key supplies further details. 
@@ -486,7 +486,7 @@ Next you need to read the other three articles in the [Introduction section](/do
 
 This will push your knowledge to about 70%. The
 final 30% will come incrementally with use, and by reading the other
-tutorials (of which there's a few).
+tutorials (of which there are a few).
 
 You can also experiment with these two examples: <br>
 https://github.com/Day8/re-frame/tree/master/examples
