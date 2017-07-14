@@ -118,5 +118,6 @@
 (register
   :db
   (fn [value]
-    (reset! app-db value)))
+    (if-not (identical? @app-db value)
+      (reset! app-db value))))
 
