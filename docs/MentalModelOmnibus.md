@@ -102,17 +102,22 @@ Sincerely, The Self-appointed President of the Cursor Skeptic's Society.
 
 ## DSLs and VMs 
 
-`Events` are central to re-frame's architecture. Nothing happens without a dispatched event.
+`Events` are cardinal to re-frame - they are a fundamental organising principle. 
 
-Every app will have a different `events`. Indeed, part of your job will be to
-design exactly the right set of them. For your app,`events` will be the "language of the system". 
-They capture intent (generally the user's intent). They provide the eloquence.
+Every re-frame app will have a different set of `events`. Your job is
+to design exactly the right ones for any given app you build. These `events` 
+will be the "language of the system". They'll represent intent
+(generally the user's). They'll provide the eloquence.
 
 And they are data.
 
-Here's a collection of events from a drawing app:
+Imagine we created a drawing application. And then we allowed 
+someone to use our application, and captured, into a collection, 
+the events caused by that user's actions (button clicks, drags, etc).
+ 
+The collection of events might look like this:  
 ```cljs
-(def events
+(def collected-events
   [
      [:clear]
      [:new :triangle 1 2 3]
@@ -122,25 +127,30 @@ Here's a collection of events from a drawing app:
   ])
 ```
 
-I'd like you to look upon that collection as you would the following assembler:
+Now, consider the following assembly instructions:
 ```asm
 mov eax, ebx
 sub eax, 216
 mov BYTE PTR [ebx], 2
 ```
 
-Assembler instructions are data, right?  They have to be "executed" by a machine. I'd 
-like you to look back at the collection of events above the same way.
+Assembly instructions are data, right?  Data which happens to be "executable" 
+by the right machine. An x86 machine in the case above.
 
-Mental Model:
-  - Events are the assembly language of your app.  They are instructions. 
-  - These instructions are data. One after another gets executed by your functioning app.
-  - Collectively, the events you design form a Domain Specific Language (DSL). The language of your system.
-  - And, collectively, the Event Handlers you register create the Virtual Machine (VM) on which this DSL executes. 
+I'd like you to now look back at that collection of events in the 
+same way - data which can be executed - by the right machine.
 
-> So, data is executed by the re-frame VM you create. Which is all data oriented and Clojurian.
+Wait. What machine?  Well, the Event Handlers you register collectively implement 
+the "machine" on which these Instructions execute. 
 
-I find James Reeves' talks to be excellent (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
+Summary: 
+  - Events are the assembly language of your app. 
+  - These instructions collectively form a Domain Specific Language (DSL). The language of your system.
+  - These instructions are data. 
+  - One instruction after another gets executed by your functioning app.
+  - The Event Handlers you register collectively implement the "machine" on which this DSL executes. 
+
+On the subject of DSLs, I'd recommend James Reeves' talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
 
 ## It does Event Sourcing
 
