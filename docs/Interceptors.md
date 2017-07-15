@@ -89,8 +89,8 @@ transforms a `request` in one direction, and, then in the backwards
 sweep, it progressively produces a `response`. 
 
 In re-frame, the forwards sweep progressively creates the `coeffects` 
-(inputs to the handler), while the backwards sweep processes the `effects`
-(outputs from the handler).  
+(inputs to the event handler), while the backwards sweep processes the `effects`
+(outputs from the event handler).  
 
 I'll pause while you read that sentence again. That's the key 
 concept, right there. 
