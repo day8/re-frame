@@ -288,7 +288,7 @@ to completely grok the terse code presented below. We're still at 30,000 feet. D
 
 ### Code For Domino 1
 
-The delete button for that 3rd item will look like this:
+The delete button for that 3rd item will be rendered by a ViewFunction which looks like this: 
 ```clj
 (defn delete-button 
   [item-id]
@@ -296,7 +296,7 @@ The delete button for that 3rd item will look like this:
      :on-click #(re-frame.core/dispatch [:delete-item item-id])])
 ```
 
-That the `on-click` handler uses `re-frame.core/dispatch` to emit an `event`.
+That `on-click` handler uses re-frame's `dispatch` to emit an `event`.
 
 A re-frame `event` is a vector and, in this case, 
 it has 2 elements: `[:delete-item 2486]` (where `2486` in the made-up id for that 3rd item).  
@@ -305,7 +305,7 @@ The first element of an event vector,
 `:delete-item`, is the kind of event. The rest is optional, useful data about the 
 `event`.  
 
-Events express intent in a domain specific (app specific) way. 
+Events express intent in a domain specific way. 
 They are the language of your re-frame system. 
 
 ### Code For Domino 2
@@ -318,7 +318,7 @@ register this `h` as the handler for  `:delete-item` events, like this:
 ```clj
 (re-frame.core/reg-event-fx   ;; a part of the re-frame API
   :delete-item                ;; the kind of event
-  h)                          ;; the handler function for this kind of event
+  h)                         ;; the handler function for this kind of event
 ```
 
 `h` is written to take two arguments: 
@@ -330,7 +330,7 @@ it returns a map of `effects` - a description of the those changes.
 
 Here's a sketch (we are at 30,000 feet):
 ```clj
-(defn h 
+(defn h                               ;; choose a better name like delete-item
  [coeffects event]                    ;; args:  db from coeffect, event
  (let [item-id (second event)         ;; extract id from event vector
        db      (:db coeffects)        ;; extract the current application state
@@ -339,11 +339,11 @@ Here's a sketch (we are at 30,000 feet):
 
 re-frame has ways (described in later tutorials) to inject necessary aspects
 of the world into that first `coeffects` argument (map). Different 
-event handlers need to different "things" to get their job done. But 
+event handlers need different "things" to get their job done. But 
 current "application state" is one aspect of the world which is 
-invariably needed, and it is made available by default in the `:db` key.
+invariably needed, and it is available by default in the `:db` key.
 
-BTW, here more idiomatic rewrite of `h` which uses "destructuring": 
+BTW, here is a more idiomatic rewrite of `h` which uses "destructuring" of the args: 
 
 ```clj
 (defn h 
@@ -391,8 +391,9 @@ This query (function) computes "a materialised view" of the
 application state - a version of the application state which is useful to 
 the next domino, 5.
 
-Remember, we are in `v = f(s)`, and this domino is about delivering the right
-data to later functions (domino 5) which compute DOM.
+Remember, we are now within the `v = f(s)` part of the flow, and this 
+domino is about delivering the right
+data (s) to later domino functions (f) which compute DOM (v).
 
 Now, in this particular case, the query function is pretty trivial.
 Because the items are stored in app state, there's not a lot 
@@ -442,11 +443,12 @@ you might have this:<br>
   `(subscribe [:items "blue"])`
 
 The vector identifies, first, the query, and then
-supplies further arguments. You could think of that as representing `select * from Items where colour="blue"`.
+supplies further arguments. You could think of that as 
+representing `select * from Items where colour="blue"`.
 
 Except there's no SQL available and you would be the one to implement
-the more sophisticated `query-fn` to handle those
-further arguments. More in later tutorials.
+the more sophisticated `query-fn` capable of handling the 
+"where" argument. More in later tutorials.
 
 ### Code For Domino 6
 
