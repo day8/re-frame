@@ -30,7 +30,7 @@ namespaces. To the Google Closure dependency mechanism it appears as
 if these two namespaces are not needed and it doesn't load them.
 
 And, if the code does not get loaded, the registrations in these namespaces
-never happen. You'll then you'll be puzzled as to why none of your events handlers 
+never happen. You'll then be puzzled as to why none of your events handlers 
 are registered.
 
 Once you twig to what's going on, the solution is easy.  You must 
@@ -44,6 +44,7 @@ Assuming your larger apps have multiple "panels" (or "views") which are
 relatively independent, you might use this structure:
 ```
 src
+├── core.cljs             <--- entry point, plus history, routing, etc
 ├── panel-1
 │   ├── db.cljs           <--- schema, validation, etc  (data layer)
 │   ├── subs.cljs         <--- subscription handlers  (query layer)
