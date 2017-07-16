@@ -1,26 +1,27 @@
 (ns todomvc.views
   (:require [reagent.core  :as reagent]
-            [re-frame.core :refer [subscribe dispatch]]))
+            [re-frame.core :refer [subscribe dispatch]]
+            [clojure.string :as str]))
 
 
 (defn todo-input [{:keys [title on-save on-stop]}]
-  (let [val (reagent/atom title)
+  (let [val  (reagent/atom title)
         stop #(do (reset! val "")
                   (when on-stop (on-stop)))
-        save #(let [v (-> @val str clojure.string/trim)]
-               (when (seq v) (on-save v))
-               (stop))]
+        save #(let [v (-> @val str str/trim)]
+                (when (seq v) (on-save v))
+                (stop))]
     (fn [props]
       [:input (merge props
-                     {:type "text"
-                      :value @val
-                      :auto-focus true
-                      :on-blur save
-                      :on-change #(reset! val (-> % .-target .-value))
+                     {:type        "text"
+                      :value       @val
+                      :auto-focus  true
+                      :on-blur     save
+                      :on-change   #(reset! val (-> % .-target .-value))
                       :on-key-down #(case (.-which %)
-                                     13 (save)
-                                     27 (stop)
-                                     nil)})])))
+                                      13 (save)
+                                      27 (stop)
+                                      nil)})])))
 
 
 (defn todo-item
