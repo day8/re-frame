@@ -338,7 +338,7 @@ reset! app-db with a new value. Expects a map.
 
 usage:
 ```clj
-{:db  {:key1 value1 key2 value2}}
+{:db  {:key1 value1 :key2 value2}}
 ```
 
 ### External Effects
