@@ -9,6 +9,8 @@
 
  - [#357](https://github.com/Day8/re-frame/pull/357)
  - [#340](https://github.com/Day8/re-frame/pull/340)
+ - [#341](https://github.com/Day8/re-frame/pull/341) Fix `re-frame.std-interceptors/on-changes` to work even if effect handler does not set `:db`. 
+
  
 ## 0.9.4 (2017.06.01)
 

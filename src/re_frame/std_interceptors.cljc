@@ -294,7 +294,9 @@
                    ;; work out if any "inputs" have changed
                    new-ins      (map #(get-in new-db %) in-paths)
                    old-ins      (map #(get-in old-db %) in-paths)
-                   changed-ins? (some false? (map identical? new-ins old-ins))]
+                   ;; make sure the db is actually set in the effect
+                   changed-ins? (and (contains? (get-effect context) :db)
+                                     (some false? (map identical? new-ins old-ins)))]
 
                ;; if one of the inputs has changed, then run 'f'
                (if changed-ins?
