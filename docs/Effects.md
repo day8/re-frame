@@ -191,7 +191,7 @@ While it might look like you have registered with 2 interceptors,
 It silently inserts `do-fx` at the front, and this is a good thing. 
 
 The placement of `do-fx` at the beginning of the interceptor chain means 
-it's  `:after` function would be the final act when the chain is executed 
+its `:after` function would be the final act when the chain is executed 
 (forwards and then backwards, as described in the Interceptor Tutorial).
 
 In this final act, the `:after` function extracts `:effects` from `context` 
