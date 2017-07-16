@@ -44,8 +44,7 @@
 (rf/reg-sub
   :time
   (fn [db _]     ;; db is current app state. 2nd unused param is query vector
-    (-> db
-        :time)))
+    (:time db))) ;; return a query computation over the application state
 
 (rf/reg-sub
   :time-color
