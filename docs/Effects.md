@@ -191,7 +191,7 @@ While it might look like you have registered with 2 interceptors,
 It silently inserts `do-fx` at the front, and this is a good thing. 
 
 The placement of `do-fx` at the beginning of the interceptor chain means 
-it's  `:after` function would be the final act when the chain is executed 
+its `:after` function would be the final act when the chain is executed 
 (forwards and then backwards, as described in the Interceptor Tutorial).
 
 In this final act, the `:after` function extracts `:effects` from `context` 
@@ -282,8 +282,14 @@ registered handlers) to which you can return.
 
 ### Summary 
 
-XXX
+The 4 Point Summary
 
+In note form:
+
+1. Event handlers should only return effect declaratively
+2. They return a map like `{:effect1 value1 :effect2 value2}`
+3. Keys of this map can refer to builtin effects handlers (see below) or custom ones
+4. We use `reg-fx` to register our own effects handlers
 
 ### Builtin Effect Handlers
 
@@ -338,7 +344,7 @@ reset! app-db with a new value. Expects a map.
 
 usage:
 ```clj
-{:db  {:key1 value1 key2 value2}}
+{:db  {:key1 value1 :key2 value2}}
 ```
 
 ### External Effects

@@ -20,6 +20,19 @@
 - [Correcting a wrong](SubscriptionsCleanup.md)
 - [Flow Mechanics](SubscriptionFlow.md)
 
+### Other Tutorials
+
+- [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a excellent, written overview. 
+- [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on clojure, with some on re-frame
+
+### Reagent Tutorials
+
+- [The Basics](https://github.com/Day8/re-frame/wiki#reagent-tutorials) (look at the bottom of that page)
+- [Lambda Island Videos](https://lambdaisland.com/episodes). There's a 3 part series.
+- [purelyfunctional.tv ](https://purelyfunctional.tv/guide/reagent/) - a written overview
+- [Reagent Deep Dive Series from Timothy Pratley](http://timothypratley.blogspot.com.au/p/p.html)  four part series
+- [Props, Children & Component Lifecycle](https://www.martinklepsch.org/posts/props-children-and-component-lifecycle-in-reagent.html) by Martin Klepsch
+
 ### App Structure
 
 - [Basic App Structure](Basic-App-Structure.md)
@@ -38,6 +51,7 @@
 
 - [Debugging Event Handlers](Debugging-Event-Handlers.md)
 - [Debugging](Debugging.md)
+- [Testing](Testing.md)
 
 
 ### Miscellaneous
@@ -50,6 +64,6 @@
 - [Code Of Conduct](Code-Of-Conduct.md)
 
 <!--  We put these at the end so that there is nothing for doctoc to generate. -->
- <!-- START doctoc -->
- <!-- END doctoc -->
+<!-- START doctoc -->
+<!-- END doctoc -->
 

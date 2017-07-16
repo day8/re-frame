@@ -71,7 +71,7 @@ Above, I suggested this:
    @(rf/subscribe [:time-str])])
 ```
 
-But that may offend your aesthetics. Too much noise with those `@`? 
+But that may offend your aesthetics. Too much noise with those two `@`? 
 
 To clean this up, we can define a new `listen` function: 
 ```clj
@@ -91,6 +91,16 @@ And then rewrite:
 So, at the cost of writing your own function, `listen`, the code is now less noisy 
 AND there's less chance of us forgetting an `@` (which can lead to odd problems).
 
+### LambdaIsland Naming  (LIN)
+
+I've ended up quite liking [the alternative names](https://lambdaisland.com/blog/11-02-2017-re-frame-form-1-subscriptions) 
+suggested by [Lambda Island Videos](https://lambdaisland.com/):
+
+```cljs
+(def <sub (comp deref re-frame.core/subscribe))   ;; aka listen (above)
+(def >evt re-frame.core/dispatch)
+```
+
 ### Say It Again
 
 So, if, in code review, you saw this view function:
@@ -102,8 +112,8 @@ So, if, in code review, you saw this view function:
 ```
 What would you (supportively) object to?
 
-That `sort`, right?  Computation in the view. Instead, we want the right data 
-delivered to the view - its job is to simply make `hiccup`. 
+That `sort`, right?  Computation in the view. Instead, we want exactly the right data 
+delivered to the view - no further computation required - the view's job is to simply make `hiccup`. 
 
 The solution is to create a subscription that delivers items already sorted. 
 ```clj
@@ -134,15 +144,14 @@ Now it is easy to test `item-sorter` independently.
 
 ### And There's Another Benefit
 
-re-frame de-duplicates signal graph nodes.  
+re-frame de-duplicates signal graph nodes.
 
 If, for example, two views wanted to `(subscribe [:sorted-items])` only the one node 
 (in the signal graph) would be created.  Only one node would be doing that 
 potentially expensive sorting operation (when items changed) and values from 
 it would be flowing through to both views.
 
-That sort of efficiency can't happen if this views themselves are doing the `sort`. 
-
+That sort of efficiency can't happen if this views themselves are doing the `sort`.
  
 ### de-duplication
 

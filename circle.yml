@@ -7,3 +7,5 @@ test:
   override:
     - lein karma-once
     - karma start --single-run --reporters junit,dots
+    - lein cljsbuild once:
+        pwd: examples/todomvc

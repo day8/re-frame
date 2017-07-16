@@ -120,7 +120,7 @@ Something like this (this handler is the same as before, except for one detail):
 
 Look at that - my event handler has a new Interceptor!  It is injecting the 
 right key/value pair (`:local-store`)
-into `context's` `:coeffeects`, which itself then goes on to be the first argument 
+into `context's` `:coeffects`, which itself then goes on to be the first argument 
 to our event handler (`cofx`).
 
 ### `inject-cofx`
@@ -169,6 +169,7 @@ handler function that injects the right key/value pair.
 The function you register will be passed two arguments:
   - a `:coeffects` map (to which it should add a key/value pair), and 
   - optionally, the additional value supplied to `inject-cofx`
+
 and it is expected to return a modified `:coeffects` map.
 
 ### Example Of `reg-cofx`
