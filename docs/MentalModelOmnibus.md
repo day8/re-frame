@@ -90,16 +90,16 @@ Sincerely, The Self-appointed President of the Cursor Skeptic's Society.
 
 `Events` are cardinal to re-frame - they're a fundamental organising principle. 
 
-Every re-frame app will have a different set of `events` and your job is
+Each re-frame app will have a different set of `events` and your job is
 to design exactly the right ones for any given app you build. These `events` 
-will be the "language of the system". They'll represent "intent" - 
-generally the user's. They'll provide the eloquence.
+will model "intent" - generally the user's.  They will be the 
+"language of the system" and will provide the eloquence.
 
 And they are data.
 
 Imagine we created a drawing application. And then we allowed 
 someone to use our application, and as they did we captured, into a collection, 
-the events caused by that user's actions (button clicks, drags, etc).
+the events caused by that user's actions (button clicks, drags, key presses, etc).
  
 The collection of events might look like this:  
 ```cljs
@@ -108,7 +108,8 @@ The collection of events might look like this:
      [:clear]
      [:new :triangle 1 2 3]
      [:select-object 23]
-     [:delete-selected]
+     [:rename "a better name"]
+     [:delete-selection]
      ....
   ])
 ```
@@ -120,14 +121,15 @@ sub eax, 216
 mov BYTE PTR [ebx], 2
 ```
 
-Assembly instructions are data, right?  Data which happens to be "executable" 
+Assembly instructions are represented as data, right?  Data which happens to be "executable" 
 by the right machine - an x86 machine in the case above.
 
 I'd like you to now look back at that collection of events and view it in the 
-same way - data which can be executed - by the right machine.
+same way - data instructions which can be executed - by the right machine.
 
 Wait. What machine?  Well, the Event Handlers you register collectively implement 
-the "machine" on which these instructions execute. 
+the "machine" on which these instructions execute. When you register a new event handler, 
+it is like you are adding to the instruction set of the "machine".
 
 In this repo's README, near the top, I explained that re-frame had a 
 Data Oriented Design. Typically, that claim means there's a DSL (Domain specific language) 
