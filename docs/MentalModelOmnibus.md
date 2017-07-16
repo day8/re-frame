@@ -1,8 +1,8 @@
 
-> In a rush? You can skip this tutorial page on the first pass. <br>
-> It is quite abstract and it will not help you write re-frame code. 
-> On the other hand, it will considerably deepen your understanding, so  
-> remember to cycle back to it later.<br>
+> In a rush? You can skip this tutorial page on a first pass. <br>
+> It is quite abstract and it won't directly help you write re-frame code. 
+> On the other hand, it will considerably deepen your understanding 
+> of what re-frame is about, so remember to cycle back and read it later.<br>
 > Next page: [Effectful Handlers](EffectfulHandlers.md)
 
 ## Mental Model Omnibus
@@ -29,22 +29,6 @@ patterns of thought that produced that government are left intact,
 then those patterns will repeat themselves. <br>
 > -- Robert Pirsig, Zen and the Art of Motorcycle Maintenance
 
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [What is the problem?](#what-is-the-problem)
-- [Guiding Philosophy](#guiding-philosophy)
-- [It does Event Sourcing](#it-does-event-sourcing)
-- [It does a reduce](#it-does-a-reduce)
-- [Derived Data All The Way Down](#derived-data-all-the-way-down)
-- [It does FSM](#it-does-fsm)
-- [Interconnections](#interconnections)
-- [Full Stack](#full-stack)
-- [What Of This Romance?](#what-of-this-romance)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## What is the problem?
 
@@ -108,8 +92,8 @@ Sincerely, The Self-appointed President of the Cursor Skeptic's Society.
 
 Every re-frame app will have a different set of `events` and your job is
 to design exactly the right ones for any given app you build. These `events` 
-will be the "language of the system". They'll represent "intent"
-(generally the user's). They'll provide the eloquence.
+will be the "language of the system". They'll represent "intent" - 
+generally the user's. They'll provide the eloquence.
 
 And they are data.
 
@@ -146,21 +130,20 @@ Wait. What machine?  Well, the Event Handlers you register collectively implemen
 the "machine" on which these instructions execute. 
 
 In this repo's README, near the top, I explained that re-frame had a 
-Data Oriented Design. That tends to mean there's a DSL (Domain specific language) 
-somewhere and an interpreter for it.  With re-frame, YOU design a DSL and 
-then YOU provide the machine to run it.
+Data Oriented Design. Typically, that claim means there's a DSL (Domain specific language) 
+involved and an interpreter for it.  As you design your re-frame app, 
+YOU design a DSL and then YOU provide the machine to execute it.
 
 Summary: 
   - Events are the assembly language of your app. 
-  - These instructions collectively form a Domain Specific Language (DSL). The language of your system.
+  - The instructions collectively form a Domain Specific Language (DSL). The language of your system.
   - These instructions are data. 
   - One instruction after another gets executed by your functioning app.
   - The Event Handlers you register collectively implement the "machine" on which this DSL executes. 
 
-On the subject of DSLs, I'd recommend James Reeves' talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
+On the subject of DSLs, watch James Reeves' excellent talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
 
 ## It does Event Sourcing
-
 
 How did that error happen, you puzzle, shaking your head ruefully?
 What did the user do immediately prior?  What
@@ -179,7 +162,7 @@ Note: that's all just data. **Pure, lovely loggable data.**
 If you have that data, then you can reproduce the error.
 
 re-frame allows you to time travel, even in a production setting.
-Install the "checkpoint" state into `app-db`
+To find the bug, install the "checkpoint" state into `app-db`
 and then "play forward" through the collection of dispatched events.
 
 The only way the app "moves forwards" is via events. "Replaying events" moves you
@@ -216,7 +199,7 @@ Then notice that `reg-event-db` event handlers take two arguments also:
 
 Interesting. That's the same as a `combining function` in a `reduce`!!
 
-So now we can introduce the new mental model:  at any point in time,
+So, now we can introduce the new mental model:  at any point in time,
 the value in `app-db` is the result of performing a `reduce` over
 the entire `collection` of events dispatched in the app up until
 that time. The combining function for this reduce is the set of event handlers.
@@ -393,3 +376,8 @@ Next:  [Infographic Overview](EventHandlingInfographic.md)
 [OM]:https://github.com/swannodette/om
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
