@@ -14,7 +14,7 @@
     (rf/dispatch [:timer now])))  ;; <-- dispatch used
 
 ;; Call the dispatching function every second.
-;; `defonce` is like `def` but it ensures only instance is ever
+;; `defonce` is like `def` but it ensures only one instance is ever
 ;; created in the face of figwheel hot-reloading of this file.
 (defonce do-timer (js/setInterval dispatch-timer-event 1000))
 
@@ -45,8 +45,7 @@
 (rf/reg-sub
   :time
   (fn [db _]     ;; db is current app state. 2nd unused param is query vector
-    (-> db
-        :time)))
+    (:time db))) ;; return a query computation over the application state
 
 (rf/reg-sub
   :time-color

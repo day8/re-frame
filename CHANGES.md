@@ -1,9 +1,19 @@
 ## Unreleased
 
-## Unreleased
+#### New
+
+  - improved [testing docs](https://github.com/Day8/re-frame/blob/master/docs/Testing.md)
+  - added [a new mental model](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#dsls-and-vms)
+  
+#### Fixes
+
+ - [#357](https://github.com/Day8/re-frame/pull/357)
+ - [#340](https://github.com/Day8/re-frame/pull/340)
+ 
+## 0.9.4 (2017.06.01)
 
 #### Improvements
-
+- added a CITATION.md file
 - re-frame now supports self-hosted ClojureScript at an alpha/unofficial/experimental level. It may be removed in the future if it causes problems elsewhere. [#325](https://github.com/Day8/re-frame/pull/325)
 
 ## 0.9.3 (2017.05.15)

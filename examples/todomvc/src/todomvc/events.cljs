@@ -26,7 +26,7 @@
 (def ->local-store (after todos->local-store))
 
 ;; Each event handler can have its own set of interceptors (middleware)
-;; But we use the same set of interceptors for all event habdlers related
+;; But we use the same set of interceptors for all event handlers related
 ;; to manipulating todos.
 ;; A chain of interceptors is a vector.
 (def todo-interceptors [check-spec-interceptor               ;; ensure the spec is still valid
