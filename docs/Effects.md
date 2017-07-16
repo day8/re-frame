@@ -289,7 +289,7 @@ In note form:
 1. Event handlers should only return effect declaratively
 2. They return a map like `{:effect1 value1 :effect2 value2}`
 3. Keys of this map can refer to builtin effects handlers (see below) or custom ones
-4. We use `reg-fx` to register our own effects handlers
+4. We use `reg-fx` to register our own effects handlers, builtin ones are already registered
 
 ### Builtin Effect Handlers
 
