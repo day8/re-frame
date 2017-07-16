@@ -98,8 +98,9 @@ will model "intent" - generally the user's.  They will be the
 And they are data.
 
 Imagine we created a drawing application. And then we allowed 
-someone to use our application, and as they did we captured, into a collection, 
-the events caused by that user's actions (button clicks, drags, key presses, etc).
+someone to use our application and, as they did, we captured, 
+into a collection, the events caused by that user's actions 
+(button clicks, drags, key presses, etc).
  
 The collection of events might look like this:  
 ```cljs
@@ -114,31 +115,47 @@ The collection of events might look like this:
   ])
 ```
 
-Now, consider the following assembly instructions:
+Now, as an aside, consider the following assembly instructions:
 ```asm
 mov eax, ebx
 sub eax, 216
 mov BYTE PTR [ebx], 2
 ```
 
-Assembly instructions are represented as data, right?  Data which happens to be "executable" 
-by the right machine - an x86 machine in the case above.
+Assembly instructions are represented as data, right?  Data which 
+happens to be "executable" by the right machine - an x86 machine in the case above.
 
 I'd like you to now look back at that collection of events and view it in the 
 same way - data instructions which can be executed - by the right machine.
 
 Wait. What machine?  Well, the Event Handlers you register collectively implement 
-the "machine" on which these instructions execute. When you register a new event handler, 
-it is like you are adding to the instruction set of the "machine".
+the "machine" on which these instructions execute. When you register 
+a new event handler using `reg-event-db`, 
+it is like you are adding to the "instruction set" of the "machine".
 
-In this repo's README, near the top, I explained that re-frame had a 
-Data Oriented Design. Typically, that claim means there's a DSL (Domain specific language) 
-involved and an interpreter for it.  As you design your re-frame app, 
-YOU design a DSL and then YOU provide the machine to execute it.
+In re-frame's README, near the top, I claimed that it had a 
+Data Oriented Design. Typically, that claim means you "program" in a data
+structure of a certain format (Domain specific language), 
+which is then "executed" by an interpreter.
 
-Summary: 
+Take hiccup as an example. It is a DSL for describing DOM. 
+You program by supplying a data structure in a particular, 
+known format (the DSL) and Reagent acts as the 
+"interpreter" which executes that "language":  
+```
+[:div {:font-size 12} "Hello"]  ;; a data structure
+```
+
+Back to re-frame. It requires that YOU design events which
+combine into a DSL for your app
+and, at the same time, it asks YOU to provide an interpreter for
+each instruction in that DSL. When your re-frame application runs, 
+it is just executing a "program" (collection of events) 
+dynamically created by the user's event-causing actions.
+ 
+In summary: 
   - Events are the assembly language of your app. 
-  - The instructions collectively form a Domain Specific Language (DSL). The language of your system.
+  - These instructions collectively form a Domain Specific Language (DSL). The language of your system.
   - These instructions are data. 
   - One instruction after another gets executed by your functioning app.
   - The Event Handlers you register collectively implement the "machine" on which this DSL executes. 
@@ -249,7 +266,7 @@ This is an infinite loop of sorts - an infinite loop of derived data.
 `event handlers` collectively
 implement the "control" part of an application. Their logic
 interprets arriving events in the context of existing state,
-and they compute the new state of the application.  
+and they compute the new state of the application.
 
 `events` act a bit like the `triggers` in a finite state machine, and
 the `event handlers` act like the rules which govern how the state machine
@@ -280,7 +297,6 @@ Depending on your app, this may or may not be a useful mental model,
 but one thing is for sure ...
 
 Events - that's the way we roll.
-
 
 ## Interconnections
 
