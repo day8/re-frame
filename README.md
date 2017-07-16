@@ -517,7 +517,7 @@ and useful 3rd party libraries.
 
 ## Where Do I Go Next?
 
-**At this point you already know 50% of re-frame.** The full [docs are here](/docs).  
+At this point, you know 50% of re-frame. The full [docs are here](/docs/README.md).  
 
 There are two example apps to play with: <br>
 https://github.com/Day8/re-frame/tree/master/examples

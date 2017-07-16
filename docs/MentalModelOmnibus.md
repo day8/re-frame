@@ -1,6 +1,8 @@
 
-> In a rush? You can get away with skipping this page on the first pass. <br>
-> But remember to cycle back to it later. It contains useful insights.<br>
+> In a rush? You can skip this tutorial page on the first pass. <br>
+> It is quite abstract and it will not help you write re-frame code. 
+> On the other hand, it will considerably deepen your understanding, so  
+> remember to cycle back to it later.<br>
 > Next page: [Effectful Handlers](EffectfulHandlers.md)
 
 ## Mental Model Omnibus
@@ -100,19 +102,19 @@ will encourage control logic into all the
 wrong places and you'll end up with a tire-fire of an Architecture. <br>
 Sincerely, The Self-appointed President of the Cursor Skeptic's Society.
 
-## DSLs and VMs 
+## On DSLs and Machines 
 
-`Events` are cardinal to re-frame - they are a fundamental organising principle. 
+`Events` are cardinal to re-frame - they're a fundamental organising principle. 
 
-Every re-frame app will have a different set of `events`. Your job is
+Every re-frame app will have a different set of `events` and your job is
 to design exactly the right ones for any given app you build. These `events` 
-will be the "language of the system". They'll represent intent
+will be the "language of the system". They'll represent "intent"
 (generally the user's). They'll provide the eloquence.
 
 And they are data.
 
 Imagine we created a drawing application. And then we allowed 
-someone to use our application, and captured, into a collection, 
+someone to use our application, and as they did we captured, into a collection, 
 the events caused by that user's actions (button clicks, drags, etc).
  
 The collection of events might look like this:  
@@ -135,13 +137,18 @@ mov BYTE PTR [ebx], 2
 ```
 
 Assembly instructions are data, right?  Data which happens to be "executable" 
-by the right machine. An x86 machine in the case above.
+by the right machine - an x86 machine in the case above.
 
-I'd like you to now look back at that collection of events in the 
+I'd like you to now look back at that collection of events and view it in the 
 same way - data which can be executed - by the right machine.
 
 Wait. What machine?  Well, the Event Handlers you register collectively implement 
-the "machine" on which these Instructions execute. 
+the "machine" on which these instructions execute. 
+
+In this repo's README, near the top, I explained that re-frame had a 
+Data Oriented Design. That tends to mean there's a DSL (Domain specific language) 
+somewhere and an interpreter for it.  With re-frame, YOU design a DSL and 
+then YOU provide the machine to run it.
 
 Summary: 
   - Events are the assembly language of your app. 
@@ -324,7 +331,7 @@ Sometimes, we'd rewrite this code as:
       str)
 ```
 With this arrangement, we talk of "threading" data
-through functions. **It seems to help our comprehension to frame function
+through functions. **It seems to help our comprehension to conceive function
 composition in terms of data flow**.
 
 re-frame delivers architecture
