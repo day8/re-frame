@@ -44,6 +44,7 @@ Assuming your larger apps have multiple "panels" (or "views") which are
 relatively independent, you might use this structure:
 ```
 src
+├── core.cljs             <--- entry point, plus history, routing, etc
 ├── panel-1
 │   ├── db.cljs           <--- schema, validation, etc  (data layer)
 │   ├── subs.cljs         <--- subscription handlers  (query layer)
