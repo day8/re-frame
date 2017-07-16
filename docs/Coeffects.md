@@ -169,6 +169,7 @@ handler function that injects the right key/value pair.
 The function you register will be passed two arguments:
   - a `:coeffects` map (to which it should add a key/value pair), and 
   - optionally, the additional value supplied to `inject-cofx`
+
 and it is expected to return a modified `:coeffects` map.
 
 ### Example Of `reg-cofx`
