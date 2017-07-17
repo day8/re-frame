@@ -38,7 +38,9 @@
 ;;
 ;; When the application first starts, this will be the value put in app-db
 ;; Unless, of course, there are todos in the LocalStore (see further below)
-;; Look in `core.cljs` for  "(dispatch-sync [:initialise-db])"
+;; Look in:
+;;   1.  `core.cljs` for  "(dispatch-sync [:initialise-db])"
+;;   2.  `events.cljs` for the registration of :initialise-db handler
 ;;
 
 (def default-value                                          ;; what gets put into app-db by default.
@@ -54,20 +56,30 @@
 ;; filter. Just the todos.
 ;;
 
-(def ls-key "todos-reframe")                          ;; localstore key
+(def ls-key "todos-reframe")                         ;; localstore key
+
 (defn todos->local-store
   "Puts todos into localStorage"
   [todos]
   (.setItem js/localStorage ls-key (str todos)))     ;; sorted-map writen as an EDN map
 
 
-;; register a coeffect handler which will load a value from localstore
-;; To see it used look in events.clj at the event handler for `:initialise-db`
+;; -- cofx Registrations  -----------------------------------------------------
+
+;; Use `reg-cofx` to register a "coeffect handler" which will inject the todos
+;; stored in localstore.
+;;
+;; To see it used, look in `events.clj` at the event handler for `:initialise-db`.
+;; That event handler has the interceptor `(inject-cofx :local-store-todos)`
+;; The function registered below will be used to fulfill that request.
+;;
+;; We must supply a `sorted-map` but in LocalStore it is stored as a `map`.
+;;
 (re-frame/reg-cofx
   :local-store-todos
   (fn [cofx _]
-      "Read in todos from localstore, and process into a map we can merge into app-db."
-      (assoc cofx :local-store-todos
+      ;; put the localstore todos into the coeffect, under key :local-store-todos
+      (assoc cofx :local-store-todos   ;; read in todos from localstore, and process into a sorted map
              (into (sorted-map)
                    (some->> (.getItem js/localStorage ls-key)
                             (cljs.reader/read-string)       ;; stored as an EDN map.

@@ -2,25 +2,35 @@
   (:require [re-frame.core :refer [reg-sub subscribe]]))
 
 ;; -------------------------------------------------------------------------------------
-;; Layer 2  (see the Subscriptions Infographic for meaning)
+;; Layer 2
+;;
+;; https://github.com/Day8/re-frame/blob/master/docs/SubscriptionInfographic.md
+;;
+;; Layer 2 query functions, are "extractors". They simply take from `app-db`
+;; and don't do any further computation on the extracted values. That further
+;; computation happens in Layer 3.
+;; Why?  Well Layer 2 subscriptions will rerun every time that `app-db` changes.
+;; So for efficiency reasons, we want them to be trivial extractors.
 ;;
 (reg-sub
-  :showing
-  (fn [db _]        ;; db is the (map) value in app-db
-    (:showing db))) ;; I repeat:  db is a value. Not a ratom.  And this fn does not return a reaction, just a value.
+  :showing          ;; usage:   (subscribe [:showing])
+  (fn [db _]        ;; db is the (map) value stored in the app-db atom
+    (:showing db))) ;; extract a value from the application state
 
-;; that `fn` is a pure function
 
 ;; Next, the registration of a similar handler is done in two steps.
 ;; First, we `defn` a pure handler function.  Then, we use `reg-sub` to register it.
-;; Two steps. This is different to that first registration, above, which was done in one step.
+;; Two steps. This is different to that first registration, above, which was done
+;; in one step using an anonymous function.
 (defn sorted-todos
   [db _]
   (:todos db))
-(reg-sub :sorted-todos sorted-todos)
+(reg-sub :sorted-todos sorted-todos)    ;; usage: (subscribe [:sorted-todos])
 
 ;; -------------------------------------------------------------------------------------
-;; Layer 3  (see the infographic for meaning)
+;; Layer 3
+;;
+;; https://github.com/Day8/re-frame/blob/master/docs/SubscriptionInfographic.md
 ;;
 ;; A subscription handler is a function which is re-run when its input signals
 ;; change. Each time it is rerun, it produces a new output (return value).
@@ -39,16 +49,16 @@
 ;; reg-sub allows you to supply:
 ;;
 ;;   1. a function which returns the input signals. It can return either a single signal or
-;;      a vector of signals, or a map of where the values are the signals.
+;;      a vector of signals, or a map where the values are the signals.
 ;;
 ;;   2. a function which does the computation. It takes input values and produces a new
 ;;      derived value.
 ;;
 ;; In the two simple examples at the top, we only supplied the 2nd of these functions.
-;; But now we are dealing with intermediate nodes, we'll need to provide both fns.
+;; But now we are dealing with intermediate (layer 3) nodes, we'll need to provide both fns.
 ;;
 (reg-sub
-  :todos
+  :todos        ;; usage:   (subscribe [:todos])
 
   ;; This function returns the input signals.
   ;; In this case, it returns a single signal.
@@ -75,12 +85,12 @@
 ;; So here we define the handler for another intermediate node.
 ;; This time the computation involves two input signals.
 ;; As a result note:
-;;   - the first function (which returns the signals, returns a 2-vector)
-;;   - the second function (which is the computation, destructures this 2-vector as its first parameter)
+;;   - the first function (which returns the signals) returns a 2-vector
+;;   - the second function (which is the computation) destructures this 2-vector as its first parameter
 (reg-sub
   :visible-todos
 
-  ;; signal function
+  ;; signal function - tells us what inputs flow into this node
   ;; returns a vector of two input signals
   (fn [query-v _]
     [(subscribe [:todos])
@@ -106,7 +116,7 @@
 ;; It returns one signal, and that signal is app-db itself.
 ;;
 ;; So the two simple registrations at the top didn't need to provide a signal-fn,
-;; because they operated only on the value in app-db, supplied as 'db' in the 1st arguement.
+;; because they operated only on the value in app-db, supplied as 'db' in the 1st argument.
 
 ;; -------------------------------------------------------------------------------------
 ;; SUGAR ?
