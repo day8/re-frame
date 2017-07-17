@@ -89,7 +89,7 @@
 ;; Advanced topic:  we inject the todos currently stored in LocalStore
 ;; into the first, coeffect parameter via `(inject-cofx :local-store-todos)`
 ;; To fully understand how that works, you'll have to review the tutorials.
-;; But, if you are interested, look at the bottom of `db.cljs` to see how this is done.
+;; If you are interested, look at the bottom of `db.cljs` to see how this is done.
 ;;
 (reg-event-fx                     ;; part of the re-frame API
   :initialise-db                  ;; event id being handled
@@ -101,7 +101,7 @@
 
 ;; usage:  (dispatch [:set-showing  :active])
 ;; This event is dispatched when the user clicks on the various
-;; filter buttons at the bottom of the panel. All, showing, done.
+;; filter buttons at the bottom of the panel. All, active or done.
 (reg-event-db      ;; part of the re-frame API
   :set-showing     ;; event-id
   [check-spec-interceptor]
@@ -109,7 +109,8 @@
     (assoc db :showing new-filter-kw)))
 
 ;; NOTE: here is a rewrite of the event handler above using `path` or `trimv`
-;; These interceptors can be interesting and useful, but they are a little advanced
+;; These interceptors can be interesting and useful, but they are an advanced topic.
+;; It will be illuminating to compare the version below with the one above. 
 #_(reg-event-db
   :set-showing                    ;; event-id
 
@@ -141,8 +142,8 @@
   ;; value at `:todos` within `db`, rather than the full `db`.
   ;; And, further, it means the event handler returns just the value to be
   ;; put into `:todos` and not the entire `db`.
-  ;; So, a path interceptor makea the event handler act more like clojure's `update-in`
-  (fn [todos [text]]
+  ;; So, a path interceptor makes the event handler act more like clojure's `update-in`
+  (fn [todos [text]]   ;; because of trimv,  the 2nd parameter is NOT [_ text]
     (let [id (allocate-next-id todos)]
       (assoc todos id {:id id :title text :done false}))))
 
