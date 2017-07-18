@@ -18,17 +18,15 @@
 (def query->reaction (atom {}))
 
 (defn clear-subscription-cache!
-  "Runs on-dispose for all subscriptions we have in the subscription cache.
-  Used to force recreation of new subscriptions. Should only be necessary
-  in development.
+  "Causes all subscriptions to be removed from the cache.
+  Does this by:
+     1. running on-dispose on all cached subscriptions
+     2. These on-dispose will then do the removal of themselves.
 
-  The on-dispose functions for the subscriptions will remove themselves from the
-  cache.
-
-  Useful when reloading Figwheel code after a React exception, as React components
-  aren't cleaned up properly. This means a subscription's on-dispose function isn't
-  run when the components are destroyed. If a bad subscription caused your exception,
-  then you can't fix it without reloading your browser."
+  This is a development time tool. Useful when reloading Figwheel code
+  after a React exception, because React components won't have been
+  cleaned up properly. And this, in turn, means the subscriptions within those
+  components won't have been cleaned up correctly. So this forces the issue."
   []
   (doseq [[k rxn] @query->reaction]
     (dispose! rxn))
