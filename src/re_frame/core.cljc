@@ -16,71 +16,49 @@
     [clojure.set               :as set]))
 
 
-;; --  dispatch
+;; XXX move API functions up to this core level - to enable code completion and auto-generated docs
+
+
+;; --  dispatch ---------------------------------------------------------------
 (def dispatch         router/dispatch)
 (def dispatch-sync    router/dispatch-sync)
 
 
-;; XXX move API functions up to this core level - to enable code completion and docs
-;; XXX on figwheel reload, is there a way to not get the re-registration messages.
-
-
-;; -- interceptor related
-;; useful if you are writing your own interceptors
-(def ->interceptor   interceptor/->interceptor)
-(def enqueue         interceptor/enqueue)
-(def get-coeffect    interceptor/get-coeffect)
-(def get-effect      interceptor/get-effect)
-(def assoc-effect    interceptor/assoc-effect)
-(def assoc-coeffect  interceptor/assoc-coeffect)
-
-
-;; --  standard interceptors
-(def debug       std-interceptors/debug)
-(def path        std-interceptors/path)
-(def enrich      std-interceptors/enrich)
-(def trim-v      std-interceptors/trim-v)
-(def after       std-interceptors/after)
-(def on-changes  std-interceptors/on-changes)
-
-
-;; --  subscriptions
-(defn reg-sub-raw
-  "Associate a given `query id` with a given subscription handler function `handler-fn`
-   which is expected to take two arguments: app-db and query vector, and return
-   a `reaction`.
-
-  This is a low level, advanced function.  You should probably be using reg-sub
-  instead."
-  [query-id handler-fn]
-  (registrar/register-handler subs/kind query-id handler-fn))
-
+;; --  subscriptions ----------------------------------------------------------
 (def reg-sub             subs/reg-sub)
 (def subscribe           subs/subscribe)
 
 (def clear-sub    (partial registrar/clear-handlers subs/kind))
 (def clear-subscription-cache! subs/clear-subscription-cache!)
 
-;; -- effects
+(defn reg-sub-raw
+  "This is a low level, advanced function.  You should probably be
+  using reg-sub instead.
+  Docs in https://github.com/Day8/re-frame/blob/master/docs/SubscriptionFlow.md"
+  [query-id handler-fn]
+  (registrar/register-handler subs/kind query-id handler-fn))
+
+
+;; -- effects -----------------------------------------------------------------
 (def reg-fx      fx/register)
 (def clear-fx    (partial registrar/clear-handlers fx/kind))
 
-;; -- coeffects
+;; -- coeffects ---------------------------------------------------------------
 (def reg-cofx    cofx/register)
 (def inject-cofx cofx/inject-cofx)
 (def clear-cofx (partial registrar/clear-handlers cofx/kind))
 
 
-;; --  Events
+;; --  Events -----------------------------------------------------------------
 (def clear-event (partial registrar/clear-handlers events/kind))
 
 (defn reg-event-db
-  "Register the given `id`, typically a keyword, with the combination of
+  "Register the given `id`, typically a namespaced keyword, with the combination of
   `db-handler` and an interceptor chain.
   `db-handler` is a function: (db event) -> db
   `interceptors` is a collection of interceptors, possibly nested (needs flattening).
-  `db-handler` is wrapped in an interceptor and added to the end of the chain, so in the end
-   there is only a chain.
+  `db-handler` is wrapped in an interceptor and added to the end of the chain, so
+   that, in the end, there is only a chain.
    The necessary effects and coeffects handler are added to the front of the
    interceptor chain.  These interceptors ensure that app-db is available and updated."
   ([id db-handler]
@@ -103,7 +81,38 @@
    (events/register id [cofx/inject-db fx/do-fx interceptors (ctx-handler->interceptor handler)])))
 
 
-;; --  Logging -----
+;; -- interceptors ------------------------------------------------------------
+
+;; Standard interceptors. Detailed docs in std-interceptors.cljs
+(def debug       std-interceptors/debug)
+(def path        std-interceptors/path)
+(def enrich      std-interceptors/enrich)
+(def trim-v      std-interceptors/trim-v)
+(def after       std-interceptors/after)
+(def on-changes  std-interceptors/on-changes)
+
+
+;; utility functions - for creating your own interceptors
+;;
+;;  (def some-interceptor
+;;     (->interceptor                ;; used to create an interceptor
+;;       :id     :my-interceptor     ;; an id - decorative only
+;;       :before (fn [context]                         ;; you normally want to change :coeffects
+;;                  ... use get-coeffect  and assoc-coeffect
+;;                       )
+;;       :after  (fn [context]                         ;; you normally want to change :effects
+;;                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+;;                   (assoc-effect context :http-ajax {...}])))))
+;;
+(def ->interceptor   interceptor/->interceptor)
+(def get-coeffect    interceptor/get-coeffect)
+(def assoc-coeffect  interceptor/assoc-coeffect)
+(def get-effect      interceptor/get-effect)
+(def assoc-effect    interceptor/assoc-effect)
+(def enqueue         interceptor/enqueue)
+
+
+;; --  logging ----------------------------------------------------------------
 ;; Internally, re-frame uses the logging functions: warn, log, error, group and groupEnd
 ;; By default, these functions map directly to the js/console implementations,
 ;; but you can override with your own fns (set or subset).
@@ -120,7 +129,7 @@
 (def console loggers/console)
 
 
-;; -- State Restoration For Unit Tests
+;; -- unit testing ------------------------------------------------------------
 
 (defn make-restore-fn
   "Checkpoints the state of re-frame and returns a function which, when
@@ -148,7 +157,7 @@
       nil)))
 
 
-;; -- Event Processing Callbacks
+;; -- Event Processing Callbacks  ---------------------------------------------
 
 (defn add-post-event-callback
   "Registers a function `f` to be called after each event is processed
@@ -176,7 +185,7 @@
   (router/remove-post-event-callback re-frame.router/event-queue id))
 
 
-;; --  Deprecation Messages
+;; --  Deprecation ------------------------------------------------------------
 ;; Assisting the v0.0.7 ->  v0.0.8 transition.
 (defn register-handler
   [& args]
