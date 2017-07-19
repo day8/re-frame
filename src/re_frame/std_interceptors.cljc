@@ -21,8 +21,17 @@
 
   Warning:  calling clojure.data/diff on large, complex data structures
   can be slow. So, you won't want this interceptor present in production
-  code. See the todomvc example to see how to exclude interceptors from
-  production code."
+  code. So condition it out like this:
+
+    (re-frame.core/reg-event
+       :evt-id
+       [(when ^boolean goog.DEBUG re-frame.core/debug)]  ;; <-- conditional
+       (fn [db v]
+         ...))
+
+  You'll also have to set goog.DEBUG to false in your production builds - look
+  in project.clj of the todomvc example in /examples.
+  "
   (->interceptor
     :id     :debug
     :before (fn debug-before
@@ -72,7 +81,7 @@
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
 ;;
-;; These 3 factories wrap the 3 kinds of handlers.
+;; These 3 factories wrap the 3 kinds of event handlers.
 ;;
 
 (defn db-handler->interceptor
@@ -137,7 +146,7 @@
 
 (defn path
   "An interceptor factory which supplies a sub-path of `:db` to the handler.
-  It's action is somewhat analogous to `update-in`. It grafts the return
+  It's action is somewhat analogous to clojure's `update-in`. It grafts the return
   value from the handler back into db.
 
   Usage:
@@ -147,9 +156,8 @@
     (path [:some :path] [:to] :here)
 
   Notes:
-    1. cater for `path` appearing more than once in an interceptor chain.
-    2. `:effects` may not contain `:db` effect. Which means no change to
-       `:db` should be made.
+    1. `path` may appear more than once in an interceptor chain
+    2. if `:effects` contains no `:db` effect, can't graft a value back in.
   "
   [& args]
   (let [path (flatten args)
@@ -184,7 +192,7 @@
   position.  `f` is called with two arguments: `db` and `v`, and is expected to
   return a modified `db`.
 
-  Unlike the `after` inteceptor which is only about side effects, `enrich`
+  Unlike the `after` interceptor which is only about side effects, `enrich`
   expects `f` to process and alter the given `db` coeffect in some useful way,
   contributing to the derived data, flowing vibe.
 
@@ -192,11 +200,11 @@
   ------------
 
   Imagine that todomvc needed to do duplicate detection - if any two todos had
-  the same text, then highlight their background, and report them in a warning
-  down the bottom of the panel.
+  the same text, then highlight their background, and report them via a warning
+  at the bottom of the panel.
 
   Almost any user action (edit text, add new todo, remove a todo) requires a
-  complete reassesment of duplication errors and warnings. Eg: that edit
+  complete reassessment of duplication errors and warnings. Eg: that edit
   just made might have introduced a new duplicate, or removed one. Same with
   any todo removal. So we need to re-calculate warnings after any CRUD events
   associated with the todos list.
@@ -204,23 +212,25 @@
   Unless we are careful, we might end up coding subtly different checks
   for each kind of CRUD operation.  The duplicates check made after
   'delete todo' event might be subtly different to that done after an
-  eddting operation. Nice and efficient, but fiddly. A bug generator
+  editing operation. Nice and efficient, but fiddly. A bug generator
   approach.
 
-  So, instead, we create an `f` which recalculates warnings from scratch
+  So, instead, we create an `f` which recalculates ALL warnings from scratch
   every time there is ANY change. It will inspect all the todos, and
   reset ALL FLAGS every time (overwriting what was there previously)
   and fully recalculate the list of duplicates (displayed at the bottom?).
+
+  https://twitter.com/nathanmarz/status/879722740776939520
 
   By applying `f` in an `:enrich` interceptor, after every CRUD event,
   we keep the handlers simple and yet we ensure this important step
   (of getting warnings right) is not missed on any change.
 
-  We can test `f` easily - it is a pure fucntions - independently of
+  We can test `f` easily - it is a pure function - independently of
   any CRUD operation.
 
   This brings huge simplicity at the expense of some re-computation
-  each time. This may be a very satisfactory tradeoff in many cases."
+  each time. This may be a very satisfactory trade-off in many cases."
   [f]
   (->interceptor
     :id    :enrich
@@ -243,8 +253,8 @@
   (or the `coeffect` value of db if no db effect is returned) and the event.
    Its return value is ignored so `f` can only side-effect.
 
-  Example use:
-     - `f` runs schema validation (reporting any errors found)
+  Examples use can be seen in the /examples/todomvc:
+     - `f` runs schema validation (reporting any errors found).
      - `f` writes some aspect of db to localstorage."
   [f]
   (->interceptor
@@ -260,10 +270,11 @@
 
 
 (defn  on-changes
-  "Interceptor factory which acts a bit like `reaction`  (but it flows into `db`, rather than out)
-  It observes N paths in `db` and if any of them test not indentical? to their previous value
-  (as a result of a handler being run) then it runs `f` to compute a new value, which is
-  then assoced into the given `out-path` within `db`.
+  "Interceptor factory which acts a bit like `reaction`  (but it flows into
+  `db`, rather than out). It observes N paths within `db` and if any of them
+  test not identical? to their previous value  (as a result of a event handler
+  being run) then it runs `f` to compute a new value, which is then assoc-ed
+  into the given `out-path` within `db`.
 
   Usage:
 
