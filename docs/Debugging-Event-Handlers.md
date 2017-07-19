@@ -171,12 +171,12 @@ Above, we discussed a way of "factoring out" common interceptors into `standard-
 
 There's an additional technique we can use to ensure that all event handlers get certain Interceptors: 
 you write a custom registration function -- a replacement for `reg-event-db` -- like this:
-```clj 
+```clj
 (defn my-reg-event-db          ;; alternative to reg-event-db
-  ([id handler-fn] 
-    (my-reg-event-db id standard-interceptors handler-fn))
+  ([id handler-fn]
+    (re-frame.core/reg-event-db id standard-interceptors handler-fn))
   ([id interceptors handler-fn]
-    (re-frame.core/reg-event-db 
+    (re-frame.core/reg-event-db
         id
         [standard-interceptors interceptors]
         handler-fn)))
@@ -205,18 +205,18 @@ was being changed).
 ```clj
 (def debug? ^boolean goog.DEBUG)
 (def standard-interceptors-fx
-  [(when debug?  debug)    ;; as before 
+  [(when debug?  debug)    ;; as before
    (when debug? (after #(if % (db/valid-schema? %)))]) ;; <-- different after
 ```
 and then:
-```clj 
+```clj
 (defn my-reg-event-fx          ;; alternative to reg-event-db
-  ([id handler-fn] 
-    (my-reg-event-db id standard-interceptors-fx handler-fn))
+  ([id handler-fn]
+    (re-frame.core/reg-event-fx id standard-interceptors-fx handler-fn))
   ([id interceptors handler-fn]
-    (re-frame.core/reg-event-fx 
+    (re-frame.core/reg-event-fx
         id
-        [standard-interceptors-fx  interceptors]
+        [standard-interceptors-fx interceptors]
         handler-fn)))
 ```
 
