@@ -174,7 +174,7 @@ you write a custom registration function -- a replacement for `reg-event-db` -- 
 ```clj
 (defn my-reg-event-db          ;; alternative to reg-event-db
   ([id handler-fn]
-    (my-reg-event-db id standard-interceptors handler-fn))
+    (re-frame.core/reg-event-db id standard-interceptors handler-fn))
   ([id interceptors handler-fn]
     (re-frame.core/reg-event-db
         id
