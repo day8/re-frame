@@ -81,12 +81,17 @@
 ;; usage:
 ;;   {:dispatch-n (list [:do :all] [:three :of] [:these])}
 ;;
+;; Note: nil events are ignored which means events can be added
+;; conditionally:
+;;    {:dispatch-n (list (when (> 3 5) [:conditioned-out])
+;;                       [:another-one])}
+;;
 (register
   :dispatch-n
   (fn [value]
     (if-not (sequential? value)
       (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got:" value)
-      (doseq [event value] (router/dispatch event)))))
+      (doseq [event (remove nil? value)] (router/dispatch event)))))
 
 
 ;; :deregister-event-handler
