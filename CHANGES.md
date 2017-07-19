@@ -3,8 +3,8 @@
 #### New
 
   - improved [testing docs](https://github.com/Day8/re-frame/blob/master/docs/Testing.md)
-  - added [a new mental model](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#dsls-and-vms)
-  
+  - added [a new mental model](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines)
+  - Enshrine and document existing practice around `dispatch-n` and `nils` [checkin](https://github.com/Day8/re-frame/commit/6efdae438f393f8121a2d6dfbf76db00e6dafbf5)
 #### Fixes
 
  - [#357](https://github.com/Day8/re-frame/pull/357)
