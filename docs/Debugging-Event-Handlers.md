@@ -212,7 +212,7 @@ and then:
 ```clj
 (defn my-reg-event-fx          ;; alternative to reg-event-db
   ([id handler-fn]
-    (my-reg-event-fx id standard-interceptors-fx handler-fn))
+    (re-frame.core/reg-event-fx id standard-interceptors-fx handler-fn))
   ([id interceptors handler-fn]
     (re-frame.core/reg-event-fx
         id
