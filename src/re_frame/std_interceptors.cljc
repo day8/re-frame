@@ -10,10 +10,6 @@
     [re-frame.utils :as utils]))
 
 
-;; XXX provide a way to set what handler should be called when there is no registered handler.
-;;    by default this handler will simply print out a message saying no handler was found.
-
-
 (def debug
   "An interceptor which logs data about the handling of an event.
 
