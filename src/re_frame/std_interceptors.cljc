@@ -30,7 +30,7 @@
          ...))
 
   You'll also have to set goog.DEBUG to false in your production builds - look
-  in project.clj of the todomvc example in /examples.
+  in project.clj of /examples/todomvc.
   "
   (->interceptor
     :id     :debug
