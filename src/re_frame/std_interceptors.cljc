@@ -14,7 +14,9 @@
   "An interceptor which logs data about the handling of an event.
 
   Includes a `clojure.data/diff` of the db, before vs after, showing
-  the changes caused by the event handler.
+  the changes caused by the event handler.  You absolutely will have
+  to understand https://clojuredocs.org/clojure.data/diff to
+  understand the output.
 
   You'd typically want this interceptor after (to the right of) any
   path interceptor.
@@ -23,14 +25,14 @@
   can be slow. So, you won't want this interceptor present in production
   code. So condition it out like this:
 
-    (re-frame.core/reg-event
+    (re-frame.core/reg-event-db
        :evt-id
        [(when ^boolean goog.DEBUG re-frame.core/debug)]  ;; <-- conditional
        (fn [db v]
          ...))
 
-  You'll also have to set goog.DEBUG to false in your production builds - look
-  in project.clj of /examples/todomvc.
+  To make this code fragment work, you'll also have to set goog.DEBUG to
+  false in your production builds - look in `project.clj` of /examples/todomvc.
   "
   (->interceptor
     :id     :debug
@@ -58,7 +60,7 @@
 
 (def trim-v
   "An interceptor which removes the first element of the event vector,
-  allowing you to write more aesthetically pleasing db handlers. No
+  allowing you to write more aesthetically pleasing event handlers. No
   leading underscore on the event-v!
   Your event handlers will look like this:
 
@@ -145,18 +147,28 @@
 
 
 (defn path
-  "An interceptor factory which supplies a sub-path of `:db` to the handler.
-  It's action is somewhat analogous to clojure's `update-in`. It grafts the return
-  value from the handler back into db.
+  "An interceptor factory which supplies the value at a sub-path of `db` to
+  the handler, rather than all of `db`.
+  Afterwards, it grafts the handler's return value back into db, at the right path.
+  Its overall action is to make the handler behave like the function you
+  might give to clojure's `update-in`.
 
-  Usage:
+  Examples:
     (path :some :path)
     (path [:some :path])
     (path [:some :path] :to :here)
     (path [:some :path] [:to] :here)
 
+  Example Use:
+
+    (reg-event-db
+      :event-id
+      (path [:a :b])  ;; used here, in interceptor chain
+      (fn [b v]       ;; 1st arg is now not db. Is the value from that path within db
+        ... new-b))      ;; must return a new value for that path (not db)
+
   Notes:
-    1. `path` may appear more than once in an interceptor chain
+    1. `path` may appear more than once in an interceptor chain. Progressive narrowing.
     2. if `:effects` contains no `:db` effect, can't graft a value back in.
   "
   [& args]
@@ -249,13 +261,13 @@
   "Interceptor factory which runs a given function `f` in the \"after\"
   position, presumably for side effects.
 
-  `f` is called with two arguments: the `effects` value of `:db`
+  `f` is called with two arguments: the `:effects` value for `:db`
   (or the `coeffect` value of db if no db effect is returned) and the event.
-   Its return value is ignored so `f` can only side-effect.
+  Its return value is ignored, so `f` can only side-effect.
 
   Examples use can be seen in the /examples/todomvc:
      - `f` runs schema validation (reporting any errors found).
-     - `f` writes some aspect of db to localstorage."
+     - `f` writes to localstorage."
   [f]
   (->interceptor
     :id    :after
