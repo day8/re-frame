@@ -1,14 +1,16 @@
-## re-frame API
+> Page Under construction 
 
-I have good news and bad news.
+## The re-frame API
+
+So, I have some good news and some bad news.
 
 First, the bad news:
  1. [there's this problem](https://github.com/Day8/re-frame/blob/master/src/re_frame/core.cljc#L19-L33)
  2. I lied about the extra nudity
 
 Now, the good news:  
-  1. the re-frame API is indeed [all in one namespace](https://github.com/Day8/re-frame/blob/master/src/re_frame/core.cljc)
-  2. That namespace has occasional comments
+  1. the re-frame API is indeed [all in the core namespace](https://github.com/Day8/re-frame/blob/master/src/re_frame/core.cljc)
+  2. That namespace has some comments
   3. Each API function has passable documentation (see links below), just not auto-generated.
 
 ## Links To API docs
@@ -23,7 +25,7 @@ Occasionally, you'll need to use:
   - [reg-fx]()
   - [reg-cofx]() and [inject-cofx]()
      
-And, finally, there are some standard Interceptors:
+And, finally, there are some builtin Interceptors:
   - [path]()
   - [after]()
   - [debug]()
