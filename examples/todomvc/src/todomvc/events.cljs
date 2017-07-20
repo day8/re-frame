@@ -7,24 +7,19 @@
 
 
 ;; -- Interceptors --------------------------------------------------------------
-;; Interceptors are an advanced topic. So, we're plunging into the deep end.
+;; Interceptors are an advanced topic. So, we're plunging into the deep end here.
 ;;
-;; There are full tutorials on Interceptors. But I'll try here to get you
-;; going enough information so that you can proceed without reading those
-;; docs for the moment.
+;; There are full tutorials on Interceptors in re-frame's /docs. But to get
+;; you going, here's a very high level description of them ...
 ;;
 ;; Every event handler can be "wrapped" in a chain of interceptors. Each of these
-;; interceptors can do things "before" and/or "after" the event handler itself.
-;; Think of them like the "middleware" that is often used in web servers.
-;; Interceptors are a useful way of handling crosscutting concerns like
-;; logging, or debugging, and factoring out commonality.
+;; interceptors can do things "before" and/or "after" the event handler is executed.
+;; They are like the "middleware" of web servers, wrapping around the "handler".
+;; Interceptors are a useful way of factoring out commonality (across event
+;; handlers) and looking after cross-cutting concerns like logging or validation.
 ;;
 ;; They are also used to "inject" values into the `coeffects` parameter of
 ;; an event handler, when that handler needs access to certain resources.
-;;
-;; Yeah, so that's just enough information to get you going.  But read the
-;; /docs for full information. This is an advanced topic.
-;;
 ;;
 
 (defn check-and-throw
@@ -34,19 +29,19 @@
     (throw (ex-info (str "spec check failed: " (s/explain-str a-spec db)) {}))))
 
 ;; Event handlers change state, that's their job. But what happens if there's
-;; a bug in the event handler which corrupts application state in some subtle way?
-;; Next, we create an interceptor `check-spec-interceptor`.
+;; a bug in the event handler and it corrupts application state in some subtle way?
+;; Next, we create an interceptor called `check-spec-interceptor`.
 ;; Later, we use this interceptor in the interceptor chain of all event handlers.
 ;; When included in the interceptor chain of an event handler, this interceptor
 ;; runs `check-and-throw` `after` the event handler has finished, checking
-;; the contents of `app-db` against a spec.
-;; If the event handler messed up `app-db` an exception will be thrown. This
-;; helps us detect event handler bugs early.
-;; Because all state is held in `app-db`, we are effectively checking the
-;; ENTIRE state of the application after each event handler runs.
+;; the value in `app-db` against a spec.
+;; If the event handler corrupted tha value in `app-db` an exception will be
+;; thrown. This helps us detect event handler bugs early.
+;; Because all state is held in `app-db`, we are effectively validating the
+;; ENTIRE state of the application after each event handler runs.  All of it.
 (def check-spec-interceptor (after (partial check-and-throw :todomvc.db/db)))
 
-;; Part of the TodoMVC challenge is to remember todos in Local Storage.
+;; Part of the TodoMVC challenge is to store todos in Local Storage.
 ;; Next, we define an interceptor to help with this challenge.
 ;; This interceptor runs `after` an event handler, and it stores the
 ;; current todos into local storage.
@@ -87,34 +82,40 @@
 ;;   2. The default initial value
 ;;
 ;; Advanced topic:  we inject the todos currently stored in LocalStore
-;; into the first, coeffect parameter via `(inject-cofx :local-store-todos)`
-;; To fully understand how that works, you'll have to review the tutorials.
-;; If you are interested, look at the bottom of `db.cljs` to see how this is done.
+;; into the first, coeffect parameter via use of the interceptor
+;;    `(inject-cofx :local-store-todos)`
 ;;
-(reg-event-fx                     ;; part of the re-frame API
-  :initialise-db                  ;; event id being handled
-  [(inject-cofx :local-store-todos)  ;; <-- advanced: obtain todos from localstore
-   check-spec-interceptor]                                  ;; after the event handler runs, check that app-db matches the spec
-  (fn [{:keys [db local-store-todos]} _]                    ;; the handler being registered
+;; To fully understand how this works, you'll have to review the tutorials
+;; and look at the bottom of `db.cljs` for the `:local-store-todos` cofx
+;; registration.
+(reg-event-fx                 ;; part of the re-frame API
+  :initialise-db              ;; event id being handled
+
+  ;; the interceptor chain (a vector of interceptors)
+  [(inject-cofx :local-store-todos)  ;; get todos from localstore, and put into coeffects arg
+   check-spec-interceptor]           ;; after the event handler runs, check app-db matches Spec
+
+  ;; the event handler (function) being registered
+  (fn [{:keys [db local-store-todos]} _]                    ;; take 2 vals from coeffects. Ignore event vector itself.
     {:db (assoc default-value :todos local-store-todos)}))  ;; all hail the new state
 
 
 ;; usage:  (dispatch [:set-showing  :active])
-;; This event is dispatched when the user clicks on the various
-;; filter buttons at the bottom of the panel. All, active or done.
+;; This event is dispatched when the user clicks on one of the 3
+;; filter buttons at the bottom of the display.
 (reg-event-db      ;; part of the re-frame API
   :set-showing     ;; event-id
   [check-spec-interceptor]
-  (fn [db [_ new-filter-kw]]
+  (fn [db [_ new-filter-kw]]     ;; new-filter-kw is one of :all, :active or :done
     (assoc db :showing new-filter-kw)))
 
 ;; NOTE: here is a rewrite of the event handler above using `path` or `trimv`
-;; These interceptors can be interesting and useful, but they are an advanced topic.
-;; It will be illuminating to compare the version below with the one above. 
+;; These interceptors are useful, but they are an advanced topic.
+;; It will be illuminating if you compare this rewrite with the original above.
 #_(reg-event-db
   :set-showing                    ;; event-id
 
-  ;; this chain of 3 interceptors wrap the handler. Note use of path and trimv
+  ;; this chain of 3 interceptors wrap the handler. Note use of `path` and `trimv`
   [check-spec-interceptor (path :showing) trim-v]
 
   ;; The event handler
@@ -127,21 +128,21 @@
     new-filter-kw))                  ;; return new state for the path
 
 
-;; usage:  (dispatch [:add-todo  "a string"])
+;; usage:  (dispatch [:add-todo  "a description string"])
 (reg-event-db                     ;; given the text, create a new todo
   :add-todo
 
   ;; The standard set of interceptors, defined above, which we
-  ;; apply to all todos-modifying event handlers. Looks after
-  ;; writing todos to local store, etc.
-  ;; NOTE: the interceptors include `path` and `trimv`
+  ;; use for all todos-modifying event handlers. Looks after
+  ;; writing todos to LocalStore, etc.
+  ;; NOTE: this chain includes `path` and `trimv`
   todo-interceptors
 
   ;; The event handler function.
   ;; The "path" interceptor in `todo-interceptors` means 1st parameter is the
-  ;; value at `:todos` within `db`, rather than the full `db`.
+  ;; value at `:todos` path within `db`, rather than the full `db`.
   ;; And, further, it means the event handler returns just the value to be
-  ;; put into `:todos` and not the entire `db`.
+  ;; put into `:todos` path, and not the entire `db`.
   ;; So, a path interceptor makes the event handler act more like clojure's `update-in`
   (fn [todos [text]]   ;; because of trimv,  the 2nd parameter is NOT [_ text]
     (let [id (allocate-next-id todos)]

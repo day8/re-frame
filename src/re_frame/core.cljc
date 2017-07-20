@@ -16,27 +16,26 @@
     [clojure.set               :as set]))
 
 
-;; This namespace defines the re-frame API
-
-;; When originally writing this re-frame API namespace, we used
-;; this technique:
-;;    (def api-name (deeper.namespace/where-the-defn-is))
+;; -- API ---------------------------------------------------------------------
 ;;
-;; Turns out this technique makes it hard:
+;; When originally writing this namespace, we used this technique:
+;;   (def  api-name-for-fn    deeper.namespace/where-the-defn-is)
+;;
+;; Turns out, not doing a `defn` in the API itself makes it hard:
 ;;   - to auto-generate API docs
-;;   - for IDEs to provide code completion on functions in the API.
+;;   - for IDEs to provide code completion on functions in the API
 ;;
 ;; Which is annoying. But there are pros and cons and we haven't yet
 ;; revisited the decision. So, sorry, in advance. To compensate we've
 ;; added more nudity to the official docs.
 
 
-;; --  dispatch ---------------------------------------------------------------
+;; -- dispatch ----------------------------------------------------------------
 (def dispatch       router/dispatch)
 (def dispatch-sync  router/dispatch-sync)
 
 
-;; --  subscriptions ----------------------------------------------------------
+;; -- subscriptions -----------------------------------------------------------
 (def reg-sub        subs/reg-sub)
 (def subscribe      subs/subscribe)
 
@@ -61,7 +60,7 @@
 (def clear-cofx (partial registrar/clear-handlers cofx/kind)) ;; think unreg-cofx
 
 
-;; --  Events -----------------------------------------------------------------
+;; -- Events ------------------------------------------------------------------
 
 (defn reg-event-db
   "Register the given event `handler` (function) for the given `id`. Optionally, provide

@@ -4,13 +4,13 @@
 ;; -------------------------------------------------------------------------------------
 ;; Layer 2
 ;;
-;; https://github.com/Day8/re-frame/blob/master/docs/SubscriptionInfographic.md
+;; See https://github.com/Day8/re-frame/blob/master/docs/SubscriptionInfographic.md
 ;;
-;; Layer 2 query functions, are "extractors". They simply take from `app-db`
-;; and don't do any further computation on the extracted values. That further
-;; computation happens in Layer 3.
-;; Why?  Well Layer 2 subscriptions will rerun every time that `app-db` changes.
-;; So for efficiency reasons, we want them to be trivial extractors.
+;; Layer 2 query functions, are "extractors". They take from `app-db`
+;; and don't do any further computation on the extracted values. Any further
+;; computation should happen in Layer 3.
+;; Why?  It is an efficiency thing. Every Layer 2 subscriptions will rerun anytime
+;; that `app-db` changes (in any way). As a result, we want Layer 2 to be trivial.
 ;;
 (reg-sub
   :showing          ;; usage:   (subscribe [:showing])
@@ -30,7 +30,7 @@
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3
 ;;
-;; https://github.com/Day8/re-frame/blob/master/docs/SubscriptionInfographic.md
+;; See https://github.com/Day8/re-frame/blob/master/docs/SubscriptionInfographic.md
 ;;
 ;; A subscription handler is a function which is re-run when its input signals
 ;; change. Each time it is rerun, it produces a new output (return value).
@@ -90,8 +90,9 @@
 (reg-sub
   :visible-todos
 
-  ;; signal function - tells us what inputs flow into this node
-  ;; returns a vector of two input signals
+  ;; Signal Function
+  ;; Tells us what inputs flow into this node.
+  ;; Returns a vector of two input signals (in this case)
   (fn [query-v _]
     [(subscribe [:todos])
      (subscribe [:showing])])
@@ -107,16 +108,20 @@
 ;; -------------------------------------------------------------------------------------
 ;; Hey, wait on!!
 ;;
-;; How did those two simple registrations at the top work?
+;; How did those two simple Layer 2 registrations at the top work?
 ;; We only supplied one function in those registrations, not two?
 ;; Very observant of you, I'm glad you asked.
-;; When the signal-returning-fn is omitted, re-sub provides a default,
+;; When the signal-returning-fn is omitted, reg-sub provides a default,
 ;; and it looks like this:
-;;    (fn [_ _] re-frame.db/app-db)
+;;    (fn [_ _]
+;;       re-frame.db/app-db)
 ;; It returns one signal, and that signal is app-db itself.
 ;;
 ;; So the two simple registrations at the top didn't need to provide a signal-fn,
 ;; because they operated only on the value in app-db, supplied as 'db' in the 1st argument.
+;;
+;; So that, by the way, is why Layer 2 subscriptions always re-calculate when `app-db`
+;; changes - `app-db` is literally their input signal.
 
 ;; -------------------------------------------------------------------------------------
 ;; SUGAR ?
