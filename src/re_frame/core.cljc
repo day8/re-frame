@@ -18,16 +18,19 @@
 
 ;; -- API ---------------------------------------------------------------------
 ;;
-;; When originally writing this namespace, we used this technique:
+;; This namespace represents the re-frame API
+;;
+;; When originally writing this API namespace, we used this technique:
 ;;   (def  api-name-for-fn    deeper.namespace/where-the-defn-is)
 ;;
 ;; Turns out, not doing a `defn` in the API itself makes it hard:
 ;;   - to auto-generate API docs
 ;;   - for IDEs to provide code completion on functions in the API
 ;;
-;; Which is annoying. But there are pros and cons and we haven't yet
-;; revisited the decision. So, sorry, in advance. To compensate we've
-;; added more nudity to the official docs.
+;; Sigh. Which is annoying. But there are pros and cons and we haven't
+;; yet revisited the decision. So, sorry, in advance for the lack of
+;; auto-generated API docs and auto-completion in your IDE.
+;; To compensate we've added more nudity to the official docs.
 
 
 ;; -- dispatch ----------------------------------------------------------------

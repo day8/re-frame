@@ -26,7 +26,7 @@
    Perhaps it needs access to the connection to a DataScript database.
 
    If the handler directly access these resources, it stops being as
-   pure. It immedaitely becomes harder to test, etc.
+   pure. It immediately becomes harder to test, etc.
 
    So the necessary resources are \"injected\" into the `coeffect` (map)
    given the handler.

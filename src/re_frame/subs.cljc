@@ -62,10 +62,26 @@
    (get @query->reaction [query-v dyn-v])))
 
 
-;; -- subscribe -----------------------------------------------------
+;; -- subscribe ---------------------------------------------------------------
 
 (defn subscribe
-  "Returns a Reagent/reaction which contains a computation"
+  "Given a `query` (vector), returns a Reagent `reaction` which, over
+  time, reactively delivers a stream of freshly computed values.
+
+  To obtain the obtain the current value, the returned `reaction`
+  must be `deref`ed.
+
+  The `query` vector must have at least one value, the query-id, typically
+  a namespaced keyword.  The rest of the elements are optional, additional
+  values which parameterise the query.
+
+  There can be a further optional, argument `dynv` which is a vector of
+  further input signals (atoms, reactions, etc). This arg is not really
+  used/needed any more and is borderline deprecated.
+
+  XXX mention de-duplication and caching.
+  "
+
   ([query-v]
    (trace/with-trace {:operation (first-in-vector query-v)
                       :op-type   :sub/create
@@ -133,40 +149,95 @@
 
 
 (defn reg-sub
-  "Associate the given `query id` with a handler function and an optional signal function.
+  "For a given `query-id`, register a `computation` function and input `signals`.
 
-  There's 3 ways this function can be called
+  At an abstract level, a call to this function allows you to register 'the mechanism'
+  to later fulfil a call to `(subscribe [query-id ...])`.
 
-  1. (reg-sub
-       :test-sub
-       (fn [db [_]] db))
-  The value in app-db is passed to the computation function as the 1st argument.
+  To say that another way, reg-sub allows you to create a template for a node
+  in the signal graph. But note: reg-sub does not cause a node to be created.
+  It simply allows you to register the template from which such a
+  node could be created, if it were needed, sometime later, when the call
+  to `subscribe` is made.
 
-  2. (reg-sub
-       :a-b-sub
-       (fn [q-vec d-vec]
-         [(subs/subscribe [:a-sub])
-          (subs/subscribe [:b-sub])])
-       (fn [[a b] [_]] {:a a :b b}))
+  reg-sub needs three things:
+    - a `query-id`
+    - the required inputs for this node
+    - a computation function for this node
 
-  Two functions provided. The 2nd is computation function, as before. The 1st
-  is returns what `input signals` should be provided to the computation. The
-  `input signals` function is called with two arguments: the query vector
-  and the dynamic vector. The return value can be singleton reaction or
-  a sequence of reactions.
+  The `query-id` is always the 1st argument to reg-sub and it is typically
+  a namespaced keyword.
 
-  3. (reg-sub
+  A computation function is always the last argument and it has this general form:
+    `(input-signals, query-vector) -> a-value`
+
+  What goes in between the 1st and last args can vary, but whatever is there will
+  define the input signals part of the template, and, as a result, it will control
+  what values the computation functions gets as a first argument.
+
+  There's 3 ways this function can be called - 3 ways to supply input signals:
+
+  1. No input signals given:
+
+     (reg-sub
+       :query-id
+       a-computation-fn)   ;; (fn [db v]  ... a-value)
+
+     The node's input signal defaults to `app-db`, and the value within `app-db` is
+     is given as the 1st argument to the computation function.
+
+  2. A signal function is supplied:
+
+     (reg-sub
+       :query-id
+       signal-fn     ;; <-- here
+       computation-fn)
+
+     When a node is created from the template, the `signal-fn` will be called and it
+     is expected to return the input signal(s) as either a singleton, if there is only
+     one, or a sequence if there are many, or a map with the signals as the values.
+
+     The values from the nominated signals will be supplied as the 1st argument to the
+     computation function - either a singleton, sequence or map of them, paralleling
+     the structure returned by the signal function.
+
+     Here, is an example signal-fn, which returns a vector of input signals.
+
+       (fn [query-vec dynamic-vec]
+         [(subscribe [:a-sub])
+          (subscribe [:b-sub])])
+
+     For that signal function, the computation function must be written
+     to expect a vector of values for its first argument.
+       (fn [[a b] _] ....)
+
+     If the signal function was simpler and returned a singleton, like this:
+        (fn [query-vec dynamic-vec]
+          (subscribe [:a-sub]))
+
+     then the computation function must be written to expect a single value
+     as the 1st argument:
+
+        (fn [a _] ...)
+
+  3. Syntax Sugar
+
+     (reg-sub
        :a-b-sub
        :<- [:a-sub]
        :<- [:b-sub]
-       (fn [[a b] [_]] {:a a :b b}))```
-  This 3rd variation is just syntactic sugar for the 2nd. Pairs are supplied instead
-  of an `input signals` functions. `:<-` is supplied followed by the subscription
-  vector.
+       (fn [[a b] [_]] {:a a :b b}))
+
+  This 3rd variation is syntactic sugar for the 2nd. Pairs are supplied instead
+  of an `input signals` functions. Each pair starts with a `:<-` and a subscription
+  vector follows.
+
+  For further understanding, read `/docs`, and look at the detailed comments in
+  /examples/todomvc/src/subs.cljs
   "
   [query-id & args]
   (let [computation-fn (last args)
-        input-args     (butlast args) ;; may be empty, or one fn, or pairs of  :<- / vector
+        input-args     (butlast args) ;; may be empty, or one signal fn, or pairs of  :<- / vector
         err-header     (str "re-frame: reg-sub for " query-id ", ")
         inputs-fn      (case (count input-args)
                          ;; no `inputs` function provided - give the default
