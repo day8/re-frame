@@ -299,7 +299,7 @@ The delete button for that 3rd item will be rendered by a ViewFunction which loo
 That `on-click` handler uses re-frame's `dispatch` to emit an `event`.
 
 A re-frame `event` is a vector and, in this case, 
-it has 2 elements: `[:delete-item 2486]` (where `2486` in the made-up id for that 3rd item).  
+it has 2 elements: `[:delete-item 2486]` (where `2486` is the made-up id for that 3rd item).  
  
 The first element of an event vector,
 `:delete-item`, is the kind of event. The rest is optional, useful data about the 
