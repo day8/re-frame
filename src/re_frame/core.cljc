@@ -20,17 +20,20 @@
 ;;
 ;; This namespace represents the re-frame API
 ;;
-;; When originally writing this API namespace, we used this technique:
+;; Below, you'll see we've used this technique:
 ;;   (def  api-name-for-fn    deeper.namespace/where-the-defn-is)
 ;;
-;; Turns out, not doing a `defn` in the API itself makes it hard:
+;; So, we promote a `defn` in a deeper namespace "up" to the API
+;; via a `def` in this namespace.
+;;
+;; Turns out, this approach makes it hard:
 ;;   - to auto-generate API docs
 ;;   - for IDEs to provide code completion on functions in the API
 ;;
-;; Sigh. Which is annoying. But there are pros and cons and we haven't
-;; yet revisited the decision. So, sorry, in advance for the lack of
-;; auto-generated API docs and auto-completion in your IDE.
-;; To compensate we've added more nudity to the official docs.
+;; Which is annoying. But there are pros and cons and we haven't
+;; yet revisited the decision.  To compensate, we've added more nudity
+;; to the docs.
+;;
 
 
 ;; -- dispatch ----------------------------------------------------------------

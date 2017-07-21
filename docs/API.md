@@ -1,23 +1,21 @@
-> Page Under construction 
-
 ## The re-frame API
 
 So, I have some good news and some bad news.
 
 First, the bad news:
- 1. [there's this problem](https://github.com/Day8/re-frame/blob/master/src/re_frame/core.cljc#L19-L33)
- 2. I lied about the extra nudity
+ 1. These API docs are not auto-generated [because of this problem](/src/re_frame/core.cljc#L19-L33)
+ 2. There's no added nudity
 
-Now, the good news:  
-  1. the re-frame API is indeed [all in the core namespace](https://github.com/Day8/re-frame/blob/master/src/re_frame/core.cljc)
-  2. That namespace has some comments
-  3. Each API function has passable documentation (see links below), just not auto-generated.
+Now, the good news:
+  1. the re-frame API is entirely provided by the [core namespace](/src/re_frame/core.cljc)
+  2. That namespace has occasional comments. You should read it sometime.
+  3. Each API function has passable documentation which is linked-to below. 
 
 ## Links To API docs
 
 The core API is these functions:
-  - [dispatch](), [dispatch-sync]()
-  - [reg-event-db](), [reg-event-fx]()
+  - [dispatch](https://github.com/Day8/re-frame/blob/master/src/re_frame/router.cljc#L229-L239), [dispatch-sync](https://github.com/Day8/re-frame/blob/master/src/re_frame/router.cljc#L229-L239). See also [this FAQ](/docs/FAQs/When-Does-Dispatch-Happen.md)
+  - [reg-event-db](), [reg-event-fx]() are both documented in the code namespace
   - [reg-sub]()
   - [subscribe]()
 
