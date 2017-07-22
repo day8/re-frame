@@ -10,7 +10,10 @@
 
 (def kind :cofx)
 (assert (re-frame.registrar/kinds kind))
-(def register  (partial register-handler kind))
+
+(defn reg-cofx
+  [id handler]
+  (register-handler kind id handler))
 
 
 ;; -- Interceptor -------------------------------------------------------------
@@ -55,7 +58,7 @@
 ;; :db
 ;;
 ;; Adds to coeffects the value in `app-db`, under the key `:db`
-(register
+(reg-cofx
   :db
   (fn db-coeffects-handler
     [coeffects]
