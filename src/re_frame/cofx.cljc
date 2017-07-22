@@ -12,6 +12,7 @@
 (assert (re-frame.registrar/kinds kind))
 
 (defn reg-cofx
+  ""
   [id handler]
   (register-handler kind id handler))
 
@@ -19,26 +20,57 @@
 ;; -- Interceptor -------------------------------------------------------------
 
 (defn inject-cofx
-  "Returns an interceptor which adds to a `context's` `:coeffects`.
+  "Given an `id`, and an optional, arbitrary `value`, returns an interceptor
+   whose `:before` adds to the `:coeffects` (map) by calling a pre-registered
+   'coeffect handler' identified by the `id`.
 
-  `coeffects` are the input resources required by an event handler
+   It is expected that a `coeffect handler` will previously have been registered
+   for the given `id`, via a call to `re-frame.core/reg-cofx`.
+
+   The `coeffect handler` (identified by `id`) will be called (at `:before` time)
+   with two arguments:
+     - the current value of `:coeffects`
+     - optionally, the originally supplied arbitrary `value`
+
+   This `coeffect handler` is expected to modify and return its first argument.
+
+   Example Use
+   -----------
+
+   1. Early in app startup, you register a `coeffect handler` for `:datetime`:
+
+      (re-frame.core/reg-cofx
+        :datetime                        ;; usage  (inject-cofx :datetime)
+        (fn coeffect-handler
+          [coeffect]
+          (assoc coeffect :now (js/Date.))))   ;; modify and return first arg
+
+   2. Later, add an interceptor to an -fx event handler, using `inject-cofx`:
+
+      (re-frame.reg-event-fx
+         :event-id
+         [ ... (inject-cofx :datetime) ... ]    ;; <-- create an injecting interceptor
+         (fn event-handler
+           [coeffect event]
+           ... can access (:now coeffect) to obtain current datetime ... )))
+
+   Background
+   ----------
+
+   `coeffects` are the input resources required by an event handler
    to perform its job. The two most obvious ones are `db` and `event`.
-   But sometimes a handler might need other resources.
+   But sometimes an event handler might need other resources.
 
-   Perhaps a handler needs a random number or a GUID or the current datetime.
-   Perhaps it needs access to the connection to a DataScript database.
+   Perhaps an event handler needs a random number or a GUID or the current
+   datetime. Perhaps it needs access to a DataScript database connection.
 
-   If the handler directly access these resources, it stops being as
-   pure. It immediately becomes harder to test, etc.
+   If an event handler directly accesses these resources, it stops being
+   pure and, consequently, it becomes harder to test, etc. So we don't
+   want that.
 
-   So the necessary resources are \"injected\" into the `coeffect` (map)
-   given the handler.
-
-   Given an `id`, and an optional value, lookup the registered coeffect
-   handler (previously registered via `reg-cofx`) and it with two arguments:
-   the current value of `:coeffects` and, optionally, the value. The registered handler
-   is expected to return a modified coeffect.
-   "
+   Instead, the interceptor created by this function is a way to 'inject'
+   'necessary resources' into the `:coeffects` (map) subsequently given
+   to the event handler at call time."
   ([id]
   (->interceptor
     :id      :coeffects

@@ -61,7 +61,7 @@
 (def clear-fx    (partial registrar/clear-handlers fx/kind))  ;; think unreg-fx
 
 ;; -- coeffects ---------------------------------------------------------------
-(def reg-cofx    cofx/register)
+(def reg-cofx    cofx/reg-cofx)
 (def inject-cofx cofx/inject-cofx)
 (def clear-cofx (partial registrar/clear-handlers cofx/kind)) ;; think unreg-cofx
 
