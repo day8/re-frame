@@ -3,10 +3,15 @@
 - [This Repo's README](../README.md)
 - [app-db (Application State)](ApplicationState.md)
 - [First Code Walk-Through](CodeWalkthrough.md)
+- [The API](API.md)
 - [Mental Model Omnibus](MentalModelOmnibus.md)
 
+### Alternative Introductions
 
-### Event Handlers
+- [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a excellent, written overview. 
+- [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on clojure, with some on re-frame
+
+### Domaino 2 - Event Handlers
 
 - [Infographic Overview](EventHandlingInfographic.md)
 - [Effectful Handlers](EffectfulHandlers.md)
@@ -14,18 +19,13 @@
 - [Effects](Effects.md)
 - [Coeffects](Coeffects.md)
 
-### Subscriptions
+### Domino 4 - Subscriptions
 
 - [Infographic](SubscriptionInfographic.md)
 - [Correcting a wrong](SubscriptionsCleanup.md)
 - [Flow Mechanics](SubscriptionFlow.md)
 
-### Other Tutorials
-
-- [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a excellent, written overview. 
-- [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on clojure, with some on re-frame
-
-### Reagent Tutorials
+### Domino 5 - Reagent Tutorials
 
 - [The Basics](https://github.com/Day8/re-frame/wiki#reagent-tutorials) (look at the bottom of that page)
 - [Lambda Island Videos](https://lambdaisland.com/episodes). There's a 3 part series.
