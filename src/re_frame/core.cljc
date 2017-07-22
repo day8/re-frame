@@ -221,7 +221,7 @@
 
 
 ;; --  Deprecation ------------------------------------------------------------
-;; Assisting the v0.0.7 ->  v0.0.8 transition.
+;; Assisting the v0.7.x ->  v0.8.x transition.
 (defn register-handler
   [& args]
   (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
