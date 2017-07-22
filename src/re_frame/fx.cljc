@@ -18,24 +18,30 @@
 ;; -- Interceptor -------------------------------------------------------------
 
 (def do-fx
-  "An interceptor which actions a `context's` (side) `:effects`.
+  "An interceptor whose `:after` executes the instructions in `:effects`.
 
-  For each key in the `:effects` map, call the `effects handler` previously
-  registered using `reg-fx`.
+  For each key in `:effects` (a map), it calls the registered `effects handler`
+  (see `reg-fx` for registration of effects handlers).
 
   So, if `:effects` was:
       {:dispatch  [:hello 42]
        :db        {...}
        :undo      \"set flag\"}
-  call the registered effects handlers for each of the map's keys:
-  `:dispatch`, `:undo` and `:db`."
+
+  it will call the registered effects handlers for each of the map's keys:
+  `:dispatch`, `:undo` and `:db`. When calling each handler, provides the map
+  value for that key - so in the example above the effect handler for :dispatch
+  will be given one arg `[:hello 42]`.
+
+  You cannot rely on the ordering in which effects are executed."
   (->interceptor
     :id :do-fx
     :after (fn do-fx-after
              [context]
-             (doseq [[effect-k value] (:effects context)]
-               (if-let [effect-fn (get-handler kind effect-k true)]
-                 (effect-fn value))))))
+             (doseq [[effect-key effect-value] (:effects context)]
+               (if-let [effect-fn (get-handler kind effect-key true)]
+                 (effect-fn effect-value)
+                 (console :error "re-frame: no handler registered for effect: \"" effect-key "\". Ignoring."))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 
@@ -97,7 +103,7 @@
 ;; :deregister-event-handler
 ;;
 ;; removes a previously registered event handler. Expects either a single id (
-;; typically a keyword), or a seq of ids.
+;; typically a namespaced keyword), or a seq of ids.
 ;;
 ;; usage:
 ;;   {:deregister-event-handler :my-id)}
@@ -115,7 +121,7 @@
 
 ;; :db
 ;;
-;; reset! app-db with a new value. Expects a map.
+;; reset! app-db with a new value. `value` is expected to be a map.
 ;;
 ;; usage:
 ;;   {:db  {:key1 value1 key2 value2}}
