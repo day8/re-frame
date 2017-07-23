@@ -84,7 +84,7 @@
 ;;    {:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}    ;;  in 200ms do this: (dispatch [:event-id "param"])
 ;;                      {:ms 100 :dispatch [:also :this :in :100ms]}]}
 ;;
-(register
+(reg-fx
   :dispatch-later
   (fn [value]
     (doseq [{:keys [ms dispatch] :as effect} value]
@@ -100,7 +100,7 @@
 ;; usage:
 ;;   {:dispatch [:event-id "param"] }
 
-(register
+(reg-fx
   :dispatch
   (fn [value]
     (if-not (vector? value)
@@ -121,7 +121,7 @@
 ;;    {:dispatch-n (list (when (> 3 5) [:conditioned-out])
 ;;                       [:another-one])}
 ;;
-(register
+(reg-fx
   :dispatch-n
   (fn [value]
     (if-not (sequential? value)
@@ -139,7 +139,7 @@
 ;; or:
 ;;   {:deregister-event-handler [:one-id :another-id]}
 ;;
-(register
+(reg-fx
   :deregister-event-handler
   (fn [value]
     (let [clear-event (partial clear-handlers events/kind)]
@@ -155,7 +155,7 @@
 ;; usage:
 ;;   {:db  {:key1 value1 key2 value2}}
 ;;
-(register
+(reg-fx
   :db
   (fn [value]
     (if-not (identical? @app-db value)
