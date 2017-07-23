@@ -11,14 +11,14 @@ Orientation:
 ## Doc Strings For API Functions 
 
 The core API consists of: 
-  - [dispatch](/src/re_frame/router.cljc#L229-L239), [dispatch-sync](/src/re_frame/router.cljc#L247-L259). See also [this FAQ](/docs/FAQs/When-Does-Dispatch-Happen.md)
+  - [dispatch](/src/re_frame/router.cljc#L229-L239), [dispatch-sync](/src/re_frame/router.cljc#L247-L259).
   - [reg-event-db](/src/re_frame/core.cljc#L71-L80), [reg-event-fx](/src/re_frame/core.cljc#L87-L97) 
   - [reg-sub](/src/re_frame/subs.cljc#L151-L237)
   - [subscribe](/src/re_frame/subs.cljc#L67-L83)
 
 Occasionally, you'll need to use:  
   - [reg-fx](/src/re_frame/fx.cljc#L17-L39)
-  - [reg-cofx](/src/re_frame/cofx.cljc#L14-L21) and [inject-cofx](/src/re_frame/cofx.cljc#L22-L73)
+  - [reg-cofx](/src/re_frame/cofx.cljc#L14-L21) and [inject-cofx](/src/re_frame/cofx.cljc#L28-L79)
      
 And, finally, there are builtin Interceptors which are useful:
   - [path](/src/re_frame/std_interceptors.cljc#L149-L173)
