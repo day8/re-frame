@@ -2,6 +2,13 @@
 
 A [re-frame](https://github.com/Day8/re-frame) implementation of [TodoMVC](http://todomvc.com/).
 
+But this is NOT your normal, lean and minimal todomvc implementation, 
+geared towards showing how easily re-frame can implement the challenge.
+ 
+Instead, this todomvc example has evolved into more of a teaching tool 
+and we've thrown in more advanced re-frame features which aren't 
+really required to get the job done. 
+
 
 ## Setup And Run
 
