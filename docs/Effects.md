@@ -21,12 +21,6 @@ make side effects a noop in event replays.
 - [Effects With No Data](#effects-with-no-data)
 - [Testing And Noops](#testing-and-noops)
 - [Summary](#summary)
-- [Builtin Effect Handlers](#builtin-effect-handlers)
-  - [:dispatch-later](#dispatch-later)
-  - [:dispatch](#dispatch)
-  - [:dispatch-n](#dispatch-n)
-  - [:deregister-event-handler](#deregister-event-handler)
-  - [:db](#db)
 - [External Effects](#external-effects)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -280,76 +274,21 @@ then you can use a `fixture` to restore all effect handlers at the end of your t
 `re-frame.core/make-restore-fn` creates a checkpoint for re-frame state (including 
 registered handlers) to which you can return. 
 
+### Existing Effect Handlers
+
+Built-in effect handlers are detailed [the API](/docs/API.md) document.
+
+And please review the [External-Resources document](External-Resources.md) for a list of 3rd party Effect Handlers.
+
+
 ### Summary 
 
-The 4 Point Summary
-
-In note form:
+The 4 Point Summary in note form:
 
 1. Event handlers should only return effect declaratively
 2. They return a map like `{:effect1 value1 :effect2 value2}`
 3. Keys of this map can refer to builtin effects handlers (see below) or custom ones
-4. We use `reg-fx` to register our own effects handlers, builtin ones are already registered
-
-### Builtin Effect Handlers
-
-#### :dispatch-later
-
-`dispatch` one or more events after given delays. Expects a collection
-of maps with two keys: `:ms` and `:dispatch`
-
-usage:
-```clj
-{:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}    
-                  {:ms 100 :dispatch [:also :this :in :100ms]}]}
-```
-
-Which means: in 200ms do this: `(dispatch [:event-id "param"])` and in 100ms ...
-
-#### :dispatch
-
-`dispatch` one event. Expects a single vector.
-
-usage:
-```clj
-{:dispatch [:event-id "param"] }
-```
-
-#### :dispatch-n
-
-`dispatch` more than one event. Expects a collection events.
-
-usage:
-```clj
-{:dispatch-n (list [:do :all] [:three :of] [:these])}
-```
-
-#### :deregister-event-handler
-
-removes a previously registered event handler. Expects either a single id (
-typically a keyword), or a seq of ids.
-
-usage:
-```clj
-{:deregister-event-handler :my-id)}
-```
-or:
-```clj
-{:deregister-event-handler [:one-id :another-id]}
-```
-
-#### :db
-
-reset! app-db with a new value. Expects a map. 
-
-usage:
-```clj
-{:db  {:key1 value1 :key2 value2}}
-```
-
-### External Effects
-
-Please see the [External-Resources document](External-Resources.md) for a list of 3rd part Effect Handlers.
+4. We use `reg-fx` to register our own effects handlers, built-in ones are already registered
 
 
 ***
