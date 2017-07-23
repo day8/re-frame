@@ -15,7 +15,7 @@ The core API is:
 
 Occasionally, you'll need to use:  
   - [reg-fx]() XXX
-  - [reg-cofx]() XXX and [inject-cofx](src/re_frame/cofx.cljc#L22-L73)
+  - [reg-cofx]() XXX and [inject-cofx](/src/re_frame/cofx.cljc#L22-L73)
      
 And, finally, there are builtin Interceptors which are used a bit:
   - [path](/src/re_frame/std_interceptors.cljc#L149-L173)
