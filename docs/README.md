@@ -11,7 +11,7 @@
 - [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a detailed, well written introduction.  
 - [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on many clojure topics, including re-frame and reagent.
 
-### Domaino 2 - Event Handlers
+### Dominoes 2 and 3 - Event Handlers
 
 - [Infographic Overview](EventHandlingInfographic.md)
 - [Effectful Handlers](EffectfulHandlers.md)

@@ -1,24 +1,25 @@
 ## Unreleased
 
+#### New
+
+  - added [an API document](/docs/API.md)
+  - added [testing docs](/docs/Testing.md)
+  - added [a new mental model](/docs/MentalModelOmnibus.md#on-dsls-and-machines)
+  - added [a new FAQ entry](docs/FAQs/When-Does-Dispatch-Happen.md) on dispatch processing 
+  - The effect handler for `:dispatch-n` will now ignore `nils`. [See checkin](https://github.com/Day8/re-frame/commit/6efdae438f393f8121a2d6dfbf76db00e6dafbf5)
+
 #### Breaking 
 
   - [#357](https://github.com/Day8/re-frame/pull/357)
-    I'd be amazed if this actually broke any apps. Shocked. But for completeness ... the 
-    effect handler for `:db` has been changed. If the provided value tests 
-    `identical?` to the current value within `app-db` then `app-db` is not `reset!`. 
+    I'd be amazed if this actually broke any apps. Shocked! But, better safe than sorry. 
+    The effect handler for `:db` has changed: if the value provided tests 
+    `identical?` to the existing value within `app-db`, then `app-db` is not `reset!`. 
     Previously, `app-db` was always `reset!` when a `:db` effect was supplied, 
     which caused Layer 2 subscriptions to run unnecessarily. So this is a tiny 
-    efficiency change which also results in behaviour that better matches 
+    efficiency change in an edge case, which also results in behaviour that better matches 
     programmer intuitions.
 
-#### New
-
-  - added [testing docs](/docs/Testing.md)
-  - added [a new mental model](/docs/MentalModelOmnibus.md#on-dsls-and-machines)
-  - added [a new FAQ](docs/FAQs/When-Does-Dispatch-Happen.md) on dispatch processing 
-  - The effect `:dispatch-n` will now ignore `nils` which can be useful. [See checkin](https://github.com/Day8/re-frame/commit/6efdae438f393f8121a2d6dfbf76db00e6dafbf5)
-
-#### Fixes and Improvements
+#### Minor Fixes and Improvements
 
  - [#340](https://github.com/Day8/re-frame/pull/340)
  - [#341](https://github.com/Day8/re-frame/pull/341) Fix `re-frame.std-interceptors/on-changes` to work even if effect handler does not set `:db`. 
