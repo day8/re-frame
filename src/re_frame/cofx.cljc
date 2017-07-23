@@ -12,7 +12,13 @@
 (assert (re-frame.registrar/kinds kind))
 
 (defn reg-cofx
-  ""
+  "Register the given coeffect `handler` for the given coeffect `id`.
+
+  `id` is keyword, often namespaced.
+  `handler` is a function which takes either one or two values, the first of which is
+  always `context` and which returns an updated `context`.
+
+  Please see the docs for `inject-cofx` for example use."
   [id handler]
   (register-handler kind id handler))
 

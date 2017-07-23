@@ -1,12 +1,14 @@
 ## The re-frame API
 
 Orientation:
-  1. The API is provided by the [re-frame.core](/src/re_frame/core.cljc) namespace
-  2. The API is quite small - you'll use less than 10 API functions when writing an app.
+  1. The API is provided by [re-frame.core](/src/re_frame/core.cljc) which means:
+     - you should probably browse this namespace sometime
+     - to use re-frame, you'll have to `require` it
+  2. The API is small. Writing an app, you'll use less than 10 API functions. Maybe just 5.
   3. There's no auto-generated docs [because of this problem](/src/re_frame/core.cljc#L23-L36)
-  4. But below are helpful links to the doc strings of often-used API functions 
+  4. But below are links to the doc strings of often-used API functions. 
 
-## Links To API docs
+## Doc Strings For API Functions 
 
 The core API consists of: 
   - [dispatch](/src/re_frame/router.cljc#L229-L239), [dispatch-sync](/src/re_frame/router.cljc#L247-L259). See also [this FAQ](/docs/FAQs/When-Does-Dispatch-Happen.md)
@@ -15,8 +17,8 @@ The core API consists of:
   - [subscribe](/src/re_frame/subs.cljc#L67-L83)
 
 Occasionally, you'll need to use:  
-  - [reg-fx]() XXX
-  - [reg-cofx]() XXX and [inject-cofx](/src/re_frame/cofx.cljc#L22-L73)
+  - [reg-fx](/src/re_frame/fx.cljc#L17-L39)
+  - [reg-cofx](/src/re_frame/cofx.cljc#L14-L21) and [inject-cofx](/src/re_frame/cofx.cljc#L22-L73)
      
 And, finally, there are builtin Interceptors which are useful:
   - [path](/src/re_frame/std_interceptors.cljc#L149-L173)
@@ -25,11 +27,11 @@ And, finally, there are builtin Interceptors which are useful:
   - [and browse the others](/src/re_frame/std_interceptors.cljc)
   
 
-### Built-in Effect Handlers
+## Built-in Effect Handlers
 
-The following built-in effects are effectively part of the API:  
+The following built-in effects are part of the API:  
 
-#### :dispatch-later
+### :dispatch-later
 
 `dispatch` one or more events after given delays. Expects a collection
 of maps with two keys: `:ms` and `:dispatch`
@@ -51,7 +53,7 @@ usage:
 {:dispatch [:event-id "param"] }
 ```
 
-#### :dispatch-n
+### :dispatch-n
 
 `dispatch` more than one event. Expects a collection events.
 
@@ -60,7 +62,7 @@ usage:
 {:dispatch-n (list [:do :all] [:three :of] [:these])}
 ```
 
-#### :deregister-event-handler
+### :deregister-event-handler
 
 removes a previously registered event handler. Expects either a single id (
 typically a keyword), or a seq of ids.
@@ -74,7 +76,7 @@ or:
 {:deregister-event-handler [:one-id :another-id]}
 ```
 
-#### :db
+### :db
 
 reset! app-db with a new value. Expects a map. 
 
@@ -83,6 +85,7 @@ usage:
 {:db  {:key1 value1 :key2 value2}}
 ```
 
+*** 
 
 Previous:  [First Code Walk-Through](CodeWalkthrough.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

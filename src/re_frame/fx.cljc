@@ -13,22 +13,51 @@
 
 (def kind :fx)
 (assert (re-frame.registrar/kinds kind))
-(def register  (partial register-handler kind))
+
+(defn reg-fx
+  "Register the given effect `handler` for the given effect `id`.
+
+  `id` is keyword, often namespaced.
+  `handler` is a side-effecting function which takes a single value and returns nothing.
+
+  Example Use
+  -----------
+
+  First registration ... associating `:effect2` with a handler.
+
+  (reg-fx
+     :effect2
+     (fn [value]
+        ... do something side-effect-y))
+
+  Then, later if an event handler were to return this effects map:
+
+  {:effect1  42
+   :effect2  [1 2]}
+
+   Then the `handler` `fn` we registered previously, using reg-fx, will be
+   called with a `value` argument of `[1 2]`."
+  [id handler]
+  (register-handler kind id handler))
 
 ;; -- Interceptor -------------------------------------------------------------
 
 (def do-fx
-  "An interceptor whose `:after` executes the instructions in `:effects`.
+  "An interceptor whose `:after` actions the contents of `:effects`. As a result,
+  this interceptor is Domino 3.
+
+  This interceptor is silently added (by reg-event-db etc) to the front of
+  interceptor chains for all events.
 
   For each key in `:effects` (a map), it calls the registered `effects handler`
-  (see `reg-fx` for registration of effects handlers).
+  (see `reg-fx` for registration of effect handlers).
 
   So, if `:effects` was:
       {:dispatch  [:hello 42]
        :db        {...}
        :undo      \"set flag\"}
 
-  it will call the registered effects handlers for each of the map's keys:
+  it will call the registered effect handlers for each of the map's keys:
   `:dispatch`, `:undo` and `:db`. When calling each handler, provides the map
   value for that key - so in the example above the effect handler for :dispatch
   will be given one arg `[:hello 42]`.

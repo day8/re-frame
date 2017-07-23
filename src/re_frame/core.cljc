@@ -57,7 +57,7 @@
 
 
 ;; -- effects -----------------------------------------------------------------
-(def reg-fx      fx/register)
+(def reg-fx      fx/reg-fx)
 (def clear-fx    (partial registrar/clear-handlers fx/kind))  ;; think unreg-fx
 
 ;; -- coeffects ---------------------------------------------------------------

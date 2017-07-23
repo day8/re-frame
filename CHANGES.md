@@ -1,28 +1,28 @@
-## Unreleased
+## Unreleased 0.10.0  (2017.07.NN)
 
-#### New
+#### New Docs
 
-  - added [an API document](/docs/API.md)
+  - added [API documentation](/docs/API.md)
   - added [testing docs](/docs/Testing.md)
   - added [a new mental model](/docs/MentalModelOmnibus.md#on-dsls-and-machines)
   - added [a new FAQ entry](docs/FAQs/When-Does-Dispatch-Happen.md) on dispatch processing 
-  - The effect handler for `:dispatch-n` will now ignore `nils`. [See checkin](https://github.com/Day8/re-frame/commit/6efdae438f393f8121a2d6dfbf76db00e6dafbf5)
 
-#### Breaking 
+#### Breaking
 
   - [#357](https://github.com/Day8/re-frame/pull/357)
     I'd be amazed if this actually broke any apps. Shocked! But, better safe than sorry. 
-    The effect handler for `:db` has changed: if the value provided tests 
+    The effect handler for `:db` has changed: if the new value provided tests
     `identical?` to the existing value within `app-db`, then `app-db` is not `reset!`. 
-    Previously, `app-db` was always `reset!` when a `:db` effect was supplied, 
-    which caused Layer 2 subscriptions to run unnecessarily. So this is a tiny 
-    efficiency change in an edge case, which also results in behaviour that better matches 
+    Previously, `app-db` was always `reset!` irrespective, 
+    which potentially caused Layer 2 subscriptions to run unnecessarily. So this is a tiny 
+    efficiency change in this edge case, and it results in behaviour that better matches 
     programmer intuitions.
 
 #### Minor Fixes and Improvements
 
+ - The effect handler for `:dispatch-n` will now ignore `nils`. [See checkin](https://github.com/Day8/re-frame/commit/6efdae438f393f8121a2d6dfbf76db00e6dafbf5)
  - [#340](https://github.com/Day8/re-frame/pull/340)
- - [#341](https://github.com/Day8/re-frame/pull/341) Fix `re-frame.std-interceptors/on-changes` to work even if effect handler does not set `:db`. 
+ - [#341](https://github.com/Day8/re-frame/pull/341) Fix `re-frame.core/on-changes` to work even if event handler does not set `:db`. 
 
  
 ## 0.9.4 (2017.06.01)
