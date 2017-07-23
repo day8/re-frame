@@ -26,9 +26,9 @@
 
   ([kind id required?]
    (let [handler (get-handler kind id)]
-     (when debug-enabled?                                   ;; This is in a separate when so Closure DCE can run
-       (when (and required? (nil? handler))                 ;; Otherwise you'd need to type hint the and with a ^boolean for DCE.
-         (console :error "re-frame: no " (str kind) " handler registered for:" id)))
+     (when debug-enabled?                          ;; This is in a separate when so Closure DCE can run ...
+       (when (and required? (nil? handler))        ;; ...otherwise you'd need to type hint the `and` with a ^boolean for DCE.
+         (console :error "re-frame: no " (str kind) " handler registered for: " id)))
      handler)))
 
 
