@@ -2,11 +2,11 @@
 
 Orientation:
   1. The API is provided by [re-frame.core](/src/re_frame/core.cljc) which means:
-     - you should probably browse this namespace sometime
-     - to use re-frame, you'll have to `require` it
-  2. The API is small. Writing an app, you'll use less than 10 API functions. Maybe just 5.
-  3. There's no auto-generated docs [because of this problem](/src/re_frame/core.cljc#L23-L36)
-  4. But below are links to the doc strings of often-used API functions. 
+     - it will be worth your while to browse this namespace sometime
+     - to use re-frame, you'll need to `require` it
+  2. The API is small. Writing an app, you'll be using less than 10 API functions. Maybe just 5.
+  3. There's no auto-generated docs [because of this problem](/src/re_frame/core.cljc#L23-L36) but 
+     the links below take you to the doc strings of often-used API functions. 
 
 ## Doc Strings For API Functions 
 
@@ -24,7 +24,7 @@ And, finally, there are builtin Interceptors which are useful:
   - [path](/src/re_frame/std_interceptors.cljc#L149-L173)
   - [after](/src/re_frame/std_interceptors.cljc#L260-L281)
   - [debug](/src/re_frame/std_interceptors.cljc#L13-L36)
-  - [and browse the others](/src/re_frame/std_interceptors.cljc)
+  - [and browse docs for the others](/src/re_frame/std_interceptors.cljc)
   
 
 ## Built-in Effect Handlers
