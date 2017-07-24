@@ -19,25 +19,24 @@ Orientation:
 ## Doc Strings For API Functions 
 
 The core API consists of: 
-  - [dispatch](/src/re_frame/router.cljc#L229-L239), [dispatch-sync](/src/re_frame/router.cljc#L247-L259).
-  - [reg-event-db](/src/re_frame/core.cljc#L71-L80), [reg-event-fx](/src/re_frame/core.cljc#L87-L97) 
-  - [reg-sub](/src/re_frame/subs.cljc#L151-L237)
-  - [subscribe](/src/re_frame/subs.cljc#L67-L83)
+  - [dispatch](/src/re_frame/router.cljc#L229-L239) or [dispatch-sync](/src/re_frame/router.cljc#L247-L259).
+  - [reg-event-db](/src/re_frame/core.cljc#L71-L80) or [reg-event-fx](/src/re_frame/core.cljc#L87-L97) 
+  - [reg-sub](/src/re_frame/subs.cljc#L151-L237) and [subscribe](/src/re_frame/subs.cljc#L67-L83) working together
 
 Occasionally, you'll need to use:  
   - [reg-fx](/src/re_frame/fx.cljc#L17-L40)
-  - [reg-cofx](/src/re_frame/cofx.cljc#L14-L22) and [inject-cofx](/src/re_frame/cofx.cljc#L29-L80)
+  - [reg-cofx](/src/re_frame/cofx.cljc#L14-L22) and [inject-cofx](/src/re_frame/cofx.cljc#L29-L80) working together
      
-And, finally, there are builtin Interceptors which are useful:
+And, finally, there are the builtin Interceptors:
   - [path](/src/re_frame/std_interceptors.cljc#L149-L173)
   - [after](/src/re_frame/std_interceptors.cljc#L260-L281)
   - [debug](/src/re_frame/std_interceptors.cljc#L13-L36)
-  - [and browse docs for the others](/src/re_frame/std_interceptors.cljc)
+  - and browse [the others](/src/re_frame/std_interceptors.cljc)
   
 
 ## Built-in Effect Handlers
 
-The following built-in effects are part of the API:  
+The following built-in effects are also part of the API:  
 
 ### :dispatch-later
 
