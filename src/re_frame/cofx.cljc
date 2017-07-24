@@ -12,13 +12,14 @@
 (assert (re-frame.registrar/kinds kind))
 
 (defn reg-cofx
-  "Register the given coeffect `handler` for the given coeffect `id`.
+  "Register the given coeffect `handler` for the given `id`, for later use
+  within `inject-cofx`.
 
   `id` is keyword, often namespaced.
-  `handler` is a function which takes either one or two values, the first of which is
-  always `context` and which returns an updated `context`.
+  `handler` is a function which takes either one or two arguements, the first of which is
+  always `coeffects` and which returns an updated `coeffects`.
 
-  Please see the docs for `inject-cofx` for example use."
+  See the docs for `inject-cofx` for example use."
   [id handler]
   (register-handler kind id handler))
 
@@ -30,18 +31,18 @@
    whose `:before` adds to the `:coeffects` (map) by calling a pre-registered
    'coeffect handler' identified by the `id`.
 
-   It is expected that a `coeffect handler` will previously have been registered
-   for the given `id`, via a call to `re-frame.core/reg-cofx`.
+   The previous association of a `coeffect handler` with an `id` will have
+   happened via a call to `re-frame.core/reg-cofx` - generally on program startup.
 
-   The `coeffect handler` (identified by `id`) will be called (at `:before` time)
-   with two arguments:
+   Within the created interceptor, this 'looked up' `coeffect handler` will
+   be called (within the `:before`) with two arguments:
      - the current value of `:coeffects`
      - optionally, the originally supplied arbitrary `value`
 
-   This `coeffect handler` is expected to modify and return its first argument.
+   This `coeffect handler` is expected to modify and return its first, `coeffects` argument.
 
-   Example Use
-   -----------
+   Example Of how `inject-cofx` and `reg-cofx` work together
+   ---------------------------------------------------------
 
    1. Early in app startup, you register a `coeffect handler` for `:datetime`:
 
@@ -53,12 +54,12 @@
 
    2. Later, add an interceptor to an -fx event handler, using `inject-cofx`:
 
-      (re-frame.reg-event-fx
+      (re-frame.core/reg-event-fx        ;; we are registering an event handler
          :event-id
          [ ... (inject-cofx :datetime) ... ]    ;; <-- create an injecting interceptor
          (fn event-handler
            [coeffect event]
-           ... can access (:now coeffect) to obtain current datetime ... )))
+           ... in here can access (:now coeffect) to obtain current datetime ... )))
 
    Background
    ----------

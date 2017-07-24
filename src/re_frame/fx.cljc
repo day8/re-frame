@@ -15,28 +15,29 @@
 (assert (re-frame.registrar/kinds kind))
 
 (defn reg-fx
-  "Register the given effect `handler` for the given effect `id`.
+  "Register the given effect `handler` for the given `id`.
 
   `id` is keyword, often namespaced.
-  `handler` is a side-effecting function which takes a single value and returns nothing.
+  `handler` is a side-effecting function which takes a single argument and whose return
+  value is ignored.
 
   Example Use
   -----------
 
-  First registration ... associating `:effect2` with a handler.
+  First, registration ... associate `:effect2` with a handler.
 
   (reg-fx
      :effect2
      (fn [value]
         ... do something side-effect-y))
 
-  Then, later if an event handler were to return this effects map:
+  Then, later, if an event handler were to return this effects map ...
 
-  {:effect1  42
+  {...
    :effect2  [1 2]}
 
-   Then the `handler` `fn` we registered previously, using reg-fx, will be
-   called with a `value` argument of `[1 2]`."
+   ... then the `handler` `fn` we registered previously, using `reg-fx`, will be
+   called with an argument of `[1 2]`."
   [id handler]
   (register-handler kind id handler))
 

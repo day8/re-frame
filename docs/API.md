@@ -1,11 +1,19 @@
 ## The re-frame API
 
 Orientation:
-  1. The API is provided by [re-frame.core](/src/re_frame/core.cljc) which means:
-     - it will be worth your while to browse this namespace sometime
-     - to use re-frame, you'll need to `require` it
+  1. The API is provided by [re-frame.core](/src/re_frame/core.cljc):
+     - at some point, it will be worth your time to browse it
+     - to use re-frame, you'll need to `require` it, perhaps this way ...
+     ```
+     (ns  my.namespace
+       (:require [re-frame.core :as rf]))
+                 
+     ... now use rf/reg-event-fx  or rf/subscribe
+     ```
+          
   2. The API is small. Writing an app, you'll be using less than 10 API functions. Maybe just 5.
-  3. There's no auto-generated docs [because of this problem](/src/re_frame/core.cljc#L23-L36) but 
+  3. There's no auto-generated docs [because of this problem](/src/re_frame/core.cljc#L23-L36) 
+     but, as a substitute, 
      the links below take you to the doc strings of often-used API functions. 
 
 ## Doc Strings For API Functions 
@@ -17,8 +25,8 @@ The core API consists of:
   - [subscribe](/src/re_frame/subs.cljc#L67-L83)
 
 Occasionally, you'll need to use:  
-  - [reg-fx](/src/re_frame/fx.cljc#L17-L39)
-  - [reg-cofx](/src/re_frame/cofx.cljc#L14-L21) and [inject-cofx](/src/re_frame/cofx.cljc#L28-L79)
+  - [reg-fx](/src/re_frame/fx.cljc#L17-L40)
+  - [reg-cofx](/src/re_frame/cofx.cljc#L14-L22) and [inject-cofx](/src/re_frame/cofx.cljc#L29-L80)
      
 And, finally, there are builtin Interceptors which are useful:
   - [path](/src/re_frame/std_interceptors.cljc#L149-L173)
