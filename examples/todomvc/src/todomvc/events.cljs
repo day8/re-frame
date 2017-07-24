@@ -34,19 +34,20 @@
 ;; Later, we use this interceptor in the interceptor chain of all event handlers.
 ;; When included in the interceptor chain of an event handler, this interceptor
 ;; runs `check-and-throw` `after` the event handler has finished, checking
-;; the value in `app-db` against a spec.
-;; If the event handler corrupted tha value in `app-db` an exception will be
+;; the value for `app-db` against a spec.
+;; If the event handler corrupted tha value for `app-db` an exception will be
 ;; thrown. This helps us detect event handler bugs early.
 ;; Because all state is held in `app-db`, we are effectively validating the
 ;; ENTIRE state of the application after each event handler runs.  All of it.
 (def check-spec-interceptor (after (partial check-and-throw :todomvc.db/db)))
 
-;; Part of the TodoMVC challenge is to store todos in Local Storage.
+;; Part of the TodoMVC challenge is to store todos in local storage.
 ;; Next, we define an interceptor to help with this challenge.
 ;; This interceptor runs `after` an event handler, and it stores the
 ;; current todos into local storage.
 ;; Later, we include this interceptor into the interceptor chain
-;; of all event handlers which modify todos.
+;; of all event handlers which modify todos.  In this way, we ensure that
+;; any change to todos is written to local storage.
 (def ->local-store (after todos->local-store))
 
 ;; Each event handler can have its own chain of interceptors.
@@ -75,24 +76,24 @@
 
 ;; usage:  (dispatch [:initialise-db])
 ;;
-;; You'll see this event dispatched in the app's `main` (core.cljs)
-;; It's job is to establish initial application state in `app-db`.
+;; This event is dispatched in the app's `main` (core.cljs).
+;; It establishes initial application state in `app-db`.
 ;; That means merging:
 ;;   1. Any todos stored in LocalStore (from the last session of this app)
-;;   2. The default initial value
+;;   2. Default initial values
 ;;
 ;; Advanced topic:  we inject the todos currently stored in LocalStore
 ;; into the first, coeffect parameter via use of the interceptor
 ;;    `(inject-cofx :local-store-todos)`
 ;;
-;; To fully understand how this works, you'll have to review the tutorials
+;; To fully understand this advanced topic, you'll have to read the tutorials
 ;; and look at the bottom of `db.cljs` for the `:local-store-todos` cofx
 ;; registration.
 (reg-event-fx                 ;; part of the re-frame API
   :initialise-db              ;; event id being handled
 
   ;; the interceptor chain (a vector of interceptors)
-  [(inject-cofx :local-store-todos)  ;; get todos from localstore, and put into coeffects arg
+  [(inject-cofx :local-store-todos)  ;; gets todos from localstore, and puts into coeffects arg
    check-spec-interceptor]           ;; after the event handler runs, check app-db matches Spec
 
   ;; the event handler (function) being registered
@@ -109,7 +110,7 @@
   (fn [db [_ new-filter-kw]]     ;; new-filter-kw is one of :all, :active or :done
     (assoc db :showing new-filter-kw)))
 
-;; NOTE: here is a rewrite of the event handler above using `path` or `trimv`
+;; NOTE: here is a rewrite of the event handler above using `path` and `trimv`
 ;; These interceptors are useful, but they are an advanced topic.
 ;; It will be illuminating if you compare this rewrite with the original above.
 #_(reg-event-db
