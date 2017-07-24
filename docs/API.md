@@ -1,20 +1,19 @@
 ## The re-frame API
 
 Orientation:
-  1. The API is provided by [re-frame.core](/src/re_frame/core.cljc):
-     - at some point, it will be worth your time to browse it
-     - to use re-frame, you'll need to `require` it, perhaps this way ...
-     ```
+  1. The API is provided by `re-frame.core`: 
+     - at some point, it would be worth your time [to browse it](/src/re_frame/core.cljc)
+     - to use re-frame, you'll need to `require` it, perhaps like this ...
+     ```clj
      (ns  my.namespace
        (:require [re-frame.core :as rf]))
                  
-     ... now use rf/reg-event-fx  or rf/subscribe
+     ... now use rf/reg-event-fx or rf/subscribe
      ```
-          
-  2. The API is small. Writing an app, you'll be using less than 10 API functions. Maybe just 5.
+  2. The API is small. Writing an app, you use less than 10 API functions. Maybe just 5.
   3. There's no auto-generated docs [because of this problem](/src/re_frame/core.cljc#L23-L36) 
      but, as a substitute, 
-     the links below take you to the doc strings of often-used API functions. 
+     the links below take you to the doc-strings of often-used API functions.
 
 ## Doc Strings For API Functions 
 
@@ -36,9 +35,9 @@ And, finally, there are the builtin Interceptors:
 
 ## Built-in Effect Handlers
 
-The following built-in effects are also part of the API:  
+The following built-in effects are also a part of the API:  
 
-### :dispatch-later
+#### :dispatch-later
 
 `dispatch` one or more events after given delays. Expects a collection
 of maps with two keys: `:ms` and `:dispatch`
@@ -51,6 +50,8 @@ usage:
 
 Which means: in 200ms do this: `(dispatch [:event-id "param"])` and in 100ms ...
 
+*** 
+
 #### :dispatch
 
 `dispatch` one event. Expects a single vector.
@@ -60,7 +61,9 @@ usage:
 {:dispatch [:event-id "param"] }
 ```
 
-### :dispatch-n
+***
+ 
+#### :dispatch-n
 
 `dispatch` more than one event. Expects a collection events.
 
@@ -69,7 +72,14 @@ usage:
 {:dispatch-n (list [:do :all] [:three :of] [:these])}
 ```
 
-### :deregister-event-handler
+Note: nil events are ignored which means events can be added
+conditionally:
+```clj
+{:dispatch-n (list (when (> 3 5) [:conditioned-out])
+                   [:another-one])}
+```
+*** 
+#### :deregister-event-handler
 
 removes a previously registered event handler. Expects either a single id (
 typically a keyword), or a seq of ids.
@@ -82,8 +92,8 @@ or:
 ```clj
 {:deregister-event-handler [:one-id :another-id]}
 ```
-
-### :db
+*** 
+#### :db
 
 reset! app-db with a new value. Expects a map. 
 

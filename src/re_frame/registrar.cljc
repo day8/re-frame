@@ -10,7 +10,7 @@
 (def kinds #{:event :fx :cofx :sub})
 
 ;; This atom contains a register of all handlers.
-;; Contains a map keyed first by `kind` (of handler), and then `id`.
+;; Contains a two layer map, keyed first by `kind` (of handler), and then `id` of handler.
 ;; Leaf nodes are handlers.
 (def kind->id->handler  (atom {}))
 
@@ -26,8 +26,8 @@
 
   ([kind id required?]
    (let [handler (get-handler kind id)]
-     (when debug-enabled?                          ;; This is in a separate when so Closure DCE can run ...
-       (when (and required? (nil? handler))        ;; ...otherwise you'd need to type hint the `and` with a ^boolean for DCE.
+     (when debug-enabled?                          ;; This is in a separate `when` so Closure DCE can run ...
+       (when (and required? (nil? handler))        ;; ...otherwise you'd need to type-hint the `and` with a ^boolean for DCE.
          (console :error "re-frame: no " (str kind) " handler registered for: " id)))
      handler)))
 
