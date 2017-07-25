@@ -35,7 +35,7 @@
 ;; When included in the interceptor chain of an event handler, this interceptor
 ;; runs `check-and-throw` `after` the event handler has finished, checking
 ;; the value for `app-db` against a spec.
-;; If the event handler corrupted tha value for `app-db` an exception will be
+;; If the event handler corrupted the value for `app-db` an exception will be
 ;; thrown. This helps us detect event handler bugs early.
 ;; Because all state is held in `app-db`, we are effectively validating the
 ;; ENTIRE state of the application after each event handler runs.  All of it.
