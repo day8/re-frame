@@ -20,7 +20,7 @@ Orientation:
 The core API consists of: 
   - [dispatch](/src/re_frame/router.cljc#L229-L239) or [dispatch-sync](/src/re_frame/router.cljc#L247-L259).
   - [reg-event-db](/src/re_frame/core.cljc#L71-L80) or [reg-event-fx](/src/re_frame/core.cljc#L87-L97) 
-  - [reg-sub](/src/re_frame/subs.cljc#L151-L237) and [subscribe](/src/re_frame/subs.cljc#L67-L83) working together
+  - [reg-sub](/src/re_frame/subs.cljc#L176-L261) and [subscribe](/src/re_frame/subs.cljc#L67-L107) working together
 
 Occasionally, you'll need to use:  
   - [reg-fx](/src/re_frame/fx.cljc#L17-L40)

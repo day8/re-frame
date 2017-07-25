@@ -65,52 +65,77 @@
 ;; -- subscribe ---------------------------------------------------------------
 
 (defn subscribe
-  "Given a `query` (vector), returns a Reagent `reaction` which, over
-  time, reactively delivers a stream of freshly computed values.
+  "Given a `query`, returns a Reagent `reaction` which, over
+  time, reactively delivers a stream of values. So in FRP-ish terms,
+  it returns a Signal.
 
-  To obtain the obtain the current value, the returned `reaction`
-  must be `deref`ed.
+  To obtain the returned Signal/Stream's current value, it must be `deref`ed.
 
-  The `query` vector must have at least one value, the query-id, typically
-  a namespaced keyword.  The rest of the elements are optional, additional
-  values which parameterise the query.
+  `query` is a vector of at least one element. The first element is the
+  `query-id`, typically a namespaced keyword. The rest of the vector's
+  elements are optional, additional values which parameterise the query
+  performed.
 
-  There can be a further optional, argument `dynv` which is a vector of
-  further input signals (atoms, reactions, etc). This arg is not really
-  used/needed any more and is borderline deprecated.
+  `dynv` is an optional 3rd argument, `which is a vector of further input
+  signals (atoms, reactions, etc), NOT values. This argument exists for
+  historical reasons and is borderline deprecated these days.
 
-  XXX mention de-duplication and caching.
+  Example Usage:
+  --------------
+
+    (subscribe [:items])
+    (subscribe [:items \"blue\" :small])
+    (subscribe [:items {:colour \"blue\"  :size :small}])
+
+  Note: for any given call to `subscribe` there must have been a previous call
+  to `reg-sub`, registering the query handler (function) for the `query-id` given.
+
+  Hint
+  ----
+
+  When used in a view function BE SURE to `deref` the returned value.
+  In fact, to avoid any mistakes, some prefer to define:
+
+     (def <sub  (comp deref re-frame.core/subscribe))
+
+  And then, within their views, they call  `(<sub [:items :small])` rather
+  than using `subscribe` directly.
+
+  De-duplication
+  --------------
+
+  XXX
   "
 
-  ([query-v]
-   (trace/with-trace {:operation (first-in-vector query-v)
+  ([query]
+   (trace/with-trace {:operation (first-in-vector query)
                       :op-type   :sub/create
-                      :tags      {:query-v query-v}}
-     (if-let [cached (cache-lookup query-v)]
+                      :tags      {:query-v query}}
+     (if-let [cached (cache-lookup query)]
        (do
          (trace/merge-trace! {:tags {:cached?  true
                                      :reaction (reagent-id cached)}})
          cached)
 
-       (let [query-id   (first-in-vector query-v)
+       (let [query-id   (first-in-vector query)
              handler-fn (get-handler kind query-id)]
          (trace/merge-trace! {:tags {:cached? false}})
          (if (nil? handler-fn)
            (do (trace/merge-trace! {:error true})
                (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
-           (cache-and-return query-v [] (handler-fn app-db query-v)))))))
+           (cache-and-return query [] (handler-fn app-db query)))))))
 
-  ([v dynv]
-   (trace/with-trace {:operation (first-in-vector v)
+  ([query dynv]
+   (trace/with-trace {:operation (first-in-vector query)
                       :op-type   :sub/create
-                      :tags      {:query-v v
+                      :tags      {:query-v query
                                   :dyn-v   dynv}}
-     (if-let [cached (cache-lookup v dynv)]
+     (if-let [cached (cache-lookup query dynv)]
        (do
          (trace/merge-trace! {:tags {:cached?  true
                                      :reaction (reagent-id cached)}})
          cached)
-       (let [query-id   (first-in-vector v)
+       (let [query-id   (first-in-vector query)
              handler-fn (get-handler kind query-id)]
          (trace/merge-trace! {:tags {:cached? false}})
          (when debug-enabled?
@@ -120,11 +145,11 @@
            (do (trace/merge-trace! {:error true})
                (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
            (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
-                 sub      (make-reaction (fn [] (handler-fn app-db v @dyn-vals)))]
+                 sub      (make-reaction (fn [] (handler-fn app-db query @dyn-vals)))]
              ;; handler-fn returns a reaction which is then wrapped in the sub reaction
              ;; need to double deref it to get to the actual value.
              ;(console :log "Subscription created: " v dynv)
-             (cache-and-return v dynv (make-reaction (fn [] @@sub))))))))))
+             (cache-and-return query dynv (make-reaction (fn [] @@sub))))))))))
 
 ;; -- reg-sub -----------------------------------------------------------------
 
