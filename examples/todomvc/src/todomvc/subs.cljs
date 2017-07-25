@@ -6,7 +6,7 @@
 ;;
 ;; See https://github.com/Day8/re-frame/blob/master/docs/SubscriptionInfographic.md
 ;;
-;; Layer 2 query functions, are "extractors". They take from `app-db`
+;; Layer 2 query functions are "extractors". They take from `app-db`
 ;; and don't do any further computation on the extracted values. Any further
 ;; computation should happen in Layer 3.
 ;; Why?  It is an efficiency thing. Every Layer 2 subscriptions will rerun anytime

@@ -52,7 +52,7 @@
 ;;
 ;; Part of the todomvc challenge is to store todos in LocalStorage, and
 ;; on app startup, reload the todos from when the program was last run.
-;; But the challenge stipulates to NOT  load the setting for the "showing"
+;; But the challenge stipulates to NOT load the setting for the "showing"
 ;; filter. Just the todos.
 ;;
 
@@ -69,7 +69,7 @@
 ;; Use `reg-cofx` to register a "coeffect handler" which will inject the todos
 ;; stored in localstore.
 ;;
-;; To see it used, look in `events.clj` at the event handler for `:initialise-db`.
+;; To see it used, look in `events.cljs` at the event handler for `:initialise-db`.
 ;; That event handler has the interceptor `(inject-cofx :local-store-todos)`
 ;; The function registered below will be used to fulfill that request.
 ;;
