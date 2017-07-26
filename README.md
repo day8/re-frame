@@ -384,20 +384,20 @@ to have written them yourself (see how in a later tutorial).
 
 ### Code For Domino 4
 
-Because an effect handler just mutated "application state",
-a query (function) over this app state is automatically called (reactively). 
+We now start the `v = f(s)` part of the flow. 
 
-This query (function) computes "a materialised view" of the 
-application state - a version of the application state which is useful to 
-the next domino, 5.
+The application state
+`s` has just changed (via Domino 3) and now bom, bom go Dominoes 4, 5, 
+and 6, at the end of which we have a new view, `v`, being shown to the user.
 
-Remember, we are now within the `v = f(s)` part of the flow, and this 
-domino is about delivering the right
-data (s) to later domino functions (f) which compute DOM (v).
+In this domino 4, a query (function) over this app state is automatically 
+called.  This query function "extracts" data from application state, and 
+then computes "a materialised view" of the application state - producing
+data which is useful to the view functions of domino, 5.
 
 Now, in this particular case, the query function is pretty trivial.
 Because the items are stored in app state, there's not a lot 
-to compute and, instead, it acts more like an extractor or accessor,
+to compute and, instead, it acts strictly like an extractor or accessor,
 just plucking the list of items out of application state:
 ```clj
 (defn query-fn
@@ -406,14 +406,14 @@ just plucking the list of items out of application state:
 ```
 
 On program startup, such a `query-fn` must be associated with a `query-id`, 
-(so it can be used via `subscribe` in the next domino) using `re-frame.core/reg-sub`, 
+(so it can be used via `subscribe` in domino 5) using `re-frame.core/reg-sub`, 
 like this:
 ```clj
 (re-frame.core/reg-sub  ;; part of the re-frame API
    :query-items         ;; query id  
    query-fn)            ;; query fn
 ```
-Which says "if you see a `(subscribe [:query-items])`, then 
+Which says "if, in domino 5, you see a `(subscribe [:query-items])`, then 
 use `query-fn` to compute it".
 
 ### Code For Domino 5
@@ -423,9 +423,9 @@ any view (function) which uses a `(subscribe [:query-items])`
 is called automatically (reactively) to re-compute new DOM.
 
 View functions compute a data structure, in hiccup format, describing 
-the DOM nodes required. In this case, the view functions will *not* be generating 
-hiccup for the now-deleted item obviously but, other than this, 
-the hiccup computed will be the same as last time.
+the DOM nodes required. In this "items" case, the view functions will *not* be generating 
+hiccup for the just-deleted item obviously but, other than this, 
+the hiccup computed "this time" will be the same as "last time".
 
 ```clj
 (defn items-view
@@ -436,7 +436,7 @@ the hiccup computed will be the same as last time.
 
 Notice how `items` is "sourced" from "app state" via `re-frame.core/subscribe`.
 It is called with a vector argument, and the first element of that vector is
-a query-id which identifies the "materialised view" required.
+a query-id which identifies the "materialised view" required by the view.
 
 Note: `subscribe` queries can be parameterised. So, in real world apps
 you might have this:<br>
@@ -452,12 +452,13 @@ the more sophisticated `query-fn` capable of handling the
 
 ### Code For Domino 6
 
-The DOM (hiccup) returned by the view function 
-is made real by Reagent/React. No code from you required. Just happens.
+The hiccup returned by the view function 
+is made into real browser DOM by Reagent/React. No code from you required. Just happens.
 
 The DOM computed "this
-time" will be the same as last time, **except** for the absence of DOM for the
-deleted item, so the mutation will be to remove some DOM nodes.
+time" will be the same as "last time", **except** for the absence of DOM for the
+deleted item, so the mutation will be to remove those now-missing
+DOM nodes from the browser.
 
 ### 3-4-5-6 Summary
 
@@ -465,7 +466,7 @@ The key point to understand about our 3-4-5-6 example is:
   - a change to app state ...
   - triggers query functions to rerun ...
   - which triggers view functions to rerun
-  - which causes new DOM 
+  - which causes modified browser DOM 
 
 Boom, boom, boom go the dominoes. It is a reactive data flow.
 
