@@ -11,19 +11,22 @@
 
 
 (def debug
-  "An interceptor which logs data about the handling of an event.
+  "An interceptor which logs/instruments an event handler's actions to
+  `js/console.debug`. See examples/todomvc/src/events.cljs for use.
 
-  Includes a `clojure.data/diff` of the db, before vs after, showing
-  the changes caused by the event handler.  You absolutely will have
-  to understand https://clojuredocs.org/clojure.data/diff to
-  understand the output.
+  Output includes:
+  1. the event vector
+  2. a `clojure.data/diff` of db, before vs after, which shows
+     the changes caused by the event handler.  You will absolutely have
+     to understand https://clojuredocs.org/clojure.data/diff to
+     understand the output.
 
-  You'd typically want this interceptor after (to the right of) any
+  You'd typically include this interceptor after (to the right of) any
   path interceptor.
 
   Warning:  calling clojure.data/diff on large, complex data structures
   can be slow. So, you won't want this interceptor present in production
-  code. So condition it out like this:
+  code. So condition it out like this :
 
     (re-frame.core/reg-event-db
        :evt-id
@@ -147,11 +150,12 @@
 
 
 (defn path
-  "An interceptor factory which supplies the value at a sub-path of `db` to
-  the handler, rather than all of `db`.
-  Afterwards, it grafts the handler's return value back into db, at the right path.
-  Its overall action is to make the handler behave like the function you
-  might give to clojure's `update-in`.
+  "returns an interceptor whose `:before` substitutes the coeffects `:db` with
+  a sub-path of `:db`. Within `:after` it grafts the handler's return value
+  back into db, at the right path.
+
+  So, its overall action is to make the event handler behave like the function
+  you might give to clojure's `update-in`.
 
   Examples:
     (path :some :path)
@@ -164,8 +168,8 @@
     (reg-event-db
       :event-id
       (path [:a :b])  ;; used here, in interceptor chain
-      (fn [b v]       ;; 1st arg is now not db. Is the value from that path within db
-        ... new-b))      ;; must return a new value for that path (not db)
+      (fn [b v]       ;; 1st arg is now not db. Is the value from path [:a :b] within db
+        ... new-b))   ;; returns a new value for that path (not the entire db)
 
   Notes:
     1. `path` may appear more than once in an interceptor chain. Progressive narrowing.
@@ -258,7 +262,7 @@
 
 
 (defn after
-  "Interceptor factory which runs a given function `f` in the \"after\"
+  "returns an interceptor which runs a given function `f` in the `:after`
   position, presumably for side effects.
 
   `f` is called with two arguments: the `:effects` value for `:db`

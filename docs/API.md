@@ -27,9 +27,9 @@ Occasionally, you'll need to use:
   - [reg-cofx](/src/re_frame/cofx.cljc#L14-L22) and [inject-cofx](/src/re_frame/cofx.cljc#L29-L80) working together
      
 And, finally, there are the builtin Interceptors:
-  - [path](/src/re_frame/std_interceptors.cljc#L149-L173)
-  - [after](/src/re_frame/std_interceptors.cljc#L260-L281)
-  - [debug](/src/re_frame/std_interceptors.cljc#L13-L36)
+  - [path](/src/re_frame/std_interceptors.cljc#L152-L176)
+  - [after](/src/re_frame/std_interceptors.cljc#L264-L274)
+  - [debug](/src/re_frame/std_interceptors.cljc#L13-L38)
   - and browse [the others](/src/re_frame/std_interceptors.cljc)
   
 

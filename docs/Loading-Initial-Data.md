@@ -209,7 +209,7 @@ This assumes boolean flags are set in `app-db` when data was loaded from these s
 In simple cases, you can simplify matters by using `dispatch-sync` (instead of `dispatch`) in 
 the main function.  
 
-This technique can be seen in the [TodoMVC Example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/core.cljs#L35).
+This technique can be seen in the [TodoMVC Example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/core.cljs#L49).
 
 `dispatch` queues an event for later processing, but `dispatch-sync` acts 
 like a function call and handles an event immediately. That's useful for initial data 
