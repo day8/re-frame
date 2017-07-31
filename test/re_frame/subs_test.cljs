@@ -98,6 +98,22 @@
     (subs/subscribe [:side-effecting-handler :a]) ;; this should be handled by cache
     (is (= @side-effect-atom 2))))
 
+;============== test clear-subscription-cache! ================
+
+(deftest test-clear-subscription-cache!
+  (re-frame/reg-sub
+   :clear-subscription-cache!
+   (fn clear-subs-cache [db _] 1))
+
+  (testing "cold cache"
+    (is (nil? (subs/cache-lookup [:clear-subscription-cache!]))))
+  (testing "cache miss"
+    (is (= 1 @(subs/subscribe [:clear-subscription-cache!])))
+    (is (some? (subs/cache-lookup [:clear-subscription-cache!]))))
+  (testing "clearing"
+    (subs/clear-subscription-cache!)
+    (is (nil? (subs/cache-lookup [:clear-subscription-cache!])))))
+
 ;============== test register-pure macros ================
 
 (deftest test-reg-sub-macro

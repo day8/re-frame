@@ -23,6 +23,8 @@
 
 (defonce ^:private executor (Executors/newSingleThreadExecutor))
 
+(defonce ^:private on-dispose-callbacks (atom {}))
+
 (defn next-tick [f]
   (let [bound-f (bound-fn [& args] (apply f args))]
     (.execute ^Executor executor bound-f))
@@ -56,15 +58,21 @@
     (deref [_] (f))))
 
 (defn add-on-dispose!
-  "No-op in JVM Clojure, since for testing purposes, we don't care about
-  releasing resources for efficiency purposes."
+  "On JVM Clojure, use an atom to register `f` to be invoked when `dispose!` is
+  invoked with `a-ratom`."
   [a-ratom f]
-  nil)
+  (do (swap! on-dispose-callbacks update a-ratom (fnil conj []) f)
+      nil))
 
-(defn dispose! [a-ratom]
-	"No-op in JVM Clojure, since for testing purposes, we don't care about
-  releasing resources for efficiency purposes."
-	nil)
+(defn dispose!
+  "On JVM Clojure, invoke all callbacks registered with `add-on-dispose!` for
+  `a-ratom`."
+  [a-ratom]
+  ;; Try to replicate reagent's behavior, releasing resources first then
+  ;; invoking callbacks
+  (let [callbacks (get @on-dispose-callbacks a-ratom)]
+    (swap! on-dispose-callbacks dissoc a-ratom)
+    (doseq [f callbacks] (f))))
 
 (defn set-timeout!
   "Note that we ignore the `ms` value and just invoke the function, because
