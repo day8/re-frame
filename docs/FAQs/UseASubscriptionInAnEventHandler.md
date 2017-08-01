@@ -19,16 +19,16 @@ because that `subscribe`:
 
 ### The Better Way
 
-Instead, the value of a subscription should  
+Instead, the value of a subscription should
 be injected into the `coeffects` of that handler via an interceptor.
 
 A sketch:
 ```clj
-(re-frame.core/reg-event-fx     ;; handler must access coeffects, so use -fx
+(re-frame.core/reg-event-fx         ;; handler must access coeffects, so use -fx
   :event-id 
-  (inject-sub  [:query-id :param])  ;; <-- will inject subscription value into coeffects
-  (fn [coeffect event]
-    (let [sub-val  (:something coeffect)]  ;; obtain subscription value 
+  (inject-sub  [:query-id :param])  ;; <-- interceptor will inject subscription value into coeffects
+  (fn [coeffects event]
+    (let [sub-val  (:something coeffects)]  ;; obtain subscription value 
        ....)))
 ```
 
@@ -36,7 +36,7 @@ Notes:
 1. `inject-sub` is an interceptor which will get the subscription value and add it to coeffects (somehow)
 2. The event handler obtains the value from coeffects
 
-So how to write this interceptor?
+So, how to write this `inject-sub` interceptor?
 
 ### Solutions
 

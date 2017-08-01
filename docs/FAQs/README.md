@@ -5,9 +5,10 @@
 2. [How can I use a subscription in an Event Handler](UseASubscriptionInAnEventHandler.md)
 2. [How do I use logging method X](Logging.md)
 3. [Dispatched Events Are Null](Null-Dispatched-Events.md)
-4. [Why implement re-frame in `.cljc` files](Why-CLJC.md)
+4. [Why is re-frame implemented in `.cljc` files](Why-CLJC.md)
 5. [Why do we need to clear the subscription cache when reloading with Figwheel?](Why-Clear-Sub-Cache.md)
 6. [How can I detect exceptions in Event Handlers?](CatchingEventExceptions.md)
+7. [How do I store normalised data in app-db?](DB_Normalisation.md)
 
 
 

@@ -5,7 +5,8 @@
   - added [API documentation](/docs/API.md)
   - added [testing docs](/docs/Testing.md)
   - added [a new mental model](/docs/MentalModelOmnibus.md#on-dsls-and-machines)
-  - added [a new FAQ entry](docs/FAQs/When-Does-Dispatch-Happen.md) on dispatch processing 
+  - added [a new FAQ entry](/docs/FAQs/When-Does-Dispatch-Happen.md) on dispatch processing 
+  - added [a new FAQ entry](/docs/FAQs/DB_Normalisation.md) on representing normalised data in `app-db`. 
 
 #### Breaking
 
