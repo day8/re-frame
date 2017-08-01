@@ -449,7 +449,7 @@ Django, Rails, Handlebars or Mustache -- they map data to HTML -- except for two
 
 ## Kick Starting The App
 
-Below, `run` is the called to kick off the application once the HTML page has loaded.
+Below, `run` is called to kick off the application once the HTML page has loaded.
 
 It has two tasks:
   1. Load the initial application state
