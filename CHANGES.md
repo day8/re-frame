@@ -7,7 +7,8 @@
   - added [a new mental model](/docs/MentalModelOmnibus.md#on-dsls-and-machines)
   - added [a new FAQ entry](/docs/FAQs/When-Does-Dispatch-Happen.md) on dispatch processing 
   - added [a new FAQ entry](/docs/FAQs/DB_Normalisation.md) on representing normalised data in `app-db`. 
-
+  - added [a new FAQ entry](/docs/FAQs/GlobalInterceptors.md) on how to register a global interceptor.
+  
 #### Breaking
 
   - [#357](https://github.com/Day8/re-frame/pull/357)
