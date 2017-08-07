@@ -1,6 +1,6 @@
 (ns todomvc.events
   (:require
-    [todomvc.db    :refer [default-value todos->local-store]]
+    [todomvc.db    :refer [default-db todos->local-store]]
     [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx path trim-v
                            after debug]]
     [cljs.spec     :as s]))
@@ -98,7 +98,7 @@
 
   ;; the event handler (function) being registered
   (fn [{:keys [db local-store-todos]} _]                    ;; take 2 vals from coeffects. Ignore event vector itself.
-    {:db (assoc default-value :todos local-store-todos)}))  ;; all hail the new state
+    {:db (assoc default-db :todos local-store-todos)}))     ;; all hail the new state
 
 
 ;; usage:  (dispatch [:set-showing  :active])
