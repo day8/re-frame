@@ -54,7 +54,7 @@
 ;; Below we create the interceptor chain shared by all event handlers
 ;; which manipulate todos.
 ;; A chain of interceptors is a vector.
-;; Explanation of `path` and `trimv` is given further below.
+;; Explanation of `path` and `trim-v` is given further below.
 (def todo-interceptors [check-spec-interceptor               ;; ensure the spec is still valid  (after)
                         (path :todos)                        ;; 1st param to handler will be the value from this path within db
                         ->local-store                        ;; write todos to localstore  (after)
@@ -110,13 +110,13 @@
   (fn [db [_ new-filter-kw]]     ;; new-filter-kw is one of :all, :active or :done
     (assoc db :showing new-filter-kw)))
 
-;; NOTE: here is a rewrite of the event handler above using `path` and `trimv`
+;; NOTE: here is a rewrite of the event handler above using `path` and `trim-v`
 ;; These interceptors are useful, but they are an advanced topic.
 ;; It will be illuminating if you compare this rewrite with the original above.
 #_(reg-event-db
   :set-showing                    ;; event-id
 
-  ;; this chain of 3 interceptors wrap the handler. Note use of `path` and `trimv`
+  ;; this chain of 3 interceptors wrap the handler. Note use of `path` and `trim-v`
   [check-spec-interceptor (path :showing) trim-v]
 
   ;; The event handler
@@ -136,7 +136,7 @@
   ;; The standard set of interceptors, defined above, which we
   ;; use for all todos-modifying event handlers. Looks after
   ;; writing todos to LocalStore, etc.
-  ;; NOTE: this chain includes `path` and `trimv`
+  ;; NOTE: this chain includes `path` and `trim-v`
   todo-interceptors
 
   ;; The event handler function.
@@ -145,7 +145,7 @@
   ;; And, further, it means the event handler returns just the value to be
   ;; put into `:todos` path, and not the entire `db`.
   ;; So, a path interceptor makes the event handler act more like clojure's `update-in`
-  (fn [todos [text]]   ;; because of trimv,  the 2nd parameter is NOT [_ text]
+  (fn [todos [text]]   ;; because of trim-v,  the 2nd parameter is NOT [_ text]
     (let [id (allocate-next-id todos)]
       (assoc todos id {:id id :title text :done false}))))
 
