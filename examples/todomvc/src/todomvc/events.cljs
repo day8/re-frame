@@ -114,7 +114,7 @@
 ;; These interceptors are useful, but they are an advanced topic.
 ;; It will be illuminating if you compare this rewrite with the original above.
 #_(reg-event-db
-  :set-showing                    ;; event-id
+  :set-showing
 
   ;; this chain of 3 interceptors wrap the handler. Note use of `path` and `trimv`
   [check-spec-interceptor (path :showing) trim-v]
@@ -125,7 +125,7 @@
   ;; be the value at the path `[:showing]` within db.
   ;; Also, the use of the `trim-v` interceptor means we can omit
   ;; the leading underscore from the 2nd parameter (event vector).
-  (fn [old-keyword [new-filter-kw]]  ;; handler
+  (fn [old-keyword [new-filter-kw]]
     new-filter-kw))                  ;; return new state for the path
 
 
