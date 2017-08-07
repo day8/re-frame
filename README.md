@@ -326,7 +326,7 @@ register this `h` as the handler for  `:delete-item` events, like this:
   2. the `event` to handle
 
 It is the job of `h` to compute how the world should be changed by the event, and 
-it returns a map of `effects` - a description of the those changes.
+it returns a map of `effects` - a description of those changes.
 
 Here's a sketch (we are at 30,000 feet):
 ```clj
@@ -370,7 +370,7 @@ This update of "app state" is a mutative step, facilitated by re-frame
 which has a built-in `effects handler` for the `:db` effect.
 
 Why the name `:db`?  Well, re-frame sees "app state" as something of an in-memory 
-database. More on this is a following tutorial.
+database. More on this in a following tutorial.
 
 Just to be clear, if `h` had returned: 
 ```clj
@@ -387,7 +387,7 @@ to have written them yourself (see how in a later tutorial).
 We now start the `v = f(s)` part of the flow. 
 
 The application state
-`s` has just changed (via Domino 3) and now bom, bom go Dominoes 4, 5, 
+`s` has just changed (via Domino 3) and now boom, boom go Dominoes 4, 5, 
 and 6, at the end of which we have a new view, `v`, being shown to the user.
 
 In this domino 4, a query (function) over this app state is automatically 
@@ -511,7 +511,7 @@ We're still puzzling over some aspects and tweaking as we go. All designs
 represent a point in the possible design space, with pros and cons.
 
 And, yes, re-frame is fast, straight out of the box. And, yes, it has 
-a good testing story (unit and behavioural). And, yes, it works in with figwheel to create
+a good testing story (unit and behavioural). And, yes, it works with figwheel to create
 a powerful hot-loading development story. And, yes, it has 
 fun specialist tooling, and a community,
 and useful 3rd party libraries.
