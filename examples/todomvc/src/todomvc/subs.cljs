@@ -97,7 +97,7 @@
     [(subscribe [:todos])
      (subscribe [:showing])])
 
-  ;; computation function
+  ;; Computation Function
   (fn [[todos showing] _]   ;; that 1st parameter is a 2-vector of values
     (let [filter-fn (case showing
                       :active (complement :done)
