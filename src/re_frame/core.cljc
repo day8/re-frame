@@ -36,6 +36,47 @@
 ;;
 
 
+;; -- interceptors ------------------------------------------------------------
+;; Standard interceptors.
+;; Detailed docs on each in std-interceptors.cljs
+(def debug       std-interceptors/debug)
+(def path        std-interceptors/path)
+(def enrich      std-interceptors/enrich)
+(def trim-v      std-interceptors/trim-v)
+(def after       std-interceptors/after)
+(def on-changes  std-interceptors/on-changes)
+
+
+;; Utility functions for creating your own interceptors
+;;
+;;  (def my-interceptor
+;;     (->interceptor                ;; used to create an interceptor
+;;       :id     :my-interceptor     ;; an id - decorative only
+;;       :before (fn [context]                         ;; you normally want to change :coeffects
+;;                  ... use get-coeffect  and assoc-coeffect
+;;                       )
+;;       :after  (fn [context]                         ;; you normally want to change :effects
+;;                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+;;                   (assoc-effect context :http-ajax {...}])))))
+;;
+(def append-app-global-interceptor-head  (partial interceptor/append-app-global-interceptor :head))
+(def prepend-app-global-interceptor-head (partial interceptor/prepend-app-global-interceptor :head) )
+(def append-app-global-interceptor-tail  (partial interceptor/append-app-global-interceptor :tail))
+(def prepend-app-global-interceptor-tail (partial interceptor/prepend-app-global-interceptor :tail))
+(def ->interceptor                       interceptor/->interceptor)
+(def get-coeffect                        interceptor/get-coeffect)
+(def assoc-coeffect                      interceptor/assoc-coeffect)
+(def get-effect                          interceptor/get-effect)
+(def assoc-effect                        interceptor/assoc-effect)
+(def enqueue                             interceptor/enqueue)
+
+;; set up application global interceptors
+(append-app-global-interceptor-head cofx/inject-db)
+(append-app-global-interceptor-head fx/do-fx)
+
+(def app-global-interceptors
+  interceptor/app-global-interceptors)
+
 ;; -- dispatch ----------------------------------------------------------------
 (def dispatch       router/dispatch)
 (def dispatch-sync  router/dispatch-sync)
@@ -81,7 +122,7 @@
   ([id handler]
     (reg-event-db id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (db-handler->interceptor handler)])))
+   (events/register id (interceptor/->chain interceptors @app-global-interceptors (db-handler->interceptor handler)))))
 
 
 (defn reg-event-fx
@@ -98,7 +139,7 @@
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (fx-handler->interceptor handler)])))
+   (events/register id (interceptor/->chain interceptors @app-global-interceptors (fx-handler->interceptor handler)))))
 
 
 (defn reg-event-ctx
@@ -111,43 +152,11 @@
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (ctx-handler->interceptor handler)])))
+      (events/register id (interceptor/->chain interceptors @app-global-interceptors (ctx-handler->interceptor handler)))))
 
 (def clear-event (partial registrar/clear-handlers events/kind)) ;; think unreg-event-*
 
-;; -- interceptors ------------------------------------------------------------
-
-;; Standard interceptors.
-;; Detailed docs on each in std-interceptors.cljs
-(def debug       std-interceptors/debug)
-(def path        std-interceptors/path)
-(def enrich      std-interceptors/enrich)
-(def trim-v      std-interceptors/trim-v)
-(def after       std-interceptors/after)
-(def on-changes  std-interceptors/on-changes)
-
-
-;; Utility functions for creating your own interceptors
-;;
-;;  (def my-interceptor
-;;     (->interceptor                ;; used to create an interceptor
-;;       :id     :my-interceptor     ;; an id - decorative only
-;;       :before (fn [context]                         ;; you normally want to change :coeffects
-;;                  ... use get-coeffect  and assoc-coeffect
-;;                       )
-;;       :after  (fn [context]                         ;; you normally want to change :effects
-;;                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
-;;                   (assoc-effect context :http-ajax {...}])))))
-;;
-(def ->interceptor   interceptor/->interceptor)
-(def get-coeffect    interceptor/get-coeffect)
-(def assoc-coeffect  interceptor/assoc-coeffect)
-(def get-effect      interceptor/get-effect)
-(def assoc-effect    interceptor/assoc-effect)
-(def enqueue         interceptor/enqueue)
-
-
-;; --  logging ----------------------------------------------------------------
+;; --  Logging ----------------------------------------------------------------
 ;; Internally, re-frame uses the logging functions: warn, log, error, group and groupEnd
 ;; By default, these functions map directly to the js/console implementations,
 ;; but you can override with your own fns (set or subset).

@@ -2,7 +2,7 @@
   (:require
     [todomvc.db    :refer [default-db todos->local-store]]
     [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx path trim-v
-                           after debug]]
+                           after debug append-app-global-interceptor-tail]]
     [cljs.spec     :as s]))
 
 
@@ -58,9 +58,12 @@
 (def todo-interceptors [check-spec-interceptor               ;; ensure the spec is still valid  (after)
                         (path :todos)                        ;; 1st param to handler will be the value from this path within db
                         ->local-store                        ;; write todos to localstore  (after)
-                        (when ^boolean js/goog.DEBUG debug)  ;; look at the js browser console for debug logs
-                        trim-v])                             ;; removes first (event id) element from the event vec
+                        trim-v])                            ;;  removes first (event id) element from the event vec
 
+;; global config, setting global interceptors for all handlers
+;; look at the js browser console for debug logs
+(when ^boolean js/goog.DEBUG
+  (append-app-global-interceptor-tail debug))
 
 ;; -- Helpers -----------------------------------------------------------------
 

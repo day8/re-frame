@@ -7,6 +7,42 @@
 
 (def mandatory-interceptor-keys #{:id :after :before})
 
+(def app-global-interceptors
+  "Interceptors applied for all events.
+
+  The atom is a map that contains two vectors under the keywords `:head` and `:tail`.
+
+  Interceptors in the head vector come before the event interceptors, interceptors in
+  the tail vector come after. Event interceptors in this context are the ones defined in
+  `reg-event-` functions."
+  (atom {:head []
+         :tail []}))
+
+(defn append-app-global-interceptor
+  "Append an application global interceptor to the `loc` vector in `app-global-interceptors`"
+  [loc interceptor]
+  (if (#{:head :tail} loc)
+    (swap! app-global-interceptors update loc conj interceptor)
+    (when debug-enabled?
+      (console :error "re-frame: loc " loc " is not valid, should be either :head or :tail"))))
+
+(defn prepend-app-global-interceptor
+  "Prepend an application global interceptor to the `loc` vector in `app-global-interceptors`"
+[loc interceptor]
+  (if (#{:head :tail} loc)
+    (swap! app-global-interceptors update loc #(vec (cons interceptor %)))
+    (when debug-enabled?
+      (console :error "re-frame: loc " loc " is not valid, should be either :head or :tail"))))
+
+(defn ->chain
+  "Create the interceptor chain.
+
+  The  order of interceptors is `:head` of `app-global-interceptors`, event interceptors, `:tail` of `app-global-interceptors` and the event handler as an interceptor at the end."
+  [event-interceptors {:keys [head tail] :as app-interceptors} handler-interceptor]
+  (-> (concat head event-interceptors tail)
+      vec
+      (conj handler-interceptor)))
+
 (defn interceptor?
   [m]
   (and (map? m)
