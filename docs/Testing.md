@@ -215,7 +215,9 @@ First, we could split the computation function from its registration, like this:
   visible-todos)     ;; <--- computation function used here
 ```
 
-That makes `visible-todos` available for direct unit testing.
+That makes `visible-todos` available for direct unit testing.  But, as we experienced 
+with Event Handlers, the challenge is around constructing `db` values (first parameter)
+in a way which doesn't become fragile. 
 
 ## View Functions - Part 1
 
@@ -225,8 +227,8 @@ But remember my ugly secret - I don't tend to write tests for my views.
 
 But here's how, theoretically, I'd write tests if I wasn't me ...
 
-If a View Function is a [Form-1](https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components#form-1-a-simple-function)  
-structure, then it is fairly easy to test.  
+If a View Function is [Form-1](https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components#form-1-a-simple-function),
+then it is fairly easy to test.  
 
 A trivial example:
 ```clj
@@ -243,10 +245,9 @@ for correctness.
 
 What's returned is hiccup, of course. So how do you test hiccup for correctness?  
 
-hiccup is just a clojure data structure - vectors containing keywords, and maps, and other vectors, etc.  
-Perhaps you'd use https://github.com/nathanmarz/specter to declaratively check on the presence 
-of certain values and structures? Or do it more manually. 
-
+hiccup is just a clojure data structure - vectors containing keywords, and maps, and other vectors, etc.
+Perhaps you'd use https://github.com/nathanmarz/specter to declaratively check on the presence
+of certain values and structures? Or do it more manually.
 
 ## View Functions - Part 2A
 
@@ -267,15 +268,16 @@ A testing plan might be:
   3. check the hiccup structure for correctness. 
    
 Continuing on, in a second phase you could then:
+
   5. change the value in `app-db`  (which will cause the subscription to fire)
   6. call view functions again (hiccup returned). 
-  7. check that the hiccup 
+  7. check the new hiccup for correctness 
 
 Which is all possible, if a little messy. 
 
 ## View Functions - Part 2B
 
-There is a very pragmatic method available to handle the impurity: use `with-redefs` 
+There is a pragmatic method available to handle the impurity: use `with-redefs` 
 to stub out `subscribe`.  Like this:
 ```clj
 (defn subscription-stub [x]
@@ -289,7 +291,7 @@ to stub out `subscribe`.  Like this:
       ..... call the view function and the hiccup output)))
 ```
 
-For more integration level testing, you can use `with-mounted-component` 
+For more integration level testing, you can use `with-mounted-component`
 from the [reagent-template](https://github.com/reagent-project/reagent-template/blob/master/src/leiningen/new/reagent/test/cljs/reagent/core_test.cljs) 
 to render the component in the browser and validate the generated DOM. 
 
@@ -301,15 +303,15 @@ The trick here is to create an outer and inner component.  The outer sources the
 (via a subscription), and passes it onto the inner as props (parameters).
 
 As a result, the inner component, which does the testable work, is pure and 
-easily tested. The outer is impure but fairly trivial.
+easily tested. The outer is impure but trivial.
 
-To get a more concrete idea, I'll direct you to another page in the docs 
+To get a more concrete idea, I'll direct you to another page in the re-frame docs 
 which has nothing to do with testing, but it does use this `simple-outer-subscribe-with-complicated-inner-render` 
 pattern for a different purpose: 
 [Using Stateful JS Components](Using-Stateful-JS-Components.md)
  
-Note this technique could be made simple and almost invisible via the 
-use of macros. (Contribute one if you have it).
+Note: this technique could be made simple and almost invisible via the 
+use of macros.
 
 This pattern has been independently discovered by many. For example, here 
 it is called the [Container/Component pattern](https://medium.com/@learnreact/container-components-c0e67432e005#.mb0hzgm3l).
