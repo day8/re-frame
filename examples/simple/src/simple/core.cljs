@@ -3,7 +3,7 @@
             [re-frame.core :as rf]
             [clojure.string :as str]))
 
-;; A detailed walk-through of this source code is provied in the docs:
+;; A detailed walk-through of this source code is provided in the docs:
 ;; https://github.com/Day8/re-frame/blob/master/docs/CodeWalkthrough.md
 
 ;; -- Domino 1 - Event Dispatch -----------------------------------------------

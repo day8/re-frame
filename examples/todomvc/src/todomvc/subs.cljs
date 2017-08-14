@@ -9,7 +9,7 @@
 ;; Layer 2 query functions are "extractors". They take from `app-db`
 ;; and don't do any further computation on the extracted values. Any further
 ;; computation should happen in Layer 3.
-;; Why?  It is an efficiency thing. Every Layer 2 subscriptions will rerun anytime
+;; Why?  It is an efficiency thing. Every Layer 2 subscription will rerun any time
 ;; that `app-db` changes (in any way). As a result, we want Layer 2 to be trivial.
 ;;
 (reg-sub
@@ -62,7 +62,7 @@
 
   ;; This function returns the input signals.
   ;; In this case, it returns a single signal.
-  ;; Although not required in this example, it is called with two paramters
+  ;; Although not required in this example, it is called with two parameters
   ;; being the two values supplied in the originating `(subscribe X Y)`.
   ;; X will be the query vector and Y is an advanced feature and out of scope
   ;; for this explanation.

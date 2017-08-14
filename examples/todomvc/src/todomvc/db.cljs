@@ -61,7 +61,7 @@
 (defn todos->local-store
   "Puts todos into localStorage"
   [todos]
-  (.setItem js/localStorage ls-key (str todos)))     ;; sorted-map writen as an EDN map
+  (.setItem js/localStorage ls-key (str todos)))     ;; sorted-map written as an EDN map
 
 
 ;; -- cofx Registrations  -----------------------------------------------------
