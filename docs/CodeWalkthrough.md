@@ -62,7 +62,7 @@ informal description, and here it is ... for this app `app-db` will contain
 a two-key map like this:
 ```cljs
 {:time       (js/Date.)  ;; current time for display
- :time-color "#f88"}     ;; the colour in which the time should be be shown
+ :time-color "#f88"}     ;; the colour in which the time should be shown
 ```
 
 re-frame itself owns/manages `app-db` (see FAQ #1), and it will
