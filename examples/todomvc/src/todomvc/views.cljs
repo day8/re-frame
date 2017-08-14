@@ -7,7 +7,7 @@
 (defn todo-input [{:keys [title on-save on-stop]}]
   (let [val  (reagent/atom title)
         stop #(do (reset! val "")
-                  (when on-stop (on-stop)))
+                  (on-stop))
         save #(let [v (-> @val str str/trim)]
                 (when (seq v) (on-save v))
                 (stop))]
