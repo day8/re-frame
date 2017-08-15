@@ -23,6 +23,7 @@
 
 #### Minor Fixes and Improvements
 
+ - [#400](https://github.com/Day8/re-frame/pull/400) Improve error message when a registered cofx can't be found
  - The effect handler for `:dispatch-n` will now ignore `nils`. [See checkin](https://github.com/Day8/re-frame/commit/6efdae438f393f8121a2d6dfbf76db00e6dafbf5)
  - [#340](https://github.com/Day8/re-frame/pull/340)
  - [#341](https://github.com/Day8/re-frame/pull/341) Fix `re-frame.core/on-changes` to work even if event handler does not set `:db`. 
