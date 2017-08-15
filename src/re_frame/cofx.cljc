@@ -83,13 +83,17 @@
     :id      :coeffects
     :before  (fn coeffects-before
                [context]
-               (update context :coeffects (get-handler kind id)))))
+               (if-let [handler (get-handler kind id)]
+                 (update context handler :coeffects)
+                 (console :error "No cofx handler registered for \"" id "\"")))))
   ([id value]
    (->interceptor
      :id     :coeffects
      :before  (fn coeffects-before
                 [context]
-                (update context :coeffects (get-handler kind id) value)))))
+                (if-let [handler (get-handler kind id)]
+                  (update context :coeffects handler value)
+                  (console :error "No cofx handler registered for \"" id "\""))))))
 
 
 ;; -- Builtin CoEffects Handlers  ---------------------------------------------
