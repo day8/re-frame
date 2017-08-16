@@ -1,7 +1,7 @@
 (defproject simple "0.9.0"
   :dependencies [[org.clojure/clojure        "1.8.0"]
                  [org.clojure/clojurescript  "1.9.227"]
-                 [reagent  "0.6.0-rc"]
+                 [reagent  "0.7.0"]
                  [re-frame "0.9.4"]]
 
   :plugins [[lein-cljsbuild "1.1.3"]
