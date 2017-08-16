@@ -1,3 +1,7 @@
+## 0.10.1  (2017.08.17)
+
+  - fix a showstopper bug introduced at the last minute in v0.10.0
+
 ## 0.10.0  (2017.08.16)
 
 #### New Docs
