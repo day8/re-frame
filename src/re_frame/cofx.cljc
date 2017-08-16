@@ -84,7 +84,7 @@
     :before  (fn coeffects-before
                [context]
                (if-let [handler (get-handler kind id)]
-                 (update context handler :coeffects)
+                 (update context :coeffects handler)
                  (console :error "No cofx handler registered for \"" id "\"")))))
   ([id value]
    (->interceptor
