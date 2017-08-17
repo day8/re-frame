@@ -14,7 +14,9 @@ Please add to this list by submitting a pull request.
 
 ### Examples and Applications Using re-frame
 
+* [BlueGenes](https://github.com/intermine/bluegenes) - searching and analysing genomic data, by the University of Cambridge
 * [How to create decentralised apps with re-frame and Ethereum](https://medium.com/@matus.lestan/how-to-create-decentralised-apps-with-clojurescript-re-frame-and-ethereum-81de24d72ff5#.b9xh9xnis) - Tutorial with links to code and live example.
+* [Braid](https://github.com/braidchat/braid) - A new approach to group chat, designed around conversations and tags instead of rooms.
 * [Elfeed-cljsrn](https://github.com/areina/elfeed-cljsrn) - A mobile client for [Elfeed](https://github.com/skeeto/elfeed) rss reader, built with React Native.
 * [Memory Hole](https://github.com/yogthos/memory-hole) - A small issue tracking app written with Luminus and re-frame.
 * [Crossed](https://github.com/velveteer/crossed/) - A multiplayer crossword puzzle generator. Based on re-frame `0.7.0`
@@ -23,8 +25,7 @@ Please add to this list by submitting a pull request.
 * [flux-challenge with re-frame](https://github.com/staltz/flux-challenge/tree/master/submissions/jelz) - "a frontend challenge to test UI architectures and solutions". re-frame `0.5.0`
 * [fractalify](https://github.com/madvas/fractalify/)  -
   An entertainment and educational webapp for creating & sharing fractal images that powers [fractalify.com](http://fractalify.com). Based on re-frame `0.4.1`
-* [Angular Phonecat tutorial in re-frame](http://dhruvp.github.io/2015/03/07/re-frame/) - A detailed step-by-step tutorial that ports the Angular Phonecat tutorial to re-frame. Based on re-frame `0.2.0`
-* [Braid](https://github.com/braidchat/braid) - A new approach to group chat, designed around conversations and tags instead of rooms.
+
 
 ### Effect and CoEffect Handlers
 
