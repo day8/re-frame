@@ -1,7 +1,7 @@
 (ns todomvc.db
   (:require [cljs.reader]
             [cljs.spec :as s]
-            [re-frame.core :as re-frame]))
+            [re-frame.core :refer [reg-cofx]]))
 
 
 ;; -- Spec --------------------------------------------------------------------
@@ -75,7 +75,7 @@
 ;;
 ;; We must supply a `sorted-map` but in LocalStore it is stored as a `map`.
 ;;
-(re-frame/reg-cofx
+(reg-cofx
   :local-store-todos
   (fn [cofx _]
       ;; put the localstore todos into the coeffect, under key :local-store-todos
