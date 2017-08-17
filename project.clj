@@ -3,18 +3,18 @@
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
   :dependencies [[org.clojure/clojure        "1.8.0"]
-                 [org.clojure/clojurescript  "1.9.227"]
-                 [reagent                    "0.6.0"]
-                 [net.cgrand/macrovich "0.2.0"]
+                 [org.clojure/clojurescript  "1.9.908"]
+                 [reagent                    "0.7.0"]
+                 [net.cgrand/macrovich       "0.2.0"]
                  [org.clojure/tools.logging  "0.3.1"]]
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[karma-reporter            "1.0.1"]
-                                    [binaryage/devtools        "0.8.1"]]
+                                    [binaryage/devtools        "0.9.4"]]
                      :plugins      [[lein-ancient              "0.6.10"]
-                                    [lein-cljsbuild            "1.1.4"]
+                                    [lein-cljsbuild            "1.1.5"]
                                     [lein-npm                  "0.6.2"]
-                                    [lein-figwheel             "0.5.6"]
+                                    [lein-figwheel             "0.5.13"]
                                     [lein-shell                "0.5.0"]]}}
 
   :clean-targets  [:target-path "run/compiled"]

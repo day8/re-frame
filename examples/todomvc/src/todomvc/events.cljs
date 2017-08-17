@@ -3,7 +3,7 @@
     [todomvc.db    :refer [default-db todos->local-store]]
     [re-frame.core :refer [reg-event-db reg-event-fx inject-cofx path trim-v
                            after debug]]
-    [cljs.spec     :as s]))
+    [cljs.spec.alpha :as s]))
 
 
 ;; -- Interceptors --------------------------------------------------------------
