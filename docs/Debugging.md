@@ -153,8 +153,9 @@ If you are using `lein`, do this in your `project.clj` file:
 ```clj
 :cljsbuild {:builds [{:id "dev"            ;; for the development build, turn on tracing
                       ....
-                      :closure-defines {"clairvoyant.core.devmode" true}
-                      }]}
+                      :compiler {
+                          :closure-defines {"clairvoyant.core.devmode" true}
+                      }}]}
 ```
 
 So, just to be clear, if you see no tracing when you are debugging, it 
