@@ -10,6 +10,7 @@
 6. [How can I detect exceptions in Event Handlers?](CatchingEventExceptions.md)
 7. [How do I store normalised data in app-db?](DB_Normalisation.md)
 8. [How do I register a global interceptor](GlobalInterceptors.md)
+9. [How do I turn on/off polling a database every 60 secs](PollADatabaseEvery60.md)
 
 
 ## Want To Add An FAQ?  

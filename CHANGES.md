@@ -1,3 +1,10 @@
+
+## Unreleased 0.NN.N  (2017.NN.NN)
+
+#### New Docs
+
+  - added [a new FAQ entry](/docs/FAQs/PollADatabaseEvery60.md) How do I turn on/off polling a database every 60 secs  (hint: effects)
+
 ## 0.10.1  (2017.08.17)
 
   - fix a showstopper bug introduced at the last minute in v0.10.0
