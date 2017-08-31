@@ -10,7 +10,7 @@ How do i do it?
 
 ### Before I Answer - An Architectural Note 
 
-The boarder React community often uses the "load data from server on Component mount" 
+The broader React community often uses the "load data from server on Component mount" 
 model of architecture. They'll often collocate queries with view components and perform a 
 GET (to the server) within the View's `componentDidMount`. 
 
@@ -53,7 +53,7 @@ And to later cancel the regular dispatch, an event handler would do this:
 
 Now, register an effect handler for `:interval`:
 ```clj
-re-frame.core/(reg-fx 
+(re-frame.core/reg-fx 
   :interval 
   (let [live-intervals (atom {})] 
     (fn [{:keys [action id frequency event]}]
