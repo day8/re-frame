@@ -21,7 +21,7 @@ Please add to this list by submitting a pull request.
 * [Elfeed-cljsrn](https://github.com/areina/elfeed-cljsrn) - A mobile client for [Elfeed](https://github.com/skeeto/elfeed) rss reader, built with React Native.
 * [Memory Hole](https://github.com/yogthos/memory-hole) - A small issue tracking app written with Luminus and re-frame.
 * [Crossed](https://github.com/velveteer/crossed/) - A multiplayer crossword puzzle generator. Based on re-frame `0.7.0`
-* [mperimetric](https://github.com/Dexterminator/imperimetric) - Webapp for converting texts with some system of measurement to another, such as imperial to metric.
+* [imperimetric](https://github.com/Dexterminator/imperimetric) - Webapp for converting texts with some system of measurement to another, such as imperial to metric.
 * [Brave Clojure Open Source](https://github.com/braveclojure/open-source) A site using re-frame, liberator, boot and more to display active github projects that powers [http://open-source.braveclojure.com](http://open-source.braveclojure.com). Based on re-frame `0.6.0`
 * [flux-challenge with re-frame](https://github.com/staltz/flux-challenge/tree/master/submissions/jelz) - "a frontend challenge to test UI architectures and solutions". re-frame `0.5.0`
 * [fractalify](https://github.com/madvas/fractalify/)  -
