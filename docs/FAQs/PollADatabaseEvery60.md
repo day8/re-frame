@@ -1,11 +1,9 @@
 ### Question
 
 When the user switches to a certain panel, I'd like to kickoff a regular poll of my 
-backend (database) - say every 60 seconds.
- 
-And, then later, when the user switches away from that panel, I want to stop that polling.
+backend (database) - say every 60 seconds.  And, then later, when the user switches 
+away from that panel, I want to stop that polling.
 
-How do I do it?
 
 
 ### First, An Architectural Note 
@@ -32,11 +30,12 @@ So, having got that out the way ...
 
 We'll create an effect. It will be general in nature. 
 
-It will start and stop the timed/scheduled dispatch of an event. For this FAQ,
+It will start and stop the timed/scheduled dispatch of an event (every 60 seconds).
+For this FAQ,
 this event will poll the backend but this is a general pattern
 and the regularly dispatched event could do anything we wanted.
 
-We first create an `effect` called, say, `:interval`. We must 
+We'll be creating an `effect` called, say, `:interval`. We must 
 design the data format (micro DSL) returned by an 
 event handler for this effect. This data format must allow an event handler to 
 start and stop a regular dispatch.
@@ -46,22 +45,22 @@ data in this format:
 ```clj
 {:interval  {:action    :start
              :id        :panel-1-query     ;; my id for this (so I cancel later)
-             :frequency 60000              ;; how many millisecsbetween dispatches 
+             :frequency 60000              ;; how many ms between dispatches 
              :event     [:panel-query 1]}} ;; what to dispatch 
 ```
 
 And to later cancel the regular dispatch, an event handler would return this:
 ```clj
 {:interval  {:action    :cancel
-             :id        :panel-1-query}}   ;; my id for this (provided to :start)  
+             :id        :panel-1-query}}   ;; the id provided to :start  
 ```
 
-Now, register an effect handler for `:interval`:
+Now, register an `effect handler` for the `:interval` effect:
 ```clj
-(re-frame.core/reg-fx 
-  :interval 
-  (let [live-intervals (atom {})] 
-    (fn [{:keys [action id frequency event]}]
+(re-frame.core/reg-fx        ;; the re-frame API for registering effect handlers
+  :interval                  ;; the effect id
+  (let [live-intervals (atom {})]                 ;; storage for live interevals
+    (fn [{:keys [action id frequency event]}]     ;; the handler
       (if (= action :start) 
         (swap! live-intervals assoc id (js/setInterval #(dispatch event) frequency))) 
         (do (js/clearInterval (get live-intervals id)) 
@@ -70,4 +69,6 @@ Now, register an effect handler for `:interval`:
 
 You'd probably want a bit more error checking, but that's the (untested) sketch.
 
+### Figwheel 
 
+Figwheel is a really 
