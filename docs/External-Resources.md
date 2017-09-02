@@ -26,7 +26,9 @@ Please add to this list by submitting a pull request.
 * [flux-challenge with re-frame](https://github.com/staltz/flux-challenge/tree/master/submissions/jelz) - "a frontend challenge to test UI architectures and solutions". re-frame `0.5.0`
 * [fractalify](https://github.com/madvas/fractalify/)  -
   An entertainment and educational webapp for creating & sharing fractal images that powers [fractalify.com](http://fractalify.com). Based on re-frame `0.4.1`
-
+* [boodle](https://github.com/manuel-uberti/boodle) - A simple SPA for
+  accounting. It uses, among others, re-frame, http-kit, compojure-api and it
+  runs on PostgreSQL.
 
 ### Effect and CoEffect Handlers
 
