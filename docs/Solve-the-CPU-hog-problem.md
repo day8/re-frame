@@ -30,7 +30,7 @@ but worth establishing as a rule, right up front.
 
 __Second__, you must be able to break up that CPU 
 work into chunks. You need a way to do part of the work, pause, 
-then resume from where you left off. (More in min). 
+then resume from where you left off (more in a minute).
 
 In a perfect world, each chunk would take something like
 16ms (60 fps). If you go longer, say 50ms or 100ms, it is no train 
