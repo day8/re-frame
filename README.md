@@ -333,7 +333,7 @@ Here's a sketch (we are at 30,000 feet):
 (defn h                               ;; choose a better name like delete-item
  [coeffects event]                    ;; args:  db from coeffect, event
  (let [item-id (second event)         ;; extract id from event vector
-       db      (:db coeffects)        ;; extract the current application state
+       db      (:db coeffects)]       ;; extract the current application state
    {:db  (dissoc-in db [:items item-id])})) ;; effect is change app state
 ```
 
