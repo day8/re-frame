@@ -1,4 +1,3 @@
-
 ## Unreleased 0.NN.N  (2017.NN.NN)
 
 #### New Docs
@@ -157,7 +156,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
 
   - re-frame now supports the notion of Event Handlers accepting coeffects and returning effects. <br>
     There's now three kinds of event handlers: `-db`, `-fx` and `-ctx`. <br>
-    For a tutorial see: https://github.com/Day8/re-frame/tree/develop/docs  <br>
+    For a tutorial see: https://github.com/Day8/re-frame/tree/master/docs  <br>
 
     For Effect Handler examples see:
 
@@ -206,7 +205,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     Interceptors also dovetail really nicely with the effects and coeffects
     story which has emerged in re-frame through this 0.8.0 release.
 
-    Docs:  https://github.com/Day8/re-frame/tree/develop/docs
+    Docs:  https://github.com/Day8/re-frame/tree/master/docs
 
   - we now have a logo designed by Sketch Maester @martinklepsch. Thank you Martin!  But remember, no
     good deed ever goes unpunished - we'll be pestering you every time from now on :-)
@@ -229,7 +228,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     chance you won't notice the change UNLESS:
 
     1. You have written your own middleware.  If so, you'll have to rewrite it.
-       See how [the builtin interceptors are done](https://github.com/Day8/re-frame/blob/develop/src/re_frame/std_interceptors.cljc).
+       See how [the builtin interceptors are done](https://github.com/Day8/re-frame/blob/master/src/re_frame/std_interceptors.cljc).
 
     2. You explicitly use `comp` to compose middleware like this:
        ```clj

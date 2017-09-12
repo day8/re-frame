@@ -15,7 +15,6 @@ y'know. Pretty good.
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
 [![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
-[![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/develop.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/develop)
 [![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/master)
 
 ## re-frame
@@ -528,7 +527,7 @@ Client only:  https://github.com/Day8/re-frame-template  <br>
 Full Stack: http://www.luminusweb.net/
 
 And please be sure to review these further resources: <br>
-https://github.com/Day8/re-frame/blob/develop/docs/External-Resources.md
+https://github.com/Day8/re-frame/blob/master/docs/External-Resources.md
 
 ### T-Shirt Unlocked
 

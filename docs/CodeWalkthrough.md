@@ -10,8 +10,8 @@ In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 7
 
 ## What Code?
 
-This repo contains an `/examples` application called ["simple"](https://github.com/Day8/re-frame/tree/develop/examples/simple),
-which contains 70 lines of code. We'll look at every line of [the file](https://github.com/Day8/re-frame/blob/develop/examples/simple/src/simple/core.cljs).
+This repo contains an `/examples` application called ["simple"](https://github.com/Day8/re-frame/tree/master/examples/simple),
+which contains 70 lines of code. We'll look at every line of [the file](https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs).
 
 This app:
  - displays the current time in a nice big, colourful font
@@ -488,7 +488,7 @@ structure exists in `app-db` before any subscriptions or event handlers run.
 ## Next Steps
 
 You should now take time to carefully review the 
-[todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).
+[todomvc example application](https://github.com/Day8/re-frame/tree/master/examples/todomvc).
 On the one hand, it contains a lot of very helpful practical advice. On the other, it does
 use some more advanced features like `interceptors` which are covered later in the docs.   
 
