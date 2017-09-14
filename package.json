@@ -5,11 +5,11 @@
   "repository": "https://github.com/Day8/re-frame.git",
   "scripts": {
     "serve": "gitbook serve",
-    "epub": "gitbook epub docs/build/",
-    "mobi": "gitbook mobi docs/build/",
-    "pdf": "gitbook pdf docs/build/",
+    "epub": "gitbook epub docs/build/ docs/build/re-frame.epub",
+    "mobi": "gitbook mobi docs/build/ docs/build/re-frame.mobi",
+    "pdf": "gitbook pdf docs/build/ docs/build/re-frame.pdf",
     "html": "gitbook build docs/build/",            
-    "build": "yarn html && yarn pdf && yarn mobi && yarn epub"
+    "build": "npm run html && npm run pdf && npm run mobi && npm run epub"
   },
   "dependencies": {
     "gitbook-cli": "^2.3.2"
