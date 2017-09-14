@@ -1,0 +1,17 @@
+{
+  "name": "re-frame-docs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Day8/re-frame.git",
+  "scripts": {
+    "serve": "gitbook serve",
+    "epub": "gitbook epub docs/build/",
+    "mobi": "gitbook mobi docs/build/",
+    "pdf": "gitbook pdf docs/build/",
+    "html": "gitbook build docs/build/",            
+    "build": "yarn html && yarn pdf && yarn mobi && yarn epub"
+  },
+  "dependencies": {
+    "gitbook-cli": "^2.3.2"
+  }
+}
