@@ -4,11 +4,11 @@
   "main": "index.js",
   "repository": "https://github.com/Day8/re-frame.git",
   "scripts": {
-    "serve": "mkdir -p docs/build/_book && gitbook serve docs/ docs/build/_book",
-    "epub": "gitbook epub docs/ docs/build/re-frame.epub",
-    "mobi": "gitbook mobi docs/ docs/build/re-frame.mobi",
-    "pdf": "gitbook pdf docs/ docs/build/re-frame.pdf",
-    "html": "gitbook build ./docs/ docs/build/_book",
+    "serve": "mkdir -p ./build/_book && gitbook serve ./ ./build/re-frame",
+    "epub": "gitbook epub ./ ./build/re-frame.epub",
+    "mobi": "gitbook mobi ./ ./build/re-frame.mobi",
+    "pdf": "gitbook pdf ./ ./build/re-frame.pdf",
+    "html": "gitbook build ./ ./build/re-frame",
     "build": "npm run html && npm run pdf && npm run mobi && npm run epub"
   },
   "dependencies": {
