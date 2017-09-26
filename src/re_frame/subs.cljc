@@ -114,7 +114,7 @@
      (if-let [cached (cache-lookup query)]
        (do
          (trace/merge-trace! {:tags {:cached?  true
-                                     :sub-value (deref cached)
+                                     :value (deref cached)
                                      :reaction (reagent-id cached)}})
          cached)
 
@@ -125,7 +125,7 @@
            (do (trace/merge-trace! {:error true})
                (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
            (let [sub-reaction (handler-fn app-db query)]
-             (do (trace/merge-trace! {:tags {:sub-value (deref sub-reaction)}})
+             (do (trace/merge-trace! {:tags {:value (deref sub-reaction)}})
                  (cache-and-return query [] sub-reaction))))))))
 
   ([query dynv]
@@ -305,13 +305,13 @@
                reaction-id   (atom nil)
                reaction      (make-reaction
                                (fn []
-                                 (let [sub-value (computation-fn (deref-input-signals subscriptions query-id) query-vec)]
-                                   (trace/with-trace {:operation (first-in-vector query-vec)
-                                                      :op-type   :sub/run
-                                                      :tags      {:sub-value  sub-value
-                                                                  :query-v    query-vec
-                                                                  :reaction   @reaction-id}}
-                                                     sub-value))))]
+                                 (trace/with-trace {:operation (first-in-vector query-vec)
+                                                    :op-type   :sub/run
+                                                    :tags      {:query-v    query-vec
+                                                                :reaction   @reaction-id}}
+                                                   (let [subscription (computation-fn (deref-input-signals subscriptions query-id) query-vec)]
+                                                     (trace/merge-trace! {:tags {:value subscription}})
+                                                     subscription))))]
 
            (reset! reaction-id (reagent-id reaction))
            reaction))
@@ -320,14 +320,14 @@
                reaction-id   (atom nil)
                reaction      (make-reaction
                                (fn []
-                                 (let [sub-value (computation-fn (deref-input-signals subscriptions query-id) query-vec dyn-vec)]
-                                   (trace/with-trace {:operation (first-in-vector query-vec)
-                                                      :op-type   :sub/run
-                                                      :tags      {:sub-value sub-value
-                                                                  :query-v   query-vec
-                                                                  :dyn-v     dyn-vec
-                                                                  :reaction  @reaction-id}}
-                                                     sub-value))))]
+                                 (trace/with-trace {:operation (first-in-vector query-vec)
+                                                    :op-type   :sub/run
+                                                    :tags      {:query-v   query-vec
+                                                                :dyn-v     dyn-vec
+                                                                :reaction  @reaction-id}}
+                                                   (let [subscription (computation-fn (deref-input-signals subscriptions query-id) query-vec dyn-vec)]
+                                                     (trace/merge-trace! {:tags {:value subscription}})
+                                                     subscription))))]
 
            (reset! reaction-id (reagent-id reaction))
            reaction))))))
