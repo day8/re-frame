@@ -6,8 +6,8 @@ But this is NOT your normal, lean and minimal todomvc implementation,
 geared towards showing how easily re-frame can implement the challenge.
  
 Instead, this todomvc example has evolved into more of a teaching tool 
-and we've thrown in more advanced re-frame features which aren't 
-really required to get the job done. 
+and we've thrown in more advanced re-frame features which are not 
+really required to get the job done. So lean and minimal is no longer a goal. 
 
 
 ## Setup And Run
@@ -70,8 +70,6 @@ src
 └── events.cljs     <--- event handlers (control/update layer)
 ```
 
-## Notes
+## Further Notes
 
-Various:
- - The [official reagent example](https://github.com/reagent-project/reagent/tree/master/examples/todomvc)
- - Look at the [re-frame Wiki](https://github.com/Day8/re-frame/wiki)
+The [official reagent example](https://github.com/reagent-project/reagent/tree/master/examples/todomvc). 
