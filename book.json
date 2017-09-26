@@ -2,9 +2,5 @@
   "title": "re-frame",
   "description": "Documentation of re-frame framework",
   "language": "en",
-  "root": "./docs/",
-  "structure": {
-    "summary": "README.md"
-  }
-
+  "root": "./docs/"
 }
