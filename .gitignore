@@ -21,3 +21,12 @@ misc/
 .flooignore
 node_modules/
 examples/todomvc/.idea/
+docs/build/_book/
+docs/build/index.html
+docs/**/*.epub
+docs/**/*.pdf
+docs/**/*.mobi
+build/
+*~
+yarn.lock
+package-lock.json
