@@ -3,6 +3,7 @@
 #### New Docs
 
   - added [a new FAQ entry](/docs/FAQs/PollADatabaseEvery60.md) How do I turn on/off polling a database every 60 secs  (hint: effects)
+  - added [a new FAQ entry](/docs/FAQs/FullStackReframe.md) How do I do full-stack re-frame?
 
 ## 0.10.1  (2017.08.17)
 
