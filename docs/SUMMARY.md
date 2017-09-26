@@ -11,12 +11,28 @@
   * [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on many clojure topics, including re-frame and reagent.
 
 ## Dominoes 2 & 3
-* Event handler
-  * [Infographic Overview](EventHandlingInfographic.md)
-  * [Effectful Handlers](EffectfulHandlers.md)
-  * [Interceptors](Interceptors.md)
-  * [Effects](Effects.md)
-  * [Coeffects](Coeffects.md)
+* [Infographic Overview](EventHandlingInfographic.md)
+* [Effectful Handlers](EffectfulHandlers.md)
+  * [Events Happen](EffectfulHandlers.md#events-happen)
+  * [Handling The Happening](EffectfulHandlers.md#handling-the-happening)
+  * [Your Handling](EffectfulHandlers.md#your-handling)
+  * [90% Solution](EffectfulHandlers.md#90%25-solution)
+  * [Bad, Why?](EffectfulHandlers.md#bad-why)
+  * [The 2nd Kind Of Problem](EffectfulHandlers.md#the-2nd-kind-of-problem)
+  * [Effects And Coeffects](EffectfulHandlers.md#effects-and-coeffects)
+  * [Why Does This Happen?](EffectfulHandlers.md#why-does-this-happen)
+  * [Doing vs Causing](EffectfulHandlers.md#doing-vs-causing)
+  * [Et tu, React?](EffectfulHandlers.md#et-tu-react)
+  * [Pattern Structure](EffectfulHandlers.md#pattern-structure)
+  * [Effects: The Two Step Plan](EffectfulHandlers.md#effects-the-two-step-plan)
+  * [Step 1 Of Plan](EffectfulHandlers.md#step-1-of-plan)
+  * [Another Example](EffectfulHandlers.md#another-example)
+  * [The Coeffects](EffectfulHandlers.md#the-coeffects)
+  * [Variations On A Theme](EffectfulHandlers.md#variations-on-a-theme)
+  * [Summary](EffectfulHandlers.md#summary)
+* [Interceptors](Interceptors.md)
+* [Effects](Effects.md)
+* [Coeffects](Coeffects.md)
 
 ## Domino 4
 * Subscriptions
