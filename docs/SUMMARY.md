@@ -10,6 +10,7 @@
   * [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a detailed, well written introduction.
   * [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on many clojure topics, including re-frame and reagent.
 
+
 ## Dominoes 2 & 3
 * [Infographic Overview](EventHandlingInfographic.md)
 * [Effectful Handlers](EffectfulHandlers.md)
@@ -30,6 +31,7 @@
   * [The Coeffects](EffectfulHandlers.md#the-coeffects)
   * [Variations On A Theme](EffectfulHandlers.md#variations-on-a-theme)
   * [Summary](EffectfulHandlers.md#summary)
+
 * [Interceptors](Interceptors.md)
   * [Why Interceptors?](Interceptors.md#why-interceptors)
   * [What Do Interceptors Do?](Interceptors.md#what-do-interceptors-do)
@@ -44,19 +46,33 @@
     * [Credit](Interceptors.md#credit)
     * [Write An Interceptor](Interceptors.md#write-an-interceptor)
     * [Wrapping Handlers](Interceptors.md#wrapping-handlers)
-* [Summary](Interceptors.md#summary)
-* [Appendix](Interceptors.md#appendix)
-  * [The Built-in Interceptors](Interceptors.md#the-built-in-interceptors)
-
+  * [Summary](Interceptors.md#summary)
+  * [Appendix](Interceptors.md#appendix)
+    * [The Built-in Interceptors](Interceptors.md#the-built-in-interceptors)
 
 * [Effects](Effects.md)
+  * [Where Effects Come From](Effects.md#where-effects-come-from)
+  * [The Effects Map](Effects.md#the-effects-map)
+  * [Infinite Effects](Effects.md#infinite-effects)
+  * [Extensible Side Effects](Effects.md#extensible-side-effects)
+  * [Writing An Effect Handler](Effects.md#writing-an-effect-handler)
+  * [:db Not Always Needed](Effects.md#db-not-always-needed)
+  * [What Makes This Work?](Effects.md#what-makes-this-work)
+  * [Order Of Effects?](Effects.md#order-of-effects)
+  * [Effects With No Data](Effects.md#effects-with-no-data)
+  * [Testing And Noops](Effects.md#testing-and-noops)
+  * [Summary](Effects.md#summary)
+  * [External Effects](Effects.md#external-effects)
+
 * [Coeffects](Coeffects.md)
+
 
 ## Domino 4
 * Subscriptions
   * [Infographic](SubscriptionInfographic.md)
   * [Correcting a wrong](SubscriptionsCleanup.md)
   * [Flow Mechanics](SubscriptionFlow.md)
+
 
 ## Domino 5
 * Reagent Tutorials
@@ -65,6 +81,7 @@
   * [purelyfunctional.tv ](https://purelyfunctional.tv/guide/reagent/) - a written overview
   * [Reagent Deep Dive Series from Timothy Pratley](http://timothypratley.blogspot.com.au/p/p.html)  four part series
   * [Props, Children & Component Lifecycle](https://www.martinklepsch.org/posts/props-children-and-component-lifecycle-in-reagent.html) by Martin Klepsch
+
 
 ## App Structure
   * [Basic App Structure](Basic-App-Structure.md)
