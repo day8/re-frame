@@ -114,7 +114,6 @@
      (if-let [cached (cache-lookup query)]
        (do
          (trace/merge-trace! {:tags {:cached?  true
-                                     :value (deref cached)
                                      :reaction (reagent-id cached)}})
          cached)
 
@@ -124,9 +123,7 @@
          (if (nil? handler-fn)
            (do (trace/merge-trace! {:error true})
                (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
-           (let [sub-reaction (handler-fn app-db query)]
-             (do (trace/merge-trace! {:tags {:value (deref sub-reaction)}})
-                 (cache-and-return query [] sub-reaction))))))))
+           (cache-and-return query [] (handler-fn app-db query)))))))
 
   ([query dynv]
    (trace/with-trace {:operation (first-in-vector query)
