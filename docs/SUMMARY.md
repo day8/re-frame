@@ -65,7 +65,19 @@
   * [External Effects](Effects.md#external-effects)
 
 * [Coeffects](Coeffects.md)
-
+  * [What Are They?](Coeffects.md#what-are-they)
+  * [An Example](Coeffects.md#an-example)
+  * [How We Want It](Coeffects.md#how-we-want-it)
+  * [Abracadabra](Coeffects.md#abracadabra)
+  * [Which Interceptors?](Coeffects.md#which-interceptors)
+  * [`inject-cofx`](Coeffects.md#inject-cofx)
+  * [More `inject-cofx`](Coeffects.md#more-inject-cofx)
+  * [Meet `reg-cofx`](Coeffects.md#meet-reg-cofx)
+  * [Example Of `reg-cofx`](Coeffects.md#example-of-reg-cofx)
+  * [Another Example Of `reg-cofx`](Coeffects.md#another-example-of-reg-cofx)
+  * [Secret Interceptors](Coeffects.md#secret-interceptors)
+  * [Testing](Coeffects.md#testing)
+  * [The 5 Point Summary](Coeffects.md#the-5-point-summary)
 
 ## Domino 4
 * Subscriptions
