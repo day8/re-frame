@@ -301,11 +301,15 @@
          (let [subscriptions (inputs-fn query-vec)
                reaction-id   (atom nil)
                reaction      (make-reaction
-                               (fn [] (trace/with-trace {:operation (first-in-vector query-vec)
-                                                         :op-type   :sub/run
-                                                         :tags      {:query-v  query-vec
-                                                                     :reaction @reaction-id}}
-                                        (computation-fn (deref-input-signals subscriptions query-id) query-vec))))]
+                               (fn []
+                                 (trace/with-trace {:operation (first-in-vector query-vec)
+                                                    :op-type   :sub/run
+                                                    :tags      {:query-v    query-vec
+                                                                :reaction   @reaction-id}}
+                                                   (let [subscription (computation-fn (deref-input-signals subscriptions query-id) query-vec)]
+                                                     (trace/merge-trace! {:tags {:value subscription}})
+                                                     subscription))))]
+
            (reset! reaction-id (reagent-id reaction))
            reaction))
         ([db query-vec dyn-vec]
@@ -315,9 +319,12 @@
                                (fn []
                                  (trace/with-trace {:operation (first-in-vector query-vec)
                                                     :op-type   :sub/run
-                                                    :tags      {:query-v  query-vec
-                                                                :dyn-v    dyn-vec
-                                                                :reaction @reaction-id}}
-                                   (computation-fn (deref-input-signals subscriptions query-id) query-vec dyn-vec))))]
+                                                    :tags      {:query-v   query-vec
+                                                                :dyn-v     dyn-vec
+                                                                :reaction  @reaction-id}}
+                                                   (let [subscription (computation-fn (deref-input-signals subscriptions query-id) query-vec dyn-vec)]
+                                                     (trace/merge-trace! {:tags {:value subscription}})
+                                                     subscription))))]
+
            (reset! reaction-id (reagent-id reaction))
            reaction))))))
