@@ -106,15 +106,15 @@
   * [Subscribing to External Data](Subscribing-To-External-Data.md)
 
 ## Debugging And Testing
-    * [Debugging Event Handlers](Debugging-Event-Handlers.md)
-    * [Debugging](Debugging.md)
-    * [Testing](Testing.md)
+  * [Debugging Event Handlers](Debugging-Event-Handlers.md)
+  * [Debugging](Debugging.md)
+  * [Testing](Testing.md)
 
 ## Miscellaneous
-    * [FAQs](FAQs/README.md)
-    * [External Resources](External-Resources.md)
-    * [Eek! Performance Problems](Performance-Problems.md)
-    * [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
-    * [Using Stateful JS Components](Using-Stateful-JS-Components.md)
-    * [The re-frame Logo](The-re-frame-logo.md)
-    * [Code Of Conduct](Code-Of-Conduct.md)
+  * [FAQs](FAQs/README.md)
+  * [External Resources](External-Resources.md)
+  * [Eek! Performance Problems](Performance-Problems.md)
+  * [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
+  * [Using Stateful JS Components](Using-Stateful-JS-Components.md)
+  * [The re-frame Logo](The-re-frame-logo.md)
+  * [Code Of Conduct](Code-Of-Conduct.md)
