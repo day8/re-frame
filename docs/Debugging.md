@@ -89,16 +89,16 @@ It is the functions within these namespaces that we wish to trace.
 
 1. At the top of each add these namespaces, add these requires:
 
-   ```cljs
-    [clairvoyant.core :refer-macros [trace-forms]]
-    [re-frame-tracer.core :refer [tracer]]
-   ```
+```clojure
+ [clairvoyant.core :refer-macros [trace-forms]]
+ [re-frame-tracer.core :refer [tracer]]
+```
 
 2. Then, immediately after the `ns` form add (if you want a green colour):
 
-   ```cljs
-   (trace-forms {:tracer (tracer :color "green")}
-   ```
+```clojure
+ (trace-forms {:tracer (tracer :color "green")}
+```
 
 3. Finally, put in a closing `)` at the end of the file. Now all functions within the 
 `ns` will be traced.  It that is too noisy -- perhaps you won't want to trace all the helper functions --
@@ -107,15 +107,15 @@ around to suit your needs.
 
 4. Colour choice
 
-   We have sauntered in the direction of the following colours
+We have sauntered in the direction of the following colours
 
-   |    file      | colour|
-   |--------------|-------|
-   |`handlers.clj`| green |
-   |`subs.cljs`   | brown |
-   |`views.clj`   | gold  |
+|    file      | colour|
+|--------------|-------|
+|`handlers.clj`| green |
+|`subs.cljs`   | brown |
+|`views.clj`   | gold  |
 
-   But I still think orange, flared pants are a good look.  So, yeah.  You may end up choosing others. 
+But I still think orange, flared pants are a good look.  So, yeah.  You may end up choosing others. 
 
 
 ## Say No To Anonymous
@@ -124,7 +124,8 @@ To get good quality tracing, you need to provide names for all
 your functions.  So, don't let handlers be anonymous when registering them. 
 
 For example, make sure you name the renderer in a Form2 component:
-```clj
+
+```clojure
 (defn my-view
   []
   (let [name   (subscribe [:name])]
@@ -133,6 +134,7 @@ For example, make sure you name the renderer in a Form2 component:
 ```
 
 And name those event handlers:
+
 ```clj
 (reg-event-db
   :blah
@@ -209,7 +211,7 @@ you need to replace the macro `reaction` with the function `make-reaction`.
 
 Do the following code:
 
-```cljs
+```clj
 (ns my.ns
  (:require-macros [reagent.ratom :refer [reaction]]))
 
@@ -224,7 +226,7 @@ Do the following code:
 
 needs to become
 
-```cljs
+```clj
 (ns my.ns
  (:require [reagent.ratom :refer [make-reaction]]))
 

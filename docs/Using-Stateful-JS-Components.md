@@ -23,7 +23,7 @@ The pattern involves the outer component, which sources data, supplying this dat
 
 ### Example Using Google Maps
 
-```cljs
+```clj
 (defn gmap-inner []
   (let [gmap    (atom nil)
         options (clj->js {"zoom" 9})

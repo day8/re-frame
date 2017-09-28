@@ -49,7 +49,7 @@ the particular side effect required, and the `value` for that `key` provides
 further data. The structure of `value` is different for each side-effect.
 
 Here's the two instructions from the example above:
-```cljs
+```clj
 {:db       (assoc db :flag  a)         ;; side effect on app-db
  :dispatch [:do-something-else 3]}     ;; dispatch this event
 ```

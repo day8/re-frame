@@ -103,7 +103,7 @@ into a collection, the events caused by that user's actions
 (button clicks, drags, key presses, etc).
  
 The collection of events might look like this:  
-```cljs
+```clj
 (def collected-events
   [
      [:clear]

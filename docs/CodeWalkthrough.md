@@ -60,7 +60,7 @@ here, to minimise cognitive load, we'll cut that corner.
 But ... we can't cut it completely. You'll still need an
 informal description, and here it is ... for this app `app-db` will contain
 a two-key map like this:
-```cljs
+```clj
 {:time       (js/Date.)  ;; current time for display
  :time-color "#f88"}     ;; the colour in which the time should be shown
 ```

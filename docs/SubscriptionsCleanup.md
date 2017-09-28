@@ -96,7 +96,7 @@ AND there's less chance of us forgetting an `@` (which can lead to odd problems)
 I've ended up quite liking [the alternative names](https://lambdaisland.com/blog/11-02-2017-re-frame-form-1-subscriptions) 
 suggested by [Lambda Island Videos](https://lambdaisland.com/):
 
-```cljs
+```clj
 (def <sub (comp deref re-frame.core/subscribe))   ;; aka listen (above)
 (def >evt re-frame.core/dispatch)
 ```

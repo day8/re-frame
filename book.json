@@ -3,6 +3,9 @@
   "description": "Documentation of re-frame framework",
   "language": "en",
   "root": "./docs/",
+  "styles": {
+    "website": "styles/website.css"
+  },
   "structure": {
     "readme": "INTRO.md",
     "summary": "README.md"
