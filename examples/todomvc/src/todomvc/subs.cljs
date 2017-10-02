@@ -148,7 +148,7 @@
   :all-complete?
   :<- [:todos]
   (fn [todos _]
-    (seq todos)))
+    (every? :done todos)))
 
 (reg-sub
   :completed-count
