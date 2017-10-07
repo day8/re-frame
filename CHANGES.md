@@ -1,9 +1,16 @@
-## Unreleased 0.NN.N  (2017.NN.NN)
+## Unreleased 0.10.2  (2017.10.07)
+
+#### New Features
+
+  - On dispose callbacks now run on JVM re-frame. [#386](https://github.com/Day8/re-frame/pull/386).
+  - Log warnings when tracing is not enabled and you try to add a trace callback [#395](https://github.com/Day8/re-frame/pull/395).
 
 #### New Docs
 
   - added [a new FAQ entry](/docs/FAQs/PollADatabaseEvery60.md) How do I turn on/off polling a database every 60 secs  (hint: effects)
   - added [a new FAQ entry](/docs/FAQs/FullStackReframe.md) How do I do full-stack re-frame?
+  - Added a gitbook for re-frame docs [#414](https://github.com/Day8/re-frame/pull/414).
+  - Lots of spelling fixes, for which we are eternally grateful.
 
 ## 0.10.1  (2017.08.17)
 
