@@ -1,29 +1,31 @@
 ### Question
 
-When the user switches to a certain panel, I'd like to start regularly polling my 
+When the user switches to a particular panel, I'd like to start regularly polling my 
 backend (database) - say every 60 seconds.  And, then later, when the user switches 
 away from that panel, I want to stop that polling.
 
 ### First, An Architectural Note 
 
-The broader React community sometimes likes to collocate queries with view components 
-and initiate those queries (via a GET?) within the View's `componentDidMount`.
-And then, perhaps cleanup/stop any database polling in the Component's `componentWillUnmount`.
+The broader React community often uses a "load data on mount" approach. 
+They collocate queries with view components 
+and initiate these queries (via a GET?) within the View's `componentDidMount` lifecycle method.
+And then, later, they might cleanup/stop any database polling in `componentWillUnmount`.
 
-This approach is not idiomatic for re-frame. Views are not imperative
-(they don't issue database queries), they simply render current application state.
+This arrangement is not idiomatic for re-frame. Views are not imperative and 
+they don't initiate database queries. Instead, views simply render current application state.
 [Read more in PurelyFunctional.tv's writeup](https://purelyfunctional.tv/article/react-vs-re-frame/)
 
 With re-frame, "imperative stuff" only ever happens
-because of an `event`.  When the user clicks on a panel-changing widget (a button or a tab?),
-an event is dispatched, and it is the event handler for this event which knows 
-that actions X, Y and Z needs to happen. X might be change application state so 
-that the view displayed changes, and Y might be change application state so that a
-"twirly thing" is shown over the top, and Z might be to issue a database query. 
+because an `event` is dispatched.  When the user clicks on a panel-changing widget 
+(perhaps a button or a tab?),
+an event is dispatched, and it is the event handler associated with this event which 
+computes the effects of the user's action. First, it might change application state so 
+the panel is shown, and then it might further change application state so that a
+"twirly busy" thing is shown and, finally, it might issue a database query.
 
 So, having got that issue out the way ... 
  
-### Answer 
+### An Answer 
 
 We'll create an effect. It will be general in nature. 
 
