@@ -65,7 +65,7 @@ With that design work done, let's now implement it by registering an
     (fn [{:keys [action id frequency event]}]     ;; the handler
       (if (= action :start) 
         (swap! live-intervals assoc id (js/setInterval #(dispatch event) frequency))) 
-        (do (js/clearInterval (get live-intervals id)) 
+        (do (js/clearInterval (get @live-intervals id)) 
             (swap! live-intervals dissoc id))))
 ```
 
@@ -97,7 +97,7 @@ OR, you can code defensively for reloading, perhaps like this:
                      #(handler {:action :end  :id  %1}) 
                      (keys @live-intervals))
          :start   (swap! live-intervals assoc id (js/setInterval #(dispatch event) frequency))) 
-         :end     (do (js/clearInterval (get live-intervals id)) 
+         :end     (do (js/clearInterval (get @live-intervals id)) 
                       (swap! live-intervals dissoc id))))
 
 ;; when this code is reloaded `:clean` existing intervals
