@@ -74,7 +74,7 @@ a map literal, like this:
 (let [
       ;; setup - create db and event
       db      {:some 42  :thing "hello"}   ; a literal
-      event   [:select-triange :other :event :args]
+      event   [:select-triangle :other :event :args]
 
       ;; execute
       result-db (select-triange db event)]
@@ -173,7 +173,7 @@ If this method appeals to you, you should ABSOLUTELY review the utilities in thi
 [re-frame-test](https://github.com/Day8/re-frame-test).
 
 In summary, event handlers should be easy to test because they are pure functions. The interesting
-part is the unittest "setup" where we need to establishing an initial value for `db`.
+part is the unittest "setup" where we need to establish an initial value for `db`.
 
 ## Subscription Handlers
 
