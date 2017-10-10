@@ -245,7 +245,7 @@ A trivial example:
 ```
 
 So, here, testing involves passing values into the function and checking the data structure returned
-for correctness.p
+for correctness.
 
 What's returned is hiccup, of course. So how do you test hiccup for correctness?
 
