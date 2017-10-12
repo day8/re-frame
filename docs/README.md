@@ -1,14 +1,10 @@
 # Table of content
 
 ## Introduction
-* First, read this repo's README
+* First, read this repo's [README](../README.md)
 * [app-db (Application State)](ApplicationState.md)
 * [First Code Walk-Through](CodeWalkthrough.md)
 * [The API](API.md)
-* [Mental Model Omnibus](MentalModelOmnibus.md)
-* Alternative Introductions:
-  * [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a detailed, well written introduction. (Plus they have commercial videos)
-  * [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on many clojure topics, including re-frame and reagent. Some are free.
 
 ## Dominoes 2 & 3
 * [Infographic Overview](EventHandlingInfographic.md)
@@ -23,7 +19,6 @@
   * [Correcting a wrong](SubscriptionsCleanup.md)
   * [Flow Mechanics](SubscriptionFlow.md)
 
-
 ## Domino 5
 * Reagent Tutorials
   * [The Basics](https://github.com/Day8/re-frame/wiki#reagent-tutorials) (look at the bottom of that page)
@@ -31,6 +26,15 @@
   * [purelyfunctional.tv ](https://purelyfunctional.tv/guide/reagent/) - a written overview
   * [Reagent Deep Dive Series from Timothy Pratley](http://timothypratley.blogspot.com.au/p/p.html)  four part series
   * [Props, Children & Component Lifecycle](https://www.martinklepsch.org/posts/props-children-and-component-lifecycle-in-reagent.html) by Martin Klepsch
+
+## Deepen Your Knowledge
+
+* [Mental Model Omnibus](MentalModelOmnibus.md)
+* [FAQs](FAQs/README.md)
+* [External Resources](External-Resources.md)
+* Alternative Introductions:
+  * [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a detailed, well written introduction. (Plus they have commercial videos)
+  * [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on many clojure topics, including re-frame and reagent. Some are free.
 
 ## App Structure
   * [Basic App Structure](Basic-App-Structure.md)
@@ -48,10 +52,7 @@
   * [Testing](Testing.md)
 
 ## Miscellaneous
-  * [FAQs](FAQs/README.md)
-  * [External Resources](External-Resources.md)
   * [Eek! Performance Problems](Performance-Problems.md)
   * [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
   * [Using Stateful JS Components](Using-Stateful-JS-Components.md)
   * [The re-frame Logo](The-re-frame-logo.md)
-  * [Code Of Conduct](Code-Of-Conduct.md)
