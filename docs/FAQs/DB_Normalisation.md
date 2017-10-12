@@ -12,5 +12,13 @@ These libraries might be interesting to you:
 If you want to go whole hog and ditch `app-db` and embrace DataScript, 
 then you'll find [re-posh](https://github.com/denistakeda/re-posh) interesting.  
 
-  
 
+***
+
+Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

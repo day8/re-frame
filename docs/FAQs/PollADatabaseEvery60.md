@@ -115,3 +115,8 @@ OR, you can code defensively for reloading, perhaps like this:
 come up with strategies to handle Figwheel reloads on a case by case basis. Sometimes
 there's no escaping an application restart.
 
+
+***
+
+Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
