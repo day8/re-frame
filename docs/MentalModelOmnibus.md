@@ -348,20 +348,6 @@ compelled by different kinds of forces at different times (gravity, convection, 
 With this focus on interconnections, we have been looking on the "forces"  part of the loop.  The transport.
 
 
-## Full Stack
-
-If you like re-frame and want to take the principles full-stack, then
-these resources might be interesting to you:
-
-Commander Pattern  
-https://www.youtube.com/watch?v=B1-gS0oEtYc
-
-Datalog All The Way Down  
-https://www.youtube.com/watch?v=aI0zVzzoK_E
-
-Reactive PostgreSQL:
-https://yogthos.net/posts/2016-11-05-LuminusPostgresNotifications.html
-
 ## What Of This Romance?
 
 My job is to be a relentless cheerleader for re-frame, right?
