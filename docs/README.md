@@ -1,5 +1,3 @@
-# Table of content
-
 ## Introduction
 * First, read this repo's [README](../README.md)
 * [app-db (Application State)](ApplicationState.md)
