@@ -7,8 +7,8 @@
 * [The API](API.md)
 * [Mental Model Omnibus](MentalModelOmnibus.md)
 * Alternative Introductions:
-  * [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a detailed, well written introduction.
-  * [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on many clojure topics, including re-frame and reagent.
+  * [purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/) - a detailed, well written introduction. (Plus they have commercial videos)
+  * [Lambda Island Videos](https://lambdaisland.com/episodes) - commercial videos on many clojure topics, including re-frame and reagent. Some are free.
 
 ## Dominoes 2 & 3
 * [Infographic Overview](EventHandlingInfographic.md)
