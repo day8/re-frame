@@ -12,13 +12,13 @@
 * [Coeffects](Coeffects.md)
 
 ## Domino 4
-* Subscriptions
+Subscriptions
   * [Infographic](SubscriptionInfographic.md)
   * [Correcting a wrong](SubscriptionsCleanup.md)
   * [Flow Mechanics](SubscriptionFlow.md)
 
 ## Domino 5
-* Reagent Tutorials
+Reagent Tutorials
   * [The Basics](https://github.com/Day8/re-frame/wiki#reagent-tutorials) (look at the bottom of that page)
   * [Lambda Island Videos](https://lambdaisland.com/episodes). There's a 3 part series.
   * [purelyfunctional.tv ](https://purelyfunctional.tv/guide/reagent/) - a written overview
