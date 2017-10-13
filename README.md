@@ -62,24 +62,23 @@ Perhaps:
 
 ## It Leverages Data
 
-You might already know that ClojureScript is a modern lisp, and that
-lisps are **homoiconic**.  If not, you do now.
+You might already know that ClojureScript is a modern Lisp, and that
+Lisps are **homoiconic**.  If not, you do now.
 
-This homoiconic bit is significant. It means you program in a lisp by creating and
-assembling lisp data structures. Dwell on that for a moment. You are **programming in data**. 
-The functions which later transform data, themselves start as data.  In the beginning, 
-there was only data.
+This homoiconic bit is significant. It means you program in a Lisp by creating and
+assembling Lisp data structures. Dwell on that for a moment. You are **programming in data**. 
+The functions which later transform data, themselves start as data.
 
 Clojure programmers place particular emphasis on the primacy of data, and 
-they like to meditate on aphorisms like **Data is the ultimate in late binding**.
-(Less productively, they also like re-watching Rich Hickey videos, 
-and wishing their hair was darker and more curly)
+they like to meditate on aphorisms like **data is the ultimate in late binding**. 
+(Less productively, they also like re-watching Rich Hickey videos, and wishing
+their hair was darker and more curly)
 
 I cannot stress enough what a big deal this is. It may seem 
 like a syntax curiosity at first but, when the penny drops for 
 you on this, it tends to be a profound moment. And once you 
 understand the importance of this concept at the language level, 
-you naturally want to leverage similar power at the library level.
+you naturally want to leverage similar power at the library and system levels.
 
 So, it will come as no surprise, then, to know that re-frame has a 
 data oriented design. Events are data. Effects are data. DOM is data.
