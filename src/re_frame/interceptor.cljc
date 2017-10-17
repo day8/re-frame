@@ -3,6 +3,7 @@
    [re-frame.loggers :refer [console]]
    [re-frame.interop :refer [empty-queue debug-enabled?]]
    [re-frame.trace :as trace :include-macros true]
+   [re-frame.registrar :as registrar]
    [clojure.set :as set]))
 
 (def mandatory-interceptor-keys #{:id :after :before})
@@ -66,11 +67,23 @@
 
 ;; -- Execute Interceptor Chain  ------------------------------------------------------------------
 
+(defn- exception->ex-info [e interceptor direction]
+  (ex-info (str "Interceptor Exception: " #?(:clj (.getMessage e) :cljs (ex-message e)))
+           {:direction direction
+            :interceptor (:id interceptor)
+            :exception e}))
+
 (defn- invoke-interceptor-fn
   [context interceptor direction]
-  (if-let [f (get interceptor direction)]
-    (f context)
-    context))
+  (let [f (get interceptor direction)
+        error-handler (registrar/get-handler :error :error-handler)]
+    (cond
+      (not f) context
+      (not error-handler) (f context)
+      :else (try
+              (f context)
+              (catch #?(:clj Exception :cljs :default) e
+                (throw (exception->ex-info e interceptor direction)))))))
 
 (defn- invoke-interceptors
   "Loop over all interceptors, calling `direction` function on each,
@@ -140,6 +153,15 @@
       (dissoc :queue)
       (enqueue (:stack context))))
 
+(defn execute*
+  [event-v interceptors]
+  (trace/merge-trace!
+   {:tags {:interceptors interceptors}})
+  (-> (context event-v interceptors)
+      (invoke-interceptors :before)
+      change-direction
+      (invoke-interceptors :after)))
+
 (defn execute
   "Executes the given chain (coll) of interceptors.
 
@@ -190,9 +212,9 @@
    already done.  In advanced cases, these values can be modified by the
    functions through which the context is threaded."
   [event-v interceptors]
-  (trace/merge-trace!
-   {:tags {:interceptors interceptors}})
-  (-> (context event-v interceptors)
-      (invoke-interceptors :before)
-      change-direction
-      (invoke-interceptors :after)))
+  (if-let [error-handler (registrar/get-handler :error :error-handler)]
+    (try
+      (execute* event-v interceptors)
+      (catch #?(:clj Exception :cljs :default) e
+        (error-handler e)))
+    (execute* event-v interceptors)))
