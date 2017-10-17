@@ -1,28 +1,59 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Question](#question)
-- [Short Answer](#short-answer)
-- [Longer Answer](#longer-answer)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ### Question
 
-How do I access the value of a subscription from inside an event handler? 
+How do I access the value of a subscription from within an event handler?
 
-### Short Answer
+### The Wrong Way
 
-You shouldn't.
+You should NOT do this:
+```clj
+(re-frame.core/reg-event-db
+  :event-id 
+  (fn [db v]
+    (let [sub-val  @(subscribe [:something])]   ;; <--- Eeek
+       ....)))
+```
 
-Philosophically: subscriptions are designed to deliver "a stream" of new values 
-over time. Within an event handler, we only need a one off value.
- 
-Operationally: you'll end up with a memory leak.  
-  
-### Longer Answer
+because that `subscribe`:
+1. might create a memory leak (the subscription might not be "freed")
+2. makes the event handler impure (it grabs a global value)
 
+### The Better Way
+
+Instead, the value of a subscription should
+be injected into the `coeffects` of that handler via an interceptor.
+
+A sketch:
+```clj
+(re-frame.core/reg-event-fx         ;; handler must access coeffects, so use -fx
+  :event-id 
+  (inject-sub  [:query-id :param])  ;; <-- interceptor will inject subscription value into coeffects
+  (fn [coeffects event]
+    (let [sub-val  (:something coeffects)]  ;; obtain subscription value 
+       ....)))
+```
+
+Notes:
+1. `inject-sub` is an interceptor which will get the subscription value and add it to coeffects (somehow)
+2. The event handler obtains the value from coeffects
+
+So, how to write this `inject-sub` interceptor?
+
+### Solutions
+
+re-frame doesn't yet have a builtin `inject-sub` interceptor to do this injection.
+
+I'd suggest you use this 3rd party library: 
+https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc
+
+
+***
+
+Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 

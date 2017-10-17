@@ -10,23 +10,33 @@
     [re-frame.utils :as utils]))
 
 
-;; XXX provide a way to set what handler should be called when there is no registered handler.
-;;    by default this handler will simply print out a message saying no handler was found.
-
-
 (def debug
-  "An interceptor which logs data about the handling of an event.
+  "An interceptor which logs/instruments an event handler's actions to
+  `js/console.debug`. See examples/todomvc/src/events.cljs for use.
 
-  Includes a `clojure.data/diff` of the db, before vs after, showing
-  the changes caused by the event handler.
+  Output includes:
+  1. the event vector
+  2. a `clojure.data/diff` of db, before vs after, which shows
+     the changes caused by the event handler.  You will absolutely have
+     to understand https://clojuredocs.org/clojure.data/diff to
+     understand the output.
 
-  You'd typically want this interceptor after (to the right of) any
+  You'd typically include this interceptor after (to the right of) any
   path interceptor.
 
   Warning:  calling clojure.data/diff on large, complex data structures
   can be slow. So, you won't want this interceptor present in production
-  code. See the todomvc example to see how to exclude interceptors from
-  production code."
+  code. So condition it out like this :
+
+    (re-frame.core/reg-event-db
+       :evt-id
+       [(when ^boolean goog.DEBUG re-frame.core/debug)]  ;; <-- conditional
+       (fn [db v]
+         ...))
+
+  To make this code fragment work, you'll also have to set goog.DEBUG to
+  false in your production builds - look in `project.clj` of /examples/todomvc.
+  "
   (->interceptor
     :id     :debug
     :before (fn debug-before
@@ -53,7 +63,7 @@
 
 (def trim-v
   "An interceptor which removes the first element of the event vector,
-  allowing you to write more aesthetically pleasing db handlers. No
+  allowing you to write more aesthetically pleasing event handlers. No
   leading underscore on the event-v!
   Your event handlers will look like this:
 
@@ -76,7 +86,7 @@
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
 ;;
-;; These 3 factories wrap the 3 kinds of handlers.
+;; These 3 factories wrap the 3 kinds of event handlers.
 ;;
 
 (defn db-handler->interceptor
@@ -140,20 +150,30 @@
 
 
 (defn path
-  "An interceptor factory which supplies a sub-path of `:db` to the handler.
-  It's action is somewhat analogous to `update-in`. It grafts the return
-  value from the handler back into db.
+  "returns an interceptor whose `:before` substitutes the coeffects `:db` with
+  a sub-path of `:db`. Within `:after` it grafts the handler's return value
+  back into db, at the right path.
 
-  Usage:
+  So, its overall action is to make the event handler behave like the function
+  you might give to clojure's `update-in`.
+
+  Examples:
     (path :some :path)
     (path [:some :path])
     (path [:some :path] :to :here)
     (path [:some :path] [:to] :here)
 
+  Example Use:
+
+    (reg-event-db
+      :event-id
+      (path [:a :b])  ;; used here, in interceptor chain
+      (fn [b v]       ;; 1st arg is now not db. Is the value from path [:a :b] within db
+        ... new-b))   ;; returns a new value for that path (not the entire db)
+
   Notes:
-    1. cater for `path` appearing more than once in an interceptor chain.
-    2. `:effects` may not contain `:db` effect. Which means no change to
-       `:db` should be made.
+    1. `path` may appear more than once in an interceptor chain. Progressive narrowing.
+    2. if `:effects` contains no `:db` effect, can't graft a value back in.
   "
   [& args]
   (let [path (flatten args)
@@ -188,7 +208,7 @@
   position.  `f` is called with two arguments: `db` and `v`, and is expected to
   return a modified `db`.
 
-  Unlike the `after` inteceptor which is only about side effects, `enrich`
+  Unlike the `after` interceptor which is only about side effects, `enrich`
   expects `f` to process and alter the given `db` coeffect in some useful way,
   contributing to the derived data, flowing vibe.
 
@@ -196,11 +216,11 @@
   ------------
 
   Imagine that todomvc needed to do duplicate detection - if any two todos had
-  the same text, then highlight their background, and report them in a warning
-  down the bottom of the panel.
+  the same text, then highlight their background, and report them via a warning
+  at the bottom of the panel.
 
   Almost any user action (edit text, add new todo, remove a todo) requires a
-  complete reassesment of duplication errors and warnings. Eg: that edit
+  complete reassessment of duplication errors and warnings. Eg: that edit
   just made might have introduced a new duplicate, or removed one. Same with
   any todo removal. So we need to re-calculate warnings after any CRUD events
   associated with the todos list.
@@ -208,23 +228,25 @@
   Unless we are careful, we might end up coding subtly different checks
   for each kind of CRUD operation.  The duplicates check made after
   'delete todo' event might be subtly different to that done after an
-  eddting operation. Nice and efficient, but fiddly. A bug generator
+  editing operation. Nice and efficient, but fiddly. A bug generator
   approach.
 
-  So, instead, we create an `f` which recalcualtes warnings from scratch
+  So, instead, we create an `f` which recalculates ALL warnings from scratch
   every time there is ANY change. It will inspect all the todos, and
   reset ALL FLAGS every time (overwriting what was there previously)
   and fully recalculate the list of duplicates (displayed at the bottom?).
+
+  https://twitter.com/nathanmarz/status/879722740776939520
 
   By applying `f` in an `:enrich` interceptor, after every CRUD event,
   we keep the handlers simple and yet we ensure this important step
   (of getting warnings right) is not missed on any change.
 
-  We can test `f` easily - it is a pure fucntions - independently of
+  We can test `f` easily - it is a pure function - independently of
   any CRUD operation.
 
   This brings huge simplicity at the expense of some re-computation
-  each time. This may be a very satisfactory tradeoff in many cases."
+  each time. This may be a very satisfactory trade-off in many cases."
   [f]
   (->interceptor
     :id    :enrich
@@ -240,16 +262,16 @@
 
 
 (defn after
-  "Interceptor factory which runs a given function `f` in the \"after\"
+  "returns an interceptor which runs a given function `f` in the `:after`
   position, presumably for side effects.
 
-  `f` is called with two arguments: the `effects` value of `:db`
+  `f` is called with two arguments: the `:effects` value for `:db`
   (or the `coeffect` value of db if no db effect is returned) and the event.
-   Its return value is ignored so `f` can only side-effect.
+  Its return value is ignored, so `f` can only side-effect.
 
-  Example use:
-     - `f` runs schema validation (reporting any errors found)
-     - `f` writes some aspect of db to localstorage."
+  Examples use can be seen in the /examples/todomvc:
+     - `f` runs schema validation (reporting any errors found).
+     - `f` writes to localstorage."
   [f]
   (->interceptor
     :id    :after
@@ -264,10 +286,11 @@
 
 
 (defn  on-changes
-  "Interceptor factory which acts a bit like `reaction`  (but it flows into `db`, rather than out)
-  It observes N paths in `db` and if any of them test not indentical? to their previous value
-  (as a result of a handler being run) then it runs `f` to compute a new value, which is
-  then assoced into the given `out-path` within `db`.
+  "Interceptor factory which acts a bit like `reaction`  (but it flows into
+  `db`, rather than out). It observes N paths within `db` and if any of them
+  test not identical? to their previous value  (as a result of a event handler
+  being run) then it runs `f` to compute a new value, which is then assoc-ed
+  into the given `out-path` within `db`.
 
   Usage:
 
@@ -294,7 +317,9 @@
                    ;; work out if any "inputs" have changed
                    new-ins      (map #(get-in new-db %) in-paths)
                    old-ins      (map #(get-in old-db %) in-paths)
-                   changed-ins? (some false? (map identical? new-ins old-ins))]
+                   ;; make sure the db is actually set in the effect
+                   changed-ins? (and (contains? (get-effect context) :db)
+                                     (some false? (map identical? new-ins old-ins)))]
 
                ;; if one of the inputs has changed, then run 'f'
                (if changed-ins?

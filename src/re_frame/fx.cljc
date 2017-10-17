@@ -13,29 +13,65 @@
 
 (def kind :fx)
 (assert (re-frame.registrar/kinds kind))
-(def register  (partial register-handler kind))
+
+(defn reg-fx
+  "Register the given effect `handler` for the given `id`.
+
+  `id` is keyword, often namespaced.
+  `handler` is a side-effecting function which takes a single argument and whose return
+  value is ignored.
+
+  Example Use
+  -----------
+
+  First, registration ... associate `:effect2` with a handler.
+
+  (reg-fx
+     :effect2
+     (fn [value]
+        ... do something side-effect-y))
+
+  Then, later, if an event handler were to return this effects map ...
+
+  {...
+   :effect2  [1 2]}
+
+   ... then the `handler` `fn` we registered previously, using `reg-fx`, will be
+   called with an argument of `[1 2]`."
+  [id handler]
+  (register-handler kind id handler))
 
 ;; -- Interceptor -------------------------------------------------------------
 
 (def do-fx
-  "An interceptor which actions a `context's` (side) `:effects`.
+  "An interceptor whose `:after` actions the contents of `:effects`. As a result,
+  this interceptor is Domino 3.
 
-  For each key in the `:effects` map, call the `effects handler` previously
-  registered using `reg-fx`.
+  This interceptor is silently added (by reg-event-db etc) to the front of
+  interceptor chains for all events.
+
+  For each key in `:effects` (a map), it calls the registered `effects handler`
+  (see `reg-fx` for registration of effect handlers).
 
   So, if `:effects` was:
       {:dispatch  [:hello 42]
        :db        {...}
        :undo      \"set flag\"}
-  call the registered effects handlers for each of the map's keys:
-  `:dispatch`, `:undo` and `:db`."
+
+  it will call the registered effect handlers for each of the map's keys:
+  `:dispatch`, `:undo` and `:db`. When calling each handler, provides the map
+  value for that key - so in the example above the effect handler for :dispatch
+  will be given one arg `[:hello 42]`.
+
+  You cannot rely on the ordering in which effects are executed."
   (->interceptor
     :id :do-fx
     :after (fn do-fx-after
              [context]
-             (doseq [[effect-k value] (:effects context)]
-               (if-let [effect-fn (get-handler kind effect-k true)]
-                 (effect-fn value))))))
+             (doseq [[effect-key effect-value] (:effects context)]
+               (if-let [effect-fn (get-handler kind effect-key false)]
+                 (effect-fn effect-value)
+                 (console :error "re-frame: no handler registered for effect: \"" effect-key "\". Ignoring."))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 
@@ -49,7 +85,7 @@
 ;;    {:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}    ;;  in 200ms do this: (dispatch [:event-id "param"])
 ;;                      {:ms 100 :dispatch [:also :this :in :100ms]}]}
 ;;
-(register
+(reg-fx
   :dispatch-later
   (fn [value]
     (doseq [{:keys [ms dispatch] :as effect} value]
@@ -65,7 +101,7 @@
 ;; usage:
 ;;   {:dispatch [:event-id "param"] }
 
-(register
+(reg-fx
   :dispatch
   (fn [value]
     (if-not (vector? value)
@@ -81,42 +117,48 @@
 ;; usage:
 ;;   {:dispatch-n (list [:do :all] [:three :of] [:these])}
 ;;
-(register
+;; Note: nil events are ignored which means events can be added
+;; conditionally:
+;;    {:dispatch-n (list (when (> 3 5) [:conditioned-out])
+;;                       [:another-one])}
+;;
+(reg-fx
   :dispatch-n
   (fn [value]
     (if-not (sequential? value)
-      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got:" value))
-    (doseq [event value] (router/dispatch event))))
+      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got:" value)
+      (doseq [event (remove nil? value)] (router/dispatch event)))))
 
 
 ;; :deregister-event-handler
 ;;
 ;; removes a previously registered event handler. Expects either a single id (
-;; typically a keyword), or a seq of ids.
+;; typically a namespaced keyword), or a seq of ids.
 ;;
 ;; usage:
 ;;   {:deregister-event-handler :my-id)}
 ;; or:
 ;;   {:deregister-event-handler [:one-id :another-id]}
 ;;
-(register
+(reg-fx
   :deregister-event-handler
   (fn [value]
     (let [clear-event (partial clear-handlers events/kind)]
       (if (sequential? value)
-        (doseq [event (if (sequential? value) value [value])]
-          (clear-event event))))))
+        (doseq [event value] (clear-event event))
+        (clear-event value)))))
 
 
 ;; :db
 ;;
-;; reset! app-db with a new value. Expects a map.
+;; reset! app-db with a new value. `value` is expected to be a map.
 ;;
 ;; usage:
 ;;   {:db  {:key1 value1 key2 value2}}
 ;;
-(register
+(reg-fx
   :db
   (fn [value]
-    (reset! app-db value)))
+    (if-not (identical? @app-db value)
+      (reset! app-db value))))
 

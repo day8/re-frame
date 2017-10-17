@@ -1,8 +1,7 @@
 ## Application State
 
-<div style="width:520px">
+<div style="width:400px">
   <blockquote class="twitter-tweet" lang="en"><p>Well-formed Data at rest is as close to perfection in programming as it gets. All the crap that had to happen to put it there however...</p>&mdash; Fogus (@fogus) <a href="https://twitter.com/fogus/status/454582953067438080">April 11, 2014</a></blockquote>
-  <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 </div>
 
 ### The Big Ratom
@@ -125,5 +124,4 @@ Next:  [First Code Walk-Through](CodeWalkthrough.md)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->

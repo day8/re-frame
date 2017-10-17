@@ -1,8 +1,8 @@
 (ns re-frame.interceptor
   (:require
-    [re-frame.interop :refer [ratom?]]
     [re-frame.loggers :refer [console]]
-    [re-frame.interop :refer [empty-queue debug-enabled?]]))
+    [re-frame.interop :refer [empty-queue debug-enabled?]]
+    [clojure.set :as set]))
 
 
 (def mandatory-interceptor-keys #{:id :after :before})
@@ -20,9 +20,9 @@
   "Create an interceptor from named arguments"
   [& {:as m :keys [id before after error]}]
   (when debug-enabled?
-    (if-let [unknown-keys  (seq (clojure.set/difference
-                                  (-> m keys set)
-                                  known-interceptor-keys))]
+    (if-let [unknown-keys (seq (set/difference
+                                (-> m keys set)
+                                known-interceptor-keys))]
       (console :error "re-frame: ->interceptor " m " has unknown keys:" unknown-keys)))
   {:id     (or id :unnamed)
    :before before

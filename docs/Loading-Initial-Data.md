@@ -1,35 +1,19 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Bootstrapping Application State](#bootstrapping-application-state)
-- [1. Register Handlers](#1-register-handlers)
-- [2. Kick Start Reagent](#2-kick-start-reagent)
-- [3. Loading Initial Data](#3-loading-initial-data)
-  - [Getting Data Into `app-db`](#getting-data-into-app-db)
-- [The Pattern](#the-pattern)
-- [Scales Up](#scales-up)
-- [Cheating - Synchronous Dispatch](#cheating---synchronous-dispatch)
-- [Loading Initial Data From Services](#loading-initial-data-from-services)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Bootstrapping Application State
 
 To bootstrap a re-frame application, you need to:
-  1. register handlers
+1. register handlers:
    - subscription  (via `reg-sub`)
    - events (via `reg-event-db` or `reg-event-fx`)
    - effects (via `reg-fx`)
    - coeffects (via `reg-cofx`)
-  2. kickstart reagent (views)
-  3. Load the right initial data into `app-db` which might be a `merge` of:
+2. kickstart reagent (views)
+3. Load the right initial data into `app-db` which might, for example, be a `merge` of:
    - Some default values
    - Values stored in LocalStorage
    - Values obtained via service calls to server
-   - etc, etc
 
-Point 3 is the interesting bit and will be the main focus of this page, but let's work our way through them ...
+Point 3 is the interesting bit and will be the main focus of this page, 
+but let's work our way through them ...
 
 ## 1. Register Handlers 
 
@@ -43,7 +27,8 @@ and register your handlers in the one step, like this "event handler" example:
 ```
 
 As a result, there's nothing further you need to do because 
-handler registration happens as a direct result of loading the code (presumably via a `<script>` tag in your HTML file).
+handler registration happens as a direct result of loading the code 
+(presumably via a `<script>` tag in your HTML file).
 
 ## 2. Kick Start Reagent 
 
@@ -70,7 +55,7 @@ we want it to source and render some data held in `app-db`.
 
 First, we'll create the subscription handler:
 ```Clojure
-(re-frame/reg-sub     ;; a new subscription handler
+(re-frame.core/reg-sub     ;; a new subscription handler
   :name               ;; usage (subscribe [:name])
   (fn [db _]
     (:display-name db)))  ;; extracts `:display-name` from app-db
@@ -80,7 +65,7 @@ And now we use that subscription:
 ```clj
 (defn main-panel 
   []
-  (let [name  (re-frame/subscribe [:name])]  ;; <--- a subscription  <---
+  (let [name  (re-frame.core/subscribe [:name])]  ;; <--- a subscription  <---
       [:div "Hello " @name])))   ;; <--- use the result of the subscription
 ```
 
@@ -101,7 +86,7 @@ values must be put in `app-db` via an event handler.
 
 Here's an event handler for that purpose:
 ```Clojure
-(re-frame/reg-event-db
+(re-frame.core/reg-event-db
   :initialise-db				 ;; usage: (dispatch [:initialise-db])
   (fn [_ _]						 ;; Ignore both params (db and event)
 	 {:display-name "DDATWD"	 ;; return a new value for app-db
@@ -115,7 +100,7 @@ We'll need to dispatch an `:initialise-db` event to get it to execute. `main` se
 ```Clojure
 (defn ^:export main
   []
-  (re-frame/dispatch [:initialise-db])   ;;  <--- this is new 
+  (re-frame.core/dispatch [:initialise-db])   ;;  <--- this is new 
   (reagent/render [main-panel]
                   (js/document.getElementById "app")))
 ```
@@ -139,36 +124,36 @@ quick sketch of the entire pattern. It is very straight-forward.
 ## The Pattern
 
 ```Clojure
-(re-frame/reg-sub   ;; the means by which main-panel gets data
-  :name             ;; usage (subscribe [:name])
+(re-frame.core/reg-sub   ;; supplied main-panel with data
+  :name                  ;; usage (subscribe [:name])
   (fn  [db _]
 	(:display-name db)))
 	   
-(re-frame/reg-sub        ;; we can check if there is data
+(re-frame.core/reg-sub   ;; we can check if there is data
   :initialised?          ;; usage (subscribe [:initialised?])
   (fn  [db _]
 	(not (empty? db))))  ;; do we have data
 	
-(re-frame/reg-event-db
+(re-frame.core/reg-event-db
    :initialise-db
    (fn [db _]
        (assoc db :display-name "Jane Doe")))
 
 (defn main-panel    ;; the top level of our app 
   []
-  (let [name  (re-frame/subscribe [:name])]   ;; we need there to be good data
+  (let [name  (re-frame.core/subscribe [:name])]   ;; we need there to be good data
     [:div "Hello " @name])))
 
 (defn top-panel    ;; this is new
   []
-  (let [ready?  (re-frame/subscribe [:initialised?])]
+  (let [ready?  (re-frame.core/subscribe [:initialised?])]
     (if-not @ready?         ;; do we have good data?
       [:div "Initialising ..."]   ;; tell them we are working on it
       [main-panel])))      ;; all good, render this component
 
 (defn ^:export main     ;; call this to bootstrap your app
   []
-  (re-frame/dispatch [:initialise-db])
+  (re-frame.core/dispatch [:initialise-db])
   (reagent/render [top-panel]
                   (js/document.getElementById "app")))
 ```
@@ -184,17 +169,17 @@ Your `main` might look like this:
 ```Clojure
 (defn ^:export main     ;; call this to bootstrap your app
   []
-  (re-frame/dispatch [:initialise-db])           ;; basics
-  (re-frame/dispatch [:load-from-service-1])     ;; ask for data from service-1
-  (re-frame/dispatch [:load-from-service-2])     ;; ask for data from service-2
-  (reagent/render [top-panel]
+  (re-frame.core/dispatch [:initialise-db])           ;; basics
+  (re-frame.core/dispatch [:load-from-service-1])     ;; ask for data from service-1
+  (re-frame.core/dispatch [:load-from-service-2])     ;; ask for data from service-2
+  (reagent.core/render [top-panel]
                   (js/document.getElementById "app")))
 ```
 
 Your `:initialised?` test then becomes more like this sketch: 
 
 ```Clojure
-(reg-sub
+(re-frame.core/reg-sub
   :initialised?          ;; usage (subscribe [:initialised?])
   (fn  [db _]
     (and  (not (empty? db))
@@ -209,7 +194,7 @@ This assumes boolean flags are set in `app-db` when data was loaded from these s
 In simple cases, you can simplify matters by using `dispatch-sync` (instead of `dispatch`) in 
 the main function.  
 
-This technique can be seen in the [TodoMVC Example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/core.cljs#L35).
+This technique can be seen in the [TodoMVC Example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/core.cljs#L49).
 
 `dispatch` queues an event for later processing, but `dispatch-sync` acts 
 like a function call and handles an event immediately. That's useful for initial data 
@@ -237,3 +222,7 @@ Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Talking To Servers](Talking-To-Servers.md)  
 
  
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+

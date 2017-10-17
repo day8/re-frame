@@ -254,7 +254,7 @@ ability to attach an `:on-dispose` handler to the returned reaction, allowing yo
 
 ### Example reg-sub-raw 
 
-The following use of `reg-sub` can be found in [the todomvc example](https://github.com/Day8/re-frame/blob/develop/examples/todomvc/src/todomvc/subs.cljs):
+The following use of `reg-sub` can be found in [the todomvc example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs):
 ```clj
 (reg-sub
   :visible-todos

@@ -1,6 +1,6 @@
 (ns todomvc.db
   (:require [cljs.reader]
-            [cljs.spec :as s]
+            [cljs.spec.alpha :as s]
             [re-frame.core :as re-frame]))
 
 
@@ -13,7 +13,7 @@
 ;; can change the value in app-db so, after each event handler
 ;; has run, we re-check app-db for correctness (compliance with the Schema).
 ;;
-;; How is this done? Look in events.cljs and you'll notice that all handers
+;; How is this done? Look in events.cljs and you'll notice that all handlers
 ;; have an "after" interceptor which does the spec re-check.
 ;;
 ;; None of this is strictly necessary. It could be omitted. But we find it
@@ -38,37 +38,50 @@
 ;;
 ;; When the application first starts, this will be the value put in app-db
 ;; Unless, of course, there are todos in the LocalStore (see further below)
-;; Look in `core.cljs` for  "(dispatch-sync [:initialise-db])"
+;; Look in:
+;;   1.  `core.cljs` for  "(dispatch-sync [:initialise-db])"
+;;   2.  `events.cljs` for the registration of :initialise-db handler
 ;;
 
-(def default-value                                          ;; what gets put into app-db by default.
-  {:todos   (sorted-map)                                    ;; an empty list of todos. Use the (int) :id as the key
-   :showing :all})                                          ;; show all todos
+(def default-db           ;; what gets put into app-db by default.
+  {:todos   (sorted-map)  ;; an empty list of todos. Use the (int) :id as the key
+   :showing :all})        ;; show all todos
 
 
 ;; -- Local Storage  ----------------------------------------------------------
 ;;
 ;; Part of the todomvc challenge is to store todos in LocalStorage, and
 ;; on app startup, reload the todos from when the program was last run.
-;; But the challenge stipulates to NOT  load the setting for the "showing"
+;; But the challenge stipulates to NOT load the setting for the "showing"
 ;; filter. Just the todos.
 ;;
 
-(def ls-key "todos-reframe")                          ;; localstore key
+(def ls-key "todos-reframe")                         ;; localstore key
+
 (defn todos->local-store
   "Puts todos into localStorage"
   [todos]
-  (.setItem js/localStorage ls-key (str todos)))     ;; sorted-map writen as an EDN map
+  (.setItem js/localStorage ls-key (str todos)))     ;; sorted-map written as an EDN map
 
 
-;; register a coeffect handler which will load a value from localstore
-;; To see it used look in events.clj at the event handler for `:initialise-db`
+;; -- cofx Registrations  -----------------------------------------------------
+
+;; Use `reg-cofx` to register a "coeffect handler" which will inject the todos
+;; stored in localstore.
+;;
+;; To see it used, look in `events.cljs` at the event handler for `:initialise-db`.
+;; That event handler has the interceptor `(inject-cofx :local-store-todos)`
+;; The function registered below will be used to fulfill that request.
+;;
+;; We must supply a `sorted-map` but in LocalStore it is stored as a `map`.
+;;
 (re-frame/reg-cofx
   :local-store-todos
   (fn [cofx _]
-      "Read in todos from localstore, and process into a map we can merge into app-db."
+      ;; put the localstore todos into the coeffect under :local-store-todos
       (assoc cofx :local-store-todos
+             ;; read in todos from localstore, and process into a sorted map
              (into (sorted-map)
                    (some->> (.getItem js/localStorage ls-key)
-                            (cljs.reader/read-string)       ;; stored as an EDN map.
+                            (cljs.reader/read-string)    ;; EDN map -> map
                             )))))

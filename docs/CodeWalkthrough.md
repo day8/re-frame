@@ -2,47 +2,16 @@
 
 ## Initial Code Walk-through
 
-At this point, you are about 50% of the way to understanding re-frame.  You have:
+At this point, you are about 55% of the way to understanding re-frame.  You have:
  - an overview of the 6 domino process [from this repo's README](../README.md)
  - an understanding of app state ([from the previous tutorial](ApplicationState.md))
 
-In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 70% knowledge, and ready to start coding.
-
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [What Code?](#what-code)
-- [Namespace](#namespace)
-- [Data Schema](#data-schema)
-- [Events (domino 1)](#events-domino-1)
-  - [dispatch](#dispatch)
-  - [After dispatch](#after-dispatch)
-- [Event Handlers (domino 2)](#event-handlers-domino-2)
-  - [Two ways To register](#two-ways-to-register)
-  - [reg-event-db](#reg-event-db)
-  - [:initialize](#initialize)
-  - [:timer](#timer)
-  - [:time-color-change](#time-color-change)
-- [Effect Handlers (domino 3)](#effect-handlers-domino-3)
-- [Subscription Handlers (domino 4)](#subscription-handlers-domino-4)
-  - [reg-sub](#reg-sub)
-- [View Functions (domino 5)](#view-functions-domino-5)
-  - [Hiccup](#hiccup)
-  - [Subscribing](#subscribing)
-  - [The View Functions](#the-view-functions)
-  - [Components Like Templates?](#components-like-templates)
-- [Kick Starting The App](#kick-starting-the-app)
-- [Summary](#summary)
-- [Next Steps](#next-steps)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 70% knowledge, and ready to start coding an app.
 
 ## What Code?
 
-This repo contains an `/examples` application called ["simple"](https://github.com/Day8/re-frame/tree/develop/examples/simple),
-which contains 70 lines of code. We'll look at every line of [the file](https://github.com/Day8/re-frame/blob/develop/examples/simple/src/simple/core.cljs).
+This repo contains an `/examples` application called ["simple"](https://github.com/Day8/re-frame/tree/master/examples/simple),
+which contains 70 lines of code. We'll look at every line of [the file](https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs).
 
 This app:
  - displays the current time in a nice big, colourful font
@@ -61,17 +30,17 @@ Then:
   1. `git clone https://github.com/Day8/re-frame.git`
   2. `cd re-frame/examples/simple`
   3. `lein do clean, figwheel`
-  4. wait a minute and then open `http://localhost:3449/example.html`
+  4. wait a minute and then open <http://localhost:3449/example.html>
   
-So, what's just happened?  The ClojureScript code under `src` has been compiled across to `javascript` and
-put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML you just openned)
+So, what's just happened?  The ClojureScript code under `/src` has been compiled into `javascript` and
+put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML you just opened)
  
-Figwheel provides for hot-loading, so you can edit the source and watch the loaded HTML change.
+Figwheel provides for hot-loading, so you can edit the source code (under `/src`)and watch the loaded HTML change.
 
 
 ## Namespace
 
-Because this example is tiny, the code is in a single namespace which you can find here:
+Because this example is tiny, the source code is in a single namespace:
 https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs
 
 Within this namespace, we'll need access to both `reagent` and `re-frame`. 
@@ -84,20 +53,20 @@ So, at the top, we start like this:
 
 ## Data Schema
 
-Now, normally, I'd strongly recommended you write a quality schema
+Now, normally, I'd strongly recommended that you write a quality schema
 for your application state (the data stored in `app-db`). But,
 here, to minimise cognitive load, we'll cut that corner.
 
 But ... we can't cut it completely. You'll still need an
 informal description, and here it is ... for this app `app-db` will contain
 a two-key map like this:
-```cljs
+```clj
 {:time       (js/Date.)  ;; current time for display
- :time-color "#f88"}     ;; the colour in which the time should be be shown
+ :time-color "#f88"}     ;; the colour in which the time should be shown
 ```
 
 re-frame itself owns/manages `app-db` (see FAQ #1), and it will
-supply the value within it (a two-key map in this case)
+supply the value within it (the two-key map described above) 
 to your various handlers as required.
 
 ## Events (domino 1)
@@ -159,12 +128,12 @@ The consumer of the queue is a `router` which looks after the event's processing
 The `router`:
 
 1. inspects the 1st element of an event vector
-2. looks in a registry for the event handler which is **registered**
+2. looks for the event handler (function) which is **registered**
    for this kind of event
 3. calls that event handler with the necessary arguments
 
-As a re-frame app developer, your job, then, is to write and register a handler 
-for each kind of event. 
+As a re-frame app developer, your job, then, is to write and register an
+event handler (function) for each kind of event. 
 
 ## Event Handlers (domino 2)
 
@@ -179,17 +148,22 @@ In this application, 3 kinds of event are dispatched:
 
 ### Two ways to register
 
-Handler functions take `coeffects` (input args) and return `effects`.
+Event handler functions take two arguments `coeffects` and `event`, 
+and they return `effects`.
 
-Handlers can be registered via either `reg-event-fx`
+Conceptually, you can think of `coeffects` as being "the current state of the world". 
+And you can think of event handlers has computing and returning changes (effects) based on 
+"the current state of the world" and the arriving event.
+
+Event handlers can be registered via either `reg-event-fx`
 or `reg-event-db`  (`-fx` vs `-db`): 
 
   - `reg-event-fx` can take multiple `coeffects` and can return multiple `effects`, while 
-  - `reg-event-db` allows you to write simpler handlers in the common case where you want 
+  - `reg-event-db` allows you to write simpler handlers for the common case where you want 
   them to take only one `coeffect` - the current app state - and return one `effect` - the 
   updated app state.
 
-Because of its simplicity, we'll be using the latter here. 
+Because of its simplicity, we'll be using the latter here: `reg-event-db`. 
 
 ### reg-event-db
 
@@ -202,13 +176,13 @@ We register event handlers using re-frame's `reg-event-db`:
 ```
 The handler function you provide should expect two arguments:
    - `db`, the current application state  (the value contained in `app-db`)
-   - `v`,  the event vector
+   - `v`,  the event vector  (what was given to `dispatch`)
     
-So, your function will have a signature like this: `(fn [db v] ...)`. 
+So, your function will have a signature like this: `(fn [db v] ...)`.
 
-Each event handler must compute and return the new state of 
+Each event handler must compute and return the new state of
 the application, which means it returns a
-modified version of `db` (or an unmodified one, if there are to be no changes to the state). 
+modified version of `db` (or an unmodified one, if there are to be no changes to the state).
 
 ### :initialize
 
@@ -296,14 +270,14 @@ and run a query over it, returning something called
 a "materialised view" of that application state.
 
 When the application state changes, subscription functions are 
-re-run by re-frame, to compute new values (new materialised views). 
+re-run by re-frame, to compute new values (new materialised views).
 
 Ultimately, the data returned by `query` functions is used
-in the `view` functions (Domino 5). 
+in the `view` functions (Domino 5).
  
 One subscription can 
 source data from other subscriptions. So it is possible to 
-create a tree of dependencies. 
+create a tree of dependencies.
  
 The Views (Domino 5) are the leaves of this tree.  The tree's 
 root is `app-db` and the intermediate nodes between the two 
@@ -322,7 +296,7 @@ of subscriptions, and more explanation, can be found in the todomvc example.
   :some-query-id  ;; query id (used later in subscribe)
   a-query-fn)     ;; the function which will compute the query
 ```
-Then later, a view function subscribes to a query like this:
+Then later, a view function (domino 5) subscribes to a query like this:
 `(subscribe [:some-query-id])`, and `a-query-fn` will be used 
 to perform the query over the application state.
 
@@ -348,13 +322,16 @@ Here's the code:
     (:time-color db)))
 ```
 
-Like I said, both of these queries are trivial. See [todomvc.subs.clj](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs) for more interesting ones.
+Like I said, both of these queries are trivial. 
+See [todomvc.subs.clj](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs) 
+for more interesting ones.
 
 ## View Functions (domino 5)
 
-`view` functions turn data into DOM.  They are "State in, Hiccup out" and they are Reagent components. 
+`view` functions turn data into DOM.  They are "State in, Hiccup out" and they are Reagent 
+components. 
 
-Any SPA will have lots of `view` functions, and collectively, 
+An SPA will have lots of `view` functions, and collectively, 
 they render the app's entire UI.
  
 ### Hiccup 
@@ -433,11 +410,14 @@ And this view function renders the input field:
             :on-change #(rf/dispatch [:time-color-change (-> % .-target .-value)])}]])  ;; <---
 ```
 
-Notice how it does BOTH a `subscribe` to obtain the current value AND a `dispatch` to say when it has changed. 
+Notice how it does BOTH a `subscribe` to obtain the current value AND 
+a `dispatch` to say when it has changed. 
 
-It is very common for view functions to run event-dispatching functions. The user's interaction with the UI is usually the largest source of events.
+It is very common for view functions to run event-dispatching functions. 
+The user's interaction with the UI is usually the largest source of events.
 
-And then a `view` function to bring the others together, which contains no subscriptions or dispatching of its own:
+And then a `view` function to bring the others together, which contains no 
+subscriptions or dispatching of its own:
 ```clj
 (defn ui
   []
@@ -447,11 +427,13 @@ And then a `view` function to bring the others together, which contains no subsc
    [color-input]])
 ```
 
-Note: `view` functions tend to be organized into a hierarchy, often with data flowing from parent to child via
-parameters. So, not every view function needs a subscription. Very often the values passed in from a parent component
-are sufficient.
+Note: `view` functions tend to be organized into a hierarchy, often with 
+data flowing from parent to child via
+parameters. So, not every view function needs a subscription. Very often 
+the values passed in from a parent component are sufficient.
 
-Note: `view` functions should never directly access `app-db`. Data is only ever sourced via subscriptions.
+Note: `view` functions should never directly access `app-db`. Data is 
+only ever sourced via subscriptions.
 
 ### Components Like Templates?
 
@@ -467,11 +449,12 @@ Django, Rails, Handlebars or Mustache -- they map data to HTML -- except for two
 
 ## Kick Starting The App
 
-Below, `run` is the called to kick off the application once the HTML page has loaded.
+Below, `run` is called to kick off the application once the HTML page has loaded.
 
 It has two tasks:
   1. Load the initial application state
-  2. Load the GUI by "mounting" the root-level function in the hierarchy of `view` functions -- in our case, `ui` --
+  2. Load the GUI by "mounting" the root-level function in the hierarchy 
+  of `view` functions -- in our case, `ui` --
   onto an existing DOM element. 
 
 ```clj
@@ -486,7 +469,8 @@ After `run` is called, the app passively waits for `events`.
 Nothing happens without an `event`.
 
 When it comes to establishing initial application state, you'll 
-notice the use of `dispatch-sync`, rather than `dispatch`. This is a cheat which ensures that a correct
+notice the use of `dispatch-sync`, rather than `dispatch`. This is a simplifying cheat 
+which ensures that a correct
 structure exists in `app-db` before any subscriptions or event handlers run. 
 
 ## Summary
@@ -503,18 +487,26 @@ structure exists in `app-db` before any subscriptions or event handlers run.
 
 ## Next Steps
 
-You should now take time to carefully review the [todomvc example application](https://github.com/Day8/re-frame/tree/develop/examples/todomvc).
+You should now take time to carefully review the 
+[todomvc example application](https://github.com/Day8/re-frame/tree/master/examples/todomvc).
+On the one hand, it contains a lot of very helpful practical advice. On the other, it does
+use some more advanced features like `interceptors` which are covered later in the docs.   
 
 After that, you'll be ready to write your own code.  Perhaps you will use a
 template to create your own project: <br>
 Client only:  https://github.com/Day8/re-frame-template  <br>
 Full Stack: http://www.luminusweb.net/
 
-Obviously you should also go on to read the further documentation.
+Obviously, you should also go on to read the further documentation.
 
 *** 
 
 Previous:  [app-db (Application State)](ApplicationState.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Mental Model Omnibus](MentalModelOmnibus.md)
+Next:  [The API](API.md)
 
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

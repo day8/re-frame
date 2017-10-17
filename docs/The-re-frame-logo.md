@@ -18,26 +18,27 @@ wielded nunchucks.
 Great, unexplained works encourage fan theories, and the re-frame <br>
 logo is no exception.
 
-One noisy group thinks @martinklepsch simply wanted to <br>
-`Put the 'f' back into infinity`. They have t-shirts.
+One noisy group insists that @martinklepsch's design is assertively <br>
+trying to `Put the 'f' back into infinity`. They have t-shirts. 
 
 Another group speculates that he created the logo as a bifarious  <br>
 rainbow homage to Frank Lloyd Wright's masterpiece, the Guggenheim <br>
-Museum. A classic case of premature abstraction and over engineering <br>
-if you ask me. Their theory, not the Guggenheim.
+Museum. Which is surely a classic case of premature abstraction  <br>
+and over engineering. Their theory, not the Guggenheim.
 
 ![](/images/logo/Guggenheim.jpg)
 
 The infamous "Bad Touch" faction look at the logo and see the cljs <br>
 logo mating noisily with re-frame's official architecture diagram. <br>
-Attend one of their parties and you have a 50% chance of arrest. 
+Yes, its true, their parties are completely awesome, but you will <br>
+need someone to bail you out of jail later.
 
 ![](/images/logo/Genesis.png)
 
-The Functional Fundamentalists, a stern bunch, see the logo as a <br>
+For the Functional Fundamentalists, a stern bunch, the logo is a <br>
 flowing poststructuralist rebuttal of OO's vowel duplication and <br>
-horizontal adjacency. Their alternative approach, FF, is apparently <br>
-fine because "everyone loves a fricative".
+horizontal adjacency. Their alternative approach, FF, is fine, apparently, <br>
+because "everyone loves a fricative".
 
 For his part, @martinklepsch has never confirmed any theory, teasing <br>
 us instead with coded clues like "Will you please stop emailing me" <br>

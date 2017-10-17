@@ -1,6 +1,8 @@
 
-> In a rush? You can get away with skipping this page on the first pass. <br>
-> But remember to cycle back to it later. It contains useful insights.<br>
+> In a rush? You can skip this tutorial page on a first pass. <br>
+> It is quite abstract and it won't directly help you write re-frame code. 
+> On the other hand, it will considerably deepen your understanding 
+> of what re-frame is about, so remember to cycle back and read it later.<br>
 > Next page: [Effectful Handlers](EffectfulHandlers.md)
 
 ## Mental Model Omnibus
@@ -27,22 +29,6 @@ patterns of thought that produced that government are left intact,
 then those patterns will repeat themselves. <br>
 > -- Robert Pirsig, Zen and the Art of Motorcycle Maintenance
 
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [What is the problem?](#what-is-the-problem)
-- [Guiding Philosophy](#guiding-philosophy)
-- [It does Event Sourcing](#it-does-event-sourcing)
-- [It does a reduce](#it-does-a-reduce)
-- [Derived Data All The Way Down](#derived-data-all-the-way-down)
-- [It does FSM](#it-does-fsm)
-- [Interconnections](#interconnections)
-- [Full Stack](#full-stack)
-- [What Of This Romance?](#what-of-this-romance)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## What is the problem?
 
@@ -100,8 +86,83 @@ will encourage control logic into all the
 wrong places and you'll end up with a tire-fire of an Architecture. <br>
 Sincerely, The Self-appointed President of the Cursor Skeptic's Society.
 
-## It does Event Sourcing
+## On DSLs and Machines 
 
+`Events` are cardinal to re-frame - they're a fundamental organising principle. 
+
+Each re-frame app will have a different set of `events` and your job is
+to design exactly the right ones for any given app you build. These `events` 
+will model "intent" - generally the user's.  They will be the 
+"language of the system" and will provide the eloquence.
+
+And they are data.
+
+Imagine we created a drawing application. And then we allowed 
+someone to use our application and, as they did, we captured, 
+into a collection, the events caused by that user's actions 
+(button clicks, drags, key presses, etc).
+ 
+The collection of events might look like this:  
+```clj
+(def collected-events
+  [
+     [:clear]
+     [:new :triangle 1 2 3]
+     [:select-object 23]
+     [:rename "a better name"]
+     [:delete-selection]
+     ....
+  ])
+```
+
+Now, as an aside, consider the following assembly instructions:
+```asm
+mov eax, ebx
+sub eax, 216
+mov BYTE PTR [ebx], 2
+```
+
+Assembly instructions are represented as data, right?  Data which 
+happens to be "executable" by the right machine - an x86 machine in the case above.
+
+I'd like you to now look back at that collection of events and view it in the 
+same way - data instructions which can be executed - by the right machine.
+
+Wait. What machine?  Well, the Event Handlers you register collectively implement 
+the "machine" on which these instructions execute. When you register 
+a new event handler using `reg-event-db`, 
+it is like you are adding to the "instruction set" of the "machine".
+
+In re-frame's README, near the top, I claimed that it had a 
+Data Oriented Design. Typically, that claim means you "program" in a data
+structure of a certain format (Domain specific language), 
+which is then "executed" by an interpreter.
+
+Take hiccup as an example. It is a DSL for describing DOM. 
+You program by supplying a data structure in a particular, 
+known format (the DSL) and Reagent acts as the 
+"interpreter" which executes that "language":  
+```
+[:div {:font-size 12} "Hello"]  ;; a data structure
+```
+
+Back to re-frame. It requires that YOU design events which
+combine into a DSL for your app
+and, at the same time, it asks YOU to provide an interpreter for
+each instruction in that DSL. When your re-frame application runs, 
+it is just executing a "program" (collection of events) 
+dynamically created by the user's event-causing actions.
+ 
+In summary: 
+  - Events are the assembly language of your app. 
+  - These instructions collectively form a Domain Specific Language (DSL). The language of your system.
+  - These instructions are data. 
+  - One instruction after another gets executed by your functioning app.
+  - The Event Handlers you register collectively implement the "machine" on which this DSL executes. 
+
+On the subject of DSLs, watch James Reeves' excellent talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
+
+## It does Event Sourcing
 
 How did that error happen, you puzzle, shaking your head ruefully?
 What did the user do immediately prior?  What
@@ -120,7 +181,7 @@ Note: that's all just data. **Pure, lovely loggable data.**
 If you have that data, then you can reproduce the error.
 
 re-frame allows you to time travel, even in a production setting.
-Install the "checkpoint" state into `app-db`
+To find the bug, install the "checkpoint" state into `app-db`
 and then "play forward" through the collection of dispatched events.
 
 The only way the app "moves forwards" is via events. "Replaying events" moves you
@@ -157,7 +218,7 @@ Then notice that `reg-event-db` event handlers take two arguments also:
 
 Interesting. That's the same as a `combining function` in a `reduce`!!
 
-So now we can introduce the new mental model:  at any point in time,
+So, now we can introduce the new mental model:  at any point in time,
 the value in `app-db` is the result of performing a `reduce` over
 the entire `collection` of events dispatched in the app up until
 that time. The combining function for this reduce is the set of event handlers.
@@ -205,7 +266,7 @@ This is an infinite loop of sorts - an infinite loop of derived data.
 `event handlers` collectively
 implement the "control" part of an application. Their logic
 interprets arriving events in the context of existing state,
-and they compute the new state of the application.  
+and they compute the new state of the application.
 
 `events` act a bit like the `triggers` in a finite state machine, and
 the `event handlers` act like the rules which govern how the state machine
@@ -236,7 +297,6 @@ Depending on your app, this may or may not be a useful mental model,
 but one thing is for sure ...
 
 Events - that's the way we roll.
-
 
 ## Interconnections
 
@@ -272,7 +332,7 @@ Sometimes, we'd rewrite this code as:
       str)
 ```
 With this arrangement, we talk of "threading" data
-through functions. **It seems to help our comprehension to frame function
+through functions. **It seems to help our comprehension to conceive function
 composition in terms of data flow**.
 
 re-frame delivers architecture
@@ -287,20 +347,6 @@ compelled by different kinds of forces at different times (gravity, convection, 
 
 With this focus on interconnections, we have been looking on the "forces"  part of the loop.  The transport.
 
-
-## Full Stack
-
-If you like re-frame and want to take the principles full-stack, then
-these resources might be interesting to you:
-
-Commander Pattern  
-https://www.youtube.com/watch?v=B1-gS0oEtYc
-
-Datalog All The Way Down  
-https://www.youtube.com/watch?v=aI0zVzzoK_E
-
-Reactive PostgreSQL:
-https://yogthos.net/posts/2016-11-05-LuminusPostgresNotifications.html
 
 ## What Of This Romance?
 
@@ -320,7 +366,7 @@ Your love for re-frame will be deep, abiding and enriching.
 
 ***
 
-Previous:  [First Code Walk-Through](CodeWalkthrough.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Previous:  [The API](API.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Infographic Overview](EventHandlingInfographic.md)
 
@@ -334,3 +380,8 @@ Next:  [Infographic Overview](EventHandlingInfographic.md)
 [OM]:https://github.com/swannodette/om
 [Hoplon]:http://hoplon.io/
 [Pedestal App]:https://github.com/pedestal/pedestal-app
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->

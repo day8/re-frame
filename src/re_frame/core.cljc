@@ -16,26 +16,109 @@
     [clojure.set               :as set]))
 
 
-;; --  dispatch
-(def dispatch         router/dispatch)
-(def dispatch-sync    router/dispatch-sync)
+;; -- API ---------------------------------------------------------------------
+;;
+;; This namespace represents the re-frame API
+;;
+;; Below, you'll see we've used this technique:
+;;   (def  api-name-for-fn    deeper.namespace/where-the-defn-is)
+;;
+;; So, we promote a `defn` in a deeper namespace "up" to the API
+;; via a `def` in this namespace.
+;;
+;; Turns out, this approach makes it hard:
+;;   - to auto-generate API docs
+;;   - for IDEs to provide code completion on functions in the API
+;;
+;; Which is annoying. But there are pros and cons and we haven't
+;; yet revisited the decision.  To compensate, we've added more nudity
+;; to the docs.
+;;
 
 
-;; XXX move API functions up to this core level - to enable code completion and docs
-;; XXX on figwheel reload, is there a way to not get the re-registration messages.
+;; -- dispatch ----------------------------------------------------------------
+(def dispatch       router/dispatch)
+(def dispatch-sync  router/dispatch-sync)
 
 
-;; -- interceptor related
-;; useful if you are writing your own interceptors
-(def ->interceptor   interceptor/->interceptor)
-(def enqueue         interceptor/enqueue)
-(def get-coeffect    interceptor/get-coeffect)
-(def get-effect      interceptor/get-effect)
-(def assoc-effect    interceptor/assoc-effect)
-(def assoc-coeffect  interceptor/assoc-coeffect)
+;; -- subscriptions -----------------------------------------------------------
+(def reg-sub        subs/reg-sub)
+(def subscribe      subs/subscribe)
+
+(def clear-sub (partial registrar/clear-handlers subs/kind))  ;; think unreg-sub
+(def clear-subscription-cache! subs/clear-subscription-cache!)
+
+(defn reg-sub-raw
+  "This is a low level, advanced function.  You should probably be
+  using reg-sub instead.
+  Docs in https://github.com/Day8/re-frame/blob/master/docs/SubscriptionFlow.md"
+  [query-id handler-fn]
+  (registrar/register-handler subs/kind query-id handler-fn))
 
 
-;; --  standard interceptors
+;; -- effects -----------------------------------------------------------------
+(def reg-fx      fx/reg-fx)
+(def clear-fx    (partial registrar/clear-handlers fx/kind))  ;; think unreg-fx
+
+;; -- coeffects ---------------------------------------------------------------
+(def reg-cofx    cofx/reg-cofx)
+(def inject-cofx cofx/inject-cofx)
+(def clear-cofx (partial registrar/clear-handlers cofx/kind)) ;; think unreg-cofx
+
+
+;; -- Events ------------------------------------------------------------------
+
+(defn reg-event-db
+  "Register the given event `handler` (function) for the given `id`. Optionally, provide
+  an `interceptors` chain.
+  `id` is typically a namespaced keyword  (but can be anything)
+  `handler` is a function: (db event) -> db
+  `interceptors` is a collection of interceptors. Will be flattened and nils removed.
+  `handler` is wrapped in its own interceptor and added to the end of the interceptor
+   chain, so that, in the end, only a chain is registered.
+   Special effects and coeffects interceptors are added to the front of this
+   chain."
+  ([id handler]
+    (reg-event-db id nil handler))
+  ([id interceptors handler]
+   (events/register id [cofx/inject-db fx/do-fx interceptors (db-handler->interceptor handler)])))
+
+
+(defn reg-event-fx
+  "Register the given event `handler` (function) for the given `id`. Optionally, provide
+  an `interceptors` chain.
+  `id` is typically a namespaced keyword  (but can be anything)
+  `handler` is a function: (coeffects-map event-vector) -> effects-map
+  `interceptors` is a collection of interceptors. Will be flattened and nils removed.
+  `handler` is wrapped in its own interceptor and added to the end of the interceptor
+   chain, so that, in the end, only a chain is registered.
+   Special effects and coeffects interceptors are added to the front of the
+   interceptor chain.  These interceptors inject the value of app-db into coeffects,
+   and, later, action effects."
+  ([id handler]
+   (reg-event-fx id nil handler))
+  ([id interceptors handler]
+   (events/register id [cofx/inject-db fx/do-fx interceptors (fx-handler->interceptor handler)])))
+
+
+(defn reg-event-ctx
+  "Register the given event `handler` (function) for the given `id`. Optionally, provide
+  an `interceptors` chain.
+  `id` is typically a namespaced keyword  (but can be anything)
+  `handler` is a function: (context-map event-vector) -> context-map
+
+  This form of registration is almost never used. "
+  ([id handler]
+   (reg-event-ctx id nil handler))
+  ([id interceptors handler]
+   (events/register id [cofx/inject-db fx/do-fx interceptors (ctx-handler->interceptor handler)])))
+
+(def clear-event (partial registrar/clear-handlers events/kind)) ;; think unreg-event-*
+
+;; -- interceptors ------------------------------------------------------------
+
+;; Standard interceptors.
+;; Detailed docs on each in std-interceptors.cljs
 (def debug       std-interceptors/debug)
 (def path        std-interceptors/path)
 (def enrich      std-interceptors/enrich)
@@ -44,66 +127,27 @@
 (def on-changes  std-interceptors/on-changes)
 
 
-;; --  subscriptions
-(defn reg-sub-raw
-  "Associate a given `query id` with a given subscription handler function `handler-fn`
-   which is expected to take two arguments: app-db and query vector, and return
-   a `reaction`.
-
-  This is a low level, advanced function.  You should probably be using reg-sub
-  instead."
-  [query-id handler-fn]
-  (registrar/register-handler subs/kind query-id handler-fn))
-
-(def reg-sub             subs/reg-sub)
-(def subscribe           subs/subscribe)
-
-(def clear-sub    (partial registrar/clear-handlers subs/kind))
-(def clear-subscription-cache! subs/clear-subscription-cache!)
-
-;; -- effects
-(def reg-fx      fx/register)
-(def clear-fx    (partial registrar/clear-handlers fx/kind))
-
-;; -- coeffects
-(def reg-cofx    cofx/register)
-(def inject-cofx cofx/inject-cofx)
-(def clear-cofx (partial registrar/clear-handlers cofx/kind))
+;; Utility functions for creating your own interceptors
+;;
+;;  (def my-interceptor
+;;     (->interceptor                ;; used to create an interceptor
+;;       :id     :my-interceptor     ;; an id - decorative only
+;;       :before (fn [context]                         ;; you normally want to change :coeffects
+;;                  ... use get-coeffect  and assoc-coeffect
+;;                       )
+;;       :after  (fn [context]                         ;; you normally want to change :effects
+;;                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+;;                   (assoc-effect context :http-ajax {...}])))))
+;;
+(def ->interceptor   interceptor/->interceptor)
+(def get-coeffect    interceptor/get-coeffect)
+(def assoc-coeffect  interceptor/assoc-coeffect)
+(def get-effect      interceptor/get-effect)
+(def assoc-effect    interceptor/assoc-effect)
+(def enqueue         interceptor/enqueue)
 
 
-;; --  Events
-(def clear-event (partial registrar/clear-handlers events/kind))
-
-(defn reg-event-db
-  "Register the given `id`, typically a keyword, with the combination of
-  `db-handler` and an interceptor chain.
-  `db-handler` is a function: (db event) -> db
-  `interceptors` is a collection of interceptors, possibly nested (needs flattening).
-  `db-handler` is wrapped in an interceptor and added to the end of the chain, so in the end
-   there is only a chain.
-   The necessary effects and coeffects handler are added to the front of the
-   interceptor chain.  These interceptors ensure that app-db is available and updated."
-  ([id db-handler]
-    (reg-event-db id nil db-handler))
-  ([id interceptors db-handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (db-handler->interceptor db-handler)])))
-
-
-(defn reg-event-fx
-  ([id fx-handler]
-   (reg-event-fx id nil fx-handler))
-  ([id interceptors fx-handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (fx-handler->interceptor fx-handler)])))
-
-
-(defn reg-event-ctx
-  ([id handler]
-   (reg-event-ctx id nil handler))
-  ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (ctx-handler->interceptor handler)])))
-
-
-;; --  Logging -----
+;; --  logging ----------------------------------------------------------------
 ;; Internally, re-frame uses the logging functions: warn, log, error, group and groupEnd
 ;; By default, these functions map directly to the js/console implementations,
 ;; but you can override with your own fns (set or subset).
@@ -115,12 +159,12 @@
 ;; If you are writing an extension to re-frame, like perhaps
 ;; an effects handler, you may want to use re-frame logging.
 ;;
-;; usage:  (console :error "this is bad: " a-variable " and " anotherv)
-;;         (console :warn "possible breach of containment wall at: " dt)
+;; usage: (console :error "Oh, dear God, it happened: " a-var " and " another)
+;;        (console :warn "Possible breach of containment wall at: " dt)
 (def console loggers/console)
 
 
-;; -- State Restoration For Unit Tests
+;; -- unit testing ------------------------------------------------------------
 
 (defn make-restore-fn
   "Checkpoints the state of re-frame and returns a function which, when
@@ -148,7 +192,7 @@
       nil)))
 
 
-;; -- Event Processing Callbacks
+;; -- Event Processing Callbacks  ---------------------------------------------
 
 (defn add-post-event-callback
   "Registers a function `f` to be called after each event is processed
@@ -176,8 +220,8 @@
   (router/remove-post-event-callback re-frame.router/event-queue id))
 
 
-;; --  Deprecation Messages
-;; Assisting the v0.0.7 ->  v0.0.8 transition.
+;; --  Deprecation ------------------------------------------------------------
+;; Assisting the v0.7.x ->  v0.8.x transition.
 (defn register-handler
   [& args]
   (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
