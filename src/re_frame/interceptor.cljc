@@ -6,6 +6,9 @@
 
 
 (def mandatory-interceptor-keys #{:id :after :before})
+(def optional-interceptor-keys #{:error})
+(def known-interceptor-keys (clojure.set/union mandatory-interceptor-keys
+                                               optional-interceptor-keys))
 
 (defn interceptor?
   [m]
@@ -15,15 +18,16 @@
 
 (defn ->interceptor
   "Create an interceptor from named arguments"
-  [& {:as m :keys [id before after]}]
+  [& {:as m :keys [id before after error]}]
   (when debug-enabled?
     (if-let [unknown-keys (seq (set/difference
                                 (-> m keys set)
-                                mandatory-interceptor-keys))]
+                                known-interceptor-keys))]
       (console :error "re-frame: ->interceptor " m " has unknown keys:" unknown-keys)))
   {:id     (or id :unnamed)
    :before before
-   :after  after })
+   :after  after
+   :error  error})
 
 ;; -- Effect Helpers  -----------------------------------------------------------------------------
 
@@ -60,11 +64,23 @@
 
 ;; -- Execute Interceptor Chain  ------------------------------------------------------------------
 
+(defn- exception->ex-info [e interceptor stage]
+  (ex-info (str "Interceptor Exception: " e)
+           {:stage stage
+            :interceptor (:id interceptor)
+            :exception e}))
 
 (defn- invoke-interceptor-fn
-  [context interceptor direction]
-  (if-let [f (get interceptor direction)]
-    (f context)
+  [context interceptor stage]
+  (if-let [f (get interceptor stage)]
+    (try
+      (f context)
+      (catch #?(:clj Throwable
+                :cljs :default) e
+        (-> context
+            (assoc :error (exception->ex-info e interceptor stage))
+            (cond->
+              (= :before stage) (update :queue empty))))) ; do not run the rest of the chain when in :before stage
     context))
 
 
@@ -98,12 +114,14 @@
        (if (empty? queue)
          context
          (let [interceptor (peek queue)   ;; next interceptor to call
-               stack (:stack context)]    ;; already completed interceptors
+               stack (:stack context)     ;; already completed interceptors
+               stage (if (:error context)
+                           :error
+                           direction)]
            (recur (-> context
                       (assoc :queue (pop queue)
                              :stack (conj stack interceptor))
-                      (invoke-interceptor-fn interceptor direction)))))))))
-
+                      (invoke-interceptor-fn interceptor stage)))))))))
 
 (defn enqueue
   "Add a collection of `interceptors` to the end of `context's` execution `:queue`.
@@ -141,6 +159,12 @@
       (dissoc :queue)
       (enqueue (:stack context))))
 
+(defn execute-chain
+  [context]
+  (-> context
+      (invoke-interceptors :before)
+      change-direction
+      (invoke-interceptors :after)))
 
 (defn execute
   "Executes the given chain (coll) of interceptors.
@@ -193,6 +217,4 @@
    functions through which the context is threaded."
   [event-v interceptors]
   (-> (context event-v interceptors)
-      (invoke-interceptors :before)
-      change-direction
-      (invoke-interceptors :after)))
+      (execute-chain)))
