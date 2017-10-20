@@ -8,14 +8,14 @@ conceptual overhead?
 Reagent is wonderful. If your application is small and simple, then standalone Reagent 
 is absolutely a fine choice.
 
-But it does only supply the V part of the traditional MVC triad. As a result, as  
+But it does only supply the V part of the traditional MVC triad. As a result, as
 your application starts to get bigger and more complicated, you will need to 
 find solutions to questions in the M and C realms - like "where does the control logic go?".  And, 
 "how do I manage state".  And, coordination issues like "How do I put up a spinner
 when waiting for the database, and take it down correctly?".  How do I ensure 
 efficient view updates?  How do I write my control logic in a way that's testable. 
 
-These questions accumulate. Reagent, by itself,  
+These questions accumulate. Reagent, by itself,
 provides little guidance and, so, you'll need to 
 come up with your own solutions. The choices you make will accumulate too and,   
 over time, will become baked into into your code base, 
@@ -23,7 +23,7 @@ becoming increasingly difficult to revisit.
 
 Now, any decision which is hard to revisit later is an architecture decision - that's 
 pretty much the definition of architecture.  So, as you proceed, baking your
-decisions into your code base, you will be incrementally growing an architecture. 
+decisions into your code base, you will be incrementally growing an architecture.
 
 So, then, the question becomes: is your architecture better than re-frame's?  Because 
 that's what re-frame gives you ... an architecture ... answers to the
@@ -32,17 +32,17 @@ various questions you'll face when developing your app.
 Now, in response, some will enthusiastically say "yes, I want to grow my own architecture". 
 Fair enough - its a fun ride.
 
-I think the only danger arises if this process is not conscious and purposeful - if  
-someone gets going quickly with Reagent and has a bunch of enjoyable early wins, but 
-ends up in the weeds because they didn't understand the road they were driving as 
+I think the only danger arises if this process is not conscious and purposeful - if
+someone gets going quickly with Reagent and has a bunch of enjoyable early wins, but
+ends up in the weeds because they didn't understand the road they were driving as
 their application was getting bigger. 
 
-I've had many people (20?) privately say to me that's what happened to them. The real 
-number would obviously be much higher. And that's pretty much the reason for 
+I've had many people (20?) privately say to me that's what happened to them. The real
+number would obviously be much higher. And that's pretty much the reason for
 this FAQ - this happens too often.  
 
-So, my advice is ... if your application is a little more complicated, 
-be sure to make a conscious choice around architecture, because one way or 
+So, my advice is ... if your application is a little more complicated,
+be sure to make a conscious choice around architecture, because one way or
 another you'll be using one.  If your application is beyond a few thousands lines
 of code, and you are using only Reagent, you **will** end up creating your own "alternative re-frame".
 
