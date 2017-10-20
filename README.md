@@ -84,7 +84,7 @@ So, it will come as no surprise, then, to know that re-frame has a
 data oriented design. Events are data. Effects are data. DOM is data.
 The functions which transform data are registered and looked up via 
 data. Interceptors (data) are preferred over middleware (higher 
-order functions). Etc.
+order functions). Etc. 
 
 **Data - that's the way we roll.**
 
@@ -94,7 +94,7 @@ order functions). Etc.
 Architecturally, re-frame implements "a perpetual loop".
 
 To build an app, you hang pure functions on certain parts of this loop, 
-and re-frame looks after the `conveyance of data` 
+and re-frame looks after the **conveyance of data** 
 around the loop, into and out of the transforming functions you 
 provide - hence a tag line of "Derived Values, Flowing".
 
