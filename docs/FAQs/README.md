@@ -1,6 +1,7 @@
 ## Frequently Asked Questions
 
 1. [How can I Inspect app-db?](Inspecting-app-db.md)
+2. [Why not just Reagent?](DoINeedReFrame.md)
 2. [How do I do full-stack re-frame?](FullStackReframe.md)
 2. [How long after I do a dispatch does the event get handled?](When-Does-Dispatch-Happen.md)
 2. [How can I use a subscription in an Event Handler](UseASubscriptionInAnEventHandler.md)

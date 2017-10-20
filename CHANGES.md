@@ -1,6 +1,8 @@
 ## Unreleased 
 
+#### New Features
 
+  - added [a new FAQ entry](/docs/FAQs/DoINeedReFrame.md) Why not just Reagent?
 
 
 ## 0.10.2  (2017.10.07)
