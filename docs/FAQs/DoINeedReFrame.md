@@ -10,10 +10,10 @@ then standalone Reagent is absolutely a fine choice.
 
 But it does only supply the V part of the traditional MVC triad. As a result, when
 your application starts to get bigger and more complicated, you will need to 
-find solutions to questions in the M and C realms - like "where does the control logic go?".  And, 
-"how do I manage state".  And, coordination issues like "How do I put up a spinner
+find solutions to questions in the M and C realms. Questions like "where does the control logic go?".
+And, "how do I manage state".  And, coordination issues like "How do I put up a spinner
 when waiting for the database, and take it down correctly?".  How do I ensure 
-efficient view updates?  How do I write my control logic in a way that's testable. 
+efficient view updates?  How do I write my control logic in a way that's testable? 
 How should new websocket packets be communicated with the broader app? Or GET failures? 
 
 These questions accumulate. Reagent, by itself,
@@ -44,9 +44,9 @@ number would obviously be much higher. And that's pretty much the reason for
 this FAQ - this happens a bit too often.  
 
 So, my advice is ... if your application is a little more complicated,
-be sure to make a conscious choice around architecture, because one way or
-another you'll be using one.  If your application is beyond a few thousands lines
-of code, and you are using only Reagent, you **will** end up creating your own "alternative re-frame".
+be sure to make a conscious choice around architecture. Don't think 
+"Reagent is all I need", because one way or
+another you'll be using Reagent + a broader architecture.
 
 ### Some Choices Made By re-frame
 
