@@ -21,16 +21,17 @@ come up with your own solutions. The choices you make will accumulate too and,
 over time, will become baked into into your code base,
 becoming increasingly difficult to revisit. 
 
-Now, any decision which is hard to revisit later is an architecture decision - that's 
-pretty much the definition of architecture.  So, as you proceed, baking your
-decisions into your code base, you will be incrementally growing an architecture.
+Now, any decision which is hard to revisit later is an architectural decision - 
+"hard to change later" is pretty much the definition of architecture.  So, 
+as you proceed, baking your decisions into your codebase, you will be 
+incrementally growing an architecture.
 
 So, then, the question becomes: is your architecture better than re-frame's?  Because 
 that's what re-frame gives you ... an architecture ... answers to the
 various questions you'll face when developing your app.  
 
-Now, in response, some will enthusiastically say "yes, I want to grow my own architecture". 
-Fair enough - its a fun ride!
+Now, in response, some will enthusiastically say "yes, I want to grow my own 
+architecture. I like mine!". Fair enough - its a fun ride!
 
 I think the only danger arises if this process is not conscious and purposeful - if
 someone gets going quickly with Reagent and has a bunch of enjoyable early wins, but
@@ -49,15 +50,18 @@ of code, and you are using only Reagent, you **will** end up creating your own "
 ### Some Choices Made By re-frame
 
 1. Events as data  (which means they are loggable, and can be queued, etc)
-2. Events are handled async  (critical, requires carefully engineering, no core.async!)
+2. Events are handled async  (A critical decision. Engineered to avoid core.async problems!)
 3. For efficiency, subscriptions (reactions) should be layered and de-duplicated
 4. Views are never imperative or side effecting
 4. Unidirectional data flow only, ever
 5. Interceptors over middleware. Provide cross cutting concerns like logging and debugging. 
 6. Event handlers capture control and contain key code. Ensure purity via coeffects and effects. 
-7. State is stored in one place and is committed-to transactionally. 
+7. State is stored in one place and is committed-to transactionally.
 
-Hmm. I feel like I'm missing a couple, but that's certainly indicative. 
+Hmm. I feel like I'm missing a couple, but that's certainly an indicative list.
+
+re-frame is only about 500 lines of code.  So it's value is much more in the honed 
+choices it embodies (and documents), than the code it provides.
 
 ### What Reagent Does Provide
 
@@ -69,7 +73,7 @@ your own architecture, then be sure to check out Reagent's `track`, `reaction` a
 
 There's also other Reagent-based architectures like [keechma](https://github.com/keechma/keechma) and 
 [carry](https://github.com/metametadata/carry) which make different choices - ones which may 
-suit your needs better.
+better suit your needs.
 
 ***
 
