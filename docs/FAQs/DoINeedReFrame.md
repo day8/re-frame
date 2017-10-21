@@ -14,7 +14,7 @@ find solutions to questions in the M and C realms - like "where does the control
 "how do I manage state".  And, coordination issues like "How do I put up a spinner
 when waiting for the database, and take it down correctly?".  How do I ensure 
 efficient view updates?  How do I write my control logic in a way that's testable. 
-How should new websocket packets be communicated with the broader app. Or GET failures. 
+How should new websocket packets be communicated with the broader app? Or GET failures? 
 
 These questions accumulate. Reagent, by itself,
 provides little guidance and, so, you'll need to
@@ -29,7 +29,7 @@ incrementally growing an architecture.
 
 So, then, the question becomes: is your architecture better than re-frame's?  Because 
 that's what re-frame gives you ... an architecture ... answers to the
-various questions you'll face when developing your app.  
+various questions you'll face when developing your app.
 
 Now, in response, some will enthusiastically say "yes, I want to grow my own 
 architecture. I like mine!". Fair enough - its a fun ride!
