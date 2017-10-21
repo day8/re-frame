@@ -23,7 +23,7 @@ over time, will become baked into your code base,
 becoming increasingly difficult to revisit. 
 
 Now, any decision which is hard to revisit later is an architectural decision - 
-"hard to change later" is pretty much the definition of architecture.  So, 
+"hard to change later" is pretty much the definition of "architecture".  So, 
 as you proceed, baking your decisions into your codebase, you will be 
 incrementally growing an architecture.
 
@@ -51,10 +51,10 @@ of code, and you are using only Reagent, you **will** end up creating your own "
 ### Some Choices Made By re-frame
 
 1. Events are cardinal. Nothing happens without an event. 
-2. Events as data  (which means they are loggable, and can be queued, etc)
+2. Events are data  (which means they are loggable, and can be queued, etc)
 3. Events are handled async  (A critical decision. Engineered to avoid core.async problems!)
 4. For efficiency, subscriptions (reactions) should be layered and de-duplicated
-5. Views are never imperative or side effecting
+5. Views are never imperative or side effecting (best effort)
 6. Unidirectional data flow only, ever
 7. Interceptors over middleware. Provide cross cutting concerns like logging and debugging. 
 8. Event handlers capture control and contain key code. Ensure purity via coeffects and effects. 
