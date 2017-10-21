@@ -8,19 +8,19 @@ conceptual overhead for not much benefit!
 First, I agree, Reagent is terrific. If your application is small and simple, 
 then standalone Reagent is absolutely a fine choice.
 
-But it only supplyiesthe V part of the traditional MVC triad. When
+But it only supplies the V part of the traditional MVC triad. When
 your application gets bigger and more complicated, you'll need to 
 find solutions to questions in the M and C realms. Questions like "where do I put control logic?".
 And, "how do I manage state?".  And, "How do I put up a spinner
-when waiting for CPU consuming computations to run?"  How do I ensure 
-efficient view updates?  How do I write my control logic in a way that's testable? 
+when waiting for CPU intensive computations to run, while allowing the user to press Cancel?"  
+How do I ensure efficient view updates?  How do I write my control logic in a way that's testable? 
 How should new websocket packets be communicated with the broader app? Or GET failures? 
 
 These questions accumulate. 
 
 Reagent, by itself, provides little guidance and, so, you'll need to
-come up with your own solutions. The choices you make will accumulate too and,
-over time, will become baked into your code base,
+come up with your own solutions. Your choices will also accumulate and,
+over time, will become baked into your codebase,
 becoming increasingly difficult to revisit. 
 
 Now, any decision which is hard to revisit later is an architectural decision - 
@@ -30,12 +30,12 @@ incrementally growing an architecture.
 
 So, then, the question becomes: is your architecture better than re-frame's?  Because 
 that's what re-frame gives you ... an architecture ... answers to the
-various questions you'll face when developing your app.
+various challenges you'll face when developing your app.
 
 Now, in response, some will enthusiastically say "yes, I want to grow my own 
 architecture. I like mine!". Fair enough - its a fun ride!
 
-I think problems only arise when this process is not conscious and purposeful. You 
+I think problems arise when this process is not conscious and purposeful. You 
 can accelerate quickly with Reagent and get a bunch of enjoyable early wins, but then  
 ultimately end up off the road, in the paddock, because of
 one of the corners leading up to a bigger application.
