@@ -1,7 +1,7 @@
 ### Question
 
-Reagent looks terrific.  Why do I need re-frame?  Does it add extra layers and
-conceptual overhead for not much benefit?
+Reagent looks terrific.  Why do I need re-frame?  It looks like extra layers and
+conceptual overhead for not much benefit!
 
 ### Answer 
 
@@ -14,11 +14,12 @@ find solutions to questions in the M and C realms - like "where does the control
 "how do I manage state".  And, coordination issues like "How do I put up a spinner
 when waiting for the database, and take it down correctly?".  How do I ensure 
 efficient view updates?  How do I write my control logic in a way that's testable. 
+How should new websocket packets be communicated with the broader app. Or GET failures. 
 
 These questions accumulate. Reagent, by itself,
 provides little guidance and, so, you'll need to
 come up with your own solutions. The choices you make will accumulate too and,
-over time, will become baked into into your code base,
+over time, will become baked into your code base,
 becoming increasingly difficult to revisit. 
 
 Now, any decision which is hard to revisit later is an architectural decision - 
@@ -35,7 +36,7 @@ architecture. I like mine!". Fair enough - its a fun ride!
 
 I think the only danger arises if this process is not conscious and purposeful - if
 someone gets going quickly with Reagent and has a bunch of enjoyable early wins, but
-ends up in the weeds because they didn't understand the road they were driving as
+ultimately ends up in the weeds because they didn't understand the road they were driving as
 their application got bigger.
 
 I've had many people (20?) privately say to me that's what happened to them. The real
@@ -49,14 +50,15 @@ of code, and you are using only Reagent, you **will** end up creating your own "
 
 ### Some Choices Made By re-frame
 
-1. Events as data  (which means they are loggable, and can be queued, etc)
-2. Events are handled async  (A critical decision. Engineered to avoid core.async problems!)
-3. For efficiency, subscriptions (reactions) should be layered and de-duplicated
-4. Views are never imperative or side effecting
-4. Unidirectional data flow only, ever
-5. Interceptors over middleware. Provide cross cutting concerns like logging and debugging. 
-6. Event handlers capture control and contain key code. Ensure purity via coeffects and effects. 
-7. State is stored in one place and is committed-to transactionally.
+1. Events are cardinal. Nothing happens without an event. 
+2. Events as data  (which means they are loggable, and can be queued, etc)
+3. Events are handled async  (A critical decision. Engineered to avoid core.async problems!)
+4. For efficiency, subscriptions (reactions) should be layered and de-duplicated
+5. Views are never imperative or side effecting
+6. Unidirectional data flow only, ever
+7. Interceptors over middleware. Provide cross cutting concerns like logging and debugging. 
+8. Event handlers capture control and contain key code. Ensure purity via coeffects and effects. 
+9. State is stored in one place and is committed-to transactionally, never piecemeal.
 
 Hmm. I feel like I'm missing a couple, but that's certainly an indicative list.
 
