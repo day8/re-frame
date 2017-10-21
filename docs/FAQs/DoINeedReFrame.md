@@ -57,8 +57,17 @@ of code, and you are using only Reagent, you **will** end up creating your own "
 6. Event handlers capture control and contain key code. Ensure purity via coeffects and effects. 
 7. State is stored in one place and is committed-to transactionally. 
 
+### What Reagent Does Provide
 
-These decision accumulate. 
+Above I said:
+> Reagent, by itself, provides little guidance
+
+which is true but, it does provide useful building blocks. If you do want to create 
+your own architecture, then be sure to check out Reagent's `track`, `reaction` and `rswap`. 
+
+There's also other Reagent-based architectures like [keechma](https://github.com/keechma/keechma) and 
+[carry](https://github.com/metametadata/carry) which make different choices that may 
+suit your needs better.  
 
 ***
 
