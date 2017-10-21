@@ -46,7 +46,7 @@ be sure to make a conscious choice around architecture, because one way or
 another you'll be using one.  If your application is beyond a few thousands lines
 of code, and you are using only Reagent, you **will** end up creating your own "alternative re-frame".
 
-### Example Choices Made By re-frame
+### Some Choices Made By re-frame
 
 1. Events as data  (which means they are loggable, and can be queued, etc)
 2. Events are handled async  (critical, requires carefully engineering, no core.async!)
@@ -57,17 +57,19 @@ of code, and you are using only Reagent, you **will** end up creating your own "
 6. Event handlers capture control and contain key code. Ensure purity via coeffects and effects. 
 7. State is stored in one place and is committed-to transactionally. 
 
+Hmm. I feel like I'm missing a couple, but that's certainly indicative. 
+
 ### What Reagent Does Provide
 
 Above I said:
-> Reagent, by itself, provides little guidance
+> Reagent, by itself, provides little guidance ...
 
 which is true but, it does provide useful building blocks. If you do want to create 
 your own architecture, then be sure to check out Reagent's `track`, `reaction` and `rswap`. 
 
 There's also other Reagent-based architectures like [keechma](https://github.com/keechma/keechma) and 
-[carry](https://github.com/metametadata/carry) which make different choices that may 
-suit your needs better.  
+[carry](https://github.com/metametadata/carry) which make different choices - ones which may 
+suit your needs better.
 
 ***
 
