@@ -2,8 +2,7 @@
 
 #### New Features
 
-  - added [a new FAQ entry](/docs/FAQs/DoINeedReFrame.md) Why not just Reagent?
-
+  - added [a new FAQ entry](/docs/FAQs/DoINeedReFrame.md) Reagent looks terrific. Why do I need re-frame?
 
 ## 0.10.2  (2017.10.07)
 

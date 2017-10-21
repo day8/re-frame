@@ -8,16 +8,17 @@ conceptual overhead for not much benefit!
 First, I agree, Reagent is terrific. If your application is small and simple, 
 then standalone Reagent is absolutely a fine choice.
 
-But it does only supply the V part of the traditional MVC triad. As a result, when
-your application starts to get bigger and more complicated, you will need to 
-find solutions to questions in the M and C realms. Questions like "where does the control logic go?".
-And, "how do I manage state".  And, coordination issues like "How do I put up a spinner
-when waiting for the database, and take it down correctly?".  How do I ensure 
+But it only supplyiesthe V part of the traditional MVC triad. When
+your application gets bigger and more complicated, you'll need to 
+find solutions to questions in the M and C realms. Questions like "where do I put control logic?".
+And, "how do I manage state?".  And, "How do I put up a spinner
+when waiting for CPU consuming computations to run?"  How do I ensure 
 efficient view updates?  How do I write my control logic in a way that's testable? 
 How should new websocket packets be communicated with the broader app? Or GET failures? 
 
-These questions accumulate. Reagent, by itself,
-provides little guidance and, so, you'll need to
+These questions accumulate. 
+
+Reagent, by itself, provides little guidance and, so, you'll need to
 come up with your own solutions. The choices you make will accumulate too and,
 over time, will become baked into your code base,
 becoming increasingly difficult to revisit. 
@@ -34,19 +35,19 @@ various questions you'll face when developing your app.
 Now, in response, some will enthusiastically say "yes, I want to grow my own 
 architecture. I like mine!". Fair enough - its a fun ride!
 
-I think the only danger arises if this process is not conscious and purposeful - if
-someone gets going quickly with Reagent and has a bunch of enjoyable early wins, but
-ultimately ends up in the weeds because they didn't understand the road they were driving as
-their application got bigger.
+I think problems only arise when this process is not conscious and purposeful. You 
+can accelerate quickly with Reagent and get a bunch of enjoyable early wins, but then  
+ultimately end up off the road, in the paddock, because of
+one of the corners leading up to a bigger application.
 
 I've had many people (20?) privately say to me that's what happened to them. The real
 number would obviously be much higher. And that's pretty much the reason for
-this FAQ - this happens a bit too often.  
+this FAQ - this happens a bit too often.
 
 So, my advice is ... if your application is a little more complicated,
 be sure to make a conscious choice around architecture. Don't think 
 "Reagent is all I need", because one way or
-another you'll be using Reagent + a broader architecture.
+another you'll be using "Reagent + a broader architecture".
 
 ### Some Choices Made By re-frame
 
