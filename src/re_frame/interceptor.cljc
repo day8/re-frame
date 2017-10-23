@@ -76,7 +76,7 @@
 (defn- invoke-interceptor-fn
   [context interceptor direction]
   (let [f (get interceptor direction)
-        error-handler (registrar/get-handler :error :error-handler)]
+        error-handler (registrar/get-handler :error :event-handler)]
     (cond
       (not f) context
       (not error-handler) (f context)
@@ -212,7 +212,7 @@
    already done.  In advanced cases, these values can be modified by the
    functions through which the context is threaded."
   [event-v interceptors]
-  (if-let [error-handler (registrar/get-handler :error :error-handler)]
+  (if-let [error-handler (registrar/get-handler :error :event-handler)]
     (try
       (execute* event-v interceptors)
       (catch #?(:clj Exception :cljs :default) e
