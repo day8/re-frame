@@ -128,7 +128,7 @@
     :exception   ;; original exception
    }"
   [handler]
-  (registrar/register-handler :error :error-handler handler))
+  (registrar/register-handler :error :event-handler handler))
 
 ;; -- interceptors ------------------------------------------------------------
 

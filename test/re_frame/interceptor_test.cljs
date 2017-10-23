@@ -207,7 +207,7 @@
              (invoke-interceptor-fn context interceptor :before))))
 
     (testing "throws original exception to flow when there is no error handler"
-      (is (nil? (registrar/get-handler :error :error-handler)) "no error-handler was registered")
+      (is (nil? (registrar/get-handler :error :event-handler)) "no error-handler was registered")
       (let [exception (ex-info "Oopsie" {:foo :bar})
             interceptor {:id :throws
                          :before #(throw exception)}
@@ -222,7 +222,7 @@
 
     (testing "throws via exception->ex-info when there's an error handler"
       ;; actual handler doesn't matter here, we just need a registered handler so invoke-exception
-      (registrar/register-handler :error :error-handler identity)
+      (registrar/register-handler :error :event-handler identity)
       (try
         (let [exception (ex-info "Oopsie" {:foo :bar})
               interceptor {:id :throws
@@ -260,7 +260,7 @@
       (is (nil? @error-atom)))
 
     (testing "an exception in an interceptor, with error handler"
-      (registrar/register-handler :error :error-handler error-handler)
+      (registrar/register-handler :error :event-handler error-handler)
       (try
         (is (registrar/get-handler :error))
         (interceptor/execute [:_] interceptors)
