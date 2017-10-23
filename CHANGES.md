@@ -1,5 +1,9 @@
 ## Unreleased
 
+#### Changed
+
+  - Added `reg-event-error-handler` to provide a way to handle errors in the interceptor chain [#423](https://github.com/Day8/re-frame/pull/423).
+
 #### Fixed
 
   - After interceptor now runs against effect db if effect db is nil/false. [#447](https://github.com/Day8/re-frame/issues/447) 
