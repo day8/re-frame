@@ -54,6 +54,10 @@ Global interceptors can be very useful:
   - register them via `reg-global-interceptors` 
   - rarely, remove them via `clear-global-interceptor`
 
+When errors arise:
+
+  - Catch them from events and interceptors via `reg-event-error-handler`
+
 ## More Rarely Used Part
 
 Testing or dev-time related utilities:
