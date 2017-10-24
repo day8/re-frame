@@ -70,8 +70,8 @@
 (defn- exception->ex-info [e interceptor direction]
   (ex-info (str "Interceptor Exception: " #?(:clj (.getMessage e) :cljs (ex-message e)))
            {:direction direction
-            :interceptor (:id interceptor)
-            :exception e}))
+            :interceptor (:id interceptor)}
+           e))
 
 (defn- invoke-interceptor-fn
   [context interceptor direction]
