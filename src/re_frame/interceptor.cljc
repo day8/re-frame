@@ -162,6 +162,11 @@
       change-direction
       (invoke-interceptors :after)))
 
+(defn- add-error-context [e extra-data]
+  (ex-info #?(:clj (.getMessage e) :cljs (ex-message e))
+           (merge (ex-data e) extra-data)
+           #?(:clj (.getCause e) :cljs (ex-cause e))))
+
 (defn execute
   "Executes the given chain (coll) of interceptors.
 
@@ -216,5 +221,5 @@
     (try
       (execute* event-v interceptors)
       (catch #?(:clj Exception :cljs :default) e
-        (error-handler e)))
+        (error-handler (add-error-context e {:event-v event-v}))))
     (execute* event-v interceptors)))
