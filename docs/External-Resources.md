@@ -29,6 +29,9 @@ Please add to this list by submitting a pull request.
 * [boodle](https://github.com/manuel-uberti/boodle) - A simple SPA for
   accounting. It uses, among others, re-frame, http-kit, compojure-api and it
   runs on PostgreSQL.
+* [status-react](https://github.com/status-im/status-react) - A mobile OS for Ethereum. Server, SPA + React Native App
+* [Catlantis](https://github.com/madvas/catlantis) - React Native App about cats
+* [Lymchat](https://github.com/tiensonqin/lymchat) - React Native App to learn different cultures
 
 ### Effect and CoEffect Handlers
 
@@ -53,11 +56,22 @@ Please add to this list by submitting a pull request.
 * [re-frame-undo](https://github.com/Day8/re-frame-undo) - An undo library for re-frame
 * [re-frame-test](https://github.com/Day8/re-frame-test) - Advanced testing utilities
 * [Animation](http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html) using `react-flip-move`
-* [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
 * [re-thread](https://github.com/yetanalytics/re-thread) - A library for running re-frame applications in Web Workers.
 * [re-frame-datatable](https://github.com/kishanov/re-frame-datatable) - DataTable UI component built for use with re-frame.
 * [Stately: State Machines](https://github.com/nodename/stately) also https://www.youtube.com/watch?v=klqorRUPluw
 * [re-learn](https://github.com/oliyh/re-learn) - Data driven tutorials for educating users of your reagent / re-frame app
+* [subgraph](https://github.com/vimsical/subgraph) - Reactive graph database for re-frame
+
+#### Debugging
+
+* [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
+* [re-frame-trace](https://github.com/Day8/re-frame-trace) - A trace window for re-frame
+
+#### React Native
+
+* [re-natal](https://github.com/drapanjanas/re-natal): Bootstrap ClojureScript React Native apps
+* [cljsrn-re-frame-workers](https://github.com/seantempesta/cljsrn-re-frame-workers): A library supporting react-native-workers with re-frame for ClojureScript and React Native.
+* [re-navigate](https://github.com/vikeri/re-navigate): Example of React Native Navigation with re-frame/re-natal
 
 ### Videos
 
