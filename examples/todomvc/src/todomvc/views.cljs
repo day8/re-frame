@@ -56,7 +56,7 @@
         [:input#toggle-all
           {:type "checkbox"
            :checked all-complete?
-           :on-change #(dispatch [:complete-all-toggle (not all-complete?)])}]
+           :on-change #(dispatch [:complete-all-toggle])}]
         [:label
           {:for "toggle-all"}
           "Mark all as complete"]
