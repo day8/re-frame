@@ -191,6 +191,10 @@
       (reset! db/app-db app-db)
       nil)))
 
+(defn purge-event-queue
+  "Remove all events queued for processing"
+  []
+  (router/purge re-frame.router/event-queue))
 
 ;; -- Event Processing Callbacks  ---------------------------------------------
 

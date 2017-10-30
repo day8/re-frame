@@ -74,6 +74,7 @@
   (push [this event])
   (add-post-event-callback [this id callack])
   (remove-post-event-callback [this f])
+  (purge [this])
 
   ;; -- Implementation via a Finite State Machine
   (-fsm-trigger [this trigger arg])
@@ -113,6 +114,8 @@
       (->> (dissoc post-event-callback-fns id)
            (set! post-event-callback-fns))))
 
+  (purge [_]
+    (set! queue empty-queue))
 
   ;; -- FSM Implementation ---------------------------------------------------
 
@@ -195,8 +198,8 @@
               (recur (dec n)))))))
 
   (-exception
-    [_ ex]
-    (set! queue empty-queue) ;; purge the queue
+    [this ex]
+    (purge this)   ;; purge the queue
     (throw ex))
 
   (-pause

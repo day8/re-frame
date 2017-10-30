@@ -1,7 +1,8 @@
 ## Unreleased 
 
-#### New Features
+#### New
 
+  - add `purge-event-queue` to the API. See https://github.com/Day8/re-frame-test/issues/13 for motivation. 
   - added [a new FAQ entry](/docs/FAQs/DoINeedReFrame.md) Reagent looks terrific. Why do I need re-frame?
 
 ## 0.10.2  (2017.10.07)
