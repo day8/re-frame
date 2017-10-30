@@ -5,23 +5,24 @@ conceptual overhead for not much benefit!
 
 ### Answer 
 
-First, I agree, Reagent is terrific. If your application is small and simple, 
+Yes, Reagent is terrific. If your application is small and simple, 
 then standalone Reagent is absolutely a fine choice.
 
-But it only supplies the V part of the traditional MVC triad. When
-your application gets bigger and more complicated, you'll need to 
-find solutions to questions in the M and C realms. Questions like "where do I put control logic?".
-And, "how do I manage state?".  And, "How do I put up a spinner
+But it only supplies the V part of the MVC triad. As your application 
+gets bigger and more complicated, you'll need to find solutions to 
+questions in the M and C realms. 
+Questions like "where do I put control logic?".
+And, "how do I manage state?".  
+And, How should new websocket packets be communicated with the broader app? Or GET failures? 
+"How do I put up a spinner
 when waiting for CPU intensive computations to run, while allowing the user to press Cancel?"
 How do I ensure efficient view updates?  How do I write my control logic in a way that's testable? 
-How should new websocket packets be communicated with the broader app? Or GET failures? 
 
 These questions accumulate. 
 
 Reagent, by itself, provides little guidance and, so, you'll need to
-come up with your own solutions. Your choices will also accumulate and,
-over time, will become baked into your codebase,
-becoming increasingly difficult to revisit. 
+design own solutions. Your choices will also accumulate and,
+over time, will become baked into your codebase.
 
 Now, any decision which is hard to revisit later is an architectural decision - 
 "hard to change later" is pretty much the definition of "architecture".  So, 
@@ -35,7 +36,7 @@ various challenges you'll face when developing your app.
 Now, in response, some will enthusiastically say "yes, I want to grow my own 
 architecture. I like mine!". Fair enough - its a fun ride!
 
-I think problems arise when this process is not conscious and purposeful. You 
+The problems arise ONLY when this process is not conscious and purposeful. You 
 can accelerate quickly with Reagent and get a bunch of enjoyable early wins, but then
 ultimately end up off the road, in the paddock, because of the twists and turns 
 leading up to a bigger application.
@@ -46,7 +47,7 @@ this FAQ - this happens a bit too often.
 
 So, my advice is ... if your application is a little more complicated,
 be sure to make a conscious choice around architecture. Don't think 
-"Reagent is all I need", because one way or
+"Reagent is all I need", because it isn't. One way or
 another you'll be using "Reagent + a broader architecture".
 
 ### Some Choices Made By re-frame
