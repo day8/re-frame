@@ -79,7 +79,7 @@ now want `cofx` to have other keys and values, like this:
    (fn [cofx event]                 ;; cofx means coeffects
      (let [val (:local-store cofx)  ;; <-- get data from cofx
            db  (:db cofx)]          ;; <-- more data from cofx
-       {:db (assoc db :defaults val))})) ;; returns an effect
+       {:db (assoc db :defaults val)}))) ;; returns an effect
 ```
 
 Notice how `cofx` magically contains a `:local-store` key with the
@@ -115,7 +115,7 @@ Something like this (this handler is the same as before, except for one detail):
    (fn [cofx event]
      (let [val (:local-store cofx)
            db  (:db cofx)]
-       {:db (assoc db :defaults val))}))
+       {:db (assoc db :defaults val)})))
 ```
 
 Look at that - my event handler has a new Interceptor!  It is injecting the
