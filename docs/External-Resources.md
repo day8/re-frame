@@ -16,6 +16,7 @@ Please add to this list by submitting a pull request.
 
 * [BlueGenes](https://github.com/intermine/bluegenes) - searching and analysing genomic data, by the University of Cambridge
 * [Memento](https://gitlab.com/Numergent/memento) a private note-taking app. Uses compojure-api, PostgreSQL and token auth.
+* [RealWord](https://github.com/polymeris/re-frame-realword-example-app) has CRUD, auth. Adheres to [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 * [How to create decentralised apps with re-frame and Ethereum](https://medium.com/@matus.lestan/how-to-create-decentralised-apps-with-clojurescript-re-frame-and-ethereum-81de24d72ff5#.b9xh9xnis) - Tutorial with links to code and live example.
 * [Braid](https://github.com/braidchat/braid) - A new approach to group chat, designed around conversations and tags instead of rooms.
 * [Elfeed-cljsrn](https://github.com/areina/elfeed-cljsrn) - A mobile client for [Elfeed](https://github.com/skeeto/elfeed) rss reader, built with React Native.
