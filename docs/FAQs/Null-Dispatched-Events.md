@@ -17,12 +17,12 @@ run async.  [Find out more here](https://facebook.github.io/react/docs/events.ht
   
 ### Longer Answer
 
-It is probably more idiomatic to extract the salient data from the event 
-and `dispatch` that, rather than the js event object itself. When you 
-`dispatch` pure, simple cljs data (ie. rather than js objects) testing 
-and debugging will become easier. 
+It is better to extract the salient details from the event 
+and `dispatch` them, rather than the entire js event object. When you 
+`dispatch` pure, simple ClojureScript data (ie. rather than js objects) testing 
+and debugging will be easier. 
 
-To put that point evenly more strongly, think about it like this:
+To put this point even more strongly again, think about it like this:
  - a DOM `on-click` `callback` might tell us "a button was clicked"
  - our application must then interpret that click. The click means 
    the user wanted to achieve something. They had "intent".
@@ -30,12 +30,12 @@ To put that point evenly more strongly, think about it like this:
    which is dispatched.  It is this intent which the event handler must 
    later facilitate.
    
-   
+
 So, in summary, re-frame view functions should transform DOM events 
 into re-frame `events` which capture user intent: "a button was clicked"
 becomes `user wants to delete item with id 42`
 
-So, philosophically, low-level DOM details have no place in an event.
+As a result, philosophically, low-level DOM objects have no place in an event.
  
 
 ***
