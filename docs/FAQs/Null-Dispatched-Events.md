@@ -11,7 +11,6 @@ by the time it gets to the event-handler. What gives?
 
 If you want to `dispatch` a js event object to a re-frame 
 event handler, you must call `(.persist event)` before the `dispatch`. 
-
 React recycles events (using a pool), and re-frame event handlers 
 run async.  [Find out more here](https://facebook.github.io/react/docs/events.html)
   
@@ -33,10 +32,10 @@ To put that point evenly more strongly, think about it like this:
    
    
 So, in summary, re-frame view functions should transform DOM event's 
-into re-frame `events` which capture user intent: "a button was clicked"  
+into re-frame `events` which capture user intent: "a button was clicked"
 becomes `user wants to deleted item with id 42`
 
-So, philosophically, low-level DOM detail have no  place in an event.
+So, philosophically, low-level DOM detail has no place in an event.
  
 
 ***
