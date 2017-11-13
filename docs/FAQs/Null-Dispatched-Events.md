@@ -31,7 +31,7 @@ To put that point evenly more strongly, think about it like this:
    later facilitate.
    
    
-So, in summary, re-frame view functions should transform DOM event's 
+So, in summary, re-frame view functions should transform DOM events 
 into re-frame `events` which capture user intent: "a button was clicked"
 becomes `user wants to delete item with id 42`
 
