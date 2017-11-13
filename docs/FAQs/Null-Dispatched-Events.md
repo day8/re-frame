@@ -33,9 +33,9 @@ To put that point evenly more strongly, think about it like this:
    
 So, in summary, re-frame view functions should transform DOM event's 
 into re-frame `events` which capture user intent: "a button was clicked"
-becomes `user wants to deleted item with id 42`
+becomes `user wants to delete item with id 42`
 
-So, philosophically, low-level DOM detail has no place in an event.
+So, philosophically, low-level DOM details have no place in an event.
  
 
 ***
