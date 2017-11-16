@@ -15,7 +15,7 @@
 ;; De-duplicate subscriptions. If two or more equal subscriptions
 ;; are concurrently active, we want only one handler running.
 ;; Two subscriptions are "equal" if their query vectors test "=".
-(def query->reaction (atom {}))
+(def query->reaction (re-frame.interop/ratom {}))
 
 (defn clear-subscription-cache!
   "Causes all subscriptions to be removed from the cache.
