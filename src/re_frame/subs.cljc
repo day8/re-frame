@@ -44,12 +44,15 @@
   [query-v dynv r]
   (let [cache-key [query-v dynv]]
     ;; when this reaction is no longer being used, remove it from the cache
-    (add-on-dispose! r #(do (swap! query->reaction dissoc cache-key)
-                            (trace/with-trace {:operation (first-in-vector query-v)
-                                               :op-type   :sub/dispose
-                                               :tags      {:query-v  query-v
-                                                           :reaction (reagent-id r)}}
-                              nil)))
+    (add-on-dispose! r #(trace/with-trace {:operation (first-in-vector query-v)
+                                           :op-type   :sub/dispose
+                                           :tags      {:query-v  query-v
+                                                       :reaction (reagent-id r)}}
+                                          (swap! query->reaction
+                                                 (fn [query-cache]
+                                                   (if (and (contains? query-cache cache-key) (identical? r (get query-cache cache-key)))
+                                                     (dissoc query-cache cache-key)
+                                                     query-cache)))))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction assoc cache-key r)
     (trace/merge-trace! {:tags {:reaction (reagent-id r)}})
