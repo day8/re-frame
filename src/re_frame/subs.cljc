@@ -54,7 +54,11 @@
                                                      (dissoc query-cache cache-key)
                                                      query-cache)))))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
-    (swap! query->reaction assoc cache-key r)
+    (swap! query->reaction (fn [query-cache]
+                             (when debug-enabled?
+                               (when (contains? query-cache cache-key)
+                                 (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" cache-key)))
+                             (assoc query-cache cache-key r)))
     (trace/merge-trace! {:tags {:reaction (reagent-id r)}})
     r)) ;; return the actual reaction
 
