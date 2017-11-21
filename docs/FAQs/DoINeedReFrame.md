@@ -1,45 +1,46 @@
 ### Question
 
-Reagent looks terrific.  Why do I need re-frame?  It looks like extra layers and
-conceptual overhead for not much benefit!
+Reagent looks terrific.  So, why do I need re-frame?  What benefit 
+is there in the extra layers and conceptual overhead it brings?
 
 ### Answer 
 
-Yes, Reagent is terrific. If your application is small and simple, 
-then standalone Reagent is absolutely a fine choice.
+Yes, we agree, Reagent is terrific. And, yes, we'd agree that if your application 
+is small and simple, then standalone Reagent is a fine choice.
 
-But it only supplies the V part of the MVC triad. As your application 
+But it does only supplies the V part of the MVC triad. As your application 
 gets bigger and more complicated, you'll need to find solutions to 
 questions in the M and C realms. 
 Questions like "where do I put control logic?".
-And, "how do I manage state?".  
-And, How should new websocket packets be communicated with the broader app? Or GET failures? 
-"How do I put up a spinner
+And, "how do I store and update state?".  
+And, "how should new websocket packets be communicated with the broader app"? Or GET failures? 
+And, "how do I put up a spinner
 when waiting for CPU intensive computations to run, while allowing the user to press Cancel?"
 How do I ensure efficient view updates?  How do I write my control logic in a way that's testable? 
 
 These questions accumulate. 
 
 Reagent, by itself, provides little guidance and, so, you'll need to
-design own solutions. Your choices will also accumulate and,
-over time, will become baked into your codebase.
+design your own solutions. Your choices will also accumulate and,
+over time, they'll become baked into your codebase.
 
 Now, any decision which is hard to revisit later is an architectural decision - 
-"hard to change later" is pretty much the definition of "architecture".  So, 
+"difficult to change later" is pretty much the definition of "architecture".  So, 
 as you proceed, baking your decisions into your codebase, you will be 
 incrementally growing an architecture.
 
-So, then, the question becomes: is your architecture better than re-frame's?  Because 
+So, then, the question is this: is your architecture better than re-frame's?  Because 
 that's what re-frame gives you ... an architecture ... answers to the
-various challenges you'll face when developing your app.
+various challenges you'll face when developing your app, and mechanism for implementing  
+those answers.
 
 Now, in response, some will enthusiastically say "yes, I want to grow my own 
 architecture. I like mine!". Fair enough - its a fun ride!
 
-The problems arise ONLY when this process is not conscious and purposeful. You 
-can accelerate quickly with Reagent and get a bunch of enjoyable early wins, but then
-ultimately end up off the road, in the paddock, because of the twists and turns 
-leading up to a bigger application.
+Problems arise ONLY when this process is not conscious and purposeful. It is a 
+credit to Reagent that you can accelerate quickly and get a bunch of enjoyable 
+early wins. But you can equally end up off the road, in a ditch, because of 
+the twists and turns leading up to a larger application.
 
 I've had many people (20?) privately say to me that's what happened to them. The real
 number would obviously be much higher. And that's pretty much the reason for
@@ -50,19 +51,19 @@ be sure to make a conscious choice around architecture. Don't think
 "Reagent is all I need", because it isn't. One way or
 another you'll be using "Reagent + a broader architecture".
 
-### Some Choices Made By re-frame
+### Example Choices Made By re-frame
 
-1. Events are cardinal. Nothing happens without an event. 
-2. Events are data  (which means they are loggable, and can be queued, etc)
-3. Events are handled async  (A critical decision. Engineered to avoid core.async problems!)
-4. For efficiency, subscriptions (reactions) should be layered and de-duplicated
-5. Views are never imperative or side effecting (best effort)
-6. Unidirectional data flow only, ever
-7. Interceptors over middleware. Provide cross cutting concerns like logging and debugging. 
+1. Events are cardinal. Nothing happens without an event.
+2. Events are data  (which means they are loggable, and can be queued, etc).
+3. Events are handled async  (A critical decision. Engineered to avoid some `core.async` issues!).
+4. For efficiency, subscriptions (reactions) should be layered and de-duplicated.
+5. Views are never imperative or side effecting (best effort).
+6. Unidirectional data flow only, ever.
+7. Interceptors over middleware. Provide cross cutting concerns like logging and debugging.
 8. Event handlers capture control and contain key code. Ensure purity via coeffects and effects. 
 9. State is stored in one place and is committed-to transactionally, never piecemeal.
 
-Hmm. I feel like I'm missing a couple, but that's certainly an indicative list.
+Hmm. I feel like I'm missing a few, but that's certainly an indicative list.
 
 re-frame is only about 500 lines of code.  So it's value is much more in the honed 
 choices it embodies (and documents), than the code it provides.
