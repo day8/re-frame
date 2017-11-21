@@ -1,7 +1,7 @@
 (ns re-frame.subs
  (:require
    [re-frame.db        :refer [app-db]]
-   [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref? dispose! reagent-id]]
+   [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref? dispose! reagent-id ratom]]
    [re-frame.loggers   :refer [console]]
    [re-frame.utils     :refer [first-in-vector]]
    [re-frame.registrar :refer [get-handler clear-handlers register-handler]]
@@ -15,7 +15,7 @@
 ;; De-duplicate subscriptions. If two or more equal subscriptions
 ;; are concurrently active, we want only one handler running.
 ;; Two subscriptions are "equal" if their query vectors test "=".
-(def query->reaction (atom {}))
+(def query->reaction (ratom {}))
 
 (defn clear-subscription-cache!
   "Causes all subscriptions to be removed from the cache.
