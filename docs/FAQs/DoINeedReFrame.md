@@ -55,7 +55,7 @@ another you'll be using "Reagent + a broader architecture".
 
 1. Events are cardinal. Nothing happens without an event.
 2. Events are data  (which means they are loggable, and can be queued, etc).
-3. Events are handled async  (A critical decision. Engineered to avoid some `core.async` issues!).
+3. Events are handled async  (a critical decision. Engineered to avoid some `core.async` issues!).
 4. For efficiency, subscriptions (reactions) should be layered and de-duplicated.
 5. Views are never imperative or side effecting (best effort).
 6. Unidirectional data flow only, ever.
