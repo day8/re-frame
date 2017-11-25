@@ -2,6 +2,10 @@
 
 Please add to this list by submitting a pull request.
 
+### IDE Support 
+
+*  Cursive - has direct support for re-frame features: [example](https://github.com/cursive-ide/cursive/issues/1816) and [example](https://github.com/cursive-ide/cursive/issues/1549)
+*  Emacs - https://github.com/oliyh/re-jump.el
 
 ### Templates
 
@@ -65,8 +69,9 @@ Please add to this list by submitting a pull request.
 
 #### Debugging
 
+
+* [re-frame-trace](https://github.com/Day8/re-frame-trace) - A debugging dashboard for re-frame
 * [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
-* [re-frame-trace](https://github.com/Day8/re-frame-trace) - A trace window for re-frame
 
 #### React Native
 
