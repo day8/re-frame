@@ -20,11 +20,10 @@ You'll want to investigate CQRS (vs REST).
    
 ### Further Related Links
 
-Reactive PostgreSQL:
-https://yogthos.net/posts/2016-11-05-LuminusPostgresNotifications.html
-   
-Datalog All The Way Down  
-https://www.youtube.com/watch?v=aI0zVzzoK_E
+* Reactive PostgreSQL:
+  https://yogthos.net/posts/2016-11-05-LuminusPostgresNotifications.html
+* Datalog All The Way Down:
+  https://www.youtube.com/watch?v=aI0zVzzoK_E
  
 
 ***
