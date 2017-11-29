@@ -4,8 +4,9 @@
   #?(:cljs (:require-macros [net.cgrand.macrovich :as macros]
                             [re-frame.trace :refer [finish-trace with-trace merge-trace!]]))
   (:require [re-frame.interop :as interop]
+            [re-frame.loggers :refer [console]]
             #?(:clj [net.cgrand.macrovich :as macros])
-            [re-frame.loggers :refer [console]]))
+            #?(:cljs [goog.functions])))
 
 (def id (atom 0))
 (def ^:dynamic *current-trace* nil)
@@ -22,6 +23,7 @@
   trace-enabled?)
 
 (def trace-cbs (atom {}))
+(defonce traces (atom []))
 
 (defn register-trace-cb
   "Registers a tracing callback function which will receive a collection of one or more traces.
@@ -45,19 +47,32 @@
    :child-of  (or child-of (:id *current-trace*))
    :start     (interop/now)})
 
+(defn debounce [f interval]
+  #?(:cljs (goog.functions/debounce f interval)
+     :clj  (f)))
+
+(def run-tracing-callbacks!
+  (debounce
+    (fn []
+      (doseq [[k cb] @trace-cbs]
+        (try (cb @traces)
+             #?(:clj (catch Exception e
+                       (console :error "Error thrown from trace cb" k "while storing" @traces e)))
+             #?(:cljs (catch :default e
+                        (console :error "Error thrown from trace cb" k "while storing" @traces e))))
+        (reset! traces [])))
+    50))
+
+
 (macros/deftime
   (defmacro finish-trace [trace]
      `(when (is-trace-enabled?)
         (let [end#      (interop/now)
               duration# (- end# (:start ~trace))]
-          (doseq [[k# cb#] @trace-cbs]
-            (try (cb# [(assoc ~trace
-                              :duration duration#
-                              :end (interop/now))])
-                 #?(:clj (catch Exception e#
-                           (console :error "Error thrown from trace cb" k# "while storing" ~trace e#)))
-                 #?(:cljs (catch :default e#
-                            (console :error "Error thrown from trace cb" k# "while storing" ~trace e#))))))))
+          (swap! traces conj (assoc ~trace
+                               :duration duration#
+                               :end (interop/now)))
+          (run-tracing-callbacks!))))
 
  (defmacro with-trace
      "Create a trace inside the scope of the with-trace macro
