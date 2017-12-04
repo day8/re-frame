@@ -9,7 +9,7 @@
         stop #(do (reset! val "")
                   (when on-stop (on-stop)))
         save #(let [v (-> @val str str/trim)]
-                (when (seq v) (on-save v))
+                (on-save v)
                 (stop))]
     (fn [props]
       [:input (merge props
@@ -44,7 +44,9 @@
           [todo-input
             {:class "edit"
              :title title
-             :on-save #(dispatch [:save id %])
+             :on-save #(if (seq %)
+                          (dispatch [:save id %])
+                          (dispatch [:delete-todo id]))
              :on-stop #(reset! editing false)}])])))
 
 
@@ -91,7 +93,8 @@
     [todo-input
       {:id "new-todo"
        :placeholder "What needs to be done?"
-       :on-save #(dispatch [:add-todo %])}]])
+       :on-save #(when (seq %)
+                    (dispatch [:add-todo %]))}]])
 
 
 (defn todo-app
