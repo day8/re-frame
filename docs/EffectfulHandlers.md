@@ -347,7 +347,7 @@ We'd now rewrite it as a pure handler, like this:
 
 So, by some magic, not yet revealed, LocalStore will be queried before
 this handler runs and the required value from it will be placed into
-`cofx` under the key `:localstore` for the handler to use.
+`cofx` under the key `:local-store` for the handler to use.
 
 That process leaves the handler itself pure because it only sources
 data from arguments.
