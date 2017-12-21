@@ -9,6 +9,10 @@
 
   - Debounce trace callbacks to handle larger batches of traces at once, to improve efficiency.
 
+#### Fixed
+
+  - Handle js/performance not being defined in NodeJS. [#439](https://github.com/Day8/re-frame/pull/439)
+
 ## 0.10.2  (2017.10.07)
 
 #### New Features
