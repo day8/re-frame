@@ -18,6 +18,7 @@ Please add to this list by submitting a pull request.
 
 ### Examples and Applications Using re-frame
 
+* [RealWorld](https://github.com/jacekschae/conduit) - heavily inspired by [todomvc](https://github.com/Day8/re-frame/tree/master/examples/todomvc) - well commented codebase with CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 * [BlueGenes](https://github.com/intermine/bluegenes) - searching and analysing genomic data, by the University of Cambridge
 * [Memento](https://gitlab.com/Numergent/memento) a private note-taking app. Uses compojure-api, PostgreSQL and token auth.
 * [RealWord](https://github.com/polymeris/re-frame-realword-example-app) has CRUD, auth. Adheres to [RealWorld](https://github.com/gothinkster/realworld) spec and API.
@@ -66,6 +67,8 @@ Please add to this list by submitting a pull request.
 * [Stately: State Machines](https://github.com/nodename/stately) also https://www.youtube.com/watch?v=klqorRUPluw
 * [re-learn](https://github.com/oliyh/re-learn) - Data driven tutorials for educating users of your reagent / re-frame app
 * [subgraph](https://github.com/vimsical/subgraph) - Reactive graph database for re-frame
+* [re-graph](https://github.com/oliyh/re-graph) - GraphQL client for re-frame
+* [martian](https://github.com/oliyh/martian) - Swagger-compatible API client that abstracts away from HTTP with [re-frame bindings](https://github.com/oliyh/martian/tree/master/re-frame)
 
 #### Debugging
 

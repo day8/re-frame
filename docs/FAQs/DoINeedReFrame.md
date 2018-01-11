@@ -5,11 +5,11 @@ is there in the extra layers and conceptual overhead it brings?
 
 ### Answer 
 
-Yes, we agree, Reagent is terrific. And, yes, we'd agree that if your application 
+Yes, we agree, Reagent is terrific. We use it enthusiastically ourselves. And, yes, we'd agree that if your application 
 is small and simple, then standalone Reagent is a fine choice.
 
-But it does only supplies the V part of the MVC triad. As your application 
-gets bigger and more complicated, you'll need to find solutions to 
+But it does only supply the V part of the MVC triad. As your application 
+gets bigger and more complicated, you *will* need to find solutions to 
 questions in the M and C realms. 
 
 Questions like "where do I put control logic?".

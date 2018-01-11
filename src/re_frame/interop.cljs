@@ -38,7 +38,9 @@
   (js/setTimeout f ms))
 
 (defn now []
-  (if (exists? js/performance.now)
+  (if (and
+       (exists? js/performance)
+       (exists? js/performance.now))
     (js/performance.now)
     (js/Date.now)))
 
