@@ -11,8 +11,9 @@ is small and simple, then standalone Reagent is a fine choice.
 But it does only supplies the V part of the MVC triad. As your application 
 gets bigger and more complicated, you'll need to find solutions to 
 questions in the M and C realms. 
+
 Questions like "where do I put control logic?".
-And, "how do I store and update state?".  
+And, "how do I store and update state?".
 And, "how should new websocket packets be communicated with the broader app"? Or GET failures? 
 And, "how do I put up a spinner
 when waiting for CPU intensive computations to run, while allowing the user to press Cancel?"
@@ -39,12 +40,12 @@ architecture. I like mine!". Fair enough - its a fun ride!
 
 Problems arise ONLY when this process is not conscious and purposeful. It is a 
 credit to Reagent that you can accelerate quickly and get a bunch of enjoyable 
-early wins. But you can equally end up off the road, in a ditch, because of 
-the twists and turns leading up to a larger application.
+early wins. But, equally, that acceleration can have you off the road
+in a ditch because there are twists and turns on the way to a larger application.
 
-I've had many people (20?) privately say to me that's what happened to them. The real
-number would obviously be much higher. And that's pretty much the reason for
-this FAQ - this happens a bit too often.
+I've had many people (20?) privately say to me that's what happened to them. 
+And that's pretty much the reason for this FAQ - this happens a bit too often
+and there been a bit too much pain.
 
 So, my advice is ... if your application is a little more complicated,
 be sure to make a conscious choice around architecture. Don't think 
