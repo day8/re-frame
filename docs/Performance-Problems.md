@@ -1,19 +1,5 @@
 ## Eek! Performance Problems
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [1. Is It The `debug` Interceptor?](#1-is-it-the-debug-interceptor)
-- [2. `=` On Big Structures](#2--on-big-structures)
-  - [An Example Of Problem 2](#an-example-of-problem-2)
-  - [Solutions To Problem 2](#solutions-to-problem-2)
-- [3. Are you Using a React `key`?](#3-are-you-using-a-react-key)
-- [4. Callback Functions](#4-callback-functions)
-- [A Weapon](#a-weapon)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## 1. Is It The `debug` Interceptor?
 
 This first one is something of a non-problem. 
@@ -155,12 +141,12 @@ But like I say, don't be too paranoid about this, it is unlikely
 to be an issue unless you have something like a table with a 
 lot of identical cells.
 
-## Use The Trace, Luke
+## Use The Trace
 
-If you want to really track down what is going on, Luke, take advice from Edna Mode and get some X-Ray vision
-from the [official tracer](https://github.com/Day8/re-frame-trace). But, no capes!
+If you want to know exactly what's going on, get some X-Ray vision
+from the [official tracer](https://github.com/Day8/re-frame-trace). See exactly what subscriptions are running, what views are getting re-rendered, etc.
 
-Er, except, it is still a WIP.  So, yeah, some overhyping in the previous paragraph. But, anyway, you may be surprised by what the trace tells you.
+You may be surprised by what you see.
 
 ## The Old Weapon
 
@@ -174,4 +160,8 @@ Chrome devtools to take masses of RAM.  So you may want to selectively
 add tracing when poking about. 
 
 
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
