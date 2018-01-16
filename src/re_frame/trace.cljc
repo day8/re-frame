@@ -53,14 +53,14 @@
 
 (def run-tracing-callbacks!
   (debounce
-    (fn []
+    (fn tracing-cb-debounced []
       (doseq [[k cb] @trace-cbs]
         (try (cb @traces)
              #?(:clj (catch Exception e
                        (console :error "Error thrown from trace cb" k "while storing" @traces e)))
              #?(:cljs (catch :default e
-                        (console :error "Error thrown from trace cb" k "while storing" @traces e))))
-        (reset! traces [])))
+                        (console :error "Error thrown from trace cb" k "while storing" @traces e)))))
+      (reset! traces []))
     50))
 
 
