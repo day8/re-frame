@@ -176,7 +176,7 @@
     (sequential? signals) (map f signals)
     (map? signals) (map-vals f signals)
     (deref? signals) (f signals)
-    :else nil))
+    :else '()))
 
 (defn to-seq
   "Coerces x to a seq if it isn't one already"
@@ -188,8 +188,11 @@
 (defn- deref-input-signals
   [signals query-id]
   (let [dereffed-signals (map-signals deref signals)]
-    (when (nil? dereffed-signals)
-      (console :error "re-frame: in the reg-sub for " query-id ", the input-signals function returns:" signals))
+    (cond
+      (sequential? signals) (map deref signals)
+      (map? signals) (map-vals deref signals)
+      (deref? signals) (deref signals)
+      :else (console :error "re-frame: in the reg-sub for" query-id ", the input-signals function returns:" signals))
     (trace/merge-trace! {:tags {:input-signals (doall (to-seq (map-signals reagent-id signals)))}})
     dereffed-signals))
 
