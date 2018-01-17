@@ -71,7 +71,7 @@
              (doseq [[effect-key effect-value] (:effects context)]
                (if-let [effect-fn (get-handler kind effect-key false)]
                  (effect-fn effect-value)
-                 (console :error "re-frame: no handler registered for effect: \"" effect-key "\". Ignoring."))))))
+                 (console :error "re-frame: no handler registered for effect:" effect-key ". Ignoring."))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 

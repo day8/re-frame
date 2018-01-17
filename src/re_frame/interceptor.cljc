@@ -20,7 +20,7 @@
     (if-let [unknown-keys (seq (set/difference
                                 (-> m keys set)
                                 mandatory-interceptor-keys))]
-      (console :error "re-frame: ->interceptor " m " has unknown keys:" unknown-keys)))
+      (console :error "re-frame: ->interceptor" m "has unknown keys:" unknown-keys)))
   {:id     (or id :unnamed)
    :before before
    :after  after })

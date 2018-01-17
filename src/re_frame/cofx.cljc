@@ -85,7 +85,7 @@
                [context]
                (if-let [handler (get-handler kind id)]
                  (update context :coeffects handler)
-                 (console :error "No cofx handler registered for \"" id "\"")))))
+                 (console :error "No cofx handler registered for" id)))))
   ([id value]
    (->interceptor
      :id     :coeffects
@@ -93,7 +93,7 @@
                 [context]
                 (if-let [handler (get-handler kind id)]
                   (update context :coeffects handler value)
-                  (console :error "No cofx handler registered for \"" id "\""))))))
+                  (console :error "No cofx handler registered for" id))))))
 
 
 ;; -- Builtin CoEffects Handlers  ---------------------------------------------

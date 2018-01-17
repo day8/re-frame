@@ -129,7 +129,7 @@
          (trace/merge-trace! {:tags {:cached? false}})
          (if (nil? handler-fn)
            (do (trace/merge-trace! {:error true})
-               (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
+               (console :error (str "re-frame: no subscription handler registered for:" query-id ". Returning a nil subscription.")))
            (cache-and-return query [] (handler-fn app-db query)))))))
 
   ([query dynv]
@@ -150,7 +150,7 @@
              (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom:" not-reactive)))
          (if (nil? handler-fn)
            (do (trace/merge-trace! {:error true})
-               (console :error (str "re-frame: no subscription handler registered for: \"" query-id "\". Returning a nil subscription.")))
+               (console :error (str "re-frame: no subscription handler registered for:" query-id ". Returning a nil subscription.")))
            (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
                  sub      (make-reaction (fn [] (handler-fn app-db query @dyn-vals)))]
              ;; handler-fn returns a reaction which is then wrapped in the sub reaction
@@ -189,7 +189,7 @@
   [signals query-id]
   (let [dereffed-signals (map-signals deref signals)]
     (when (nil? dereffed-signals)
-      (console :error "re-frame: in the reg-sub for " query-id ", the input-signals function returns: " signals))
+      (console :error "re-frame: in the reg-sub for " query-id ", the input-signals function returns:" signals))
     (trace/merge-trace! {:tags {:input-signals (doall (to-seq (map-signals reagent-id signals)))}})
     dereffed-signals))
 

@@ -21,14 +21,14 @@
       (make-chain interceptors)
       (do    ;; do a whole lot of development time checks
         (when-not (coll? interceptors)
-          (console :error "re-frame: when registering " id ", expected a collection of interceptors, got: " interceptors))
+          (console :error "re-frame: when registering" id ", expected a collection of interceptors, got:" interceptors))
         (let [chain (make-chain interceptors)]
           (when (empty? chain)
-            (console :error "re-frame: when registering " id ", given an empty interceptor chain"))
+            (console :error "re-frame: when registering" id ", given an empty interceptor chain"))
           (when-let [not-i (first (remove interceptor/interceptor? chain))]
             (if (fn? not-i)
-              (console :error "re-frame: when registering " id ", got a function instead of an interceptor. Did you provide old style middleware by mistake? Got: " not-i)
-              (console :error "re-frame: when registering " id ", expected interceptors, but got: " not-i)))
+              (console :error "re-frame: when registering" id ", got a function instead of an interceptor. Did you provide old style middleware by mistake? Got:" not-i)
+              (console :error "re-frame: when registering" id ", expected interceptors, but got:" not-i)))
           chain)))))
 
 
@@ -56,7 +56,7 @@
   (let [event-id  (first-in-vector event-v)]
     (if-let [interceptors  (get-handler kind event-id true)]
       (if *handling*
-        (console :error "re-frame: while handling \"" *handling* "\", dispatch-sync was called for \"" event-v "\". You can't call dispatch-sync within an event handler.")
+        (console :error "re-frame: while handling" *handling* ", dispatch-sync was called for" event-v ". You can't call dispatch-sync within an event handler.")
         (binding [*handling*  event-v]
           (trace/with-trace {:operation event-id
                              :op-type   kind
