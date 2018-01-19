@@ -24,6 +24,7 @@
 
 (def trace-cbs (atom {}))
 (defonce traces (atom []))
+(defonce next-delivery (atom 0))
 
 (defn register-trace-cb
   "Registers a tracing callback function which will receive a collection of one or more traces.
@@ -47,11 +48,25 @@
    :child-of  (or child-of (:id *current-trace*))
    :start     (interop/now)})
 
+;; On debouncing
+;;
+;; We debounce delivering traces to registered cbs so that
+;; we can deliver them in batches. This aids us in efficiency
+;; but also importantly lets us avoid slowing down the host
+;; application by running any trace code in the critical path.
+;;
+;; We add a lightweight check on top of goog.functions/debounce
+;; to avoid constant setting and cancelling of timeouts. This
+;; means that we will deliver traces between 10-50 ms from the
+;; last trace being created, which still achieves our goals.
+
+(def debounce-time 50)
+
 (defn debounce [f interval]
   #?(:cljs (goog.functions/debounce f interval)
      :clj  (f)))
 
-(def run-tracing-callbacks!
+(def schedule-debounce
   (debounce
     (fn tracing-cb-debounced []
       (doseq [[k cb] @trace-cbs]
@@ -61,8 +76,21 @@
              #?(:cljs (catch :default e
                         (console :error "Error thrown from trace cb" k "while storing" @traces e)))))
       (reset! traces []))
-    50))
+    debounce-time))
 
+(defn run-tracing-callbacks! [now]
+  ;; Optimised debounce, we only re-debounce
+  ;; if we are close to delivery time
+  ;; to avoid constant setting and cancelling
+  ;; timeouts.
+
+  ;; If we are within 10 ms of next delivery
+  (when (< (- @next-delivery 10) now)
+    (schedule-debounce)
+    ;; The next-delivery time is not perfectly accurate
+    ;; as scheduling the debounce takes some time, but
+    ;; it's good enough for our purposes here.
+    (reset! next-delivery (+ now debounce-time))))
 
 (macros/deftime
   (defmacro finish-trace [trace]
@@ -72,7 +100,7 @@
           (swap! traces conj (assoc ~trace
                                :duration duration#
                                :end (interop/now)))
-          (run-tracing-callbacks!))))
+          (run-tracing-callbacks! end#))))
 
  (defmacro with-trace
      "Create a trace inside the scope of the with-trace macro
