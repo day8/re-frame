@@ -1,17 +1,21 @@
-## Unreleased 
+## Unreleased
+
+## 0.10.3 (Unreleased)
 
 #### New
 
-  - add `purge-event-queue` to the API. See https://github.com/Day8/re-frame-test/issues/13 for motivation. 
+  - add `purge-event-queue` to the API. See https://github.com/Day8/re-frame-test/issues/13 for motivation.
   - added [a new FAQ entry](/docs/FAQs/DoINeedReFrame.md) Reagent looks terrific. Why do I need re-frame?
 
 #### Changed
 
   - Debounce trace callbacks to handle larger batches of traces at once, to improve efficiency.
+  - Improved error messages to not have multiple spaces before variables.
 
 #### Fixed
 
   - Handle js/performance not being defined in NodeJS. [#439](https://github.com/Day8/re-frame/pull/439)
+  - Improve cache eviction behaviour of subscription caches. In more complex applications a subscription may have been unnecessarily created and destroyed several times after a Figwheel re-render.
 
 ## 0.10.2  (2017.10.07)
 
@@ -38,19 +42,19 @@
   - added [API documentation](/docs/API.md)
   - added [testing docs](/docs/Testing.md)
   - added [a new mental model](/docs/MentalModelOmnibus.md#on-dsls-and-machines)
-  - added [a new FAQ entry](/docs/FAQs/When-Does-Dispatch-Happen.md) on dispatch processing 
+  - added [a new FAQ entry](/docs/FAQs/When-Does-Dispatch-Happen.md) on dispatch processing
   - added [a new FAQ entry](/docs/FAQs/DB_Normalisation.md) on representing normalised data in `app-db`
   - added [a new FAQ entry](/docs/FAQs/GlobalInterceptors.md) on how to register a global interceptor
-  
+
 #### Breaking
 
   - [#357](https://github.com/Day8/re-frame/pull/357)
-    I'd be amazed if this actually broke any apps. Shocked! But, better safe than sorry. 
+    I'd be amazed if this actually broke any apps. Shocked! But, better safe than sorry.
     The effect handler for `:db` has changed: if the new value provided tests
-    `identical?` to the existing value within `app-db`, then `app-db` is not `reset!`. 
-    Previously, `app-db` was always `reset!` irrespective, 
-    which potentially caused Layer 2 subscriptions to run unnecessarily. So this is a tiny 
-    efficiency change in this edge case, and it results in behaviour that better matches 
+    `identical?` to the existing value within `app-db`, then `app-db` is not `reset!`.
+    Previously, `app-db` was always `reset!` irrespective,
+    which potentially caused Layer 2 subscriptions to run unnecessarily. So this is a tiny
+    efficiency change in this edge case, and it results in behaviour that better matches
     programmer intuitions.
 
 #### Minor Fixes and Improvements
