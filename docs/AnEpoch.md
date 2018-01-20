@@ -1,6 +1,3 @@
-## A re-frame Epoch
-
-The following graphic shows, operationally, how the dominoes play out, over time, within the browser.  
 
 <img src="/images/epoch.png?raw=true">
 
