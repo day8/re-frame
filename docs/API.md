@@ -105,9 +105,9 @@ usage:
 
 *** 
 
-Previous:  [First Code Walk-Through](CodeWalkthrough.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Previous:  [Infographic: A re-frame Epoch](AnEpoch.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next: [Mental Model Omnibus](MentalModelOmnibus.md)
+Next: [Infographic: Event Processing](EventHandlingInfographic.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

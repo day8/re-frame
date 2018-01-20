@@ -2,11 +2,12 @@
 * First, read this repo's [README](../README.md)
 * [app-db (Application State)](ApplicationState.md)
 * [First Code Walk-Through](CodeWalkthrough.md)
+* [Infographic: A re-frame Epoch](AnEpoch.md)
 * [The API](API.md)
 * [An alternative, all-dominoes overview of re-frame by purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/)
 
 ## Dominoes 2 & 3  (event, effect and coeffect handling)
-* [Infographic Overview](EventHandlingInfographic.md)
+* [Infographic: Event Processing](EventHandlingInfographic.md)
 * [Effectful Handlers](EffectfulHandlers.md)
 * [Interceptors](Interceptors.md)
 * [Effects](Effects.md)
@@ -14,7 +15,7 @@
 
 ## Domino 4 (Subscriptions)
 
-  * [Infographic](SubscriptionInfographic.md)
+  * [Infographic: Subscriptions and The Signal Graph](SubscriptionInfographic.md)
   * [Correcting a wrong](SubscriptionsCleanup.md)
   * [Flow Mechanics](SubscriptionFlow.md)
 
@@ -34,9 +35,10 @@
 
 ## Deepen/Broaden Your Understanding
 
+* [Mental Model Omnibus](MentalModelOmnibus.md)
 * [External Resources - including example apps](External-Resources.md)
 * [FAQs](FAQs/README.md)
-* [Mental Model Omnibus](MentalModelOmnibus.md)
+
 
 
 ## App Structure
