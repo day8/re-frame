@@ -1,12 +1,14 @@
 ## Unreleased
 
-## 0.10.3 (Unreleased)
+
+
+## 0.10.3 (2018.01.24)
 
 #### New
 
   - add `purge-event-queue` to the API. See https://github.com/Day8/re-frame-test/issues/13 for motivation.
   - added [a new FAQ entry](/docs/FAQs/DoINeedReFrame.md) Reagent looks terrific. Why do I need re-frame?
-  - added [a new Inforgraphic](/docs/AnEpoch.md) explaining how dominoes play out over time in the browser?
+  - added [a new Infographic](/docs/AnEpoch.md) explaining how dominoes play out over time in the browser
 
 #### Changed
 
