@@ -1,6 +1,12 @@
 ## Unreleased
 
 
+## 0.10.4 (2018.01.31)
+
+#### Changed
+
+- Interceptors, effects, and coeffects are now captured in re-frame's tracing.
+
 
 ## 0.10.3 (2018.01.24)
 

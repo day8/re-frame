@@ -2,6 +2,7 @@
   (:require
     [re-frame.loggers :refer [console]]
     [re-frame.interop :refer [empty-queue debug-enabled?]]
+    [re-frame.trace :as trace :include-macros true]
     [clojure.set :as set]))
 
 
@@ -192,6 +193,8 @@
    already done.  In advanced cases, these values can be modified by the
    functions through which the context is threaded."
   [event-v interceptors]
+  (trace/merge-trace!
+    {:tags {:interceptors interceptors}})
   (-> (context event-v interceptors)
       (invoke-interceptors :before)
       change-direction
