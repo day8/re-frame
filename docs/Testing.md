@@ -163,7 +163,7 @@ force immediate handling of events, rather than queuing.
 Notes:
   1. we use `dispatch-sync` because `dispatch` is async (event is handled not now, but soon)
   2. Not pure. We are choosing to mutate the global `app-db`. But
-     having said that, there's something about this approach with is remarkably
+     having said that, there's something about this approach which is remarkably
      pragmatic.
   2. the **setup** is now very natural. The associated handlers can be either `-db` or `-fx`
   3. if the handlers have effects other than just updating app-db, we might need to stub out XXX
@@ -267,22 +267,22 @@ But what if the View Function has a subscription?
 The use of `subscribe` makes the function impure (it obtains data from places other than its args).
 
 A testing plan might be:
-  1. setup  `app-db` with some values in the right places  (via dispatch of events?)
+  1. setup `app-db` with some values in the right places  (via dispatch of events?)
   2. call `my-view` (with a parameter) which will return hiccup
   3. check the hiccup structure for correctness.
 
 Continuing on, in a second phase you could then:
 
   5. change the value in `app-db`  (which will cause the subscription to fire)
-  6. call view functions again (hiccup returned).
-  7. check the new hiccup for correctness
+  6. call view functions again (hiccup returned)
+  7. check the new hiccup for correctness.
 
 Which is all possible, if a little messy.
 
 ## View Functions - Part 2B
 
 There is a pragmatic method available to handle the impurity: use `with-redefs`
-to stub out `subscribe`.  Like this:
+to stub out `subscribe`. Like this:
 
 ```clj
 (defn subscription-stub [x]
@@ -304,7 +304,7 @@ to render the component in the browser and validate the generated DOM.
 
 Or ... there is another option: you can structure in the first place for pure view functions.
 
-The trick here is to create an outer and inner component.  The outer sources the data
+The trick here is to create an outer and inner component. The outer sources the data
 (via a subscription), and passes it onto the inner as props (parameters).
 
 As a result, the inner component, which does the testable work, is pure and
