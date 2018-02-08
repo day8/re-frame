@@ -38,6 +38,7 @@ Please add to this list by submitting a pull request.
 * [status-react](https://github.com/status-im/status-react) - A mobile OS for Ethereum. Server, SPA + React Native App
 * [Catlantis](https://github.com/madvas/catlantis) - React Native App about cats
 * [Lymchat](https://github.com/tiensonqin/lymchat) - React Native App to learn different cultures
+* [ventas](https://github.com/JoelSanchez/ventas) - Ecommerce platform made with a full-clojure stack
 
 ### Effect and CoEffect Handlers
 
@@ -98,6 +99,8 @@ Please add to this list by submitting a pull request.
 * [Server Side Rendering with re-frame](http://davidtanzer.net/server_side_rendering_with_re_frame) - Blog post on rendering re-frame views with Clojure.
 
 * [Rendering Reagent on the Server Using Hiccup](http://yogthos.net/posts/2015-11-24-Serverside-Reagent.html)- Blog post on rendering Reagent with Clojure.
+
+* [Prerendering a re-frame app with Chrome Headless](https://medium.com/@joelsanchezclj/prerendering-a-re-frame-app-with-chrome-headless-bb875de31fd0) - Blog post on prerendering a re-frame app using [etaoin](https://github.com/igrishaev/etaoin) and Chrome Headless.
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
