@@ -1,5 +1,8 @@
-## Unreleased
+## 0.10.5 (Unreleased)
 
+#### Changed
+
+- Event handlers and fx are now traced, to provide more granular timing info in re-frame-trace. This has no impact on your code execution if you haven't [enabled tracing](https://github.com/Day8/re-frame-trace#installation).
 
 ## 0.10.4 (2018.01.31)
 
@@ -217,7 +220,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
   - the undo/redo features buried in re-frame has been factored out into
    [a standalone library](https://github.com/Day8/re-frame-undo).
 
-    undo and redo have been a part of re-frame from the beginning, but they have never officially  
+    undo and redo have been a part of re-frame from the beginning, but they have never officially
     been made a part of the API, and have not been documented. So it nice to see it available, and fully
     documented.
 
@@ -234,7 +237,7 @@ Joking aside, this is a substantial release which will change how you use re-fra
     But recently @steveb8n gave a cljsyd talk on
     Pedestal's Interceptor pattern which suddenly transformed them from
     arcane to delightfully simple in 20 mins. Interceptors are
-    really "middleware via data" rather than "middleware via higher order functions".  
+    really "middleware via data" rather than "middleware via higher order functions".
     So it is another way of doing the same thing, but thanks to @steveb8n
     Interceptors appear a more flexible base, and simpler.
 

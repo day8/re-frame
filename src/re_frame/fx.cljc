@@ -6,7 +6,8 @@
     [re-frame.interop     :refer [set-timeout!]]
     [re-frame.events      :as events]
     [re-frame.registrar   :refer [get-handler clear-handlers register-handler]]
-    [re-frame.loggers     :refer [console]]))
+    [re-frame.loggers     :refer [console]]
+    [re-frame.trace :as trace :include-macros true]))
 
 
 ;; -- Registration ------------------------------------------------------------
@@ -68,10 +69,12 @@
     :id :do-fx
     :after (fn do-fx-after
              [context]
-             (doseq [[effect-key effect-value] (:effects context)]
-               (if-let [effect-fn (get-handler kind effect-key false)]
-                 (effect-fn effect-value)
-                 (console :error "re-frame: no handler registered for effect:" effect-key ". Ignoring."))))))
+             (trace/with-trace
+               {:op-type :event/do-fx}
+               (doseq [[effect-key effect-value] (:effects context)]
+                 (if-let [effect-fn (get-handler kind effect-key false)]
+                   (effect-fn effect-value)
+                   (console :error "re-frame: no handler registered for effect:" effect-key ". Ignoring.")))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 
