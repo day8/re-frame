@@ -1,3 +1,6 @@
+>  This page is now out of date.
+>  Google instead for `re-frame-trace` because it is now our recommeded tool. 
+
 ## Debugging
 
 This page describes a technique for 
