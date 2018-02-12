@@ -1,5 +1,7 @@
->  This page is now out of date.
->  Google instead for `re-frame-trace` because it is now our recommeded tool. 
+>  The methods described in this page are now out of date. Included for historical reasons only.  
+> [re-frame-trace](https://github.com/Day8/re-frame-trace) is now our recommeded tool. 
+
+---
 
 ## Debugging
 
