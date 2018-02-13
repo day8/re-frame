@@ -84,8 +84,8 @@
   ;; to avoid constant setting and cancelling
   ;; timeouts.
 
-  ;; If we are within 10 ms of next delivery
-  (when (< (- @next-delivery 10) now)
+  ;; If we are within 25 ms of next delivery
+  (when (< (- @next-delivery 25) now)
     (schedule-debounce)
     ;; The next-delivery time is not perfectly accurate
     ;; as scheduling the debounce takes some time, but
