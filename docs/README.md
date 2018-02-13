@@ -21,11 +21,7 @@
 
 ## Domino 5 (Reagent)
 
-  * [The Basics](https://github.com/Day8/re-frame/wiki#reagent-tutorials) (look at the bottom of that page)
-  * [Lambda Island Videos](https://lambdaisland.com/episodes). There's a 3 part series.
-  * [purelyfunctional.tv ](https://purelyfunctional.tv/guide/reagent/) - a written overview
-  * [Reagent Deep Dive Series from Timothy Pratley](http://timothypratley.blogspot.com.au/p/p.html)  four part series
-  * [Props, Children & Component Lifecycle](https://www.martinklepsch.org/posts/props-children-and-component-lifecycle-in-reagent.html) by Martin Klepsch
+All the material you need is [here](https://github.com/reagent-project/reagent/blob/master/docs/README.md).
 
 
 ## Commercial-Grade Video Training 
