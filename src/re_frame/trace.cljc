@@ -107,8 +107,8 @@
 
           Common keys for trace-opts
           :op-type - what kind of operation is this? e.g. :sub/create, :render.
-          :operation - identifier for the operation, for an subscription it would be the subscription keyword
-          tags - a map of arbitrary kv pairs"
+          :operation - identifier for the operation, for a subscription it would be the subscription keyword
+          :tags - a map of arbitrary kv pairs"
      [{:keys [operation op-type tags child-of] :as trace-opts} & body]
      `(if (is-trace-enabled?)
         (binding [*current-trace* (start-trace ~trace-opts)]
