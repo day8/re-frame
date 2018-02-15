@@ -145,13 +145,29 @@
           (interceptor/invoke-interceptors :before)
           interceptor/change-direction
           (interceptor/invoke-interceptors :after))
-      (is (= @after-db-val {:a 1})))))
+      (is (= @after-db-val {:a 1}))))
+  (testing "when db effect is falsey"
+    (let [ctx (context [:a :b] [] {:a 1})]
+      (-> ctx
+          (assoc-effect :db false)
+          ((:after (after (fn [db] (is (false? db)))))))
+      (-> ctx
+          (assoc-effect :db nil)
+          ((:after (after (fn [db] (is (nil? db))))))))))
 
 (deftest test-enrich
   (testing "when no db effect is returned"
     (let [ctx (context [] [] {:a 1})]
       (is (= ::not-found (get-effect ctx :db ::not-found)))
-      (-> ctx (:after (enrich (fn [db] (is (= db {:a 1})))))))))
+      (-> ctx ((:after (enrich (fn [db] (is (= db {:a 1})))))))))
+  (testing "when db effect is falsey"
+    (let [ctx (context [] [] {:a 1})]
+      (-> ctx
+          (assoc-effect :db false)
+          ((:after (enrich (fn [db] (is (false? db)))))))
+      (-> ctx
+          (assoc-effect :db nil)
+          ((:after (enrich (fn [db] (is (nil? db))))))))))
 
 (deftest test-update-coeffect
   (let [context {:effects {:db {:a 1}}

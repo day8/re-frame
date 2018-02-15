@@ -282,9 +282,10 @@
     :after (fn enrich-after
              [context]
              (let [event (get-coeffect context :event)
-                   db    (or (get-effect context :db)
-                             ;; If no db effect is returned, we provide the original coeffect.
-                             (get-coeffect context :db))]
+                   db    (if (contains? (get-effect context) :db)
+                           (get-effect context :db)
+                           ;; If no db effect is returned, we provide the original coeffect.
+                           (get-coeffect context :db))]
                (->> (f db event)
                     (assoc-effect context :db))))))
 
@@ -306,9 +307,11 @@
     :id    :after
     :after (fn after-after
              [context]
-             (let [db    (or (get-effect context :db)
-                             ;; If no db effect is returned, we provide the original coeffect.
-                             (get-coeffect context :db))
+             (let [db    (if (contains? (get-effect context) :db)
+                           (get-effect context :db)
+                           ;; If no db effect is returned, we provide the original coeffect.
+                           (get-coeffect context :db))
+
                    event (get-coeffect context :event)]
                (f db event)    ;; call f for side effects
                context))))     ;; context is unchanged
