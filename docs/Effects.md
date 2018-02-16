@@ -61,7 +61,7 @@ And the `:dispatch` `key` instructs that an event should be
 dispatched. The `value` is the vector to dispatch.
 
 There's many other possible
-effects, like for example `:dispatch-later` or `:set-local-store`.
+effects, like for example `:dispatch-later`, `dispatch-n`, `:set-local-store`, etc.
 
 And so on. And so on. Which brings us to a problem.
 
