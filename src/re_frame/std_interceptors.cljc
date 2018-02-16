@@ -281,13 +281,12 @@
     :id    :enrich
     :after (fn enrich-after
              [context]
-             (let [event (get-coeffect context :event)
-                   db    (if (contains? (get-effect context) :db)
-                           (get-effect context :db)
-                           ;; If no db effect is returned, we provide the original coeffect.
-                           (get-coeffect context :db))]
-               (->> (f db event)
-                    (assoc-effect context :db))))))
+             ;; enrich only when :db changes
+             (cond-> context
+               (contains? (get-effect context) :db)
+               (assoc-effect
+                :db
+                (f (get-effect context :db) (get-coeffect context :event)))))))
 
 
 
@@ -307,14 +306,10 @@
     :id    :after
     :after (fn after-after
              [context]
-             (let [db    (if (contains? (get-effect context) :db)
-                           (get-effect context :db)
-                           ;; If no db effect is returned, we provide the original coeffect.
-                           (get-coeffect context :db))
-
-                   event (get-coeffect context :event)]
-               (f db event)    ;; call f for side effects
-               context))))     ;; context is unchanged
+             ;; call f for side effects only when :db changes
+             (when (contains? (get-effect context) :db)
+               (f (get-effect context :db) (get-coeffect context :event)))
+             context)))     ;; context is unchanged
 
 
 (defn  on-changes

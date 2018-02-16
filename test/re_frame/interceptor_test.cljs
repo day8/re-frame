@@ -137,17 +137,14 @@
                 (get-effect :db ::not-found))))))
 
 (deftest test-after
-  (testing "when no db effect is returned"
-    (let [after-db-val (atom nil)]
-      (-> (context [:a :b]
-                   [(after (fn [db] (reset! after-db-val db)))]
-                   {:a 1})
-          (interceptor/invoke-interceptors :before)
-          interceptor/change-direction
-          (interceptor/invoke-interceptors :after))
-      (is (= @after-db-val {:a 1}))))
-  (testing "when db effect is falsey"
-    (let [ctx (context [:a :b] [] {:a 1})]
+  (let [ctx (context [] [] {:a 1})]
+    (testing "when no db effect is returned"
+      (is
+       (-> ctx
+           ;; assert after is not invoked
+           ((:after (after (fn [db] (is false)))))
+           (= ctx))))
+    (testing "when db effect is falsey"
       (-> ctx
           (assoc-effect :db false)
           ((:after (after (fn [db] (is (false? db)))))))
@@ -156,12 +153,14 @@
           ((:after (after (fn [db] (is (nil? db))))))))))
 
 (deftest test-enrich
-  (testing "when no db effect is returned"
-    (let [ctx (context [] [] {:a 1})]
-      (is (= ::not-found (get-effect ctx :db ::not-found)))
-      (-> ctx ((:after (enrich (fn [db] (is (= db {:a 1})))))))))
-  (testing "when db effect is falsey"
-    (let [ctx (context [] [] {:a 1})]
+  (let [ctx (context [] [] {:a 1})]
+    (testing "when no db effect is returned"
+      (is
+       (-> ctx
+           ;; assert enrich is not invoked
+           ((:after (enrich (fn [db] (is false)))))
+           (= ctx))))
+    (testing "when db effect is falsey"
       (-> ctx
           (assoc-effect :db false)
           ((:after (enrich (fn [db] (is (false? db)))))))
