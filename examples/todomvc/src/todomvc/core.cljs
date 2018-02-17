@@ -16,6 +16,13 @@
 (devtools/install!)       ;; we love https://github.com/binaryage/cljs-devtools
 (enable-console-print!)   ;; so that println writes to `console.log`
 
+
+;; Put an initial value into app-db.
+;; The event handler for `:initialise-db` can be found in `events.cljs`
+;; Using the sync version of dispatch means that value is in
+;; place before we go onto the next step.
+(dispatch-sync [:initialise-db])
+
 ;; -- Routes and History ------------------------------------------------------
 ;; Although we use the secretary library below, that's mostly a historical
 ;; accident. You might also consider using:
@@ -42,12 +49,6 @@
 ;;
 (defn ^:export main
   []
-  ;; Put an initial value into app-db.
-  ;; The event handler for `:initialise-db` can be found in `events.cljs`
-  ;; Using the sync version of dispatch means that value is in
-  ;; place before we go onto the next step.
-  (dispatch-sync [:initialise-db])
-
   ;; Render the UI into the HTML's <div id="app" /> element
   ;; The view function `todomvc.views/todo-app` is the
   ;; root view for the entire UI.
