@@ -98,17 +98,25 @@
 
   ;; the event handler (function) being registered
   (fn [{:keys [db local-store-todos]} _]                    ;; take 2 vals from coeffects. Ignore event vector itself.
-    {:db (assoc default-db :todos local-store-todos)}))     ;; all hail the new state
-
+    ;; initialise event may have been preceded by :set-showing on a route other
+    ;; than the default, so we merge with existing db to pick up that or any other db setting
+    ;; we might some day handle in router.
+    {:db (assoc (merge default-db db)
+           :todos local-store-todos)}))     ;; all hail the new state
 
 ;; usage:  (dispatch [:set-showing  :active])
 ;; This event is dispatched when the user clicks on one of the 3
-;; filter buttons at the bottom of the display.
+;; filter buttons at the bottom of the display, or by the router at page load time.
+;; In the latter case, this event will precede the :initialise-db event so we
+;; have to see to initialization ourselves by merging with default-db (or stop
+;; checking against our db spec, which gets upset by the missing :todos key if we
+;; just add :showing to the empty db at start-up.)
 (reg-event-db      ;; part of the re-frame API
   :set-showing     ;; event-id
   [check-spec-interceptor]
   (fn [db [_ new-filter-kw]]     ;; new-filter-kw is one of :all, :active or :done
-    (assoc db :showing new-filter-kw)))
+    (assoc (merge default-db db)
+      :showing new-filter-kw)))
 
 ;; NOTE: here is a rewrite of the event handler above using `path` and `trim-v`
 ;; These interceptors are useful, but they are an advanced topic.
