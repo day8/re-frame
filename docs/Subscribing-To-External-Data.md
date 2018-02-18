@@ -136,7 +136,7 @@ Enough fluffing about with words, here's a code sketch for our subscription hand
                             type
                             :on-success #(re-frame/dispatch [:write-to  [:some :path]]))]
          (reagent.ratom/make-reaction
-           (fn [] (get-in @app-db [:some :path] []))
+           (fn [] (get-in @app-db [:some :path]))
            :on-dispose #(do (terminate-items-query! query-token)
                             (re-frame/dispatch [:cleanup [:some :path]]))))))
 ```
