@@ -12,7 +12,7 @@
                 (when (seq v) (on-save v))
                 (stop))]
     (fn [props]
-      [:input (merge props
+      [:input (merge (dissoc props :on-save :on-stop :title)
                      {:type        "text"
                       :value       @val
                       :auto-focus  true
