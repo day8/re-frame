@@ -1,7 +1,8 @@
 ## Unreleased
 
 #### Fixed
-  - [#447](https://github.com/Day8/re-frame/issues/447) After interceptor runs against coeffect db if effect db is nil/false. 
+
+  - After interceptor now runs against effect db if effect db is nil/false. [#447](https://github.com/Day8/re-frame/issues/447) 
 
 ## 0.10.5 (2018.02.13)
 
