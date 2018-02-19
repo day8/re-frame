@@ -278,13 +278,13 @@
   each time. This may be a very satisfactory trade-off in many cases."
   [f]
   (->interceptor
-    :id    :enrich
+    :id :enrich
     :after (fn enrich-after
              [context]
              (let [event (get-coeffect context :event)
-                   db    (or (get-effect context :db)
-                             ;; If no db effect is returned, we provide the original coeffect.
-                             (get-coeffect context :db))]
+                   db    (if (contains? (:effects context) :db)
+                           (get-effect context :db) ;; If no db effect is returned, we provide the original coeffect.
+                           (get-coeffect context :db))]
                (->> (f db event)
                     (assoc-effect context :db))))))
 
@@ -303,15 +303,15 @@
      - `f` writes to localstorage."
   [f]
   (->interceptor
-    :id    :after
+    :id :after
     :after (fn after-after
              [context]
-             (let [db    (or (get-effect context :db)
-                             ;; If no db effect is returned, we provide the original coeffect.
-                             (get-coeffect context :db))
-                   event (get-coeffect context :event)]
-               (f db event)    ;; call f for side effects
-               context))))     ;; context is unchanged
+             (let [db    (if (contains? (:effects context) :db)
+                           (get-in context [:effects :db])
+                           (get-in context [:coeffects :db]))
+                   event (get-in context [:coeffects :event])]
+               (f db event) ;; call f for side effects
+               context)))) ;; context is unchanged
 
 
 (defn  on-changes

@@ -145,7 +145,27 @@
           (interceptor/invoke-interceptors :before)
           interceptor/change-direction
           (interceptor/invoke-interceptors :after))
-      (is (= @after-db-val {:a 1})))))
+      (is (= @after-db-val {:a 1}))))
+  (testing "when a false db effect is returned"
+    (let [after-db-val (atom :not-reset)]
+      (-> (context [:a :b]
+                   [(after (fn [db] (reset! after-db-val db)))]
+                   {:a 2})
+          (assoc-effect :db nil)
+          (interceptor/invoke-interceptors :before)
+          interceptor/change-direction
+          (interceptor/invoke-interceptors :after))
+      (is (= @after-db-val nil))))
+  (testing "when a nil db effect is returned"
+    (let [after-db-val (atom :not-reset)]
+      (-> (context [:a :b]
+                   [(after (fn [db] (reset! after-db-val db)))]
+                   {:a 3})
+          (assoc-effect :db false)
+          (interceptor/invoke-interceptors :before)
+          interceptor/change-direction
+          (interceptor/invoke-interceptors :after))
+      (is (= @after-db-val false)))))
 
 (deftest test-enrich
   (testing "when no db effect is returned"
