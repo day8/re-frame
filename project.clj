@@ -9,7 +9,7 @@
                  [org.clojure/tools.logging  "0.3.1"]]
 
   :profiles {:debug {:debug true}
-             :dev   {:dependencies [[karma-reporter            "1.0.1"]
+             :dev   {:dependencies [[karma-reporter            "3.0.0-alpha1"]
                                     [binaryage/devtools        "0.9.4"]]
                      :plugins      [[lein-ancient              "0.6.10"]
                                     [lein-cljsbuild            "1.1.5"]
