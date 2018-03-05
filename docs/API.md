@@ -50,6 +50,14 @@ usage:
 
 Which means: in 200ms do this: `(dispatch [:event-id "param"])` and in 100ms ...
 
+Note: nil entries in the collection are ignored which means events can be added
+conditionally:
+
+```clj
+{:dispatch-later [ (when (> 3 5) {:ms 200 :dispatch [:conditioned-out]})
+                   {:ms 100 :dispatch [:another-one]}]}
+```
+
 *** 
 
 #### :dispatch

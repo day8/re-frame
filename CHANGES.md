@@ -3,6 +3,7 @@
 #### Fixed
 
   - After interceptor now runs against effect db if effect db is nil/false. [#447](https://github.com/Day8/re-frame/issues/447) 
+  - The effect handler for `:dispatch-later` will now ignore `nils`. [#455](https://github.com/Day8/re-frame/issues/455)
 
 ## 0.10.5 (2018.02.13)
 
