@@ -21,7 +21,7 @@
 
 ## Domino 5 (Reagent)
 
-All the material you need is [here](https://github.com/reagent-project/reagent/blob/master/docs/README.md).
+All the material you need is [here, in Reagent's /docs](https://github.com/reagent-project/reagent/blob/master/docs/README.md).
 
 
 ## Commercial-Grade Video Training 
