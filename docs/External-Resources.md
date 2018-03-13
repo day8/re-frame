@@ -53,6 +53,7 @@ Please add to this list by submitting a pull request.
 * [re-frame-storage](https://github.com/akiroz/re-frame-storage) - Local Storage based persistence
 * [re-frame-storage-fx](https://github.com/deg/re-frame-storage-fx) - Another take on Local Storage persistence
 * [re-frame-firebase](https://github.com/deg/re-frame-firebase) - Firebase DB API
+* [sse-fx](https://github.com/yetanalytics/sse-fx) - fx/cofx handlers for [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) and SSE
 
 ### Routing
 
