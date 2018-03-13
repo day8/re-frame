@@ -96,7 +96,7 @@
 (reg-fx
   :dispatch-later
   (fn [value]
-    (doseq [{:keys [ms dispatch] :as effect} (filter nil? value)]
+    (doseq [{:keys [ms dispatch] :as effect} (remove nil? value)]
         (if (or (empty? dispatch) (not (number? ms)))
           (console :error "re-frame: ignoring bad :dispatch-later value:" effect)
           (set-timeout! #(router/dispatch dispatch) ms)))))
