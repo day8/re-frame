@@ -23,7 +23,7 @@
 
 (deftest dispatch-later
   (let [seen-events (atom [])]
-    ;; Setup and excercise effects handler with :dispatch-later.
+    ;; Setup and exercise effects handler with :dispatch-later.
     (re-frame/reg-event-fx
       ::later-test
       (fn [_world _event-v]
