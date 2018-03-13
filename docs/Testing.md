@@ -144,7 +144,7 @@ There is further variation which is quite general but not as pure.
 During test **setup** we could literally just `dispatch` the events
 which would put `app-db` into the right state.
 
-Except, we'd have to use `dispatch-sysnc` rather `dispatch` to
+Except, we'd have to use `dispatch-sync` rather `dispatch` to
 force immediate handling of events, rather than queuing.
 
 ```clj
