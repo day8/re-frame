@@ -19,6 +19,10 @@
 
 (defn ^boolean is-trace-enabled?
   "See https://groups.google.com/d/msg/clojurescript/jk43kmYiMhA/IHglVr_TPdgJ for more details"
+  ;; We can remove this extra step of type hinting indirection once our minimum CLJS version includes
+  ;; https://dev.clojure.org/jira/browse/CLJS-1439
+  ;; r1.10.63 is the first version with this:
+  ;; https://github.com/clojure/clojurescript/commit/9ec796d791b1b2bd613af2f62cdecfd25caa6482
   []
   trace-enabled?)
 
