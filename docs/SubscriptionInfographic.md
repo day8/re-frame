@@ -53,17 +53,20 @@ When a ViewFunction uses a subscription, the graph of nodes needed to service
 that subscription will be created and, later, when the ViewFunction is destroyed 
 that part of the graph will also be destroyed (unless used for other purposes). 
 
-## Infographic and Code
+## An Infographic Depiction 
 
-There's now two things to do: 
-
-  - **First**, look at the Infographic below. Please be sure to read it carefully
-    because it contains important information.  
-
-  - **Then**, please read through the annotated subscription
-    code [in the todomvc example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs).
+Please read the following infographic carefully
+because it contains important notes.
 
 <img src="/images/subscriptions.png?raw=true">
+
+## Example Use 
+
+To see `reg-sub` used in a real application, please read through the 
+heavily commented subscription code
+[in the todomvc example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs).
+
+
 
 *** 
 
