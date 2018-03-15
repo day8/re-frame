@@ -1,60 +1,57 @@
 ## Subscriptions 
 
-A re-frame app is 75% derived data. `app-db` is the root, authoratative
-source of data but radiating from it is a graph of derived data.
+A re-frame app is 75% derived data. 
 
-Ultimately, the leaf nodes of this graph are ViewFunctions
-which compute hiccup (more data) which is rendered into the application's UI.   
-But sitting within the graph, between the 
-root and these leaves, are intermediate computational 
-nodes supplied by subscriptions, which produce (more data) "materialsed views"
-of `app-db`. 
+`app-db` is the root, authoratative source of data but radiating 
+from it is a graph of nodes all computing derived data. Ultimately, the leaf nodes of 
+this graph are ViewFunctions which compute hiccup (yes, derived data)
+which is rendered into the application's UI. But sitting within
+the graph, between the root and these leaves, are intermediate
+computational nodes supplied by subscriptions which compute 
+materialised views of the data in `app-db`.
 
 ## The Domino Narative
 
-In terms of the dominos narative, subscriptions are domino 4, 
+In terms of the dominos narative, subscriptions are domino 4,
 and the leaf View Functions are domino 5. For tutorial purposes, 
-we distinguishthem - they serve different needs - but 
-keep in mind they are, conceptually, all nodes in the same graph.
+we distinguish them - they serve different purposes - but 
+they are, conceptually, all nodes in the same graph.
 
-## Subscriptions
+## Graph Shapes
 
-In the simplest version of a graph, subscriptions simply extract 
-data from `app-db`, which then flows on into ViewFunctions unchanged. 
-So what get delivered to the ViewFunctions is exactly what's in `app-db`.
+In the simplest version of a graph, subscriptions simply extract
+some part of the data in `app-db`, which then flows on into 
+ViewFunctions unchanged.
 
 In more complex examples, subscriptions are 
 layered, with some obtaining data from one or more other 
-subscriptions, and each node in the graph does further computations 
-to produce materialised views of the data currently in `app-db`. What 
-the ViewFunctions eventually recieve is a highly processed version of what's
-in `app-db`. 
+subscriptions, before a ViewFunctions eventually recieve 
+highly processed versions of what's in `app-db`. 
 
 ## The Layers
 
 The layers in this graph are as follows: 
-   - layer 1 is the root node, `app-db`
-   - layer 2 subsrcitpions take data directly from `app-db`
-   - layer 3 subsrciptions take data only from other subsciptions (not `app-db`)
-   - layer 4 the view functions 
+   - layer 1 is the root node, `app-db`. 
+   - layer 2 subscriptions extract data directly from `app-db`.
+   - layer 3 subscriptions obtain data from other subsciptions (not `app-db`), and compute derived data.
+   - layer 4 the view functions which compute hiccup (more derived data)
 
-As we'll see soon, there's good reasons to distinguish between layer 2 (extractor) 
+As we'll see soon, there's efficency reasons to distinguish between layer 2 (extractor) 
 and layer 3 (materialised view).
 
 ## reg-sub 
 
-As we have already seen, subscription handlers are registered via `reg-sub`. 
+Subscription handlers are registered using `reg-sub`. 
  
 But note: just because you register a handler doesn't mean that node exists in 
-the graph. You are simply defining what would happen if ever the node was needed. 
+the graph. You are only defining how the node would compute if it was needed. 
 
-Nodes in the signal graph are created and destroyed according to the demands  
+Nodes in the signal graph are created and destroyed according to the demands
 of (leaf) ViewFunction nodes. 
 
-When a ViewFunction uses a subscription whatever nodes are needed to service
-that subscription will be created, and when the ViewFunction is destroyed 
-that part of the graph servicing that need will be destroyed (unless used 
-for other purposes). 
+When a ViewFunction uses a subscription, the graph of nodes needed to service
+that subscription will be created and, later, when the ViewFunction is destroyed 
+that part of the graph will also be destroyed (unless used for other purposes). 
 
 ## Infographic and Code
 
