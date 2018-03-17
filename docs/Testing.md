@@ -42,7 +42,7 @@ First, create a named event handler using `defn` like this:
 
 ```clj
 (defn select-triangle
-  [db [_ triangle-id]
+  [db [_ triangle-id]]
   ... return a modified version of db)
 ```
 
