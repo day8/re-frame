@@ -75,7 +75,7 @@ Please add to this list by submitting a pull request.
 #### Debugging
 
 
-* [re-frame-trace](https://github.com/Day8/re-frame-trace) - A debugging dashboard for re-frame
+* [re-frame-10x](https://github.com/Day8/re-frame-10x) - A debugging dashboard for re-frame
 * [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
 
 #### React Native
