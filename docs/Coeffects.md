@@ -5,45 +5,47 @@ This tutorial explains `coeffects`.
 It explains what they are, how they can be "injected", and how
 to manage them in tests.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- ## Table Of Contents -->
-
-<!-- - [What Are They?](#what-are-they) -->
-<!-- - [An Example](#an-example) -->
-<!-- - [How We Want It](#how-we-want-it) -->
-<!-- - [Abracadabra](#abracadabra) -->
-<!-- - [Which Interceptors?](#which-interceptors) -->
-<!-- - [`inject-cofx`](#inject-cofx) -->
-<!-- - [More `inject-cofx`](#more-inject-cofx) -->
-<!-- - [Meet `reg-cofx`](#meet-reg-cofx) -->
-<!-- - [Example Of `reg-cofx`](#example-of-reg-cofx) -->
-<!-- - [Another Example Of `reg-cofx`](#another-example-of-reg-cofx) -->
-<!-- - [Secret Interceptors](#secret-interceptors) -->
-<!-- - [Testing](#testing) -->
-<!-- - [The 5 Point Summary](#the-5-point-summary) -->
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## What Are They?
 
-`coeffects` are the data resources that an event handler needs
-to perform its computation.
+Event handlers compute how the world should change in response to an event and, to do that, 
+they need to first know the current state of the world. 
 
-Because the majority of event handlers only need `db` and
-`event`, there's a specific registration function, called `reg-event-db`,
-which delivers ONLY these two coeffects as arguments to an event
-handler, making this common case easy to program.
+`coeffects` is the current state of the world, as data, as presented to an event handler.
 
-But sometimes an event handler needs other data inputs
-to perform its computation.  Things like a random number, or a GUID,
-or the current datetime. Perhaps it needs access to a
+Many event handlers only need applicaton state to do their job - that's as much of "the world"
+as they need to know about. To make this common case easy to program, 
+there's a specific registration function, called `reg-event-db`,
+which delivers ONLY the coeffect `db` to the event handler  (and `event` of course). 
+
+Such an event handler will have this signature:
+```clj
+(fn [db event] 
+   ... return updated db)
+```
+
+But event handlers sometimes need to know more about the world OR have more inputs 
+than just application state. Sometimes they need "inputs" like a random number, or a GUID,
+or the current datetime. Perhaps they need access to LocalStore, or Cookies, or a
 DataScript connection.
 
+We refer to these inputs collectively as the event handler's `coeffects`.  When more than
+application state is needed, we use the registration function `reg-event-fx` and the event handler has
+a signature like this:
+```clj
+(fn [coeffects event]     ;; first arg is often abreviated to cofx 
+    ... return a map of effects)
+```
 
-##  An Example
+Notice how previously the first arg was `db` and now it is `coeffects`.  `coeffects` contains a 
+`:db` key which is the current application state. It is a superset of `db`. It is a bigger 
+world to compute against. 
+ 
+##  A Motivating Example
 
-This handler obtains data directly from LocalStore:
+Imagine you had an event handler which needed to "know" a value in LocalStore, in order to
+compute an event's effect. 
+
+It could be writen to access data directly from LocalStore:
 ```clj
 (reg-event-db
    :load-defaults
@@ -55,12 +57,13 @@ This handler obtains data directly from LocalStore:
 This works, but there's a cost.
 
 Because it has directly accessed LocalStore, this event handler is not
-pure, and impure functions cause well-documented paper cuts.
+pure, and impure functions cause well-documented paper cuts, and paper cuts
+have a way of accumulating non-linearly.
 
 ## How We Want It
 
-Our goal in this tutorial will be to rewrite this event handler so
-that it __only__ uses data from arguments. This will take a few steps.
+Our goal in this tutorial is to rewrite this event handler so
+that it __only__ uses data from arguments (coeffects!). This will take a few steps.
 
 The first is that we switch to
 using `reg-event-fx` (instead of `reg-event-db`).
@@ -91,7 +94,7 @@ Each time an event handler is executed, a brand new `context` (map)
 is created, and within that `context` is a `:coeffects` key which
 is a further map (initially empty).
 
-That pristine `context` value (containing a pristine `:coeffects` map) is threaded
+That pristine `context` value (containing, in turn, a pristine `:coeffects` map) is threaded
 through a chain of Interceptors before it finally reaches our event handler,
 which sits on the end of the chain, itself wrapped up in an interceptor. We know
 this story well from a previous tutorial.
@@ -100,7 +103,8 @@ So, all members of the Interceptor chain have the opportunity to `assoc` into `:
 within their `:before` function, cumulatively building up what it holds.  Later, our event handler,
 which sits on the end of the chain, magically finds just the
 right data (like a value for the key `:local-store`) in its first `cofx` argument.
-So, it is the event handler's Interceptors which put it there.
+So, it is the event handler's Interceptors which can add to the "world" eventually 
+given to an event handler. 
 
 ## Which Interceptors?
 
@@ -153,7 +157,7 @@ I could create an event handler which has access to 3 coeffects:
        ... in here I can access cofx's keys :now :local-store and :random-int))
 ```
 
-But that's probably just greedy, and not very useful.
+But that's probably just greedy. 
 
 And so, to the final piece in the puzzle: how does `inject-cofx`
 know what to do when it is given `:now` or `:local-store`?
@@ -276,3 +280,25 @@ In note form:
 Previous:  [Effects](Effects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Infographic](SubscriptionInfographic.md)
+
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- ## Table Of Contents -->
+
+<!-- - [What Are They?](#what-are-they) -->
+<!-- - [An Example](#an-example) -->
+<!-- - [How We Want It](#how-we-want-it) -->
+<!-- - [Abracadabra](#abracadabra) -->
+<!-- - [Which Interceptors?](#which-interceptors) -->
+<!-- - [`inject-cofx`](#inject-cofx) -->
+<!-- - [More `inject-cofx`](#more-inject-cofx) -->
+<!-- - [Meet `reg-cofx`](#meet-reg-cofx) -->
+<!-- - [Example Of `reg-cofx`](#example-of-reg-cofx) -->
+<!-- - [Another Example Of `reg-cofx`](#another-example-of-reg-cofx) -->
+<!-- - [Secret Interceptors](#secret-interceptors) -->
+<!-- - [Testing](#testing) -->
+<!-- - [The 5 Point Summary](#the-5-point-summary) -->
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
