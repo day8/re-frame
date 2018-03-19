@@ -36,9 +36,9 @@ a signature like this:
     ... return a map of effects)
 ```
 
-Notice how previously the first arg was `db` and now it is `coeffects`.  `coeffects` contains a 
-`:db` key which is the current application state. It is a superset of `db`. It is a bigger 
-world to compute against. 
+Notice how previously the first arg was `db` and now it is `coeffects`.  `coeffects` is a map, and it contains a 
+`:db` key which is the current application state. But it can contain other keys holding data about other aspects of 
+the world. So `coeffects` is a superset of `db`. It is a bigger world to compute against. 
  
 ##  A Motivating Example
 
