@@ -144,7 +144,8 @@ lot of identical cells.
 ## Use The Trace
 
 If you want to know exactly what's going on, get some X-Ray vision
-from the [official tracer](https://github.com/Day8/re-frame-trace). See exactly what subscriptions are running, what views are getting re-rendered, etc.
+from the [official tracer](https://github.com/Day8/re-frame-10x). See exactly what subscriptions are running, 
+what views are getting re-rendered, etc.
 
 You may be surprised by what you see.
 
