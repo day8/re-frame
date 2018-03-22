@@ -1,22 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Subscribing to External Data](#subscribing-to-external-data)
-  - [There Can Be Only One!!](#there-can-be-only-one)
-  - [Components Don't Know, Don't Care](#components-dont-know-dont-care)
-  - [A 2nd Source](#a-2nd-source)
-  - [Via A Subscription](#via-a-subscription)
-  - [The Subscription Handler's Job](#the-subscription-handlers-job)
-  - [Some Code](#some-code)
-  - [Any Good?](#any-good)
-  - [Warning: Undo/Redo](#warning-undoredo)
-  - [Query De-duplication](#query-de-duplication)
-  - [Thanks To](#thanks-to)
-- [The Alternative Approach](#the-alternative-approach)
-- [Absolutely Never Do This](#absolutely-never-do-this)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Subscribing to External Data
 
@@ -259,3 +240,9 @@ Use one of the two alternatives described above.
 
 Previous:  [Talking to Servers](Talking-To-Servers.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table Of Contents
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
