@@ -1,6 +1,6 @@
 ### Question
 
-How do I load the data for a view on navigation to that view? 
+How do I load the data for a view, on navigation to that view? 
 
 ### Don't Do This 
 
@@ -18,7 +18,7 @@ Read more in [PurelyFunctional.tv's writeup](https://purelyfunctional.tv/article
 ### Do This Instead 
 
 With re-frame, "imperative stuff" only ever happens because an event 
-is dispatched. 
+is dispatched.
 
 When the user clicks on a button or tab to change what is shown 
 to them in the UI, an event is dispatched, and it is 
@@ -28,7 +28,7 @@ effects of the user's request. It might:
   2. further change application state so that a "twirly busy" thing is shown
   3. issue a database query
 
-Also, remember that events are meant to model "user intent", like 
+Also, remember that events should model "user intent", like 
 "I'd now like to view overdue items". Be sure to never model events like
 "load overdue items from database" because that's just a  
 low level operation which might be performed in the service of fulfilling
