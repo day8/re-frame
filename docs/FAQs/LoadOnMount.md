@@ -40,3 +40,13 @@ https://github.com/Day8/re-frame-http-fx
 
 Look at the "Real World App" example for inspiration: 
 https://github.com/gothinkster/clojurescript-reframe-realworld-example-app/blob/master/src/conduit/events.cljs
+
+
+***
+
+Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
