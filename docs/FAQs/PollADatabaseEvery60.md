@@ -4,28 +4,12 @@ When the user switches to a particular panel, I'd like to start regularly pollin
 backend (database) - say every 60 seconds.  And, then later, when the user switches 
 away from that panel, I want to stop that polling.
 
-### First, An Architectural Note 
+### First, What Not To Do 
 
-The broader React community often uses a "load data on mount" approach. 
-They collocate queries with view components 
-and initiate these queries (via a GET?) within the View's `componentDidMount` lifecycle method.
-And then, later, they might cleanup/stop any database polling in `componentWillUnmount`.
+Please be sure to read [How Do I Load On Mount?](LoadOnMount.md)
 
-This arrangement is not idiomatic for re-frame. Views are not imperative and 
-they don't initiate database queries. Instead, views simply render current application state.
-[Read more in PurelyFunctional.tv's writeup](https://purelyfunctional.tv/article/react-vs-re-frame/)
-
-With re-frame, "imperative stuff" only ever happens
-because an `event` is dispatched.  When the user clicks on a panel-changing widget 
-(perhaps a button or a tab?),
-an event is dispatched, and it is the event handler associated with this event which 
-computes the effects of the user's action. First, it might change application state so 
-the panel is shown, and then it might further change application state so that a
-"twirly busy" thing is shown and, finally, it might issue a database query.
-
-So, having got that issue out the way ... 
- 
 ### An Answer 
+
 
 We'll create an effect. It will be general in nature. 
 
