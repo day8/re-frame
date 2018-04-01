@@ -1,6 +1,6 @@
 ### Question
 
-I want to load the data for a view on navigation to that view. How should I do that? 
+How do I load the data for a view on navigation to that view? 
 
 ### Don't Do This 
 
