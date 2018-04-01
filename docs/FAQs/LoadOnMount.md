@@ -22,18 +22,17 @@ is dispatched.
 
 When the user clicks on a button or tab to change what is shown 
 to them in the UI, an event is dispatched, and it is 
-the event handler associated with this event which computes the 
-effects of the user's request. First, it might change application 
-state so the panel is shown, and then it might further change 
-application state so that a "twirly busy" thing is shown and, 
-finally, it might issue a database query.
+the associated event handler which will compute the 
+effects of the user's request. It might:
+  1. change application state so the panel is shown
+  2. further change application state so that a "twirly busy" thing is shown
+  3. issue a database query
 
 Also, remember that events are meant to model "user intent", like 
-"I'd now like to view overdue items". Be sure not to model events like
-"load overdue items from database" because that's just one of the 
-low level, operational details associated with the user's high level intent.
-It is the event handler which knows that loading from the database is required 
-to fulfil the user's intent.
+"I'd now like to view overdue items". Be sure to never model events like
+"load overdue items from database" because that's just a  
+low level operation which might be performed in the service of fulfilling
+the user's intent.
 
 There's a useful effect handler available for HTTP work:
 https://github.com/Day8/re-frame-http-fx
