@@ -1,7 +1,7 @@
 ## Frequently Asked Questions
 
 1. [How can I Inspect app-db?](Inspecting-app-db.md)
-2. [How Do I Load On Mount?](LoadOnMount.md)
+2. [How Do I Load On Mount?](LoadOnMount.md)  (Hint: you don't)
 2. [Reagent looks terrific. Why do I need re-frame?](DoINeedReFrame.md)
 2. [How do I do full-stack re-frame?](FullStackReframe.md)
 2. [How long after I do a dispatch does the event get handled?](When-Does-Dispatch-Happen.md)
