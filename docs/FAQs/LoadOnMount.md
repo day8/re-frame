@@ -30,7 +30,7 @@ effects of the user's request. It might:
 
 Also, remember that events should model "user intent", like 
 "I'd now like to view overdue items". Be sure to never model events like
-"load overdue items from database" because that's just a  
+"load overdue items from database" because that's just a
 low level operation which might be performed in the service of fulfilling
 the user's intent.
 
