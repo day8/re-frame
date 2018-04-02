@@ -61,6 +61,7 @@ Please add to this list by submitting a pull request.
 
 ### Tools, Techniques & Libraries
 
+* [re-fill](https://github.com/metosin/re-fill) - routing and more  
 * [re-frame-undo](https://github.com/Day8/re-frame-undo) - An undo library for re-frame
 * [re-frame-test](https://github.com/Day8/re-frame-test) - Advanced testing utilities
 * [Animation](http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html) using `react-flip-move`
