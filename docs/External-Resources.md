@@ -55,6 +55,12 @@ Please add to this list by submitting a pull request.
 * [re-frame-firebase](https://github.com/deg/re-frame-firebase) - Firebase DB API
 * [sse-fx](https://github.com/yetanalytics/sse-fx) - fx/cofx handlers for [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) and SSE
 
+### Forms 
+
+* [re-form](https://github.com/HealthSamurai/re-form)
+* [free-form](https://github.com/pupeno/free-form)
+* [re-frame-forms](https://github.com/tomasd/re-frame-forms)
+
 ### Routing
 
 * [Bidirectional using Silk and Pushy](https://pupeno.com/2015/08/18/no-hashes-bidirectional-routing-in-re-frame-with-silk-and-pushy/)
