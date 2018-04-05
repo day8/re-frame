@@ -31,7 +31,7 @@ keyed at the first level by the `kind` of handler and at the second level by the
 ## Introduction 
 
 This EP proposes that:
-  1. all current registration fucntions in th API be superceeded by a new single macro `reg`
+  1. all current registration functions in th API be superseded by a new single macro `reg`
   2. the leaf nodes of the `registrar` which are currently just the handler function, 
      become instead a map of values related to the handler, 
      including a doc string, the file/line where defined, specs, etc, and, of course, 
@@ -40,7 +40,7 @@ This EP proposes that:
 
 ## Motivations
 
-There's preasure from multiple directions to collect and retain more metadata about handlers: 
+There's pressure from multiple directions to collect and retain more metadata about handlers: 
   - tickets like [#457](https://github.com/Day8/re-frame/issues/457) argue for handler docstrings
   - adding specs for events, so they can be checked at dev time
   - when re-frame becomes less of a framework and more of a library, handler registrations might 
@@ -52,7 +52,7 @@ new code base. That's one of [the four stated goals](https://github.com/Day8/re-
 Ideally, re-frame would be capable of providing tooling with "a complete 
 inventory" of all handlers available within an application, along with useful
 metadata on these handlers. When an event is processed, the audit trail of 
-handlerd involved should be rich with information.
+handlers involved should be rich with information.
  
 ## Macro?
 
@@ -122,7 +122,7 @@ Other keys:  XXX
   - `:spec` for event spec (when registering events)  ???  Too much ??
 
 XXX I'm not too happy about using short names like `:cept`.  But, then 
-again, there's the asthetics of formatting the code and lining things up.  
+again, there's the aesthetics  of formatting the code and lining things up.  
 
 
 ### Registrar 
