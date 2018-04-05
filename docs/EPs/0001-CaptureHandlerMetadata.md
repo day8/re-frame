@@ -140,9 +140,9 @@ XXX
 
 ## Consider 
 
-XXX implications for Cursive - it currently special-cases re-frame registration function -- give him a leads up??
-XXX dear god, consider changes to documentation/tutorials
-XXX means giving up syntax sugar for reg-sub ?
+  - XXX implications for Cursive - it currently special-cases re-frame registration function -- give him a leads up?? 
+  - XXX dear god, consider changes to documentation/tutorials 
+  - XXX means giving up syntax sugar for reg-sub ?
 
 
 
