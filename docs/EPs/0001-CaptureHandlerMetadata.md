@@ -1,4 +1,4 @@
-## EP 001 - Better Capture Handler Metadata  
+## EP 001 - Better Capture Of Handler Metadata  
 
 > Status: WIP. Incomplete. Don't read.
 
