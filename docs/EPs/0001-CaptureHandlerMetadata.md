@@ -67,11 +67,11 @@ builds.
 
 ## Method 
 
-A new API registration macro `reg` will be added and  
+A new API registration macro `reg` will be added and
 it will become the prefered method of registering all handlers. 
 The existing 7 registration functions will ultimately be deprecated.
 
-`reg` will take one argument, a map, which captures the handler aspects of 
+`reg` will take one argument, a map, which captures all aspects of 
 the handler. 
 
 The argument to `reg` can also be a vector of maps to allow
@@ -112,8 +112,8 @@ Optionally, for all `kinds` of handlers the map can have these additional keys:
    - `:file` the name file where the handler was registered
    - `:doc` a doc string
 
-The key `:pkg` is reserved for future use, and will eventually indicate the 
-"package" to which this handler belongs. See EP XXX. 
+The key `:pkg` is reserved for future use, and might eventually indicate the 
+"package" to which this handler belongs. See EP 002. 
 
 Other keys:  XXX
   - `:cept` for interceptors (when registering events)
