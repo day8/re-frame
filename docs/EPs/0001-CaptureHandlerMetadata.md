@@ -1,16 +1,17 @@
 ## EP 001 - Better Capture Handler Metadata  
 
-> Status: WIP. Incomplete
+> Status: WIP. Incomplete. Don't read.
 
 ### Abstract 
 
-This EP proposes changes to the way re-frame handlers are registered. These changes
-lay the groundwork for tooling advances, and EPs to follow.
+This EP proposes changes to the way re-frame handlers are registered, 
+to allow for the capture of richer handler metadata. 
+These changes also lay the groundwork for tooling advances, and EPs to follow.
 
 
 ### Background  
 
-At the time of writing, re-frame's API includes 7 functions for registering handlers:
+re-frame's API currently includes 7 functions for registering handlers:
   - reg-event-db, reg-event-fx and reg-event-ctx
   - reg-sub and reg-sub-raw
   - reg-fx
@@ -31,38 +32,39 @@ keyed at the first level by the `kind` of handler and at the second level by the
 
 This EP proposes that:
   1. all current registration fucntions in th API be superceeded by a new single function `reg`
-  2. that a new macro be introduces XXX
+  2. that a new macro be introduced
   2. the leaf nodes of the `registrar` which are currently just the handler function, 
      become instead a map of values related to the handler, 
      including a doc string, the file/line where defined, specs, etc, and, of course, 
      the handler itself.
 
 
-## Motivation #1
+## Motivations
 
 There's preasure from multiple directions to collect and retain more metadata about handlers: 
-  - see tickets like [#457](https://github.com/Day8/re-frame/issues/457) arguing for docstrings
-  - adding a specs for events, so they can be checked at dev time?
-  - when re-frame becomes less of a framework and more of a library, handler registrations will 
-    likely be "grouped" into "packages". So that 'package' information about handlers will need to be 
+  - tickets like [#457](https://github.com/Day8/re-frame/issues/457) argue for handler docstrings
+  - adding specs for events, so they can be checked at dev time
+  - when re-frame becomes less of a framework and more of a library, handler registrations might 
+    need be "grouped" into "packages". So that "package" information about handlers will need to be 
     retained.
 
-## Motivation #2A
-
-We'd like tooling, like `re-frame-10x`, to help programmers when they are learning a 
+We'd like `re-frame-10x` to actively help programmers when they are learning a 
 new code base. That's one of [the four stated goals](https://github.com/Day8/re-frame-10x#helps-me-how). 
-
-re-frame should be capable of providing these tools with "the complete 
-inventory" of handlers available within an application. This would allow 
-`re-frame-10x` to, for example, provide details for all handlers used in the processing 
-of an event. 
+Ideally, re-frame would be capable of providing tooling with "a complete 
+inventory" of all handlers available within an application, along with useful
+metadata on these handlers. When an event is processed, the audit trail of 
+handlerd involved should be rich with information.
  
-## Motivation #2B
+## Macro?
 
-As part of this retained handler inventory, we'd like to capture 
+As part of the retained handler metadata, we'd like to capture 
 the namespace and line number for each registered handler automatically.
 This will necessitate the introduction of a macro for registrations. 
 (Up until now, macros have been resisted)
+
+Introducing docstrings into registrations also pushes us towards 
+a macro solution because we'd like to remove the docstring in production 
+builds.
 
 ## Method 
 
@@ -70,8 +72,10 @@ A new API registration macro `reg` will be added and
 it will become the prefered method of registering all handlers. 
 The existing 7 registration functions will ultimately be deprecated.
 
-`reg` will take one argument, a map, which defines all aspects of 
-the handler. The argument can also be a vector of maps to allows
+`reg` will take one argument, a map, which captures the handler aspects of 
+the handler. 
+
+The argument to `reg` can also be a vector of maps to allow
 for multiple handlers to be registered at once.
 
 ## Examples
@@ -107,6 +111,7 @@ Optionally, for all `kinds` of handlers the map can have these additional keys:
    - `:ns` the namespace where the handler was registered 
    - `:line` line number where the handler was registered
    - `:file` the name file where the handler was registered
+   - `:doc` a doc string
 
 The key `:pkg` is reserved for future use, and will eventually indicate the 
 "package" to which this handler belongs. See EP XXX. 
@@ -117,178 +122,28 @@ Other keys:  XXX
   - `:ret` for return spec (subscriptions and events)
   - `:spec` for event spec (when registering events)  ???  Too much ??
 
-
-### Code Coordinate Capture 
-
-  - 
-
-  
-2-arity:  easy to replace
-  - reg-fx
-  - reg-cofx
-  - reg-sub-raw
-
-2-3-arity:
-  - reg-event-db, reg-event-fx and reg-event-ctx
-  XXX flatten and remove nils interceptors 
-  XXX add special interceptors to beginning
-  XXX in the end handler is just a vector of interceptors 
-  
-  
-  
-2-3-N-arity
-  - reg-sub 
-  
-  
-With one exception, `reg-sub`, all registration functions are 2-arity: they 
-take an id and a handler fucntion.
-
-```clj
-(reg-event-db 
-    :some-id)
-    some-handler-fn)
-```
-
-An optional 3-arity version of all registration functions will be added,
-one which takes an additional map argument, which can carry additional 
-information about the registration.
-
-```clj
-(reg-event-db 
-    :some-id
-    {:file XXX
-     :line XXX
-     :doc  "doc string"}
-    some-handler-fn)
-    
-OR   
-```
-
-```clj
-(reg-event-db 
-    :some-id
-    {:file XXX
-     :line XXX
-     :doc  "doc"}
-     :fn some-handler-fn})
-```
-
-### Stored 
-
-Each entry stored in the registrar will become a map:
-
-```clj
-{:file f
- :line l 
- :doc  d
- :fn   f}
-```
-
-what about reg-sub XXX
-
-### New Macros 
- 
-1. This proposal would create 7 mirror macros
-2. Would change all registration functions so they take a dictionary 
-   file, line, key, namespace, etc. 
- 
-While working on the design of re-frame-10x we've 
+XXX I'm not too happy about using short names like `:cept`.  But, then 
+again, there's the asthetics of formatting the code and lining things up.  
 
 
-```clj
-(reg-event-db 
-    :keyword-id)
-    {:file XXX
-     :line XXX}
-    (fn [db event]
-       ....))
-```
+### Registrar 
 
-XXX One registration fucntion to Rule them all 
+Each entry stored in the registrar will become a map instead of just a handler. 
 
-```clj
-(rf/reg :event-db 
-  :id   :event-id
-  :doc  "something"
-  :espec 
-  :rspec 
-  :fn   (fn [db event]
-           ....))
-```
-           
+XXX
 
-(rf/reg :event-db     ;; others here might be `:fx`  `:sub`
-  {:pkg   :re-frame/undo       ;; altnerative:  `:unit` `:scope`  `:pkg`  `:blundle` `:lot`  `:furl`
-   :id    :some-id 
-   :doc   "Some docs here" 
-   :e-spec XXX
-   :r-spec YYY
-   :interceptors    [(path [:todos])]
-   :fn   (fn [db v]
-           ....)})
-           
-           
-(rf/reg :view 
-   :id  :item-viewer
-   :ins (fn [])            ;; obtains dispatch, and context ... no need for subscribe not really needed  
-   :fn  (fn [item ] 
-          )
-   )
-
-
-[:item-viewer  item]
+XXX look into reg-sub 
 
 
 ### Backwards Compatibility 
 
+XXX
 
-## Also 
+## Consider 
 
-XXX implications for Cursive ??
-XXX how do we drop doc strings from production builds ???
-XXX changes to documentation/tutorials
-XXX means giving up syntax sugar for reg-sub ?  Or keep it and get macro to  
-
-
-
-## Options Considered
-
-Have `kind` lead befoer the rest of the map:
-```clj
-(rf/reg    :event-db        ;; :event-fx  :sub   :fx   :cofx
-  {:id     :event-id 
-   :ceptrs [(path [:a]) trimv]
-   :fn     (fn [db event]
-             (assoc db .....))})
-```
-
-Merge `kind` and `id` into one map entry:
-```clj
-(rf/reg  
-  {:evt-db :event-id      ;; <-- merged
-   :cepts  [(path [:a]) trimv]
-   :fn     (fn [db event]
-              (assoc db .....))})
-```
+XXX implications for Cursive - it currently special-cases re-frame registration function -- give him a leads up??
+XXX dear god, consider changes to documentation/tutorials
+XXX means giving up syntax sugar for reg-sub ?
 
 
-`reg` could take an initial arg which identified the `kind`, removing a line:
-```clj
-(rf/reg  :event-db   ;; :event-fx  :sub   :fx   :cofx
-  {:id    :event-id 
-   :cepts [(path [:a]) trimv]
-   :fn    (fn [db event]
-            (assoc db .....))})
 
-XXX map or named args?
-XXX maps enable more than one at a time registration 
-XXX what about just 
-
-```clj
-(rf/reg :event-db     ;; there is no `kind`
-   :id    :event-id 
-   :ceptrs [(path [:a]) trimv]
-   :sig-fn 
-   :fn   (fn [db event]
-          (assoc db .....)))
-```
