@@ -31,8 +31,7 @@ keyed at the first level by the `kind` of handler and at the second level by the
 ## Introduction 
 
 This EP proposes that:
-  1. all current registration fucntions in th API be superceeded by a new single function `reg`
-  2. that a new macro be introduced
+  1. all current registration fucntions in th API be superceeded by a new single macro `reg`
   2. the leaf nodes of the `registrar` which are currently just the handler function, 
      become instead a map of values related to the handler, 
      including a doc string, the file/line where defined, specs, etc, and, of course, 
