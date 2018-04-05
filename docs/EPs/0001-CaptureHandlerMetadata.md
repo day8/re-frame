@@ -12,16 +12,16 @@ These changes also lay the groundwork for tooling advances, and EPs to follow.
 ### Background  
 
 re-frame's API currently includes 7 functions for registering handlers:
-  - reg-event-db, reg-event-fx and reg-event-ctx
-  - reg-sub and reg-sub-raw
-  - reg-fx
-  - reg-cofx
+  - event: `reg-event-db`, `reg-event-fx` and `reg-event-ctx`
+  - subscription: `reg-sub` and `reg-sub-raw`
+  - effects: `reg-fx`
+  - coeffects: `reg-cofx`
  
 Two others are on the drawing board: 
-  - reg-view
-  - reg-interceptor
+  - `reg-view`
+  - `reg-interceptor`
   
-So there are potentially 9 `kinds` of handlers.
+So, there are potentially 9 `kinds` of handlers.
 
 Internally, re-frame manages registered handlers in a `registrar`, which is a two level map, 
 keyed at the first level by the `kind` of handler and at the second level by the (keyword) 
@@ -32,7 +32,7 @@ keyed at the first level by the `kind` of handler and at the second level by the
 
 This EP proposes that:
   1. all current registration functions in th API be superseded by a new single macro `reg`
-  2. the leaf nodes of the `registrar` which are currently just the handler function, 
+  2. the leaf nodes of the `registrar`, which are currently the handler functions themselves, 
      become instead a map of values related to the handler, 
      including a doc string, the file/line where defined, specs, etc, and, of course, 
      the handler itself.
@@ -41,16 +41,16 @@ This EP proposes that:
 ## Motivations
 
 There's pressure from multiple directions to collect and retain more metadata about handlers: 
-  - tickets like [#457](https://github.com/Day8/re-frame/issues/457) argue for handler docstrings
+  - tickets like [#457](https://github.com/Day8/re-frame/issues/457) want docstrings for handlers
   - adding specs for events, so they can be checked at dev time
-  - when re-frame becomes less of a framework and more of a library, handler registrations might 
-    need be "grouped" into "packages". So that "package" information about handlers will need to be 
-    retained.
+  - when re-frame becomes less of a framework and more of a library, handlers might 
+    need be "grouped" into "packages". So "package" information about handlers need 
+    to be supplied and retained.
 
 We'd like `re-frame-10x` to actively help programmers when they are learning a 
 new code base. That's one of [the four stated goals](https://github.com/Day8/re-frame-10x#helps-me-how). 
 Ideally, re-frame would be capable of providing tooling with "a complete 
-inventory" of all handlers available within an application, along with useful
+inventory" of an app's handlers, along with useful
 metadata on these handlers. When an event is processed, the audit trail of 
 handlers involved should be rich with information.
  
@@ -59,7 +59,7 @@ handlers involved should be rich with information.
 As part of the retained handler metadata, we'd like to capture 
 the namespace and line number for each registered handler automatically.
 This will necessitate the introduction of a macro for registrations. 
-(Up until now, macros have been resisted)
+(Until now, macros have been resisted.)
 
 Introducing docstrings into registrations also pushes us towards 
 a macro solution because we'd like to remove the docstring in production 
