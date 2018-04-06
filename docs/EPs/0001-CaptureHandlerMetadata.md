@@ -74,9 +74,6 @@ The existing 7 registration functions will ultimately be deprecated.
 `reg` will take one argument, a map, which captures all aspects of 
 the handler. 
 
-The argument to `reg` can also be a vector of maps to allow
-for multiple handlers to be registered at once.
-
 ## Examples
 
 Previously, `reg-event-db` was used like this:
@@ -124,6 +121,21 @@ Other keys:  XXX
 XXX I'm not too happy about using short names like `:cept`.  But, then 
 again, there's the aesthetics  of formatting the code and lining things up.  
 
+
+### Multiple Registrations
+
+The argument to `reg` can also be a vector of maps to allow
+for multiple handlers to be registered at once:
+
+```clj 
+(rf/reg
+  [{:kind :event-db ...}
+   {:kind :event-db ...}
+   {:kind :event-fx ...}
+   {:kind :sub ...])
+```
+
+XXX maybe not needed. Provide the most minimal API? Let towers of abstraction be built on top.
 
 ### Registrar 
 
