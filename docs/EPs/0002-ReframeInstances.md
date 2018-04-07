@@ -9,7 +9,7 @@ of a re-frame app on the same (HTML) page.
  
 ## Introduction 
 
-Currently, there can only be one instance of `re-frame` at a time on a page.
+Currently, there can only be one instance of `re-frame` on a page.
 This limitation greately simplifies the programmer's
 experience of re-frame in 99% of usecases.
 
@@ -20,29 +20,32 @@ But there are usecases where this is a problem:
        use them, and then throw them away.
   2. when **different** re-frame apps need to coexist on the one page. 
 
-While the more advanced features are nice to have, simplicity is a must.
+While these more advanced features are nice to have, the current 
+simplicity is a must.
 So, the challenge here is to facilitate these more complicated usecases 
-but, in the process, to not lose the currently simplicity which is
+but, in the process, to not lose the current simplicity which is
 enjoyed most of the time. 
 
 ### Global State As A Frame
 
-re-frame has some global state in the form of a few atoms. 
+re-frame has some global state in the form of a few atoms scattered 
+about internal namespaces. The best externally-known one of 
+these is `app-db`. 
 
 It would be completely straightforward to scoop up that state and 
-put it into somesort of defrecord - let's call each "a frame object" - and 
-then allow the programmer to create instances of such "frame", to 
-create instances of a re-frame app.
+put it into some sort of `defrecord` - let's call a `Frame` - and 
+then allow the programmer to create instances of `Frame` when they  
+want to create a new instances of a re-frame app.
 
-That's the easy bit.  Let's imagine that there is a new piece of API 
-called `create-frame` which created a `defrecord` which captured all 
-that state. Easy. 
+Imagine that there's is a new API function 
+called `create-frame` - use it to create as many re-frame instances
+as you want.
 
-But the moment there's potentially more than one frame, the design  
-problem shifts to:  
-   - registering handlers "into" a frame (aka VM creation)
-   - within a view fucntions, accessing the right "frame" so as to `subscribe`
-     or `dispatch`. 
+That's the easy bit.  Now the design work starts in earnest. 
+Two problems to solve:    
+   - how to register handlers "into" a `Frame` (aka VM creation)
+   - within a view fucntion, how to `subscribe`
+     or `dispatch` from/to the right `Frame`.
 
 ### Building The re-frame VM
 
@@ -51,41 +54,43 @@ A re-frame app is defined collectively by its handlers.
 It is the many calls to registration functions like `reg-event-db` and `reg-sub` which 
 "build up" an app, infusing it with behaviour and function.
 
-If we are now to support different `frames` on the same page, how  
-should handlers be registered with one or more of these `frames`?
+To support different `Frame` instances on the same page, how  
+should handlers be registered with one or more of them?
 
-Solution sketch #1: all registration calls take another argument which is 
-the `frame` into which they should be registered?  If so, what 
-about effect handlers, like handlers in libraries like [`re-frame-http-fx`](https://github.com/Day8/re-frame-http-fx). 
-They can't know of the app `fraems` into which they'll eventually be 
-used. Maybe the library provides a "inject all my handlers" kinda
-function which takes a `frame` argument?  Maybe?  Getting a bit
-disruptive to existing code bases. 
+The difficult usecase here is where there there are two or more
+different apps on a page. Apps that share nothing. The handlers for one `Frame`
+should not be present in the other.
 
-Solution sketch #2: all handlers are registered into a central 
-place, as is currently the case. Each handler belongs to a 
-"package" (defaults to `:default`) which can be supplied at 
-registrration time. When a `frame` is created, it takes the 
-`set of packages` which should be injected into it (to be found in 
-the central registrar). When you create the `frame` you 
-are "pulling together" all the namespaces/packages to form 
-a functioning app.  Of course, by default, you get all handlers
-registered, which means this is all very backwards compatable. 
+**Solution sketch #1**: registration calls (`reg-event-db`, etc) 
+apply to a `Frame`. Either the current functions, like `reg-event-db`
+are checged to take a `Frame` argument OR a `Frame` has `reg-event-db`
+method.  So each time you create a `Frame` you have to add all the 
+handlers to it? And what about handlers in libraries 
+like [`re-frame-http-fx`](https://github.com/Day8/re-frame-http-fx). 
+
+
+**Solution sketch #2**: all handlers are registered as they are now 
+using `reg-event-db` etc, and are
+stored (as now) in a central registrar (as now). But each handler belongs to a 
+"package" (which defaults to `:default`). When a `frame` is created, you 
+can, optionally, supply the `set of packages`. When the `Frame` is created 
+all handlers in the nominated `packages` are injected into the 
+`Frame`. If not set is provided, then all handlers areinjected. 
+
+
+Solution #2 has clear advantages. , If you had `devcards` on a Page you'd 
 
 At this point I favour sketch #2 from a backwards compatability 
 point of view. It is the least disruptive method.
 
-Remember: the hard usecase is the one where there are two 
-distinct apps on a page. They share nothing.  
-
 ### Views
 
-Consider a page containing multiple `devcards` on the one page. 
-There will be one `frames` for each devcard, each frame for the 
-same app.  
+Consider an HTML page containing multiple `devcard` instances. 
+There will be one `Frame` for each `devcard`, with each `Frame`
+for the same app.  
 
-Now to the design puzzle: how will a given view know to which 
-`frame` it should `subscribe`? And to which frame should it 
+Now to the design puzzle: how can a given view know to which 
+`Frame` it should `subscribe`? And to which `Frame` it should 
 `dispatch`?
 
 **Solution sketch #1**: the `frame` is passed as an arguement to 

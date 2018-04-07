@@ -121,6 +121,9 @@ Other keys:  XXX
 XXX I'm not too happy about using short names like `:cept`.  But, then 
 again, there's the aesthetics  of formatting the code and lining things up.  
 
+"The craft of programming begins with empathy, not formatting or languages 
+or tools or algorithms or data structures." - Kent Beck
+
 
 ### Multiple Registrations
 
