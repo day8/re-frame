@@ -85,27 +85,31 @@ point of view. It is the least disruptive method.
 
 ### Views
 
-Consider an HTML page containing multiple `devcard` instances. 
-There will be one `Frame` for each `devcard`, with each `Frame`
-for the same app.  
+In an HTML page, containing multiple `devcard` instances,
+all for exactly the same app, there will be one `Frame`  
+for each `devcard`.
 
-Now to the design puzzle: how can a given view know to which 
+In this scenario, how can a view know to which 
 `Frame` it should `subscribe`? And to which `Frame` it should 
 `dispatch`?
 
-**Solution sketch #1**: the `frame` is passed as an arguement to 
-each view function.  And then down into child view functions. 
-Certainly very functional. But laborious. Every single time. 
-Every single view. And not at all what is done now, so 
-disruptive. A lot of work, for the few times needed. 
+The answer which requires the least design is to say that 
+`Frames` are passed as an arguement into 
+each view function, and then further passed down into 
+child views, and so on, and so on.  Then the view will 
+`(dispatch frame [:event-id arg])`. 
+WHich is certainly all very very functional, but so tedious! Every single time. 
+Every single view. (And not at all what is done now, so 
+disruptive.)
 
-**Solution sketch #2**: Hack Reagent so that any given view can 
-"reach up" through parent hierarchy of views looking for a `frame` to which it
-can subscribe and dispatch. This avoids the horror of having 
-to pass frames everywhere. 
+**Solution sketch #2**: Hack Reagent so that a given node in 
+the hierarchy can "register" a Frame, and then provide a 
+way so that any given view can "query upwards" through its 
+the parent/owner hierarchy of views 
+looking for the `frame` to which it should subscribe and dispatch. 
 
-**Solution sketch #3**: Similar to #2, except piggyback on React's
-`context` facility. `context` only works for simple values, so 
+**Solution sketch #3**: The Algebric Effects approach is to 
+piggyback on React's `context` facility. `context` only works for simple values, so 
 this path would passing down the `id` of the frame, and then 
 looking it up.
 

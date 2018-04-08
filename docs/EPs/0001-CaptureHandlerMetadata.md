@@ -46,30 +46,29 @@ There's pressure from multiple directions to collect and retain more metadata ab
   - when re-frame becomes less of a framework and more of a library, handlers might 
     need be "grouped" into "packages". So "package" information about handlers need 
     to be supplied and retained.
+  - Tooling support - we'd like `re-frame-10x` to actively help programmers when they are learning a 
+    new code base. That's one of [the four stated goals](https://github.com/Day8/re-frame-10x#helps-me-how). 
+    Ideally, re-frame would be capable of providing tooling with "a complete 
+    inventory" of an app's handlers, along with useful
+    metadata on each handles. When an event is processed, the audit trail of 
+    handlers involved should be rich with information.
 
-We'd like `re-frame-10x` to actively help programmers when they are learning a 
-new code base. That's one of [the four stated goals](https://github.com/Day8/re-frame-10x#helps-me-how). 
-Ideally, re-frame would be capable of providing tooling with "a complete 
-inventory" of an app's handlers, along with useful
-metadata on these handlers. When an event is processed, the audit trail of 
-handlers involved should be rich with information.
- 
-## Macro?
+## Macro
 
-As part of the retained handler metadata, we'd like to capture 
-the namespace and line number for each registered handler automatically.
-This will necessitate the introduction of a macro for registrations. 
-(Until now, macros have been resisted.)
+As part of the retained handler metadata, we'd like to automatically capture 
+source code coordinates, like namespace and line number for each registered handler.
+This will require the introduction of a macro for registrations which is a shift in 
+approach because, until now, macros have been manfully resisted.
 
-Introducing docstrings into registrations also pushes us towards 
-a macro solution because we'd like to remove the docstring in production 
-builds.
+Introducing docstrings into registrations also encourages 
+a macro solution because docstrings should be removed from 
+production builds.
 
 ## Method 
 
-A new API registration macro `reg` will be added and
-it will become the prefered method of registering all handlers. 
-The existing 7 registration functions will ultimately be deprecated.
+A new macro `reg` will become the method 
+of registering handlers. The existing 7 registration functions
+will ultimately be deprecated.
 
 `reg` will take one argument, a map, which captures all aspects of 
 the handler. 
@@ -102,12 +101,19 @@ The value `:kind` can be one these 7 (mapping to 7 existing `reg-*` functions):
   - `:sub` `:sub-raw`
   - `:fx`
   - `:cofx`
-
-Optionally, for all `kinds` of handlers the map can have these additional keys:
+  
+Optionally, for all `kinds` of handlers the 
+the map can also have these additional keys:
+   - `:doc` a doc string
    - `:ns` the namespace where the handler was registered 
    - `:line` line number where the handler was registered
    - `:file` the name file where the handler was registered
-   - `:doc` a doc string
+
+In a dev build, the `reg` macro will supply the final 3 (source code coordinates), 
+if not explicitly supplied in the map. 
+
+In a production build, the `:doc` string will be elided, so we to not
+appear in the final source code at all. 
 
 The key `:pkg` is reserved for future use, and might eventually indicate the 
 "package" to which this handler belongs. See EP 002. 
@@ -120,10 +126,6 @@ Other keys:  XXX
 
 XXX I'm not too happy about using short names like `:cept`.  But, then 
 again, there's the aesthetics  of formatting the code and lining things up.  
-
-"The craft of programming begins with empathy, not formatting or languages 
-or tools or algorithms or data structures." - Kent Beck
-
 
 ### Multiple Registrations
 
@@ -138,16 +140,22 @@ for multiple handlers to be registered at once:
    {:kind :sub ...])
 ```
 
-XXX maybe not needed. Provide the most minimal API? Let towers of abstraction be built on top.
+XXX maybe not needed. Provide the most minimal API? Then let towers of abstraction be built on top.
 
 ### Registrar 
 
 Each entry stored in the registrar will become a map instead of just a handler. 
 
-XXX
-
+Map keys:
+  - `:kind`  - somehow redundant 
+  - `:id`
+  - `:doc`
+  - `:line`
+  - `:ns`
+  - `:doc`
+  - `:fn` the handler
+  
 XXX look into reg-sub 
-
 
 ### Backwards Compatibility 
 
@@ -158,6 +166,7 @@ XXX
   - XXX implications for Cursive - it currently special-cases re-frame registration function -- give him a leads up?? 
   - XXX dear god, consider changes to documentation/tutorials 
   - XXX means giving up syntax sugar for reg-sub ?
+  - XXX any format for `:doc` ??
 
 
 
