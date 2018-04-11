@@ -56,8 +56,8 @@ There's pressure from multiple directions to collect and retain more metadata ab
 ## Macro
 
 As part of the retained handler metadata, we'd like to automatically capture 
-source code coordinates, like namespace and line number for each registered handler.
-This will require the introduction of a macro for registrations which is a shift in 
+source code coordinates, like namespace and line number.
+To make this happen, a macro will need to be introduced for registration, and that's a shift in 
 approach because, until now, macros have been manfully resisted.
 
 Introducing docstrings into registrations also encourages 
@@ -124,8 +124,10 @@ Other keys:  XXX
   - `:ret` for return spec (subscriptions and events)
   - `:spec` for event spec (when registering events)  ???  Too much ??
 
-XXX I'm not too happy about using short names like `:cept`.  But, then 
+XXX I'm not entirely happy about using short names like `:cept`.  But, then 
 again, there's the aesthetics  of formatting the code and lining things up.  
+
+XXX could have a `:cofx` key for  event handlers to make them more explicit. 
 
 ### Multiple Registrations
 
@@ -161,9 +163,9 @@ XXX look into reg-sub
 
 XXX
 
-## Consider 
+## Issues/Questions/Todos 
 
-  - XXX implications for Cursive - it currently special-cases re-frame registration function -- give him a leads up?? 
+  - XXX implications for Cursive - it currently special-cases re-frame registration function -- give ColinF a leads up?? 
   - XXX dear god, consider changes to documentation/tutorials 
   - XXX means giving up syntax sugar for reg-sub ?
   - XXX any format for `:doc` ??

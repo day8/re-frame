@@ -5,35 +5,32 @@
 ### Abstract
 
 This EP proposes changes to allow more than one instance 
-of a re-frame app on the same (HTML) page.
+of a re-frame app to coexist on the same (HTML) page.
  
 ## Introduction 
 
 Currently, there can only be one instance of `re-frame` on a page.
-This limitation greately simplifies the programmer's
-experience of re-frame in 99% of usecases.
+This design limitation simplifies the programmer's
+experience of using re-frame in 99% of usecases.
 
-But there are usecases where this is a problem: 
+But there are problematic usecases: 
   1. when two instances of **the same** app need to coexist on the one page:
      - think of `devcards` where instances can coexist 
      - when unittesting, it might be useful to create re-frame "instances", 
        use them, and then throw them away.
   2. when **different** re-frame apps need to coexist on the one page. 
 
-While these more advanced features are nice to have, the current 
-simplicity is a must.
 So, the challenge here is to facilitate these more complicated usecases 
 but, in the process, to not lose the current simplicity which is
 enjoyed most of the time. 
 
 ### Global State As A Frame
 
-re-frame has some global state in the form of a few atoms scattered 
-about internal namespaces. The best externally-known one of 
-these is `app-db`. 
+re-frame has some global state in the form of various atoms scattered 
+about internal namespaces. The best externally-known is `app-db`. 
 
-It would be completely straightforward to scoop up that state and 
-put it into some sort of `defrecord` - let's call a `Frame` - and 
+It would be completely straightforward to scoop up this state and 
+put it into some sort of `defrecord` whole - let's call a `Frame` - and 
 then allow the programmer to create instances of `Frame` when they  
 want to create a new instances of a re-frame app.
 
@@ -41,24 +38,27 @@ Imagine that there's is a new API function
 called `create-frame` - use it to create as many re-frame instances
 as you want.
 
-That's the easy bit.  Now the design work starts in earnest. 
-Two problems to solve:    
-   - how to register handlers "into" a `Frame` (aka VM creation)
-   - within a view fucntion, how to `subscribe`
-     or `dispatch` from/to the right `Frame`.
+So, that's the easy bit.  Now the design work starts in earnest and there's
+two problems to solve:    
+  1. how to associate handlers with a `Frame`  
+  2. within a view fucntion, how to `subscribe`
+     or `dispatch` from/to the right `Frame`
 
-### Building The re-frame VM
+### Problem 1: Associating Handlers
 
 A re-frame app is defined collectively by its handlers.
 
 It is the many calls to registration functions like `reg-event-db` and `reg-sub` which 
-"build up" an app, infusing it with behaviour and function.
+"build up" an app, infusing it with behaviour and capability. 
 
-To support different `Frame` instances on the same page, how  
-should handlers be registered with one or more of them?
+So, if there are different `Frame` instances on the same page, how  
+should handlers be "added into" one or more of them?
 
-The difficult usecase here is where there there are two or more
-different apps on a page. Apps that share nothing. The handlers for one `Frame`
+This is easy enough if all `Frames` on the one page 
+are instances of the same app - all `Frames` will share 
+the same set of handlers.  
+But the design is tricker when different `Frames` are for different 
+apps - each instance needs a different set of handlers. The handlers for one `Frame`
 should not be present in the other.
 
 **Solution sketch #1**: registration calls (`reg-event-db`, etc) 
@@ -77,13 +77,10 @@ can, optionally, supply the `set of packages`. When the `Frame` is created
 all handlers in the nominated `packages` are injected into the 
 `Frame`. If not set is provided, then all handlers areinjected. 
 
-
-Solution #2 has clear advantages. , If you had `devcards` on a Page you'd 
-
 At this point I favour sketch #2 from a backwards compatability 
-point of view. It is the least disruptive method.
+point of view. It is the least disruptive from abackwards compatability.
 
-### Views
+### Problem 2: Views, dispatch and subscription 
 
 In an HTML page, containing multiple `devcard` instances,
 all for exactly the same app, there will be one `Frame`  
@@ -93,14 +90,20 @@ In this scenario, how can a view know to which
 `Frame` it should `subscribe`? And to which `Frame` it should 
 `dispatch`?
 
-The answer which requires the least design is to say that 
+**Solution sketch #1**:
+
+The "minimal design" approach is to say that 
 `Frames` are passed as an arguement into 
 each view function, and then further passed down into 
-child views, and so on, and so on.  Then the view will 
-`(dispatch frame [:event-id arg])`. 
-WHich is certainly all very very functional, but so tedious! Every single time. 
-Every single view. (And not at all what is done now, so 
-disruptive.)
+child views, and so on, and so on.
+
+Then, when using `dispatch` or `subscribe` a view will 
+use the arg given to it called, say, `frame` like this:
+`(dispatch frame [:event-id arg])`.
+
+This approach is certainly simple. But it does get labourious
+and tedious pretty quickly. Every view needs to accept a `frame`
+and every XXX further supply that frame to child 
 
 **Solution sketch #2**: Hack Reagent so that a given node in 
 the hierarchy can "register" a Frame, and then provide a 
