@@ -1,6 +1,6 @@
 ## EP 001 - Better Capture Of Handler Metadata  
 
-> Status: WIP. Incomplete. Don't read.
+> Status: Draft. WIP. Incomplete. Don't read.
 
 ### Abstract 
 

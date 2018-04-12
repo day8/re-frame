@@ -1,6 +1,6 @@
 ## EP 002 - Multiple re-frame Instances  
 
-> Status: WIP. Incomplete. Don't read.
+> Status: Draft. WIP. Incomplete. Don't read.
 
 ### Abstract
 
@@ -10,35 +10,39 @@ of a re-frame app to coexist on the same (HTML) page.
 ## Introduction 
 
 Currently, there can only be one instance of `re-frame` on a page.
-This design limitation simplifies the programmer's
-experience of using re-frame in 99% of usecases.
+This design limitation simplifies the programmer's development
+experience in 98% of usecases.
 
 But there are problematic usecases: 
   1. when two instances of **the same** app need to coexist on the one page:
      - think of `devcards` where instances can coexist 
      - when unittesting, it might be useful to create re-frame "instances", 
        use them, and then throw them away.
-  2. when **different** re-frame apps need to coexist on the one page. 
+  2. when **different** re-frame apps need to coexist on the one page. Different, as in, 
+     completely different apps - like one is TodoMVC and the other is a meme creator. 
 
-So, the challenge here is to facilitate these more complicated usecases 
+So, the challenge is to facilitate these more complicated usecases 
 but, in the process, to not lose the current simplicity which is
 enjoyed most of the time. 
 
 ### Global State As A Frame
 
 re-frame has some global state in the form of various atoms scattered 
-about internal namespaces. The best externally-known is `app-db`. 
+about internal namespaces. The best known is `app-db`. 
 
 It would be completely straightforward to scoop up this state and 
 put it into some sort of `defrecord` whole - let's call a `Frame` - and 
 then allow the programmer to create instances of `Frame` when they  
 want to create a new instances of a re-frame app.
 
-Imagine that there's is a new API function 
-called `create-frame` - use it to create as many re-frame instances
+Imagine that there's a new API function 
+called `create-frame`, which creates a new instance of this 
+`defrecord` `Frame` and you can use it to create as many re-frame apps 
 as you want.
 
-So, that's the easy bit.  Now the design work starts in earnest and there's
+### The Two Problems
+
+So, that was the easy bit.  Now the design work starts in earnest and there's
 two problems to solve:    
   1. how to associate handlers with a `Frame`  
   2. within a view fucntion, how to `subscribe`
@@ -49,17 +53,26 @@ two problems to solve:
 A re-frame app is defined collectively by its handlers.
 
 It is the many calls to registration functions like `reg-event-db` and `reg-sub` which 
-"build up" an app, infusing it with behaviour and capability. 
+"build up" an app, infusing it with behaviour and capability.
 
 So, if there are different `Frame` instances on the same page, how  
 should handlers be "added into" one or more of them?
 
-This is easy enough if all `Frames` on the one page 
-are instances of the same app - all `Frames` will share 
-the same set of handlers.  
-But the design is tricker when different `Frames` are for different 
+This is made easier if all `Frames` on the one page 
+are instances of the same app - for example, if all the `Frames` were TodoMVC apps - 
+because all `Frames` will share the same set of handlers. In this case, all the `Frames` 
+can still use those handlers registered with a central "registrar". 
+
+But more design is reqired when the `Frames` are for different 
 apps - each instance needs a different set of handlers. The handlers for one `Frame`
-should not be present in the other.
+should not be present in the other. Imagine that one app is TodoMVC and the other is
+a meme creator tool.  Here, handlers have to be partitioned into independent 
+collections, let's call them `packages`, and when we create a `Frame` we need 
+to indicate which of these "packages" (collections of handlers) should be 
+brought together.
+  
+
+
 
 **Solution sketch #1**: registration calls (`reg-event-db`, etc) 
 apply to a `Frame`. Either the current functions, like `reg-event-db`
