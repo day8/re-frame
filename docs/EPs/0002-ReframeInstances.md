@@ -1,6 +1,6 @@
 ## EP 002 - Multiple re-frame Instances  
 
-> Status: Draft. WIP. Incomplete. Don't read.
+> Status: Drafting. May be incorrehent and/or wrong. Don't read.
 
 ### Abstract
 
@@ -13,10 +13,10 @@ Currently, there can only be one instance of `re-frame` on a page.
 This design limitation simplifies the programmer's development
 experience in 98% of usecases.
 
-But there are problematic usecases: 
+But there are some problematic usecases: 
   1. when two instances of **the same** app need to coexist on the one page:
      - think of `devcards` where instances can coexist 
-     - when unittesting, it might be useful to create re-frame "instances", 
+     - when unittesting, it might be useful to create re-frame "instances" serially, 
        use them, and then throw them away.
   2. when **different** re-frame apps need to coexist on the one page. Different, as in, 
      completely different apps - like one is TodoMVC and the other is a meme creator. 
@@ -48,38 +48,75 @@ two problems to solve:
   2. within a view fucntion, how to `subscribe`
      or `dispatch` from/to the right `Frame`
 
-### Problem 1: Associating Handlers
+
+### On Lynching Mobs
 
 A re-frame app is defined collectively by its handlers.
 
 It is the many calls to registration functions like `reg-event-db` and `reg-sub` which 
-"build up" an app, infusing it with behaviour and capability.
+collectively "build up" an app, infusing it with behaviour and capability.
 
-So, if there are different `Frame` instances on the same page, how  
-should handlers be "added into" one or more of them?
+This "building up" process happens via the progressive 
+mutation of a global `registrar` (map) held internally within `re-frame`. That's 
+where an `id` and its associated handler are `interned`.   
 
-This is made easier if all `Frames` on the one page 
-are instances of the same app - for example, if all the `Frames` were TodoMVC apps - 
-because all `Frames` will share the same set of handlers. In this case, all the `Frames` 
-can still use those handlers registered with a central "registrar". 
+Egads! Say it isn't true. Mutation of a global? Summon the functional lynch mob!
 
-But more design is reqired when the `Frames` are for different 
-apps - each instance needs a different set of handlers. The handlers for one `Frame`
-should not be present in the other. Imagine that one app is TodoMVC and the other is
-a meme creator tool.  Here, handlers have to be partitioned into independent 
-collections, let's call them `packages`, and when we create a `Frame` we need 
+Except, wait. Yes, we all know the dangers of mutation, 
+particularly of globals, but `re-frame` handler registration 
+is the same pattern as using `defn` to intern a symbol and
+function in a namespace. 
+
+Moving on.
+
+### Problem 1: Associating Handlers With Frames
+
+If there are different `Frame` instances on the one page, how then
+should handlers be injected into the `registrar` within each of them?
+Should there even be a `registrar` within a `Frame`?
+
+And, more subtly, when figwheel reloads a namespace containing  
+handler registrations, all existing `Frames` should be updated.
+How to do this if each `Frame` contains its own `registrar`? 
+
+In the case where all `Frames` on a page 
+are instances of the **same app** - for example, multiple TodoMVC - then all the  
+`Frames` could share the same set of handlers. Perhaps there is only one central
+`registrar` (still use re-frame's one?) and all `Frames` lookup handlers in this global 
+`registrar` and don't have one to themselves. That would work.
+
+Well, not quite. More design is reqired when the `Frames` on the page are for **different 
+apps** and each `Frame` instance needs a different set of handlers. 
+Imagine that one app on the page is TodoMVC and the other is a MemeCreator tool.
+The handlers for one should not be present in the other. Can we still put all handlers 
+into a central `registrar`?  Maybe. 
+
+If the handler `ids` are organised into collections, a 
+central registrar could work.  The collection mechanism could be as simple as insisting 
+on `ids` with namespaces.  Or if ==t could be that registration puts handlers into `packages`. 
+
+
+And then, when we created a `Frame`, we'd need 
 to indicate which of these "packages" (collections of handlers) should be 
-brought together.
-  
+brought together for that `Frame`? 
+
+But keep in mind the need for updates as figwheel reloads handlers. Which `Frame`
+should get which udpated handlers?
+
+Also remember that there are libraries of handlers. `re-frame-undo` is a library 
+which has event handlers, subsciption handlers, etc. How could one `Frame` on a page 
+include handlers from this library, but another `Frame` not? 
+
+### Problem 1 - Solutiuons
 
 
-
-**Solution sketch #1**: registration calls (`reg-event-db`, etc) 
-apply to a `Frame`. Either the current functions, like `reg-event-db`
-are checged to take a `Frame` argument OR a `Frame` has `reg-event-db`
-method.  So each time you create a `Frame` you have to add all the 
-handlers to it? And what about handlers in libraries 
-like [`re-frame-http-fx`](https://github.com/Day8/re-frame-http-fx). 
+Registration calls (to `reg-event-db`, etc) could be adjusted to 
+take an additional `Frame` argument. So, Handlers get registered "into" a `Frame`. 
+ 
+But what to do if we have two `Frames` on a page? Does that mean a handler has to be
+registered twice?   And what ahout using libraires 
+like [`re-frame-http-fx`](https://github.com/Day8/re-frame-http-fx). Should 
+frames explicitly  
 
 
 **Solution sketch #2**: all handlers are registered as they are now 
@@ -95,7 +132,7 @@ point of view. It is the least disruptive from abackwards compatability.
 
 ### Problem 2: Views, dispatch and subscription 
 
-In an HTML page, containing multiple `devcard` instances,
+In an HTML page containing multiple `devcard` instances,
 all for exactly the same app, there will be one `Frame`  
 for each `devcard`.
 
@@ -103,7 +140,7 @@ In this scenario, how can a view know to which
 `Frame` it should `subscribe`? And to which `Frame` it should 
 `dispatch`?
 
-**Solution sketch #1**:
+### Problem 2: Minimal Design Solution 
 
 The "minimal design" approach is to say that 
 `Frames` are passed as an arguement into 

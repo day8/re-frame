@@ -1,6 +1,6 @@
 ## EP 001 - Better Capture Of Handler Metadata  
 
-> Status: Draft. WIP. Incomplete. Don't read.
+> Status: Drafting. May be incorrehent and/or wrong. Don't read.
 
 ### Abstract 
 
@@ -165,10 +165,10 @@ XXX
 
 ## Issues/Questions/Todos 
 
-  - XXX implications for Cursive - it currently special-cases re-frame registration function -- give ColinF a leads up?? 
-  - XXX dear god, consider changes to documentation/tutorials 
+  - XXX implications for Cursive - it currently special-cases re-frame registration function -- give ColinF a heads up?? 
+  - XXX Dear God, consider changes to documentation/tutorials 
   - XXX means giving up syntax sugar for reg-sub ?
-  - XXX any format for `:doc` ??
+  - XXX any format for `:doc` for display in HTML?  Or just texual. 
 
 
 
