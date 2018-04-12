@@ -5,11 +5,11 @@ This directory contains re-frame "Enhancement Proposals" (EPs), one per file.
 ## Status
 
 An EP goes through the following stages:
-  - PlaceHolderOnly:  one day someone might write something.  
-  - Draft: some writing and thinking has been done, but it is incomplete.
-  - UnderReview: ready for comment - there will be a repo Issue openned for discussion.
-  - Accepted or Rejected
-  - Deployed
+  - **PlaceHolderOnly** - one day someone might write something.  
+  - **Draft** - some writing and thinking has been done, but it is incomplete.
+  - **UnderReview** - there will be a repo Issue openned for comment and discussion.
+  - **Accepted** or **Rejected**
+  - **Released**
  
 
 ## List 
