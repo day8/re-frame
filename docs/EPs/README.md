@@ -15,7 +15,7 @@ An EP goes through the following stages:
 ## List 
 
   - [EP 001 - Capture Handler Metadata](001-CaptureHandlerMetadata.md) - Drafting
-  - [EP 002 - Multiple re-frame Instances](0002-ReframeInstances.md) - Drafting
+  - [EP 002 - Multiple re-frame Instances](002-ReframeInstances.md) - Drafting
   - [EP 003 - Reusable Components Via context](003-ReusableComponents.md) - Place Holder Only
   - [EP 004 - View Registration](004-ViewRegistration.md) - Place Holder Only
   - [EP 005 - State Machines](005-StateMachines.md) - Place Holder Only
