@@ -1,11 +1,11 @@
 ## EP 002 - Multiple re-frame Instances  
 
-> Status: Drafting. May be incorrehent and/or wrong. Don't read.
+> Status: Drafting. May be incoherent and/or wrong. Don't read.
 
 ### Abstract
 
-This EP proposes changes to allow more than one instance 
-of a re-frame app to coexist on the same (HTML) page.
+This EP proposes changes to allow multiple
+re-frame apps to coexist on the same (HTML) page.
  
 ## Introduction 
 
@@ -47,7 +47,7 @@ So, that was the easy bit.
 Now the design work starts in earnest and there's
 two problems to solve:    
   1. how to associate handlers with a `Frame`  
-  2. within a view fucntion, how to `subscribe`
+  2. within a view function, how to `subscribe`
      or `dispatch` from/to the right `Frame`
 
 We'll start with problem #1.
@@ -56,59 +56,76 @@ We'll start with problem #1.
 
 A re-frame app is defined collectively by its handlers.
 
-It is the many calls to registration functions like `reg-event-db` and `reg-sub` which 
+As an app boots, calls to registration functions like `reg-event-db` and `reg-sub` 
 collectively "build up" an app, infusing it with behaviour and capability.
 
-This "building up" process happens via the progressive 
-mutation of a global `registrar` (map) held internally within `re-frame`. That's 
-where an `id` and its associated handler are maintained.   
+Currently, this "building up" process involves  
+progressive mutation of a global `registrar` (map) held internally within `re-frame`. 
+Each registration adds a new entry. 
 
 Egads! Say it isn't true. Mutation of a global? Summon the functional lynch mob!
 
-Except, except ... yes, we all "get" the dangers of mutation, 
-particularly of globals but, as a Clojure program starts, I note that we're happy enough allowing `defn` 
-to `intern` a symbol and function in a structure representing a `namespace`. 
-The lynch mob stays home for that. The pitch forks remain in their rack. 
- 
-So, I would put it to you that `re-frame` handler registration 
-is exactly the same pattern - an `id` and `handler function` are interned in a `registrar`, 
-once, on program load.
+About once a quarter, I get a lecture from someone 
+who assumes re-frame's design is all a bad mistake born of ignorance. 
 
-For more background on this thinking, read [On DSLs and Machines](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines). 
-The registration process represents the act of creating the re-frame VM. 
+re-frame's design represents a conscious decision to tradeoff 
+some functional purity for simplicity of developer experience.  
+It is a point in 
+the possible design space with pros and cons. 
+
+Then I go further, and explain that, even at a theory level, yes, we all 
+"get" the potential dangers of mutation, particularly of globals but, as a Clojure program 
+starts, I note that we're happy enough allowing `defn` 
+to `intern` a symbol and function in a (map-ish) structure representing a `namespace`. 
+The lynch mob stays home for that. The pitchforks remain in their rack. 
+
+So, I would put it to you that `re-frame` handler registration 
+is exactly the same pattern - an `id` and `handler function` are interned within a map-ish structure (a `registrar`), 
+once, on program load.
  
-I'm glad we've cleared that up. Moving on.
+`re-frame` registrations create `the machine` on which your app runs. 
+Read [On DSLs and Machines](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines). 
+
+So I'm happy to talk about the difficult tradeoffs, but please don't 
+come at me with 
+
 
 ### Problem 1:  Frames And Registrars
 
 The first design challenge to explore: what's the new relationship between 
 `Frames` and `registrars`.
 
-Currently, `re-frame` holds a global `registrar` of handlers.
+Currently, `re-frame` holds a global `registrar` of handlers. But in our new world, 
+where there are different `Frame` instances on a page, should each 
+have its own `registrar` of handlers?  And, if so, how and when
+should handlers be added to these `registrars`?
 
-But if there are to be different `Frame` instances on the one page, should each 
-now have its own `registrar` of handlers? And, if so, how and when 
-should handlers be injected into these `registrars`? 
+And, to support the developer experience, how should this 
+work with `figwheel` reloads of namespace containing registrations? 
+How would the `registrar` within 
+a given `Frame` be updated? 
 
-And, more subtly, to support the dev experience, later, when figwheel reloads  
-handler registrations, how would the `registrar` within a given `Frame` be updated?
+Let's explore via usecases ...
 
-Let's explore this via usecases ...
-
-In the case where there are multiple `Frames` on a page and they are 
-all instances of the **same app** - for example, multiple TodoMVC - then all the  
+In the usecase where there are multiple `Frames` on a page and they are 
+all instances of the **same app** - for example, multiple TodoMVC apps - then all the
 `Frames` will have an identical set of handlers. So there need be only one central
 `registrar` (continue to use re-frame's global one?) and all `Frames` can look up 
 handlers in this global `registrar`, and not hold one themselves. That would work.
 
-But, not quite. More design is reqired when the usecase is harder. Imagine that 
+But, not quite. More design is required for the harder usecase where
 there are many `Frames` on a page, but each is for a **different 
-apps**. Each `Frame` instance would need a different set of handlers. 
+apps**.
 Imagine that one app on the page is TodoMVC and the other is a MemeCreator tool.
-The handlers for one should not be present in the other to even call accidentally.
-Could we still put all handlers 
+Each `Frame` would require a different set of handlers.
+Could we still put all handlers
 into a central `registrar`?  Maybe. But it would "safer" if each app's `Frame` only had 
 access to the subset of handlers specific to its app. 
+ 
+ and the comingling of 
+handlers in a central `registrar` feels problematic.  What if one.  
+
+
 
 Perhaps if the handler `ids` were organised into app specific collections, a 
 central registrar could work.  The collection mechanism could be as simple as insisting 
@@ -120,20 +137,20 @@ to indicate which of these "packages" (collections of handlers) should be
 brought together for that `Frame`? 
 
 But keep in mind the need for updates as figwheel reloads handlers. Which `Frame`
-should get which udpated handlers?
+should get which updated handlers?
 
 Also remember that there are libraries of handlers. `re-frame-undo` is a library 
-which has event handlers, subsciption handlers, etc. How could one `Frame` on a page 
+which has event handlers, subscription handlers, etc. How could one `Frame` on a page 
 include handlers from this library, but another `Frame` not? 
 
-### Problem 1 - Solutiuons
+### Problem 1 - Solutions
 
 
 Registration calls (to `reg-event-db`, etc) could be adjusted to 
 take an additional `Frame` argument. So, Handlers get registered "into" a `Frame`. 
  
 But what to do if we have two `Frames` on a page? Does that mean a handler has to be
-registered twice?   And what ahout using libraires 
+registered twice?   And what about using libraries 
 like [`re-frame-http-fx`](https://github.com/Day8/re-frame-http-fx). Should 
 frames explicitly  
 
@@ -144,10 +161,10 @@ stored (as now) in a central registrar (as now). But each handler belongs to a
 "package" (which defaults to `:default`). When a `frame` is created, you 
 can, optionally, supply the `set of packages`. When the `Frame` is created 
 all handlers in the nominated `packages` are injected into the 
-`Frame`. If not set is provided, then all handlers areinjected. 
+`Frame`. If not set is provided, then all handlers are injected. 
 
-At this point I favour sketch #2 from a backwards compatability 
-point of view. It is the least disruptive from abackwards compatability.
+At this point I favour sketch #2 from a backwards compatibility 
+point of view. It is the least disruptive. 
 
 ### Problem 2: Views, dispatch and subscription 
 
@@ -170,7 +187,7 @@ Then, when using `dispatch` or `subscribe` a view will
 use the arg given to it called, say, `frame` like this:
 `(dispatch frame [:event-id arg])`.
 
-This approach is certainly simple. But it does get labourious
+This approach is certainly simple. But it does get laborious
 and tedious pretty quickly. Every view needs to accept a `frame`
 and every XXX further supply that frame to child 
 
@@ -180,7 +197,7 @@ way so that any given view can "query upwards" through its
 the parent/owner hierarchy of views 
 looking for the `frame` to which it should subscribe and dispatch. 
 
-**Solution sketch #3**: The Algebric Effects approach is to 
+**Solution sketch #3**: The Algebraic  Effects approach is to 
 piggyback on React's `context` facility. `context` only works for simple values, so 
 this path would passing down the `id` of the frame, and then 
 looking it up.

@@ -1,6 +1,6 @@
 ## EP 001 - Better Capture Of Handler Metadata  
 
-> Status: Drafting. May be incorrehent and/or wrong. Don't read.
+> Status: Drafting. May be incoherent and/or wrong. Don't read.
 
 ### Abstract 
 

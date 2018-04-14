@@ -6,7 +6,7 @@ This directory contains re-frame "Enhancement Proposals" (EPs), one per file.
 
 An EP goes through the following stages:
   - **PlaceHolderOnly** - one day someone might write something.  
-  - **Drafting** - some writing and thinking has been done, but it may be incorrehent and/or wrong.
+  - **Drafting** - some writing and thinking has been done, but it may be incoherent and/or wrong.
   - **UnderReview** - there will be a repo Issue openned to encourage comment and discussion.
   - **Accepted** or **Rejected**
   - **Released**
