@@ -61,33 +61,24 @@ collectively "build up" an app, infusing it with behaviour and capability.
 
 Currently, this "building up" process involves  
 progressive mutation of a global `registrar` (map) held internally within `re-frame`. 
-Each registration adds a new entry. 
+Each registration adds a new entry to this `registrar`. 
 
-Egads! Say it isn't true. Mutation of a global? Summon the functional lynch mob!
-
-About once a quarter, I get a lecture from someone 
-who assumes re-frame's design is all a bad mistake born of ignorance. 
-
-re-frame's design represents a conscious decision to tradeoff 
-some functional purity for simplicity of developer experience.  
-It is a point in 
-the possible design space with pros and cons. 
-
-Then I go further, and explain that, even at a theory level, yes, we all 
-"get" the potential dangers of mutation, particularly of globals but, as a Clojure program 
-starts, I note that we're happy enough allowing `defn` 
-to `intern` a symbol and function in a (map-ish) structure representing a `namespace`. 
-The lynch mob stays home for that. The pitchforks remain in their rack. 
-
-So, I would put it to you that `re-frame` handler registration 
-is exactly the same pattern - an `id` and `handler function` are interned within a map-ish structure (a `registrar`), 
-once, on program load.
- 
-`re-frame` registrations create `the machine` on which your app runs. 
-Read [On DSLs and Machines](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines). 
-
-So I'm happy to talk about the difficult tradeoffs, but please don't 
-come at me with 
+There's three ways to view this:
+  1. Egads! Say it isn't true. Mutation of a global? Summon the functional lynch mob!
+  2. Yes, we all understand the potential dangers of mutation, particularly of globals
+     but re-frame's design represents a conscious decision to tradeoff 
+     some functional purity for simplicity of developer experience.  
+     It represents a point in 
+     the possible design space with associated pros and cons.
+  3. There's no purity problem at all. As a Clojure program 
+     starts, each `defn` (becomes a `def`) happily
+     `interns` a symbol and function in [a map-ish structure](https://clojuredocs.org/clojure.core/ns-interns) representing a `namespace`. 
+     The lynch mob stays home for that. The pitchforks remain in their rack. 
+     `re-frame` handler registration 
+     is the same pattern - an `id` and `handler function` are interned
+     within a map-ish structure (a `registrar`), once, on program load.
+     If you hate on re-frame, you hate on `defn`. 
+     Also, you might be interested to read [On DSLs and Machines](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines).
 
 
 ### Problem 1:  Frames And Registrars
@@ -102,8 +93,7 @@ should handlers be added to these `registrars`?
 
 And, to support the developer experience, how should this 
 work with `figwheel` reloads of namespace containing registrations? 
-How would the `registrar` within 
-a given `Frame` be updated? 
+How sould the `registrar` within a given `Frame` be updated? 
 
 Let's explore via usecases ...
 
@@ -179,7 +169,7 @@ In this scenario, how can a view know to which
 ### Problem 2: Minimal Design Solution 
 
 The "minimal design" approach is to say that 
-`Frames` are passed as an arguement into 
+`Frames` are passed as an argument into 
 each view function, and then further passed down into 
 child views, and so on, and so on.
 

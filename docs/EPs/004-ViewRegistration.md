@@ -1,6 +1,7 @@
 ## EP 003 - View Registration
 
-> Status: Place Holder Only
+> Status: Placeholder. Don't bother reading yet. 
+
 
 ### Abstract 
 

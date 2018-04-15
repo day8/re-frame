@@ -1,6 +1,6 @@
 ## EP 003 - State Machines
 
-> Status: Place Holder Only
+> Status: Placeholder. Don't bother reading yet. 
 
 ### Abstract 
 
