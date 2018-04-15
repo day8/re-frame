@@ -35,7 +35,7 @@ There's three ways to view this:
      is the same pattern - an `id` and `handler function` are interned
      within a map-ish structure (a `registrar`), once, on program load.
      If you hate on what re-frame does, you should also hate on `defn`.
-     In fact, your discomfort only arises because you don't understand  
+     I claim your discomfort only arises because you don't understand
      [how you are creating a virtual machine when you program re-frame](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines)   
    
 -------- 
