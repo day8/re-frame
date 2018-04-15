@@ -8,7 +8,7 @@ A re-frame app is defined collectively by its handlers. As an app boots, calls t
 functions like `reg-event-db` and `reg-sub` 
 collectively "build up" an app, infusing it with behaviour and capability.
 
-Currently, this "building up" process involves  
+Currently, this "building up" process involves
 progressive mutation of a global `registrar` (map) held internally within `re-frame`. 
 Each registration adds a new entry to this `registrar`.
 
