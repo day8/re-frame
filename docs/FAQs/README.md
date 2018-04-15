@@ -14,6 +14,7 @@
 7. [How do I store normalised data in app-db?](DB_Normalisation.md)
 8. [How do I register a global interceptor](GlobalInterceptors.md)
 9. [How do I turn on/off polling a database every 60 secs](PollADatabaseEvery60.md)
+10. [re-frame's uses side-effecting registrations. Should I feel dirty?](ViewsOnGlobalRegistration.md)
 
 
 ## Want To Add An FAQ?  
