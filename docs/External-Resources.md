@@ -78,6 +78,7 @@ Please add to this list by submitting a pull request.
 * [subgraph](https://github.com/vimsical/subgraph) - Reactive graph database for re-frame
 * [re-graph](https://github.com/oliyh/re-graph) - GraphQL client for re-frame
 * [martian](https://github.com/oliyh/martian) - Swagger-compatible API client that abstracts away from HTTP with [re-frame bindings](https://github.com/oliyh/martian/tree/master/re-frame)
+* [re-pressed](https://github.com/gadfly361/re-pressed) - A keyboard event library for re-frame
 
 #### Debugging
 
