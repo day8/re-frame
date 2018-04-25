@@ -233,10 +233,10 @@
         e (js/Error. "Ooops!")
         interceptor {:id :some-interceptor :before identity}
         result (exception->ex-info e interceptor :after)]
-    (is (= {:exception e
-            :direction :after
+    (is (= {:direction :after
             :interceptor :some-interceptor}
            (ex-data result)))
+    (is (= e (ex-cause result)))
     (is (= "Interceptor Exception: Ooops!" (ex-message result)))))
 
 (deftest test-invoke-interceptor-fn
@@ -280,8 +280,8 @@
             (catch :default e
               (is (not= exception e))
               (is (= "Interceptor Exception: Oopsie" (ex-message e)))
-              (is (= {:exception exception
-                      :direction :before
+              (is (= exception (ex-cause e)))
+              (is (= {:direction :before
                       :interceptor :throws}
                      (ex-data e))))))
         (finally
@@ -311,8 +311,9 @@
         (is (registrar/get-handler :error))
         (interceptor/execute [:_] interceptors)
         (let [error @error-atom]
+          (is (= exception (ex-cause error)))
           (is (= {:direction :before
-                  :exception exception
+                  :event-v [:_]
                   :interceptor :throws-before}
                  (ex-data error))))
         (finally
