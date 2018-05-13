@@ -135,7 +135,7 @@ It is a function which returns an Interceptor whose `:before` function loads
 a key/value pair into a `context's` `:coeffects` map.
 
 `inject-cofx` takes either one or two arguments. The first is always the `id` of the coeffect
-required (called a `cofx-id`). The 2nd is an optional addition value.
+required (called a `cofx-id`). The 2nd is an optional additional value.
 
 So, in the case above, the `cofx-id` was `:local-store`  and the additional value
 was "defaults-key" which was presumably the LocalStore key.
