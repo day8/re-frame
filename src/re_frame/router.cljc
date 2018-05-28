@@ -126,46 +126,47 @@
     ;; Given a "trigger", and the existing FSM state, it computes the
     ;; new FSM state and the transition action (function).
 
-    (trace/with-trace {:op-type ::fsm-trigger}
-      (let [[new-fsm-state action-fn]
-            (case [fsm-state trigger]
+    (locking this
+      (trace/with-trace {:op-type ::fsm-trigger}
+        (let [[new-fsm-state action-fn]
+              (case [fsm-state trigger]
 
-              ;; You should read the following "case" as:
-              ;; [current-FSM-state trigger] -> [new-FSM-state action-fn]
-              ;;
-              ;; So, for example, the next line should be interpreted as:
-              ;; if you are in state ":idle" and a trigger ":add-event"
-              ;; happens, then move the FSM to state ":scheduled" and execute
-              ;; that two-part "do" function.
-              [:idle :add-event] [:scheduled #(do (-add-event this arg)
-                                                  (-run-next-tick this))]
+                ;; You should read the following "case" as:
+                ;; [current-FSM-state trigger] -> [new-FSM-state action-fn]
+                ;;
+                ;; So, for example, the next line should be interpreted as:
+                ;; if you are in state ":idle" and a trigger ":add-event"
+                ;; happens, then move the FSM to state ":scheduled" and execute
+                ;; that two-part "do" function.
+                [:idle :add-event] [:scheduled #(do (-add-event this arg)
+                                                    (-run-next-tick this))]
 
-              ;; State: :scheduled  (the queue is scheduled to run, soon)
-              [:scheduled :add-event] [:scheduled #(-add-event this arg)]
-              [:scheduled :run-queue] [:running #(-run-queue this)]
+                ;; State: :scheduled  (the queue is scheduled to run, soon)
+                [:scheduled :add-event] [:scheduled #(-add-event this arg)]
+                [:scheduled :run-queue] [:running #(-run-queue this)]
 
-              ;; State: :running (the queue is being processed one event after another)
-              [:running :add-event] [:running #(-add-event this arg)]
-              [:running :pause] [:paused #(-pause this arg)]
-              [:running :exception] [:idle #(-exception this arg)]
-              [:running :finish-run] (if (empty? queue)     ;; FSM guard
-                                       [:idle]
-                                       [:scheduled #(-run-next-tick this)])
+                ;; State: :running (the queue is being processed one event after another)
+                [:running :add-event] [:running #(-add-event this arg)]
+                [:running :pause] [:paused #(-pause this arg)]
+                [:running :exception] [:idle #(-exception this arg)]
+                [:running :finish-run] (if (empty? queue)     ;; FSM guard
+                                         [:idle]
+                                         [:scheduled #(-run-next-tick this)])
 
-              ;; State: :paused (:flush-dom metadata on an event has caused a temporary pause in processing)
-              [:paused :add-event] [:paused #(-add-event this arg)]
-              [:paused :resume] [:running #(-resume this)]
+                ;; State: :paused (:flush-dom metadata on an event has caused a temporary pause in processing)
+                [:paused :add-event] [:paused #(-add-event this arg)]
+                [:paused :resume] [:running #(-resume this)]
 
-              (throw (ex-info (str "re-frame: router state transition not found. " fsm-state " " trigger)
-                              {:fsm-state fsm-state, :trigger trigger})))]
+                (throw (ex-info (str "re-frame: router state transition not found. " fsm-state " " trigger)
+                                {:fsm-state fsm-state, :trigger trigger})))]
 
-        ;; The "case" above computed both the new FSM state, and the action. Now, make it happen.
+          ;; The "case" above computed both the new FSM state, and the action. Now, make it happen.
 
-        (trace/merge-trace! {:operation [fsm-state trigger]
-                             :tags      {:current-state fsm-state
-                                         :new-state     new-fsm-state}})
-        (set! fsm-state new-fsm-state)
-        (when action-fn (action-fn)))))
+          (trace/merge-trace! {:operation [fsm-state trigger]
+                               :tags      {:current-state fsm-state
+                                           :new-state     new-fsm-state}})
+          (set! fsm-state new-fsm-state)
+          (when action-fn (action-fn))))))
 
   (-add-event
     [_ event]
