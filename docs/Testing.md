@@ -231,7 +231,7 @@ But remember my ugly secret - I don't tend to write tests for my views.
 
 But here's how, theoretically, I'd write tests if I wasn't me ...
 
-If a View Function is [Form-1](https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components#form-1-a-simple-function),
+If a View Function is [Form-1](https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-1-a-simple-function),
 then it is fairly easy to test.
 
 A trivial example:
