@@ -16,9 +16,23 @@
   (fn [db [_ i]]
     (update db ::test (fnil conj []) i)))
 
+(rf/reg-fx
+ ::promise
+ (fn [{:keys [p val]}]
+   (deliver p val)))
+
+(rf/reg-event-fx
+ ::sentinel
+ (fn [cofx [_ p val]]
+   {::promise {:p p :val val}}))
+
 (deftest dispatching-race-condition-469-test
   ;; Checks for Day8/re-frame#469
-  (is (nil? (dotimes [i 1000]
-              (rf/dispatch [::test i]))))
-  (is (= (::test @db/app-db)
-         (range 1000))))
+  (let [p (promise)]
+    (is (nil? (dotimes [i 1000]
+                (rf/dispatch [::test i]))))
+    (is (nil? (rf/dispatch [::sentinel p ::done])))
+    (let [val (deref p 1000 ::timed-out)]
+      (is (= ::done val)))
+    (is (= (::test @db/app-db)
+           (range 1000)))))
