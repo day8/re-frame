@@ -86,8 +86,9 @@ D3 (from @zachcp):
   - Code: https://github.com/zachcp/simplecomponent
   - Example: http://zachcp.github.io/simplecomponent/
 
-A different take on using D3: 
-https://gadfly361.github.io/gadfly-blog/posts-output/2016-10-22-d3-in-reagent/
+RID3, a reagent interface to D3
+  - Repo: https://github.com/gadfly361/rid3
+  - Demo: https://rawgit.com/gadfly361/rid3/master/dev-resources/public/examples.html
 
 ### JS Interop 
 
