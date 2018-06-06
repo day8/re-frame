@@ -15,11 +15,11 @@ experience in 98% of usecases.
 
 But there are some problematic usecases: 
   1. when two instances of **the same** app need to coexist on the one page:
-     - think of `devcards` where instances can coexist 
+     - think of `devcards` where instances should coexist 
      - when unittesting, it might be useful to create re-frame "instances" serially, 
        use them, and then throw them away.
   2. when **different** re-frame apps need to coexist on the one page. Different, as in, 
-     completely different apps - like one is TodoMVC and the other is a meme creator. 
+     completely different apps - like one is TodoMVC and the other is a MemeCreator. 
 
 So, the challenge is to facilitate these more complicated usecases 
 but, in the process, to not lose the current simplicity which is
@@ -27,15 +27,15 @@ enjoyed most of the time.
 
 ### Global State As A Frame
 
-re-frame has some global state in the form of various atoms scattered 
+Currently, re-frame has some global state in the form of various atoms scattered 
 about internal namespaces. The best known is `app-db`. 
 
 It would be completely straightforward to scoop up this state and 
-put it into some sort of `defrecord` whole - let's call a `Frame` - and 
+put it into some sort of `defrecord` whole - let's call it `Frame` - and 
 then allow the programmer to create instances of `Frame` when they
 want to create a new instances of a re-frame app.
 
-Imagine that there's a new API function 
+Imagine there's a new API function 
 called `create-frame`, which creates a new instance of this 
 `defrecord` `Frame` and that you can call it as often as you want 
 to create as many re-frame apps as needed.
@@ -52,7 +52,7 @@ two problems to solve:
 
 We'll start with problem #1.
 
-### On Lynch Mobs
+### On Mutating registrars
 
 A re-frame app is defined collectively by its handlers.
 
@@ -63,23 +63,8 @@ Currently, this "building up" process involves
 progressive mutation of a global `registrar` (map) held internally within `re-frame`. 
 Each registration adds a new entry to this `registrar`. 
 
-There's three ways to view this:
-  1. Egads! Say it isn't true. Mutation of a global? Summon the functional lynch mob!
-  2. Yes, we all understand the potential dangers of mutation, particularly of globals
-     but re-frame's design represents a conscious decision to tradeoff 
-     some functional purity for simplicity of developer experience.  
-     It represents a point in 
-     the possible design space with associated pros and cons.
-  3. There's no purity problem at all. As a Clojure program 
-     starts, each `defn` (becomes a `def`) happily
-     `interns` a symbol and function in [a map-ish structure](https://clojuredocs.org/clojure.core/ns-interns) representing a `namespace`. 
-     The lynch mob stays home for that. The pitchforks remain in their rack. 
-     `re-frame` handler registration 
-     is the same pattern - an `id` and `handler function` are interned
-     within a map-ish structure (a `registrar`), once, on program load.
-     If you hate on re-frame, you hate on `defn`. 
-     Also, you might be interested to read [On DSLs and Machines](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines).
-
+If side effects on globals sounds troubling, there's 
+an [FAQ entry for you to read](https://github.com/Day8/re-frame/blob/master/docs/FAQs/ViewsOnGlobalRegistration.md).
 
 ### Problem 1:  Frames And Registrars
 
@@ -93,7 +78,7 @@ should handlers be added to these `registrars`?
 
 And, to support the developer experience, how should this 
 work with `figwheel` reloads of namespace containing registrations? 
-How sould the `registrar` within a given `Frame` be updated? 
+How sould the `registrar` within a given `Frame` be updated?
 
 Let's explore via usecases ...
 
@@ -111,13 +96,18 @@ Each `Frame` would require a different set of handlers.
 Could we still put all handlers
 into a central `registrar`?  Maybe. But it would "safer" if each app's `Frame` only had 
 access to the subset of handlers specific to its app. 
- 
- and the comingling of 
-handlers in a central `registrar` feels problematic.  What if one.  
 
+Perhaps when registering a handler, the "package" to which it belongs can be nominated. 
+Collections of related handlers would all belong to the same package.  So all of the 
+handlers for `re-frame-undo` would be registered as part of the package `:re-frame-undo`.
 
+And then, `create-frame` could, optionally, take a set of `packages` as an argument 
+indicating which of them should be included into the `Frame` being created. 
 
-Perhaps if the handler `ids` were organised into app specific collections, a 
+Alternatively, we could be drop the notion of `:package` and simply work from the 
+namespace of the registration `id`.  So, 
+
+XXX Perhaps if the handler `ids` were organised into app specific collections, a 
 central registrar could work.  The collection mechanism could be as simple as insisting 
 on `ids` with namespaces.  Or if ==t could be that registration puts handlers into `packages`.
 
@@ -135,14 +125,9 @@ include handlers from this library, but another `Frame` not?
 
 ### Problem 1 - Solutions
 
-
 Registration calls (to `reg-event-db`, etc) could be adjusted to 
 take an additional `Frame` argument. So, Handlers get registered "into" a `Frame`. 
- 
-But what to do if we have two `Frames` on a page? Does that mean a handler has to be
-registered twice?   And what about using libraries 
-like [`re-frame-http-fx`](https://github.com/Day8/re-frame-http-fx). Should 
-frames explicitly  
+
 
 
 **Solution sketch #2**: all handlers are registered as they are now 
@@ -179,7 +164,11 @@ use the arg given to it called, say, `frame` like this:
 
 This approach is certainly simple. But it does get laborious
 and tedious pretty quickly. Every view needs to accept a `frame`
-and every XXX further supply that frame to child 
+and then pass it down to all children. Even intermediate
+
+### Problem 2: Better Design Solution 
+
+
 
 **Solution sketch #2**: Hack Reagent so that a given node in 
 the hierarchy can "register" a Frame, and then provide a 
