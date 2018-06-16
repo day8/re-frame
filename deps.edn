@@ -1,0 +1,6 @@
+{:deps
+ {org.clojure/clojure #:mvn{:version "1.8.0"},
+  org.clojure/clojurescript #:mvn{:version "1.9.908"},
+  reagent #:mvn{:version "0.7.0"},
+  net.cgrand/macrovich #:mvn{:version "0.2.0"},
+  org.clojure/tools.logging #:mvn{:version "0.3.1"}}}
