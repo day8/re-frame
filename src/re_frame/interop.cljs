@@ -13,7 +13,7 @@
 ;; otherwise Dead Code Elimination won't happen in `:advanced` builds.
 ;; Type hints have been liberally sprinkled.
 ;; https://developers.google.com/closure/compiler/docs/js-for-compiler
-(def ^boolean debug-enabled? "@define {boolean}" ^boolean js/goog.DEBUG)
+(def ^boolean debug-enabled? "@define {boolean}" ^boolean goog.DEBUG)
 
 (defn ratom [x]
   (reagent.core/atom x))
