@@ -80,6 +80,7 @@ Please add to this list by submitting a pull request.
 * [martian](https://github.com/oliyh/martian) - Swagger-compatible API client that abstracts away from HTTP with [re-frame bindings](https://github.com/oliyh/martian/tree/master/re-frame)
 * [re-pressed](https://github.com/gadfly361/re-pressed) - A keyboard event library for re-frame
 * [re-pollsive](https://github.com/gadfly361/re-pollsive) - A polling event library for re-frame
+* [breaking-point](https://github.com/gadfly361/breaking-point) - Quickly define screen breakpoints for re-frame
 
 #### Debugging
 
