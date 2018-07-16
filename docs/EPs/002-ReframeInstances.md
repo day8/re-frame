@@ -1,6 +1,6 @@
 ## EP 002 - Multiple re-frame Instances  
 
-> Status: Drafting. May be incoherent and/or wrong. Don't read.
+> Status: Drafting. May be incoherent and/or wrong. Probably don't read.
 
 ### Abstract
 
@@ -44,9 +44,9 @@ So, that was the easy bit.
 
 ### The Two Problems
 
-Now the design work starts in earnest and there's
-two problems to solve:    
-  1. how to associate handlers with a `Frame`  
+Now the design work has to start in earnest and there's
+two problems to solve:
+  1. how to associate/register handlers with a `Frame`  
   2. within a view function, how to `subscribe`
      or `dispatch` from/to the right `Frame`
 
@@ -54,27 +54,26 @@ We'll start with problem #1.
 
 ### On Mutating registrars
 
-A re-frame app is defined collectively by its handlers.
-
-As an app boots, calls to registration functions like `reg-event-db` and `reg-sub` 
+A re-frame app is defined collectively by its handlers. As an app boots, 
+calls to registration functions like `reg-event-db` and `reg-sub` 
 collectively "build up" an app, infusing it with behaviour and capability.
 
-Currently, this "building up" process involves  
+This "building up" process currently involves  
 progressive mutation of a global `registrar` (map) held internally within `re-frame`. 
 Each registration adds a new entry to this `registrar`. 
 
-If side effects on globals sounds troubling, there's 
-an [FAQ entry for you to read](https://github.com/Day8/re-frame/blob/master/docs/FAQs/ViewsOnGlobalRegistration.md).
+If you are troubled by the thought of side effects on globals, there's 
+an [FAQ entry you may find interesting](https://github.com/Day8/re-frame/blob/master/docs/FAQs/ViewsOnGlobalRegistration.md).
 
 ### Problem 1:  Frames And Registrars
 
-The first design challenge to explore: what's the new relationship between 
+The first design challenge to explore is: what's the new relationship between 
 `Frames` and `registrars`.
 
-Currently, `re-frame` holds a global `registrar` of handlers. But in our new world, 
-where there are different `Frame` instances on a page, should each 
+`re-frame` currently holds a global `registrar` of handlers, but in our new world,
+where there are different `Frame` instances on a page, should each of these `Frames`
 have its own `registrar` of handlers?  And, if so, how and when
-should handlers be added to these `registrars`?
+should handlers be added to their `registrars`?
 
 And, to support the developer experience, how should this 
 work with `figwheel` reloads of namespace containing registrations? 
@@ -86,47 +85,51 @@ In the usecase where there are multiple `Frames` on a page and they are
 all instances of the **same app** - for example, multiple TodoMVC apps - then all the
 `Frames` will have an identical set of handlers. So there need be only one central
 `registrar` (continue to use re-frame's global one?) and all `Frames` can look up 
-handlers in this global `registrar`, and not hold one themselves. That would work.
+handlers in this global `registrar`, and not hold one themselves. So continuing with 
+a global registrar would work.
 
-But, not quite. More design is required for the harder usecase where
+But there are harder usecases to contend with. Ones where 
 there are many `Frames` on a page, but each is for a **different 
-apps**.
+app**.
 Imagine that one app on the page is TodoMVC and the other is a MemeCreator tool.
-Each `Frame` would require a different set of handlers.
-Could we still put all handlers
+Each `Frame` needs a different set of handlers.
+In which case, can we still put all handlers
 into a central `registrar`?  Maybe. But it would "safer" if each app's `Frame` only had 
-access to the subset of handlers specific to its app. 
+access to the subset of handlers specific to *that* app.
 
-Perhaps when registering a handler, the "package" to which it belongs can be nominated. 
+More ideas. Perhaps when registering a handler, the "package" to which it belongs can be nominated. 
 Collections of related handlers would all belong to the same package.  So all of the 
 handlers for `re-frame-undo` would be registered as part of the package `:re-frame-undo`.
 
 And then, `create-frame` could, optionally, take a set of `packages` as an argument 
-indicating which of them should be included into the `Frame` being created. 
+indicating which of them should be included/imported into the `Frame` being created.  Its almost as 
+if we are `importing` packages of handlers into a `Frame`. 
+
+Keep in mind that there are libraries of handlers. `re-frame-undo` is a library 
+which has event handlers, subscription handlers, etc. So one `Frame` on a page 
+might need to include the `package` of `re-frame-undo` handlers, but another 
+`Frame` on the same page might not.
 
 Alternatively, we could be drop the notion of `:package` and simply work from the 
-namespace of the registration `id`.  So, 
+namespace of the registration `id`.
 
 XXX Perhaps if the handler `ids` were organised into app specific collections, a 
 central registrar could work.  The collection mechanism could be as simple as insisting 
 on `ids` with namespaces.  Or if ==t could be that registration puts handlers into `packages`.
 
-
 And then, when we created a `Frame`, we'd need 
 to indicate which of these "packages" (collections of handlers) should be 
-brought together for that `Frame`? 
+"imported" into that `Frame`?
 
-But keep in mind the need for updates as figwheel reloads handlers. Which `Frame`
-should get which updated handlers?
+But keep in mind the need for updates to handlers being reloaded by figwheel (or the like). 
+A `Frame` will need to "get" these updated handlers. 
 
-Also remember that there are libraries of handlers. `re-frame-undo` is a library 
-which has event handlers, subscription handlers, etc. How could one `Frame` on a page 
-include handlers from this library, but another `Frame` not? 
+And also k
 
 ### Problem 1 - Solutions
 
 Registration calls (to `reg-event-db`, etc) could be adjusted to 
-take an additional `Frame` argument. So, Handlers get registered "into" a `Frame`. 
+take an additional `Frame` argument. So, Handlers get registered "into" a `Frame`.
 
 
 
