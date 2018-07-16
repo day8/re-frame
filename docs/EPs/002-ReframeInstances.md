@@ -11,18 +11,18 @@ re-frame apps to coexist on the same (HTML) page.
 
 Currently, there can only be one instance of `re-frame` on a page.
 This design limitation simplifies the programmer's development
-experience in 98% of usecases.
+experience in 98.3% of usecases (yes, I just pulled that number out of my keyboard). 
 
 But there are some problematic usecases: 
-  1. when two instances of **the same** app need to coexist on the one page:
+  1. when two or more instances of **the same** app need to coexist on the one page:
      - think of `devcards` where instances should coexist 
      - when unittesting, it might be useful to create re-frame "instances" serially, 
        use them, and then throw them away.
-  2. when **different** re-frame apps need to coexist on the one page. Different, as in, 
-     completely different apps - like one is TodoMVC and the other is a MemeCreator. 
+  2. when two or more instances of **different** re-frame apps need to coexist on the one page. Different, as in, 
+     one is TodoMVC and the other is a MemeCreator.
 
-So, the challenge is to facilitate these more complicated usecases 
-but, in the process, to not lose the current simplicity which is
+The challenge is to facilitate these more complicated usecases 
+while not, in the process, losing the current simplicity which is
 enjoyed most of the time. 
 
 ### Global State As A Frame
