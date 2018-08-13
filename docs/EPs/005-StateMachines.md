@@ -17,7 +17,7 @@ decisions and the UIs involved as an FSM.
 
 Many **low level** aspects of SPAs are best modelled explicitly as FSM too.
 The simple act of GETing from a server involves various
-states, including waiting, and failed, and timedout, and retrying and succeeded.
+states, including waiting, and failed, and timed-out, and retrying and succeeded.
 
 BUT you need the power of a fully expressive state machine.
 You need orthogonal state, guards, hierarchical state, history, etc. 
@@ -34,7 +34,7 @@ formalism, so tooling is also important.
 State machines are appealing because:
   - they constrain you  (vs the full Turing tar-pit). Just because you *can* wield 
     immense power doesn't mean you should.
-  - they force you to think through, and structure a problem. This proceess helps to flush out the corner cases.
+  - they force you to think through and structure a problem. This process helps to flush out the corner cases.
   - they make explicit certain important assumptions which are otherwise hidden in a thicket of conditionals.  
 
 
@@ -46,7 +46,7 @@ https://www.skorks.com/2011/09/why-developers-never-use-state-machines/
 Technical elements:
   - a way to register:
     - a state machine specification against a `machine-id` 
-    - specification will be a data structure, listing states, transitions, etc
+    - the specification will be a data structure, listing states, transitions, etc
   - a way to create an instance of a registered state machine 
      - args: machine-id, id for this particular instance
      - data for machine instance will be stored in `app-db` (at `:machines` or a configurable place?) 
@@ -54,7 +54,7 @@ Technical elements:
       - the `id` of the state machine targeted
       - the trigger 
       - the trigger args
-  - tigger causes:
+  - trigger causes:
       - state transition 
       - an action fn to be called which produces `:effects` 
   - UI changes. See EP on `reg-view` which will make it much easier to describe UI in machine data structure  
@@ -76,13 +76,13 @@ But event handlers should know about XXX
 
 
 Types of triggers:  
-  1. Exteranal (from user, websocket)
+  1. External (from the user, websocket)
   2. Data - something about `app-db` has changed
 
 ### Implementation 
 
 What if we didn't even use FSM and used Behaviour Trees instead?  
-Behaviour trees are more composable. A better match for a data oriented design.  
+Behaviour trees are more composable. A better match for a data-oriented design.  
 
  
 Links And Notes:
