@@ -23,7 +23,7 @@ Two others are on the drawing board:
   
 So, there are potentially 9 `kinds` of handlers.
 
-Internally, re-frame manages registered handlers in a `registrar`, which is a two level map, 
+Internally, re-frame manages registered handlers in a `registrar`, which is a two-level map, 
 keyed at the first level by the `kind` of handler and at the second level by the (keyword) 
 `id` of the handler. The leaf values are the handler functions themselves.
  
@@ -31,7 +31,7 @@ keyed at the first level by the `kind` of handler and at the second level by the
 ## Introduction 
 
 This EP proposes that:
-  1. all current registration functions in th API be superseded by a new single macro `reg`
+  1. all current registration functions in the API be superseded by a new single macro `reg`
   2. the leaf nodes of the `registrar`, which are currently the handler functions themselves, 
      become instead a map of values related to the handler, 
      including a doc string, the file/line where defined, specs, etc, and, of course, 
@@ -44,8 +44,7 @@ There's pressure from multiple directions to collect and retain more metadata ab
   - tickets like [#457](https://github.com/Day8/re-frame/issues/457) want docstrings for handlers
   - adding specs for events, so they can be checked at dev time
   - when re-frame becomes less of a framework and more of a library, handlers might 
-    need be "grouped" into "packages". So "package" information about handlers need 
-    to be supplied and retained.
+    need be "grouped" into "packages". So "package" information about handlers need to be supplied and retained.
   - Tooling support - we'd like `re-frame-10x` to actively help programmers when they are learning a 
     new code base. That's one of [the four stated goals](https://github.com/Day8/re-frame-10x#helps-me-how). 
     Ideally, re-frame would be capable of providing tooling with "a complete 
@@ -92,7 +91,7 @@ now, use `reg` would be used like this:
             (assoc db :some :thing))})
 ```
 
-The map argument must contains the keys `:kind`, `:id` and `:fn`, 
+The map argument must contain the keys `:kind`, `:id` and `:fn`, 
 with other valid keys being dependent on the `kind` of 
 handler being registered.
 
@@ -112,7 +111,7 @@ the map can also have these additional keys:
 In a dev build, the `reg` macro will supply the final 3 (source code coordinates), 
 if not explicitly supplied in the map. 
 
-In a production build, the `:doc` string will be elided, so we to not
+In a production build, the `:doc` string will be elided, so we do not
 appear in the final source code at all. 
 
 The key `:pkg` is reserved for future use, and might eventually indicate the 
@@ -125,9 +124,9 @@ Other keys:  XXX
   - `:spec` for event spec (when registering events)  ???  Too much ??
 
 XXX I'm not entirely happy about using short names like `:cept`.  But, then 
-again, there's the aesthetics  of formatting the code and lining things up.  
+again, there's the aesthetics of formatting the code and lining things up.  
 
-XXX could have a `:cofx` key for  event handlers to make them more explicit. 
+XXX could have a `:cofx` key for event handlers to make them more explicit. 
 
 ### Multiple Registrations
 
