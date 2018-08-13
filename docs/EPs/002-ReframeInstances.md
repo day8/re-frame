@@ -27,13 +27,12 @@ enjoyed most of the time.
 
 ### Global State As A Frame
 
-Currently, re-frame has some global state in the form of various atoms scattered 
-about internal namespaces. The best known is `app-db`. 
+Currently, re-frame has some global state in the form of various atoms scattered about internal namespaces. The best known is `app-db`. 
 
 It would be completely straightforward to scoop up this state and 
 put it into some sort of `defrecord` whole - let's call it `Frame` - and 
 then allow the programmer to create instances of `Frame` when they
-want to create a new instances of a re-frame app.
+want to create a new instance of a re-frame app.
 
 Imagine there's a new API function 
 called `create-frame`, which creates a new instance of this 
@@ -77,7 +76,7 @@ should handlers be added to their `registrars`?
 
 And, to support the developer experience, how should this 
 work with `figwheel` reloads of namespace containing registrations? 
-How sould the `registrar` within a given `Frame` be updated?
+How should the `registrar` within a given `Frame` be updated?
 
 Let's explore via usecases ...
 
@@ -110,10 +109,10 @@ which has event handlers, subscription handlers, etc. So one `Frame` on a page
 might need to include the `package` of `re-frame-undo` handlers, but another 
 `Frame` on the same page might not.
 
-Alternatively, we could be drop the notion of `:package` and simply work from the 
+Alternatively, we could drop the notion of `:package` and simply work from the 
 namespace of the registration `id`.
 
-XXX Perhaps if the handler `ids` were organised into app specific collections, a 
+XXX Perhaps if the handler `ids` were organised into app-specific collections, a 
 central registrar could work.  The collection mechanism could be as simple as insisting 
 on `ids` with namespaces.  Or if ==t could be that registration puts handlers into `packages`.
 
@@ -141,7 +140,7 @@ can, optionally, supply the `set of packages`. When the `Frame` is created
 all handlers in the nominated `packages` are injected into the 
 `Frame`. If not set is provided, then all handlers are injected. 
 
-At this point I favour sketch #2 from a backwards compatibility 
+At this point, I favour sketch #2 from a backwards compatibility 
 point of view. It is the least disruptive. 
 
 ### Problem 2: Views, dispatch and subscription 
@@ -175,7 +174,7 @@ and then pass it down to all children. Even intermediate
 
 **Solution sketch #2**: Hack Reagent so that a given node in 
 the hierarchy can "register" a Frame, and then provide a 
-way so that any given view can "query upwards" through its 
+a way so that any given view can "query upwards" through its 
 the parent/owner hierarchy of views 
 looking for the `frame` to which it should subscribe and dispatch. 
 
