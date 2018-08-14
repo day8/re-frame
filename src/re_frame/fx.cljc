@@ -104,7 +104,7 @@
 
 ;; :dispatch
 ;;
-;; `dispatch` one event. Excepts a single vector.
+;; `dispatch` one event. Expects a single vector.
 ;;
 ;; usage:
 ;;   {:dispatch [:event-id "param"] }
