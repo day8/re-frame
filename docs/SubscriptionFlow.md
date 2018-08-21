@@ -280,8 +280,8 @@ we could rewrite this use of `reg-sub` using `reg-sub-raw` like this:
   (fn [app-db event]  ;; app-db not used, name shown for clarity
     (reaction         ;; wrap the computation in a reaction
       (let [todos   @(subscribe [:todos])   ;; input signal #1
-	        showing @(subscribe [:showing]) ;; input signal #2 
-		    filter-fn (case showing
+	    showing @(subscribe [:showing]) ;; input signal #2 
+	    filter-fn (case showing
                         :active (complement :done)
                         :done   :done
                         :all    identity)]
