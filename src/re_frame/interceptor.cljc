@@ -36,10 +36,13 @@
   ([context key not-found]
    (get-in context [:effects key] not-found)))
 
-
 (defn assoc-effect
   [context key value]
   (assoc-in context [:effects key] value))
+
+(defn update-effect
+  [context key f & args]
+  (apply update-in context [:effects key] f args))
 
 ;; -- CoEffect Helpers  ---------------------------------------------------------------------------
 
