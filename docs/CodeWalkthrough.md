@@ -152,7 +152,7 @@ Event handler functions take two arguments `coeffects` and `event`,
 and they return `effects`.
 
 Conceptually, you can think of `coeffects` as being "the current state of the world". 
-And you can think of event handlers has computing and returning changes (effects) based on 
+And you can think of event handlers as computing and returning changes (effects) based on 
 "the current state of the world" and the arriving event.
 
 Event handlers can be registered via either `reg-event-fx`
