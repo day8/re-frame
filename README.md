@@ -226,7 +226,7 @@ Domino 4 is a novel and efficient de-duplicated signal graph which
 runs query functions on the app state, `s`, efficiently computing 
 reactive, multi-layered, "materialised views" of `s`.
 
-If you've used `react-redux`, query functions essentially serve the same purpose as the commonly used `mapStateToProps`.
+If you've used `react-redux`, query functions serve essentially the same purpose as the commonly used `mapStateToProps`.
 
 (Relax about any unfamiliar terminology, you'll soon 
 see how simple the code actually is)
