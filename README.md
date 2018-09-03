@@ -229,7 +229,7 @@ reactive, multi-layered, "materialised views" of `s`.
 Relax about any unfamiliar terminology, you'll soon 
 see how simple the code actually is.
 
-*js programmers:* if you've used `react-redux`, query functions serve essentially the same purpose as `mapStateToProps`. Apparently. 
+*`react-redux` programmers:* query functions serve essentially the same purpose as `mapStateToProps`.
 
 ### Domino 5 - View
 
