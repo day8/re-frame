@@ -54,6 +54,8 @@ The pattern involves the outer component, which sources data, supplying this dat
 (defn gmap-outer []
   (let [pos (subscribe [:current-position])]   ;; obtain the data
     (fn []
+      ;; Note: @pos is a map here, so it gets passed as props.
+      ;; Non-props values can be accessed via (reagent/argv comp)
       [gmap-inner @pos])))
 ```
 
