@@ -76,7 +76,7 @@ that Types can increase confidence, only [a good schema can potentially provide 
 
 4. Undo/Redo [becomes straight forward to implement](https://github.com/Day8/re-frame-undo).
 It is easy to snapshot and restore one central value. Immutable data structures have a
-feature called `structural sharing` which means it doesn't cost much RAM to keep the last, say, 200  
+feature called `structural sharing` which means it doesn't cost much RAM to keep the last, say, 200
 snapshots. All very efficient.
 For certain categories of applications (eg: drawing applications) this feature is borderline magic.
 Instead of undo/redo being hard, disruptive and error prone, it becomes trivial.
