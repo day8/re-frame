@@ -65,7 +65,7 @@ a two-key map like this:
  :time-color "#f88"}     ;; the colour in which the time should be shown
 ```
 
-re-frame itself owns/manages `app-db` (see FAQ #1), and it will
+re-frame itself owns/manages `app-db` (see [FAQ #1](FAQs/Inspecting-app-db.md)), and it will
 supply the value within it (the two-key map described above) 
 to your various handlers as required.
 
