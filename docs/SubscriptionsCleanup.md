@@ -151,7 +151,7 @@ If, for example, two views wanted to `(subscribe [:sorted-items])` only the one 
 potentially expensive sorting operation (when items changed) and values from 
 it would be flowing through to both views.
 
-That sort of efficiency can't happen if this views themselves are doing the `sort`.
+That sort of efficiency can't happen if the views themselves are doing the `sort`.
  
 ### de-duplication
 
