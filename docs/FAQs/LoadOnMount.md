@@ -44,7 +44,7 @@ https://github.com/gothinkster/clojurescript-reframe-realworld-example-app/blob/
 
 A stern reminder:
 1. re-frame is event driven. It is events which move the system from one state to the next
-2. Every event causes a "change"  (a mutation): perhaps to `app-db` or openning a web socket. These are the effects of the event
+2. events cause changes: perhaps to `app-db` or openning a web socket. These are the effects of the event
 3. subscriptions simply deliver data
 4. subscriptions are not imperative. They do not cause things to happen
 5. only events cause things to happen and, even then, only via effects
