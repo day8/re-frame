@@ -13,7 +13,7 @@ This arrangement is not idiomatic for re-frame. Views are not imperative
 and they don't initiate database queries. Instead, views are simply a rendering of the 
 current application state. 
 
-Please read the explanation in [PurelyFunctional.tv's writeup](https://purelyfunctional.tv/article/react-vs-re-frame/) under the heading "Reacters load data on mount".
+Please read the further explanation in [PurelyFunctional.tv's writeup](https://purelyfunctional.tv/article/react-vs-re-frame/) under the heading "Reacters load data on mount". If you have redux experience, you'll need to retrain yourself. 
 
 ### Do This Instead 
 
@@ -26,12 +26,12 @@ the associated event handler which will compute the
 effects of the user's request. It might:
   1. change application state so the panel is shown
   2. further change application state so that a "twirly busy" thing is shown
-  3. issue a database query
+  3. issue a database query or open a websocket
 
 Also, remember that events should model "user intent", like 
 "I'd now like to view overdue items". Be sure to never model events like
 "load overdue items from database" because that's just a
-low level operation which might be performed in the service of fulfilling
+low level operation performed in the service of fulfilling
 the user's intent.
 
 There's a useful effect handler available for HTTP work:
