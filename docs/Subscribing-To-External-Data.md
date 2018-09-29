@@ -1,4 +1,11 @@
 
+>  This document will soon be retired, so be cautious about reading it. <br> <br>
+>  We keep it around only because it documents an approach we experiementeed with early, and we haven't yet transfered it to some other document. But this is probably not the right way of doing things. <br>
+>  <br>
+>  The RIGHT WAY in think can be found in FAQs like: <br>
+>  1. https://github.com/Day8/re-frame/blob/master/docs/FAQs/LoadOnMount.md  <br>
+>  2. https://github.com/Day8/re-frame/blob/master/docs/FAQs/PollADatabaseEvery60.md
+
 ## Subscribing to External Data
 
 In [Talking To Servers](Talking-To-Servers.md) we learned how to 
