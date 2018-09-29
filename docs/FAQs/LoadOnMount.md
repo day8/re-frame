@@ -13,7 +13,7 @@ This arrangement is not idiomatic for re-frame. Views are not imperative
 and they don't initiate database queries. Instead, views are simply a rendering of the 
 current application state. 
 
-Please read the further explanation in [PurelyFunctional.tv's writeup](https://purelyfunctional.tv/article/react-vs-re-frame/) under the heading "Reacters load data on mount". If you have redux experience, you'll need to retrain yourself. 
+Please read the further explanation in [PurelyFunctional.tv's writeup](https://purelyfunctional.tv/article/react-vs-re-frame/) under the heading "Reacters load data on mount". 
 
 ### Do This Instead 
 
