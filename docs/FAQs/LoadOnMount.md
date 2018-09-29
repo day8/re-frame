@@ -40,6 +40,18 @@ https://github.com/Day8/re-frame-http-fx
 Look at the "Real World App" example for inspiration: 
 https://github.com/gothinkster/clojurescript-reframe-realworld-example-app/blob/master/src/conduit/events.cljs
 
+### Extra For Those With Redux Backgrounds
+
+A stern reminder:
+1. re-frame is event driven. It is events which move the system from one state to the next
+2. Every event causes a "change"  (a mutation): perhaps to `app-db` or openning a web socket. These are the effects of the event
+3. subscriptions simply deliver data
+4. subscriptions are not imperative. They do not cause things to happen
+5. only events cause things to happen and, even then, only via effects
+6. views simply render the data delivered by subsciptions
+7. views are not imperative. They do not cause things to happen
+8. only events cause things to happen and, even then, only via effects
+
 
 ***
 
