@@ -51,6 +51,6 @@
   ; Render the UI into the HTML's <div id="app" /> element
   ; The view function `todomvc.views/todo-app` is the
   ; root view for the entire UI.
-  (reagent/render [todomvc.views/todo-app]
+  (reagent/render [todomvc.views/todo-app-comp]
     (.getElementById js/document "app")))
 

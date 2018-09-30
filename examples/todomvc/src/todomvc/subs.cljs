@@ -124,7 +124,7 @@
 ;     [:rs/gui-state :todos :showing ...]
 ;     (fn [[gui-state todos showing ...] ...]
 ;       ...))
-;   or
+; or
 ;     (rs/register-topic!
 ;       [:rs/gui-state :todos :showing ...] ...)             ; auto declare arglist [gui-state todos showing ...]
 
