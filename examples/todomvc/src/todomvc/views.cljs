@@ -15,24 +15,32 @@
   [{:keys [title on-save on-stop]}]
   ; #todo -> (with-map-vals [title on-save on-stop] ...)
   (let [val  (r/atom title)
-        stop #(do (reset! val "")
-                  (when on-stop (on-stop)))
+        stop (fn []
+               (println :stop-fn)
+               (reset! val "")
+               (when on-stop (on-stop)))
         save #(let [v (-> @val str str/trim)]
+                (println :save-fn)
                 (on-save v)
                 (stop))]
     (fn [props]
       (println "received: " props)
       [:input
        (merge (dissoc props :on-save :on-stop :title)
-         {:type        "text"
-          :value       @val
-          :auto-focus  true
-          :on-blur     save
-          :on-change   #(reset! val (-> % .-target .-value))
-          :on-key-down #(case (.-which %) ; KeyboardEvent property
-                          ascii-code-return (save)
-                          ascii-code-escape (stop)
-                          nil)})])))
+              {:type        "text"
+               :value       @val
+               :auto-focus  true
+               :on-blur     save
+               :on-change   #(reset! val (-> % .-target .-value))
+               :on-key-down #(do  ; KeyboardEvent property
+                               (let [rcvd (.-which %)]
+                                 (println :awt20 rcvd)
+                                 (cond
+                                   (= rcvd ascii-code-return) (do (println "saw <ret>")
+                                                               (save))
+                                   (= rcvd ascii-code-escape) (do (println "saw <exc>")
+                                                               (stop))
+                                   :else nil)))})])))
 
 (defn single-task-comp []
   (let [editing (r/atom false)]
