@@ -1,6 +1,6 @@
 
 >  This document will soon be retired, and you probably shouldn't be reading it. It may mislead you. <br> <br>
->  It documents an approach we experiemented with early, and we haven't yet transfered the knowledge it contains to some other, less central place.  <br>
+>  It documents an approach we experiemented with early, before realising it was probably wrong, but we haven't yet transfered the knowledge it contains to some other, less central place. So here is still sits. <br>
 >  <br>
 >  The RIGHT WAY in think can be found in FAQs like: <br>
 >  1. https://github.com/Day8/re-frame/blob/master/docs/FAQs/LoadOnMount.md  <br>
