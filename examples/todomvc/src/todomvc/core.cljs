@@ -29,7 +29,7 @@
 ;   - https://github.com/juxt/bidi
 ; We don't have a strong opinion.
 
-; #todo  make event type, (event :set-showing :all)
+; #todo  make an `event` type & factory fn: (event :set-showing :all) instead of bare vec:  [:set-showing :all]
 (defroute "/" [] (dispatch [:set-showing :all]))
 (defroute "/:filter" [filter] (dispatch [:set-showing (keyword filter)]))
 ; #todo fix secretary (-> bidi?) to avoid dup (:filter x2) and make more like pedestal

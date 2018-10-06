@@ -6,48 +6,41 @@
 
 (enable-console-print!)
 
-(def ascii-code-return 13) ; => tupelo.ascii
+(def ascii-code-return 13) ; #todo => tupelo.ascii
 (def ascii-code-escape 27)
+(defn event-value [event]  (-> event .-target .-value))
 
 ; These functions are all Reagent components
 
 (defn input-field-comp
-  [{:keys [title on-save on-stop]}]
-  ; #todo -> (with-map-vals [title on-save on-stop] ...)
+  [{:keys [title on-save on-stop]}] ; #todo -> (with-map-vals [title on-save on-stop] ...)
   (let [val  (r/atom title)
         stop (fn []
-               (println :stop-fn)
                (reset! val "")
                (when on-stop (on-stop)))
         save #(let [v (-> @val str str/trim)]
-                (println :save-fn)
                 (on-save v)
                 (stop))]
     (fn [props]
-      (println "received: " props)
       [:input
        (merge (dissoc props :on-save :on-stop :title)
-              {:type        "text"
-               :value       @val
-               :auto-focus  true
-               :on-blur     save
-               :on-change   #(reset! val (-> % .-target .-value))
-               :on-key-down #(do  ; KeyboardEvent property
-                               (let [rcvd (.-which %)]
-                                 (println :awt20 rcvd)
-                                 (cond
-                                   (= rcvd ascii-code-return) (do (println "saw <ret>")
-                                                               (save))
-                                   (= rcvd ascii-code-escape) (do (println "saw <exc>")
-                                                               (stop))
-                                   :else nil)))})])))
+         {:type        "text"
+          :value       @val
+          :auto-focus  true
+          :on-blur     save
+          :on-change   #(reset! val (event-value %))
+          :on-key-down #(let [rcvd (.-which %)] ; KeyboardEvent property
+                          (cond
+                            (= rcvd ascii-code-return) (save)
+                            (= rcvd ascii-code-escape) (stop)
+                            :else nil))})])))
 
 (defn single-task-comp []
   (let [editing (r/atom false)]
     (fn [{:keys [id done title]}]
-      [:li {:class (str
-                     (when done "completed ")
-                     (when @editing "editing"))}
+      [:li {:class (cond-> ""
+                     done (str " completed")
+                     @editing (str " editing"))}
        [:div.view
         [:input.toggle
          {:type      "checkbox"

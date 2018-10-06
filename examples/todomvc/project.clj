@@ -6,7 +6,6 @@
                  [binaryage/devtools "0.9.4"]
                  [secretary "1.2.3"]]
 
-
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel  "0.5.16"]]
 
@@ -19,7 +18,6 @@
                                                   :source-map-timestamp true
                                                   :main                 "todomvc.core"}
                                        :figwheel {:on-jsload "todomvc.core/main"}}}}}
-
              :prod {:cljsbuild
                     {:builds {:client {:compiler {:optimizations :advanced
                                                   :elide-asserts true
@@ -27,7 +25,6 @@
 
   :figwheel {:server-port 3450
              :repl        true}
-
 
   :clean-targets ^{:protect false} ["resources/public/js" "target"]
 
