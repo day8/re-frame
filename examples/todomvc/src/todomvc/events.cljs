@@ -10,6 +10,32 @@
 ; #todo coeffects  =>  global state
 ; #todo   effects  =>     app state
 
+; #todo   maybe rename interceptor chain to intc-chain, proc-chain, transform-chain
+
+; #todo   unify [:dispatch ...] effect handlers
+; #todo     {:do-effects [  ; <= always a vector param, else a single effect
+; #todo        {:effect/id :eff-tag-1  :par1 1  :par2 2}
+; #todo        {:effect/id :eff-tag-2  :effect/delay {:value 200  :unit :ms} ;
+; #todo         :some-param "hello"  :another-param :italics } ] }
+
+; #todo make all routes define an intc chain.
+; #todo each intc is {:id ...  :enter ...  :leave ...} (coerce if :before/:after found - strictly)
+; #todo each :enter/:leave fn is (fn [params-map] ...)
+; #todo    where params-map  =>  {:event {:event/id ...  :param1 <val1>  :param2 <val2> ...}
+; #todo                           :state {:app          ...
+; #todo                                   :local-store  ...
+; #todo                                   :datascript   ... }}
+
+; #todo replace (reg-cofx ...)  =>  (definterceptor ...)  ; defines a regular fn
+
+; #todo [:delete-item 42] => {:event/id :delete-item :value 42}
+; #todo   {:event/id :add-entry  :key :name :value "Joe"}
+; #todo   {:event/id :set-timer  :units :ms :value 50 :action (fn [] (js/alert "Expired!") }
+
+; #todo (dispatch-event {:event/id <some-id> ...} )   => event map
+; #todo (add-effect ctx {:effect/id <some-id> ...} )  => updated ctx
+
+
 ; -- Interceptors --------------------------------------------------------------
 ;
 ; Interceptors are a more advanced topic. So, we're plunging into the deep
@@ -72,9 +98,10 @@
 ; We now create the interceptor chain shared by all event handlers
 ; which manipulate todos. A chain of interceptors is a vector of interceptors.
 ; Explanation of the `path` Interceptor is given further below.
-(def std-interceptors [check-spec-intc       ; ensure the spec is still valid  (rf/after)
-                   (rf/path :todos)      ; the 1st param given to handler will be the value from this path within db
-                   ->local-store-intc])  ; write todos to localstore  (rf/after)
+(def std-interceptors
+  [check-spec-intc      ; ensure the spec is still valid  (rf/after)
+   (rf/path :todos)     ; the 1st param given to handler will be the value from this path within db
+   ->local-store-intc]) ; write todos to localstore  (rf/after)
 
 ; #todo kill off rf/path  ???   keep it simple & explicit
 
@@ -89,9 +116,8 @@
 
 ; usage:  (dispatch [:initialise-db])
 ;
-; This event is dispatched in the app's `main` (core.cljs).
-; It establishes initial application state in `app-db`.
-; That means merging:
+; This event is dispatched when the app's `main` ns is loaded (todomvc.core).
+; It establishes initial application state in `app-db`. That means merging:
 ;   1. Any todos stored in LocalStore (from the last session of this app)
 ;   2. Default initial values
 ;
@@ -101,8 +127,19 @@
 ;
 ; To fully understand this advanced topic, you'll have to read the tutorials
 ; and look at the bottom of `db.cljs` for the `:local-store-todos` cofx registration.
-(rf/reg-event-fx
+(rf/reg-event-fx ; #todo reg-event-fx => subscribe-to
   :initialise-db   ; event id being handled
+  ; #todo is there just one handler per event?
+  ; #todo   => (sethandler!    :evt-name  (fn [& args] ...))
+  ; #todo   => (clearhandler!  :evt-name)
+  ; #todo is there just one handler per event? => sethandler!
+
+  ; #todo can there be multiple event subscribers?
+  ; #todo   =>  (def subscriber-ref (event-subscription :evt-name (fn [& args] ...)))
+  ; #todo   =>  (clear-subscriber  :evt-name  subscriber-ref)
+  ; #todo   =>  (clear-subscribers :evt-name)
+  ; #todo   =>  (subscribers :evt-name)
+  ; #todo same for db-topic subscriptions
 
   ; the interceptor chain (a vector of 2 interceptors in this case)
   [(rf/inject-cofx :local-store-todos) ; gets todos from localstore, and puts value into coeffects arg
@@ -150,7 +187,8 @@
     new-showing-value))                  ; return new state for the path
 
 ; usage:  (rf/dispatch [:add-todo  "a description string"])
-; #todo rf/reg-event-db/fx  =>  set-event-handler!   (add to global state?)
+; #todo rf/reg-event-db/fx  =>  set-event-handler!    (add to global state?) ; clear-event-handler!
+; #todo rf/reg-event-db/fx  =>  set-effect-handler!   (add to global state?) ; clear-effect-handler!
 (rf/reg-event-db :add-todo  ; given the text, create a new todo
   ; Use the standard interceptors, defined above, which we use for all todos-modifying
   ; event handlers. Looks after writing todos to LocalStore, etc.
@@ -165,6 +203,7 @@
   (fn [todos [_ text]] ; => {:global-state xxx   :event {:event-name xxx  :arg1 yyy  :arg2 zzz ...}}
     (let [id (allocate-next-id todos)]
       (assoc todos id {:id id :title text :done false}))))
+; #todo event handlers take only params-map (fn [params :- tsk/Map] ...)
 
 (rf/reg-event-db
   :toggle-done
