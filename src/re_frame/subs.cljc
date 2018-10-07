@@ -230,7 +230,7 @@
 
      (reg-sub
        :query-id
-       a-computation-fn)   ;; (fn [db v]  ... a-value)
+       computation-fn)   ;; (fn [db v]  ... a-value)
 
      The node's input signal defaults to `app-db`, and the value within `app-db` is
      is given as the 1st argument to the computation function.
@@ -243,8 +243,8 @@
        computation-fn)
 
      When a node is created from the template, the `signal-fn` will be called and it
-     is expected to return the input signal(s) as either a singleton, if there is only
-     one, or a sequence if there are many, or a map with the signals as the values.
+     is expected to return the input signal(s) as either a value, if there is only
+     one; a sequence, if there are many; or a map, with the signals as the values.
 
      The values from the nominated signals will be supplied as the 1st argument to the
      computation function - either a singleton, sequence or map of them, paralleling
@@ -253,8 +253,8 @@
      Here, is an example signal-fn, which returns a vector of input signals.
 
        (fn [query-vec dynamic-vec]
-         [(subscribe [:a-sub])
-          (subscribe [:b-sub])])
+         [ (subscribe [:a-sub])
+           (subscribe [:b-sub]) ])
 
      For that signal function, the computation function must be written
      to expect a vector of values for its first argument.
@@ -284,6 +284,7 @@
   For further understanding, read `/docs`, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs
   "
+  ; #todo kill option #2 above, always use "sugar" version for register-topic-transform
   [query-id & args]
   (let [computation-fn (last args)
         input-args     (butlast args) ;; may be empty, or one signal fn, or pairs of  :<- / vector
