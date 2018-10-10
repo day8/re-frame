@@ -25,7 +25,7 @@ ViewFunctions unchanged.
 
 In more complex examples, subscriptions are 
 layered, with some obtaining data from one or more other 
-subscriptions, before a ViewFunctions eventually recieve 
+subscriptions, before a ViewFunctions eventually receive 
 highly processed versions of what's in `app-db`. 
 
 ## The Layers
@@ -47,9 +47,9 @@ But note: just because you register a handler doesn't mean that node exists in
 the graph. You are only defining how the node would compute if it was needed. 
 
 Nodes in the signal graph are created and destroyed according to the demands
-of (leaf) ViewFunction nodes. 
+of (leaf) ViewFunction nodes (layer 4). 
 
-When a ViewFunction uses a subscription, the graph of nodes needed to service
+When a ViewFunction (layer 4) uses a subscription, the graph of nodes needed to service
 that subscription will be created and, later, when the ViewFunction is destroyed 
 that part of the graph will also be destroyed (unless used for other purposes). 
 
