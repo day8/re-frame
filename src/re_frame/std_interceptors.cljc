@@ -13,7 +13,7 @@
 
 (def debug
   "An interceptor which logs/instruments an event handler's actions to
-  `js/console.debug`. See examples/todomvc/src/events.cljs for use.
+  `js/console.log`. See examples/todomvc/src/events.cljs for use.
 
   Output includes:
   1. the event vector
