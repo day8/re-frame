@@ -28,7 +28,7 @@ Occasionally, you'll need to use:
      
 And, finally, there are the builtin Interceptors:
   - [path](/src/re_frame/std_interceptors.cljc#L152-L176)
-  - [after](/src/re_frame/std_interceptors.cljc#L279-L300)
+  - [after](/src/re_frame/std_interceptors.cljc#L295-L316)
   - [debug](/src/re_frame/std_interceptors.cljc#L13-L38)
   - and browse [the others](/src/re_frame/std_interceptors.cljc)
   
