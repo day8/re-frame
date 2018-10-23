@@ -41,6 +41,9 @@ State machines are appealing because:
 Also, Why Developers Never Use State Machines
 https://www.skorks.com/2011/09/why-developers-never-use-state-machines/
 
+> "The strength of JavaScript is that you can do anything. The weakness is that you will." <br>
+>    - Reg Braithwaite
+
 ### How?
 
 Technical elements:
