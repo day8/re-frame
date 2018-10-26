@@ -75,7 +75,7 @@ Further Notes:
 ### Successful GET
 
 As we noted above, the on-success handler itself is just
-`(dispatch [:process-response RESPONSE])`.  So we'll need to register a handler
+`#(dispatch [:process-response RESPONSE])`.  So we'll need to register a handler
 for this event too.
 
 Like this:
