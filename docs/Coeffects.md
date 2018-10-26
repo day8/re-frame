@@ -90,16 +90,16 @@ right value. Nice! But how do we make this magic happen?
 
 ## Abracadabra
 
-Each time an event handler is executed, a brand new `context` (map)
-is created, and within that `context` is a `:coeffects` key which
+Each time an event is dispatched, a brand new "context" (map)
+is created, and within that context is a `:coeffects` key which
 is a further map (initially empty).
 
-That pristine `context` value (containing, in turn, a pristine `:coeffects` map) is threaded
+That pristine context value (containing, in turn, a pristine `:coeffects` map) is threaded
 through a chain of Interceptors before it finally reaches our event handler,
 which sits on the end of the chain, itself wrapped up in an interceptor. We know
 this story well from a previous tutorial.
 
-So, all members of the Interceptor chain have the opportunity to `assoc` into `:coeffects`
+So, all members of the Interceptor chain have the opportunity to `assoc` into the `:coeffects` map
 within their `:before` function, cumulatively building up what it holds.  Later, our event handler,
 which sits on the end of the chain, magically finds just the
 right data (like a value for the key `:local-store`) in its first `cofx` argument.
@@ -218,8 +218,8 @@ know how to inject a `:blah`.
 ## Secret Interceptors
 
 In a previous tutorial we learned that `reg-events-db`
-and `reg-events-fx` add Interceptors to the front of any chain
-during registration. We found they inserted an Interceptor called `do-fx`.
+and `reg-events-fx` add default interceptors to the front of the interceptor chain
+specified during registration. We found they inserted an Interceptor called `do-fx`.
 
 I can now reveal that
 they also add `(inject-cofx :db)` at the front of each chain.
@@ -246,7 +246,7 @@ In your test, you'd mock out the cofx handler:
 (reg-cofx
    :now
    (fn [coeffects _]
-      (assoc coeffects :now (js/Date. 2016 1 1)))   ;; now was then
+      (assoc coeffects :now (js/Date. 2016 1 1)))   ;; then is `:now`
 ```
 
 If your test does alter registered coeffect handlers, and you are using `cljs.test`,
