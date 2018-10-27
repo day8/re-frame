@@ -90,21 +90,21 @@ right value. Nice! But how do we make this magic happen?
 
 ## Abracadabra
 
-Each time an event is dispatched, a brand new "context" (map)
-is created, and within that context is a `:coeffects` key which
+Each time an event is "handled", a brand new `context` (map)
+is created, and within that `context` is a `:coeffects` key which
 is a further map (initially empty).
 
-That pristine context value (containing, in turn, a pristine `:coeffects` map) is threaded
-through a chain of Interceptors before it finally reaches our event handler,
-which sits on the end of the chain, itself wrapped up in an interceptor. We know
-this story well from a previous tutorial.
+That pristine `context` value (containing, in turn, a pristine `:coeffects` map) is threaded
+through the `:before` function of each interceptor (in the event handler chain) 
+before it finally reaches the registered event handler, which sits on the end of the chain, 
+itself wrapped up in an interceptor. We know this story well from a previous tutorial.
 
-So, all members of the Interceptor chain have the opportunity to `assoc` into the `:coeffects` map
-within their `:before` function, cumulatively building up what it holds.  Later, our event handler,
-which sits on the end of the chain, magically finds just the
-right data (like a value for the key `:local-store`) in its first `cofx` argument.
-So, it is the event handler's Interceptors which can add to the "world" eventually 
-given to an event handler. 
+These `:before` functions have the  
+opportunity to `assoc` into the `:coeffects` map (within the `context`), cumulatively adding to what it holds.  
+Later, our event handler, which sits on the end of the chain, finds that its first 
+ `cofx` argument contains just the right data, like, for example, a value for the key `:local-store`. 
+So, it is the event handler's Interceptor chain which can add to the "world" eventually 
+"seen" by an event handler. 
 
 ## Which Interceptors?
 
@@ -122,10 +122,10 @@ Something like this (this handler is the same as before, except for one detail):
        {:db (assoc db :defaults val)})))
 ```
 
-Look at that - my event handler has a new Interceptor!  It is injecting the
+Look at that - my event handler now has a new Interceptor which will inject (assoc) the
 right key/value pair (`:local-store`)
-into `context's` `:coeffects`, which itself then goes on to be the first argument
-to our event handler (`cofx`).
+into `context's` `:coeffects`, which itself is the map which goes on to be the first argument
+to our event handler (aka `cofx`).
 
 ## `inject-cofx`
 
