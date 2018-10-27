@@ -44,9 +44,9 @@ Like this:
 
 An effects map contains instructions.
 
-Each key/value pair in the map is one instruction - the `key` uniquely identifies
-the particular side effect required, and the `value` for that `key` provides
-further data. The structure of `value` is different for each side-effect.
+Each key/value pair in the map is one instruction - the key uniquely identifies
+the particular side effect required, and the value for that key provides
+further data. The type of value depends on the specific side-effect.
 
 Here's the two instructions from the example above:
 ```clj
@@ -54,20 +54,20 @@ Here's the two instructions from the example above:
  :dispatch [:do-something-else 3]}     ;; dispatch this event
 ```
 
-The `:db` `key` instructs that "app-db" should be `reset!` to the
-`value` supplied.
+The `:db` key instructs that "app-db" should be `reset!` to the
+value supplied.
 
-And the `:dispatch` `key` instructs that an event should be
-dispatched. The `value` is the vector to dispatch.
+And the `:dispatch` key instructs that an event should be
+dispatched. The value is the vector to dispatch.
 
-There's many other possible
+There are many other possible
 effects, like for example `:dispatch-later`, `dispatch-n`, `:set-local-store`, etc.
 
 And so on. And so on. Which brings us to a problem.
 
 ### Infinite Effects
 
-While re-frame supplies a number of builtin effects, the set of
+While re-frame supplies a number of built-in effect handlers, the set of
 possible effects is open ended.
 
 What if you use PostgreSQL and want an effect which issues mutating
@@ -284,10 +284,10 @@ And please review the [External-Resources document](External-Resources.md) for a
 
 The 4 Point Summary in note form:
 
-1. Event handlers should only return effect declaratively
+1. Event handlers should only return a description of required effects 
 2. They return a map like `{:effect1 value1 :effect2 value2}`
-3. Keys of this map can refer to builtin effects handlers (see below) or custom ones
-4. We use `reg-fx` to register our own effects handlers, built-in ones are already registered
+3. Keys of this map can refer to builtin effect handlers (see below) or custom ones
+4. We use `reg-fx` to register our own effect handlers, built-in ones are already registered
 
 
 ***
