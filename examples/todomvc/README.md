@@ -29,7 +29,7 @@ really required to get the job done. So lean and minimal is no longer a goal.
    lein do clean, figwheel
    ```
 
-5. You'll have to wait for step 4 to do its compile, and then:
+5. Wait for step 4 to do the compile, and then run the built app:
    ```
    open http://localhost:3450
    ```
