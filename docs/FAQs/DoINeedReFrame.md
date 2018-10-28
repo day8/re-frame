@@ -6,7 +6,7 @@ is there in the extra layers and conceptual overhead it brings?
 ### Answer 
 
 Yes, we agree, Reagent is terrific. We use it enthusiastically ourselves. And, yes, we'd agree that if your application 
-is small and simple, then standalone Reagent is a fine choice.
+is small and simple, then standalone Reagent is a reasonable choice.
 
 But it does only supply the V part of the MVC triad. As your application 
 gets bigger and more complicated, you *will* need to find solutions to 
@@ -31,17 +31,17 @@ as you proceed, baking your decisions into your codebase, you will be
 incrementally growing an architecture.
 
 So, then, the question is this: is your architecture better than re-frame's?  Because 
-that's what re-frame gives you ... an architecture ... answers to the
+that's what re-frame gives you ... an architecture ... solutions to the
 various challenges you'll face when developing your app, and mechanism for implementing  
-those answers.
+those solutions.
 
 Now, in response, some will enthusiastically say "yes, I want to grow my own 
-architecture. I like mine!". Fair enough - its a fun ride!
+architecture. I like mine!". And fair enough - it can be an interesting ride!
 
 Problems arise ONLY when this process is not conscious and purposeful. It is a 
 credit to Reagent that you can accelerate quickly and get a bunch of enjoyable 
 early wins. But, equally, that acceleration can have you off the road
-in a ditch because there are twists and turns on the way to a larger application.
+in a ditch because of the twists and turns on the way to a larger application.
 
 I've had many people (20?) privately say to me that's what happened to them. 
 And that's pretty much the reason for this FAQ - this happens a bit too often
@@ -55,14 +55,15 @@ another you'll be using "Reagent + a broader architecture".
 ### Example Choices Made By re-frame
 
 1. Events are cardinal. Nothing happens without an event.
-2. Events are data  (which means they are loggable, and can be queued, etc).
+2. Events are data  (so they they are loggable, and can be queued, etc).
 3. Events are handled async  (a critical decision. Engineered to avoid some `core.async` issues!).
 4. For efficiency, subscriptions (reactions) should be layered and de-duplicated.
 5. Views are never imperative or side effecting (best effort).
 6. Unidirectional data flow only, ever.
 7. Interceptors over middleware. Provide cross cutting concerns like logging and debugging.
 8. Event handlers capture control and contain key code. Ensure purity via coeffects and effects. 
-9. State is stored in one place and is committed-to transactionally, never piecemeal.
+9. All state is stored in one place. 
+10. State is committed-to transactionally, never incrementally or piecemeal.
 
 Hmm. I feel like I'm missing a few, but that's certainly an indicative list.
 
