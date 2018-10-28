@@ -45,7 +45,7 @@ in a ditch because of the twists and turns on the way to a larger application.
 
 I've had many people (20?) privately say to me that's what happened to them. 
 And that's pretty much the reason for this FAQ - this happens a bit too often
-and there been a bit too much pain.
+and there's been a bit too much pain.
 
 So, my advice is ... if your application is a little more complicated,
 be sure to make a conscious choice around architecture. Don't think 
