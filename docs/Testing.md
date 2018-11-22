@@ -321,6 +321,9 @@ use of macros.
 This pattern has been independently discovered by many. For example, here
 it is called the [Container/Component pattern](https://medium.com/@learnreact/container-components-c0e67432e005#.mb0hzgm3l).
 
+## Also Read This
+
+https://juxt.pro/blog/posts/cljs-apps.html
 
 ## Summary
 
