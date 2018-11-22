@@ -26,7 +26,7 @@ There are three ways to view this:
      for simplicity of everyday developer experience. 
      So, yes, re-frame represents a point in 
      the possible design space, with associated pros and cons. But the cons tend to be 
-     theoretical and the pros are real.  
+     theoretical and the pros are real. 
      
   3. Actually, there's no purity problem! As a Clojure program 
      starts, each `defn` (becomes a `def` which) happily
@@ -40,8 +40,8 @@ There are three ways to view this:
      [how you are creating a virtual machine when you program re-frame](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines)   
 
 
-While Point 3 is an interesting perspective to consider, the real discussion should probably be around points1 and 2: is it a good idea for re-frame to tradeoff purity for simplicity?  You can't really judge this
-properly until you have used it and experienced the simplicity, and/or found pain points.
+While Point 3 is an interesting perspective to consider, the real discussion should probably be around points 1 and 2: is it a good idea for re-frame to tradeoff purity for simplicity?  You can't really judge this
+properly until you have used it and experienced the simplicity, and/or found pain points (devcards!).
 Many people experience few problems and live happily ever after. For others, the conceptual
 distaste is insurmountable and nagging. Like it or hate it, please realise it was a deliberate 
 and conscious design decision, not some oversight.
