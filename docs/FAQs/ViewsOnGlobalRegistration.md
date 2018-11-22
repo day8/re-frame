@@ -42,8 +42,9 @@ There are three ways to view this:
 
 While Point 3 is an interesting perspective to consider, the real discussion should probably be around points1 and 2: is it a good idea for re-frame to tradeoff purity for simplicity?  You can't really judge this
 properly until you have used it and experienced the simplicity, and/or found pain points.
-For many peop,le it never comes up as a problem and they lived happily ever after. For others, the conceptual
-distaste is insurmountable. Like it or hate it, please realise it was a deliberate and conscious design decision, not some oversight.
+Many people experience few problems and live happily ever after. For others, the conceptual
+distaste is insurmountable and nagging. Like it or hate it, please realise it was a deliberate 
+and conscious design decision, not some oversight.
 
 -------- 
 
