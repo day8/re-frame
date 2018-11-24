@@ -6,15 +6,20 @@
 ### Abstract 
 
 Broadbrush:
-   - views registered via a new `def-view` function
+   - views will be registered via a new `re-frame.core/def-view` function
    - like other re-frame registration functions, `def-view` associates a `keyword` with a (reagent) render function
    - the registered view keyword (eg: `:my-view`) can be used in hiccup to identify the renderer. eg:  `[:my-view  "Hello world"]`
    - `def-view` allows various values to be `injected` as args into the view render
    
+Why:
+  - removing (render) functions from hiccup will make hiccup even more data oriented. Symptoms include helping with various state machine ideas.
+  - injection of `dispatch` and `subscribe` will help view functions to be slightly more pure. `dispatch` still kinda a problem. 
+  - ijection of `context` which will help with "multiple re-frame apps on the one page" problem 
+   
 What might need to be injected (as args) into a view:  
 
   - `subscribe` and `dispatch` 
-  - a `frame` supplied via `context`  (subscribe and dispatch from frame)
+  - a `frame` supplied via `context`  (subscribe and dispatch obtained from frame)
   - other context: data from higher in the DOM tree
   - annimation?  CSS  ?
 
@@ -60,3 +65,4 @@ Misc Notes:
    - reagent hiccup will be changed/monkey-patched so that views can be identified by keyword
    - Views are the leaves of the signal graph. They need to subscribe and dispatch. 
    
+XXX There's a nasty problem with frames and subscriptions.  How does the signal function know what frame to create new subscriptions against???
