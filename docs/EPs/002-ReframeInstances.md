@@ -25,6 +25,9 @@ The challenge is to facilitate these more complicated usecases
 while not, in the process, losing the current simplicity which is
 enjoyed most of the time. 
 
+XXX Another Problem: if we subscribe in a view and that subscription causes other subscriptions to fire, how to get at the associated frame so we can do the further subscriptions? 
+
+
 ### Global State As A Frame
 
 Currently, re-frame has some global state in the form of various atoms scattered about internal namespaces. The best known is `app-db`. 
