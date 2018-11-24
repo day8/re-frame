@@ -25,8 +25,6 @@ The challenge is to facilitate these more complicated usecases
 while not, in the process, losing the current simplicity which is
 enjoyed most of the time. 
 
-XXX Another Problem: if we subscribe in a view and that subscription causes other subscriptions to fire, how to get at the associated frame so we can do the further subscriptions? 
-
 
 ### Global State As A Frame
 
@@ -186,4 +184,9 @@ piggyback on React's `context` facility. `context` only works for simple values,
 this path would passing down the `id` of the frame, and then 
 looking it up.
 
+
+
+### Problem
+
+if we `subscribe` in a view, and that subscription needs to causes other subscriptions to be created, how to get at the associated frame at the point when we want to create the further subscriptions?
 
