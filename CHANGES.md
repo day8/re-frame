@@ -1,5 +1,9 @@
-## Unchanged
+## Unreelased
 
+
+#### Fixed
+
+  - [#512](https://github.com/Day8/re-frame/issues/512) Error with infer-externs "goog is not defined in the externs" 
 
 
 ## 0.10.6 (2018-09-03)
