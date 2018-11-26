@@ -277,9 +277,9 @@
        :<- [:b-sub]
        (fn [[a b] [_]] {:a a :b b}))
 
-  This 3rd variation is syntactic sugar for the 2nd. Pairs are supplied instead
-  of an `input signals` functions. Each pair starts with a `:<-` and a subscription
-  vector follows.
+     This 3rd variation is syntactic sugar for the 2nd. Pairs are supplied instead
+     of an `input signals` functions. Each pair starts with a `:<-` and a subscription
+     vector follows.
 
   For further understanding, read `/docs`, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs
