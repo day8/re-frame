@@ -218,7 +218,9 @@
   a namespaced keyword.
 
   A computation function is always the last argument and it has this general form:
-    `(input-signals, query-vector) -> a-value`
+    `(input-signals, query-vector) -> a-value`.  The `query-vector` is the
+    `query` passed to `(subscribe query)` (see there for details), which may contain
+    additional arguments to further parametrise the query.
 
   What goes in between the 1st and last args can vary, but whatever is there will
   define the input signals part of the template, and, as a result, it will control
