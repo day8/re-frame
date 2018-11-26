@@ -279,9 +279,21 @@
        (fn [[a b] [_]] {:a a :b b}))
      ```
 
-     This 3rd variation is syntactic sugar for the 2nd. Pairs are supplied instead
-     of an `input signals` functions. Each pair starts with a `:<-` and a subscription
-     vector follows.
+     This 3rd variation is syntactic sugar for the 2nd.  Instead of providing an
+     `input signals` function, other subscriptions are used as automatic `input
+     signals`: Each pair of `:<-` and a subscription vector is equivalent to a call to
+     `(subscribe [:a-sub])`.
+
+     Beware that in this syntax a single `:<-` pair is *not* wrapped in a vector, hence
+     the same rule as for the 2nd variation applies: If you only provide one `input
+     signal`, the computation function must expect a single value as the 1st argument:
+
+     ```clj
+     (reg-sub
+       :a-sub
+       :<- [:a-sub]
+       (fn [a _] ...))
+     ```
 
   For further understanding, read `/docs`, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs
