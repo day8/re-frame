@@ -26,7 +26,7 @@ McCoy might report "It's MVC, Jim, but not as we know it".  And you would respon
 re-frame is a **functional framework**."
 
 Being a functional framework, it is about data, and the functions 
-which transform that data.  And because it is a reactive framework, we will see that is about ["data coordinating code"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
+which transform that data.  Further, because it is a reactive framework, it is about ["data coordinating code"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
 
 ## Why Should You Care?
 
