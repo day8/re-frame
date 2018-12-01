@@ -86,9 +86,9 @@ The functions which transform data are registered and looked up via
 data. Interceptors (data) are preferred over middleware (higher 
 order functions). Etc. 
 
-Just to insist further on this point: while data is central to everyday 
+Just to insist further on this point: while a data orientation is central to everyday 
 Clojure programmming (in a way that is unfamiliar and surprising to those from other languages), 
-this is amplified even further in re-frame because, in a reactive system, [it is the arrival of 
+this is amplified in re-frame because, in a reactive system, [it is always the arrival of 
 data which coordinates code](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
 
 **Data - that's the way we roll.**
