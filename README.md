@@ -88,8 +88,8 @@ order functions). Etc.
 
 Just to insit on this point a bit more: while data is central to everyday 
 Clojure programmming (in a way that is unfamiliar to those from other languages), 
-this is amplified even further in a reactive system like re-frame becaue the arrival of 
-["data coordinates code"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
+this is amplified even further in re-frame because, in a reactive system, [it is the arrival of 
+data which coordinates code](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
 
 **Data - that's the way we roll.**
 
