@@ -25,8 +25,8 @@ McCoy might report "It's MVC, Jim, but not as we know it".  And you would respon
 "McCoy, you trouble maker, why even mention an OO pattern? 
 re-frame is a **functional framework**."
 
-Being a functional framework, it is about data, and the functions 
-which transform that data.  Further, because it is a reactive framework, it is about ["data coordinating code"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
+Being a functional framework, it is about two things: data, and the functions 
+which transform that data.  And, because it is a reactive framework, it is ["data which coordinates the functions"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
 
 ## Why Should You Care?
 
@@ -84,12 +84,11 @@ So, it will come as no surprise, then, to know that re-frame has a
 data oriented design. Events are data. Effects are data. DOM is data.
 The functions which transform data are registered and looked up via 
 data. Interceptors (data) are preferred over middleware (higher 
-order functions). Etc. 
+order functions). Etc.
 
-Just to insist further on this point: while a data orientation is central to everyday 
-Clojure programmming (in a way that is unfamiliar and surprising to those from other languages), 
-this is amplified in re-frame because, in a reactive system, [it is always the arrival of 
-data which coordinates code](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
+In addition, re-frame applications are recative 
+which means data acts as the conductor. [It is the arrival of 
+data which coordinates the calling of functions](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around). 
 
 **Data - that's the way we roll.**
 
