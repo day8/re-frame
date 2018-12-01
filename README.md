@@ -26,7 +26,7 @@ McCoy might report "It's MVC, Jim, but not as we know it".  And you would respon
 re-frame is a **functional framework**."
 
 Being a functional framework, it is about data, and the functions 
-which transform that data.
+which transform that data.  And because it is a reactive framework, we'll see that ["data coordinates code"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
 
 ## Why Should You Care?
 
@@ -86,6 +86,11 @@ The functions which transform data are registered and looked up via
 data. Interceptors (data) are preferred over middleware (higher 
 order functions). Etc. 
 
+Just to insit on this point a bit more: while data is central to everyday 
+Clojure programmming (in a way that is unfamiliar to those from other languages), 
+this is amplified even further in a reactive system like re-frame becaue the arrival of 
+["data coordinates code"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
+
 **Data - that's the way we roll.**
 
 
@@ -112,7 +117,7 @@ To understand re-frame, **imagine data flowing around that loop instead of water
 re-frame
 provides the conveyance of the data around the loop - the equivalent of gravity, evaporation and convection.
 You design what's flowing and then you hang functions off the loop at
-various points to compute the data's phase changes.
+various points to compute the data's phase changes (again, data coordinates code).
 
 Sure, right now, you're thinking "lazy sod - make a proper Computer Science-y diagram". But, no.
 Joe Armstrong says "don't break the laws of physics" - I'm sure
