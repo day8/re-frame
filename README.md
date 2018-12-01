@@ -117,7 +117,7 @@ To understand re-frame, **imagine data flowing around that loop instead of water
 re-frame
 provides the conveyance of the data around the loop - the equivalent of gravity, evaporation and convection.
 You design what's flowing and then you hang functions off the loop at
-various points to compute the data's phase changes (again, data coordinates code).
+various points to compute the data's phase changes (again, data flow coordinates code).
 
 Sure, right now, you're thinking "lazy sod - make a proper Computer Science-y diagram". But, no.
 Joe Armstrong says "don't break the laws of physics" - I'm sure
