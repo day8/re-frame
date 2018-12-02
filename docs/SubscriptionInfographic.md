@@ -10,11 +10,11 @@ the graph, between the root and these leaves, are intermediate
 computational nodes supplied by subscriptions which compute 
 materialised views of the data in `app-db`.
 
-## The Domino Narative
+## The Domino Narrative
 
-In terms of the dominos narative, subscriptions are domino 4,
+In terms of the dominos narrative, subscriptions are domino 4,
 and the leaf View Functions are domino 5. For tutorial purposes, 
-we distinguish them - they serve different purposes - but 
+we distinguish between them - they serve different purposes - but 
 they are, conceptually, all nodes in the same graph.
 
 ## Graph Shapes
