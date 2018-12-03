@@ -20,10 +20,10 @@
 (defn clear-subscription-cache!
   "Causes all subscriptions to be removed from the cache.
   Does this by:
-     1. running on-dispose on all cached subscriptions
-     2. These on-dispose will then do the removal of themselves.
+     1. running `on-dispose` on all cached subscriptions
+     2. Each `on-dispose` will perform the removal of themselves.
 
-  This is a development time tool. Useful when reloading Figwheel code
+  This is for development time use. Useful when reloading Figwheel code
   after a React exception, because React components won't have been
   cleaned up properly. And this, in turn, means the subscriptions within those
   components won't have been cleaned up correctly. So this forces the issue."
@@ -74,7 +74,7 @@
 (defn subscribe
   "Given a `query`, returns a Reagent `reaction` which, over
   time, reactively delivers a stream of values. So in FRP-ish terms,
-  it returns a Signal.
+  it returns a `Signal`.
 
   To obtain the returned Signal/Stream's current value, it must be `deref`ed.
 
@@ -83,7 +83,7 @@
   elements are optional, additional values which parameterise the query
   performed.
 
-  `dynv` is an optional 3rd argument, `which is a vector of further input
+  `dynv` is an optional 3rd argument, which is a vector of further input
   signals (atoms, reactions, etc), NOT values. This argument exists for
   historical reasons and is borderline deprecated these days.
 
@@ -198,79 +198,88 @@
 
 
 (defn reg-sub
-  "For a given `query-id`, register a `computation` function and input `signals`.
+  "For a given `query-id`, register two functions: a `computation` function and an `input signals` function.
+  
+  During program execution, a call to `subscribe`, such as `(subscribe [:sub-id 3 "blue"])`,
+  will create a new `:sub-id` node in the Signal Graph. And, at that time, re-frame
+  needs to know how to create the node.   By calling `reg-sub`, you are registering 
+  "the template" or "the mechanism" by which nodes in the Signal Graph can be created. 
 
-  At an abstract level, a call to this function allows you to register 'the mechanism'
-  to later fulfil a call to `(subscribe [query-id ...])`.
+  Repeating: calling `reg-sub` does not create a node. It only creates the template
+  from which nodes can be created later. 
+  
+  `reg-sub` arguments are:  
+    - a `query-id` (typically a namespaced keyword)
+    - a function which returns the inputs required by this kind of node (3 variations of this)
+    - a function which computes the value of this kind of node 
 
-  To say that another way, reg-sub allows you to create a template for a node
-  in the signal graph. But note: reg-sub does not cause a node to be created.
-  It simply allows you to register the template from which such a
-  node could be created, if it were needed, sometime later, when the call
-  to `subscribe` is made.
+  The`computation function` is always the last argument supplied and it is expected to have the signature: 
+    `(input-values, query-vector) -> a-value`
+  
+  When this computation function is called, `query-vector` will be what was passed as the first 
+  argument the `subscribe` causing the node to be created. So if the call was `(subscribe [:sub-id 3 "blue"])` 
+  then the `query-vector` supplied to the computaton function will be `[:sub-id 3 "blue"]`.
 
-  reg-sub needs three things:
-    - a `query-id`
-    - the required inputs for this node
-    - a computation function for this node
+  The arguments supplied between the `query-id` and the `computation-function` can vary in 3 ways, 
+  but whatever is there will define the `input signals` part of the template, and this controls
+  what `input-values` the `computation function` gets when it is called. 
 
-  The `query-id` is always the 1st argument to reg-sub and it is typically
-  a namespaced keyword.
-
-  A computation function is always the last argument and it has this general form:
-    `(input-signals, query-vector) -> a-value`.  The `query-vector` is the
-    `query` passed to `(subscribe query)` (see there for details), which may contain
-    additional arguments to further parametrise the query.
-
-  What goes in between the 1st and last args can vary, but whatever is there will
-  define the input signals part of the template, and, as a result, it will control
-  what values the computation functions gets as a first argument.
-
-  There's 3 ways this function can be called - 3 ways to supply input signals:
+  `reg-sub` can be called in 3 ways, because there are 3 ways to supply input signals:
 
   1. No input signals given:
-
+      ```clj
      (reg-sub
        :query-id
        a-computation-fn)   ;; (fn [db v]  ... a-value)
+     ```
 
-     The node's input signal defaults to `app-db`, and the value within `app-db` is
-     is given as the 1st argument to the computation function.
+     In the absence of an `input-fn`, the node's input signal defaults to `app-db`
+     and, as a result, the value within `app-db` (a map) is
+     is given as the 1st argument when `a-computation-fn` is called.
 
-  2. A signal function is supplied:
-
+  2. A signal function is explicitly supplied:
+     ```clj
      (reg-sub
        :query-id
        signal-fn     ;; <-- here
        computation-fn)
-
+     ```
+     
+     This is the most canonical and instructive of the three variations.
+     
      When a node is created from the template, the `signal-fn` will be called and it
      is expected to return the input signal(s) as either a singleton, if there is only
      one, or a sequence if there are many, or a map with the signals as the values.
 
-     The values from the nominated signals will be supplied as the 1st argument to the
-     computation function - either a singleton, sequence or map of them, paralleling
-     the structure returned by the signal function.
+     The values from returned nominated signals will be supplied as the 1st argument to  
+     the `a-computation-fn` when it is called - and subject to what this `signal-fn` returns, 
+     this value will be either a singleton, sequence or map of them (paralleling
+     the structure returned by the `signal-fn`).
 
-     Here, is an example signal-fn, which returns a vector of input signals.
-
+     This example `signal-fn` returns a vector of input signals.
+       ```clj
        (fn [query-vec dynamic-vec]
          [(subscribe [:a-sub])
           (subscribe [:b-sub])])
+       ```
+     The associated computation function must be written
+     to expect a vector of values for its first argument:
+       ```clj
+       (fn [[a b] _]     ;; 1st argument is a seq of two values
+         ....)
+        ```
 
-     For that signal function, the computation function must be written
-     to expect a vector of values for its first argument.
-       (fn [[a b] _] ....)
-
-     If the signal function was simpler and returned a singleton, like this:
+     If, on the other hand, the signal function was simpler and returned a singleton, like this:
+        ```clj
         (fn [query-vec dynamic-vec]
           (subscribe [:a-sub]))
-
-     then the computation function must be written to expect a single value
+        ```
+     then the associated computation function must be written to expect a single value
      as the 1st argument:
-
-        (fn [a _] ...)
-
+        ```clj
+        (fn [a _]       ;; 1st argument is a single value
+          ...)
+        ```
   3. Syntax Sugar
 
      ```clj
@@ -278,23 +287,22 @@
        :a-b-sub
        :<- [:a-sub]
        :<- [:b-sub]
-       (fn [[a b] [_]] {:a a :b b}))
+       (fn [[a b] [_]]    ;; 1st argument is a seq of two values
+         {:a a :b b}))
      ```
 
-     This 3rd variation is syntactic sugar for the 2nd.  Instead of providing an
-     `input signals` function, other subscriptions are used as automatic `input
-     signals`: Each pair of `:<-` and a subscription vector is equivalent to a call to
-     `(subscribe [:a-sub])`.
+     This 3rd variation is just syntactic sugar for the 2nd.  Instead of providing an
+     `signals-fn` you provide one or more pairs of `:<-` and a subscription vector.
 
-     Beware that in this syntax a single `:<-` pair is *not* wrapped in a vector, hence
-     the same rule as for the 2nd variation applies: If you only provide one `input
-     signal`, the computation function must expect a single value as the 1st argument:
+     If you supply only one pair a singleton will be supplied to the computation function, 
+     as if you had supplied a `signal-fn` returning only a single value:
 
      ```clj
      (reg-sub
        :a-sub
        :<- [:a-sub]
-       (fn [a _] ...))
+       (fn [a _]      ;; only one pair, so 1st argument is a single value
+         ...))
      ```
 
   For further understanding, read `/docs`, and look at the detailed comments in
