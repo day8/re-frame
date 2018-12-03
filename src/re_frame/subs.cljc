@@ -210,32 +210,35 @@
   
   `reg-sub` arguments are:  
     - a `query-id` (typically a namespaced keyword)
-    - a function which returns the inputs required by this kind of node (3 variations of this)
+    - a function which returns the inputs required by this kind of node (can be supplied  in one of three ways) 
     - a function which computes the value of this kind of node 
 
-  The`computation function` is always the last argument supplied and it is expected to have the signature: 
+  The `computation function` is always the last argument supplied and it is expected to have the signature: 
     `(input-values, query-vector) -> a-value`
   
-  When this computation function is called, `query-vector` will be what was passed as the first 
-  argument the `subscribe` causing the node to be created. So if the call was `(subscribe [:sub-id 3 \"blue\"])` 
+  When `computation function` is called, the `query-vector` argument will be the vector supplied to the 
+  the `subscribe` which caused the node to be created. So, if the call was `(subscribe [:sub-id 3 \"blue\"])`, 
   then the `query-vector` supplied to the computaton function will be `[:sub-id 3 \"blue\"]`.
 
   The arguments supplied between the `query-id` and the `computation-function` can vary in 3 ways, 
-  but whatever is there will define the `input signals` part of the template, and this controls
-  what `input-values` the `computation function` gets when it is called. 
+  but whatever is there defines the `input signals` part of the template, controlling what input 
+ values \"flow into\" the `computation function` gets when it is called. 
 
-  `reg-sub` can be called in 3 ways, because there are 3 ways to supply input signals:
+  `reg-sub` can be called in one of three ways, because there are three ways to define the input signals part.
+  But note, the 2nd method, in which a `signal-fn` is explicitly supplied, is the most canonical and instructive. The other 
+  two are really just sugary variations. 
 
   1. No input signals given:
       ```clj
      (reg-sub
        :query-id
-       a-computation-fn)   ;; (fn [db v]  ... a-value)
+       a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
      ```
 
-     In the absence of an `input-fn`, the node's input signal defaults to `app-db`
+     In the absence of an explicit `input-fn`, the node's input signal defaults to `app-db`
      and, as a result, the value within `app-db` (a map) is
-     is given as the 1st argument when `a-computation-fn` is called.
+     is given as the 1st argument when `a-computation-fn` is called.   
+ 
 
   2. A signal function is explicitly supplied:
      ```clj
@@ -265,7 +268,7 @@
      The associated computation function must be written
      to expect a vector of values for its first argument:
        ```clj
-       (fn [[a b] _]     ;; 1st argument is a seq of two values
+       (fn [[a b] query-vec]     ;; 1st argument is a seq of two values
          ....)
         ```
 
@@ -277,9 +280,25 @@
      then the associated computation function must be written to expect a single value
      as the 1st argument:
         ```clj
-        (fn [a _]       ;; 1st argument is a single value
+        (fn [a query-vec]       ;; 1st argument is a single value
           ...)
         ```
+ 
+     Further Note: variation #1 above, in which an `input-fn` was not supplied, like this:
+       ```clj
+     (reg-sub
+       :query-id
+       a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
+     ```
+     is the equivalent of using this
+     2nd variation and explicitly suppling a `signal-fn` which returns `app-db`:
+     ```clj
+     (reg-sub
+       :query-id
+       (fn [_ _]  re-frame/app-db)   ;; <--- explicit input-fn 
+       a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
+     ```
+ 
   3. Syntax Sugar
 
      ```clj
@@ -287,7 +306,7 @@
        :a-b-sub
        :<- [:a-sub]
        :<- [:b-sub]
-       (fn [[a b] [_]]    ;; 1st argument is a seq of two values
+       (fn [[a b] query-vec]    ;; 1st argument is a seq of two values
          {:a a :b b}))
      ```
 
@@ -301,7 +320,7 @@
      (reg-sub
        :a-sub
        :<- [:a-sub]
-       (fn [a _]      ;; only one pair, so 1st argument is a single value
+       (fn [a query-vec]      ;; only one pair, so 1st argument is a single value
          ...))
      ```
 
