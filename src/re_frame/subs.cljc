@@ -203,7 +203,7 @@
   During program execution, a call to `subscribe`, such as `(subscribe [:sub-id 3 "blue"])`,
   will create a new `:sub-id` node in the Signal Graph. And, at that time, re-frame
   needs to know how to create the node.   By calling `reg-sub`, you are registering 
-  "the template" or "the mechanism" by which nodes in the Signal Graph can be created. 
+  'the template' or 'the mechanism' by which nodes in the Signal Graph can be created. 
 
   Repeating: calling `reg-sub` does not create a node. It only creates the template
   from which nodes can be created later. 
