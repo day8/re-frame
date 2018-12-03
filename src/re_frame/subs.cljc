@@ -200,7 +200,7 @@
 (defn reg-sub
   "For a given `query-id`, register two functions: a `computation` function and an `input signals` function.
   
-  During program execution, a call to `subscribe`, such as `(subscribe [:sub-id 3 "blue"])`,
+  During program execution, a call to `subscribe`, such as `(subscribe [:sub-id 3 \"blue\"])`,
   will create a new `:sub-id` node in the Signal Graph. And, at that time, re-frame
   needs to know how to create the node.   By calling `reg-sub`, you are registering 
   'the template' or 'the mechanism' by which nodes in the Signal Graph can be created. 
@@ -217,8 +217,8 @@
     `(input-values, query-vector) -> a-value`
   
   When this computation function is called, `query-vector` will be what was passed as the first 
-  argument the `subscribe` causing the node to be created. So if the call was `(subscribe [:sub-id 3 "blue"])` 
-  then the `query-vector` supplied to the computaton function will be `[:sub-id 3 "blue"]`.
+  argument the `subscribe` causing the node to be created. So if the call was `(subscribe [:sub-id 3 \"blue\"])` 
+  then the `query-vector` supplied to the computaton function will be `[:sub-id 3 \"blue\"]`.
 
   The arguments supplied between the `query-id` and the `computation-function` can vary in 3 ways, 
   but whatever is there will define the `input signals` part of the template, and this controls
