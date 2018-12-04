@@ -26,7 +26,7 @@ McCoy might report "It's MVC, Jim, but not as we know it".  And you would respon
 re-frame is a **functional framework**."
 
 Being a functional framework, it is about two things: data, and the functions 
-which transform that data.  And, because it is a reactive framework, it is ["data which coordinates the functions"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
+which transform that data.  And, because it is a reactive framework, the ["data coordinates the functions"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
 
 ## Why Should You Care?
 
@@ -86,9 +86,10 @@ The functions which transform data are registered and looked up via
 data. Interceptors (data) are preferred over middleware (higher 
 order functions). Etc.
 
-In addition, re-frame applications are recative 
-which means data acts as the conductor. [It is the arrival of 
-data which coordinates the calling of functions](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around). 
+On a slightly different, but related arc, re-frame applications are reactive 
+which also elevates the importance of data because in reactive architecture data 
+becomes the conductor. It is the arrival of 
+data which [coordinates the calling of functions](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around). 
 
 **Data - that's the way we roll.**
 
