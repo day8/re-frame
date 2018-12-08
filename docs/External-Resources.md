@@ -98,6 +98,12 @@ Please add to this list by submitting a pull request.
 
 * [re-frame your ClojureScript applications](https://youtu.be/cDzjlx6otCU) - re-frame presentation given at Clojure/Conj 2016
 * [A Video Tour of the Source Code of Ninja Tools](https://carouselapps.com/2015/12/02/tour-of-the-source-code-of-ninja-tools/)
+* [Funding Circle Clojure Meetup: Modular Users Interfaces with Re-frame](https://youtu.be/b_uum_iYShE)
+* [Build your next single page app in ClojureScript and re-frame](https://youtu.be/Pq5oof3SJXA)
+* [Clojurescript re-frame Tutorial Part 1 - Events and Event Handlers](https://youtu.be/Xo6W300s1Xs)
+* [From 0 to prototype using ClojureScript, re-frame and friends: Martin Clausen](https://youtu.be/DdkwNTgtIJ0)
+* [Re-usable GUI Components with Re-frame and Atomic Design - Mark Nutter](https://youtu.be/JCY_cHzklRs)
+* [clojureD 2018: "Reframing your next Single Page App" by Kenneth Kalmer](https://youtu.be/x6z2-P1MpUw)
 
 ### Server Side Rendering
 
