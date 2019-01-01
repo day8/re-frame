@@ -23,7 +23,7 @@ good look at what's happening in there.
 
 Reagent uses `=` to compare the previous value of a prop with the 
 new value of that prop, when it determines if a component needs 
-rerendering. [Make sure you have a good understanding of this](https://github.com/Day8/re-frame/wiki/When-do-components-update%3F). 
+rerendering. [Make sure you have a good understanding of this](https://github.com/reagent-project/reagent/blob/master/doc/WhenDoComponentsUpdate.md). 
 
 In the worst case, if those props are big data structures which differ only in some 
 tiny, leaf aspect, then a lot of CPU cycles will be spent doing 
