@@ -32,13 +32,12 @@ All the material you need is [here, in Reagent's /doc](https://github.com/reagen
 ## Deepen/Broaden Your Understanding
 
 * [Mental Model Omnibus](MentalModelOmnibus.md)
-* [External Resources - including example apps](External-Resources.md)
+* [Other Interesting Resources - including example apps](External-Resources.md)
 * [FAQs](FAQs/README.md)
-
-
 
 ## App Structure
   * [Basic App Structure](Basic-App-Structure.md)
+  * [On naming things and app-db structure (external link)](https://purelyfunctional.tv/guide/database-structure-in-re-frame/)
   * [Navigation](Navigation.md)
   * [Namespaced Keywords](Namespaced-Keywords.md)
 
