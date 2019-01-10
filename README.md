@@ -26,7 +26,7 @@ McCoy might report "It's MVC, Jim, but not as we know it".  And you would respon
 re-frame is a **functional framework**."
 
 Being a functional framework, it is about two things: data, and the functions 
-which transform that data.  And, because it is a reactive framework, the ["data coordinates the functions"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
+which transform that data.  Because it is a reactive framework, the ["data coordinates the functions"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
 
 ## Why Should You Care?
 
@@ -36,15 +36,15 @@ Perhaps:
 2.  You believe Facebook did something magnificent when it created React, and
     you are curious about the further implications. Is the combination of
     `reactive programming`, `functional programming` and `immutable data` going to
-    **completely change everything**?  And, if so, what would that look like in a language
+    **completely change everything**?  If so, what would that look like in a language
     that embraces those paradigms?
 3.  You're taking a [Functional Design and Programming course](http://www.eli.sdsu.edu/courses/fall15/cs696/index.html) at San Diego State University
     and you have a re-frame/reagent assignment due.  You've left the reading a bit late, right?
 4.  You know Redux, Elm, Cycle.js or Pux and you're
     interested in a ClojureScript implementation.
     In this space, re-frame is very old, hopefully in a Gandalf kind of way.
-    First designed in Dec 2014, it even slightly pre-dates the official Elm Architecture,
-    although thankfully we were influenced by early-Elm concepts like `foldp` and `lift`, as well as 
+    First designed in Dec 2014, it slightly pre-dates the official Elm Architecture. Thankfully, 
+    we were influenced by early-Elm concepts like `foldp` and `lift`, as well as 
     Clojure projects like [Pedestal App], [Om] and [Hoplon]. Since then,
     re-frame has pioneered ideas like event handler middleware,
     coeffect accretion, and de-duplicated signal graphs.
@@ -74,7 +74,7 @@ they like to meditate on aphorisms like **data is the ultimate in late binding**
 (Less productively, they also like re-watching Rich Hickey videos, and wishing
 their hair was darker and more curly)
 
-I cannot stress enough what a big deal this is. It may seem 
+The importance of this cannot be stressed enough. It may seem 
 like a syntax curiosity at first but, when the penny drops for 
 you on this, it tends to be a profound moment. And once you 
 understand the importance of this concept at the language level, 
@@ -114,8 +114,7 @@ by different forces: gravity working one way, evaporation/convection the other.
 
 To understand re-frame, **imagine data flowing around that loop instead of water**.
 
-re-frame
-provides the conveyance of the data around the loop - the equivalent of gravity, evaporation and convection.
+re-frame provides the conveyance of the data around the loop - the equivalent of gravity, evaporation and convection.
 You design what's flowing and then you hang functions off the loop at
 various points to compute the data's phase changes (again, data flow coordinates code).
 
@@ -133,7 +132,7 @@ you to understand re-frame, is **practically proof** it does physics.
 Computationally, each iteration of the loop involves a
 six domino cascade.
 
-One domino triggers the next, which triggers the next, et cetera, boom, boom, boom, until we are 
+One domino triggers the next, which triggers the next, ad infinitum, until we are 
 back at the beginning of the loop, and the dominoes spring to attention 
 again, ready for the next iteration of the same cascade.
 
@@ -516,7 +515,7 @@ like with devcards, because it is a framework, rather than a library.
 We're still puzzling over some aspects and tweaking as we go. All designs
 represent a point in the possible design space, with pros and cons.
 
-And, yes, re-frame is fast, straight out of the box. And, yes, it has 
+Re-frame is fast, straight out of the box. It has 
 a good testing story (unit and behavioural). And, yes, it works with figwheel to create
 a powerful hot-loading development story. And, yes, it has 
 fun specialist tooling, and a community,
