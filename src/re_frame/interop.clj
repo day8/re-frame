@@ -23,7 +23,7 @@
 (defn on-load
   [listener]) ;; no-op
 
-(defonce ^:private executor (Executors/newSingleThreadExecutor))
+(defonce ^:private executor (Executors/newCachedThreadPool))
 
 (defonce ^:private on-dispose-callbacks (atom {}))
 

@@ -1,5 +1,6 @@
 (ns re-frame.router
   (:require [re-frame.events  :refer [handle]]
+            [re-frame.db :as db]
             [re-frame.interop :refer [after-render empty-queue next-tick]]
             [re-frame.loggers :refer [console]]
             [re-frame.trace   :as trace :include-macros true]))
@@ -99,7 +100,9 @@
   ;; -- API ------------------------------------------------------------------
 
   (push [this event]         ;; presumably called by dispatch
-    (-fsm-trigger this :add-event event))
+    (-fsm-trigger this :add-event 
+                  #?(:cljs event
+                     :clj (with-meta event {:app-db-id db/app-db-id}))))
 
   ;; register a callback function which will be called after each event is processed
   (add-post-event-callback [_ id callback-fn]
@@ -176,8 +179,18 @@
     [this]
     (let [event-v (peek queue)]
       (try
-        (handle event-v)
-        (set! queue (pop queue))
+        (let [app-db-id (:app-db-id (meta event-v))]
+          (if (and app-db-id
+                   (= (first event-v) :block)
+                   (first (filter #(= app-db-id (:app-db-id (meta %))) (rest queue))))
+            (do
+              (set! queue (pop queue))
+              (-add-event this event-v))
+            (do
+              #?(:clj (with-bindings {#'db/app-db-id (:app-db-id (meta event-v))}
+                        (handle event-v))
+                 :cljs (handle event-v))
+                (set! queue (pop queue)))))
         (-call-post-event-callbacks this event-v)
         (catch #?(:cljs :default :clj Exception) ex
           (-fsm-trigger this :exception ex)))))
@@ -234,8 +247,9 @@
   [event]
   (if (nil? event)
       (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
-      (push event-queue event))
-  nil)                                           ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
+      (push event-queue #?(:clj (with-meta event {:app-db-id db/app-db-id})
+                           :cljs event)))
+  nil)                                           ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
 
 (defn dispatch-sync
   [event-v]

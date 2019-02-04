@@ -987,7 +987,7 @@
   []
   (let [handlers @registrar/kind->id->handler
         app-db   @db/app-db
-        subs-cache @subs/query->reaction]
+				subs-cache @subs/query->reaction]
     (fn []
       ;; call `dispose!` on all current subscriptions which
       ;; didn't originally exist.
