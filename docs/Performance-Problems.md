@@ -151,7 +151,7 @@ You may be surprised by what you see.
 
 ## The Old Weapon
 
-In the old days, we had a different, clumsier [tracing technique](https://github.com/Day8/re-frame/wiki/Debugging). 
+In the old days, we had a different, clumsier [tracing technique](https://github.com/Day8/re-frame/blob/master/docs/Debugging.md). 
 
 Be aware that this OLD method of tracing adds its own performance drag - there's the 
 overhead of all that stuff getting written on the js console. 
