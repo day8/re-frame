@@ -1,5 +1,5 @@
 > In a rush? You can get away with skipping this page on the first pass. <br>
-> Next page: [Basic App Structure](Basic-App-Structure.md)
+> Next page: [App Structure](App-Structure.md)
 
 ## Flow Mechanics
 
@@ -37,10 +37,10 @@ re-frame uses both of these building blocks, so let's now make sure we understan
 From a ClojureScript perspective, the purpose of an atom is to hold mutable data.  From a re-frame
 perspective, we'll tweak that paradigm slightly and **view a `ratom` as having a value that
 changes over time.**  Seems like a subtle distinction, I know, but because of it, re-frame sees a
-`ratom` as a Signal. 
+`ratom` as a Signal.
 
 A Signal is a value that changes over time.  So it is a stream of values. Each time a ratom gets
-`reset!` that's a new value in the stream. 
+`reset!` that's a new value in the stream.
 
 The 2nd building block, `reaction`, acts a bit like a function. It's a macro which wraps some
 `computation` (a block of code) and returns a `ratom` holding the result of that `computation`.
@@ -103,7 +103,7 @@ accessible via the `ratom` it returns.
 
 ## Components  (view functions)
 
-When using Reagent, your primary job is to write one or more `components`. 
+When using Reagent, your primary job is to write one or more `components`.
 This is the view layer.
 
 Think about `components` as `pure functions` - data in, Hiccup out.  `Hiccup` is
@@ -146,7 +146,7 @@ by doing this, because Reagent allows you to be ignorant of the mechanics I'm ab
 you. (It invisibly wraps your components in a `reaction` allowing you to be blissfully
 ignorant of how the magic happens.)
 
-On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired. 
+On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired.
 
 ```Clojure
 (defn greet                ;; a component - data in, Hiccup out.
@@ -206,10 +206,10 @@ On with the rest of my lies and distortions...
 
 ### reg-sub-raw
 
-This low level part of the API provides a way to register a subscription handler - so 
+This low level part of the API provides a way to register a subscription handler - so
 the intent is similar to `reg-sub`.
 
-You use it like other registration functions: 
+You use it like other registration functions:
 ```clj
 (re-frame.core/reg-sub-raw   ;; it is part of the API
   :query-id     ;; later use (subscribe [:query-id])
@@ -218,17 +218,17 @@ You use it like other registration functions:
 
 The interesting bit is how `some-fn` is written. Here's an example:
 ```clj
-(defn some-fn 
+(defn some-fn
   [app-db event]    ;; app-db is not a value, it is a reagent/atom
   (reaction (get-in @app-db [:some :path])))  ;; returns a reaction
 ```
 Notice:
   1. `app-db` is a reagent/atom. It is not a value like `reg-sub` gets.
   2. it returns a `reaction` which does a computation. It does not return a value like `reg-sub` does.
-  3. Within that `reaction` `app-db` is deref-ed (see use of `@`) 
-  
+  3. Within that `reaction` `app-db` is deref-ed (see use of `@`)
+
 As a result of point 3, each time `app-db` changes, the wrapped `reaction` will rerun.
-`app-db` is an input signal to that `reaction`. 
+`app-db` is an input signal to that `reaction`.
 
 Unlike `reg-sub`, there is no 3-arity version of `reg-sub-raw`, so there's no way for you to provide an input signals function.
 Instead, even simpler, you can just use `subscribe` within the `reaction` itself. For example:
@@ -239,33 +239,33 @@ Instead, even simpler, you can just use `subscribe` within the `reaction` itself
      (let [a-path-element @(subscribe [:get-path-part])]   ;; <-- subscribe used here
        (get-in @app-db [:some a-path-element]))))
 ```
-As you can see, this `reaction` has two input signals: `app-db` and `(subscribe [:get-path-part])`.  If either changes, 
+As you can see, this `reaction` has two input signals: `app-db` and `(subscribe [:get-path-part])`.  If either changes,
 the `reaction` will rerun.
 
 In some cases, the returned `reaction` might not even
-use `app-db` and, instead, it might only use `subscribe` to provide input signals. In that case, the 
+use `app-db` and, instead, it might only use `subscribe` to provide input signals. In that case, the
 registered subscription would belong to "Level 3" of the signal graph (discussed in earlier tutorials).
 
 Remember to deref any use of `app-db` and `subscribe`.  It is a rookie mistake to forget. I do it regularly.
 
-Instead of using `reaction` (a macro), you can use `reagent/make-reaction` (a utility function) which gives you the additional 
-ability to attach an `:on-dispose` handler to the returned reaction, allowing you to do cleanup work when the subscription is no longer needed. 
+Instead of using `reaction` (a macro), you can use `reagent/make-reaction` (a utility function) which gives you the additional
+ability to attach an `:on-dispose` handler to the returned reaction, allowing you to do cleanup work when the subscription is no longer needed.
 [See an example of using `:on-dispose` here](Subscribing-To-External-Data.md)
 
-### Example reg-sub-raw 
+### Example reg-sub-raw
 
 The following use of `reg-sub` can be found in [the todomvc example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs):
 ```clj
 (reg-sub
   :visible-todos
-  
+
   ;; signal function - returns a vector of two input signals
-  (fn [query-v _]     
+  (fn [query-v _]
     [(subscribe [:todos])
      (subscribe [:showing])])
 
   ;; the computation function - 1st arg is a 2-vector of values
-  (fn [[todos showing] _]   
+  (fn [[todos showing] _]
     (let [filter-fn (case showing
                       :active (complement :done)
                       :done   :done
@@ -275,29 +275,29 @@ The following use of `reg-sub` can be found in [the todomvc example](https://git
 
 we could rewrite this use of `reg-sub` using `reg-sub-raw` like this:
 ```clj
-(reg-sub-raw 
+(reg-sub-raw
   :visible-todos
   (fn [app-db event]  ;; app-db not used, name shown for clarity
     (reaction         ;; wrap the computation in a reaction
       (let [todos   @(subscribe [:todos])   ;; input signal #1
-	    showing @(subscribe [:showing]) ;; input signal #2 
-	    filter-fn (case showing
+        showing @(subscribe [:showing]) ;; input signal #2
+        filter-fn (case showing
                         :active (complement :done)
                         :done   :done
                         :all    identity)]
-	    (filter filter-fn todos))))
+        (filter filter-fn todos))))
 ```
 
-A view could do `(subscribe [:visible-todos])` and never know which of 
+A view could do `(subscribe [:visible-todos])` and never know which of
 the two variations above was used. Same result delivered.
 
 
 
-*** 
+***
 
 Previous: [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:       [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:     [Basic App Structure](Basic-App-Structure.md) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Next:     [App Structure](App-Structure.md) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

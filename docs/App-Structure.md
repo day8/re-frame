@@ -1,4 +1,3 @@
-
 ## Simpler Apps
 
 To build a re-frame app, you:
@@ -23,24 +22,24 @@ For a living example of this approach, look at the [todomvc example](https://git
 
 ### There's A Small Gotcha
 
-If you adopt this structure, there's a gotcha. 
+If you adopt this structure, there's a gotcha.
 
-`events.cljs` and `subs.cljs` will never be `required` by any other 
-namespaces. To the Google Closure dependency mechanism it appears as 
+`events.cljs` and `subs.cljs` will never be `required` by any other
+namespaces. To the Google Closure dependency mechanism it appears as
 if these two namespaces are not needed and it doesn't load them.
 
 And, if the code does not get loaded, the registrations in these namespaces
-never happen. You'll then be puzzled as to why none of your events handlers 
+never happen. You'll then be puzzled as to why none of your events handlers
 are registered.
 
-Once you twig to what's going on, the solution is easy.  You must 
-explicitly `require` both namespaces, `events` and `subs`, in your `core` 
-namespace. Then they'll be loaded and the registrations will occur 
-as that loading happens. 
+Once you twig to what's going on, the solution is easy.  You must
+explicitly `require` both namespaces, `events` and `subs`, in your `core`
+namespace. Then they'll be loaded and the registrations will occur
+as that loading happens.
 
 ## Larger Apps
 
-Assuming your larger apps have multiple "panels" (or "views") which are 
+Assuming your larger apps have multiple "panels" (or "views") which are
 relatively independent, you might use this structure:
 ```
 src
@@ -60,11 +59,43 @@ src
 └── panel-n
 ```
 
-*** 
+If you follow this structure you should probably use namespaced keywords instead of simple keywords.
+
+This gives the ability to encapsulate the state of each "panel" and ensure you don't get any conflicts.
+
+
+Suppose for example that in your panel you want to store a value `x` in the db, if you want to use
+namespaced keywords you the event handler and subscription will look like this:
+
+```
+(rf/reg-event-db ::set-x
+                 (fn [db [_ value]]
+                   (assoc db ::x value)))
+
+(rf/reg-sub ::x
+            (fn [db _]
+              (get db ::x)))
+```
+
+If you want to dispatch that even you have two options, either:
+
+```
+(require [project.panel.handlers :as handlers])
+
+(rf/dispatch [::handlers/set-x 100])
+```
+
+or:
+
+`(rf/dispatch [:project.panel.handlers/set-x 100])`
+
+Where the first option might be preferrable since it makes sure you require the handlers file and saves you from possibly typos.
+
+***
 
 Previous:  [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Navigation](Navigation.md)  
+Next:  [Navigation](Navigation.md)
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

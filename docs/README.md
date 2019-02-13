@@ -24,7 +24,7 @@
 All the material you need is [here, in Reagent's /doc](https://github.com/reagent-project/reagent/blob/master/doc/README.md).
 
 
-## Commercial-Grade Video Training 
+## Commercial-Grade Video Training
 
 * [purelyfunctional.tv](https://purelyfunctional.tv/courses/understanding-re-frame/)
 * [Lambda Island Videos](https://lambdaisland.com/collections/react-reagent-re-frame)
@@ -36,7 +36,7 @@ All the material you need is [here, in Reagent's /doc](https://github.com/reagen
 * [FAQs](FAQs/README.md)
 
 ## App Structure
-  * [Basic App Structure](Basic-App-Structure.md)
+  * [App Structure](App-Structure.md)
   * [On naming things and app-db structure (external link)](https://purelyfunctional.tv/guide/database-structure-in-re-frame/)
   * [Navigation](Navigation.md)
   * [Namespaced Keywords](Namespaced-Keywords.md)
