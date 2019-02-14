@@ -1,14 +1,15 @@
 (defproject todomvc-re-frame "0.10.5"
-  :dependencies [[org.clojure/clojure        "1.9.0"]
-                 [org.clojure/clojurescript  "1.10.339"]
+  :dependencies [[org.clojure/clojure        "1.10.0"]
+                 [org.clojure/clojurescript  "1.10.439"]
                  [reagent "0.8.1"]
-                 [re-frame "0.10.6"]
-                 [binaryage/devtools "0.9.4"]
-                 [secretary "1.2.3"]]
+                 [re-frame "0.10.5"]
+                 [binaryage/devtools "0.9.10"]
+                 [secretary "1.2.3"]
+                 [day8.re-frame/tracing "0.5.1"]
 
 
   :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-figwheel  "0.5.16"]]
+            [lein-figwheel  "0.5.18"]]
 
   :hooks [leiningen.cljsbuild]
 

@@ -1,11 +1,11 @@
 (defproject simple "0.10.5"
-  :dependencies [[org.clojure/clojure        "1.8.0"]
-                 [org.clojure/clojurescript  "1.9.908"]
-                 [reagent  "0.7.0"]
+  :dependencies [[org.clojure/clojure        "1.10.0"]
+                 [org.clojure/clojurescript  "1.10.439"]
+                 [reagent  "0.8.1"]
                  [re-frame "0.10.5"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-figwheel  "0.5.14"]]
+            [lein-figwheel  "0.5.18"]]
 
   :hooks [leiningen.cljsbuild]
 
