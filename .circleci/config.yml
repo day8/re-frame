@@ -4,7 +4,7 @@ orbs:
     executors:
       lein_browsers:
         docker:
-          - image: circleci/clojure:lein-2.8.1-node-browsers
+          - image: circleci/clojure:openjdk-11-lein-2.8.1-node-browsers
         working_directory: ~/repo
         environment:
           LEIN_ROOT: "true"

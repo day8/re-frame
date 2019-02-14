@@ -2,25 +2,25 @@
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
-  :dependencies [[org.clojure/clojure        "1.8.0"]
-                 [org.clojure/clojurescript  "1.9.908"]
+  :dependencies [[org.clojure/clojure        "1.8.0" :scope "provided"]
+                 [org.clojure/clojurescript  "1.10.439" :scope "provided"]
                  [reagent                    "0.7.0"]
-                 [net.cgrand/macrovich       "0.2.0"]
-                 [org.clojure/tools.logging  "0.3.1"]]
+                 [net.cgrand/macrovich       "0.2.1"]
+                 [org.clojure/tools.logging  "0.4.1"]]
 
   :profiles {:debug {:debug true}
-             :dev   {:dependencies [[karma-reporter            "3.0.0-alpha1"]
-                                    [binaryage/devtools        "0.9.4"]]
-                     :plugins      [[lein-ancient              "0.6.10"]
-                                    [lein-cljsbuild            "1.1.5"]
+             :dev   {:dependencies [[karma-reporter            "3.1.0"]
+                                    [binaryage/devtools        "0.9.10"]]
+                     :plugins      [[lein-ancient              "0.6.15"]
+                                    [lein-cljsbuild            "1.1.7"]
                                     [lein-npm                  "0.6.2"]
-                                    [lein-figwheel             "0.5.13"]
+                                    [lein-figwheel             "0.5.18"]
                                     [lein-shell                "0.5.0"]]}}
 
   :clean-targets  [:target-path "run/compiled"]
 
   :resource-paths ["run/resources"]
-  :jvm-opts       ["-Xmx1g" "-XX:+UseConcMarkSweepGC"]
+  :jvm-opts       ["-Xmx1g"]
   :source-paths   ["src"]
   :test-paths     ["test"]
 
