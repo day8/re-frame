@@ -40,10 +40,10 @@
                   ["vcs" "commit"]
                   ["vcs" "push"]]
 
-  :npm {:devDependencies [[karma                 "1.0.0"]
+  :npm {:devDependencies [[karma                 "4.0.0"]
                           [karma-cljs-test       "0.1.0"]
                           [karma-chrome-launcher "2.2.0"]
-                          [karma-junit-reporter  "0.3.8"]]}
+                          [karma-junit-reporter  "1.2.0"]]}
 
   :cljsbuild {:builds [{:id           "test"
                         :source-paths ["test" "src"]
