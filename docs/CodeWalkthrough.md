@@ -16,14 +16,14 @@ which contains 70 lines of code. We'll look at every line of [the file](https://
 This app:
  - displays the current time in a nice big, colourful font
  - provides a single text input field, into which you can type a hex colour code, 
-   like "#CCC", used for the time display
+   like "#CCC" or "blue", used for the time display
       
 When it is running, here's what it looks like:
 
 ![Example App image](../images/example_app.png)
 
 To run the code yourself: 
- * Install Java 8 
+ * Install Java 8 or later
  * Install leiningen  (http://leiningen.org/#install)
 
 Then:
@@ -37,6 +37,10 @@ put into `/resources/public/js/client.js` which is loaded into `/resources/publi
  
 Figwheel provides for hot-loading, so you can edit the source code (under `/src`)and watch the loaded HTML change.
 
+## Or Use The Online Interactive Version 
+
+>  Note: an online, interactive version of this tutorial page is [available here](http://blog.klipse.tech/clojure/2019/02/17/reframe-tutorial.html). It powered by [the wonderful Klipse](https://github.com/viebel/klipse).<br>
+> Warning: it can take about 45 seconds to load this page (the interactiveity is achieved by loading a full clojurescript compiler into the broaswer). And, in the unlikely event of it not working, try disabling your adblocker. 
 
 ## Namespace
 
