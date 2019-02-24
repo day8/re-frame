@@ -40,7 +40,8 @@ Figwheel provides for hot-loading, so you can edit the source code (under `/src`
 ## Or Use The Online Interactive Version 
 
 >  Note: an online, interactive version of this tutorial page is [available here](http://blog.klipse.tech/clojure/2019/02/17/reframe-tutorial.html). It powered by [the wonderful Klipse](https://github.com/viebel/klipse).<br>
-> Warning: it can take about 45 seconds to load this page (the interactiveity is achieved by loading a full clojurescript compiler into the broaswer). And, in the unlikely event of it not working, try disabling your adblocker. 
+> Warning: it can take about 45 seconds to load this page (the interactive part is achieved by loading a full clojurescript compiler into the broswer). <br>
+> Troubleshooting: in the unlikely event of it not working, try disabling your adblocker. 
 
 ## Namespace
 
