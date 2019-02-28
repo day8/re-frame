@@ -5,7 +5,7 @@
                  [re-frame "0.10.5"]
                  [binaryage/devtools "0.9.10"]
                  [secretary "1.2.3"]
-                 [day8.re-frame/tracing "0.5.1"]
+                 [day8.re-frame/tracing "0.5.1"]]
 
 
   :plugins [[lein-cljsbuild "1.1.7"]
