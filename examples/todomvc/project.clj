@@ -4,7 +4,7 @@
                  [reagent "0.8.1"]
                  [re-frame "0.10.5"]
                  [binaryage/devtools "0.9.10"]
-                 [secretary "1.2.3"]
+                 [clj-commons/secretary "1.2.4"]
                  [day8.re-frame/tracing "0.5.1"]]
 
 
