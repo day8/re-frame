@@ -107,6 +107,7 @@ Please add to this list by submitting a pull request.
 
 ### Server Side Rendering
 
+* [isomorphic-rendering](http://techascent.com/blog/isomorphic-rendering.html)
 * [Prerenderer](https://github.com/pupeno/prerenderer) - Server pre-rendering library using NodeJS that works with re-frame `0.6.0` (later versions untested)
    Rationale [Part 1](https://carouselapps.com/2015/09/14/isomorphic-clojurescriptjavascript-for-pre-rendering-single-page-applications-part-2/)
    [Part 2](https://carouselapps.com/2015/09/14/isomorphic-clojurescriptjavascript-for-pre-rendering-single-page-applications-part-2/)
