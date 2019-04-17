@@ -10,7 +10,7 @@ axe of my family? And because it has changed gently over time, it is still a pre
 y'know. Pretty good.
 
 > -- Terry Pratchett, The Fifth Elephant <br>
-> &nbsp;&nbsp;&nbsp; reflecting on identity, flow and derived values
+> &nbsp;&nbsp;&nbsp; reflecting on identity, flow and derived values  (aka [The Ship of Theseus](https://en.wikipedia.org/wiki/Ship_of_Theseus))
 
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
