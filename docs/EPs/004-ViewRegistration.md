@@ -1,6 +1,6 @@
 ## EP 003 - View Registration
 
-> Status: Placeholder. Don't read yet. 
+> Status: Placeholder. Only scribbles. Don't read yet. 
 
 
 ### Abstract 
@@ -25,7 +25,33 @@ What might need to be injected (as args) into a view:
 
 XXX searches up the DOM heirarchy looking for a `frame` context then extracts dispatch and subscribe.  Sounds inefficient. 
 
-### Code Doodles
+### Code Doodle #1
+
+Associate the keyword `:my-view-id ` with a renderer using `def-view`:
+```clj
+(def-view 
+   :my-view-id 
+   
+   ;; indicate what `context` is required
+   [:dispatch :subscribe :context XXX] 
+          
+   ;; the renderer
+   ;; last argument `context` is a map of:
+   ;;    - `:subs` - a vector of subscription values? 
+   ;;    - :dispatch and :subscribe 
+   ;;    - :context - a vector of context values
+   ;; 
+   (fn [a-str context]
+     (let [XXXX] 
+       )))
+```
+
+Use of `:my-view-id `:
+```clj
+[:my-view-id  "Hello"] 
+```
+
+### Code Doodle #2
 
 Associate the keyword `:my-view-id ` with a renderer using `def-view`:
 ```clj
@@ -64,5 +90,6 @@ Misc Notes:
    
    - reagent hiccup will be changed/monkey-patched so that views can be identified by keyword
    - Views are the leaves of the signal graph. They need to subscribe and dispatch. 
+   - how to obtain other pieces of `context` (beyond the current frame)
    
 XXX There's a nasty problem with frames and subscriptions.  How does the signal function know what frame to create new subscriptions against???
