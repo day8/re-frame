@@ -86,10 +86,9 @@ The functions which transform data are registered and looked up via
 data. Interceptors (data) are preferred over middleware (higher 
 order functions). Etc.
 
-On a slightly different, but related arc, re-frame applications are reactive 
-which also elevates the importance of data because in reactive architecture data 
-becomes the conductor. It is the arrival of 
-data which [coordinates the calling of functions](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around). 
+On a related arc, re-frame applications are reactive 
+and that further elevates the importance of data because, in a reactive architecture, 
+it is the arrival of data which [coordinates the calling of functions](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around). 
 
 **Data - that's the way we roll.**
 
