@@ -165,8 +165,8 @@ This is known as `event handling`.
 Event handler functions compute how an event should change "the world",
 which is to say that they compute the `side effects` of the event.
 Or, more accurately, they compute a declarative **description of the required
-`side effects`**, represented as a data structure. (Event handlers are 
-functions which compute data).
+`side effects`**, represented as a data structure. (So `event handlers`
+are just functions which compute data).
 
 Much of the time, an event will only cause `side effects` to the SPA's 
 "application state", but sometimes the outside world must also be affected:
