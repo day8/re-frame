@@ -134,7 +134,7 @@ Computationally, each iteration of the loop involves a
 six domino cascade.
 
 One domino triggers the next, which triggers the next, et cetera, boom, boom, boom, until we are 
-back at the beginning of the loop, and the dominoes spring to attention 
+back at the beginning of the loop, and the dominoes reset to attention 
 again, ready for the next iteration of the same cascade.
 
 The six dominoes are: 
@@ -144,6 +144,8 @@ The six dominoes are:
 4. Query
 5. View
 6. DOM
+
+Let's have a first look at each them. 
 
 ### 1st Domino - Event Dispatch
 
@@ -161,18 +163,19 @@ re-frame is `event` driven.
 In response to an `event`, an application must decide what action to take. 
 This is known as `event handling`.
 
-Event handler functions compute side effects (known in re-frame simply as `effects`). 
-More accurately, they compute 
-a **description of `effects`**. This description is a data structure 
-which says, declaratively, how the world should change (because of the event).
+Event handler functions compute how an event should change "the world",   
+which is to say that they compute the `side effects` of the event. 
+Or, more accurately, they compute a declarative **description of the required
+`side effects`**, represented as a data structure. (Event handlers are 
+functions which compute data).
 
-Much of the time, only the "application state" of the SPA itself need
-change, but sometimes the outside world must also be affected
-(localstore, cookies, databases, emails, logs, etc).
+Much of the time, an event will only cause `side effects` to the SPA's 
+"application state", but sometimes the outside world must also be affected:
+localstore, cookies, databases, emails, logs, etc.
 
 ### 3rd Domino - Effect Handling
 
-The descriptions of `effects` are realised (actioned).
+In this step, the `side effects`, returned by the previous step (as data), are actioned/performed.
 
 Now, to a functional programmer, `effects` are scary in a 
 [xenomorph kind of way](https://www.google.com.au/search?q=xenomorph).
