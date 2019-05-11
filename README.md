@@ -162,8 +162,8 @@ re-frame is `event` driven.
 In response to an `event`, an application must decide what action to take. 
 This is known as `event handling`.
 
-Event handler functions compute how an event should change "the world",   
-which is to say that they compute the `side effects` of the event. 
+Event handler functions compute how an event should change "the world",
+which is to say that they compute the `side effects` of the event.
 Or, more accurately, they compute a declarative **description of the required
 `side effects`**, represented as a data structure. (Event handlers are 
 functions which compute data).
