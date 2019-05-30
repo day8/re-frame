@@ -40,9 +40,9 @@ https://github.com/Day8/re-frame-http-fx
 Look at the "Real World App" example for inspiration: 
 https://github.com/jacekschae/conduit
 
-### If You Have A Redux Background
+### Redux Background?
 
-A reminder:
+The re-frame approach: 
 1. re-frame is event driven. It is events which move the system from one state to the next
 2. events cause changes: perhaps to `app-db` or opening a web socket. These are the effects of the event
 3. subscriptions simply deliver data
