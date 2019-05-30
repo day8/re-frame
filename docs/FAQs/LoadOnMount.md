@@ -38,7 +38,7 @@ There's a useful effect handler available for HTTP work:
 https://github.com/Day8/re-frame-http-fx
 
 Look at the "Real World App" example for inspiration: 
-https://github.com/gothinkster/clojurescript-reframe-realworld-example-app/blob/master/src/conduit/events.cljs
+https://github.com/jacekschae/conduit
 
 ### Extra For Those With Redux Backgrounds
 
