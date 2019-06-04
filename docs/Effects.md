@@ -276,7 +276,7 @@ registered handlers) to which you can return.
 
 ### Existing Effect Handlers
 
-`re-frame's` built-in effect handlers, like `dispatch-n` and `dispatch-later`, are detailed [the API](/docs/API.md) document.
+`re-frame's` built-in effect handlers, like `dispatch-n` and `dispatch-later`, are detailed in [the API](/docs/API.md) document.
 
 And please review the [External-Resources document](External-Resources.md) for a list of 3rd party Effect Handlers.
 
