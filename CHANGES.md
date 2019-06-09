@@ -5,6 +5,9 @@
 
   - [#512](https://github.com/Day8/re-frame/issues/512) Error with infer-externs "goog is not defined in the externs" 
 
+#### Improvements
+
+- Update dependency on reagent from `0.7.0` to `0.8.1`.
 
 ## 0.10.6 (2018-09-03)
 
