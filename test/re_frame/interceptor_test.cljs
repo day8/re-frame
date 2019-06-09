@@ -136,42 +136,48 @@
                 ((:after change-i))
                 (get-effect :db ::not-found))))))
 
+(defn- intercept-with-db-effect
+  "Used to test if interceptors run given a db effect."
+  [interceptor-f db-fx add?]
+  (cond-> (context [:a :b] [(interceptor-f)] {:a 1})
+    add? (assoc-effect :db db-fx)
+    true (interceptor/invoke-interceptors :before)
+    true interceptor/change-direction
+    true (interceptor/invoke-interceptors :after)))
+
 (deftest test-after
-  (testing "when no db effect is returned"
-    (let [after-db-val (atom nil)]
-      (-> (context [:a :b]
-                   [(after (fn [db] (reset! after-db-val db)))]
-                   {:a 1})
-          (interceptor/invoke-interceptors :before)
-          interceptor/change-direction
-          (interceptor/invoke-interceptors :after))
-      (is (= @after-db-val {:a 1}))))
-  (testing "when a false db effect is returned"
-    (let [after-db-val (atom :not-reset)]
-      (-> (context [:a :b]
-                   [(after (fn [db] (reset! after-db-val db)))]
-                   {:a 2})
-          (assoc-effect :db nil)
-          (interceptor/invoke-interceptors :before)
-          interceptor/change-direction
-          (interceptor/invoke-interceptors :after))
-      (is (= @after-db-val nil))))
-  (testing "when a nil db effect is returned"
-    (let [after-db-val (atom :not-reset)]
-      (-> (context [:a :b]
-                   [(after (fn [db] (reset! after-db-val db)))]
-                   {:a 3})
-          (assoc-effect :db false)
-          (interceptor/invoke-interceptors :before)
-          interceptor/change-direction
-          (interceptor/invoke-interceptors :after))
-      (is (= @after-db-val false)))))
+  (let [after-db-val (atom nil)
+        run-after    (partial intercept-with-db-effect
+                        #(after (fn [db] (reset! after-db-val db))))]
+    (testing "when no db effect is returned"
+      (reset! after-db-val :not-reset)
+      (run-after nil false)
+      (is (= @after-db-val :not-reset)))
+    (testing "when a nil db effect is returned"
+      (reset! after-db-val :not-reset)
+      (run-after nil true)
+      (is (= @after-db-val nil)))
+    (testing "when a false db effect is returned"
+      (reset! after-db-val :not-reset)
+      (run-after false true)
+      (is (= @after-db-val false)))
+    (testing "when a truthy db effect is returned"
+      (reset! after-db-val :not-reset)
+      (run-after :reset true)
+      (is (= @after-db-val :reset)))))
 
 (deftest test-enrich
-  (testing "when no db effect is returned"
-    (let [ctx (context [] [] {:a 1})]
-      (is (= ::not-found (get-effect ctx :db ::not-found)))
-      (-> ctx (:after (enrich (fn [db] (is (= db {:a 1})))))))))
+  (let [run-enrich (partial intercept-with-db-effect
+                      #(enrich (fn [db] (assoc db :enriched :added))))]
+    (testing "when no db effect is returned"
+      (let [ctx (run-enrich nil false)]
+        (is (= (-> ctx (get-effect :db) :enriched) nil))))
+    (testing "when nil db effect is returned"
+      (let [ctx (run-enrich nil true)]
+        (is (= (-> ctx (get-effect :db) :enriched) :added))))
+    (testing "when truthy db effect is returned"
+      (let [ctx (run-enrich {} true)]
+        (is (= (-> ctx (get-effect :db) :enriched) :added))))))
 
 (deftest test-update-coeffect
   (let [context {:effects {:db {:a 1}}
