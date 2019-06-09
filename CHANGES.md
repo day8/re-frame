@@ -8,6 +8,9 @@
 #### Improvements
 
 - Update dependency on reagent from `0.7.0` to `0.8.1`.
+- Update dependency on karma from `4.0.0` to `4.1.0`.
+- Update dependency on Clojure from `1.8.0` to `1.10.1`.
+- Update dependency on ClojureScript from `1.10.439` to `1.10.520`.
 
 ## 0.10.6 (2018-09-03)
 
