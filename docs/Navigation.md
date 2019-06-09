@@ -22,7 +22,7 @@ When the user does something navigation-ish (selects a tab, a dropdown or someth
   (fn [db [_ value]]
     (assoc db :active-panel value)))
 
-(re-frame/dispatch 
+(re-frame/dispatch
   [:set-active-panel :panel1])
 ```
 
@@ -43,7 +43,7 @@ A high level reagent view has a subscription to :active-panel and will switch to
  []
  [:div "There"])
 
-(defn high-level-view 
+(defn high-level-view
   []
   (let [active  (re-frame/subscribe [:active-panel])]
     (fn []
@@ -59,6 +59,6 @@ Continue to [Namespaced Keywords](Namespaced-Keywords.md) to reduce clashes on i
 
 ***
 
-Previous:  [Basic App Structure](Basic-App-Structure.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Previous:  [App Structure](App-Structure.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Next:  [Namespaced Keywords](Namespaced-Keywords.md)
