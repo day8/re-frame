@@ -4,7 +4,7 @@
   :license      {:name "MIT"}
   :dependencies [[org.clojure/clojure        "1.10.1" :scope "provided"]
                  [org.clojure/clojurescript  "1.10.520" :scope "provided"]
-                 [reagent                    "0.7.0"]
+                 [reagent                    "0.8.1"]
                  [net.cgrand/macrovich       "0.2.1"]
                  [org.clojure/tools.logging  "0.4.1"]]
 
