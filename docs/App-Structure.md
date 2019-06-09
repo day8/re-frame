@@ -89,7 +89,7 @@ or:
 
 `(rf/dispatch [:project.panel.handlers/set-x 100])`
 
-Where the first option might be preferrable since it makes sure you require the handlers file and saves you from possibly typos.
+Where the first option might be preferrable since it ensures you require the handlers file and saves you from the possibility of typos.
 
 ***
 
