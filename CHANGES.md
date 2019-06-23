@@ -1,5 +1,9 @@
 ## Unreleased
 
+#### New
+
+  - add `update-effect` #440 
+
 #### Fixed
 
   - `after` and `enrich` interceptors now no longer run if there is no `db` effect, rather than running against the `db` coffect. [#453](https://github.com/Day8/re-frame/issues/453)
