@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.10.7 (2019-06-24)
+
 #### New
 
   - add `update-effect` #440 
