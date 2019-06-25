@@ -4,7 +4,7 @@
 
 #### New
 
-  - add `update-effect` #440 
+  - add `update-effect` [#440](https://github.com/Day8/re-frame/issues/440)
 
 #### Fixed
 
