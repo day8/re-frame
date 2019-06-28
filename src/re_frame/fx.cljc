@@ -134,7 +134,7 @@
   :dispatch-n
   (fn [value]
     (if-not (sequential? value)
-      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, got got:" value)
+      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, but got:" value)
       (doseq [event (remove nil? value)] (router/dispatch event)))))
 
 
