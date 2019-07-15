@@ -1,6 +1,15 @@
 ## Unreleased
 
+#### Changes
+
+  - Revert `after` and `enrich` interceptors to the behaviour in
+    version 0.10.6 and earlier; i.e. reverts breaking changes in     0.10.7.
+
 ## 0.10.7 (2019-06-24)
+
+#### BREAKING CHANGES
+
+  - `after` and `enrich` interceptors now no longer run if there is no `db` effect, rather than running against the `db` coffect. [#453](https://github.com/Day8/re-frame/issues/453)
 
 #### New
 
@@ -8,7 +17,6 @@
 
 #### Fixed
 
-  - `after` and `enrich` interceptors now no longer run if there is no `db` effect, rather than running against the `db` coffect. [#453](https://github.com/Day8/re-frame/issues/453)
   - [#512](https://github.com/Day8/re-frame/issues/512) Error with infer-externs "goog is not defined in the externs" 
 
 #### Improvements
