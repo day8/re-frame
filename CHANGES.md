@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.10.8 (2019-07-15)
+
 #### Changes
 
   - Revert `after` and `enrich` interceptors to the behaviour in
