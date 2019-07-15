@@ -240,7 +240,7 @@
   return a modified `db`.
 
   Unlike the `after` interceptor which is only about side effects, `enrich`
-  expects `f` to process and alter the given `db` effect in some useful way,
+  expects `f` to process and alter the given `db` coeffect in some useful way,
   contributing to the derived data, flowing vibe.
 
   Example Use:
@@ -283,11 +283,12 @@
     :id :enrich
     :after (fn enrich-after
              [context]
-             (let [event  (get-coeffect context :event)
-                   db-fx? (contains? (:effects context) :db)
-                   db     (get-effect context :db)]
-               (cond-> context
-                 db-fx? (assoc-effect :db (f db event)))))))
+             (let [event (get-coeffect context :event)
+                   db    (if (contains? (:effects context) :db)
+                           (get-effect context :db) ;; If no db effect is returned, we provide the original coeffect.
+                           (get-coeffect context :db))]
+               (->> (f db event)
+                    (assoc-effect context :db))))))
 
 
 
@@ -295,7 +296,8 @@
   "returns an interceptor which runs a given function `f` in the `:after`
   position, presumably for side effects.
 
-  `f` is called with two arguments: the `:effects` value for `:db` and the event.
+  `f` is called with two arguments: the `:effects` value for `:db`
+  (or the `coeffect` value of db if no db effect is returned) and the event.
   Its return value is ignored, so `f` can only side-effect.
 
   Examples use can be seen in the /examples/todomvc:
@@ -306,11 +308,12 @@
     :id :after
     :after (fn after-after
              [context]
-             (let [event  (get-coeffect context :event)
-                   db-fx? (contains? (:effects context) :db)
-                   db     (get-effect context :db)]
-               (when db-fx? (f db event))) ;; call f for side effects
-             context))) ;; context is unchanged
+             (let [db    (if (contains? (:effects context) :db)
+                           (get-in context [:effects :db])
+                           (get-in context [:coeffects :db]))
+                   event (get-in context [:coeffects :event])]
+               (f db event) ;; call f for side effects
+               context)))) ;; context is unchanged
 
 
 (defn  on-changes
