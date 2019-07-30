@@ -125,7 +125,7 @@ Well, it turns out that only event handlers can change the value in
 after *every* event handler has run**.
 
 All of it, every time. This allows us to catch any errors very early, 
-easily assigning blame (to the rouge event handler).
+easily assigning blame (to the rogue event handler).
 
 Schemas are typically put into `db.cljs` (see the todomvc example in the re-frame repo). Here's 
 an example using Prismatic Schema
