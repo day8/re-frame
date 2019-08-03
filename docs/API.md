@@ -18,18 +18,18 @@ Orientation:
 ## Doc Strings For The Significant API Functions 
 
 The core API consists of: 
-  - [dispatch](/src/re_frame/router.cljc#L229-L239) or [dispatch-sync](/src/re_frame/router.cljc#L247-L259).
+  - [dispatch](/src/re_frame/router.cljc#L233-L243) or [dispatch-sync](/src/re_frame/router.cljc#L251-L263).
   - [reg-event-db](/src/re_frame/core.cljc#L71-L80) or [reg-event-fx](/src/re_frame/core.cljc#L87-L97) 
-  - [reg-sub](/src/re_frame/subs.cljc#L201-L309) and [subscribe](/src/re_frame/subs.cljc#L74-L115) working together
+  - [reg-sub](/src/re_frame/subs.cljc#L200-L329) and [subscribe](/src/re_frame/subs.cljc#L74-L115) working together
 
 Occasionally, you'll need to use:  
-  - [reg-fx](/src/re_frame/fx.cljc#L17-L40)
+  - [reg-fx](/src/re_frame/fx.cljc#L18-L41)
   - [reg-cofx](/src/re_frame/cofx.cljc#L14-L22) and [inject-cofx](/src/re_frame/cofx.cljc#L29-L80) working together
      
 And, finally, there are the builtin Interceptors:
-  - [path](/src/re_frame/std_interceptors.cljc#L152-L176)
-  - [after](/src/re_frame/std_interceptors.cljc#L295-L316)
-  - [debug](/src/re_frame/std_interceptors.cljc#L13-L38)
+  - [path](/src/re_frame/std_interceptors.cljc#L182-L208)
+  - [after](/src/re_frame/std_interceptors.cljc#L295-L305)
+  - [debug](/src/re_frame/std_interceptors.cljc#L14-L40)
   - and browse [the others](/src/re_frame/std_interceptors.cljc)
   
 
