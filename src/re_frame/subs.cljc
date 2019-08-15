@@ -365,7 +365,7 @@
       query-id
       (fn subs-handler-fn
         ([db query-vec]
-         (let [subscriptions (inputs-fn query-vec)
+         (let [subscriptions (inputs-fn query-vec nil)
                reaction-id   (atom nil)
                reaction      (make-reaction
                                (fn []
