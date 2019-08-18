@@ -1,17 +1,10 @@
 
 ;; Allows users of deps.edn to more conveniently fork / make PRs to re-frame
 
-{:deps {org.clojure/clojure       {:mvn/version "1.8.0"
+{:deps {org.clojure/clojure       {:mvn/version "1.10.1"
                                    :scope "provided"}
-
-        org.clojure/clojurescript {:mvn/version "1.10.439"
+        org.clojure/clojurescript {:mvn/version "1.10.520"
                                    :scope "provided"}
-
-        org.clojure/tools.logging {:mvn/version "0.4.0"}
-
-        reagent                   {:mvn/version "0.7.0"}
-
-        net.cgrand/macrovich      {:mvn/version "0.2.1"}}}
-
-
-
+        reagent                   {:mvn/version "0.8.1"}
+        net.cgrand/macrovich      {:mvn/version "0.2.1"}
+        org.clojure/tools.logging {:mvn/version "0.4.1"}}}
