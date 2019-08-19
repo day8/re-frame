@@ -2,20 +2,21 @@
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/Day8/re-frame.git"
   :license      {:name "MIT"}
-  :dependencies [[org.clojure/clojure        "1.10.1" :scope "provided"]
-                 [org.clojure/clojurescript  "1.10.520" :scope "provided"]
-                 [reagent                    "0.8.1"]
-                 [net.cgrand/macrovich       "0.2.1"]
-                 [org.clojure/tools.logging  "0.4.1"]]
+  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
+                 [org.clojure/clojurescript "1.10.520" :scope "provided"
+                  :exclusions [com.google.javascript/closure-compiler-unshaded
+                               org.clojure/google-closure-library]]
+                 [thheller/shadow-cljs "2.8.51" :scope "provided"]
+                 [reagent "0.8.1"]
+                 [net.cgrand/macrovich "0.2.1"]
+                 [org.clojure/tools.logging "0.4.1"]]
+
+  :plugins [[lein-shadow "0.1.5"]]
 
   :profiles {:debug {:debug true}
-             :dev   {:dependencies [[karma-reporter            "3.1.0"]
-                                    [binaryage/devtools        "0.9.10"]]
-                     :plugins      [[lein-ancient              "0.6.15"]
-                                    [lein-cljsbuild            "1.1.7"]
-                                    [lein-npm                  "0.6.2"]
-                                    [lein-figwheel             "0.5.18"]
-                                    [lein-shell                "0.5.0"]]}}
+             :dev   {:dependencies [[binaryage/devtools "0.9.10"]]
+                     :plugins      [[lein-ancient "0.6.15"]
+                                    [lein-shell "0.5.0"]]}}
 
   :clean-targets  [:target-path "run/compiled"]
 
@@ -42,35 +43,38 @@
                   ["vcs" "commit"]
                   ["vcs" "push"]]
 
-  :npm {:devDependencies [[karma                 "4.1.0"]
-                          [karma-cljs-test       "0.1.0"]
-                          [karma-chrome-launcher "2.2.0"]
-                          [karma-junit-reporter  "1.2.0"]]}
+  :shadow-cljs {:lein   true
 
-  :cljsbuild {:builds [{:id           "test"
-                        :source-paths ["test" "src"]
-                        :compiler     {:preloads        [devtools.preload]
-                                       :external-config {:devtools/config {:features-to-install [:formatters :hints]}}
-                                       :output-to     "run/compiled/browser/test.js"
-                                       :source-map    true
-                                       :output-dir    "run/compiled/browser/test"
-                                       :optimizations :none
-                                       :source-map-timestamp true
-                                       :pretty-print  true}}
-                       {:id           "karma"
-                        :source-paths ["test" "src"]
-                        :compiler     {:output-to     "run/compiled/karma/test.js"
-                                       :source-map    "run/compiled/karma/test.js.map"
-                                       :output-dir    "run/compiled/karma/test"
-                                       :optimizations :whitespace
-                                       :main          "re_frame.test_runner"
-                                       :pretty-print  true
-                                       :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}}}]}
+                :nrepl  {:port 8777}
 
-  :aliases {"test-once"   ["do" "clean," "cljsbuild" "once" "test," "shell" "open" "test/test.html"]
-            "test-auto"   ["do" "clean," "cljsbuild" "auto" "test,"]
-            "karma-once"  ["do" "clean," "cljsbuild" "once" "karma,"]
-            "karma-auto"  ["do" "clean," "cljsbuild" "auto" "karma,"]
+                :builds {:browser-test
+                         {:target           :browser-test
+                          :ns-regexp        "re-frame\\..*-test$"
+                          :runner-ns        shadow.test.browser
+                          :test-dir         "run/compiled/browser/test"
+                          :compiler-options {:pretty-print                       true
+                                             :source-map                         true
+                                             :source-map-include-sources-content true
+                                             :source-map-detail-level            :all
+                                             :external-config                    {:devtools/config {:features-to-install [:formatters :hints]}}}
+                          :devtools         {:http-port 3449
+                                             :http-root "run/compiled/browser/test"
+                                             :preloads  [devtools.preload]}}
+
+                         :karma-test
+                         {:target           :karma
+                          :ns-regexp        "re-frame\\..*-test$"
+                          :output-to        "run/compiled/karma/test/test.js"
+                          :compiler-options {:pretty-print                       true
+                                             :source-map                         true
+                                             :source-map-include-sources-content true
+                                             :source-map-detail-level            :all
+                                             :closure-defines                    {re-frame.trace.trace-enabled? true}}}}}
+
+  :aliases {"test-once"   ["do" "clean," "shadow" "compile" "browser-test," "shell" "open" "run/compiled/browser/test/index.html"]
+            "test-auto"   ["do" "clean," "shadow" "watch" "browser-test,"]
+            "karma-once"  ["do" "clean," "shadow" "compile" "karma-test,"]
+            "karma-auto"  ["do" "clean," "shadow" "watch" "karma-test,"]
             ;; NOTE: In order to compile docs you would need to install
             ;; gitbook-cli(2.3.2) utility globaly using npm or yarn
             "docs-serve" ^{:doc "Runs the development server of docs with live reloading"} ["shell" "gitbook" "serve" "./" "./build/re-frame/"]
