@@ -4,7 +4,7 @@ orbs:
     executors:
       lein_browsers:
         docker:
-          - image: circleci/clojure:openjdk-11-lein-2.8.1-node-browsers
+          - image: circleci/clojure:openjdk-11-lein-2.9.1-node-browsers
         working_directory: ~/repo
         environment:
           LEIN_ROOT: "true"
@@ -23,12 +23,12 @@ orbs:
                 # fallback to using the latest cache if no exact match is found
                 - v1-dependencies-
 
-          # run tests, we also call lein deps explicitly to force lein-npm to install.
-          - run:
-              command: lein do deps, karma-once
-
           - run:
               command: sudo npm install -g karma-cli
+
+          # run tests.
+          - run:
+              command: lein karma-once
 
           - run:
               command: karma start --single-run --reporters junit,dots
@@ -37,6 +37,7 @@ orbs:
               paths:
                 - ~/.m2
                 - node_modules
+                - .shadow-cljs
               key: v1-dependencies-{{ checksum "project.clj" }}
 
 jobs:
