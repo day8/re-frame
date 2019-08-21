@@ -81,7 +81,7 @@
 
 ;; -- Entry Point -------------------------------------------------------------
 
-(defn ^:export run
+(defn run
   []
   (rf/dispatch-sync [:initialize])     ;; puts a value into application state
   (reagent/render [ui]              ;; mount the application's ui into '<div id="app" />'
