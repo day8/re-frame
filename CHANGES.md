@@ -1,5 +1,11 @@
 ## Unreleased
 
+#### Changes
+
+- Migrate to [shadow-cljs](https://shadow-cljs.github.io/docs/UsersGuide.html) and
+  [lein-shadow](https://gitlab.com/nikperic/lein-shadow)
+- Bring deps.edn into parity with project.clj
+
 ## 0.10.8 (2019-07-15)
 
 #### Changes
