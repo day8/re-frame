@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.10.9 (2019-08-22)
+
 #### Changes
 
 - Migrate to [shadow-cljs](https://shadow-cljs.github.io/docs/UsersGuide.html) and
