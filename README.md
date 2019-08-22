@@ -519,7 +519,8 @@ We're still puzzling over some aspects and tweaking as we go. All designs
 represent a point in the possible design space, with pros and cons.
 
 And, yes, re-frame is fast, straight out of the box. And, yes, it has 
-a good testing story (unit and behavioural). And, yes, it works with figwheel to create
+a good testing story (unit and behavioural). And, yes, it works with your build
+tools (like figwheel or shadow-cljs) to create
 a powerful hot-loading development story. And, yes, it has 
 fun specialist tooling, and a community,
 and useful 3rd party libraries.
