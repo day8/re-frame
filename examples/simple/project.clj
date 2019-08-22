@@ -1,11 +1,11 @@
-(defproject simple "0.10.5"
+(defproject simple "0.10.10-SNAPSHOT"
   :dependencies [[org.clojure/clojure        "1.10.1"]
                  [org.clojure/clojurescript  "1.10.520"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library]]
                  [thheller/shadow-cljs "2.8.51"]
                  [reagent  "0.8.1"]
-                 [re-frame "0.10.9-SNAPSHOT"]]
+                 [re-frame "0.10.9"]]
 
   :plugins [[lein-shadow "0.1.5"]]
 
