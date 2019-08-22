@@ -26,12 +26,12 @@ really required to get the job done. So lean and minimal is no longer a goal.
 
 4. Clean build
    ```
-   lein do clean, figwheel
+   lein do clean, shadow watch client
    ```
 
 5. Wait for step 4 to do the compile, and then run the built app:
    ```
-   open http://localhost:3450
+   open http://localhost:8280
    ```
 
 
@@ -39,7 +39,7 @@ really required to get the job done. So lean and minimal is no longer a goal.
 
 1. Compile
    ```
-   lein do clean, with-profile prod compile
+   lein do clean, shadow release client
    ```
 
 2. Open the following in your browser
