@@ -67,19 +67,21 @@ This gives the ability to encapsulate the state of each "panel" and ensure you d
 Suppose for example that in your panel you want to store a value `x` in the db, if you want to use
 namespaced keywords you the event handler and subscription will look like this:
 
-```
-(rf/reg-event-db ::set-x
-                 (fn [db [_ value]]
-                   (assoc db ::x value)))
+```clj
+(rf/reg-event-db 
+  ::set-x
+  (fn [db [_ value]]
+    (assoc db ::x value)))
 
-(rf/reg-sub ::x
-            (fn [db _]
-              (get db ::x)))
+(rf/reg-sub 
+  ::x
+  (fn [db _]
+    (get db ::x)))
 ```
 
 If you want to dispatch that even you have two options, either:
 
-```
+```clj
 (require [project.panel.handlers :as handlers])
 
 (rf/dispatch [::handlers/set-x 100])
@@ -87,7 +89,9 @@ If you want to dispatch that even you have two options, either:
 
 or:
 
-`(rf/dispatch [:project.panel.handlers/set-x 100])`
+```clj
+(rf/dispatch [:project.panel.handlers/set-x 100])
+```
 
 Where the first option might be preferrable since it ensures you require the handlers file and saves you from the possibility of typos.
 
