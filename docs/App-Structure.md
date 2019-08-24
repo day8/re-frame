@@ -25,17 +25,17 @@ For a living example of this approach, look at the [todomvc example](https://git
 If you adopt this structure, there's a gotcha.
 
 `events.cljs` and `subs.cljs` will never be `required` by any other
-namespaces. To the Google Closure dependency mechanism it appears as
+namespaces. To the Google Closure dependency mechanism, it appears as
 if these two namespaces are not needed and it doesn't load them.
 
-And, if the code does not get loaded, the registrations in these namespaces
-never happen. You'll then be puzzled as to why none of your events handlers
-are registered.
+And, if the namespaces are not loaded, the registrations in these namespaces will
+never happen. And, then you'll be staring at your running app very 
+puzzled about why none of your events handlers are registered.
 
 Once you twig to what's going on, the solution is easy.  You must
 explicitly `require` both namespaces, `events` and `subs`, in your `core`
-namespace. Then they'll be loaded and the registrations will occur
-as that loading happens.
+namespace. Then they'll be loaded and the registrations (`reg-sub`, `reg-event-fx`,
+etc) will occur as that loading happens.
 
 ## Larger Apps
 
@@ -90,6 +90,11 @@ or:
 `(rf/dispatch [:project.panel.handlers/set-x 100])`
 
 Where the first option might be preferrable since it ensures you require the handlers file and saves you from the possibility of typos.
+
+## I Want Real Examples!
+
+Maybe look here: 
+https://github.com/Day8/re-frame/blob/master/docs/External-Resources.md#examples-and-applications-using-re-frame
 
 ***
 
