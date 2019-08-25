@@ -25,4 +25,6 @@
                                   :output-dir "resources/public/js"
                                   :modules {:client {:init-fn todomvc.core/main}}
                                   :devtools {:http-root "resources/public"
-                                             :http-port 8280}}}})
+                                             :http-port 8280}}}}
+
+  :aliases {"dev-auto" ["shadow" "watch" "client"]})

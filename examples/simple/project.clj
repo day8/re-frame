@@ -22,4 +22,6 @@
                                   :output-dir "resources/public/js"
                                   :modules    {:client {:init-fn simple.core/run}}
                                   :devtools   {:http-root "resources/public"
-                                               :http-port 8280}}}})
+                                               :http-port 8280}}}}
+
+  :aliases {"dev-auto" ["shadow" "watch" "client"]})
