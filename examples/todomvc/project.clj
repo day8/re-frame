@@ -12,7 +12,12 @@
 
   :plugins [[lein-shadow "0.1.5"]]
 
-  :clean-targets ^{:protect false} ["resources/public/js" "target"]
+  :clean-targets ^{:protect false} [:target-path
+                                    ".shadow-cljs"
+                                    "shadow-cljs.edn"
+                                    "package.json"
+                                    "package-lock.json"
+                                    "resources/public/js"]
 
   :shadow-cljs {:nrepl {:port 8777}
 
