@@ -43,19 +43,13 @@
                   ["vcs" "commit"]
                   ["vcs" "push"]]
 
-  :shadow-cljs {:lein   true
-
-                :nrepl  {:port 8777}
+  :shadow-cljs {:nrepl  {:port 8777}
 
                 :builds {:browser-test
                          {:target           :browser-test
                           :ns-regexp        "re-frame\\..*-test$"
-                          :runner-ns        shadow.test.browser
                           :test-dir         "run/compiled/browser/test"
                           :compiler-options {:pretty-print                       true
-                                             :source-map                         true
-                                             :source-map-include-sources-content true
-                                             :source-map-detail-level            :all
                                              :external-config                    {:devtools/config {:features-to-install [:formatters :hints]}}}
                           :devtools         {:http-port 3449
                                              :http-root "run/compiled/browser/test"
@@ -66,9 +60,6 @@
                           :ns-regexp        "re-frame\\..*-test$"
                           :output-to        "run/compiled/karma/test/test.js"
                           :compiler-options {:pretty-print                       true
-                                             :source-map                         true
-                                             :source-map-include-sources-content true
-                                             :source-map-detail-level            :all
                                              :closure-defines                    {re-frame.trace.trace-enabled? true}}}}}
 
   :aliases {"test-once"   ["do" "clean," "shadow" "compile" "browser-test," "shell" "open" "run/compiled/browser/test/index.html"]
