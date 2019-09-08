@@ -1,7 +1,7 @@
 (ns re-frame.std-interceptors
   "contains re-frame supplied, standard interceptors"
   (:require
-    [re-frame.interceptor :refer [->interceptor get-effect get-coeffect assoc-coeffect assoc-effect]]
+    [re-frame.interceptor :refer [->interceptor get-effect get-coeffect assoc-coeffect assoc-effect update-coeffect]]
     [re-frame.loggers :refer [console]]
     [re-frame.registrar :as registrar]
     [re-frame.db :refer [app-db]]
@@ -42,13 +42,13 @@
     :before  (fn trimv-before
                [context]
                (-> context
-                   (update-in [:coeffects :event] subvec 1)
-                   (assoc-in [:coeffects ::untrimmed-event] (get-coeffect context :event))))
+                   (update-coeffect :event subvec 1)
+                   (assoc-coeffect ::untrimmed-event (get-coeffect context :event))))
     :after   (fn trimv-after
                [context]
                (-> context
                    (utils/dissoc-in [:coeffects ::untrimmed-event])
-                   (assoc-in [:coeffects :event] (get-coeffect context ::untrimmed-event))))))
+                   (assoc-coeffect :event (get-coeffect context ::untrimmed-event))))))
 
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
@@ -76,15 +76,15 @@
               (let [new-context
                     (trace/with-trace
                       {:op-type   :event/handler
-                       :operation (get-in context [:coeffects :event])}
-                      (let [{:keys [db event]} (:coeffects context)]
+                       :operation (get-coeffect context :event)}
+                      (let [{:keys [db event]} (get-coeffect context)]
                         (->> (handler-fn db event)
                              (assoc-effect context :db))))]
                 ;; We merge these tags outside of the :event/handler trace because we want them to be assigned to the parent
                 ;; wrapping trace.
                 (trace/merge-trace!
-                  {:tags {:effects   (:effects new-context)
-                          :coeffects (:coeffects context)}})
+                  {:tags {:effects   (get-effect new-context)
+                          :coeffects (get-coeffect context)}})
                 new-context))))
 
 
@@ -109,13 +109,13 @@
             (let [new-context
                   (trace/with-trace
                     {:op-type   :event/handler
-                     :operation (get-in context [:coeffects :event])}
-                    (let [{:keys [event] :as coeffects} (:coeffects context)]
+                     :operation (get-coeffect context :event)}
+                    (let [{:keys [event] :as coeffects} (get-coeffect context)]
                       (->> (handler-fn coeffects event)
                            (assoc context :effects))))]
               (trace/merge-trace!
-                {:tags {:effects   (:effects new-context)
-                        :coeffects (:coeffects context)}})
+                {:tags {:effects   (get-effect new-context)
+                        :coeffects (get-coeffect context)}})
               new-context))))
 
 
@@ -134,11 +134,11 @@
               (let [new-context
                     (trace/with-trace
                       {:op-type   :event/handler
-                       :operation (get-in context [:coeffects :event])}
+                       :operation (get-coeffect context :event)}
                       (handler-fn context))]
                 (trace/merge-trace!
-                  {:tags {:effects   (:effects new-context)
-                          :coeffects (:coeffects context)}})
+                  {:tags {:effects   (get-effect new-context)
+                          :coeffects (get-coeffect context)}})
                 new-context))))
 
 
@@ -181,7 +181,7 @@
     :after (fn enrich-after
              [context]
              (let [event (get-coeffect context :event)
-                   db    (if (contains? (:effects context) :db)
+                   db    (if (contains? (get-effect context) :db)
                            (get-effect context :db) ;; If no db effect is returned, we provide the original coeffect.
                            (get-coeffect context :db))]
                (->> (f db event)
@@ -195,10 +195,10 @@
     :id :after
     :after (fn after-after
              [context]
-             (let [db    (if (contains? (:effects context) :db)
-                           (get-in context [:effects :db])
-                           (get-in context [:coeffects :db]))
-                   event (get-in context [:coeffects :event])]
+             (let [db    (if (contains? (get-effect context) :db)
+                           (get-effect context :db)
+                           (get-coeffect context :db))
+                   event (get-coeffect context :event)]
                (f db event) ;; call f for side effects
                context)))) ;; context is unchanged
 
