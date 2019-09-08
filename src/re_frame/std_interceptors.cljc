@@ -50,7 +50,7 @@
                     orig-db (get-coeffect context :db)
                     new-db  (get-effect   context :db ::not-found)]
                 (if (= new-db ::not-found)
-                  (console :log "No :db changes caused by:" event)
+                  (console :log "No app-db changes in:" event)
                   (let [[only-before only-after] (data/diff orig-db new-db)
                         db-changed?    (or (some? only-before) (some? only-after))]
                     (if db-changed?
@@ -58,7 +58,7 @@
                           (console :log "only before:" only-before)
                           (console :log "only after :" only-after)
                           (console :groupEnd))
-                      (console :log "no app-db changes caused by:" event))))
+                      (console :log "No app-db changes resulted from:" event))))
                 context))))
 
 
