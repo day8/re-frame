@@ -140,13 +140,13 @@
   :id     :fx-handler
   :before (fn fx-handler-before
             [context]
-            (let [{:keys [event] :as coeffects} (:coeffects context)
-                  new-context
+            (let [new-context
                   (trace/with-trace
                     {:op-type   :event/handler
                      :operation (get-in context [:coeffects :event])}
-                    (->> (handler-fn coeffects event)
-                         (assoc context :effects)))]
+                    (let [{:keys [event] :as coeffects} (:coeffects context)]
+                      (->> (handler-fn coeffects event)
+                           (assoc context :effects))))]
               (trace/merge-trace!
                 {:tags {:effects   (:effects new-context)
                         :coeffects (:coeffects context)}})
