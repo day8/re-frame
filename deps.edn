@@ -5,6 +5,6 @@
                                    :scope "provided"}
         org.clojure/clojurescript {:mvn/version "1.10.520"
                                    :scope "provided"}
-        reagent                   {:mvn/version "0.8.1"}
+        reagent                   {:mvn/version "0.9.0-rc1"}
         net.cgrand/macrovich      {:mvn/version "0.2.1"}
         org.clojure/tools.logging {:mvn/version "0.4.1"}}}

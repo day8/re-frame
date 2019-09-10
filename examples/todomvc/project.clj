@@ -4,8 +4,8 @@
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library]]
                  [thheller/shadow-cljs "2.8.52"]
-                 [reagent "0.8.1"]
-                 [re-frame "0.10.9"]
+                 [reagent "0.9.0-rc1"]
+                 [re-frame "0.10.10-SNAPSHOT"]
                  [binaryage/devtools "0.9.10"]
                  [clj-commons/secretary "1.2.4"]
                  [day8.re-frame/tracing "0.5.3"]]

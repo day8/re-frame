@@ -1,5 +1,15 @@
 ## Unreleased
 
+#### Changed
+
+- Upgrade reagent to 0.9.0-rc1
+
+#### Removed
+
+- Remove direct dependency on react and react-dom as these are now provided by
+  reagent.
+- Remove dependency on create-react-class as it is obsolete.
+
 ## 0.10.9 (2019-08-22)
 
 #### Changes
