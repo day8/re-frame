@@ -4,7 +4,7 @@
 
 #### Changed
 
-- Upgrade reagent to 0.9.0-rc1
+- Upgrade reagent to 0.9.0-rc1. [Report issues here](https://github.com/reagent-project/reagent/issues/449).
 
 #### Removed
 
