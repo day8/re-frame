@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.11.0-rc1 (2019-09-11)
+
 #### Changed
 
 - Upgrade reagent to 0.9.0-rc1
