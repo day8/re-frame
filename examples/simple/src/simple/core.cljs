@@ -81,8 +81,21 @@
 
 ;; -- Entry Point -------------------------------------------------------------
 
+(defn render
+  []
+  (reagent/render [ui]
+                  (js/document.getElementById "app")))
+
+(defn ^:dev/after-load clear-cache-and-render!
+  []
+  ;; The `:dev/after-load` metadata causes this function to be called
+  ;; after shadow-cljs hot-reloads code. We force a UI update by clearing
+  ;; the Reframe susnscription cache.
+  (rf/clear-subscription-cache!)
+  (render))
+
 (defn run
   []
-  (rf/dispatch-sync [:initialize])     ;; puts a value into application state
-  (reagent/render [ui]              ;; mount the application's ui into '<div id="app" />'
-                  (js/document.getElementById "app")))
+  (rf/dispatch-sync [:initialize]) ;; put a value into application state
+  (render)                         ;; mount the application's ui into '<div id="app" />'
+  )
