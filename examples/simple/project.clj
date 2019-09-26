@@ -7,7 +7,7 @@
                  [reagent  "0.9.0-rc1"]
                  [re-frame "0.11.0-rc2-SNAPSHOT"]]
 
-  :plugins [[lein-shadow "0.1.5"]]
+  :plugins [[lein-shadow "0.1.6"]]
 
   :clean-targets ^{:protect false} [:target-path
                                     "shadow-cljs.edn"
