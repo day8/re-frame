@@ -10,7 +10,7 @@
                  [clj-commons/secretary "1.2.4"]
                  [day8.re-frame/tracing "0.5.3"]]
 
-  :plugins [[lein-shadow "0.1.5"]]
+  :plugins [[lein-shadow "0.1.6"]]
 
   :clean-targets ^{:protect false} [:target-path
                                     "shadow-cljs.edn"
