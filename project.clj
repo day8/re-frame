@@ -11,7 +11,7 @@
                  [net.cgrand/macrovich "0.2.1"]
                  [org.clojure/tools.logging "0.4.1"]]
 
-  :plugins [[lein-shadow "0.1.5"]]
+  :plugins [[lein-shadow "0.1.6"]]
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[binaryage/devtools "0.9.10"]]
