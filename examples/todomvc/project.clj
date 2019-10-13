@@ -5,7 +5,7 @@
                                org.clojure/google-closure-library]]
                  [thheller/shadow-cljs "2.8.61"]
                  [reagent "0.9.0-rc1"]
-                 [re-frame "0.11.0-rc2-SNAPSHOT"]
+                 [re-frame "0.11.0-rc1"]
                  [binaryage/devtools "0.9.10"]
                  [clj-commons/secretary "1.2.4"]
                  [day8.re-frame/tracing "0.5.3"]]

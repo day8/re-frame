@@ -5,7 +5,7 @@
                                org.clojure/google-closure-library]]
                  [thheller/shadow-cljs "2.8.61"]
                  [reagent  "0.9.0-rc1"]
-                 [re-frame "0.11.0-rc2-SNAPSHOT"]]
+                 [re-frame "0.11.0-rc1"]]
 
   :plugins [[lein-shadow "0.1.6"]]
 
