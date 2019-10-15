@@ -74,7 +74,7 @@ And this enables us to catch errors early (and accurately). It increases confide
 that Types can increase confidence, only [a good schema can potentially provide more
 **leverage** than types](https://www.youtube.com/watch?v=nqY4nUMfus8).
 
-4. Undo/Redo [becomes straight forward to implement](https://github.com/Day8/re-frame-undo).
+4. Undo/Redo [becomes straight forward to implement](https://github.com/day8/re-frame-undo).
 It is easy to snapshot and restore one central value. Immutable data structures have a
 feature called `structural sharing` which means it doesn't cost much RAM to keep the last, say, 200
 snapshots. All very efficient.
@@ -99,7 +99,7 @@ Of course, that means you'll have to learn [spec](http://clojure.org/about/spec)
 some overhead in that, so maybe, just maybe, in your initial experiments, you can
 get away without one. But not for long.  Promise me you'll write a `spec`.  Promise me.  Okay, good.
 
-Soon we'll look at the [todomvc example](https://github.com/Day8/re-frame/tree/master/examples/todomvc)
+Soon we'll look at the [todomvc example](https://github.com/day8/re-frame/tree/master/examples/todomvc)
 which shows how to use a spec.  (Check out `src/db.cljs` for the spec itself, and then in `src/events.cljs` for
 how to write code which checks `app-db` against this spec after every single event has been
 processed.)

@@ -13,7 +13,7 @@ That diff could be taking a while, and leading to apparent performance problems.
 
 The good news is this really isn't a production problem.  `debug` should only be 
 present in an Interceptor Chain at development time, and it should be removed 
-from production using [this technique](https://github.com/Day8/re-frame/blob/be6f49f21e245dea1cd0a857b70dd720bfbe18fd/examples/todomvc/src/todomvc/handlers.cljs#L33).
+from production using [this technique](https://github.com/day8/re-frame/blob/be6f49f21e245dea1cd0a857b70dd720bfbe18fd/examples/todomvc/src/todomvc/handlers.cljs#L33).
 
 Also related, anything which writes large data structures, or strings, to the 
 js console, will be slow. So press F12, pull up devtools console, and have a 
@@ -144,14 +144,14 @@ lot of identical cells.
 ## Use The Trace
 
 If you want to know exactly what's going on, get some X-Ray vision
-from the [official tracer](https://github.com/Day8/re-frame-10x). See exactly what subscriptions are running, 
+from the [official tracer](https://github.com/day8/re-frame-10x). See exactly what subscriptions are running, 
 what views are getting re-rendered, etc.
 
 You may be surprised by what you see.
 
 ## The Old Weapon
 
-In the old days, we had a different, clumsier [tracing technique](https://github.com/Day8/re-frame/blob/master/docs/Debugging.md). 
+In the old days, we had a different, clumsier [tracing technique](https://github.com/day8/re-frame/blob/master/docs/Debugging.md). 
 
 Be aware that this OLD method of tracing adds its own performance drag - there's the 
 overhead of all that stuff getting written on the js console. 

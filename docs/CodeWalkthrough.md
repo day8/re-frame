@@ -10,8 +10,8 @@ In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 7
 
 ## What Code?
 
-This repo contains an `/examples` application called ["simple"](https://github.com/Day8/re-frame/tree/master/examples/simple),
-which contains 70 lines of code. We'll look at every line of [the file](https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs).
+This repo contains an `/examples` application called ["simple"](https://github.com/day8/re-frame/tree/master/examples/simple),
+which contains 70 lines of code. We'll look at every line of [the file](https://github.com/day8/re-frame/blob/master/examples/simple/src/simple/core.cljs).
 
 This app:
  - displays the current time in a nice big, colourful font
@@ -27,7 +27,7 @@ To run the code yourself:
  * Install leiningen  (http://leiningen.org/#install)
 
 Then:
-  1. `git clone https://github.com/Day8/re-frame.git`
+  1. `git clone https://github.com/day8/re-frame.git`
   2. `cd re-frame/examples/simple`
   3. `lein do clean, figwheel`
   4. wait a minute and then open <http://localhost:3449/example.html>
@@ -45,7 +45,7 @@ An online, interactive version of this tutorial page is [available here](http://
 ## Namespace
 
 Because this example is tiny, the source code is in a single namespace:
-https://github.com/Day8/re-frame/blob/master/examples/simple/src/simple/core.cljs
+https://github.com/day8/re-frame/blob/master/examples/simple/src/simple/core.cljs
 
 Within this namespace, we'll need access to both `reagent` and `re-frame`. 
 So, at the top, we start like this: 
@@ -327,7 +327,7 @@ Here's the code:
 ```
 
 Like I said, both of these queries are trivial. 
-See [todomvc.subs.clj](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs) 
+See [todomvc.subs.clj](https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs) 
 for more interesting ones.
 
 ## View Functions (domino 5)
@@ -492,13 +492,13 @@ structure exists in `app-db` before any subscriptions or event handlers run.
 ## Next Steps
 
 You should now take time to carefully review the 
-[todomvc example application](https://github.com/Day8/re-frame/tree/master/examples/todomvc).
+[todomvc example application](https://github.com/day8/re-frame/tree/master/examples/todomvc).
 On the one hand, it contains a lot of very helpful practical advice. On the other, it does
 use some more advanced features like `interceptors` which are covered later in the docs.   
 
 After that, you'll be ready to write your own code.  Perhaps you will use a
 template to create your own project: <br>
-Client only:  https://github.com/Day8/re-frame-template  <br>
+Client only:  https://github.com/day8/re-frame-template  <br>
 Full Stack: http://www.luminusweb.net/
 
 Obviously, you should also go on to read the further documentation.

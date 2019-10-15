@@ -170,7 +170,7 @@ Notes:
   4. How do we look at the results ????
 
 If this method appeals to you, you should ABSOLUTELY review the utilities in this helper library:
-[re-frame-test](https://github.com/Day8/re-frame-test).
+[re-frame-test](https://github.com/day8/re-frame-test).
 
 In summary, event handlers should be easy to test because they are pure functions. The interesting
 part is the unittest "setup" where we need to establish an initial value for `db`.
@@ -178,7 +178,7 @@ part is the unittest "setup" where we need to establish an initial value for `db
 ## Subscription Handlers
 
 Here's a Subscription Handler from
-[the todomvc example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs):
+[the todomvc example](https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs):
 
 ```clj
 (reg-sub
@@ -328,7 +328,7 @@ https://juxt.pro/blog/posts/cljs-apps.html
 ## Summary
 
 Event handlers will be your primary focus when testing. Remember to review the utilities in
-[re-frame-test](https://github.com/Day8/re-frame-test).
+[re-frame-test](https://github.com/day8/re-frame-test).
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

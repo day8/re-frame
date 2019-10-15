@@ -36,7 +36,7 @@
   [key f]
   (if trace-enabled?
     (swap! trace-cbs assoc key f)
-    (console :warn "Tracing is not enabled. Please set {\"re_frame.trace.trace_enabled_QMARK_\" true} in :closure-defines. See: https://github.com/Day8/re-frame-10x#installation.")))
+    (console :warn "Tracing is not enabled. Please set {\"re_frame.trace.trace_enabled_QMARK_\" true} in :closure-defines. See: https://github.com/day8/re-frame-10x#installation.")))
 
 (defn remove-trace-cb [key]
   (swap! trace-cbs dissoc key)

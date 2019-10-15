@@ -64,7 +64,7 @@ because it contains important notes.
 
 To see `reg-sub` used in a real application, please read through the 
 heavily commented subscription code
-[in the todomvc example](https://github.com/Day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs).
+[in the todomvc example](https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs).
 
 
 

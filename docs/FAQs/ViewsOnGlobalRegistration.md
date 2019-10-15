@@ -37,7 +37,7 @@ There are three ways to view this:
      within a map-ish structure (a `registrar`), once, on program load.
      So, if you feel uncomfortable with what re-frame does, you should also feel uncomfortable about using `defn`.
      Also, it would be useful to understand 
-     [how you are creating a virtual machine when you program re-frame](https://github.com/Day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines)   
+     [how you are creating a virtual machine when you program re-frame](https://github.com/day8/re-frame/blob/master/docs/MentalModelOmnibus.md#on-dsls-and-machines)   
 
 
 While Point 3 is an interesting perspective to consider, the real discussion should probably be around points 1 and 2: is it a good idea for re-frame to tradeoff purity for simplicity?  You can't really judge this

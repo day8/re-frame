@@ -8,7 +8,7 @@ If at a REPL, inspect:  `re-frame.db/app-db`.
 
 If at the js console, that's `window.re_frame.db.app_db.state`.
 
-If you want a visual browser of app-db, along with inspecting subpaths of app-db, and diffing changes, use [re-frame-10x](https://github.com/Day8/re-frame-10x).
+If you want a visual browser of app-db, along with inspecting subpaths of app-db, and diffing changes, use [re-frame-10x](https://github.com/day8/re-frame-10x).
 
 You are [using cljs-devtools](https://github.com/binaryage/cljs-devtools), right? 
 If not, stop everything ([unless you are using re-natal](https://github.com/drapanjanas/re-natal/issues/137)) and immediately make that happen. 

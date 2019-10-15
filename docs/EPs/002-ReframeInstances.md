@@ -63,7 +63,7 @@ progressive mutation of a global `registrar` (map) held internally within `re-fr
 Each registration adds a new entry to this `registrar`. 
 
 If you are troubled by the thought of side effects on globals, there's 
-an [FAQ entry you may find interesting](https://github.com/Day8/re-frame/blob/master/docs/FAQs/ViewsOnGlobalRegistration.md).
+an [FAQ entry you may find interesting](https://github.com/day8/re-frame/blob/master/docs/FAQs/ViewsOnGlobalRegistration.md).
 
 ### Problem 1:  Frames And Registrars
 

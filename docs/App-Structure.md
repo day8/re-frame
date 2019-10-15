@@ -16,9 +16,9 @@ src
 └── subs.cljs         <--- subscription handlers  (query layer)
 ```
 
-For a living example of this approach, look at the [todomvc example](https://github.com/Day8/re-frame/tree/master/examples/todomvc).
+For a living example of this approach, look at the [todomvc example](https://github.com/day8/re-frame/tree/master/examples/todomvc).
 
-*No really, you should absolutely look at the [todomvc example](https://github.com/Day8/re-frame/tree/master/examples/todomvc) example, as soon as possible. It contains all sorts of tips.*
+*No really, you should absolutely look at the [todomvc example](https://github.com/day8/re-frame/tree/master/examples/todomvc) example, as soon as possible. It contains all sorts of tips.*
 
 ### There's A Small Gotcha
 
@@ -98,7 +98,7 @@ Where the first option might be preferrable since it ensures you require the han
 ## I Want Real Examples!
 
 Maybe look here: 
-https://github.com/Day8/re-frame/blob/master/docs/External-Resources.md#examples-and-applications-using-re-frame
+https://github.com/day8/re-frame/blob/master/docs/External-Resources.md#examples-and-applications-using-re-frame
 
 ***
 

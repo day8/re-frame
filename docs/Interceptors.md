@@ -381,7 +381,7 @@ And some Interceptor factories (functions that return Interceptors):
   - __after__: perform side effects, after a handler has run.  Eg: use it to report if the data in `app-db` matches a schema.
   - __path__:  a convenience. Simplifies our handlers. Acts almost like `update-in`.
 
-In addition, [a Library like re-frame-undo](https://github.com/Day8/re-frame-undo) provides an Interceptor
+In addition, [a Library like re-frame-undo](https://github.com/day8/re-frame-undo) provides an Interceptor
 factory called `undoable` which checkpoints app state.
 
 

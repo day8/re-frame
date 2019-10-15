@@ -1,6 +1,6 @@
 # TodoMVC done with re-frame
 
-A [re-frame](https://github.com/Day8/re-frame) implementation of [TodoMVC](http://todomvc.com/).
+A [re-frame](https://github.com/day8/re-frame) implementation of [TodoMVC](http://todomvc.com/).
 
 But this is NOT your normal, lean and minimal todomvc implementation, 
 geared towards showing how easily re-frame can implement the challenge.
@@ -16,7 +16,7 @@ really required to get the job done. So lean and minimal is no longer a goal.
 
 2. Get the re-frame repo
    ```
-   git clone https://github.com/Day8/re-frame.git
+   git clone https://github.com/day8/re-frame.git
    ```
 
 3. cd to the right example directory

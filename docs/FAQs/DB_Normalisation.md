@@ -10,7 +10,7 @@ These libraries might be interesting to you:
   - [SubGraph](https://github.com/vimsical/subgraph)
   - [pull](https://github.com/juxt/pull)
   
-See also [this comment](https://github.com/Day8/re-frame/issues/304#issuecomment-269620609).
+See also [this comment](https://github.com/day8/re-frame/issues/304#issuecomment-269620609).
   
 If you want to go whole hog and ditch `app-db` and embrace DataScript, 
 then you might find [re-posh](https://github.com/denistakeda/re-posh) interesting.

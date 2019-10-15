@@ -9,7 +9,7 @@ Please add to this list by submitting a pull request.
 
 ### Templates
 
-* [re-frame-template](https://github.com/Day8/re-frame-template) - Generates the client side SPA
+* [re-frame-template](https://github.com/day8/re-frame-template) - Generates the client side SPA
 * [Luminus](http://www.luminusweb.net) - Generates SPA plus server side.
 * [re-natal](https://github.com/drapanjanas/re-natal) - React Native apps.
 * [Slush-reframe](https://github.com/kristianmandrup/slush-reframe) - A scaffolding generator for re-frame run using NodeJS. Based on re-frame `0.7.0`
@@ -18,7 +18,7 @@ Please add to this list by submitting a pull request.
 
 ### Examples and Applications Using re-frame
 
-* [RealWorld](https://github.com/jacekschae/conduit) - heavily inspired by [todomvc](https://github.com/Day8/re-frame/tree/master/examples/todomvc) - well commented codebase with CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
+* [RealWorld](https://github.com/jacekschae/conduit) - heavily inspired by [todomvc](https://github.com/day8/re-frame/tree/master/examples/todomvc) - well commented codebase with CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 * [BlueGenes](https://github.com/intermine/bluegenes) - searching and analysing genomic data, by the University of Cambridge
 * [Memento](https://gitlab.com/Numergent/memento) a private note-taking app. Uses compojure-api, PostgreSQL and token auth.
 * [RealWord](https://github.com/polymeris/re-frame-realword-example-app) has CRUD, auth. Adheres to [RealWorld](https://github.com/gothinkster/realworld) spec and API.
@@ -42,9 +42,9 @@ Please add to this list by submitting a pull request.
 
 ### Effect and CoEffect Handlers
 
-* [async-flow-fx](https://github.com/Day8/re-frame-async-flow-fx) - manage a boot process dominated by async
-* [http-fx](https://github.com/Day8/re-frame-http-fx) - performing Ajax tasks (via cljs-ajax)
-* [re-frame-forward-events-fx](https://github.com/Day8/re-frame-forward-events-fx) - slightly exotic
+* [async-flow-fx](https://github.com/day8/re-frame-async-flow-fx) - manage a boot process dominated by async
+* [http-fx](https://github.com/day8/re-frame-http-fx) - performing Ajax tasks (via cljs-ajax)
+* [re-frame-forward-events-fx](https://github.com/day8/re-frame-forward-events-fx) - slightly exotic
 * [cookie-fx](https://github.com/SMX-LTD/re-frame-cookie-fx) - set and get cookies
 * [document-fx](https://github.com/SMX-LTD/re-frame-document-fx) - set and get on `js/document` attributes
 * [re-frame-youtube-fx](https://github.com/micmarsh/re-frame-youtube-fx) - YouTube iframe API wrapper
@@ -68,8 +68,8 @@ Please add to this list by submitting a pull request.
 ### Tools, Techniques & Libraries
 
 * [re-fill](https://github.com/metosin/re-fill) - routing and more  
-* [re-frame-undo](https://github.com/Day8/re-frame-undo) - An undo library for re-frame
-* [re-frame-test](https://github.com/Day8/re-frame-test) - Advanced testing utilities
+* [re-frame-undo](https://github.com/day8/re-frame-undo) - An undo library for re-frame
+* [re-frame-test](https://github.com/day8/re-frame-test) - Advanced testing utilities
 * [Animation](http://www.upgradingdave.com/blog/posts/2016-12-17-permutation.html) using `react-flip-move`
 * [re-thread](https://github.com/yetanalytics/re-thread) - A library for running re-frame applications in Web Workers.
 * [re-frame-datatable](https://github.com/kishanov/re-frame-datatable) - DataTable UI component built for use with re-frame.
@@ -85,7 +85,7 @@ Please add to this list by submitting a pull request.
 #### Debugging
 
 
-* [re-frame-10x](https://github.com/Day8/re-frame-10x) - A debugging dashboard for re-frame
+* [re-frame-10x](https://github.com/day8/re-frame-10x) - A debugging dashboard for re-frame
 * [re-frisk](https://github.com/flexsurfer/re-frisk) - A library for visualizing re-frame data and events.
 
 #### React Native

@@ -245,7 +245,7 @@
   (if (nil? event)
       (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
       (push event-queue event))
-  nil)                                           ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
+  nil)                                           ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
 
 
 (defn dispatch-sync
@@ -264,4 +264,4 @@
   [event-v]
   (handle event-v)
   (-call-post-event-callbacks event-queue event-v)  ;; slightly ugly hack. Run the registered post event callbacks.
-  nil)                                              ;; Ensure nil return. See https://github.com/Day8/re-frame/wiki/Beware-Returning-False
+  nil)                                              ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False

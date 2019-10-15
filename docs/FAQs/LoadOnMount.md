@@ -35,7 +35,7 @@ low level operation performed in the service of fulfilling
 the user's intent.
 
 There's a useful effect handler available for HTTP work:
-https://github.com/Day8/re-frame-http-fx
+https://github.com/day8/re-frame-http-fx
 
 Look at the "Real World App" example for inspiration: 
 https://github.com/jacekschae/conduit

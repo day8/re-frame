@@ -27,7 +27,7 @@
    {::promise {:p p :val val}}))
 
 (deftest dispatching-race-condition-469-test
-  ;; Checks for Day8/re-frame#469
+  ;; Checks for day8/re-frame#469
   (let [p (promise)]
     (is (nil? (dotimes [i 1000]
                 (rf/dispatch [::test i]))))

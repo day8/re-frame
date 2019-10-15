@@ -4,7 +4,7 @@
             [clojure.string :as str]))
 
 ;; A detailed walk-through of this source code is provided in the docs:
-;; https://github.com/Day8/re-frame/blob/master/docs/CodeWalkthrough.md
+;; https://github.com/day8/re-frame/blob/master/docs/CodeWalkthrough.md
 
 ;; -- Domino 1 - Event Dispatch -----------------------------------------------
 

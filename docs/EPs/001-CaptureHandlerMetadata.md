@@ -41,12 +41,12 @@ This EP proposes that:
 ## Motivations
 
 There's pressure from multiple directions to collect and retain more metadata about handlers: 
-  - tickets like [#457](https://github.com/Day8/re-frame/issues/457) want docstrings for handlers
+  - tickets like [#457](https://github.com/day8/re-frame/issues/457) want docstrings for handlers
   - adding specs for events, so they can be checked at dev time
   - when re-frame becomes less of a framework and more of a library, handlers might 
     need be "grouped" into "packages". So "package" information about handlers need to be supplied and retained.
   - Tooling support - we'd like `re-frame-10x` to actively help programmers when they are learning a 
-    new code base. That's one of [the four stated goals](https://github.com/Day8/re-frame-10x#helps-me-how). 
+    new code base. That's one of [the four stated goals](https://github.com/day8/re-frame-10x#helps-me-how). 
     Ideally, re-frame would be capable of providing tooling with "a complete 
     inventory" of an app's handlers, along with useful
     metadata on each handles. When an event is processed, the audit trail of 

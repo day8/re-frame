@@ -13,7 +13,7 @@ The trailing `c` in `.cljc` stands for `common`.
 Necessary interop for each platform can be found in
 `interop.clj`  (for the JVM)  and `interop.cljs` (for JS).
 
-See also: https://github.com/Day8/re-frame-test
+See also: https://github.com/day8/re-frame-test
 
 
 ***

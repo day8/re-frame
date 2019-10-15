@@ -110,7 +110,7 @@ and [Effects](Effects.md).
 
 In the 2nd version, we use the alternative registration function, `reg-event-fx` , and we'll use an 
 "Effect Handler" supplied by this library 
-[https://github.com/Day8/re-frame-http-fx](https://github.com/Day8/re-frame-http-fx).
+[https://github.com/day8/re-frame-http-fx](https://github.com/day8/re-frame-http-fx).
 You may soon feel confident enough to write your own.
  
 Here's our rewrite:

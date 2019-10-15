@@ -14,8 +14,8 @@ y'know. Pretty good.
 
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
-[![GitHub license](https://img.shields.io/github/license/Day8/re-frame.svg)](license.txt)
-[![Circle CI](https://circleci.com/gh/Day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/Day8/re-frame/tree/master)
+[![GitHub license](https://img.shields.io/github/license/day8/re-frame.svg)](license.txt)
+[![Circle CI](https://circleci.com/gh/day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/day8/re-frame/tree/master)
 
 ## re-frame
 
@@ -531,14 +531,14 @@ At this point, you know 50% of re-frame.  <br>
 The full [docs are here](/docs/README.md) and the [FAQs are here](/docs/FAQs/README.md).
 
 There are two example apps to play with: <br>
-https://github.com/Day8/re-frame/tree/master/examples
+https://github.com/day8/re-frame/tree/master/examples
 
 Use a template to create your own project: <br>
-Client only:  https://github.com/Day8/re-frame-template  <br>
+Client only:  https://github.com/day8/re-frame-template  <br>
 Full Stack: http://www.luminusweb.net/
 
 And please be sure to review these further resources: <br>
-https://github.com/Day8/re-frame/blob/master/docs/External-Resources.md
+https://github.com/day8/re-frame/blob/master/docs/External-Resources.md
 
 ### T-Shirt Unlocked
 

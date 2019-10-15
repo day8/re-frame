@@ -1,5 +1,5 @@
 >  The methods described in this page are now out of date. Included for historical reasons only.  
-> [re-frame-10x](https://github.com/Day8/re-frame-10x) is now our recommeded tool. 
+> [re-frame-10x](https://github.com/day8/re-frame-10x) is now our recommeded tool. 
 
 ---
 
@@ -88,7 +88,7 @@ Then the customised tracer for cljs-devtools that includes a colour choice
 [![Clojars Project](http://clojars.org/day8/re-frame-tracer/latest-version.svg)](http://clojars.org/day8/re-frame-tracer)
 
 
-Next, we're going to assume that you have structured you app in the [recommended way](https://github.com/Day8/re-frame/tree/master/examples/todomvc/src/todomvc),
+Next, we're going to assume that you have structured you app in the [recommended way](https://github.com/day8/re-frame/tree/master/examples/todomvc/src/todomvc),
 meaning you have the namespaces `events.cljs`, `subs.cljs` and `views.cljs`.
 It is the functions within these namespaces that we wish to trace.  
 
@@ -207,7 +207,7 @@ If you are using v0.8.0 or later, then you can ignore this section.
 Prior to v0.8.0, subscriptions were done using `re-frame.core/reg-sub-raw`, 
 instead of `re-frame.core/reg-sub` (which is now the preferred method). 
 
-Details of the changes can [be found here](https://github.com/Day8/re-frame/blob/master/CHANGES.md#080--20160819).
+Details of the changes can [be found here](https://github.com/day8/re-frame/blob/master/CHANGES.md#080--20160819).
 
 When using `re-frame.core/reg-sub-raw`, you must explicitly use `reaction`.  And 
 unfortunately both `trace-forms` and `reaction` are macros and they don't work well together.
