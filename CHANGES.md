@@ -1,4 +1,5 @@
 ## Unreleased
+- Update examples/simple/CodeWalkThrough.md
 
 #### Changed
 
