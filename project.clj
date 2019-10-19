@@ -7,7 +7,7 @@
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library]]
                  [thheller/shadow-cljs "2.8.64" :scope "provided"]
-                 [reagent "0.9.0-rc1"]
+                 [reagent "0.9.0-rc2"]
                  [net.cgrand/macrovich "0.2.1"]
                  [org.clojure/tools.logging "0.4.1"]]
 
