@@ -2,7 +2,9 @@
 
 #### Changed
 
-- Upgrade shadow-cljs to 2.8.61
+- Upgrade shadow-cljs to 2.8.64
+- Upgrade karma to 4.4.1
+- Upgrade reagent to 0.9.0-rc2. [Report issues here](https://github.com/reagent-project/reagent/issues/449).
 
 ## 0.11.0-rc1 (2019-09-11)
 
