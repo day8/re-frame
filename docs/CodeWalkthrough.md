@@ -29,7 +29,7 @@ To run the code yourself:
 Then:
   1. `git clone https://github.com/day8/re-frame.git`
   2. `cd re-frame/examples/simple`
-  3. `lein do clean, figwheel`
+  3. `lein do clean, shadow watch client`
   4. wait a minute and then open <http://localhost:3449/example.html>
   
 So, what's just happened?  The ClojureScript code under `/src` has been compiled into `javascript` and

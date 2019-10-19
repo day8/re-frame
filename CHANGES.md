@@ -1,4 +1,5 @@
 ## Unreleased
+- Update examples/simple/CodeWalkThrough.md
 
 ## 0.11.0-rc2 (2019-10-19)
 
