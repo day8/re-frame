@@ -3,8 +3,7 @@
 * [app-db (Application State)](ApplicationState.md)
 * [First Code Walk-Through](CodeWalkthrough.md)
 * [Infographic: A re-frame Epoch](AnEpoch.md)
-* [The API](API.md)
-* [An alternative, all-dominoes overview of re-frame by purelyfunctional.tv](https://purelyfunctional.tv/guide/re-frame-building-blocks/)
+
 
 ## Dominoes 2 & 3  (event, effect and coeffect handling)
 * [Infographic: Event Processing](EventHandlingInfographic.md)
@@ -23,16 +22,11 @@
 
 All the material you need is [here, in Reagent's /doc](https://github.com/reagent-project/reagent/blob/master/doc/README.md).
 
-
-## Commercial-Grade Video Training
-
-* [purelyfunctional.tv](https://purelyfunctional.tv/courses/understanding-re-frame/)
-* [Lambda Island Videos](https://lambdaisland.com/collections/react-reagent-re-frame)
-
 ## Deepen/Broaden Your Understanding
-
+* [The API](API.md)
+* [An interesting overview of re-frame by purelyfunctional.tv (external link)](https://purelyfunctional.tv/guide/re-frame-building-blocks/)
 * [Mental Model Omnibus](MentalModelOmnibus.md)
-* [Other Interesting Resources - including example apps](External-Resources.md)
+* [Interesting Resources - including example apps](External-Resources.md)
 * [FAQs](FAQs/README.md)
 
 ## App Structure
@@ -50,6 +44,11 @@ All the material you need is [here, in Reagent's /doc](https://github.com/reagen
   * [Debugging Event Handlers](Debugging-Event-Handlers.md)
   * [Debugging](Debugging.md)
   * [Testing](Testing.md)
+
+## Commercial-Grade Video Training
+
+* [purelyfunctional.tv](https://purelyfunctional.tv/courses/understanding-re-frame/)
+* [Lambda Island Videos](https://lambdaisland.com/collections/react-reagent-re-frame)
 
 ## Miscellaneous
   * [Eek! Performance Problems](Performance-Problems.md)
