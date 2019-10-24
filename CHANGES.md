@@ -1,10 +1,9 @@
 ## Unreleased
 
-- Update examples/simple/CodeWalkThrough.md
-
 #### Changed
 
-- Upgrade shadow-cljs to 2.8.65
+- Update examples/simple/CodeWalkThrough.md
+- Upgrade shadow-cljs to 2.8.67
 
 ## 0.11.0-rc2 (2019-10-19)
 
