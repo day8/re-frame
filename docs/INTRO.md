@@ -23,7 +23,7 @@ y'know. Pretty good.
 
 [![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
 [![GitHub license](https://img.shields.io/github/license/day8/re-frame.svg)](license.txt)
-[![Circle CI](https://circleci.com/gh/day8/re-frame/tree/master.svg?style=shield&circle-token=:circle-ci-badge-token)](https://circleci.com/gh/day8/re-frame/tree/master)
+[![Continuous Integration](https://github.com/day8/re-frame/workflows/Continuous%20Integration/badge.svg)](https://github.com/day8/re-frame/actions)
 
 ## re-frame
 

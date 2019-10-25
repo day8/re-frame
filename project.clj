@@ -64,7 +64,10 @@
 
   :aliases {"test-once"   ["do" "clean," "shadow" "compile" "browser-test," "shell" "open" "run/compiled/browser/test/index.html"]
             "test-auto"   ["do" "clean," "shadow" "watch" "browser-test,"]
-            "karma-once"  ["do" "clean," "shadow" "compile" "karma-test,"]
+            "karma-once"  ["do"
+                           ["clean"]
+                           ["shadow" "compile" "karma-test"]
+                           ["shell" "karma" "start" "--single-run" "--reporters" "junit,dots"]]
             "karma-auto"  ["do" "clean," "shadow" "watch" "karma-test,"]
             ;; NOTE: In order to compile docs you would need to install
             ;; gitbook-cli(2.3.2) utility globaly using npm or yarn
