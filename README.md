@@ -13,9 +13,9 @@ y'know. Pretty good.
 > &nbsp;&nbsp;&nbsp; reflecting on identity, flow and derived values  (aka [The Ship of Theseus](https://en.wikipedia.org/wiki/Ship_of_Theseus))
 
 
-[![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
-[![GitHub license](https://img.shields.io/github/license/day8/re-frame.svg)](license.txt)
-[![Continuous Integration](https://github.com/day8/re-frame/workflows/Continuous%20Integration/badge.svg)](https://github.com/day8/re-frame/actions)
+[![clojars](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
+[![license](https://img.shields.io/github/license/day8/re-frame.svg)](license.txt)
+[![ci](https://github.com/day8/re-frame/workflows/ci/badge.svg)](https://github.com/day8/re-frame/actions?workflow=ci)
 
 ## re-frame
 
