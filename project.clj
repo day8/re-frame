@@ -1,7 +1,20 @@
-(defproject re-frame "0.11.0-rc3-SNAPSHOT"
+(defproject re-frame "see :git-version below https://github.com/arrdem/lein-git-version"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/day8/re-frame.git"
   :license      {:name "MIT"}
+
+  :git-version
+  {:status-to-version
+   (fn [{:keys [tag version branch ahead ahead? dirty?] :as git}]
+     (assert (re-find #"\d+\.\d+\.\d+" tag)
+       "Tag is assumed to be a raw SemVer version")
+     (if (and tag (not ahead?) (not dirty?))
+       tag
+       (let [[_ prefix patch] (re-find #"(\d+\.\d+)\.(\d+)" tag)
+             patch            (Long/parseLong patch)
+             patch+           (inc patch)]
+         (format "%s.%d-%s-SNAPSHOT" prefix patch+ ahead))))}
+
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [org.clojure/clojurescript "1.10.520" :scope "provided"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
@@ -11,7 +24,8 @@
                  [net.cgrand/macrovich "0.2.1"]
                  [org.clojure/tools.logging "0.4.1"]]
 
-  :plugins [[lein-shadow "0.1.6"]]
+  :plugins [[me.arrdem/lein-git-version "2.0.3"]
+            [lein-shadow                "0.1.6"]]
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[binaryage/devtools "0.9.10"]]
@@ -34,14 +48,7 @@
                                     :username :env/CLOJARS_USERNAME
                                     :password :env/CLOJARS_PASSWORD}]]
 
-  :release-tasks [["vcs" "assert-committed"]
-                  ["change" "version" "leiningen.release/bump-version" "release"]
-                  ["vcs" "commit"]
-                  ["vcs" "tag" "v" "--no-sign"]
-                  ["deploy" "clojars"]
-                  ["change" "version" "leiningen.release/bump-version"]
-                  ["vcs" "commit"]
-                  ["vcs" "push"]]
+  :release-tasks [["deploy" "clojars"]]
 
   :shadow-cljs {:nrepl  {:port 8777}
 
