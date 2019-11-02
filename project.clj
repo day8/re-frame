@@ -15,13 +15,13 @@
              patch+           (inc patch)]
          (format "%s.%d-%s-SNAPSHOT" prefix patch+ ahead))))}
 
-  :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
+  :dependencies [[org.clojure/clojure       "1.10.1"   :scope "provided"]
                  [org.clojure/clojurescript "1.10.520" :scope "provided"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library]]
-                 [thheller/shadow-cljs "2.8.69" :scope "provided"]
-                 [reagent "0.9.0-rc2"]
-                 [net.cgrand/macrovich "0.2.1"]
+                 [thheller/shadow-cljs      "2.8.69"   :scope "provided"]
+                 [reagent                   "0.9.0-rc2"]
+                 [net.cgrand/macrovich      "0.2.1"]
                  [org.clojure/tools.logging "0.4.1"]]
 
   :plugins [[me.arrdem/lein-git-version "2.0.3"]
@@ -30,7 +30,7 @@
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[binaryage/devtools "0.9.10"]]
                      :plugins      [[lein-ancient "0.6.15"]
-                                    [lein-shell "0.5.0"]]}}
+                                    [lein-shell   "0.5.0"]]}}
 
   :clean-targets  [:target-path "run/compiled"]
 
