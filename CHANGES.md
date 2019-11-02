@@ -3,7 +3,7 @@
 #### Changed
 
 - Update examples/simple/CodeWalkThrough.md
-- Upgrade shadow-cljs to 2.8.67
+- Upgrade shadow-cljs to 2.8.69
 - Migrate to [GitHub Actions](https://github.com/features/actions)
 
 ## 0.11.0-rc2 (2019-10-19)
