@@ -12,13 +12,13 @@
              patch+           (inc patch)]
          (format "%s.%d-%s-SNAPSHOT" prefix patch+ ahead))))}
 
-  :dependencies [[org.clojure/clojure "1.10.1"]
+  :dependencies [[org.clojure/clojure       "1.10.1"]
                  [org.clojure/clojurescript "1.10.520"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library]]
-                 [thheller/shadow-cljs "2.8.67"]
-                 [reagent "0.9.0-rc1"]
-                 [re-frame "0.11.0-rc1"]]
+                 [thheller/shadow-cljs      "2.8.69"]
+                 [reagent                   "0.9.0-rc2"]
+                 [re-frame                  "0.11.0-rc2"]]
 
   :plugins [[me.arrdem/lein-git-version "2.0.3"]
             [lein-shadow                "0.1.6"]]
