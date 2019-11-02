@@ -1,5 +1,17 @@
 name: ci
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - "bin/**"
+      - "docs/**"
+      - "images/**"
+      - ".editorconfig"
+      - ".gitignore"
+      - "CHANGELOG.md"
+      - "CITATION.md"
+      - "CONTRIBUTING.md"
+      - "license.txt"
+      - "README.md"
 
 jobs:
   build:
