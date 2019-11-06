@@ -2,15 +2,19 @@
 
   :git-version
   {:status-to-version
-   (fn [{:keys [tag version branch ahead ahead? dirty?] :as git}]
-     (assert (re-find #"\d+\.\d+\.\d+" tag)
-       "Tag is assumed to be a raw SemVer version")
-     (if (and tag (not ahead?) (not dirty?))
-       tag
-       (let [[_ prefix patch] (re-find #"(\d+\.\d+)\.(\d+)" tag)
-             patch            (Long/parseLong patch)
-             patch+           (inc patch)]
-         (format "%s.%d-%s-SNAPSHOT" prefix patch+ ahead))))}
+   (fn [{:keys [tag version branch ahead ahead? dirty?] :as git-status}]
+     (if-not (string? tag)
+       ;; If git-status is nil (i.e. IntelliJ reading project.clj) then return an empty version.
+       "_"
+       (if (and (not ahead?) (not dirty?))
+         tag
+         (let [[_ major minor patch suffix] (re-find #"v?(\d+)\.(\d+)\.(\d+)(-.+)?" tag)]
+           (if (nil? major)
+             ;; If tag is poorly formatted then return GIT-TAG-INVALID
+             "GIT-TAG-INVALID"
+             (let [patch' (try (Long/parseLong patch) (catch Throwable _ 0))
+                   patch+ (inc patch')]
+               (str major "." minor "." patch+ suffix "-" ahead "-SNAPSHOT")))))))}
 
   :dependencies [[org.clojure/clojure       "1.10.1"]
                  [org.clojure/clojurescript "1.10.520"
