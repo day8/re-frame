@@ -12,7 +12,7 @@ they need to first know the current state of the world.
 
 `coeffects` is the current state of the world, as data, as presented to an event handler.
 
-Many event handlers only need applicaton state to do their job - that's as much of "the world"
+Many event handlers only need application state to do their job - that's as much of "the world"
 as they need to know about. To make this common case easy to program, 
 there's a specific registration function, called `reg-event-db`,
 which delivers ONLY the coeffect `db` to the event handler  (and `event` of course). 
