@@ -33,7 +33,7 @@ highly processed versions of what's in `app-db`.
 The layers in this graph are as follows: 
    - layer 1 is the root node, `app-db`. 
    - layer 2 subscriptions extract data directly from `app-db`.
-   - layer 3 subscriptions obtain data from other subsciptions (not `app-db`), and compute derived data.
+   - layer 3 subscriptions obtain data from other subscriptions (not `app-db`), and compute derived data.
    - layer 4 the view functions which compute hiccup (more derived data)
 
 As we'll see soon, there's efficency reasons to distinguish between layer 2 (extractor) 
