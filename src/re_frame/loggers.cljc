@@ -19,6 +19,7 @@
   (atom #?(:cljs {:log       (js/console.log.bind   js/console)
                   :warn      (js/console.warn.bind  js/console)
                   :error     (js/console.error.bind js/console)
+                  :debug     (js/console.debug.bind js/console)
                   :group     (if (.-group js/console)         ;; console.group does not exist  < IE 11
                                (js/console.group.bind js/console)
                                (js/console.log.bind   js/console))
@@ -29,6 +30,7 @@
         #?(:clj {:log      (partial log :info)
                  :warn     (partial log :warn)
                  :error    (partial log :error)
+                 :debug    (partial log :debug)
                  :group    (partial log :info)
                  :groupEnd  #()})))
 
