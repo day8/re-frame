@@ -1,20 +1,4 @@
-(defproject todomvc-re-frame "see :git-version below https://github.com/arrdem/lein-git-version"
-
-  :git-version
-  {:status-to-version
-   (fn [{:keys [tag version branch ahead ahead? dirty?] :as git-status}]
-     (if-not (string? tag)
-       ;; If git-status is nil (i.e. IntelliJ reading project.clj) then return an empty version.
-       "_"
-       (if (and (not ahead?) (not dirty?))
-         tag
-         (let [[_ major minor patch suffix] (re-find #"v?(\d+)\.(\d+)\.(\d+)(-.+)?" tag)]
-           (if (nil? major)
-             ;; If tag is poorly formatted then return GIT-TAG-INVALID
-             "GIT-TAG-INVALID"
-             (let [patch' (try (Long/parseLong patch) (catch Throwable _ 0))
-                   patch+ (inc patch')]
-               (str major "." minor "." patch+ suffix "-" ahead "-SNAPSHOT")))))))}
+(defproject todomvc-re-frame "lein-git-inject/version"
 
   :dependencies [[org.clojure/clojure        "1.10.1"]
                  [org.clojure/clojurescript  "1.10.520"
@@ -27,8 +11,10 @@
                  [clj-commons/secretary      "1.2.4"]
                  [day8.re-frame/tracing      "0.5.3"]]
 
-  :plugins [[me.arrdem/lein-git-version "2.0.3"]
-            [lein-shadow                "0.1.6"]]
+  :plugins      [[day8/lein-git-inject "0.0.2"]
+                 [lein-shadow          "0.1.6"]]
+
+  :middleware   [leiningen.git-inject/middleware]
 
   :clean-targets ^{:protect false} [:target-path
                                     "shadow-cljs.edn"

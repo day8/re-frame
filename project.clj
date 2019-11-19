@@ -1,23 +1,7 @@
-(defproject re-frame "see :git-version below https://github.com/arrdem/lein-git-version"
+(defproject re-frame "lein-git-inject/version"
   :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/day8/re-frame.git"
   :license      {:name "MIT"}
-
-  :git-version
-  {:status-to-version
-   (fn [{:keys [tag version branch ahead ahead? dirty?] :as git-status}]
-     (if-not (string? tag)
-       ;; If git-status is nil (i.e. IntelliJ reading project.clj) then return an empty version.
-       "_"
-       (if (and (not ahead?) (not dirty?))
-         tag
-         (let [[_ major minor patch suffix] (re-find #"v?(\d+)\.(\d+)\.(\d+)(-.+)?" tag)]
-           (if (nil? major)
-             ;; If tag is poorly formatted then return GIT-TAG-INVALID
-             "GIT-TAG-INVALID"
-             (let [patch' (try (Long/parseLong patch) (catch Throwable _ 0))
-                   patch+ (inc patch')]
-               (str major "." minor "." patch+ suffix "-" ahead "-SNAPSHOT")))))))}
 
   :dependencies [[org.clojure/clojure       "1.10.1"   :scope "provided"]
                  [org.clojure/clojurescript "1.10.520" :scope "provided"
@@ -28,8 +12,10 @@
                  [net.cgrand/macrovich      "0.2.1"]
                  [org.clojure/tools.logging "0.4.1"]]
 
-  :plugins [[me.arrdem/lein-git-version "2.0.3"]
-            [lein-shadow                "0.1.6"]]
+  :plugins      [[day8/lein-git-inject "0.0.2"]
+                 [lein-shadow          "0.1.6"]]
+
+  :middleware   [leiningen.git-inject/middleware]
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[binaryage/devtools "0.9.10"]]
