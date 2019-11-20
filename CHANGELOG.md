@@ -1,5 +1,7 @@
 ## Unreleased
 
+## [0.11.0-rc3 (2019-11-20)](https://github.com/day8/re-frame/runs/311049839)
+
 #### Changed
 
 - Upgrade reagent to 0.9.0-rc3. [Report issues here](https://github.com/reagent-project/reagent/issues/449).
