@@ -1,5 +1,17 @@
 ## Unreleased
 
+#### Changed
+
+- Clarify debug interceptor log message. See [#546](https://github.com/day8/re-frame/pull/546).
+  Thanks to [@mbertheau](https://github.com/mbertheau)
+- Refactoring of `fx-handler->interceptor`. See [#547](https://github.com/day8/re-frame/pull/547).
+  Thanks to [@mbertheau](https://github.com/mbertheau)
+
+#### Added
+
+- `:debug` log level. See [#562](https://github.com/day8/re-frame/pull/562).
+  Thanks to [@p-himik](https://github.com/p-himik)
+
 ## [0.11.0-rc3 (2019-11-20)](https://github.com/day8/re-frame/runs/311049839)
 
 #### Changed
