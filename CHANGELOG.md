@@ -2,6 +2,7 @@
 
 #### Changed
 
+- Upgrade reagent to 0.9.0-rc3. [Report issues here](https://github.com/reagent-project/reagent/issues/449).
 - Update examples/simple/CodeWalkThrough.md
 - Upgrade shadow-cljs to 2.8.69
 - Migrate to [GitHub Actions](https://github.com/features/actions)
