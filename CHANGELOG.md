@@ -7,6 +7,7 @@
 - Refactoring of `fx-handler->interceptor`. See [#547](https://github.com/day8/re-frame/pull/547).
   Thanks to [@mbertheau](https://github.com/mbertheau)
 - Upgrade shadow-cljs to 2.8.76
+- Upgrade ClojureScript to 1.10.597
 
 #### Added
 
