@@ -4,7 +4,7 @@
   :license      {:name "MIT"}
 
   :dependencies [[org.clojure/clojure       "1.10.1"   :scope "provided"]
-                 [org.clojure/clojurescript "1.10.520" :scope "provided"
+                 [org.clojure/clojurescript "1.10.597" :scope "provided"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
