@@ -1,7 +1,7 @@
 (defproject todomvc-re-frame "lein-git-inject/version"
 
   :dependencies [[org.clojure/clojure        "1.10.1"]
-                 [org.clojure/clojurescript  "1.10.520"
+                 [org.clojure/clojurescript  "1.10.597"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
