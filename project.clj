@@ -1,5 +1,5 @@
-(defproject re-frame "lein-git-inject/version"
-  :description  "A Clojurescript MVC-like Framework For Writing SPAs Using Reagent."
+(defproject     re-frame "lein-git-inject/version"
+  :description  "A ClojureScript MVC-like Framework For Writing SPAs Using Reagent."
   :url          "https://github.com/day8/re-frame.git"
   :license      {:name "MIT"}
 
@@ -20,8 +20,8 @@
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[binaryage/devtools "0.9.10"]]
-                     :plugins      [[lein-ancient "0.6.15"]
-                                    [lein-shell   "0.5.0"]]}}
+                     :plugins      [[lein-ancient       "0.6.15"]
+                                    [lein-shell         "0.5.0"]]}}
 
   :clean-targets  [:target-path "run/compiled"]
 
