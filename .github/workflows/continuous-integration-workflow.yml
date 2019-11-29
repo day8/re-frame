@@ -14,8 +14,8 @@ on:
       - "README.md"
 
 jobs:
-  build:
-    name: Karma Test Runner
+  test:
+    name: Test
     runs-on: ubuntu-18.04
     container:
       # Ref: https://github.community/t5/GitHub-Actions/docker-pull-from-public-GitHub-Package-Registry-fail-with-quot/m-p/32782
@@ -34,3 +34,9 @@ jobs:
           /var/lib/dpkg/info/ca-certificates-java.postinst configure
       - name: Run Karma Test Runner
         run: lein karma-once
+      - name: Compile Simple Example
+        working-directory: examples/simple
+        run: lein shadow compile client
+      - name: Compile TodoMVC Example
+        working-directory: examples/todomvc
+        run: lein shadow compile client
