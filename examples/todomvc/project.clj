@@ -13,7 +13,7 @@
                  [day8.re-frame/tracing      "0.5.3"]]
 
   :plugins      [[day8/lein-git-inject "0.0.2"]
-                 [lein-shadow          "0.1.6"]]
+                 [lein-shadow          "0.1.7"]]
 
   :middleware   [leiningen.git-inject/middleware]
 
