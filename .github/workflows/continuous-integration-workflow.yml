@@ -24,7 +24,7 @@ jobs:
         LEIN_ROOT: "true"
         JVM_OPTS: -Xmx4g
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v1
       - name: Install Karma CLI
         run: npm install -g karma-cli
       # Ref: https://stackoverflow.com/questions/6784463/error-trustanchors-parameter-must-be-non-empty/50103533#50103533
