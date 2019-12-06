@@ -10,6 +10,7 @@ Broadbrush:
    - like other re-frame registration functions, `def-view` associates a `keyword` with a (reagent) render function
    - the registered view keyword (eg: `:my-view`) can be used in hiccup to identify the renderer. eg:  `[:my-view  "Hello world"]`
    - `def-view` allows various values to be `injected` as args into the view render
+   - see https://github.com/reagent-project/reagent/issues/362
    
 Why:
   - removing (render) functions from hiccup will make hiccup even more data oriented. Symptoms include helping with various state machine ideas.
@@ -85,11 +86,31 @@ Use of `:my-view-id `:
 [:my-view-id  "Hello"] 
 ```
 
+### Code Doodle #3
 
-Misc Notes:
+`[:something arg1 arg2]`
+
+```clj
+(def-view 
+   :something 
+   (fn [arg1 arg2] 
+      ;; obtain dispatch and subscription 
+      ;; obtain a subscription ot two 
+      ;; add a key on the component 
+      (fn [arg1 arg2] 
+          ))
+   
+```
+
+## Misc Notes
    
    - reagent hiccup will be changed/monkey-patched so that views can be identified by keyword
    - Views are the leaves of the signal graph. They need to subscribe and dispatch. 
    - how to obtain other pieces of `context` (beyond the current frame)
    
+   
 XXX There's a nasty problem with frames and subscriptions.  How does the signal function know what frame to create new subscriptions against???
+
+## Usage 
+
+
