@@ -23,14 +23,16 @@ When it is running, here's what it looks like:
 ![Example App image](../images/example_app.png)
 
 To run the code yourself: 
- * Install Java 8 or later
+ * Install Java 8 or later  (Java 11 would be a good chgoice)
  * Install leiningen  (http://leiningen.org/#install)
 
 Then:
   1. `git clone https://github.com/day8/re-frame.git`
   2. `cd re-frame/examples/simple`
   3. `lein do clean, shadow watch client`
-  4. wait a minute and then open <http://localhost:3449/example.html>
+  4. Run "`lein do clean, shadow watch client`"  to compile the app and start up shadow-cljs hot-reloading
+  5. Wait for the compile to finish. At a minumum, that might take 15 seconds. But it can take more like 60 seconds if you are new to ClojureScript and various caches are empty. Eventually you should see `[:client] Build Completed (... stats ...)`
+  6. Open `http://localhost:8280/example.html` to see the app
   
 So, what's just happened?  The ClojureScript code under `/src` has been compiled into `javascript` and
 put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML you just opened)
