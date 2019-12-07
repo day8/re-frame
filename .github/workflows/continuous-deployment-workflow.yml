@@ -13,6 +13,27 @@ jobs:
       image: superstructor/clojure:openjdk-11-lein-2.9.1-node-browsers
     steps:
       - uses: actions/checkout@v1
+      - name: Maven cache
+        uses: actions/cache@v1
+        with:
+          path: /root/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('project.clj') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: npm cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('project.clj') }}-${{ hashFiles('**/deps.cljs') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - name: shadow-cljs compiler cache
+        uses: actions/cache@v1
+        with:
+          path: .shadow-cljs
+          key: ${{ runner.os }}-shadow-cljs-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-shadow-cljs-
       - run: lein karma-once
   release:
     name: Release
@@ -23,6 +44,13 @@ jobs:
       image: superstructor/clojure:openjdk-11-lein-2.9.1-node-browsers
     steps:
       - uses: actions/checkout@v1
+      - name: Maven cache
+        uses: actions/cache@v1
+        with:
+          path: /root/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('project.clj') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: Run lein release
         run: |
           CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }} CLOJARS_PASSWORD=${{ secrets.CLOJARS_PASSWORD }} GITHUB_USERNAME=${{ github.actor }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} lein release
