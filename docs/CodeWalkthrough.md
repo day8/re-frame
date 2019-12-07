@@ -2,47 +2,58 @@
 
 ## Initial Code Walk-through
 
-At this point, you are about 55% of the way to understanding re-frame.  You have:
+At this point, you are about 50% of the way to understanding re-frame.  You should already have:
  - an overview of the 6 domino process [from this repo's README](../README.md)
  - an understanding of app state ([from the previous tutorial](ApplicationState.md))
 
-In this tutorial, **we look at re-frame code**. By the end of it, you'll be at 70% knowledge, and ready to start coding an app.
+In this tutorial, **we plunge into re-frame code**. By the end of it, you'll be at 70% knowledge, and ready to start coding an app.
 
 ## What Code?
 
 This repo contains an `/examples` application called ["simple"](https://github.com/day8/re-frame/tree/master/examples/simple),
-which contains 70 lines of code. We'll look at every line of [the file](https://github.com/day8/re-frame/blob/master/examples/simple/src/simple/core.cljs).
+which contains 70 lines of code. In this tutorial, we'll look at every line of [the file](https://github.com/day8/re-frame/blob/master/examples/simple/src/simple/core.cljs).
 
 This app:
  - displays the current time in a nice big, colourful font
  - provides a single text input field, into which you can type a hex colour code, 
-   like "#CCC" or "blue", used for the time display
+   like "#CCC" or "blue", which is what's then used for the time display
       
-When it is running, here's what it looks like:
+When it is running, here's what the app looks like:
 
 ![Example App image](../images/example_app.png)
 
-To run the code yourself: 
- * Install Java 8 or later  (Java 11 would be a good chgoice)
- * Install leiningen  (http://leiningen.org/#install)
+## Running This App Yourself (And Experimenting)
+
+There are two ways to run this app for yourself:
+  1. compile and run it on your own computer
+  2. run it via an online interactive tutorial 
+ 
+ ### 1. On Your Machine
+
+To run the code yourself (recomended), you'll need to first [install Clojure](https://purelyfunctional.tv/guide/how-to-install-clojure/)
 
 Then:
   1. `git clone https://github.com/day8/re-frame.git`
   2. `cd re-frame/examples/simple`
   3. `lein do clean, shadow watch client`
   4. Run "`lein do clean, shadow watch client`"  to compile the app and start up shadow-cljs hot-reloading
-  5. Wait for the compile to finish. At a minumum, that might take 15 seconds. But it can take more like 60 seconds if you are new to ClojureScript and various caches are empty. Eventually you should see `[:client] Build Completed (... stats ...)`
+  5. Wait for the compile to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
   6. Open `http://localhost:8280/example.html` to see the app
   
-So, what's just happened?  The ClojureScript code under `/src` has been compiled into `javascript` and
-put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML you just opened)
+So, what's just happened?  
+
+The ClojureScript code under `/src` has been compiled into `javascript` and
+put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML file you just opened in the browser)
  
-Figwheel provides for hot-loading, so you can edit the source code (under `/src`)and watch the loaded HTML change.
+Shadow-cljs (the compiler) provides for hot-reloading, which means you can edit the source code and immediately see the change in the browser. To test this, I'd suggest that you edit `./src/simple/core.cljs`, search for the string `"Hello world, it is now"`, change it to something else, save the file, then watch your change show up in the browser in near-realtime. 
 
-## Or Use The Online Interactive Version 
+### 2. Via The Online Interactive Version 
 
-An online, interactive version of this tutorial page is [available here](http://blog.klipse.tech/clojure/2019/02/17/reframe-tutorial.html).  <br>
-> Note: it is powered by [the mighty Klipse](https://github.com/viebel/klipse) which loads a ClojureScript compiler into the browser, which can take 45 seconds to initialise. So, give it sufficient time. (And, in the unlikely event of problems, try disabling your adblocker) 
+An online, interactive version of this tutorial is [available here](http://blog.klipse.tech/clojure/2019/02/17/reframe-tutorial.html). 
+
+> Note: it is powered by [the mighty Klipse](https://github.com/viebel/klipse) which loads a ClojureScript compiler into the browser, which can sometimes take as long as 60 seconds to initialise fully. So, give it sufficient time. (And, in the unlikely event of problems, try disabling your adblocker) 
+
+Onwards ...
 
 ## Namespace
 
@@ -129,47 +140,51 @@ This is an unusual source of events. Normally, it is an app's UI widgets which
 So, **an event is not processed synchronously, like a function call**. The processing
 happens **later** - asynchronously. Very soon, but not now.
 
-The consumer of the queue is a `router` which looks after the event's processing.
+The consumer of the queue is the re-frame `router` which looks after the event's processing.
 
 The `router`:
 
 1. inspects the 1st element of an event vector
-2. looks for the event handler (function) which is **registered**
+2. looks for the event handler (a function) which is **registered**
    for this kind of event
-3. calls that event handler with the necessary arguments
+3. calls that event handler (function) with the necessary arguments
 
 As a re-frame app developer, your job, then, is to write and register an
-event handler (function) for each kind of event. 
+event handler (function) for each kind of event, including this `:timer` event. 
 
 ## Event Handlers (domino 2)
 
 Collectively, event handlers provide the control logic in a re-frame application.
 
-In this application, 3 kinds of event are dispatched: 
-  `:initialize`
-  `:time-color-change`
-  `:timer`
+In this application, three kinds of event are dispatched: 
+  - `:initialize`
+  - `:time-color-change`
+  - `:timer`    (this one we saw above)
   
 3 events means we'll be registering 3 event handlers.
 
-### Two ways to register
+### Registering Event Handlers
 
-Event handler functions take two arguments `coeffects` and `event`, 
-and they return `effects`.
+Event handler functions:
+  - take two arguments `coeffects` and `event`
+  - return `effects`
 
-Conceptually, you can think of `coeffects` as being "the current state of the world". 
-And you can think of event handlers as computing and returning changes (effects) based on 
-"the current state of the world" and the arriving event.
+Conceptually, you can think of the argument `coeffects` as being "the current state of the world". 
+And you can think of event handlers as computing how the world should be changed 
+by the arriving event. They return (as data) how the world should be changed by the event - `the side effects` of the event.
 
-Event handlers can be registered via either `reg-event-fx`
-or `reg-event-db`  (`-fx` vs `-db`): 
+Event handlers can be registered in two ways:
+  - `reg-event-fx`
+  - `reg-event-db`  
+  
+ One ends in `-fx` and the other in `-db`.
 
-  - `reg-event-fx` can take multiple `coeffects` and can return multiple `effects`, while 
+  - `reg-event-fx` can take multiple `coeffects` and can return multiple `effects`, whereas ... 
   - `reg-event-db` allows you to write simpler handlers for the common case where you want 
   them to take only one `coeffect` - the current app state - and return one `effect` - the 
   updated app state.
 
-Because of its simplicity, we'll be using the latter here: `reg-event-db`. 
+Because of its simplicity, we'll be using the latter one here: `reg-event-db`.
 
 ### reg-event-db
 
@@ -181,12 +196,12 @@ We register event handlers using re-frame's `reg-event-db`:
   the-event-handler-fn)
 ```
 The handler function you provide should expect two arguments:
-   - `db`, the current application state  (the value contained in `app-db`)
-   - `v`,  the event vector  (what was given to `dispatch`)
+   - `db`, the current application state  (the map value contained in `app-db`)
+   - `ev`,  the event vector  (what was given to `dispatch`)
     
-So, your function will have a signature like this: `(fn [db v] ...)`.
+So, your function will have a signature like this: `(fn [db ev] ...)`.
 
-Each event handler must compute and return the new state of
+These event handlers must compute and return the new state of
 the application, which means it returns a
 modified version of `db` (or an unmodified one, if there are to be no changes to the state).
 
@@ -195,14 +210,14 @@ modified version of `db` (or an unmodified one, if there are to be no changes to
 On startup, application state must be initialized. We
 want to put a sensible value into `app-db`, which starts out containing `{}`.
 
-So a `(dispatch [:initialize])` will happen early in the 
+So, as well soon see, a `(dispatch [:initialize])` will happen early in the 
 app's life (more on this below), and we need to write an `event handler`
 for it. 
 
 Now this event handler is slightly unusual because not only does it not care about
 any event information passed in via the `event` vector, but it doesn't 
 even care about the existing value in `db` - it just wants to plonk 
-a completely new value:
+a completely new value into `app-db`:
 
 ```clj
 (rf/reg-event-db              ;; sets up initial application state
@@ -222,7 +237,7 @@ For comparison, here's how we would have written this if we'd cared about the ex
 (rf/reg-event-db
   :initialize
   (fn [db _]                 ;; we use db this time, so name it
-    (-> db
+    (-> db                   ;; db is initially just {}
       (assoc :time (js/Date.))
       (assoc :time-color "#f88")))
 ```
@@ -236,7 +251,7 @@ Here's how we handle it:
 ```clj
 (rf/reg-event-db                 ;; usage:  (rf/dispatch [:timer a-js-Date])
   :timer
-  (fn [db [_ new-time]]          ;; <-- de-structure the event vector
+  (fn [db [_ new-time]]          ;; <-- boitce how we de-structure the event vector
     (assoc db :time new-time)))  ;; compute and return the new application state
 ```
 
@@ -244,10 +259,11 @@ Notes:
   1. the `event` will be like `[:timer a-time]`, so the 2nd `v` parameter 
      destructures to extract the `a-time` value
   2. the handler computes a new application state from `db`, and returns it
+  3. background on [Clojure destructuring](https://clojure.org/guides/destructuring)
 
 ### :time-color-change
 
-When the user enters a new colour value (via an input text box):
+When the user enters a new colour value (via the input text box):
 ```clj
 (rf/reg-event-db
   :time-color-change            ;; usage:  (rf/dispatch [:time-color-change 34562])
@@ -257,7 +273,7 @@ When the user enters a new colour value (via an input text box):
   
 ## Effect Handlers (domino 3)
 
-Domino 3 realises/puts into action the `effects` returned by event handlers.
+Domino 3 actions the `effects` returned by event handlers.
 
 In this "simple" application, our event handlers are implicitly returning 
 only one effect: "update application state". 
@@ -278,7 +294,7 @@ a "materialised view" of that application state.
 When the application state changes, subscription functions are 
 re-run by re-frame, to compute new values (new materialised views).
 
-Ultimately, the data returned by `query` functions is used
+Ultimately, the data returned by these `query` functions is used
 in the `view` functions (Domino 5).
  
 One subscription can 
@@ -290,7 +306,8 @@ root is `app-db` and the intermediate nodes between the two
 are computations being performed by the query functions of Domino 4.
 
 Now, the two examples below are trivial. They just extract part of the application
-state and return it. So, there's virtually no computation. A more interesting tree
+state and return it. So, there's virtually no computation - the materialised view they 
+produce is the same as that stored in `app-db`. A more interesting tree
 of subscriptions, and more explanation, can be found in the todomvc example.
 
 ### reg-sub 
@@ -302,12 +319,12 @@ of subscriptions, and more explanation, can be found in the todomvc example.
   :some-query-id  ;; query id (used later in subscribe)
   a-query-fn)     ;; the function which will compute the query
 ```
-Then later, a view function (domino 5) subscribes to a query like this:
+Later, a view function (domino 5) will subscribe to a query like this:
 `(subscribe [:some-query-id])`, and `a-query-fn` will be used 
 to perform the query over the application state.
 
 Each time application state changes, `a-query-fn` will be
-called again to compute a new materialised view (a new computation over app state)
+called again to compute a new materialised view (a new computation over `app-db`)
 and that new value will be given to all `view` functions which are subscribed
 to `:some-query-id`. These `view` functions will then be called to compute the 
 new DOM state (because the views depend on query results which have changed).
@@ -329,8 +346,7 @@ Here's the code:
 ```
 
 Like I said, both of these queries are trivial. 
-See [todomvc.subs.clj](https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs) 
-for more interesting ones.
+The sibling example, todomvc, contains [more advanced subscriptions](https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs). 
 
 ## View Functions (domino 5)
 
@@ -370,7 +386,7 @@ To render the DOM representation of some part of the app state, view functions m
 for that part of `app-db`, and that means using `subscribe`.
 
 `subscribe` is always called like this:
-```Clojure
+```clj
    (rf/subscribe  [query-id some optional query parameters])
 ```
 There's only one (global) `subscribe` function and it takes one argument, assumed to be a vector.
@@ -419,10 +435,12 @@ And this view function renders the input field:
 Notice how it does BOTH a `subscribe` to obtain the current value AND 
 a `dispatch` to say when it has changed. 
 
-It is very common for view functions to run event-dispatching functions. 
-The user's interaction with the UI is usually the largest source of events.
+It is very common for view functions to render event-dispatching functions into the DOM.
+The user's interaction with the UI is usually a large source of events.
 
-And then a `view` function to bring the others together, which contains no 
+Notice also how we use `@` in front of `subscribe` to obtain the value out of the subscription. It is almost as if the subscription is an atom holding a value (which can change over time). 
+
+And then there's a `view` function to arranges the other view functions, but which contains no 
 subscriptions or dispatching of its own:
 ```clj
 (defn ui
@@ -439,15 +457,16 @@ parameters. So, not every view function needs a subscription. Very often
 the values passed in from a parent component are sufficient.
 
 Note: `view` functions should never directly access `app-db`. Data is 
-only ever sourced via subscriptions.
+only ever sourced via subscriptions (which are dereferenced via `@`).
 
 ### Components Like Templates?
 
 `view` functions are like the templates you'd find in
 Django, Rails, Handlebars or Mustache -- they map data to HTML -- except for two massive differences:
 
-  1. you have the full power of ClojureScript available to you (generating a Clojure data structure). The
+  1. you have the full power of ClojureScript available to you. The
      downside is that these are not "designer friendly" HTML templates.
+  2. You are computing a clojure data structure. Hiccup is just clojure data formatted in a certain way.
   2. these templates are reactive.  When their input Signals change, they
      are automatically rerun, producing new DOM. Reagent adroitly shields you from the details, but
      the renderer of any `component` is wrapped by a `reaction`.  If any of the "inputs"
