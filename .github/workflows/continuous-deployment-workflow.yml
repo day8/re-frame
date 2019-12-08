@@ -14,10 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Maven cache
+        id: maven-cache
         uses: actions/cache@v1
         with:
           path: /root/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('project.clj') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: npm cache
@@ -34,7 +35,26 @@ jobs:
           key: ${{ runner.os }}-shadow-cljs-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-shadow-cljs-
-      - run: lein karma-once
+      - if: steps.maven-cache.outputs.cache-hit != 'true'
+        run: lein karma-once
+      - if: steps.maven-cache.outputs.cache-hit != 'true'
+        name: Run cd examples/simple && lein shadow compile client
+        working-directory: examples/simple
+        run: lein shadow compile client
+      - if: steps.maven-cache.outputs.cache-hit != 'true'
+        name: Run cd examples/todomvc && lein shadow compile client
+        working-directory: examples/todomvc
+        run: lein shadow compile client
+      - if: steps.maven-cache.outputs.cache-hit == 'true'
+        run: lein -o karma-once
+      - if: steps.maven-cache.outputs.cache-hit == 'true'
+        name: Run cd examples/simple && lein -o shadow compile client
+        working-directory: examples/simple
+        run: lein -o shadow compile client
+      - if: steps.maven-cache.outputs.cache-hit == 'true'
+        name: Run cd examples/todomvc && lein -o shadow compile client
+        working-directory: examples/todomvc
+        run: lein -o shadow compile client
   release:
     name: Release
     needs: test
@@ -45,12 +65,18 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Maven cache
+        id: maven-cache
         uses: actions/cache@v1
         with:
           path: /root/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('project.clj') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Run lein release
+        if: steps.maven-cache.outputs.cache-hit != 'true'
         run: |
           CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }} CLOJARS_PASSWORD=${{ secrets.CLOJARS_PASSWORD }} GITHUB_USERNAME=${{ github.actor }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} lein release
+      - name: Run lein -o release
+        if: steps.maven-cache.outputs.cache-hit == 'true'
+        run: |
+          CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }} CLOJARS_PASSWORD=${{ secrets.CLOJARS_PASSWORD }} GITHUB_USERNAME=${{ github.actor }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} lein -o release

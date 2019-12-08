@@ -23,10 +23,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Maven cache
+        id: maven-cache
         uses: actions/cache@v1
         with:
           path: /root/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('project.clj') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: npm cache
@@ -43,10 +44,23 @@ jobs:
           key: ${{ runner.os }}-shadow-cljs-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-shadow-cljs-
-      - run: lein karma-once
-      - name: Compile Simple Example
+      - if: steps.maven-cache.outputs.cache-hit != 'true'
+        run: lein karma-once
+      - if: steps.maven-cache.outputs.cache-hit != 'true'
+        name: Run cd examples/simple && lein shadow compile client
         working-directory: examples/simple
         run: lein shadow compile client
-      - name: Compile TodoMVC Example
+      - if: steps.maven-cache.outputs.cache-hit != 'true'
+        name: Run cd examples/todomvc && lein shadow compile client
         working-directory: examples/todomvc
         run: lein shadow compile client
+      - if: steps.maven-cache.outputs.cache-hit == 'true'
+        run: lein -o karma-once
+      - if: steps.maven-cache.outputs.cache-hit == 'true'
+        name: Run cd examples/simple && lein -o shadow compile client
+        working-directory: examples/simple
+        run: lein -o shadow compile client
+      - if: steps.maven-cache.outputs.cache-hit == 'true'
+        name: Run cd examples/todomvc && lein -o shadow compile client
+        working-directory: examples/todomvc
+        run: lein -o shadow compile client
