@@ -419,7 +419,7 @@ This view function renders the clock:
        first)])
 ```
 As you can see, it uses `subscribe` twice to obtain two pieces of data from `app-db`. 
-If either change, re-frame will re-run this view function.
+If either change, reagent will re-run this view function.
 
 And this view function renders the input field:
 ```clj
