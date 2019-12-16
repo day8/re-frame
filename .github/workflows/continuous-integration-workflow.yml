@@ -64,3 +64,12 @@ jobs:
         name: Run cd examples/todomvc && lein -o shadow compile client
         working-directory: examples/todomvc
         run: lein -o shadow compile client
+      - uses: homoluctus/slatify@v2.0.1
+        if: failure() || cancelled()
+        with:
+          type: ${{ job.status  }}
+          job_name: re-frame Tests
+          channel: '#re-frame'
+          url: ${{ secrets.SLACK_WEBHOOK }}
+          commit: true
+          token: ${{ secrets.GITHUB_TOKEN }}
