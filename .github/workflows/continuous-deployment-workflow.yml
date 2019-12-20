@@ -60,7 +60,7 @@ jobs:
         with:
           type: ${{ job.status  }}
           job_name: re-frame Tests
-          channel: '#re-frame'
+          channel: '#oss-robots'
           mention: 'channel'
           mention_if: 'failure'
           url: ${{ secrets.SLACK_WEBHOOK }}
