@@ -92,3 +92,15 @@ jobs:
         if: steps.maven-cache.outputs.cache-hit == 'true'
         run: |
           CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }} CLOJARS_PASSWORD=${{ secrets.CLOJARS_PASSWORD }} GITHUB_USERNAME=${{ github.actor }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} lein -o release
+      - name: Slack notification
+        uses: homoluctus/slatify@v2.0.1
+        if: always()
+        with:
+          type: ${{ job.status  }}
+          job_name: re-frame Deployment
+          channel: '#oss-robots'
+          mention: 'channel'
+          mention_if: 'always'
+          url: ${{ secrets.SLACK_WEBHOOK }}
+          commit: true
+          token: ${{ secrets.GITHUB_TOKEN }}
