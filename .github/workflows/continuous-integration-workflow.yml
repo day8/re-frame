@@ -66,9 +66,9 @@ jobs:
         run: lein -o shadow compile client
       - name: Slack notification
         uses: homoluctus/slatify@v2.0.1
-        if: always()
+        if: failure() || cancelled()
         with:
-          type: ${{ job.status  }}
+          type: ${{ job.status }}
           job_name: re-frame Tests
           channel: '#oss-robots'
           mention: 'channel'
