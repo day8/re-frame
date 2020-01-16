@@ -2,6 +2,7 @@
 
 #### Changed
 
+- Upgrade reagent to 0.9.1
 - Clarify debug interceptor log message. See [#546](https://github.com/day8/re-frame/pull/546).
   Thanks to [@mbertheau](https://github.com/mbertheau)
 - Refactoring of `fx-handler->interceptor`. See [#547](https://github.com/day8/re-frame/pull/547).
