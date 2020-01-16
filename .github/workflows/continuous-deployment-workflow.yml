@@ -100,7 +100,7 @@ jobs:
           job_name: re-frame Deployment
           channel: '#oss-robots'
           mention: 'channel'
-          mention_if: 'always'
+          mention_if: 'failure'
           url: ${{ secrets.SLACK_WEBHOOK }}
           commit: true
           token: ${{ secrets.GITHUB_TOKEN }}
