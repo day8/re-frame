@@ -9,6 +9,7 @@
   Thanks to [@mbertheau](https://github.com/mbertheau)
 - Upgrade shadow-cljs to 2.8.80
 - Upgrade ClojureScript to 1.10.597
+- Upgrade lein-git-inject to 0.0.11
 
 #### Added
 
