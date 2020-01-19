@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 0.11.0 (2020-01-20)
+
+Everything in 0.11.0-rc1 to 0.11.0-rc4 or in other words the same as 0.11.0-rc4.
+
 ## 0.11.0-rc4 (2020-01-16)
 
 #### Changed
