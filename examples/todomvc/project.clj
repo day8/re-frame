@@ -7,7 +7,7 @@
                                org.clojure/google-closure-library-third-party]]
                  [thheller/shadow-cljs       "2.8.83"]
                  [reagent                    "0.9.1"]
-                 [re-frame                   "0.11.0-rc2"]
+                 [re-frame                   "RELEASE"]
                  [binaryage/devtools         "0.9.10"]
                  [clj-commons/secretary      "1.2.4"]
                  [day8.re-frame/tracing      "0.5.3"]]
