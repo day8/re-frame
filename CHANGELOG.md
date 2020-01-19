@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.11.0-rc4 (2020-01-16)
+
 #### Changed
 
 - Upgrade reagent to 0.9.1
@@ -7,7 +9,7 @@
   Thanks to [@mbertheau](https://github.com/mbertheau)
 - Refactoring of `fx-handler->interceptor`. See [#547](https://github.com/day8/re-frame/pull/547).
   Thanks to [@mbertheau](https://github.com/mbertheau)
-- Upgrade shadow-cljs to 2.8.80
+- Upgrade shadow-cljs to 2.8.83
 - Upgrade ClojureScript to 1.10.597
 - Upgrade lein-git-inject to 0.0.11
 
