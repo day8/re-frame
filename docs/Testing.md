@@ -156,7 +156,7 @@ force immediate handling of events, rather than queuing.
 ;; execute
 (dispatch-sync  [:select-triange :other :stuff])
 
-;; validate that the valuein 'app-db' is correct
+;; validate that the value in 'app-db' is correct
 ;; perhaps with subscriptions
 ```
 
