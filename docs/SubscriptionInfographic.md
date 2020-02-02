@@ -2,7 +2,7 @@
 
 A re-frame app is 75% derived data. 
 
-`app-db` is the root, authoratative source of data but radiating 
+`app-db` is the root, authoritative source of data but radiating 
 from it is a graph of nodes all computing derived data. Ultimately, the leaf nodes of 
 this graph are ViewFunctions which compute hiccup (yes, derived data)
 which is rendered into the application's UI. But sitting within
