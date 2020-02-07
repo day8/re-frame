@@ -45,7 +45,7 @@ the world. So `coeffects` is a superset of `db`. It is a bigger world to compute
 Imagine you had an event handler which needed to "know" a value in LocalStore, in order to
 compute an event's effect. 
 
-It could be writen to access data directly from LocalStore:
+It could be written to access data directly from LocalStore:
 ```clj
 (reg-event-db
    :load-defaults
