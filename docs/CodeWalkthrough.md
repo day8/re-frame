@@ -250,7 +250,7 @@ Here's how we handle it:
 ```clj
 (rf/reg-event-db                 ;; usage:  (rf/dispatch [:timer a-js-Date])
   :timer
-  (fn [db [_ new-time]]          ;; <-- boitce how we de-structure the event vector
+  (fn [db [_ new-time]]          ;; <-- notice how we de-structure the event vector
     (assoc db :time new-time)))  ;; compute and return the new application state
 ```
 
