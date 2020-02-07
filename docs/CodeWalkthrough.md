@@ -439,7 +439,7 @@ The user's interaction with the UI is usually a large source of events.
 
 Notice also how we use `@` in front of `subscribe` to obtain the value out of the subscription. It is almost as if the subscription is an atom holding a value (which can change over time). 
 
-And then there's a `view` function to arranges the other view functions, but which contains no 
+And then there's a `view` function to arrange the other view functions, but which contains no 
 subscriptions or dispatching of its own:
 ```clj
 (defn ui
