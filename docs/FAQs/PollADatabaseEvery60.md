@@ -79,8 +79,8 @@ OR, you can code defensively for reloading, perhaps like this:
   (let [live-intervals (atom {})]        ;; storage for live intervals
     (fn handler [{:keys [action id frequency event]}]     ;; the effect handler
       (condp = action
-         :clean   (doseq                ;; <--- new. clean up all existing 
-                     [_ (map #(handler {:action :end  :id  %1}) (keys @live-intervals)])
+         :clean   (doall                ;; <--- new. clean up all existing 
+                     (map #(handler {:action :end  :id  %1}) (keys @live-intervals))
          :start   (swap! live-intervals assoc id (js/setInterval #(dispatch event) frequency))) 
          :end     (do (js/clearInterval (get @live-intervals id)) 
                       (swap! live-intervals dissoc id))))
