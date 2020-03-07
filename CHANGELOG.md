@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.12.0 (2020-03-08)
+
 #### Changed
 
 - Upgrade reagent to [0.10.0](https://github.com/reagent-project/reagent/blob/master/CHANGELOG.md#0100-2020-03-06).
