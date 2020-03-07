@@ -1,5 +1,11 @@
 ## Unreleased
 
+#### Changed
+
+- Upgrade reagent to 0.10.0.
+  **Important:** If using re-frame-10x you need to upgrade to 0.6.0.
+  If using re-com you need to upgrade to 2.8.0.
+
 ## 0.11.0 (2020-01-20)
 
 Everything in 0.11.0-rc1 to 0.11.0-rc4 or in other words the same as 0.11.0-rc4.
