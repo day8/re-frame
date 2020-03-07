@@ -2,7 +2,7 @@
 
 #### Changed
 
-- Upgrade reagent to 0.10.0.
+- Upgrade reagent to [0.10.0](https://github.com/reagent-project/reagent/blob/master/CHANGELOG.md#0100-2020-03-06).
   **Important:** If using re-frame-10x you need to upgrade to 0.6.0.
   If using re-com you need to upgrade to 2.8.0.
 
