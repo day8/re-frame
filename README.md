@@ -29,7 +29,8 @@ McCoy might report "It's MVC, Jim, but not as we know it".  And you would respon
 re-frame is a **functional framework**."
 
 Being a functional framework, it is about two things: data, and the functions 
-which transform that data.  And, because it is a reactive framework, the ["data coordinates the functions"](https://www.youtube.com/watch?v=ZgqFlowyfTA&t=80) (and not the other way around).
+which transform that data.  And, because it is a reactive framework, the data coordinates 
+the functions (and not the other way around).
 
 ## Why Should You Care?
 
@@ -69,11 +70,11 @@ You might already know that ClojureScript is a modern Lisp, and that
 Lisps are **homoiconic**.  If not, you do now.
 
 This homoiconic bit is significant. It means you program in a Lisp by creating and
-assembling Lisp data structures. Dwell on that for a moment. You are **programming in data**. 
+assembling Lisp data structures. Dwell on that for a moment. You are **_programming in data_**. 
 The functions which later transform data, themselves start as data.
 
 Clojure programmers place particular emphasis on the primacy of data, and 
-they like to meditate on aphorisms like **data is the ultimate in late binding**. 
+they like to meditate on aphorisms like **_data is the ultimate in late binding_**. 
 (Less productively, they also like re-watching Rich Hickey videos, and wishing
 their hair was darker and more curly)
 
@@ -101,7 +102,7 @@ it is the arrival of data which [coordinates the calling of functions](https://w
 Architecturally, re-frame implements "a perpetual loop".
 
 To build an app, you hang pure functions on certain parts of this loop, 
-and re-frame looks after the **conveyance of data** 
+and re-frame looks after the **_conveyance of data_** 
 around the loop, into and out of the transforming functions you 
 provide - hence a tag line of "Derived Values, Flowing".
 
@@ -126,7 +127,7 @@ Joe Armstrong says "don't break the laws of physics" - I'm sure
 you've seen the videos - and if he says to do something, you do it
 (unless Rich Hickey disagrees, and says to do something else). So,
 this diagram, apart from being a plausible analogy which might help
-you to understand re-frame, is **practically proof** it does physics.
+you to understand re-frame, is **_practically proof_** it does physics.
 
 ## It is a 6-domino cascade
 
@@ -147,7 +148,7 @@ The six dominoes are:
 5. View
 6. DOM
 
-Let's have a first look at each them. 
+Let's have a first look at each of them - a very high level look. 
 
 ### 1st Domino - Event Dispatch
 
