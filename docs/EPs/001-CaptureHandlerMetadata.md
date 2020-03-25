@@ -24,7 +24,7 @@ Two others are on the drawing board:
 So, there are potentially 9 `kinds` of handlers.
 
 Internally, re-frame manages registered handlers in a `registrar`, which is a two-level map, 
-keyed at the first level by the `kind` of handler and at the second level by the (keyword) 
+keyed at the first level by the `kind` of handler and, at the second level,\by the (keyword) 
 `id` of the handler. The leaf values are the handler functions themselves.
  
  
@@ -46,7 +46,7 @@ There's pressure from multiple directions to collect and retain more metadata ab
   - when re-frame becomes less of a framework and more of a library, handlers might 
     need be "grouped" into "packages". So "package" information about handlers need to be supplied and retained.
   - Tooling support - we'd like `re-frame-10x` to actively help programmers when they are learning a 
-    new code base. That's one of [the four stated goals](https://github.com/day8/re-frame-10x#helps-me-how). 
+    new codebase. That's one of [the four stated goals](https://github.com/day8/re-frame-10x#helps-me-how). 
     Ideally, re-frame would be capable of providing tooling with "a complete 
     inventory" of an app's handlers, along with useful
     metadata on each handles. When an event is processed, the audit trail of 
@@ -139,6 +139,16 @@ for multiple handlers to be registered at once:
    {:kind :event-db ...}
    {:kind :event-fx ...}
    {:kind :sub ...])
+```
+
+Or maybe move the registration keyword outside the map, to avoid repetition. 
+
+```clj 
+(rf/reg :event-db 
+  [{...}
+   {...}
+   {...}
+   {...])
 ```
 
 XXX maybe not needed. Provide the most minimal API? Then let towers of abstraction be built on top.
