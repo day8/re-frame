@@ -1,6 +1,6 @@
 ## re-frame Interceptors
 
-This tutorial explains re-frame Interceptors. And, along the way, you'll
+This tutorial explains re-frame Interceptors. Along the way, you'll
 better understand the mechanics of re-frame event handling.
 
 As you read this, refer back to the 3rd panel of the
@@ -359,6 +359,7 @@ __2.__ When you are registering an event handler, you are associating an event i
 __3.__ An Interceptor Chain is executed in two stages. First a forwards sweep in which
   all `:before` functions are called, and then second, a backwards sweep in which the
   `:after` functions are called. A `context` map will be threaded through all these calls.
+  An Interceptor chain is a reified "call stack".
 
 __4.__ Interceptors do interesting things to `context`:
    - add to `:coeffects`  (data inputs to the handler)
