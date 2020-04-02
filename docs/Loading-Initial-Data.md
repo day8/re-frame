@@ -41,7 +41,7 @@ Create a function `main` which does a `reagent/render` of your root reagent comp
 
 (defn ^:export main     ;; call this to bootstrap your app
   []
-  (reagent/render [main-panel]
+  (reagent.dom/render [main-panel]
                   (js/document.getElementById "app")))
 ```
 
@@ -101,7 +101,7 @@ We'll need to dispatch an `:initialise-db` event to get it to execute. `main` se
 (defn ^:export main
   []
   (re-frame.core/dispatch [:initialise-db])   ;;  <--- this is new 
-  (reagent/render [main-panel]
+  (reagent.dom/render [main-panel]
                   (js/document.getElementById "app")))
 ```
 
@@ -154,7 +154,7 @@ quick sketch of the entire pattern. It is very straight-forward.
 (defn ^:export main     ;; call this to bootstrap your app
   []
   (re-frame.core/dispatch [:initialise-db])
-  (reagent/render [top-panel]
+  (reagent.dom/render [top-panel]
                   (js/document.getElementById "app")))
 ```
 
@@ -172,7 +172,7 @@ Your `main` might look like this:
   (re-frame.core/dispatch [:initialise-db])           ;; basics
   (re-frame.core/dispatch [:load-from-service-1])     ;; ask for data from service-1
   (re-frame.core/dispatch [:load-from-service-2])     ;; ask for data from service-2
-  (reagent.core/render [top-panel]
+  (reagent.dom/render [top-panel]
                   (js/document.getElementById "app")))
 ```
 

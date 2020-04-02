@@ -485,7 +485,7 @@ It has two tasks:
 (defn ^:export run
   []
   (rf/dispatch-sync [:initialize])     ;; puts a value into application state
-  (reagent/render [ui]              ;; mount the application's ui into '<div id="app" />'
+  (reagent.dom/render [ui]             ;; mount the application's ui into '<div id="app" />'
                   (js/document.getElementById "app")))
 ```
 
