@@ -82,18 +82,18 @@ namespaced keywords you the event handler and subscription will look like this:
 If you want to dispatch that even you have two options, either:
 
 ```clj
-(require [project.panel.handlers :as handlers])
+(require [project.panel.events :as events])
 
-(rf/dispatch [::handlers/set-x 100])
+(rf/dispatch [::events/set-x 100])
 ```
 
 or:
 
 ```clj
-(rf/dispatch [:project.panel.handlers/set-x 100])
+(rf/dispatch [:project.panel.events/set-x 100])
 ```
 
-Where the first option might be preferrable since it ensures you require the handlers file and saves you from the possibility of typos.
+Where the first option might be preferrable since it ensures you require the events file and saves you from the possibility of typos.
 
 ## I Want Real Examples!
 
