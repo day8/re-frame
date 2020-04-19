@@ -45,7 +45,7 @@ So, you'll want to use Interceptors because they solve problems, and help you to
 
 __Second__, under the covers, Interceptors provide the mechanism by which
 event handlers are executed. They are a central concept and understanding 
-them better will serve you well, even if you don't need to directly use them very oftem. 
+them better will serve you well, even if you don't need to directly use them very often. 
 
 ## What Do Interceptors Do?
 
