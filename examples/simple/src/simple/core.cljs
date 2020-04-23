@@ -1,5 +1,6 @@
 (ns simple.core
   (:require [reagent.core :as reagent]
+            [reagent.dom :as rdom]
             [re-frame.core :as rf]
             [clojure.string :as str]))
 
@@ -83,8 +84,8 @@
 
 (defn render
   []
-  (reagent/render [ui]
-                  (js/document.getElementById "app")))
+  (rdom/render [ui]
+               (js/document.getElementById "app")))
 
 (defn ^:dev/after-load clear-cache-and-render!
   []
