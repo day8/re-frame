@@ -15,7 +15,6 @@
 
 
 (defn ->interceptor
-  "Create an interceptor from named arguments"
   [& {:as m :keys [id before after]}]
   (when debug-enabled?
     (if-let [unknown-keys (seq (set/difference
@@ -24,7 +23,7 @@
       (console :error "re-frame: ->interceptor" m "has unknown keys:" unknown-keys)))
   {:id     (or id :unnamed)
    :before before
-   :after  after })
+   :after  after})
 
 ;; -- Effect Helpers  -----------------------------------------------------------------------------
 
@@ -110,11 +109,6 @@
 
 
 (defn enqueue
-  "Add a collection of `interceptors` to the end of `context's` execution `:queue`.
-  Returns the updated `context`.
-
-  In an advanced case, this function could allow an interceptor to add new
-  interceptors to the `:queue` of a context."
   [context interceptors]
   (update context :queue
           (fnil into empty-queue)
@@ -124,7 +118,7 @@
 (defn- context
   "Create a fresh context"
   ([event interceptors]
-  (-> {}
+   (-> {}
       (assoc-coeffect :event event)
       (enqueue interceptors)))
   ([event interceptors db]      ;; only used in tests, probably a hack, remove ?  XXX

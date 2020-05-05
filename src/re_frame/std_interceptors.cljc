@@ -12,32 +12,6 @@
 
 
 (def debug
-  "An interceptor which logs/instruments an event handler's actions to
-  `js/console.debug`. See examples/todomvc/src/events.cljs for use.
-
-  Output includes:
-  1. the event vector
-  2. a `clojure.data/diff` of db, before vs after, which shows
-     the changes caused by the event handler.  You will absolutely have
-     to understand https://clojuredocs.org/clojure.data/diff to
-     understand the output.
-
-  You'd typically include this interceptor after (to the right of) any
-  path interceptor.
-
-  Warning:  calling clojure.data/diff on large, complex data structures
-  can be slow. So, you won't want this interceptor present in production
-  code. So condition it out like this :
-
-      (re-frame.core/reg-event-db
-         :evt-id
-         [(when ^boolean goog.DEBUG re-frame.core/debug)]  ;; <-- conditional
-         (fn [db v]
-           ...))
-
-  To make this code fragment work, you'll also have to set goog.DEBUG to
-  false in your production builds - look in `project.clj` of /examples/todomvc.
-  "
   (->interceptor
     :id     :debug
     :before (fn debug-before
@@ -63,14 +37,6 @@
 
 
 (def trim-v
-  "An interceptor which removes the first element of the event vector,
-  allowing you to write more aesthetically pleasing event handlers. No
-  leading underscore on the event-v!
-  Your event handlers will look like this:
-
-      (defn my-handler
-        [db [x y z]]    ;; <-- instead of [_ x y z]
-        ....)"
   (->interceptor
     :id      :trim-v
     :before  (fn trimv-before
@@ -180,32 +146,6 @@
 
 
 (defn path
-  "returns an interceptor whose `:before` substitutes the coeffects `:db` with
-  a sub-path of `:db`. Within `:after` it grafts the handler's return value
-  back into db, at the right path.
-
-  So, its overall action is to make the event handler behave like the function
-  you might give to clojure's `update-in`.
-
-  Examples:
-
-      (path :some :path)
-      (path [:some :path])
-      (path [:some :path] :to :here)
-      (path [:some :path] [:to] :here)
-
-  Example Use:
-
-      (reg-event-db
-        :event-id
-        (path [:a :b])  ;; used here, in interceptor chain
-        (fn [b v]       ;; 1st arg is now not db. Is the value from path [:a :b] within db
-          ... new-b))   ;; returns a new value for that path (not the entire db)
-
-  Notes:
-    1. `path` may appear more than once in an interceptor chain. Progressive narrowing.
-    2. if `:effects` contains no `:db` effect, can't graft a value back in.
-  "
   [& args]
   (let [path (flatten args)
         db-store-key :re-frame-path/db-store]    ;; this is where, within `context`, we store the original dbs
@@ -235,49 +175,6 @@
 
 
 (defn enrich
-  "Interceptor factory which runs the given function `f` in the `after handler`
-  position.  `f` is called with two arguments: `db` and `v`, and is expected to
-  return a modified `db`.
-
-  Unlike the `after` interceptor which is only about side effects, `enrich`
-  expects `f` to process and alter the given `db` coeffect in some useful way,
-  contributing to the derived data, flowing vibe.
-
-  Example Use:
-  ------------
-
-  Imagine that todomvc needed to do duplicate detection - if any two todos had
-  the same text, then highlight their background, and report them via a warning
-  at the bottom of the panel.
-
-  Almost any user action (edit text, add new todo, remove a todo) requires a
-  complete reassessment of duplication errors and warnings. Eg: that edit
-  just made might have introduced a new duplicate, or removed one. Same with
-  any todo removal. So we need to re-calculate warnings after any CRUD events
-  associated with the todos list.
-
-  Unless we are careful, we might end up coding subtly different checks
-  for each kind of CRUD operation.  The duplicates check made after
-  'delete todo' event might be subtly different to that done after an
-  editing operation. Nice and efficient, but fiddly. A bug generator
-  approach.
-
-  So, instead, we create an `f` which recalculates ALL warnings from scratch
-  every time there is ANY change. It will inspect all the todos, and
-  reset ALL FLAGS every time (overwriting what was there previously)
-  and fully recalculate the list of duplicates (displayed at the bottom?).
-
-  https://twitter.com/nathanmarz/status/879722740776939520
-
-  By applying `f` in an `:enrich` interceptor, after every CRUD event,
-  we keep the handlers simple and yet we ensure this important step
-  (of getting warnings right) is not missed on any change.
-
-  We can test `f` easily - it is a pure function - independently of
-  any CRUD operation.
-
-  This brings huge simplicity at the expense of some re-computation
-  each time. This may be a very satisfactory trade-off in many cases."
   [f]
   (->interceptor
     :id :enrich
@@ -293,16 +190,6 @@
 
 
 (defn after
-  "returns an interceptor which runs a given function `f` in the `:after`
-  position, presumably for side effects.
-
-  `f` is called with two arguments: the `:effects` value for `:db`
-  (or the `coeffect` value of db if no db effect is returned) and the event.
-  Its return value is ignored, so `f` can only side-effect.
-
-  Examples use can be seen in the /examples/todomvc:
-     - `f` runs schema validation (reporting any errors found).
-     - `f` writes to localstorage."
   [f]
   (->interceptor
     :id :after
@@ -315,28 +202,7 @@
                (f db event) ;; call f for side effects
                context)))) ;; context is unchanged
 
-
 (defn  on-changes
-  "Interceptor factory which acts a bit like `reaction`  (but it flows into
-  `db`, rather than out). It observes N paths within `db` and if any of them
-  test not identical? to their previous value  (as a result of a event handler
-  being run) then it runs `f` to compute a new value, which is then assoc-ed
-  into the given `out-path` within `db`.
-
-  Usage:
-
-      (defn my-f
-        [a-val b-val]
-        ... some computation on a and b in here)
-
-      (on-changes my-f [:c]  [:a] [:b])
-
-  Put this Interceptor on the right handlers (ones which might change :a or :b).
-  It will:
-     - call `f` each time the value at path [:a] or [:b] changes
-     - call `f` with the values extracted from [:a] [:b]
-     - assoc the return value from `f` into the path  [:c]
-  "
   [f out-path & in-paths]
   (->interceptor
     :id    :on-changes

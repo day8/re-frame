@@ -14,11 +14,14 @@
                  [org.clojure/tools.logging "0.4.1"]]
 
   :plugins      [[day8/lein-git-inject "0.0.11"]
-                 [lein-shadow          "0.1.7"]]
+                 [lein-shadow          "0.1.7"]
+                 [lein-codox           "0.10.7"]]
 
   :middleware   [leiningen.git-inject/middleware]
 
   :git-inject {:version-pattern #"v(\d+\.\d+\.\d+.*)"}
+
+  :codox {:namespaces [re-frame.core]}
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[binaryage/devtools "1.0.0"]]

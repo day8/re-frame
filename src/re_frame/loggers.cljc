@@ -41,8 +41,6 @@
 
 
 (defn set-loggers!
-  "Change the set (or a subset) of logging functions used by re-frame.
-  `new-loggers` should be a map with the same keys as `loggers` (above)"
   [new-loggers]
   (assert  (empty? (difference (set (keys new-loggers)) (-> @loggers keys set))) "Unknown keys in new-loggers")
   (swap! loggers merge new-loggers))
