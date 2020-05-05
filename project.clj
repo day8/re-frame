@@ -21,7 +21,7 @@
   :git-inject {:version-pattern #"v(\d+\.\d+\.\d+.*)"}
 
   :profiles {:debug {:debug true}
-             :dev   {:dependencies [[binaryage/devtools "0.9.11"]]
+             :dev   {:dependencies [[binaryage/devtools "1.0.0"]]
                      :plugins      [[lein-ancient       "0.6.15"]
                                     [lein-shell         "0.5.0"]]}}
 
