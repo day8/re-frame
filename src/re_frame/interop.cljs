@@ -1,7 +1,12 @@
 (ns re-frame.interop
   (:require [goog.async.nextTick]
+            [goog.events :as events]
             [reagent.core]
             [reagent.ratom]))
+
+(defn on-load
+      [listener]
+      (events/listen js/window "load" listener))
 
 (def next-tick goog.async.nextTick)
 

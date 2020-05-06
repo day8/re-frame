@@ -20,6 +20,8 @@
 ;; your side-effects are all managed by effect handlers, then hopefully this will
 ;; allow you to write some useful tests that can run on the JVM.
 
+(defn on-load
+  [listener]) ;; no-op
 
 (defonce ^:private executor (Executors/newSingleThreadExecutor))
 

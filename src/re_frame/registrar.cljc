@@ -3,7 +3,8 @@
   with a `handler` (function).  This namespace contains the
   central registry of such associations."
   (:require  [re-frame.interop :refer [debug-enabled?]]
-             [re-frame.loggers :refer [console]]))
+             [re-frame.loggers :refer [console]]
+             [re-frame.settings :as settings]))
 
 
 ;; kinds of handlers
@@ -34,11 +35,12 @@
 
 (defn register-handler
   [kind id handler-fn]
-  (when debug-enabled?                                       ;; This is in a separate when so Closure DCE can run
-    (when (get-handler kind id false)
-      (console :warn "re-frame: overwriting" (str kind) "handler for:" id)))   ;; allow it, but warn. Happens on figwheel reloads.
-  (swap! kind->id->handler assoc-in [kind id] handler-fn)
-  handler-fn)    ;; note: returns the just registered handler
+  (let [{:keys [loaded?]} @settings/state]
+    (when (and debug-enabled? (not loaded?))                                       ;; This is in a separate when so Closure DCE can run
+      (when (get-handler kind id false)
+        (console :warn "re-frame: overwriting" (str kind) "handler for:" id)))   ;; allow it, but warn. Happens on figwheel reloads.
+    (swap! kind->id->handler assoc-in [kind id] handler-fn)
+    handler-fn))    ;; note: returns the just registered handler
 
 
 (defn clear-handlers
