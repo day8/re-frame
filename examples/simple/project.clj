@@ -8,7 +8,7 @@
                  [thheller/shadow-cljs      "2.8.110"]
                  [re-frame                  "RELEASE"]]
 
-  :plugins      [[day8/lein-git-inject "0.0.11"]
+  :plugins      [[day8/lein-git-inject "0.0.14"]
                  [lein-shadow          "0.1.7"]]
 
   :middleware   [leiningen.git-inject/middleware]

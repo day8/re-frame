@@ -11,7 +11,7 @@
                  [clj-commons/secretary      "1.2.4"]
                  [day8.re-frame/tracing      "0.5.5"]]
 
-  :plugins      [[day8/lein-git-inject "0.0.11"]
+  :plugins      [[day8/lein-git-inject "0.0.14"]
                  [lein-shadow          "0.1.7"]]
 
   :middleware   [leiningen.git-inject/middleware]
