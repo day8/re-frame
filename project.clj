@@ -72,24 +72,4 @@
                            ["clean"]
                            ["shadow" "compile" "karma-test"]
                            ["shell" "karma" "start" "--single-run" "--reporters" "junit,dots"]]
-            "karma-auto"  ["do" "clean," "shadow" "watch" "karma-test,"]
-            ;; NOTE: In order to compile docs you would need to install
-            ;; gitbook-cli(2.3.2) utility globaly using npm or yarn
-            "docs-serve" ^{:doc "Runs the development server of docs with live reloading"} ["shell" "gitbook" "serve" "./" "./build/re-frame/"]
-            "docs-build" ^{:doc "Builds the HTML version of docs"} ["shell" "gitbook" "build" "./" "./build/re-frame/"]
-            ;; NOTE: Calibre and svgexport(0.3.2) are needed to build below
-            ;; formats of docs. Install svgexpor3t using npm or yarn.
-            "docs-pdf"  ^{:doc "Builds the PDF version of docs"}
-            ["do"
-             ["shell" "mkdir" "-p" "./build/"]
-             ["shell" "gitbook" "pdf" "./" "./build/re-frame.pdf"]]
-
-            "docs-mobi" ^{:doc "Builds the MOBI version of docs"}
-            ["do"
-             ["shell" "mkdir" "-p" "./build/"]
-             ["shell" "gitbook" "mobi" "./" "./build/re-frame.mobi"]]
-
-            "docs-epub" ^{:doc "Builds the EPUB version of docs"}
-            ["do"
-             ["shell" "mkdir" "-p" "./build/"]
-             ["shell" "gitbook" "epub" "./" "./build/re-frame.epub"]]})
+            "karma-auto"  ["do" "clean," "shadow" "watch" "karma-test,"]})
