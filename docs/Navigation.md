@@ -1,12 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [What About Navigation?](#what-about-navigation)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-
 ## What About Navigation?
 
 How do I switch between different panels of a larger app?

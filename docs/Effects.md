@@ -6,25 +6,6 @@ This tutorial explains how side effects are actioned,
 how you can create your own side effects, and how you can
 make side effects a noop in event replays.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- ## Table Of Contents -->
-
-<!-- - [Where Effects Come From](#where-effects-come-from) -->
-<!-- - [The Effects Map](#the-effects-map) -->
-<!-- - [Infinite Effects](#infinite-effects) -->
-<!-- - [Extensible Side Effects](#extensible-side-effects) -->
-<!-- - [Writing An Effect Handler](#writing-an-effect-handler) -->
-<!-- - [:db Not Always Needed](#db-not-always-needed) -->
-<!-- - [What Makes This Work?](#what-makes-this-work) -->
-<!-- - [Order Of Effects?](#order-of-effects) -->
-<!-- - [Effects With No Data](#effects-with-no-data) -->
-<!-- - [Testing And Noops](#testing-and-noops) -->
-<!-- - [Summary](#summary) -->
-<!-- - [External Effects](#external-effects) -->
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ### Where Effects Come From
 
 When an event handler is registered via `reg-event-fx`, it must return effects.

@@ -159,10 +159,3 @@ Especially if the data getting traced is big - for example,
 tracing all of `app-db` in the console can take a while and force 
 Chrome devtools to take masses of RAM.  So you may want to selectively 
 add tracing when poking about. 
-
-
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-

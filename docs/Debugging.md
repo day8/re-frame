@@ -404,8 +404,3 @@ From @mccraigmccraig we get the following (untested by me, but they look great):
    (code-push/sync)
    db)
 ```
-
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->

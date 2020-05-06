@@ -1,11 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table Of Contents
-
-- [Namespaced Ids](#namespaced-ids)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Namespaced Ids
 
 As an app gets bigger, you'll tend to get clashes on ids - event-ids, or query-ids (subscriptions), etc. 

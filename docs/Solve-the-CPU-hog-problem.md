@@ -221,9 +221,3 @@ You only need this technique when you:
 If you handle via multiple chunks you don't have to do this, because 
 you are repeatedly handing back control to the browser/UI.  Its just 
 when you are going to tie up the CPU for a one, longish chunk. 
-
-
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->

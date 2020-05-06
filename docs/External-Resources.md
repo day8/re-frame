@@ -119,8 +119,3 @@ Please add to this list by submitting a pull request.
 * [Rendering Reagent on the Server Using Hiccup](http://yogthos.net/posts/2015-11-24-Serverside-Reagent.html)- Blog post on rendering Reagent with Clojure.
 
 * [Prerendering a re-frame app with Chrome Headless](https://medium.com/@joelsanchezclj/prerendering-a-re-frame-app-with-chrome-headless-bb875de31fd0) - Blog post on prerendering a re-frame app using [etaoin](https://github.com/igrishaev/etaoin) and Chrome Headless.
-
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->

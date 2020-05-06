@@ -20,7 +20,3 @@
 ## Want To Add An FAQ?  
 
 We'd like that.  Please supply a PR.  Or just open an issue. Many Thanks!!
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->

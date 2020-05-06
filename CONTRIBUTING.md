@@ -64,5 +64,3 @@ If possible provide:
 ## Pull requests for docs
 
 * Make your documentation changes
-* (Optional) Install doctoc with `npm install -g doctoc`
-* (Optional) Regenerate the docs TOC with `bin/doctoc.sh` or `bin/doctoc.bat` depending on your OS

@@ -104,9 +104,3 @@ https://github.com/binaryage/cljs-oops
 
 If you mess around with lifecycle methods, you'll probably want to read Martin's explanations:
 https://www.martinklepsch.org/posts/props-children-and-component-lifecycle-in-reagent.html
-
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
