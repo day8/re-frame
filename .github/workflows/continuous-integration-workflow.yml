@@ -64,6 +64,8 @@ jobs:
         name: Run cd examples/todomvc && lein -o shadow compile client
         working-directory: examples/todomvc
         run: lein -o shadow compile client
+      - name: Verify cljdoc Configuration
+        run: curl -fsSL https://raw.githubusercontent.com/cljdoc/cljdoc/master/script/verify-cljdoc-edn | bash -s doc/cljdoc.edn
       - name: Slack notification
         uses: homoluctus/slatify@v2.0.1
         if: failure() || cancelled()

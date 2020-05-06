@@ -1,0 +1,35 @@
+{:cljdoc.api/namespaces [re-frame.core]
+ :cljdoc.doc/tree       [["Introduction" {:file "README.md"}
+                          ["Application State" {:file "docs/ApplicationState.md"}]
+                          ["First Code Walk-through" {:file "docs/CodeWalkthrough.md"}]
+                          ["An Epoch " {:file "docs/AnEpoch.md"}]
+                          ["The API" {:file "docs/API.md"}]]
+                         ["Events, Effects & Coeffects" {}
+                          ["Infographics" {:file "docs/EventHandlingInfographic.md"}]
+                          ["Effectful Handlers" {:file "docs/EffectfulHandlers.md"}]
+                          ["Interceptors" {:file "docs/Interceptors.md"}]
+                          ["Effects" {:file "docs/Effects.md"}]
+                          ["Coeffects" {:file "docs/Coeffects.md"}]]
+                         ["Subscriptions" {}
+                          ["Infographic" {:file "docs/SubscriptionInfographic.md"}]
+                          ["Cleanup" {:file "docs/SubscriptionsCleanup.md"}]
+                          ["Flow Mechanics" {:file "docs/SubscriptionFlow.md"}]]
+                         ["App Structure" {}
+                          ["Simpler Apps" {:file "docs/App-Structure.md"}]
+                          ["Navigation" {:file "docs/Navigation.md"}]
+                          ["Namespaced Keywords" {:file "docs/Namespaced-Keywords.md"}]]
+                         ["App Data" {}
+                          ["Loading Initial Data" {:file "docs/Loading-Initial-Data.md"}]
+                          ["Talking To Servers " {:file "docs/Talking-To-Servers.md"}]
+                          ["Subscribing to External Data" {:file "docs/Subscribing-To-External-Data.md"}]]
+                         ["Debugging & Testing" {}
+                          ["Debugging Event Handlers" {:file "docs/Debugging-Event-Handlers.md"}]
+                          ["Debugging" {:file "docs/Debugging.md"}]
+                          ["Testing" {:file "docs/Testing.md"}]]
+                         ["Miscellaneous" {}
+                          ["Eek! Performance Problems" {:file "docs/Performance-Problems.md"}]
+                          ["Solving The CPU Hog Problem" {:file "docs/Solve-the-CPU-hog-problem.md"}]
+                          ["Using Stateful JS Components " {:file "docs/Using-Stateful-JS-Components.md"}]]
+                         ["Mental Model Omnibus" {:file "docs/MentalModelOmnibus.md"}]
+                         ["Frequently Asked Questions" {:file "docs/FAQs/README.md"}]
+                         ["External Resources" {:file "docs/External-Resources.md"}]]}
