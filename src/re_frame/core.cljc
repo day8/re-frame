@@ -7,6 +7,7 @@
     [re-frame.fx               :as fx]
     [re-frame.cofx             :as cofx]
     [re-frame.router           :as router]
+    [re-frame.settings         :as settings]
     [re-frame.loggers          :as loggers]
     [re-frame.registrar        :as registrar]
     [re-frame.interceptor      :as interceptor]
@@ -399,7 +400,7 @@
   ([id handler]
    (reg-event-db id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (db-handler->interceptor handler)])))
+   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (db-handler->interceptor handler)])))
 
 
 (defn reg-event-fx
@@ -416,7 +417,7 @@
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (fx-handler->interceptor handler)])))
+   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (fx-handler->interceptor handler)])))
 
 
 (defn reg-event-ctx
@@ -429,7 +430,7 @@
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx interceptors (ctx-handler->interceptor handler)])))
+   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (ctx-handler->interceptor handler)])))
 
 (defn clear-event ;; think unreg-event-*
   "When called with no args, unregisters all event handlers. When given one arg,
@@ -595,6 +596,25 @@
   "
   std-interceptors/on-changes)
 
+
+(defn reg-global-interceptor
+  "Registers `interceptor` as a global interceptor. Global interceptors are
+   included in the processing of every event.
+
+   When you register an event handler you have the option of supplying an
+   interceptor chain. Any global interceptors you register are effectively
+   prepending to this chain in the order that they are registered."
+  [interceptor]
+  (settings/reg-global-interceptor interceptor))
+
+(defn clear-global-interceptor ;; think unreg-global-interceptor
+  "When called with no args, unregisters all global interceptors. When given
+   one arg, assumed to be the `id` of a currently registered global
+   interceptor, it unregisters the associated interceptor."
+  ([]
+   (settings/clear-global-interceptors))
+  ([id]
+   (settings/clear-global-interceptors id)))
 
 ;; Utility functions for creating your own interceptors
 ;;
