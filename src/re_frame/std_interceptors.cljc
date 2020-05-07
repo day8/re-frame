@@ -3,12 +3,13 @@
   (:require
     [re-frame.interceptor :refer [->interceptor get-effect get-coeffect assoc-coeffect assoc-effect update-coeffect]]
     [re-frame.loggers :refer [console]]
-    [re-frame.registrar :as registrar]
+    [re-frame.settings :as settings]
     [re-frame.db :refer [app-db]]
     [clojure.data :as data]
     [re-frame.cofx :as cofx]
     [re-frame.utils :as utils]
-    [re-frame.trace :as trace :include-macros true]))
+    [re-frame.trace :as trace :include-macros true]
+    [re-frame.interceptor :as interceptor]))
 
 
 (def debug
@@ -224,3 +225,14 @@
                       (assoc-in new-db out-path)
                       (assoc-effect context :db))
                  context)))))
+
+
+(def inject-global-interceptors
+  "An interceptor which adds registered global interceptors to the context's queue.
+
+   NOTE: :queue is a Clojure.lang.PersistentQueue and not a vector."
+  (->interceptor
+    :id     :inject-global-interceptors
+    :before (fn inject-global-interceptors-before
+              [context]
+              (update context :queue #(into (settings/get-global-interceptors) %)))))
