@@ -20,22 +20,6 @@
 ;; -- API ---------------------------------------------------------------------
 ;;
 ;; This namespace represents the re-frame API
-;;
-;; Below, you'll see we've used this technique:
-;;   (def  api-name-for-fn    deeper.namespace/where-the-defn-is)
-;;
-;; So, we promote a `defn` in a deeper namespace "up" to the API
-;; via a `def` in this namespace.
-;;
-;; Turns out, this approach makes it hard:
-;;   - to auto-generate API docs
-;;   - for IDEs to provide code completion on functions in the API
-;;
-;; Which is annoying. But there are pros and cons and we haven't
-;; yet revisited the decision.  To compensate, we've added more nudity
-;; to the docs.
-;;
-
 
 ;; -- dispatch ----------------------------------------------------------------
 (defn dispatch
@@ -243,7 +227,8 @@
   De-duplication
   --------------
 
-  XXX
+  Two, or more, concurrent subscriptions for the same query will source reactive
+  updates from the one executing handler.
   "
   ([query]
    (subs/subscribe query))
@@ -251,10 +236,16 @@
    (subs/subscribe query dynv)))
 
 (defn clear-sub ;; think unreg-sub
+  "When called with no args, unregisters all subscription handlers. When given
+   one arg, assumed to be a `query-id` of a registered subscription handler,
+   unregisters the associated handler.
+
+   NOTE: Depending on the usecase it may also be necessary to call 
+         `clear-subscription-cache!`."
   ([]
    (registrar/clear-handlers subs/kind))
-  ([id]
-   (registrar/clear-handlers subs/kind id)))
+  ([query-id]
+   (registrar/clear-handlers subs/kind query-id)))
 
 (defn clear-subscription-cache!
   "Causes all subscriptions to be removed from the cache.
@@ -305,7 +296,14 @@
   [id handler]
   (fx/reg-fx id handler))
 
-(def clear-fx    (partial registrar/clear-handlers fx/kind))  ;; think unreg-fx
+(defn clear-fx ;; think unreg-fx
+  "When called with no args, unregisters all effect handlers. When given one arg,
+   assumed to be the `id` of a registered effect handler, unregisters the 
+   associated handler."
+  ([]
+   (registrar/clear-handlers fx/kind))
+  ([id]
+   (registrar/clear-handlers fx/kind id)))
 
 ;; -- coeffects ---------------------------------------------------------------
 (defn reg-cofx
@@ -377,8 +375,14 @@
   ([id value]
    (cofx/inject-cofx id value)))
 
-(def clear-cofx (partial registrar/clear-handlers cofx/kind)) ;; think unreg-cofx
-
+(defn clear-cofx ;; think unreg-cofx
+  "When called with no args, unregisters all coeffect handlers. When given one arg,
+   assumed to be the `id` of a registered coeffect handler, unregisters the 
+   associated handler." 
+  ([]
+   (registrar/clear-handlers cofx/kind))
+  ([id]
+   (registrar/clear-handlers cofx/kind id)))
 
 ;; -- Events ------------------------------------------------------------------
 
@@ -428,6 +432,9 @@
    (events/register id [cofx/inject-db fx/do-fx interceptors (ctx-handler->interceptor handler)])))
 
 (defn clear-event ;; think unreg-event-*
+  "When called with no args, unregisters all event handlers. When given one arg,
+   assumed to be the `id` of a registered event handler, unregisters the 
+   associated handler."  
   ([]
    (registrar/clear-handlers events/kind))
   ([id]
@@ -607,6 +614,10 @@
   (utils/apply-kw interceptor/->interceptor m))
 
 (defn get-coeffect
+  "When called with one arg, returns the coeffects map from the `context`.
+   When called with two or three args, behaves like `clojure.core/get`, 
+   returns the value mapped to `key` in the coeffects map, `not-found` or
+   `nil` if `key` is not present."
   ([context]
    (interceptor/get-coeffect context))
   ([context key]
@@ -615,10 +626,16 @@
    (interceptor/get-coeffect context key not-found)))
 
 (defn assoc-coeffect
-  [context key f & args]
-  (apply interceptor/assoc-coeffect (into [context key f] args)))
+  "Returns a new `context` with a new coeffects map that contains `key`
+   mapped to the `value`."
+  [context key value]
+  (interceptor/assoc-coeffect context key value))
 
 (defn get-effect
+  "When called with one arg, returns the effects map from the `context`.
+   When called with two or three args, behaves like `clojure.core/get`, 
+   returns the value mapped to `key` in the effects map, `not-found` or
+   `nil` if `key` is not present."
   ([context]
    (interceptor/get-effect context))
   ([context key]
@@ -627,6 +644,8 @@
    (interceptor/get-effect context key not-found)))
 
 (defn assoc-effect
+  "Returns a new `context` with a new effects map that contains `key`
+   mapped to the `value`."
   [context key value]
   (interceptor/assoc-effect context key value))
 
@@ -653,13 +672,15 @@
   [new-loggers]
   (loggers/set-loggers! new-loggers))
 
-;; If you are writing an extension to re-frame, like perhaps
-;; an effects handler, you may want to use re-frame logging.
-;;
-;; usage: (console :error "Oh, dear God, it happened: " a-var " and " another)
-;;        (console :warn "Possible breach of containment wall at: " dt)
-
 (defn console
+  "Logs `args` to the console at `level`. 
+   Level can be one of `:log` `:error` `:warn` `:debug` `:group` `:groupEnd`.
+   If you are writing an extension to re-frame, like prehaps an effect handler,
+   you may want to use re-frame logging so that users can configure logging 
+   from a central location.
+
+   usage: (console :error \"Oh, dear God, it happened:\" a-var \"and\" another)
+          (console :warn \"Possible breach of containment wall at:\" dt)"
   [level & args]
   (apply loggers/console (into [level] args)))
 
@@ -719,6 +740,8 @@
 
 
 (defn remove-post-event-callback
+  "Unregisters the function identified by `id` to be called after each event is
+   processed."
   [id]
   (router/remove-post-event-callback re-frame.router/event-queue id))
 
@@ -726,12 +749,14 @@
 ;; --  Deprecation ------------------------------------------------------------
 ;; Assisting the v0.7.x ->  v0.8.x transition.
 (defn register-handler
+  "Deprecated. Use `reg-event-db` instead."
   {:deprecated "0.8.0"}
   [& args]
   (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\" (look for registration of" (str (first args)) ")")
   (apply reg-event-db args))
 
 (defn register-sub
+  "Deprecated. Use `reg-sub-raw` instead."
   {:deprecated "0.8.0"}
   [& args]
   (console :warn  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\" (look for registration of" (str (first args)) ")")
