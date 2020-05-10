@@ -24,7 +24,11 @@
   (reagent.core/atom x))
 
 (defn ratom? [x]
-  (satisfies? reagent.ratom/IReactiveAtom x))
+  ;; ^:js suppresses externs inference warnings by forcing the compiler to
+  ;; generate proper externs. Although not strictly required as
+  ;; reagent.ratom/IReactiveAtom is not JS interop it appears to be harmless.
+  ;; See https://shadow-cljs.github.io/docs/UsersGuide.html#infer-externs
+  (satisfies? reagent.ratom/IReactiveAtom ^js x))
 
 (defn deref? [x]
   (satisfies? IDeref x))
@@ -53,7 +57,11 @@
   "Produces an id for reactive Reagent values
   e.g. reactions, ratoms, cursors."
   [reactive-val]
-  (when (implements? reagent.ratom/IReactiveAtom reactive-val)
+  ;; ^:js suppresses externs inference warnings by forcing the compiler to
+  ;; generate proper externs. Although not strictly required as
+  ;; reagent.ratom/IReactiveAtom is not JS interop it appears to be harmless.
+  ;; See https://shadow-cljs.github.io/docs/UsersGuide.html#infer-externs
+  (when (implements? reagent.ratom/IReactiveAtom ^js reactive-val)
     (str (condp instance? reactive-val
            reagent.ratom/RAtom "ra"
            reagent.ratom/RCursor "rc"
