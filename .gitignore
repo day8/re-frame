@@ -28,7 +28,6 @@ docs/**/*.pdf
 docs/**/*.mobi
 build/
 *~
-/package.json
 /package-lock.json
 /shadow-cljs.edn
 /.shadow-cljs/

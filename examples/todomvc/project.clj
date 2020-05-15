@@ -17,7 +17,7 @@
                  [day8.re-frame/tracing      "0.5.5"]]
 
   :plugins      [[day8/lein-git-inject "0.0.14"]
-                 [lein-shadow          "0.1.7"]]
+                 [lein-shadow          "0.2.0"]]
 
   :middleware   [leiningen.git-inject/middleware]
 
@@ -26,8 +26,6 @@
 
   :clean-targets ^{:protect false} [:target-path
                                     "shadow-cljs.edn"
-                                    "package.json"
-                                    "package-lock.json"
                                     "resources/public/js"]
 
   :shadow-cljs {:nrepl {:port 8777}
