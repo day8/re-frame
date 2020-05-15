@@ -15,7 +15,7 @@
                  [org.clojure/tools.logging "0.4.1"]]
 
   :plugins      [[day8/lein-git-inject "0.0.14"]
-                 [lein-shadow          "0.1.7"]
+                 [lein-shadow          "0.2.0"]
                  [lein-codox           "0.10.7"]]
 
   :middleware   [leiningen.git-inject/middleware]
