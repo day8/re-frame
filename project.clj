@@ -22,7 +22,8 @@
 
   :git-inject {:version-pattern #"v(\d+\.\d+\.\d+.*)"}
 
-  :codox {:namespaces [re-frame.core]}
+  :codox {:namespaces [re-frame.core]
+          :output-path "target/codox"}
 
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[binaryage/devtools "1.0.0"]]

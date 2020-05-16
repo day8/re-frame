@@ -1,0 +1,119 @@
+site_name: "re-frame"
+site_description: Derived data, flowing
+site_author: Mike Thompson
+site_url: https://day8.github.io/re-frame/
+
+repo_name: day8/re-frame
+repo_url: https://github.com/day8/re-frame
+
+copyright: Copyright &copy; 2015-2020 Michael Thompson
+
+theme:
+  name: material
+  custom_dir: docs/theme
+  language: en
+  palette:
+    primary: light-blue
+    accent: blue
+  font:
+    # WARNING: 
+    # The next line is effectively an injection attack on the mkdocs template 
+    # Notice that the leading and trailing double quotes are omitted. 
+    # That allows me to trick mkdocs into accepting more than one font here.
+    text: Segoe UI", Lato, Roboto, "Fira Sans
+    code: Source Code Pro
+  features:
+    - tabs
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/day8
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/wazound
+
+nav:
+  - Home: index.md
+  - Docs:
+    - "re-frame": re-frame.md
+    - The Basics:
+      - Homoiconic: homoiconic.md
+      - It Is A Loop: it-is-a-loop.md
+      - Dominoes Intro: dominoes-60k.md
+      - App State: application-state.md
+      - Dominoes Code: dominoes-30k.md
+      - Browser Dynamics: browser-dynamics.md
+      - Dominoes Live: dominoes-live.md
+    - "Intermediate 2 & 3":
+      - Event Infographic: event-handling-infographic.md
+      - Effectful Handlers: EffectfulHandlers.md
+      - Interceptors.md
+      - Effects.md
+      - Coeffects.md
+    - "Intermediate 4,5 & 6":
+      - Subscriptions: subscriptions.md
+      - Correcting a wrong: correcting-a-wrong.md
+      - Flow Mechanics: flow-mechanics.md
+    - "Start Coding": start-coding.md
+    - "Mental Model Omnibus":
+      - "Other Models": all-models-are-wrong.md 
+      - "On Dynamics":  on-dynamics.md
+      - "Data Oriented Design": data-oriented-design.md
+      - "Interconnections": interconnections.md
+      - "Historical": historical.md
+    - More Advanced:
+      - Reusable Components: reusable-components.md
+      - App Structure: app-structure.md
+      - Loading Initial Data: Loading-Initial-Data.md
+      - Talking To Servers: Talking-To-Servers.md
+      - Subscribing to External Data: Subscribing-To-External-Data.md
+      - Debugging.md
+      - Testing.md
+      - Eek! Performance Problems: performance-problems.md
+      - Solve the CPU hog problem: Solve-the-CPU-hog-problem.md
+      - Using Stateful JS Components: Using-Stateful-JS-Components.md
+      - The Logo Backstory: The-re-frame-logo.md
+  - FAQs:
+    - "How can I Inspect app-db?": FAQs/Inspecting-app-db.md
+    - "How Do I Load On Mount?": FAQs/LoadOnMount.md
+    - "Reagent looks terrific. Why do I need re-frame?": FAQs/DoINeedReFrame.md
+    - "How do I do full-stack re-frame?": FAQs/FullStackReframe.md
+    - "How long after I do a dispatch does the event get handled?": FAQs/When-Does-Dispatch-Happen.md
+    - "How can I use a subscription in an Event Handler": FAQs/UseASubscriptionInAnEventHandler.md
+    - "How do I use logging method X": FAQs/Logging.md
+    - "Dispatched Events Are Null": FAQs/Null-Dispatched-Events.md
+    - "Why is re-frame implemented in `.cljc` files": FAQs/Why-CLJC.md
+    - "Why do we need to clear the subscription cache when reloading with Figwheel?": FAQs/Why-Clear-Sub-Cache.md
+    - "How can I detect exceptions in Event Handlers?": FAQs/CatchingEventExceptions.md
+    - "How do I store normalised data in app-db?": FAQs/DB_Normalisation.md
+    - "How do I register a global interceptor": FAQs/GlobalInterceptors.md
+    - "How do I turn on/off polling a database every 60 secs": FAQs/PollADatabaseEvery60.md
+    - "re-frame's uses side-effecting registrations. Should I feel dirty?": FAQs/ViewsOnGlobalRegistration.md
+  - API:
+    - API: codox/index.html
+  - Releases:
+    - 2020: releases/2020.md
+    - 2019: releases/2019.md
+    - 2018: releases/2018.md
+    - 2017: releases/2017.md
+    - 2016: releases/2016.md
+    - 2015: releases/2015.md
+  - Resources:
+    - Resources: external-resources.md
+
+markdown_extensions:
+  - meta
+  - admonition
+  - footnotes
+  - toc:
+      permalink: true
+      toc_depth: 2
+  - codehilite:
+      guess_lang: false
+
+extra_css:
+  - "https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&display=swap"
+  - "https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap"
+  - "stylesheets/dominoes-live.css"
+  - "stylesheets/codehilite-monokai.css"
+  - "stylesheets/mkdocs.css"

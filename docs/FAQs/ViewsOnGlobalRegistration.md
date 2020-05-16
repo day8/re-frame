@@ -1,9 +1,14 @@
 
-### Question
+<!-- leave this H1 here. It stops mkdocs putting in a Title at the top.
+     It needs to be at the top of the file otherwise it breaks the 
+     table of contents on the right hand side. -->
+#
+
+## Question
 
 I feel offended by re-frame's `reg-*` API.  How is it functional to side effect globally? 
 
-### Background
+## Background
 
 A re-frame app is defined collectively by its handlers. As an app boots, calls to registration 
 functions like `reg-event-db` and `reg-sub`
@@ -15,7 +20,7 @@ Each registration adds a new entry to this `registrar`.
 
 How should we analyse this from a functional point of view?
 
-### Answer 
+## Answer 
 
 There are three ways to view this:
 
@@ -45,9 +50,3 @@ properly until you have used it and experienced the simplicity, and/or found pai
 Many people experience few problems and live happily ever after. For others, the conceptual
 distaste is insurmountable and nagging. Like it or hate it, please realise it was a deliberate 
 and conscious design decision, not some oversight.
-
--------- 
-
-Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
--- 

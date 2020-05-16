@@ -32,3 +32,4 @@ build/
 /package-lock.json
 /shadow-cljs.edn
 /.shadow-cljs/
+/site/

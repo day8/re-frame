@@ -1,8 +1,14 @@
-### Question
+
+<!-- leave this H1 here. It stops mkdocs putting in a Title at the top.
+     It needs to be at the top of the file otherwise it breaks the 
+     table of contents on the right hand side. -->
+#
+
+## Question
 
 Why do we call `clear-subscription-cache!` when reloading code with Figwheel?
 
-### Answer 
+## Answer 
 
 Pour yourself a drink, as this is a circuitous tale involving one of the hardest
 problems in Computer Science.
@@ -61,7 +67,3 @@ this (once you realise what is going on) is to reload the page.
 re-frame 0.9.0 provides a new function: `re-frame.core/clear-subscription-cache!` which will run the
 on-dispose function for every subscription in the cache, emptying the cache, and causing new subscriptions
 to be created after reloading.
-
-***
-
-Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -1,16 +1,12 @@
-## Effects
-
-About 10% of the time, event handlers need to cause side effects.
+Maybe 20% of the time, event handlers need to cause side effects.
 
 This tutorial explains how side effects are actioned,
 how you can create your own side effects, and how you can
-make side effects a noop in event replays.
+make side effects a noop in testing and event replays.
 
-### Where Effects Come From
+## Where Effects Come From
 
-When an event handler is registered via `reg-event-fx`, it must return effects.
-
-Like this:
+When an event handler is registered via `reg-event-fx`, it must return effects. Like this:
 ```clj
 (reg-event-fx              ;; -fx registration, not -db registration
   :my-event
@@ -21,7 +17,7 @@ Like this:
 
 `-fx` handlers return a description of the side-effects required, and that description is a map.
 
-### The Effects Map
+## The Effects Map
 
 An effects map contains instructions.
 
@@ -46,15 +42,14 @@ effects, like for example `:dispatch-later`, `dispatch-n`, `:set-local-store`, e
 
 And so on. And so on. Which brings us to a problem.
 
-### Infinite Effects
+## Infinite Effects
 
-While re-frame supplies a number of built-in effect handlers, the set of
+Although re-frame supplies a number of built-in effect handlers, the set of
 possible effects is open ended.
 
 What if you use PostgreSQL and want an effect which issues mutating
 queries?  Or what if you want to send logs to Logentries or metrics to DataDog.
-Or write values to windows.location. And what happens if your database is
-X, Y or Z?
+Or write values to `windows.location`. Or save cookies.
 
 The list of effects is long and varied, with everyone needing to use a
 different combination.
@@ -62,12 +57,10 @@ different combination.
 So effect handling has to be extensible. You need a way to define
 your own side effects.
 
-### Extensible Side Effects
+## Extensible Side Effects
 
 re-frame provides a function `reg-fx` through which you can register
-your own `Effect Handlers`.
-
-Use it like this:
+your own `Effect Handlers`. Use it like this:
 ```clj
 (reg-fx         ;; <-- registration function
    :butterfly   ;;  <1>
@@ -77,7 +70,7 @@ Use it like this:
 ```
 
 __<1>__  the key for the effect.  When later an effects map contains
-the key `:butterfly`, the function we are registering will be used to action it. <br>
+the key `:butterfly`, the function we are registering will be used to action it.
 
 __<2>__  the function which actions the side effect. Later, it will be called
 with one argument - the value in the effects map, for this key.
@@ -92,13 +85,14 @@ Then the function we registered for `:butterfly` would be called to handle
 that effect. And it would be called with the parameter "Flapping".
 
 So, terminology:
+
 - `:butterfly` is an "effect key"
 - and the function registered is an "effect handler".
 
 So re-frame has both `event` handlers and `effect` handlers and they are
 different, despite them both starting with `e` and ending in `t`!!
 
-### Writing An Effect Handler
+## Writing An Effect Handler
 
 A word of advice - make them as simple as possible, and then
 simplify them further.  You don't want them containing any fancy logic.
@@ -116,7 +110,7 @@ make that design simple too. If you resist being terse and smart, and instead, f
 verbose and obvious, your future self will thank you. Create as little
 cognitive overhead as possible for the eventual readers of your effectful code.
 
-This advice coming from the guy who named effects `fx` ... Oh, the hypocrisy.
+Right. So, this advice coming from the guy who named effects `fx` ... Oh, the hypocrisy.
 
 In my defence, here's the built-in effect handler for `:db`:
 ```clj
@@ -128,9 +122,10 @@ In my defence, here's the built-in effect handler for `:db`:
 
 So, yeah, simple ... and, because of it, I can almost guarantee there's no bug in ... bang, crash, smoke, flames.
 
-> Note: the return value of an effect handler is ignored.
+!!! note
+    The return value of an effect handler is ignored.
 
-### :db Not Always Needed
+## :db Not Always Needed
 
 An effects map does not need to include the `effect key` `:db`.
 
@@ -140,7 +135,7 @@ to not change `app-db`.
 In fact, it is perfectly valid for an event handler to return
 an effects map of `{}`.  Slightly puzzling, but not a problem.
 
-### What Makes This Work?
+## What Makes This Work?
 
 A silently inserted interceptor.
 
@@ -173,10 +168,11 @@ In this final act, the `:after` function extracts `:effects` from `context`
 and simply iterates across the key/value pairs it contains, calling the
 registered "effect handlers" for each.
 
-> For the record, the FISA Court requires that we deny all claims
-> that `do-fx` is secretly injected NSA surveillance-ware. <br>
-> We also note that you've been particularly sloppy with your personal
-> grooming today, including that you forgot to clean your teeth. Again.
+!!! Note "For the record"
+    The FISA Court requires that we deny all claims
+    that `do-fx` is secretly injected NSA surveillance-ware. <br>
+    We also note that you've been sloppy with your personal
+    grooming again, including, but not limited to, forgetting to clean your teeth on one occassion last week.
 
 If ever you want to take control of the way effect handling is done,
 create your own alternative to `reg-event-fx` and, in it, inject
@@ -184,7 +180,7 @@ your own version of the `do-fx` interceptor at the front
 of the interceptor chain.  It is only a few lines of code.
 
 
-### Order Of Effects?
+## Order Of Effects?
 
 There isn't one.
 
@@ -192,21 +188,25 @@ There isn't one.
 which side effects occur. The `:db` side effect
 might happen before `:dispatch`, or not. You can't rely on it.
 
-*Note:* if you feel you need ordering, then please
-open an issue and explain the usecase. The current absence of
-good usecases is the reason ordering isn't implemented. So give
-us a usercase and we'll revisit, maybe.
-
-*Further Note:* if later ordering was needed, it might be handled via
-metadata on `:effects`. Also, perhaps by allowing `reg-fx` to optionally
-take two functions:
-- an effects pre-process fn  <-- new. Takes `:effects` returns `:effects`
-- the effects handler (as already described above).
-
-Anyway, these are all just possibilities. But not needed or implemented yet.
+!!! Note "Is That A Problem?"
+    If you feel you need ordering, then please
+    open an issue and explain the usecase. The current absence of
+    good usecases is the reason ordering isn't implemented. So give
+    us a usercase and we'll revisit, maybe.
 
 
-### Effects With No Data
+!!! Note "For The Record"
+    If, later, ordering was needed, it might be handled via
+    metadata on `:effects`. Also, perhaps by allowing `reg-fx` to optionally
+    take two functions:
+
+    - an effects pre-process fn  <-- new. Takes `:effects` returns `:effects`
+    - the effects handler (as already described above).
+
+    Anyway, these are all just possibilities. But not needed or implemented yet.
+
+
+## Effects With No Data
 
 Some effects have no associated data:
 ```clj
@@ -226,7 +226,7 @@ The associated effect handler would look like:
      (.exitFullscreen js/document)))
 ```
 
-### Testing And Noops
+## Testing And Noops
 
 When you are running tests or replaying events, it is sometimes
 useful to stub out effects.
@@ -255,13 +255,13 @@ then you can use a `fixture` to restore all effect handlers at the end of your t
 `re-frame.core/make-restore-fn` creates a checkpoint for re-frame state (including
 registered handlers) to which you can return.
 
-### Existing Effect Handlers
+## Existing Effect Handlers
 
-`re-frame's` built-in effect handlers, like `dispatch-n` and `dispatch-later`, are detailed in [the API](/docs/API.md) document.
+`re-frame's` built-in effect handlers, like `dispatch-n` and `dispatch-later`, are detailed in [the API](https://day8.github.io/re-frame/codox/) document.
 
-And please review the [External-Resources document](External-Resources.md) for a list of 3rd party Effect Handlers.
+And please review the [External-Resources document](external-resources.md) for a list of 3rd party Effect Handlers.
 
-### Summary
+## Summary
 
 The 4 Point Summary in note form:
 
@@ -269,10 +269,3 @@ The 4 Point Summary in note form:
 2. They return a map like `{:effect1 value1 :effect2 value2}`
 3. Keys of this map can refer to builtin effect handlers (see below) or custom ones
 4. We use `reg-fx` to register our own effect handlers, built-in ones are already registered
-
-
-***
-
-Previous:  [Interceptors](Interceptors.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Coeffects](Coeffects.md)

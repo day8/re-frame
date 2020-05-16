@@ -1,8 +1,14 @@
-### Question
+
+<!-- leave this H1 here. It stops mkdocs putting in a Title at the top.
+     It needs to be at the top of the file otherwise it breaks the 
+     table of contents on the right hand side. -->
+#
+
+## Question
 
 How can I inspect the contents of `app-db`?  Perhaps from figwheel.
 
-### Short Answer
+## Short Answer
 
 If at a REPL, inspect:  `re-frame.db/app-db`.  
 
@@ -13,7 +19,7 @@ If you want a visual browser of app-db, along with inspecting subpaths of app-db
 You are [using cljs-devtools](https://github.com/binaryage/cljs-devtools), right? 
 If not, stop everything ([unless you are using re-natal](https://github.com/drapanjanas/re-natal/issues/137)) and immediately make that happen. 
 
-### Better Answer
+## Better Answer
 
 Are you sure you need to?
 
@@ -52,7 +58,7 @@ or
 
 You definitely have [clj-devtools](https://github.com/binaryage/cljs-devtools) installed now, right?
 
-### Other Inspection Tools
+## Other Inspection Tools
 
 Another very strong tool is [re-Frisk](https://github.com/flexsurfer/re-frisk) which 
 provides a nice solution for navigating and inspecting your re-frame data structures.
@@ -61,6 +67,5 @@ provides a nice solution for navigating and inspecting your re-frame data struct
 a slick presentation, at the expense of more screen real estate, and the 
 need to include specific CSS.
 
-***
 
-Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+

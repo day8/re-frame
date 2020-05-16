@@ -1,7 +1,4 @@
 
-
-## Solving The CPU Hog Problem
-
 Sometimes a handler has a lot of CPU intensive work to do, and 
 getting through it will take a while. 
 
@@ -132,7 +129,7 @@ hogging the CPU.
 Imagine you have a process which takes, say, 5 seconds, and chunking 
 is just too much effort.
 
-You lazily decide to leave the UI unresponsive for that short period.   
+You lazily decide to leave the UI unresponsive for that short period.
 Except, 
 you aren't totally lazy.  If there was a button which kicked off 
 this 5 second process, and the user clicks it, you’d like the UI to 
@@ -161,7 +158,7 @@ You might be tempted to do this:
 ```
 
 But that is just plain wrong. 
-That `assoc` into `db` is not returned (and it must be for a `-db` handler).  
+That `assoc` into `db` is not returned (and it must be for a `-db` handler).
 And, even if that did somehow work, 
 then you continue hogging the thread with `do-long-process-x`.  There's no 
 chance for any UI updates because the handler never gives up control. This 

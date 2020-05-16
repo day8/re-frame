@@ -141,10 +141,3 @@ Notes:
   1. Our event handler "describes" side effects, it does not "do" side effects
   2. The event handler we wrote for `:process-response` stays as it was
   
-  
-  
-***
-
-Previous:  [Loading Initial Data](Loading-Initial-Data.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Subscribing to External Data](Subscribing-To-External-Data.md)  

@@ -1,5 +1,3 @@
-## Using Stateful JS Components 
-
 You know what's good for you, and you know what's right.  But it
 doesn't matter - the wickedness of the temptation is too much. 
 
@@ -13,15 +11,16 @@ thrill of that forbidden fruit.
 
 I won't tell, if you don't.  But careful plans must be made  ... 
 
-### The overall plan 
+## The overall plan 
 
 To use a stateful js component, you'll need to write two Reagent components:
+
   - an **outer component** responsible for sourcing data via a subscription or r/atom or cursor, etc.  
   - an **inner component** responsible for wrapping and manipulating the stateful JS component via lifecycle functions.  
 
 The pattern involves the outer component, which sources data, supplying this data to the inner component **via props**. 
 
-### Example Using Google Maps
+## Example Using Google Maps
 
 ```clj
 (defn gmap-inner []
@@ -61,6 +60,7 @@ The pattern involves the outer component, which sources data, supplying this dat
 
 
 Notes:
+
   - `gmap-outer` obtains data via a subscription. It is quite simple - trivial almost.
   - it then passes this data __as a prop__  to `gmap-inner`.  This inner component has the job of wrapping/managing the stateful js component (Gmap in our case above)
   - when the data (delivered by the subscription) to the outer layer changes, the inner layer, `gmap-inner`, will be given a new prop - `@pos` in the case above.
@@ -70,7 +70,7 @@ Notes:
   - for example, after the renderer is called (which ignores its props), `component-did-update` will be called. In this function, we don't ignore the props, and we use them to update/mutate the stateful JS component.  
   - the props passed (in this case `@pos`) in must be a map, otherwise `(reagent/props comp)` will return nil.
 
-### Pattern Discovery 
+## Pattern Discovery 
 
 This pattern has been independently discovered by many. To my knowledge, 
 [this description of the Container/Component pattern](https://medium.com/@learnreact/container-components-c0e67432e005#.3ic1uipvu)
@@ -79,28 +79,29 @@ is the first time it was written up.
 ### Code Credit
 
 The example gmaps code above was developed by @jhchabran in this gist:
-https://gist.github.com/jhchabran/e09883c3bc1b703a224d#file-2_google_map-cljs
+<https://gist.github.com/jhchabran/e09883c3bc1b703a224d#file-2_google_map-cljs>
 
-### D3 Examples
+## D3 Examples
 
 D3 (from @zachcp): 
-  - Blog Post: http://zachcp.org/blog/2015/reagent-d3/
-  - Code: https://github.com/zachcp/simplecomponent
-  - Example: http://zachcp.github.io/simplecomponent/
 
-RID3, a reagent interface to D3
-  - Repo: https://github.com/gadfly361/rid3
-  - Demo: https://rawgit.com/gadfly361/rid3/master/dev-resources/public/examples.html
+  - Blog Post: <http://zachcp.org/blog/2015/reagent-d3/>
+  - Code: <https://github.com/zachcp/simplecomponent>
+  - Example: <http://zachcp.github.io/simplecomponent/>
 
-### JS Interop 
+RID3, a reagent interface to D3:
+
+  - Repo: <https://github.com/gadfly361/rid3>
+  - Demo: <https://rawgit.com/gadfly361/rid3/master/dev-resources/public/examples.html>
+
+## JS Interop 
 
 You'll probably need to know how to do interop with js: 
-http://www.spacjer.com/blog/2014/09/12/clojurescript-javascript-interop/
+<http://www.spacjer.com/blog/2014/09/12/clojurescript-javascript-interop/>
 
 Perhaps use this library to make it even easier:
-https://github.com/binaryage/cljs-oops
+<https://github.com/binaryage/cljs-oops>
 
-### Advanced Lifecycle Methods
+## Advanced Lifecycle Methods
 
-If you mess around with lifecycle methods, you'll probably want to read Martin's explanations:
-https://www.martinklepsch.org/posts/props-children-and-component-lifecycle-in-reagent.html
+If you mess around with lifecycle methods, you'll probably want to [read Martin's explanations](https://www.martinklepsch.org/posts/props-children-and-component-lifecycle-in-reagent.html)

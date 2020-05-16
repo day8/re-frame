@@ -1,4 +1,4 @@
-## Testing
+# Testing
 
 This is an introduction to testing re-frame apps. It
 walks you through some choices.
@@ -11,7 +11,7 @@ For any re-frame app, there's three things to test:
      be here because this is where most of the logic lives
 
   - **Subscription Handlers** - often not a lot to test here. Only
-    [Layer 3](SubscriptionInfographic.md) subscriptions need testing.
+    [Layer 3](Subscriptions.md) subscriptions need testing.
 
   - **View functions** - I don't tend to write tests for views. There, I said it.
     Hey!  It is mean to look at someone with that level of disapproval,
@@ -30,6 +30,7 @@ in this tutorial.
 
 Let's establish some terminology to aid the further explanations in this
 tutorial.  Every unittest has 3 steps:
+
   1. **setup** initial conditions
   2. **execute** the thing-under-test
   3. **verify** that the thing-under-test did the right thing
@@ -86,6 +87,7 @@ a map literal, like this:
 This certainly works in theory, but in practice,
 unless we are careful, constructing the `db`
 value in **setup** could:
+
   * be manual and time consuming
   * tie tests to the internal structure of `app-db`
 
@@ -161,6 +163,7 @@ force immediate handling of events, rather than queuing.
 ```
 
 Notes:
+
   1. we use `dispatch-sync` because `dispatch` is async (event is handled not now, but soon)
   2. Not pure. We are choosing to mutate the global `app-db`. But
      having said that, there's something about this approach which is remarkably
@@ -267,6 +270,7 @@ But what if the View Function has a subscription?
 The use of `subscribe` makes the function impure (it obtains data from places other than its args).
 
 A testing plan might be:
+
   1. setup `app-db` with some values in the right places  (via dispatch of events?)
   2. call `my-view` (with a parameter) which will return hiccup
   3. check the hiccup structure for correctness.
@@ -323,7 +327,7 @@ it is called the [Container/Component pattern](https://medium.com/@learnreact/co
 
 ## Also Read This
 
-https://juxt.pro/blog/posts/cljs-apps.html
+[https://juxt.pro/blog/posts/cljs-apps.html](https://juxt.pro/blog/posts/cljs-apps.html)
 
 ## Summary
 

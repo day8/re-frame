@@ -1,9 +1,15 @@
-### Question
+
+<!-- leave this H1 here. It stops mkdocs putting in a Title at the top.
+     It needs to be at the top of the file otherwise it breaks the 
+     table of contents on the right hand side. -->
+#
+
+## Question
 
 Reagent looks terrific.  So, why do I need re-frame?  What benefit 
 is there in the extra layers and conceptual overhead it brings?
 
-### Answer 
+## Answer 
 
 Yes, we agree, Reagent is terrific. We use it enthusiastically ourselves. And, yes, we'd agree that if your application 
 is small and simple, then standalone Reagent is a reasonable choice.
@@ -52,7 +58,7 @@ be sure to make a conscious choice around architecture. Don't think
 "Reagent is all I need", because it isn't. One way or
 another you'll be using "Reagent + a broader architecture".
 
-### Example Choices Made By re-frame
+## Example Choices Made By re-frame
 
 1. Events are cardinal. Nothing happens without an event.
 2. Events are data  (so they they are loggable, and can be queued, etc).
@@ -70,7 +76,7 @@ Hmm. I feel like I'm missing a few, but that's certainly an indicative list.
 re-frame is only about 750 lines of code.  So it's value is much more in the honed
 choices it embodies (and documents), than the code it provides.
 
-### What Reagent Does Provide
+## What Reagent Does Provide
 
 Above I said:
 > Reagent, by itself, provides little guidance ...
@@ -81,7 +87,3 @@ your own architecture, then be sure to check out Reagent's `track`, `reaction` a
 There's also other Reagent-based architectures like [keechma](https://github.com/keechma/keechma) and 
 [carry](https://github.com/metametadata/carry) which make different choices - ones which may 
 better suit your needs.
-
-***
-
-Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -1,9 +1,7 @@
-## Effectful Handlers
-
 This tutorial shows you how to implement pure event handlers that side-effect.
 Yes, a surprising claim.
 
-### Events Happen
+## Events Happen
 
 Events "happen" when they are dispatched.
 
@@ -15,7 +13,7 @@ So, this makes an event happen:
 Events are normally triggered by an external agent: the user clicks a button, or a server-pushed
 message arrives on a websocket.
 
-### Handling The Happening
+## Handling The Happening
 
 Once dispatched, an event must be "handled" - which means it must be processed or actioned.
 
@@ -31,7 +29,7 @@ State change is how an application "moves forward" - how it does its job.  Usefu
 On the other hand, control logic and state mutation tend to be the most
 complex and error prone part of an app.
 
-### Your Handling
+## Your Handling
 
 To help wrangle this potential complexity, re-frame's introduction
 provided you with a simple programming model.
@@ -53,7 +51,7 @@ as the second argument, it is expected to provide a new value for `app-db`.
 
 Data in, a computation and data out. Pure.
 
-### 90% Solution
+## 90% Solution
 
 This paradigm provides a lovely solution 90% of the time, but there are times
 when it isn't enough.
@@ -89,7 +87,7 @@ And here's more carnage:
 Again, this approach will work. But that dirty great big side-effect doesn't come
 for free. It's like a muddy monster truck has shown up in our field of white tulips.
 
-### Bad, Why?
+## Bad, Why?
 
 The moment we stop writing pure functions there are well documented
 consequences:
@@ -110,7 +108,7 @@ when all the handlers are pure. Handlers with side-effects (like that HTTP GET, 
 replay, inserting extra events into it, etc., which ruins the process.
 
 
-### The 2nd Kind Of Problem
+## The 2nd Kind Of Problem
 
 And there's the other kind of purity problem:
 ```clj
@@ -126,16 +124,17 @@ You'll notice the event handler obtains data from LocalStore.
 Although this handler has no side effect - it doesn't need to change the world - that action of
 obtaining data from somewhere other than its arguments, means it isn't pure.
 
-### Effects And Coeffects
+## Effects And Coeffects
 
 When striving for pure event handlers [there are two considerations](http://tomasp.net/blog/2014/why-coeffects-matter/):
+
   - **Effects** - what your event handler does to the world  (aka side-effects)
   - **Coeffects** - the data your event handler requires from the world in order
     to do its computation (aka [side-causes](http://blog.jenkster.com/2015/12/what-is-functional-programming.html))
 
 We'll need a solution for both.
 
-### Why Does This Happen?
+## Why Does This Happen?
 
 It is inevitable that, say, 10% of your event handlers have effects and coeffects.
 
@@ -149,7 +148,7 @@ Well, luckily a small twist in the tale makes a profound difference. We
 will look at side-effects first. Instead of creating event handlers
 which *do side-effects*, we'll instead get them to *cause side-effects*.
 
-### Doing vs Causing
+## Doing vs Causing
 
 I proudly claim that this event handler is pure:
 ```clj
@@ -173,7 +172,7 @@ value. Notice `reset!`.   That, right there, is the "necessary side effecting".
 We get to live in our ascetic functional world because re-frame is
 looking after the "necessary side-effects" on `app-db`.
 
-### Et tu, React?
+## Et tu, React?
 
 Turns out it's the same pattern with Reagent/React.
 
@@ -186,7 +185,7 @@ We get to write a nice pure component, like:
 and Reagent/React mutates the DOM for us. The framework is looking
 after the "necessary side-effects".
 
-### Pattern Structure
+## Pattern Structure
 
 Pause and look back at `say-hi`. I'd like you to view it through the
 following lens:  it is a pure function which **returns a description
@@ -202,14 +201,15 @@ let the backing framework look after the "doing" of them. Efficiently. Discreetl
 
 Let's use this pattern to solve the side-effecting event-handler problem.
 
-### Effects: The Two Step Plan
+## Effects: The Two Step Plan
 
 From here, two steps:
+
   1. Work out how event handlers can declaratively describe side-effects, in data.
   2. Work out how re-frame can do the "necessary side-effecting". Efficiently and discreetly.
 
 
-### Step 1 Of Plan
+## Step 1 Of Plan
 
 So, how would it look if event handlers returned side-effects, declaratively, in data?
 
@@ -237,6 +237,7 @@ Notes: <br>
 [we are destructuring db](http://clojure.org/guides/destructuring), i.e.
 it is a map which contains a `:db` key. <br>
 *<3>* The handler is returning a data structure (map) which describes two side-effects:
+
   - a change to application state, via the `:db` key
   - a further event, via the `:dispatch` key
 
@@ -244,7 +245,7 @@ Above, the impure handler **did** a `dispatch` side-effect, while the pure handl
 a `dispatch` side-effect.
 
 
-### Another Example
+## Another Example
 
 The impure way:
 ```clj
@@ -274,7 +275,7 @@ in data, the side-effects required (Yaaa!).
 
 More on side effects in a minute, but let's double back to coeffects.
 
-### The Coeffects
+## The Coeffects
 
 So far we've written our new style `-fx` handlers like this:
 ```clj
@@ -329,7 +330,7 @@ That process leaves the handler itself pure because it only sources
 data from arguments.
 
 
-### Variations On A Theme
+## Variations On A Theme
 
 `-db` handlers and `-fx` handlers are conceptually the same. They only differ numerically.
 
@@ -357,7 +358,7 @@ Obviously the `-db` variation is simpler and you'd use it whenever you
 can. The `-fx` version is more flexible, so it will sometimes have its place.
 
 
-### Summary
+## Summary
 
 90% of the time, simple `-db` handlers are the right tool to use.
 
@@ -369,9 +370,3 @@ cause additional side-effects (effects).  That's when you reach for `-fx` handle
 In the next tutorial, we'll shine a light on `interceptors` which are
 the mechanism by which  event handlers are executed. That knowledge will give us a springboard
 to then, as a next step, better understand coeffects and effects. We'll soon be writing our own.
-
-***
-
-Previous:  [Infographic Overview](EventHandlingInfographic.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Interceptors](Interceptors.md)

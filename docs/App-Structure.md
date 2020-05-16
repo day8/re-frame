@@ -1,26 +1,18 @@
-## Simpler Apps
-
-To build a re-frame app, you:
-  - design your app's data structures (data layer)
-  - write Reagent view functions (domino 5)
-  - write event handler functions (control layer and/or state transition layer, domino 2)
-  - write subscription functions (query layer, domino 4)
+## A Smaller App 
 
 For simpler apps, you should put code for each layer into separate files:
-```
+<pre>
 src
 ├── core.cljs         <--- entry point, plus history, routing, etc
 ├── db.cljs           <--- schema, validation, etc  (data layer)
 ├── views.cljs        <--- reagent views (view layer)
 ├── events.cljs       <--- event handlers (control/update layer)
 └── subs.cljs         <--- subscription handlers  (query layer)
-```
+</pre>
 
 For a living example of this approach, look at the [todomvc example](https://github.com/day8/re-frame/tree/master/examples/todomvc).
 
-*No really, you should absolutely look at the [todomvc example](https://github.com/day8/re-frame/tree/master/examples/todomvc) example, as soon as possible. It contains all sorts of tips.*
-
-### There's A Small Gotcha
+## The Gotcha
 
 If you adopt this structure, there's a gotcha.
 
@@ -41,7 +33,7 @@ etc) will occur as that loading happens.
 
 Assuming your larger apps have multiple "panels" (or "views") which are
 relatively independent, you might use this structure:
-```
+<pre>
 src
 ├── core.cljs             <--- entry point, plus history, routing, etc
 ├── panel-1
@@ -57,51 +49,75 @@ src
 .
 .
 └── panel-n
-```
-
-If you follow this structure you should probably use namespaced keywords instead of simple keywords.
-
-This gives the ability to encapsulate the state of each "panel" and ensure you don't get any conflicts.
+</pre>
 
 
-Suppose for example that in your panel you want to store a value `x` in the db, if you want to use
-namespaced keywords you the event handler and subscription will look like this:
+## Namespaced Ids
+
+As an app gets bigger, you'll tend to get clashes on ids - event-ids, or query-ids (subscriptions), etc. 
+ 
+One panel will need to `dispatch` an `:edit` event and so will 
+another, but the two panels will have different handlers. 
+So, how do you avoid a clash? How you you distinguish between 
+one `:edit` event and another?
+
+Your goal should be to use event-ids which encode both the event 
+itself (`:edit` ?) and the context (`:panel1` or `:panel2` ?). 
+
+Luckily, ClojureScript provides a nice easy solution: use keywords 
+with a __synthetic namespace__. Perhaps something like `:panel1/edit` and `:panel2/edit`. 
+
+You see, ClojureScript allows the namespace in a keyword to be a total
+fiction. I can have the keyword `:panel1/edit` even though 
+`panel1.cljs` doesn't exist. 
+
+Naturally, you'll take advantage of this by using keyword namespaces 
+which are both unique and descriptive.
+
+## Navigation
+
+
+How do I switch between different panels of a larger app?
+
+Your `app-db` could have an `:active-panel` key containing an id for the panel being displayed.
+
+
+When the user does something navigation-ish (selects a tab, a dropdown or something which changes the active panel), then the associated event and dispatch look like this:
 
 ```clj
-(rf/reg-event-db 
-  ::set-x
+(re-frame/reg-event-db
+  :set-active-panel
   (fn [db [_ value]]
-    (assoc db ::x value)))
+    (assoc db :active-panel value)))
 
-(rf/reg-sub 
-  ::x
+(re-frame/dispatch
+  [:set-active-panel :panel1])
+```
+
+A high level reagent view has a subscription to :active-panel and will switch to the associated panel.
+
+```clj
+(re-frame/reg-sub
+  :active-panel
   (fn [db _]
-    (get db ::x)))
+    (:active-panel db)))
+
+(defn panel1
+ []
+ [:div  {:on-click #(re-frame/dispatch [:set-active-panel :panel2])}
+        "Here" ])
+
+(defn panel2
+ []
+ [:div "There"])
+
+(defn high-level-view
+  []
+  (let [active  (re-frame/subscribe [:active-panel])]
+    (fn []
+      [:div
+       [:div.title   "Heading"]
+       (condp = @active                ;; or you could look up in a map
+         :panel1   [panel1]
+         :panel2   [panel2])])))
 ```
-
-If you want to dispatch that even you have two options, either:
-
-```clj
-(require [project.panel.handlers :as handlers])
-
-(rf/dispatch [::handlers/set-x 100])
-```
-
-or:
-
-```clj
-(rf/dispatch [:project.panel.handlers/set-x 100])
-```
-
-Where the first option might be preferrable since it ensures you require the handlers file and saves you from the possibility of typos.
-
-## I Want Real Examples!
-
-Maybe look here: 
-https://github.com/day8/re-frame/blob/master/docs/External-Resources.md#examples-and-applications-using-re-frame
-
-***
-
-Previous:  [Correcting a wrong](SubscriptionsCleanup.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Navigation](Navigation.md)

@@ -1,8 +1,14 @@
-### Question
+
+<!-- leave this H1 here. It stops mkdocs putting in a Title at the top.
+     It needs to be at the top of the file otherwise it breaks the 
+     table of contents on the right hand side. -->
+#
+
+## Question
 
 How do I access the value of a subscription from within an event handler?
 
-### The Wrong Way
+## The Wrong Way
 
 You should NOT do this:
 ```clj
@@ -17,7 +23,7 @@ because that `subscribe`:
 1. might create a memory leak (the subscription might not be "freed")
 2. makes the event handler impure (it grabs a global value)
 
-### The Better Way
+## The Better Way
 
 Instead, the value of a subscription should
 be injected into the `coeffects` of that handler via an interceptor.
@@ -38,14 +44,9 @@ Notes:
 
 So, how to write this `inject-sub` interceptor?
 
-### Solutions
+## Solutions
 
 re-frame doesn't yet have a builtin `inject-sub` interceptor to do this injection.
 
 I'd suggest you use this 3rd party library: 
-https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc
-
-
-***
-
-Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc\>

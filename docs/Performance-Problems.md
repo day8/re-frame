@@ -1,25 +1,7 @@
-## Eek! Performance Problems
 
-## 1. Is It The `debug` Interceptor?
+Things to watch out for ...
 
-This first one is something of a non-problem. 
-
-Are you are using the `re-frame.core/debug` Interceptor?
-You should be, it's useful. __But__ you do need to be aware of its possible performance implications.  
-
-`debug` reports what's changed after an event handler has run by using 
-`clojure.data/diff` to do deep, CPU intensive diff on `app-db`. 
-That diff could be taking a while, and leading to apparent performance problems.
-
-The good news is this really isn't a production problem.  `debug` should only be 
-present in an Interceptor Chain at development time, and it should be removed 
-from production using [this technique](https://github.com/day8/re-frame/blob/be6f49f21e245dea1cd0a857b70dd720bfbe18fd/examples/todomvc/src/todomvc/handlers.cljs#L33).
-
-Also related, anything which writes large data structures, or strings, to the 
-js console, will be slow. So press F12, pull up devtools console, and have a 
-good look at what's happening in there. 
-
-## 2. `=` On Big Structures
+## Using `=` On Big Structures
 
 Reagent uses `=` to compare the previous value of a prop with the 
 new value of that prop, when it determines if a component needs 
@@ -31,11 +13,11 @@ the `=` comparison only to eventually work out that, indeed, the
 answer is `false`. 
 
 This problem is exacerbated when components return a lot of hiccup, because 
-lots of hiccup normally means lots of props which, in turn, means lots of `=` 
-work to do on each of those props. Any rerender with those characteristics 
+lots of hiccup normally means lots of `=` 
+work. Any rerender with those characteristics 
 could end up chewing a lot of CPU cycles.
 
-### An Example Of Problem 2
+### An Example Of This Problem
 
 Imagine you were rendering a 19 by 19 "Go" board. 
 
@@ -74,7 +56,7 @@ out that there's only a rendering change at one point in the 19x19 grid.
 So, that's how you can get a performance problem:  lots of hiccup, 
 mixed with time consuming `=` tests on big props. 
 
-### Solutions To Problem 2
+### Solutions To This Problem
 
 The solution is to not do the unnecessary work.  Duh!  
 
@@ -106,15 +88,15 @@ Correctly using React `keys` can also make a huge difference to performance.
 
 Some resources:
 
-1. http://stackoverflow.com/questions/27863039/key-property-inside-component-function
-2. http://stackoverflow.com/a/37186230/5215391
-3. https://groups.google.com/d/msg/reagent-project/J1ELaLV20MU/iutebA-JEgAJ
+1. <http://stackoverflow.com/questions/27863039/key-property-inside-component-function>
+2. <http://stackoverflow.com/a/37186230/5215391>
+3. <https://groups.google.com/d/msg/reagent-project/J1ELaLV20MU/iutebA-JEgAJ>
 
 
 ## 4. Callback Functions
 
 Consider this `div`:
-```
+```clj
 [:div  {:on-mouse-over  (fn [event] ....)  }   "hello"]
 ```
 
@@ -126,7 +108,7 @@ Most of the time, this is not an issue.  But if you are generating a LOT of DOM
 this small inefficiency can add up.  
 
 To work around the problem, lift the function generation out of the render.  Use a `Form-2` function like this:
-```
+```clj
 (defn my-component 
    []
    (let [mouse-over-cb  (fn [event] ....)  ]      ;; created once 
@@ -141,21 +123,10 @@ But like I say, don't be too paranoid about this, it is unlikely
 to be an issue unless you have something like a table with a 
 lot of identical cells.
 
-## Use The Trace
+## Use The Trace, Luke
 
 If you want to know exactly what's going on, get some X-Ray vision
 from the [official tracer](https://github.com/day8/re-frame-10x). See exactly what subscriptions are running, 
 what views are getting re-rendered, etc.
 
 You may be surprised by what you see.
-
-## The Old Weapon
-
-In the old days, we had a different, clumsier [tracing technique](https://github.com/day8/re-frame/blob/master/docs/Debugging.md). 
-
-Be aware that this OLD method of tracing adds its own performance drag - there's the 
-overhead of all that stuff getting written on the js console. 
-Especially if the data getting traced is big - for example, 
-tracing all of `app-db` in the console can take a while and force 
-Chrome devtools to take masses of RAM.  So you may want to selectively 
-add tracing when poking about. 

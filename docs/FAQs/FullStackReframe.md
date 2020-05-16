@@ -1,13 +1,19 @@
-### Question
+
+<!-- leave this H1 here. It stops mkdocs putting in a Title at the top.
+     It needs to be at the top of the file otherwise it breaks the 
+     table of contents on the right hand side. -->
+#
+
+## Question
 
 I'm interested in taking the re-frame concepts and applying them to 
 my entire Client/Server stack.  
 
-### Short Answer
+## The Short Answer
 
-You'll want to investigate CQRS (vs REST).
+You'll want to investigate CQRS.
 
-##### Notes
+## The Longer Answer
 
 1. Perhaps watch [Bobby Calderwood's video](https://www.youtube.com/watch?v=B1-gS0oEtYc)?
 2. Look at his [reference implementation](https://github.com/capitalone/cqrs-manager-for-distributed-reactive-services) or, perhaps, [this alternative](https://github.com/greywolve/calderwood).
@@ -18,14 +24,9 @@ You'll want to investigate CQRS (vs REST).
    Greg Young might be your God and [Onyx](https://github.com/onyx-platform/onyx)
    may be useful. 
    
-### Further Related Links
+## Further Related Links
 
 * Reactive PostgreSQL:
   https://yogthos.net/posts/2016-11-05-LuminusPostgresNotifications.html
 * Datalog All The Way Down:
   https://www.youtube.com/watch?v=aI0zVzzoK_E
- 
-
-***
-
-Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

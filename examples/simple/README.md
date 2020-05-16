@@ -3,24 +3,32 @@
 This tiny application is meant to provide a quick start of the basics of re-frame.  
 
 A detailed source code walk-through is provided in the docs:
-https://github.com/day8/re-frame/blob/master/docs/CodeWalkthrough.md
+<https://day8.github.io/re-frame/dominoes-live/>
+
 
 All the code is in one namespace: `/src/simple/core.cljs`.
 
-### Run It And Change It   
+### Run It 
 
 Steps:
 
-1. Check out the re-frame repo
-2. Get a command line
-3. `cd` to the root of this sub project (where this README exists)
-4. Run "`lein do clean, shadow watch client`"  to compile the app and start up shadow-cljs hot-reloading
-5. Wait for the compile to finish. At a minumum, that might take 15 seconds. But it can take more like 60 seconds if you are new to ClojureScript and various caches are empty. Eventually you should see `[:client] Build Completed (... stats ...)`
-6. Open `http://localhost:8280/example.html` to see the app
+1. [install Clojure](https://purelyfunctional.tv/guide/how-to-install-clojure/)
+1. `git clone https://github.com/day8/re-frame.git`
+2. `cd re-frame/examples/simple`
+3. Run "`lein do clean, shadow watch client`"  to compile the app and start up shadow-cljs hot-reloading
+4. Wait for the compile to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
+5. Open `http://localhost:8280/example.html` to see the app
 
-While step 4 is running, any changes you make to the ClojureScript 
-source files (in `src`) will be re-compiled and reflected in the running 
-page immediately.
+
+So, what just happened?
+
+The ClojureScript code under `/src` has been compiled into `javascript` and
+put into `/resources/public/js/client.js` which is loaded into `/resources/public/example.html` (the HTML file you just opened in the browser)
+ 
+Shadow-cljs (the compiler) provides for hot-reloading, which means you can edit the source code and 
+immediately see the change in the browser. To test this, I'd suggest that you edit `./src/simple/core.cljs`, 
+search for the string `"Hello world, it is now"`, change it to something else, save the file, then watch your 
+change show up in the browser in near-realtime. 
 
 ### Production Version
 

@@ -1,13 +1,16 @@
 ## Bootstrapping Application State
 
 To bootstrap a re-frame application, you need to:
+
 1. register handlers:
+
    - subscription  (via `reg-sub`)
    - events (via `reg-event-db` or `reg-event-fx`)
    - effects (via `reg-fx`)
    - coeffects (via `reg-cofx`)
 2. kickstart reagent (views)
 3. Load the right initial data into `app-db` which might, for example, be a `merge` of:
+
    - Some default values
    - Values stored in LocalStorage
    - Values obtained via service calls to server
@@ -214,9 +217,3 @@ from a backend services.  How would we write the handler for this event?
 The next Tutorial will show you how.
 
 
-
-***
-
-Previous:  [Namespaced Keywords](Namespaced-Keywords.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Talking To Servers](Talking-To-Servers.md)  

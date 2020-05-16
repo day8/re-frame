@@ -1,14 +1,20 @@
-### Question
+
+<!-- leave this H1 here. It stops mkdocs putting in a Title at the top.
+     It needs to be at the top of the file otherwise it breaks the 
+     table of contents on the right hand side. -->
+#
+
+## Question
 
 When the user switches to a particular panel, I'd like to start regularly polling my 
 backend (database) - say every 60 seconds.  And, then later, when the user switches 
 away from that panel, I want to stop that polling.
 
-### First, What Not To Do 
+## First, What Not To Do 
 
 Please be sure to read [How Do I Load On Mount?](LoadOnMount.md)
 
-### An Answer 
+## An Answer 
 
 
 We'll create an effect. It will be general in nature. 
@@ -57,7 +63,7 @@ With that design work done, let's now implement it by registering an
 
 You'd probably want a bit more error checking, but that's the (untested) sketch.
 
-### A Side Note About Effect Handlers and Figwheel 
+## A Side Note About Effect Handlers and Figwheel 
 
 [Figwheel](https://github.com/bhauman/lein-figwheel) provides for the hot reloading of code, which 
 is terrific.
@@ -97,9 +103,3 @@ OR, you can code defensively for reloading, perhaps like this:
 **Key takeaway:**  every effect handler is statefully grubby in its own special way. So you'll have to 
 come up with strategies to handle Figwheel reloads on a case by case basis. Sometimes
 there's no escaping an application restart.
-
-
-***
-
-Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-

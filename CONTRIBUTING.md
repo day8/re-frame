@@ -49,7 +49,7 @@ If possible provide:
 * Code that fixes the bug
 * Failing tests which pass with the new changes
 * Improvements to documentation to make it less likely that others will run into issues (if relevant).
-* Add the change to the Unreleased section of [CHANGES.md](CHANGES.md)
+* Add the change to the Unreleased section of [CHANGELOG.md](docs/CHANGELOG.md)
 
 ## Pull requests for features
 
@@ -59,8 +59,9 @@ If possible provide:
 * Tests to cover the new feature including all of the code paths
 * Docstrings for functions
 * Documentation examples
-* Add the change to the Unreleased section of [CHANGES.md](CHANGES.md)
+* Add the change to the Unreleased section of [CHANGELOG.md](docs/CHANGELOG.md)
 
 ## Pull requests for docs
 
-* Make your documentation changes
+Please see docs/DEVELOPER_NATES.md
+

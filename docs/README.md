@@ -1,57 +1,95 @@
-## Introduction
-* First, read this repo's [README](../README.md)
-* [app-db (Application State)](ApplicationState.md)
-* [First Code Walk-Through](CodeWalkthrough.md)
-* [Infographic: A re-frame Epoch](AnEpoch.md)
+## Introduction 
+
+This directory contains the content and configuration for the re-frame website. 
+
+A production copy of the re-frame website can be viewed here: 
+https://day8.github.io/re-frame/
+
+This document describes how the website is built and how to do work on it. 
 
 
-## Dominoes 2 & 3  (event, effect and coeffect handling)
-* [Infographic: Event Processing](EventHandlingInfographic.md)
-* [Effectful Handlers](EffectfulHandlers.md)
-* [Interceptors](Interceptors.md)
-* [Effects](Effects.md)
-* [Coeffects](Coeffects.md)
+## Built Using 
 
-## Domino 4 (Subscriptions)
+The re-frame website is largly built using a static site generator:
+<https://squidfunk.github.io/mkdocs-material> which provides 
+a [Material UI](https://material.io/) theme for the `mkdocs` static site generator.
 
-  * [Infographic: Subscriptions and The Signal Graph](SubscriptionInfographic.md)
-  * [Correcting a wrong](SubscriptionsCleanup.md)
-  * [Flow Mechanics](SubscriptionFlow.md)
+The website is built [via Github actions](https://github.com/day8/re-frame/blob/feature/mkdocs/.github/workflows/docs-workflow.yml)
+whcih stich together the docs, the API and the klipse artifacts.
 
-## Domino 5 (Reagent)
+## To Build Locally
 
-All the material you need is [here, in Reagent's /doc](https://github.com/reagent-project/reagent/blob/master/doc/README.md).
+For development purposes, you can get a hot reloading docs environment going via `docker` by using the following series of commands: 
+```sh
+git clone https://github.com/day8/re-frame.git
+cd re-frame
+```
 
-## Deepen/Broaden Your Understanding
-* [The API](API.md)
-* [An interesting overview of re-frame by purelyfunctional.tv (external link)](https://purelyfunctional.tv/guide/re-frame-building-blocks/)
-* [Mental Model Omnibus](MentalModelOmnibus.md)
-* [Interesting Resources - including example apps](External-Resources.md)
-* [FAQs](FAQs/README.md)
+Then (optionally) build the API documentation (if you want the API tab of the website work in your development session):
+```sh
+lein codox
+```
 
-## App Structure
-  * [App Structure](App-Structure.md)
-  * [On naming things and app-db structure (external link)](https://purelyfunctional.tv/guide/database-structure-in-re-frame/)
-  * [Navigation](Navigation.md)
-  * [Namespaced Keywords](Namespaced-Keywords.md)
+Then, if using PowerShell on Windows:
+```sh
+docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
+```
+or, using linux:
+```sh
+docker run --rm -it -p 8000:8000 -v "%cd%":/docs squidfunk/mkdocs-material:5.1.1
+```
 
-## App Data
-  * [Loading Initial Data](Loading-Initial-Data.md)
-  * [Talking To Servers](Talking-To-Servers.md)
-  * [Subscribing to External Data](Subscribing-To-External-Data.md)
+Then, in a browser tab, load `http://localhost:8000/`. You should see the website Home page. 
 
-## Debugging And Testing
-  * [Debugging Event Handlers](Debugging-Event-Handlers.md)
-  * [Debugging](Debugging.md)
-  * [Testing](Testing.md)
+You can now edit the website's markdown in `/docs` and your changes will be hot reloaded into the brower tab for inspection.
 
-## Commercial-Grade Video Training
 
-* [purelyfunctional.tv](https://purelyfunctional.tv/courses/understanding-re-frame/)
-* [Lambda Island Videos](https://lambdaisland.com/collections/react-reagent-re-frame)
+## Configuration
 
-## Miscellaneous
-  * [Eek! Performance Problems](Performance-Problems.md)
-  * [Solve the CPU hog problem](Solve-the-CPU-hog-problem.md)
-  * [Using Stateful JS Components](Using-Stateful-JS-Components.md)
-  * [The re-frame Logo](The-re-frame-logo.md)
+The main configuration file for the static site generator is:
+`../mkdocs.yml`
+
+In that file you can nominate navigation, fonts, extensions, etc.
+
+## Look And Feel Adjustments 
+
+We've made various modifications to the base template supplied by the theme ... 
+
+Notably adds
+- Google Font stylesheets
+- klipse custom stylesheets and javascripts
+- our own stylesheets for overriding some styles
+
+`overrides/partials/footer.html`
+Removes 'Made with Material for MkDocs' from footer.
+Attribution in documentation, not footer.
+
+`overrides/partials/logo.html`
+Changes default material icon to material/home.
+
+`overrides/partials/nav.html`
+Adds logo above left nav. (Deprecated?)
+
+`overrides/main.html`
+htmltitle block
+Removes trailing dash in page title due to empty site name.
+
+`stylesheets/re-frame.css`
+Our own custom styles.
+
+`stylesheets/codehilite-monokai.css`
+Our own port of the monokai theme to codehilite.
+
+`stylesheets/codemirror.css`
+Copy of https://github.com/viebel/klipse/blob/57e5312e88425811183a838f63afd4a92077fada/dist/codemirror.css
+with FiraCode removed.
+
+Incls syntax highlighting 'theme' around lines ~100-130.
+
+`javascripts/klipse_plugin.js`
+Copy of https://github.com/viebel/klipse/blob/57e5312e88425811183a838f63afd4a92077fada/dist/klipse_plugin.js
+
+## Using Klipse
+
+On some pages we use klipse for live coding. 
+See [`docs/klipse/README.md`](klipse/README.md).

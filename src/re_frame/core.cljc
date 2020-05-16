@@ -189,7 +189,7 @@
   (apply subs/reg-sub (into [query-id] args)))
 
 (defn subscribe
-  "Given a `query`, returns a Reagent `reaction` which, over
+  "Given a `query` vector, returns a Reagent `reaction` which, over
   time, reactively delivers a stream of values. So in FRP-ish terms,
   it returns a `Signal`.
 

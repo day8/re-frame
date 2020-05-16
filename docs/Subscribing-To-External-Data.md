@@ -243,8 +243,3 @@ In re-frame, we want views to be as simple and dumb as possible. They turn
 data into HTML and nothing more. they absolutely do not do imperative stuff.
 
 Use one of the two alternatives described above.
- 
-***
-
-Previous:  [Talking to Servers](Talking-To-Servers.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

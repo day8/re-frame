@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block htmltitle %}
+    {% if page and page.meta and page.meta.title %}
+    <title>{{ page.meta.title }}</title>
+    {% elif page and page.title and not page.is_homepage %}
+    <title>{{ page.title | striptags }}</title>
+    {% else %}
+    <title>{{ config.site_name }}</title>
+    {% endif %}
+{% endblock %}
+
+{% block libs %}
+    {% if page and page.meta and page.meta.klipse %}
+    <link rel="stylesheet" href="../stylesheets/klipse.css">
+    <link rel="stylesheet" href="../stylesheets/codemirror.css">
+    {% endif %}
+{% endblock %}
+
+<!-- There is a scripts block which at first might appear to be more appropriate
+     but overriding it is too fragile as it has hard-coded paths to specific
+     upstream file versions; e.g. vendor.d7126665.min.js
+
+     Instead we override a relatively simple block immediately above it that is
+     not likely to change between upstream releases. -->
+{% block footer %}
+    {% include "partials/footer.html" %}
+    {% if page and page.meta and page.meta.klipse %}
+    <script src="https://unpkg.com/react@16.13.0/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.13.0/umd/react-dom.development.js"></script>
+    <script src="../javascripts/klipse_config.js"></script>
+    <script src="../javascripts/klipse_plugin.js"></script>
+    <script src="../javascripts/klipse_reagent_fix.js"></script>
+    {% endif %}
+{% endblock %}

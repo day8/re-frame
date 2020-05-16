@@ -1,10 +1,8 @@
-## re-frame Interceptors
-
 This tutorial explains re-frame Interceptors. Along the way, you'll
 better understand the mechanics of re-frame event handling.
 
-As you read this, refer back to the 3rd panel of the
-[Infographic](EventHandlingInfographic.md).
+As you read this, please refer back to the 3rd panel of the
+[Infographic](event-handling-infographic.md).
 
 ## Why Interceptors?
 
@@ -20,7 +18,7 @@ So, you'll want to use Interceptors because they solve problems, and help you to
 
 __Second__, under the covers, Interceptors provide the mechanism by which
 event handlers are executed. They are a central concept and understanding 
-them better will serve you well, even if you don't need to directly use them very oftem. 
+them better will serve you well, even if you don't need to directly use them very often. 
 
 ## What Do Interceptors Do?
 
@@ -84,13 +82,16 @@ Using a 3-arity registration function:
       ....)))
 ```
 
-> Each Event Handler can have its own tailored interceptor chain, provided at registration-time.
+!!! note ""
+    Each Event Handler can have its own tailored interceptor chain, provided at registration-time.
 
 ## Handlers Are Interceptors Too
 
 You might see that registration above as associating `:some-id` with
-two things: (1) a chain of 2 interceptors `[in1 in2]`
-and (2) a `handler`.
+two things:
+
+1. a chain of 2 interceptors `[in1 in2]`
+2. a `handler`.
 
 Except, the `handler` is turned into an interceptor too (we'll see how shortly).
 
@@ -110,9 +111,7 @@ Later, when a `(dispatch [:some-id ...])` happens, that 5-chain of
 interceptors will be "executed".  And that's how an event gets handled.
 
 
-## Executing A Chain
-
-### The Links Of The Chain
+## The Links Of The Chain
 
 Each interceptor has this form:
 ```clj
@@ -130,6 +129,7 @@ a `:before` and `:after` fn.
 Sometimes, the `:before` and `:after` functions are noops - they take a `context` and return that `context` unchanged - think `identity`.
 
 To "execute" an interceptor chain:
+
   1. create a `context` (a map, described below)
   2. iterate forwards over the chain, calling the `:before` function on each interceptor
   3. iterate over the chain in the opposite direction calling the `:after` function on each interceptor
@@ -139,7 +139,7 @@ Remember that the last interceptor in the chain is the handler itself (wrapped u
 That's it. That's how an event gets handled.
 
 
-### What Is Context?
+## What Is Context?
 
 Some data called a `context` is threaded through all the calls.
 
@@ -181,7 +181,7 @@ Equally, some interceptors in the chain will have an `:after` function
 which processes the side effects accumulated into `:effects`
 including, but not limited to, updates to `app-db`.
 
-### Self Modifying
+## Self Modifying
 
 Through both stages (the `:before` sweep and the `:after` sweep), 
 `context` also contains a `:queue` key which is the 
@@ -194,7 +194,7 @@ functions through which the `context` is threaded.
 What I'm saying is that interceptors can be dynamically added
 and removed from the `:queue` by Interceptors already in the chain.
 
-### Credit
+## Credit
 
 > All truths are easy to understand once they are discovered <br>
 >   -- Galileo Galilei
@@ -203,7 +203,7 @@ This elegant and flexible arrangement was originally
 designed by the talented
 [Pedestal Team](https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md). Thanks!
 
-### Write An Interceptor
+## Write An Interceptor
 
 Dunno about you, but I'm easily offended by underscores.
 
@@ -259,6 +259,7 @@ And, so here it is:
 As you read this, look back to what a `context` looks like.
 
 Notes:
+
   1. We use `->interceptor` to create an interceptor (which is just a map)
   2. Our interceptor only has a `:before` function
   3. Our `:before` is given `context`.  It modifies it and returns it.
@@ -266,7 +267,7 @@ Notes:
      with the backwards processing flow of `:effects`. It is concerned only
      with `:coeffects` in the forward flow.
 
-### Wrapping Handlers
+## Wrapping Handlers
 
 We're going well. Let's do an advanced wrapping.
 
@@ -277,6 +278,7 @@ whole `[std1 std2 in1 in2 h]` thing?
 We'll now look at the `h` bit. How does an `event handler` get wrapped to be an Interceptor?
 
 Reminder - there's two kinds of event handler:
+
    - the `-db` variety registered by `reg-event-db`
    - the `-fx` variety registered by `reg-event-fx`
 
@@ -302,6 +304,7 @@ Interceptor which wraps that handler:
 ```
 
 Notes:
+
   1.  Notice how this wrapper extracts data from the `context's` `:coeffects`
       and then calls the handler with that data  (a handler must be called with two args: `db` and `event`)
   2.  Equally notice how this wrapping takes the return value from `db-handler-fn`
@@ -327,6 +330,7 @@ __1.__ When you register an event handler, you can supply a collection of interc
 ```
 
 __2.__ When you are registering an event handler, you are associating an event id with a chain of interceptors including:
+
   - the ones you supply (optional)
   - an extra one on the end, which wraps the event handler itself
   - a couple at the beginning of the chain, put there by the `reg-event-db` or `reg-event-fx`.
@@ -337,6 +341,7 @@ __3.__ An Interceptor Chain is executed in two stages. First a forwards sweep in
   An Interceptor chain is a reified "call stack".
 
 __4.__ Interceptors do interesting things to `context`:
+
    - add to `:coeffects`  (data inputs to the handler)
    - process side `:effects` (returned by a handler)
    - produce logs
@@ -344,15 +349,15 @@ __4.__ Interceptors do interesting things to `context`:
 
 In the next Tutorial, we'll look at (side) Effects in more depth.  Later again, we'll look at Coeffects.
 
-## Appendix
-
-### The Built-in Interceptors
+## Appendix - Built-in Interceptors
 
 re-frame comes with some built-in Interceptors:
+
   - __debug__: log each event as it is processed. Shows incremental [`clojure.data/diff`](https://clojuredocs.org/clojure.data/diff) reports.
   - __trim-v__:  a convenience. More readable handlers.
 
 And some Interceptor factories (functions that return Interceptors):
+
   - __enrich__:  perform additional computations (validations?), after the handler has run. More derived data flowing.
   - __after__: perform side effects, after a handler has run.  Eg: use it to report if the data in `app-db` matches a schema.
   - __path__:  a convenience. Simplifies our handlers. Acts almost like `update-in`.
@@ -367,9 +372,3 @@ To use them, first require them:
   (:require
     [re-frame.core :refer [debug path]])
 ```
-
-***
-
-Previous:  [Effectful Handlers](EffectfulHandlers.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Effects](Effects.md)

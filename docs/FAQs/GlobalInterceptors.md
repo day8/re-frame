@@ -1,13 +1,19 @@
-### Question
+
+<!-- leave this H1 here. It stops mkdocs putting in a Title at the top.
+     It needs to be at the top of the file otherwise it breaks the 
+     table of contents on the right hand side. -->
+#
+
+## Question
 
 Does re-frame allow me to register global interceptors? Ones which are included 
 for every event handler?
 
-### Short Answer 
+## Short Answer 
 
 No, nothing direct.
 
-### Longer Answer 
+## Longer Answer 
 
 It's easy to make happen.
 
@@ -46,8 +52,3 @@ instead of the standard `reg-event-db`:
 ```
 
 And, hey presto, you'd have your `omni-ceptor` "globally" injected.
-
-
-***
-
-Up:  [FAQ Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

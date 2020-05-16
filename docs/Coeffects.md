@@ -171,6 +171,7 @@ It allows you to associate a `cofx-id` (like `:now` or `:local-store`) with a
 handler function that injects the right key/value pair.
 
 The function you register will be passed two arguments:
+
   - a `:coeffects` map (to which it should add a key/value pair), and
   - optionally, the additional value supplied to `inject-cofx`
 
@@ -188,6 +189,7 @@ is how a handler could be registered for `:now`:
 ```
 
 The outcome is:
+
   1. because that cofx handler above is now registered for `:now`, I can
   2. add an Interceptor to an event handler which
   3. looks like `(inject-cofx :now)`
@@ -274,9 +276,3 @@ In note form:
   4. It will look up the registered cofx handler for that `:key` to do the injection
   5. We must have previously registered a cofx handler via `reg-cofx`
 
-
-***
-
-Previous:  [Effects](Effects.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Up:  [Index](README.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Next:  [Infographic](SubscriptionInfographic.md)

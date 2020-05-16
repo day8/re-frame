@@ -1,0 +1,28 @@
+#dominoes-live-app {
+    border-style: solid;
+    border-color: #BBB;
+    border-width: 1px;
+    padding: 20px
+}
+
+#dominoes-live-app .preload {
+    height: 273px; /* this height matches the final application height ... which stops items on the page moving around after load */
+}
+
+#dominoes-live-app .example-clock {
+    font-size: 128px;
+    line-height: 1.2em;
+    font-family: HelveticaNeue-UltraLight, Helvetica;
+}
+
+@media (max-width: 768px) {
+    #dominoes-live-app .example-clock {
+        font-size: 64px;
+    }
+}
+
+#dominoes-live-app .color-input,
+#dominoes-live-app .color-input input {
+    font-size: 24px;
+    line-height: 1.5em;
+}
