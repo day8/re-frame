@@ -43,7 +43,7 @@ wrote that Lisp was a competitive advantage for his startup.  When we use Lisp, 
 get to leverage 50 years of foliated excellence from the very best minds available.
 We also get to leverage a thriving ClojureScript community which delivers modern ideas and best-in-class tooling.
 
-re-frame was created by a programmer who had already been developing for two decades
+re-frame was created by a programmer who had been developing for two decades
 before the Web was even "a thing". Yeah, that old. He's seen a UI or two along the way. Still has hair.
 
 Although re-frame leverages React (and the brilliant [Reagent](http://reagent-project.github.io/)), it only needs 
