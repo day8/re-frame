@@ -31,8 +31,8 @@ It is has a data-oriented, functional design.
 
 re-frame has been designed from the ground up to make developers **very**
 productive when building large Single-Page applications. That's its promise to you. 
-So far it seems to have met this 
-the goal, and it has been enthusiastically praised by many.
+So far it appears to have met this 
+goal, and it has been enthusiastically praised by many.
 
 Developed in late 2014, and released in 2015, it is mature and stable. 
 It has outlasted multiple generations of Javascript churn, and still delivers a substantially better developer experience. Imagine your productivity if you didn't have to contend with technical churn, and have new magic burn your fingers every two years.  
