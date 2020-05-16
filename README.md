@@ -30,9 +30,9 @@ re-frame is a ClojureScript framework for building user interfaces.
 It is has a data-oriented, functional design.
 
 re-frame has been designed from the ground up to make developers ***very***
-productive when building large Single-Page applications. That's its promise to you. 
-For many it has delivered on this 
-goal, and it has been enthusiastically praised. 
+productive when building large Single-Page applications. That's its promise to you.
+For many, it has delivered on this 
+goal, and it has been enthusiastically praised.
 
 Developed in late 2014, and released in 2015, it is mature and stable. It scales to 50K lines of code and beyond. It is used by small startups and by companies with 500 developers. It has outlasted multiple generations of Javascript churn, and still delivers a substantially better developer experience. Just imagine your team's productivity if you didn't have to contend with technical churn, and have new magic burn your fingers every two years.
 
@@ -43,7 +43,7 @@ get to leverage 50 years of foliated excellence from the very best minds availab
 We also get to leverage a thriving ClojureScript community which delivers modern ideas and best-in-class tooling.
 
 re-frame was created by a programmer who had been developing for two decades
-before the Web was even "a thing". Yeah, that old. And grumpy. He's seen a UI or two along the way. Still has hair.
+before the Web was even "a thing". Yeah, that old. He's seen a UI or two along the way. Still has hair.
 
 Although re-frame leverages React, it only needs 
 React to be a V in MVC, and no more. re-frame does not buy into the sadly-pervasive idea that Views should be causal (colocated queries, ComponentDidMount, hooks, etc).
@@ -51,7 +51,7 @@ In re-frame, events are causal and views are purely reactive.
 
 ## Documentation 
 
-The re-frame documentation is on [the website](http://day8.github.io/re-frame/).
+The re-frame documentation is [available here](http://day8.github.io/re-frame/).
 
 
 ## The Current Version 
