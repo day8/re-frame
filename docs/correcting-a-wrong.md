@@ -1,5 +1,5 @@
 
-The "simple" app from the live coding walk through had a flaw. It brakes a rule.
+The "simple" app from the live coding walk through had a flaw. It breaks a rule.
 
 !!! Note "re-frame Rule"
     Views should only compute hiccup. A view shouldn't process input data. The subscriptions it uses should 
