@@ -28,16 +28,6 @@ you've seen the videos - and if he says to do something, you do it
 So, this diagram, apart from being a plausible analogy which might help
 you to understand re-frame, is **practically proof** it does physics.
 
----
-
-> This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
-sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the
-metalwork, a little refreshing of the ornamentation ... but is this not the nine hundred-year-old
-axe of my family? And because it has changed gently over time, it is still a pretty good axe,
-y'know. Pretty good.
-
-> -- Terry Pratchett, The Fifth Elephant <br>
-> &nbsp;&nbsp;&nbsp; reflecting on identity, flow and derived values 
 
 <!-- 
 
