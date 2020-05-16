@@ -6,7 +6,7 @@
 # https://github.com/day8/re-frame/blob/feature/mkdocs/docs/developer-notes.md
 
 name: docs
-on: push
+on:
   push:
     branches: 'master'
 
