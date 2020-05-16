@@ -11,7 +11,7 @@ So, it is about `data`, and the `functions`
 which transform that data.  And, because it is a **reactive framework**, `data` coordinates 
 `functions`, not the other way around.
 
-It has a **data-oriented design** - perhaps an unfamiliar term for you. Read on! Indicatively, re-frame's tag line is: **derived values, flowing**. 
+Indicatively, re-frame's tag line is: **derived values, flowing**. 
 
 
 
