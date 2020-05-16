@@ -31,23 +31,22 @@ It is has a data-oriented, functional design.
 
 re-frame has been designed from the ground up to make developers ***very***
 productive when building large Single-Page applications. That's its promise to you. 
-So far it seems to have delivered on this 
-goal, and it has been enthusiastically praised by many.
+For many it has delivered on this 
+goal, and it has been enthusiastically praised. 
 
-Developed in late 2014, and released in 2015, it is mature and stable. It scales to 50K lines of code and beyond. It is used by startups and by companies with 500 developers. It has outlasted multiple generations of Javascript churn, and still delivers a substantially better developer experience. Just imagine your team's productivity if you didn't have to contend with technical churn, and have new magic burn your fingers every two years.  
-
+Developed in late 2014, and released in 2015, it is mature and stable. It scales to 50K lines of code and beyond. It is used by small startups and by companies with 500 developers. It has outlasted multiple generations of Javascript churn, and still delivers a substantially better developer experience. Just imagine your team's productivity if you didn't have to contend with technical churn, and have new magic burn your fingers every two years.
 
 re-frame provides another unfair advantage - ClojureScript is a Lisp. Alan Kay
 once described Lisp as "Maxwell's equations of software". Paul Graham 
-wrote that Lisp was a competitive advantage for his startup.  When we use Lisp, we 
+described how Lisp was a competitive advantage for his startup.  When we use Lisp, we 
 get to leverage 50 years of foliated excellence from the very best minds available.
 We also get to leverage a thriving ClojureScript community which delivers modern ideas and best-in-class tooling.
 
 re-frame was created by a programmer who had been developing for two decades
-before the Web was even "a thing". Yeah, that old. He's seen a UI or two along the way. Still has hair.
+before the Web was even "a thing". Yeah, that old. And grumpy. He's seen a UI or two along the way. Still has hair.
 
-Although re-frame leverages React (and the brilliant [Reagent](http://reagent-project.github.io/)), it only needs 
-React to be a V in MVC, no more. re-frame does not buy into the sadly-pervasive idea that Views should be causal (colocated queries, ComponentDidMount, hooks, etc).
+Although re-frame leverages React, it only needs 
+React to be a V in MVC, and no more. re-frame does not buy into the sadly-pervasive idea that Views should be causal (colocated queries, ComponentDidMount, hooks, etc).
 In re-frame, events are causal and views are purely reactive. 
 
 ## Documentation 
@@ -57,10 +56,9 @@ The re-frame documentation is on [the website](http://day8.github.io/re-frame/).
 
 ## The Current Version 
 
-Can be seen in the badges above. 
+Can be seen in the clojars badge above. 
 
-## Licence 
+## Licence
 
-MIT
+re-frame is [MIT licenced](Licence.md)
 
- 

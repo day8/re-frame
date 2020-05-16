@@ -10,25 +10,24 @@ How do I load the data for a view, on navigation to that view?
 
 ## Just Don't
 
-Are you from the React world?  If so, this first section is for you. I'm going to start by attempting to disabuse you of some "problematic" React ideas. We need to be clear about what Components are and do. And, also, what they aren't and don't do.  
+Are you from the Javascript React world?  If so, this first section is for you.
 
-In re-frame, Components are functions, not classes. They compute a materialized view of reactively delivered values. They don't have state.  (And, yes, there are exceptions to every rule)
+In re-frame, Components are functions, not classes. They compute a materialized view of values which are reactively delivered,  and they don't have state (there are exceptions to every rule).
 
-React has a more OO sense of Components: they have state and behaviour.  And even React's more modern, function components come with Hooks which are ordered, and sometimes imperative and effectful. 
+On the other hand, React has a more OO sense of Components: they have state and behaviour.  And even React's more modern, function components come with Hooks which are ordered, and often imperative and effectful. 
 
-So, re-frame and React are different philosophically regarding Components.  But there is one point above all others on which they differ the most:
+So, re-frame and React are different philosophically regarding Components.  But there is one point on which they differ the most:
 
 - In re-frame, **Components are not causal**, they are reactive. 
 - Whereas React Components are often deeply causal, via Collocated queries, ComponentDidMount, Hooks and Suspense, etc.  In React, Components initiate things - like HTTP requests.  
 - In re-frame, ***it is events which are causal***. 
 
-So the difference is over what is causal. 
 
 >  We humans have a cognitive bias: "what is focal is presumed causal".  
 
-Political leaders know this. They like presenting good news themselves because they like to be seen as causal of good stuff, but they'll get a press secretary to deliver bad news. Movie directors know how to use this when framing their protagonists.
+Political leaders know this. They like presenting good news themselves because they like to be seen as causal of good stuff, but they'll get a press secretary to deliver bad news. Movie directors know how to use this when framing their protagonists within the story.
 
-Unfortunately, it seems to me that the React team have lost themselves in this bias. They seem intent on trying to make the most visual part of the system (the most focal part) also be the most causal. A bad idea, IMHO.
+Unfortunately, the React team have lost themselves in this bias. They keep trying to make the most focal part of the system (components) also be the causal part. Stop doing that!  Events are what's causal.
 
 Just to be clear, I love React.  What an utterly brilliant idea and a great execution. I'm deeply grateful because, wow!, did it change things.  It is just that I preferred React when it was only trying to be the V part of MVC. 
 
@@ -36,20 +35,19 @@ Perhaps read the further explanation in [PurelyFunctional.tv's writeup](https://
 
 ## Do This Instead 
 
-With re-frame, "imperative stuff" only ever happens because an event 
-is dispatched.
+With re-frame, imperative, effectful stuff only ever happens during the handling of an event. 
 
-When the user clicks on a button or tab to change what is shown 
+When the user clicks on a tab to change what is shown 
 to them in the UI, an event is dispatched, and it is 
 the associated event handler which will compute the 
-effects of the user's request. It might:
+effects of the user's request. That might include:
 
   1. change application state so the panel is shown
   2. further change application state so that a "twirly busy" thing is shown
   3. issue a database query or open a websocket
 
 Also, remember that events should model "user intent", like 
-"I'd now like to view overdue items". Be sure to never model events like
+"review overdue items". Be sure to never model events like
 "load overdue items from database" because that's just a
 low level operation performed in the service of fulfilling
 the user's intent.
