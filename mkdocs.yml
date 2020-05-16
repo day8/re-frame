@@ -63,13 +63,13 @@ nav:
       - "Historical": historical.md
     - More Advanced:
       - Reusable Components: reusable-components.md
-      - App Structure: app-structure.md
+      - App Structure: App-Structure.md
       - Loading Initial Data: Loading-Initial-Data.md
       - Talking To Servers: Talking-To-Servers.md
       - Subscribing to External Data: Subscribing-To-External-Data.md
       - Debugging.md
       - Testing.md
-      - Eek! Performance Problems: performance-problems.md
+      - Eek! Performance Problems: Performance-Problems.md
       - Solve the CPU hog problem: Solve-the-CPU-hog-problem.md
       - Using Stateful JS Components: Using-Stateful-JS-Components.md
       - The Logo Backstory: The-re-frame-logo.md
@@ -99,7 +99,7 @@ nav:
     - 2016: releases/2016.md
     - 2015: releases/2015.md
   - Resources:
-    - Resources: external-resources.md
+    - Resources: External-Resources.md
 
 markdown_extensions:
   - meta
