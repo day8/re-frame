@@ -220,14 +220,16 @@
         
           
 
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
   <li class="md-tabs__item">
     
-      <a href=".." class="md-tabs__link md-tabs__link--active">
+      <a href=".." class="md-tabs__link">
         Home
       </a>
     
@@ -239,7 +241,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../re-frame/" class="md-tabs__link">
+        <a href="../re-frame/" class="md-tabs__link md-tabs__link--active">
           Docs
         </a>
       
@@ -291,7 +293,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../external-resources.md" class="md-tabs__link">
+        <a href="../External-Resources/" class="md-tabs__link">
           Resources
         </a>
       
@@ -419,10 +421,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
     
     <label class="md-nav__link" for="nav-2">
       Docs
@@ -828,10 +832,12 @@
           
           
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7" checked>
     
     <label class="md-nav__link" for="nav-2-7">
       More Advanced
@@ -865,11 +871,77 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../app-structure.md" title="App Structure" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        App Structure
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="App Structure" class="md-nav__link md-nav__link--active">
       App Structure
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-smaller-app" class="md-nav__link">
+    A Smaller App
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-gotcha" class="md-nav__link">
+    The Gotcha
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#larger-apps" class="md-nav__link">
+    Larger Apps
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#namespaced-ids" class="md-nav__link">
+    Namespaced Ids
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#navigation" class="md-nav__link">
+    Navigation
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -939,7 +1011,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../performance-problems.md" title="Eek! Performance Problems" class="md-nav__link">
+    <a href="../Performance-Problems/" title="Eek! Performance Problems" class="md-nav__link">
       Eek! Performance Problems
     </a>
   </li>
@@ -1376,7 +1448,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../external-resources.md" title="Resources" class="md-nav__link">
+    <a href="../External-Resources/" title="Resources" class="md-nav__link">
       Resources
     </a>
   </li>
@@ -1604,6 +1676,58 @@ which are both unique and descriptive.</p>
 <footer class="md-footer">
 
   <!-- Link to previous and/or next page -->
+  
+    <div class="md-footer-nav">
+      <nav
+        class="md-footer-nav__inner md-grid"
+        aria-label="Footer"
+      >
+
+        <!-- Link to previous page -->
+        
+          <a
+            href="../reusable-components/"
+            title="Reusable Components"
+            class="md-footer-nav__link md-footer-nav__link--prev"
+            rel="prev"
+          >
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Reusable Components
+              </div>
+            </div>
+          </a>
+        
+
+        <!-- Link to next page -->
+        
+          <a
+            href="../Loading-Initial-Data/"
+            title="Loading Initial Data"
+            class="md-footer-nav__link md-footer-nav__link--next"
+            rel="next"
+          >
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Loading Initial Data
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
 
   <!-- Further information -->
