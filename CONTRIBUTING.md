@@ -63,5 +63,5 @@ If possible provide:
 
 ## Pull requests for docs
 
-Please see docs/DEVELOPER_NATES.md
+Please see <docs/README.md>
 
