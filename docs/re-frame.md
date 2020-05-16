@@ -15,16 +15,6 @@ Indicatively, re-frame's tag line is: **derived values, flowing**.
 
 
 
-<!-- 
-Don't delete the following blank H1, even though it looks useless and a mistake.
-It is a trick to stop mkdocs adding a title for this page. 
-We want the logo to be the title. 
-
-Apparently, with mkdocs, if a page has any H1 element in it, 
-even at the end, like this useless one, a title won't be automatically put at the top. 
- -->
-# 
-
 [Reagent]:http://reagent-project.github.io/
 
 ## Why Should You Care?
@@ -87,3 +77,15 @@ tools like figwheel or shadow-cljs to create
 a powerful hot-loading development story. And, yes, it has 
 fun specialist tooling, and a community,
 and useful 3rd party libraries.
+
+
+
+<!-- 
+Don't delete the following blank H1, even though it looks useless and a mistake.
+It is a trick to stop mkdocs adding a title for this page. 
+We want the logo to be the title. 
+
+Apparently, with mkdocs, if a page has any H1 element in it, 
+even at the end, like this useless one, a title won't be automatically put at the top. 
+ -->
+# 
