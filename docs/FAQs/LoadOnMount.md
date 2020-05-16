@@ -14,7 +14,7 @@ Are you from the React world?  If so, this first section is for you. I'm going t
 
 In re-frame, Components are functions, not classes. They compute a materialized view of reactively delivered values. They don't have state.  (And, yes, there are exceptions to every rule)
 
-React has a more OO sense of Components: they have state and behavior.  And even React's more modern, function components come with Hooks which are ordered, and sometimes imperative and effectful. 
+React has a more OO sense of Components: they have state and behaviour.  And even React's more modern, function components come with Hooks which are ordered, and sometimes imperative and effectful. 
 
 So, re-frame and React are different philosophically regarding Components.  But there is one point above all others on which they differ the most:
 
@@ -26,9 +26,9 @@ So the difference is over what is causal.
 
 >  We humans have a cognitive bias: "what is focal is presumed causal".  
 
-Political leaders know this. They like presenting good news themselves, because they like to be seen as causal of good stuff, but they'll get a press secretary to deliver bad news. Movie directors know how to use this when framing their protagonists.
+Political leaders know this. They like presenting good news themselves because they like to be seen as causal of good stuff, but they'll get a press secretary to deliver bad news. Movie directors know how to use this when framing their protagonists.
 
-Unfortunately, it seems to me that the React team have lost themselves in this bias. They seem intent on trying to make the most visual part of the system (the most focal part) also be the most causal. Bad idea, IMHO.
+Unfortunately, it seems to me that the React team have lost themselves in this bias. They seem intent on trying to make the most visual part of the system (the most focal part) also be the most causal. A bad idea, IMHO.
 
 Just to be clear, I love React.  What an utterly brilliant idea and a great execution. I'm deeply grateful because, wow!, did it change things.  It is just that I preferred React when it was only trying to be the V part of MVC. 
 
