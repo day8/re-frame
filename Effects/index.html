@@ -1,0 +1,2008 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Derived data, flowing">
+      
+      
+        <link rel="canonical" href="https://day8.github.io/re-frame/Effects/">
+      
+      
+        <meta name="author" content="Mike Thompson">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-5.1.1">
+    
+    
+    
+    <title>Effects</title>
+    
+
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a676eddb.min.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/palette.b302131d.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#03a9f4">
+      
+    
+    
+    
+
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Segoe+UI",+Lato,+Roboto,+"Fira+Sans:300,400,400i,700%7CSource+Code+Pro&display=fallback">
+        <style>body,input{font-family:"Segoe UI", Lato, Roboto, "Fira Sans",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Source Code Pro",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&display=swap">
+    
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap">
+    
+      <link rel="stylesheet" href="../stylesheets/dominoes-live.css">
+    
+      <link rel="stylesheet" href="../stylesheets/codehilite-monokai.css">
+    
+      <link rel="stylesheet" href="../stylesheets/mkdocs.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="light-blue" data-md-color-accent="blue">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#where-effects-come-from" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Application header -->
+<header class="md-header" data-md-component="header">
+
+  <!-- Top-level navigation -->
+  <nav class="md-header-nav md-grid" aria-label="Header">
+
+    <!-- Link to home -->
+    <a
+      href="https://day8.github.io/re-frame/"
+      title="re-frame"
+      class="md-header-nav__button md-logo"
+      aria-label="re-frame"
+    >
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" /></svg>
+
+    </a>
+
+    <!-- Button to open drawer -->
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
+    </label>
+
+    <!-- Header title -->
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis md-ellipsis">
+        re-frame
+      </div>
+    </div>
+
+    <!-- Button to open search dialogue -->
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+      </label>
+
+      <!-- Search interface -->
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    <!-- Repository containing source -->
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/day8/re-frame/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    day8/re-frame
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+          
+
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href=".." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../re-frame/" class="md-tabs__link md-tabs__link--active">
+          Docs
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+          FAQs
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../codox/" class="md-tabs__link">
+          API
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../releases/2020/" class="md-tabs__link">
+          Releases
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../external-resources.md" class="md-tabs__link">
+          Resources
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Main navigation -->
+<nav
+  class="md-nav md-nav--primary"
+  aria-label="Navigation"
+  data-md-level="0"
+>
+
+<!--  <div class="re-frame-nav__logo">-->
+<!--      <img src="../images/logo/re-frame_128w.png">-->
+<!--  </div>-->
+
+
+  <!-- Site title -->
+  <label class="md-nav__title" for="__drawer">
+    <a
+      href="https://day8.github.io/re-frame/"
+      title="re-frame"
+      class="md-nav__button md-logo"
+      aria-label="re-frame"
+    >
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" /></svg>
+
+    </a>
+    re-frame
+  </label>
+
+  <!-- Repository containing source -->
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/day8/re-frame/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    day8/re-frame
+  </div>
+</a>
+    </div>
+  
+
+  <!-- Render item list -->
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      Docs
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Docs" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Docs
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../re-frame/" title="re-frame" class="md-nav__link">
+      re-frame
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2">
+    
+    <label class="md-nav__link" for="nav-2-2">
+      The Basics
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="The Basics" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        The Basics
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../homoiconic/" title="Homoiconic" class="md-nav__link">
+      Homoiconic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../it-is-a-loop/" title="It Is A Loop" class="md-nav__link">
+      It Is A Loop
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dominoes-60k/" title="Dominoes Intro" class="md-nav__link">
+      Dominoes Intro
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../application-state/" title="App State" class="md-nav__link">
+      App State
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dominoes-30k/" title="Dominoes Code" class="md-nav__link">
+      Dominoes Code
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../browser-dynamics/" title="Browser Dynamics" class="md-nav__link">
+      Browser Dynamics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dominoes-live/" title="Dominoes Live" class="md-nav__link">
+      Dominoes Live
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" checked>
+    
+    <label class="md-nav__link" for="nav-2-3">
+      Intermediate 2 & 3
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Intermediate 2 & 3" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Intermediate 2 & 3
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../event-handling-infographic/" title="Event Infographic" class="md-nav__link">
+      Event Infographic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../EffectfulHandlers/" title="Effectful Handlers" class="md-nav__link">
+      Effectful Handlers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Interceptors/" title="Interceptors" class="md-nav__link">
+      Interceptors
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Effects
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Effects" class="md-nav__link md-nav__link--active">
+      Effects
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#where-effects-come-from" class="md-nav__link">
+    Where Effects Come From
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-effects-map" class="md-nav__link">
+    The Effects Map
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#infinite-effects" class="md-nav__link">
+    Infinite Effects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extensible-side-effects" class="md-nav__link">
+    Extensible Side Effects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#writing-an-effect-handler" class="md-nav__link">
+    Writing An Effect Handler
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-not-always-needed" class="md-nav__link">
+    :db Not Always Needed
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-makes-this-work" class="md-nav__link">
+    What Makes This Work?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#order-of-effects" class="md-nav__link">
+    Order Of Effects?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#effects-with-no-data" class="md-nav__link">
+    Effects With No Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-and-noops" class="md-nav__link">
+    Testing And Noops
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#existing-effect-handlers" class="md-nav__link">
+    Existing Effect Handlers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Coeffects/" title="Coeffects" class="md-nav__link">
+      Coeffects
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
+    
+    <label class="md-nav__link" for="nav-2-4">
+      Intermediate 4,5 & 6
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Intermediate 4,5 & 6" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Intermediate 4,5 & 6
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../subscriptions/" title="Subscriptions" class="md-nav__link">
+      Subscriptions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../correcting-a-wrong/" title="Correcting a wrong" class="md-nav__link">
+      Correcting a wrong
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../flow-mechanics/" title="Flow Mechanics" class="md-nav__link">
+      Flow Mechanics
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../start-coding/" title="Start Coding" class="md-nav__link">
+      Start Coding
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-6" type="checkbox" id="nav-2-6">
+    
+    <label class="md-nav__link" for="nav-2-6">
+      Mental Model Omnibus
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Mental Model Omnibus" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-6">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Mental Model Omnibus
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../all-models-are-wrong/" title="Other Models" class="md-nav__link">
+      Other Models
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../on-dynamics/" title="On Dynamics" class="md-nav__link">
+      On Dynamics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../data-oriented-design/" title="Data Oriented Design" class="md-nav__link">
+      Data Oriented Design
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../interconnections/" title="Interconnections" class="md-nav__link">
+      Interconnections
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../historical/" title="Historical" class="md-nav__link">
+      Historical
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7">
+    
+    <label class="md-nav__link" for="nav-2-7">
+      More Advanced
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="More Advanced" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-7">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        More Advanced
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../reusable-components/" title="Reusable Components" class="md-nav__link">
+      Reusable Components
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../app-structure.md" title="App Structure" class="md-nav__link">
+      App Structure
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Loading-Initial-Data/" title="Loading Initial Data" class="md-nav__link">
+      Loading Initial Data
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Talking-To-Servers/" title="Talking To Servers" class="md-nav__link">
+      Talking To Servers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Subscribing-To-External-Data/" title="Subscribing to External Data" class="md-nav__link">
+      Subscribing to External Data
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Debugging/" title="Debugging" class="md-nav__link">
+      Debugging
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Testing/" title="Testing" class="md-nav__link">
+      Testing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../performance-problems.md" title="Eek! Performance Problems" class="md-nav__link">
+      Eek! Performance Problems
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Solve-the-CPU-hog-problem/" title="Solve the CPU hog problem" class="md-nav__link">
+      Solve the CPU hog problem
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Using-Stateful-JS-Components/" title="Using Stateful JS Components" class="md-nav__link">
+      Using Stateful JS Components
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../The-re-frame-logo/" title="The Logo Backstory" class="md-nav__link">
+      The Logo Backstory
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      FAQs
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="FAQs" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        FAQs
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
+      How can I Inspect app-db?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/LoadOnMount/" title="How Do I Load On Mount?" class="md-nav__link">
+      How Do I Load On Mount?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/DoINeedReFrame/" title="Reagent looks terrific. Why do I need re-frame?" class="md-nav__link">
+      Reagent looks terrific. Why do I need re-frame?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/FullStackReframe/" title="How do I do full-stack re-frame?" class="md-nav__link">
+      How do I do full-stack re-frame?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/When-Does-Dispatch-Happen/" title="How long after I do a dispatch does the event get handled?" class="md-nav__link">
+      How long after I do a dispatch does the event get handled?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/UseASubscriptionInAnEventHandler/" title="How can I use a subscription in an Event Handler" class="md-nav__link">
+      How can I use a subscription in an Event Handler
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Logging/" title="How do I use logging method X" class="md-nav__link">
+      How do I use logging method X
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Null-Dispatched-Events/" title="Dispatched Events Are Null" class="md-nav__link">
+      Dispatched Events Are Null
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Why-CLJC/" title="Why is re-frame implemented in `.cljc` files" class="md-nav__link">
+      Why is re-frame implemented in `.cljc` files
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Why-Clear-Sub-Cache/" title="Why do we need to clear the subscription cache when reloading with Figwheel?" class="md-nav__link">
+      Why do we need to clear the subscription cache when reloading with Figwheel?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/CatchingEventExceptions/" title="How can I detect exceptions in Event Handlers?" class="md-nav__link">
+      How can I detect exceptions in Event Handlers?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/DB_Normalisation/" title="How do I store normalised data in app-db?" class="md-nav__link">
+      How do I store normalised data in app-db?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/GlobalInterceptors/" title="How do I register a global interceptor" class="md-nav__link">
+      How do I register a global interceptor
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/PollADatabaseEvery60/" title="How do I turn on/off polling a database every 60 secs" class="md-nav__link">
+      How do I turn on/off polling a database every 60 secs
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/ViewsOnGlobalRegistration/" title="re-frame's uses side-effecting registrations. Should I feel dirty?" class="md-nav__link">
+      re-frame's uses side-effecting registrations. Should I feel dirty?
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      API
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="API" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../codox/" title="API" class="md-nav__link">
+      API
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Releases
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Releases" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Releases
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2020/" title="2020" class="md-nav__link">
+      2020
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2019/" title="2019" class="md-nav__link">
+      2019
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2018/" title="2018" class="md-nav__link">
+      2018
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2017/" title="2017" class="md-nav__link">
+      2017
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2016/" title="2016" class="md-nav__link">
+      2016
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2015/" title="2015" class="md-nav__link">
+      2015
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      Resources
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Resources" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Resources
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../external-resources.md" title="Resources" class="md-nav__link">
+      Resources
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#where-effects-come-from" class="md-nav__link">
+    Where Effects Come From
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-effects-map" class="md-nav__link">
+    The Effects Map
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#infinite-effects" class="md-nav__link">
+    Infinite Effects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extensible-side-effects" class="md-nav__link">
+    Extensible Side Effects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#writing-an-effect-handler" class="md-nav__link">
+    Writing An Effect Handler
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-not-always-needed" class="md-nav__link">
+    :db Not Always Needed
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-makes-this-work" class="md-nav__link">
+    What Makes This Work?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#order-of-effects" class="md-nav__link">
+    Order Of Effects?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#effects-with-no-data" class="md-nav__link">
+    Effects With No Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-and-noops" class="md-nav__link">
+    Testing And Noops
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#existing-effect-handlers" class="md-nav__link">
+    Existing Effect Handlers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/day8/re-frame/edit/master/docs/Effects.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                  <h1>Effects</h1>
+                
+                <p>Maybe 20% of the time, event handlers need to cause side effects.</p>
+<p>This tutorial explains how side effects are actioned,
+how you can create your own side effects, and how you can
+make side effects a noop in testing and event replays.</p>
+<h2 id="where-effects-come-from">Where Effects Come From<a class="headerlink" href="#where-effects-come-from" title="Permanent link">&para;</a></h2>
+<p>When an event handler is registered via <code>reg-event-fx</code>, it must return effects. Like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>              <span class="c1">;; -fx registration, not -db registration</span>
+  <span class="ss">:my-event</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>        <span class="c1">;; 1st argument is coeffects, instead of db</span>
+    <span class="p">{</span><span class="ss">:db</span>       <span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="ss">:db</span> <span class="nv">cofx</span><span class="p">)</span> <span class="ss">:flag</span>  <span class="nv">a</span><span class="p">)</span>
+     <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">]}))</span>   <span class="c1">;; return effects</span>
+</code></pre></div>
+
+
+<p><code>-fx</code> handlers return a description of the side-effects required, and that description is a map.</p>
+<h2 id="the-effects-map">The Effects Map<a class="headerlink" href="#the-effects-map" title="Permanent link">&para;</a></h2>
+<p>An effects map contains instructions.</p>
+<p>Each key/value pair in the map is one instruction - the key uniquely identifies
+the particular side effect required, and the value for that key provides
+further data. The type of value depends on the specific side-effect.</p>
+<p>Here's the two instructions from the example above:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span>  <span class="nv">a</span><span class="p">)</span>         <span class="c1">;; side effect on app-db</span>
+ <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">]}</span>     <span class="c1">;; dispatch this event</span>
+</code></pre></div>
+
+
+<p>The <code>:db</code> key instructs that "app-db" should be <code>reset!</code> to the
+value supplied.</p>
+<p>And the <code>:dispatch</code> key instructs that an event should be
+dispatched. The value is the vector to dispatch.</p>
+<p>There are many other possible
+effects, like for example <code>:dispatch-later</code>, <code>dispatch-n</code>, <code>:set-local-store</code>, etc.</p>
+<p>And so on. And so on. Which brings us to a problem.</p>
+<h2 id="infinite-effects">Infinite Effects<a class="headerlink" href="#infinite-effects" title="Permanent link">&para;</a></h2>
+<p>Although re-frame supplies a number of built-in effect handlers, the set of
+possible effects is open ended.</p>
+<p>What if you use PostgreSQL and want an effect which issues mutating
+queries?  Or what if you want to send logs to Logentries or metrics to DataDog.
+Or write values to <code>windows.location</code>. Or save cookies.</p>
+<p>The list of effects is long and varied, with everyone needing to use a
+different combination.</p>
+<p>So effect handling has to be extensible. You need a way to define
+your own side effects.</p>
+<h2 id="extensible-side-effects">Extensible Side Effects<a class="headerlink" href="#extensible-side-effects" title="Permanent link">&para;</a></h2>
+<p>re-frame provides a function <code>reg-fx</code> through which you can register
+your own <code>Effect Handlers</code>. Use it like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-fx</span>         <span class="c1">;; &lt;-- registration function</span>
+   <span class="ss">:butterfly</span>   <span class="c1">;;  &lt;1&gt;</span>
+   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">value</span><span class="p">]</span>  <span class="c1">;;  &lt;2&gt;</span>
+      <span class="nv">...</span>
+      <span class="p">))</span>
+</code></pre></div>
+
+
+<p><strong>&lt;1&gt;</strong>  the key for the effect.  When later an effects map contains
+the key <code>:butterfly</code>, the function we are registering will be used to action it.</p>
+<p><strong>&lt;2&gt;</strong>  the function which actions the side effect. Later, it will be called
+with one argument - the value in the effects map, for this key.</p>
+<p>So, if an event handler returned these two effects:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span>   <span class="p">[</span><span class="ss">:save-maiden</span> <span class="mi">42</span><span class="p">]</span>
+ <span class="ss">:butterfly</span>  <span class="s">&quot;Flapping&quot;</span><span class="p">}</span>         <span class="c1">;; butterfly effect, but no chaos !!</span>
+</code></pre></div>
+
+
+<p>Then the function we registered for <code>:butterfly</code> would be called to handle
+that effect. And it would be called with the parameter "Flapping".</p>
+<p>So, terminology:</p>
+<ul>
+<li><code>:butterfly</code> is an "effect key"</li>
+<li>and the function registered is an "effect handler".</li>
+</ul>
+<p>So re-frame has both <code>event</code> handlers and <code>effect</code> handlers and they are
+different, despite them both starting with <code>e</code> and ending in <code>t</code>!!</p>
+<h2 id="writing-an-effect-handler">Writing An Effect Handler<a class="headerlink" href="#writing-an-effect-handler" title="Permanent link">&para;</a></h2>
+<p>A word of advice - make them as simple as possible, and then
+simplify them further.  You don't want them containing any fancy logic.</p>
+<p>Why?  Well, because they are all side-effecty they will be a pain
+to test rigorously. And the combination of fancy logic and limited
+testing always ends in tears.  If not now, later.</p>
+<p>A second word of advice - when you create an effect handler,
+you also have to design (and document!) the structure of the
+<code>value</code> expected.</p>
+<p>When you do, realise that you are designing a nano DSL for <code>value</code> and try to
+make that design simple too. If you resist being terse and smart, and instead, favor slightly
+verbose and obvious, your future self will thank you. Create as little
+cognitive overhead as possible for the eventual readers of your effectful code.</p>
+<p>Right. So, this advice coming from the guy who named effects <code>fx</code> ... Oh, the hypocrisy.</p>
+<p>In my defence, here's the built-in effect handler for <code>:db</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-fx</span>
+  <span class="ss">:db</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">value</span><span class="p">]</span>
+    <span class="p">(</span><span class="nf">reset!</span> <span class="nv">re-frame.db/app-db</span> <span class="nv">value</span><span class="p">)))</span>
+</code></pre></div>
+
+
+<p>So, yeah, simple ... and, because of it, I can almost guarantee there's no bug in ... bang, crash, smoke, flames.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The return value of an effect handler is ignored.</p>
+</div>
+<h2 id="db-not-always-needed">:db Not Always Needed<a class="headerlink" href="#db-not-always-needed" title="Permanent link">&para;</a></h2>
+<p>An effects map does not need to include the <code>effect key</code> <code>:db</code>.</p>
+<p>It is perfectly valid for an event handler
+to not change <code>app-db</code>.</p>
+<p>In fact, it is perfectly valid for an event handler to return
+an effects map of <code>{}</code>.  Slightly puzzling, but not a problem.</p>
+<h2 id="what-makes-this-work">What Makes This Work?<a class="headerlink" href="#what-makes-this-work" title="Permanent link">&para;</a></h2>
+<p>A silently inserted interceptor.</p>
+<p>Whenever you register an event handler via <strong>either</strong> <code>reg-event-db</code>
+or <code>reg-event-fx</code>, an interceptor, cunningly named <code>do-fx</code>,
+is inserted at the beginning of the chain.</p>
+<p>Example: if your event handler registration looked like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
+  <span class="ss">:some-id</span>
+  <span class="p">[</span><span class="nv">debug</span> <span class="p">(</span><span class="nb">path </span><span class="ss">:right</span><span class="p">)]</span>     <span class="c1">;; &lt;-- two interceptors, apparently</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="nv">_</span><span class="p">]</span>
+     <span class="p">{})</span>                    <span class="c1">;; &lt;-- imagine returned effects here</span>
+</code></pre></div>
+
+
+<p>While it might look like you have registered with 2 interceptors,
+<code>reg-event-fx</code> will make it 3:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="nv">do-fx</span> <span class="nv">debug</span> <span class="p">(</span><span class="nb">path </span><span class="ss">:right</span><span class="p">)]</span>
+</code></pre></div>
+
+
+<p>It silently inserts <code>do-fx</code> at the front, and this is a good thing.</p>
+<p>The placement of <code>do-fx</code> at the beginning of the interceptor chain means
+its <code>:after</code> function would be the final act when the chain is executed
+(forwards and then backwards, as described in the Interceptor Tutorial).</p>
+<p>In this final act, the <code>:after</code> function extracts <code>:effects</code> from <code>context</code>
+and simply iterates across the key/value pairs it contains, calling the
+registered "effect handlers" for each.</p>
+<div class="admonition note">
+<p class="admonition-title">For the record</p>
+<p>The FISA Court requires that we deny all claims
+that <code>do-fx</code> is secretly injected NSA surveillance-ware. <br>
+We also note that you've been sloppy with your personal
+grooming again, including, but not limited to, forgetting to clean your teeth on one occassion last week.</p>
+</div>
+<p>If ever you want to take control of the way effect handling is done,
+create your own alternative to <code>reg-event-fx</code> and, in it, inject
+your own version of the <code>do-fx</code> interceptor at the front
+of the interceptor chain.  It is only a few lines of code.</p>
+<h2 id="order-of-effects">Order Of Effects?<a class="headerlink" href="#order-of-effects" title="Permanent link">&para;</a></h2>
+<p>There isn't one.</p>
+<p><code>do-fx</code> does not currently provide you with control over the order in
+which side effects occur. The <code>:db</code> side effect
+might happen before <code>:dispatch</code>, or not. You can't rely on it.</p>
+<div class="admonition note">
+<p class="admonition-title">Is That A Problem?</p>
+<p>If you feel you need ordering, then please
+open an issue and explain the usecase. The current absence of
+good usecases is the reason ordering isn't implemented. So give
+us a usercase and we'll revisit, maybe.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">For The Record</p>
+<p>If, later, ordering was needed, it might be handled via
+metadata on <code>:effects</code>. Also, perhaps by allowing <code>reg-fx</code> to optionally
+take two functions:</p>
+<ul>
+<li>an effects pre-process fn  &lt;-- new. Takes <code>:effects</code> returns <code>:effects</code></li>
+<li>the effects handler (as already described above).</li>
+</ul>
+<p>Anyway, these are all just possibilities. But not needed or implemented yet.</p>
+</div>
+<h2 id="effects-with-no-data">Effects With No Data<a class="headerlink" href="#effects-with-no-data" title="Permanent link">&para;</a></h2>
+<p>Some effects have no associated data:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
+  <span class="ss">:some-id</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">coeffect</span> <span class="nv">_</span><span class="p">]</span>
+     <span class="p">{</span><span class="ss">:exit-fullscreen</span> <span class="nv">nil</span><span class="p">}))</span>    <span class="c1">;;   &lt;--- no data, use a nil</span>
+</code></pre></div>
+
+
+<p>In these cases, although it looks odd, just supply <code>nil</code> as the value for this key.</p>
+<p>The associated effect handler would look like:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-fx</span>
+  <span class="ss">:exit-fullscreen</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">_</span><span class="p">]</span>             <span class="c1">;; we don&#39;t bother with that nil value</span>
+     <span class="p">(</span><span class="nf">.exitFullscreen</span> <span class="nv">js/document</span><span class="p">)))</span>
+</code></pre></div>
+
+
+<h2 id="testing-and-noops">Testing And Noops<a class="headerlink" href="#testing-and-noops" title="Permanent link">&para;</a></h2>
+<p>When you are running tests or replaying events, it is sometimes
+useful to stub out effects.</p>
+<p>This is easily done - you simply register a noop effect handler.</p>
+<p>Want to stub out the <code>:dispatch</code> effect?  Do this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-fx</span>
+  <span class="ss">:dispatch</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">_</span><span class="p">]</span> <span class="p">))</span>    <span class="c1">;; a noop</span>
+</code></pre></div>
+
+
+<p>If your test does alter registered effect handlers, and you are using <code>cljs.test</code>,
+then you can use a <code>fixture</code> to restore all effect handlers at the end of your test:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">fixture-re-frame</span>
+  <span class="p">[]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">restore-re-frame</span> <span class="p">(</span><span class="nf">atom</span> <span class="nv">nil</span><span class="p">)]</span>
+    <span class="p">{</span><span class="ss">:before</span> <span class="o">#</span><span class="p">(</span><span class="nf">reset!</span> <span class="nv">restore-re-frame</span> <span class="p">(</span><span class="nf">re-frame.core/make-restore-fn</span><span class="p">))</span>
+     <span class="ss">:after</span>  <span class="o">#</span><span class="p">(</span><span class="o">@</span><span class="nv">restore-re-frame</span><span class="p">)}))</span>
+
+<span class="p">(</span><span class="nf">use-fixtures</span> <span class="ss">:each</span> <span class="p">(</span><span class="nf">fixture-re-frame</span><span class="p">))</span>
+</code></pre></div>
+
+
+<p><code>re-frame.core/make-restore-fn</code> creates a checkpoint for re-frame state (including
+registered handlers) to which you can return.</p>
+<h2 id="existing-effect-handlers">Existing Effect Handlers<a class="headerlink" href="#existing-effect-handlers" title="Permanent link">&para;</a></h2>
+<p><code>re-frame's</code> built-in effect handlers, like <code>dispatch-n</code> and <code>dispatch-later</code>, are detailed in <a href="https://day8.github.io/re-frame/codox/">the API</a> document.</p>
+<p>And please review the <a href="external-resources.md">External-Resources document</a> for a list of 3rd party Effect Handlers.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>The 4 Point Summary in note form:</p>
+<ol>
+<li>Event handlers should only return a description of required effects </li>
+<li>They return a map like <code>{:effect1 value1 :effect2 value2}</code></li>
+<li>Keys of this map can refer to builtin effect handlers (see below) or custom ones</li>
+<li>We use <code>reg-fx</code> to register our own effect handlers, built-in ones are already registered</li>
+</ol>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+
+
+<!-- Application footer -->
+<footer class="md-footer">
+
+  <!-- Link to previous and/or next page -->
+  
+    <div class="md-footer-nav">
+      <nav
+        class="md-footer-nav__inner md-grid"
+        aria-label="Footer"
+      >
+
+        <!-- Link to previous page -->
+        
+          <a
+            href="../Interceptors/"
+            title="Interceptors"
+            class="md-footer-nav__link md-footer-nav__link--prev"
+            rel="prev"
+          >
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Interceptors
+              </div>
+            </div>
+          </a>
+        
+
+        <!-- Link to next page -->
+        
+          <a
+            href="../Coeffects/"
+            title="Coeffects"
+            class="md-footer-nav__link md-footer-nav__link--next"
+            rel="next"
+          >
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Coeffects
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+
+  <!-- Further information -->
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2015-2020 Michael Thompson
+          </div>
+        
+      </div>
+
+      <!-- Social links -->
+      
+  <div class="md-footer-social">
+    
+      
+      
+      <a href="https://github.com/day8" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+      </a>
+    
+      
+      
+      <a href="https://twitter.com/wazound" target="_blank" rel="noopener" title="twitter.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+    
+
+    </div>
+    
+      <script src="../assets/javascripts/vendor.c51dfa35.min.js"></script>
+      <script src="../assets/javascripts/bundle.eaaa3931.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: ["tabs"],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.58d22e8e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

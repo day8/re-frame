@@ -1,0 +1,27 @@
+
+/* Center ('space-evenly') links under home page logo. */
+.tx-hero__links {
+  display: flex;
+  flow-direction: row;
+  justify-content: space-evenly;
+}
+
+.tx-hero__links a {
+  margin: 0 !important;
+}
+
+/* Hide empty h1 headers that we need to place at the top of some pages such
+   as FAQs so that both a page-level header does NOT appear and the right
+   hand side table of contents is not broken. */
+h1[id=_1] {
+    display: none;
+}
+
+.not-found-container {
+    display: flex;
+    flow-direction: row;
+}
+
+.not-found-text {
+    margin-left: 31px;
+}

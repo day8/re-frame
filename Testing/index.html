@@ -1,0 +1,2086 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Derived data, flowing">
+      
+      
+        <link rel="canonical" href="https://day8.github.io/re-frame/Testing/">
+      
+      
+        <meta name="author" content="Mike Thompson">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-5.1.1">
+    
+    
+    
+    <title>Testing</title>
+    
+
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.a676eddb.min.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/palette.b302131d.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#03a9f4">
+      
+    
+    
+    
+
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Segoe+UI",+Lato,+Roboto,+"Fira+Sans:300,400,400i,700%7CSource+Code+Pro&display=fallback">
+        <style>body,input{font-family:"Segoe UI", Lato, Roboto, "Fira Sans",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Source Code Pro",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&display=swap">
+    
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap">
+    
+      <link rel="stylesheet" href="../stylesheets/dominoes-live.css">
+    
+      <link rel="stylesheet" href="../stylesheets/codehilite-monokai.css">
+    
+      <link rel="stylesheet" href="../stylesheets/mkdocs.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="light-blue" data-md-color-accent="blue">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#testing" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Application header -->
+<header class="md-header" data-md-component="header">
+
+  <!-- Top-level navigation -->
+  <nav class="md-header-nav md-grid" aria-label="Header">
+
+    <!-- Link to home -->
+    <a
+      href="https://day8.github.io/re-frame/"
+      title="re-frame"
+      class="md-header-nav__button md-logo"
+      aria-label="re-frame"
+    >
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" /></svg>
+
+    </a>
+
+    <!-- Button to open drawer -->
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
+    </label>
+
+    <!-- Header title -->
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis md-ellipsis">
+        re-frame
+      </div>
+    </div>
+
+    <!-- Button to open search dialogue -->
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+      </label>
+
+      <!-- Search interface -->
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    <!-- Repository containing source -->
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/day8/re-frame/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    day8/re-frame
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+          
+
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href=".." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../re-frame/" class="md-tabs__link md-tabs__link--active">
+          Docs
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+          FAQs
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../codox/" class="md-tabs__link">
+          API
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../releases/2020/" class="md-tabs__link">
+          Releases
+        </a>
+      
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../external-resources.md" class="md-tabs__link">
+          Resources
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Main navigation -->
+<nav
+  class="md-nav md-nav--primary"
+  aria-label="Navigation"
+  data-md-level="0"
+>
+
+<!--  <div class="re-frame-nav__logo">-->
+<!--      <img src="../images/logo/re-frame_128w.png">-->
+<!--  </div>-->
+
+
+  <!-- Site title -->
+  <label class="md-nav__title" for="__drawer">
+    <a
+      href="https://day8.github.io/re-frame/"
+      title="re-frame"
+      class="md-nav__button md-logo"
+      aria-label="re-frame"
+    >
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Logo -->
+
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" /></svg>
+
+    </a>
+    re-frame
+  </label>
+
+  <!-- Repository containing source -->
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/day8/re-frame/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    day8/re-frame
+  </div>
+</a>
+    </div>
+  
+
+  <!-- Render item list -->
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      Docs
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Docs" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Docs
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../re-frame/" title="re-frame" class="md-nav__link">
+      re-frame
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2">
+    
+    <label class="md-nav__link" for="nav-2-2">
+      The Basics
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="The Basics" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        The Basics
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../homoiconic/" title="Homoiconic" class="md-nav__link">
+      Homoiconic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../it-is-a-loop/" title="It Is A Loop" class="md-nav__link">
+      It Is A Loop
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dominoes-60k/" title="Dominoes Intro" class="md-nav__link">
+      Dominoes Intro
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../application-state/" title="App State" class="md-nav__link">
+      App State
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dominoes-30k/" title="Dominoes Code" class="md-nav__link">
+      Dominoes Code
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../browser-dynamics/" title="Browser Dynamics" class="md-nav__link">
+      Browser Dynamics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dominoes-live/" title="Dominoes Live" class="md-nav__link">
+      Dominoes Live
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
+    
+    <label class="md-nav__link" for="nav-2-3">
+      Intermediate 2 & 3
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Intermediate 2 & 3" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Intermediate 2 & 3
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../event-handling-infographic/" title="Event Infographic" class="md-nav__link">
+      Event Infographic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../EffectfulHandlers/" title="Effectful Handlers" class="md-nav__link">
+      Effectful Handlers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Interceptors/" title="Interceptors" class="md-nav__link">
+      Interceptors
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Effects/" title="Effects" class="md-nav__link">
+      Effects
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Coeffects/" title="Coeffects" class="md-nav__link">
+      Coeffects
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
+    
+    <label class="md-nav__link" for="nav-2-4">
+      Intermediate 4,5 & 6
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Intermediate 4,5 & 6" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Intermediate 4,5 & 6
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../subscriptions/" title="Subscriptions" class="md-nav__link">
+      Subscriptions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../correcting-a-wrong/" title="Correcting a wrong" class="md-nav__link">
+      Correcting a wrong
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../flow-mechanics/" title="Flow Mechanics" class="md-nav__link">
+      Flow Mechanics
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../start-coding/" title="Start Coding" class="md-nav__link">
+      Start Coding
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-6" type="checkbox" id="nav-2-6">
+    
+    <label class="md-nav__link" for="nav-2-6">
+      Mental Model Omnibus
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Mental Model Omnibus" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-6">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Mental Model Omnibus
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../all-models-are-wrong/" title="Other Models" class="md-nav__link">
+      Other Models
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../on-dynamics/" title="On Dynamics" class="md-nav__link">
+      On Dynamics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../data-oriented-design/" title="Data Oriented Design" class="md-nav__link">
+      Data Oriented Design
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../interconnections/" title="Interconnections" class="md-nav__link">
+      Interconnections
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../historical/" title="Historical" class="md-nav__link">
+      Historical
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7" checked>
+    
+    <label class="md-nav__link" for="nav-2-7">
+      More Advanced
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="More Advanced" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-7">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        More Advanced
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../reusable-components/" title="Reusable Components" class="md-nav__link">
+      Reusable Components
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../app-structure.md" title="App Structure" class="md-nav__link">
+      App Structure
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Loading-Initial-Data/" title="Loading Initial Data" class="md-nav__link">
+      Loading Initial Data
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Talking-To-Servers/" title="Talking To Servers" class="md-nav__link">
+      Talking To Servers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Subscribing-To-External-Data/" title="Subscribing to External Data" class="md-nav__link">
+      Subscribing to External Data
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Debugging/" title="Debugging" class="md-nav__link">
+      Debugging
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Testing
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Testing" class="md-nav__link md-nav__link--active">
+      Testing
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-to-test" class="md-nav__link">
+    What To Test
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-terminology" class="md-nav__link">
+    Test Terminology
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exposing-event-handlers-for-test" class="md-nav__link">
+    Exposing Event Handlers For Test
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-handlers-setup-part-1" class="md-nav__link">
+    Event Handlers - Setup - Part 1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-handlers-setup-part-2" class="md-nav__link">
+    Event Handlers - Setup - Part 2
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-handlers-setup-part-3" class="md-nav__link">
+    Event Handlers - Setup - Part 3
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subscription-handlers" class="md-nav__link">
+    Subscription Handlers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view-functions-part-1" class="md-nav__link">
+    View Functions - Part 1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view-functions-part-2a" class="md-nav__link">
+    View Functions - Part 2A
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view-functions-part-2b" class="md-nav__link">
+    View Functions - Part 2B
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view-functions-part-2c" class="md-nav__link">
+    View Functions - Part 2C
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#also-read-this" class="md-nav__link">
+    Also Read This
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../performance-problems.md" title="Eek! Performance Problems" class="md-nav__link">
+      Eek! Performance Problems
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Solve-the-CPU-hog-problem/" title="Solve the CPU hog problem" class="md-nav__link">
+      Solve the CPU hog problem
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Using-Stateful-JS-Components/" title="Using Stateful JS Components" class="md-nav__link">
+      Using Stateful JS Components
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../The-re-frame-logo/" title="The Logo Backstory" class="md-nav__link">
+      The Logo Backstory
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      FAQs
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="FAQs" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        FAQs
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
+      How can I Inspect app-db?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/LoadOnMount/" title="How Do I Load On Mount?" class="md-nav__link">
+      How Do I Load On Mount?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/DoINeedReFrame/" title="Reagent looks terrific. Why do I need re-frame?" class="md-nav__link">
+      Reagent looks terrific. Why do I need re-frame?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/FullStackReframe/" title="How do I do full-stack re-frame?" class="md-nav__link">
+      How do I do full-stack re-frame?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/When-Does-Dispatch-Happen/" title="How long after I do a dispatch does the event get handled?" class="md-nav__link">
+      How long after I do a dispatch does the event get handled?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/UseASubscriptionInAnEventHandler/" title="How can I use a subscription in an Event Handler" class="md-nav__link">
+      How can I use a subscription in an Event Handler
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Logging/" title="How do I use logging method X" class="md-nav__link">
+      How do I use logging method X
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Null-Dispatched-Events/" title="Dispatched Events Are Null" class="md-nav__link">
+      Dispatched Events Are Null
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Why-CLJC/" title="Why is re-frame implemented in `.cljc` files" class="md-nav__link">
+      Why is re-frame implemented in `.cljc` files
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/Why-Clear-Sub-Cache/" title="Why do we need to clear the subscription cache when reloading with Figwheel?" class="md-nav__link">
+      Why do we need to clear the subscription cache when reloading with Figwheel?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/CatchingEventExceptions/" title="How can I detect exceptions in Event Handlers?" class="md-nav__link">
+      How can I detect exceptions in Event Handlers?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/DB_Normalisation/" title="How do I store normalised data in app-db?" class="md-nav__link">
+      How do I store normalised data in app-db?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/GlobalInterceptors/" title="How do I register a global interceptor" class="md-nav__link">
+      How do I register a global interceptor
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/PollADatabaseEvery60/" title="How do I turn on/off polling a database every 60 secs" class="md-nav__link">
+      How do I turn on/off polling a database every 60 secs
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../FAQs/ViewsOnGlobalRegistration/" title="re-frame's uses side-effecting registrations. Should I feel dirty?" class="md-nav__link">
+      re-frame's uses side-effecting registrations. Should I feel dirty?
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      API
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="API" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../codox/" title="API" class="md-nav__link">
+      API
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Releases
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Releases" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Releases
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2020/" title="2020" class="md-nav__link">
+      2020
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2019/" title="2019" class="md-nav__link">
+      2019
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2018/" title="2018" class="md-nav__link">
+      2018
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2017/" title="2017" class="md-nav__link">
+      2017
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2016/" title="2016" class="md-nav__link">
+      2016
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../releases/2015/" title="2015" class="md-nav__link">
+      2015
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      Resources
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Resources" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+        </span>
+        Resources
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../external-resources.md" title="Resources" class="md-nav__link">
+      Resources
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-to-test" class="md-nav__link">
+    What To Test
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-terminology" class="md-nav__link">
+    Test Terminology
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exposing-event-handlers-for-test" class="md-nav__link">
+    Exposing Event Handlers For Test
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-handlers-setup-part-1" class="md-nav__link">
+    Event Handlers - Setup - Part 1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-handlers-setup-part-2" class="md-nav__link">
+    Event Handlers - Setup - Part 2
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-handlers-setup-part-3" class="md-nav__link">
+    Event Handlers - Setup - Part 3
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subscription-handlers" class="md-nav__link">
+    Subscription Handlers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view-functions-part-1" class="md-nav__link">
+    View Functions - Part 1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view-functions-part-2a" class="md-nav__link">
+    View Functions - Part 2A
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view-functions-part-2b" class="md-nav__link">
+    View Functions - Part 2B
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view-functions-part-2c" class="md-nav__link">
+    View Functions - Part 2C
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#also-read-this" class="md-nav__link">
+    Also Read This
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/day8/re-frame/edit/master/docs/Testing.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <h1 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h1>
+<p>This is an introduction to testing re-frame apps. It
+walks you through some choices.</p>
+<h2 id="what-to-test">What To Test<a class="headerlink" href="#what-to-test" title="Permanent link">&para;</a></h2>
+<p>For any re-frame app, there's three things to test:</p>
+<ul>
+<li>
+<p><strong>Event Handlers</strong> - most of your testing focus will
+     be here because this is where most of the logic lives</p>
+</li>
+<li>
+<p><strong>Subscription Handlers</strong> - often not a lot to test here. Only
+    <a href="Subscriptions.md">Layer 3</a> subscriptions need testing.</p>
+</li>
+<li>
+<p><strong>View functions</strong> - I don't tend to write tests for views. There, I said it.
+    Hey!  It is mean to look at someone with that level of disapproval,
+    while shaking your head. I have my reasons ...<br>
+    In my experience with the re-frame architecture, View Functions
+    tend to be an unlikely source of bugs. And every line of code you write is
+    like a ball &amp; chain you must forevermore drag about, so I dislike maintaining
+    tests which don't deliver good bang for buck.</p>
+</li>
+</ul>
+<p>And, yes, in theory there's also <code>Effect Handlers</code> (Domino 3) to test,
+but you'll hardly ever write one, and, anyway, each one is different, so
+I've got no good general insight to offer you for them. They will be ignored
+in this tutorial.</p>
+<h2 id="test-terminology">Test Terminology<a class="headerlink" href="#test-terminology" title="Permanent link">&para;</a></h2>
+<p>Let's establish some terminology to aid the further explanations in this
+tutorial.  Every unittest has 3 steps:</p>
+<ol>
+<li><strong>setup</strong> initial conditions</li>
+<li><strong>execute</strong> the thing-under-test</li>
+<li><strong>verify</strong> that the thing-under-test did the right thing</li>
+</ol>
+<h2 id="exposing-event-handlers-for-test">Exposing Event Handlers For Test<a class="headerlink" href="#exposing-event-handlers-for-test" title="Permanent link">&para;</a></h2>
+<p>Event Handlers are pure functions which should make them easy to test, right?</p>
+<p>First, create a named event handler using <code>defn</code> like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">select-triangle</span>
+  <span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">triangle-id</span><span class="p">]]</span>
+  <span class="nv">...</span> <span class="nv">return</span> <span class="nv">a</span> <span class="nv">modified</span> <span class="nv">version</span> <span class="nv">of</span> <span class="nv">db</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>You'd register this handler in a separate step:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>     <span class="c1">;; this is a &quot;-db&quot; event handler, not &quot;-fx&quot;</span>
+  <span class="ss">:select-triangle</span>
+  <span class="p">[</span><span class="nv">some-interceptors</span><span class="p">]</span>
+  <span class="nv">select-triangle</span><span class="p">)</span>    <span class="c1">;; &lt;--- defn above. don&#39;t use an annonomous fn</span>
+</code></pre></div>
+
+
+<p>This arrangement means the event handler function
+<code>select-triangle</code> is readily available to be unittested.</p>
+<h2 id="event-handlers-setup-part-1">Event Handlers - Setup - Part 1<a class="headerlink" href="#event-handlers-setup-part-1" title="Permanent link">&para;</a></h2>
+<p>To test <code>select-triangle</code>, a unittest must pass in values for the two arguments
+<code>db</code> and <code>v</code>. And, so, our <strong>setup</strong> would have to construct both values.</p>
+<p>But how to create a useful <code>db</code> value?</p>
+<p><code>db</code> is a map of a certain structure, so one way would be to simply <code>assoc</code> values
+into a map at certain paths to simulate a real-world <code>db</code> value or, even easier, just use
+a map literal, like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">;; a test</span>
+<span class="p">(</span><span class="k">let </span><span class="p">[</span>
+      <span class="c1">;; setup - create db and event</span>
+      <span class="nv">db</span>      <span class="p">{</span><span class="ss">:some</span> <span class="mi">42</span>  <span class="ss">:thing</span> <span class="s">&quot;hello&quot;</span><span class="p">}</span>   <span class="c1">; a literal</span>
+      <span class="nv">event</span>   <span class="p">[</span><span class="ss">:select-triangle</span> <span class="ss">:other</span> <span class="ss">:event</span> <span class="ss">:args</span><span class="p">]</span>
+
+      <span class="c1">;; execute</span>
+      <span class="nv">result-db</span> <span class="p">(</span><span class="nf">select-triange</span> <span class="nv">db</span> <span class="nv">event</span><span class="p">)]</span>
+
+      <span class="c1">;; validate that result-db is correct)</span>
+      <span class="p">(</span><span class="nf">is</span> <span class="nv">...</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>This certainly works in theory, but in practice,
+unless we are careful, constructing the <code>db</code>
+value in <strong>setup</strong> could:</p>
+<ul>
+<li>be manual and time consuming</li>
+<li>tie tests to the internal structure of <code>app-db</code></li>
+</ul>
+<p>The <strong>setup</strong> of every test could end up relying on the internal structure
+of <code>app-db</code> and any change in that structure (which is inevitable over time)
+would result in a lot re-work in the tests. That's too fragile.</p>
+<p>So, this approach doesn't quite work.</p>
+<h2 id="event-handlers-setup-part-2">Event Handlers - Setup - Part 2<a class="headerlink" href="#event-handlers-setup-part-2" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>In re-frame, <code>Events</code> are central. They are the "language of the system". They
+provide the eloquence.</p>
+</blockquote>
+<p>The <code>db</code> value (stored in <code>app-db</code>) is the cumulative result
+of many event handlers running.</p>
+<p>We can use this idea.  In <strong>setup</strong>, instead of manually trying to create that <code>db</code> value, we could
+"build up" a <code>db</code> value by threading <code>db</code> through many event handlers
+which cumulatively create the required initial state.  Tests then need
+know nothing about the internal structure of that <code>db</code>.</p>
+<p>Like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span>
+      <span class="c1">;; setup - cummulatively build up db</span>
+      <span class="nv">db</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="p">{}</span>    <span class="c1">;; empty db</span>
+             <span class="p">(</span><span class="nf">initialise-db</span> <span class="p">[</span><span class="ss">:initialise-db</span><span class="p">])</span>   <span class="c1">;; each event handler expects db and event</span>
+             <span class="p">(</span><span class="nf">clear-panel</span>   <span class="p">[</span><span class="ss">:clear-panel</span><span class="p">])</span>
+             <span class="p">(</span><span class="nf">draw-triangle</span> <span class="p">[</span><span class="ss">:draw-triangle</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]))</span>
+
+      <span class="nv">event</span>  <span class="p">[</span><span class="ss">:select-triange</span> <span class="ss">:other</span> <span class="ss">:stuff</span><span class="p">]</span>
+
+      <span class="c1">;; now execute the event handler under test</span>
+      <span class="nv">db</span><span class="o">&#39;</span>    <span class="p">(</span><span class="nf">select-triange</span> <span class="nv">db</span> <span class="nv">event</span><span class="p">)]</span>
+
+      <span class="c1">;; validate that db&#39; is correct</span>
+      <span class="p">(</span><span class="nf">is</span> <span class="nv">...</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>This approach works so long as all the event handlers are
+of the <code>-db</code> kind, but the threading gets a little messy when some event
+handlers are of the <code>-fx</code> kind which take a <code>coeffect</code> argument and
+return <code>effects</code>, instead of a <code>db</code> value.</p>
+<p>So, this approach is quite workable in some cases, but can get messy
+in the general case.</p>
+<h2 id="event-handlers-setup-part-3">Event Handlers - Setup - Part 3<a class="headerlink" href="#event-handlers-setup-part-3" title="Permanent link">&para;</a></h2>
+<p>There is further variation which is quite general but not as pure.</p>
+<p>During test <strong>setup</strong> we could literally just <code>dispatch</code> the events
+which would put <code>app-db</code> into the right state.</p>
+<p>Except, we'd have to use <code>dispatch-sync</code> rather <code>dispatch</code> to
+force immediate handling of events, rather than queuing.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">;; setup - cummulatively build up db</span>
+<span class="p">(</span><span class="nf">dispatch-sync</span> <span class="p">[</span><span class="ss">:initialise-db</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">dispatch-sync</span> <span class="p">[</span><span class="ss">:clear-panel</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">dispatch-sync</span> <span class="p">[</span><span class="ss">:draw-triangle</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="c1">;; execute</span>
+<span class="p">(</span><span class="nf">dispatch-sync</span>  <span class="p">[</span><span class="ss">:select-triange</span> <span class="ss">:other</span> <span class="ss">:stuff</span><span class="p">])</span>
+
+<span class="c1">;; validate that the value in &#39;app-db&#39; is correct</span>
+<span class="c1">;; perhaps with subscriptions</span>
+</code></pre></div>
+
+
+<p>Notes:</p>
+<ol>
+<li>we use <code>dispatch-sync</code> because <code>dispatch</code> is async (event is handled not now, but soon)</li>
+<li>Not pure. We are choosing to mutate the global <code>app-db</code>. But
+     having said that, there's something about this approach which is remarkably
+     pragmatic.</li>
+<li>the <strong>setup</strong> is now very natural. The associated handlers can be either <code>-db</code> or <code>-fx</code></li>
+<li>if the handlers have effects other than just updating app-db, we might need to stub out XXX</li>
+<li>How do we look at the results ????</li>
+</ol>
+<p>If this method appeals to you, you should ABSOLUTELY review the utilities in this helper library:
+<a href="https://github.com/day8/re-frame-test">re-frame-test</a>.</p>
+<p>In summary, event handlers should be easy to test because they are pure functions. The interesting
+part is the unittest "setup" where we need to establish an initial value for <code>db</code>.</p>
+<h2 id="subscription-handlers">Subscription Handlers<a class="headerlink" href="#subscription-handlers" title="Permanent link">&para;</a></h2>
+<p>Here's a Subscription Handler from
+<a href="https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs">the todomvc example</a>:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:visible-todos</span>
+
+  <span class="c1">;; signal function</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">query-v</span> <span class="nv">_</span><span class="p">]</span>
+    <span class="p">[(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:todos</span><span class="p">])</span>
+     <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:showing</span><span class="p">])])</span>
+
+  <span class="c1">;; computation function</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[[</span><span class="nv">todos</span> <span class="nv">showing</span><span class="p">]</span> <span class="nv">_</span><span class="p">]</span>   <span class="c1">;; that 1st parameter is a 2-vector of values</span>
+    <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">filter-fn</span> <span class="p">(</span><span class="nf">case</span> <span class="nv">showing</span>
+                      <span class="ss">:active</span> <span class="p">(</span><span class="nb">complement </span><span class="ss">:done</span><span class="p">)</span>
+                      <span class="ss">:done</span>   <span class="ss">:done</span>
+                      <span class="ss">:all</span>    <span class="nv">identity</span><span class="p">)]</span>
+      <span class="p">(</span><span class="nb">filter </span><span class="nv">filter-fn</span> <span class="nv">todos</span><span class="p">))))</span>
+</code></pre></div>
+
+
+<p>How do we test this?</p>
+<p>First, we could split the computation function from its registration, like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">visible-todos</span>
+  <span class="p">[[</span><span class="nv">todos</span> <span class="nv">showing</span><span class="p">]</span> <span class="nv">_</span><span class="p">]</span>
+
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">filter-fn</span> <span class="p">(</span><span class="nf">case</span> <span class="nv">showing</span>
+                    <span class="ss">:active</span> <span class="p">(</span><span class="nb">complement </span><span class="ss">:done</span><span class="p">)</span>
+                    <span class="ss">:done</span>   <span class="ss">:done</span>
+                    <span class="ss">:all</span>    <span class="nv">identity</span><span class="p">)]</span>
+   <span class="p">(</span><span class="nb">filter </span><span class="nv">filter-fn</span> <span class="nv">todos</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:visible-todos</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">query-v</span> <span class="nv">_</span><span class="p">]</span>
+      <span class="p">[(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:todos</span><span class="p">])</span>
+       <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:showing</span><span class="p">])])</span>
+  <span class="nv">visible-todos</span><span class="p">)</span>     <span class="c1">;; &lt;--- computation function used here</span>
+</code></pre></div>
+
+
+<p>That makes <code>visible-todos</code> available for direct unit testing.  But, as we experienced
+with Event Handlers, the challenge is around constructing <code>db</code> values (first parameter)
+in a way which doesn't become fragile.</p>
+<h2 id="view-functions-part-1">View Functions - Part 1<a class="headerlink" href="#view-functions-part-1" title="Permanent link">&para;</a></h2>
+<p>Components/views are more tricky and there are a few options.</p>
+<p>But remember my ugly secret - I don't tend to write tests for my views.</p>
+<p>But here's how, theoretically, I'd write tests if I wasn't me ...</p>
+<p>If a View Function is <a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-1-a-simple-function">Form-1</a>,
+then it is fairly easy to test.</p>
+<p>A trivial example:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">greet</span>
+   <span class="p">[</span><span class="nv">name</span><span class="p">]</span>
+   <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Hello &quot;</span> <span class="nv">name</span><span class="p">])</span>
+
+<span class="p">(</span><span class="nf">greet</span> <span class="s">&quot;Wiki&quot;</span><span class="p">)</span>
+<span class="c1">;;=&gt; [:div &quot;Hello &quot; &quot;Wiki&quot;]</span>
+</code></pre></div>
+
+
+<p>So, here, testing involves passing values into the function and checking the data structure returned
+for correctness.</p>
+<p>What's returned is hiccup, of course. So how do you test hiccup for correctness?</p>
+<p>hiccup is just a clojure data structure - vectors containing keywords, and maps, and other vectors, etc.
+Perhaps you'd use https://github.com/nathanmarz/specter to declaratively check on the presence
+of certain values and structures? Or do it more manually.</p>
+<h2 id="view-functions-part-2a">View Functions - Part 2A<a class="headerlink" href="#view-functions-part-2a" title="Permanent link">&para;</a></h2>
+<p>But what if the View Function has a subscription?</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-view</span>
+  <span class="p">[</span><span class="nv">something</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">val </span> <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:query-id</span><span class="p">])]</span>     <span class="c1">;; &lt;-- reactive subscription</span>
+    <span class="p">[</span><span class="ss">:div</span> <span class="nv">....</span> <span class="nv">using</span> <span class="o">@</span><span class="nb">val </span><span class="nv">in</span> <span class="nv">here</span><span class="p">]))</span>
+</code></pre></div>
+
+
+<p>The use of <code>subscribe</code> makes the function impure (it obtains data from places other than its args).</p>
+<p>A testing plan might be:</p>
+<ol>
+<li>setup <code>app-db</code> with some values in the right places  (via dispatch of events?)</li>
+<li>call <code>my-view</code> (with a parameter) which will return hiccup</li>
+<li>check the hiccup structure for correctness.</li>
+</ol>
+<p>Continuing on, in a second phase you could then:</p>
+<ol>
+<li>change the value in <code>app-db</code>  (which will cause the subscription to fire)</li>
+<li>call view functions again (hiccup returned)</li>
+<li>check the new hiccup for correctness.</li>
+</ol>
+<p>Which is all possible, if a little messy.</p>
+<h2 id="view-functions-part-2b">View Functions - Part 2B<a class="headerlink" href="#view-functions-part-2b" title="Permanent link">&para;</a></h2>
+<p>There is a pragmatic method available to handle the impurity: use <code>with-redefs</code>
+to stub out <code>subscribe</code>. Like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">subscription-stub</span> <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+  <span class="p">(</span><span class="nf">atom</span>
+    <span class="p">(</span><span class="nf">case</span> <span class="nv">x</span>
+      <span class="p">[</span><span class="ss">:query-id</span><span class="p">]</span> <span class="mi">42</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nf">deftest</span> <span class="nv">some-test</span>
+  <span class="p">(</span><span class="nf">with-redefs</span> <span class="p">[</span><span class="nv">re-frame/subscribe</span> <span class="p">(</span><span class="nf">subscription-stub</span><span class="p">)]</span>
+    <span class="p">(</span><span class="nf">testing</span> <span class="s">&quot;some some view which does a subscribe&quot;</span>
+      <span class="nv">.....</span> <span class="nv">call</span> <span class="nv">the</span> <span class="nv">view</span> <span class="nv">function</span> <span class="nb">and </span><span class="nv">the</span> <span class="nv">hiccup</span> <span class="nv">output</span><span class="p">)))</span>
+</code></pre></div>
+
+
+<p>For more integration level testing, you can use <code>with-mounted-component</code>
+from the <a href="https://github.com/reagent-project/reagent-template/blob/master/src/leiningen/new/reagent/test/cljs/reagent/core_test.cljs">reagent-template</a>
+to render the component in the browser and validate the generated DOM.</p>
+<h2 id="view-functions-part-2c">View Functions - Part 2C<a class="headerlink" href="#view-functions-part-2c" title="Permanent link">&para;</a></h2>
+<p>Or ... there is another option: you can structure in the first place for pure view functions.</p>
+<p>The trick here is to create an outer and inner component. The outer sources the data
+(via a subscription), and passes it onto the inner as props (parameters).</p>
+<p>As a result, the inner component, which does the testable work, is pure and
+easily tested. The outer is impure but trivial.</p>
+<p>To get a more concrete idea, I'll direct you to another page in the re-frame docs
+which has nothing to do with testing, but it does use this <code>simple-outer-subscribe-with-complicated-inner-render</code>
+pattern for a different purpose:
+<a href="../Using-Stateful-JS-Components/">Using Stateful JS Components</a></p>
+<p>Note: this technique could be made simple and almost invisible via the
+use of macros.</p>
+<p>This pattern has been independently discovered by many. For example, here
+it is called the <a href="https://medium.com/@learnreact/container-components-c0e67432e005#.mb0hzgm3l">Container/Component pattern</a>.</p>
+<h2 id="also-read-this">Also Read This<a class="headerlink" href="#also-read-this" title="Permanent link">&para;</a></h2>
+<p><a href="https://juxt.pro/blog/posts/cljs-apps.html">https://juxt.pro/blog/posts/cljs-apps.html</a></p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Event handlers will be your primary focus when testing. Remember to review the utilities in
+<a href="https://github.com/day8/re-frame-test">re-frame-test</a>.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+
+
+<!-- Application footer -->
+<footer class="md-footer">
+
+  <!-- Link to previous and/or next page -->
+  
+    <div class="md-footer-nav">
+      <nav
+        class="md-footer-nav__inner md-grid"
+        aria-label="Footer"
+      >
+
+        <!-- Link to previous page -->
+        
+          <a
+            href="../Debugging/"
+            title="Debugging"
+            class="md-footer-nav__link md-footer-nav__link--prev"
+            rel="prev"
+          >
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Debugging
+              </div>
+            </div>
+          </a>
+        
+
+        <!-- Link to next page -->
+        
+          <a
+            href="../Solve-the-CPU-hog-problem/"
+            title="Solve the CPU hog problem"
+            class="md-footer-nav__link md-footer-nav__link--next"
+            rel="next"
+          >
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Solve the CPU hog problem
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+
+  <!-- Further information -->
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+
+      <!-- Copyright and theme information -->
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2015-2020 Michael Thompson
+          </div>
+        
+      </div>
+
+      <!-- Social links -->
+      
+  <div class="md-footer-social">
+    
+      
+      
+      <a href="https://github.com/day8" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+      </a>
+    
+      
+      
+      <a href="https://twitter.com/wazound" target="_blank" rel="noopener" title="twitter.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+    
+
+    </div>
+    
+      <script src="../assets/javascripts/vendor.c51dfa35.min.js"></script>
+      <script src="../assets/javascripts/bundle.eaaa3931.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: ["tabs"],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.58d22e8e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
