@@ -63,5 +63,5 @@ If possible provide:
 
 ## Pull requests for docs
 
-Please see <docs/README.md>
+Please see the [docs/README.md](docs/README.md)
 
