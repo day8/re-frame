@@ -23,7 +23,7 @@ Perhaps:
 
 1.  You want to develop a modern web application using ClojureScript.
 2.  You want to maximise developer productivity by writing [fewer lines of code](https://medium.com/dailyjs/a-realworld-comparison-of-front-end-frameworks-2020-4e50655fe4c1). You want a simple dynamic process that you can simulate in your head. And you want a clean approach to effects and state management.
-2.  You are curious about the benifits of **_data-oriented design_**.
+2.  You are curious about the benefits of **_data-oriented design_**.
 2.  You are a refugee from technical churn, seeking stability and productivity.
     For six years, ClojureScript, Reagent and re-frame have barely changed. No need. Still cutting edge.
 2.  You want to see how `reactive programming`, `functional programming` and `immutable data`
