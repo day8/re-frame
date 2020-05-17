@@ -60,7 +60,7 @@ re-frame was released in early 2015, and has since
 [been](https://www.fullcontact.com) successfully
 [used](https://www.nubank.com.br) by
 [many](http://open.mediaexpress.reuters.com/) a 
-[conpanies](https://rokt.com/) and
+[companies](https://rokt.com/) and
 individuals to build complex apps, many running beyond 40K lines of
 ClojureScript.
 
