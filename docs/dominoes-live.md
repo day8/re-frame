@@ -45,6 +45,7 @@ So, at the top we need this:
 <code class="klipse-clojure">
 (ns simple.core
   (:require [reagent.core :as reagent]
+            [reagent.dom :as rdom]
             [re-frame.core :as rf]))
 </code>
 
@@ -471,7 +472,7 @@ It has two tasks:
 <code class="klipse-clojure">
 (defn mount-ui
   []
-  (reagent/render [ui]                 ;; mount the application's ui
+  (rdom/render [ui]                 ;; mount the application's ui
                   (js/document.getElementById "dominoes-live-app")))
 (defn run
   []
