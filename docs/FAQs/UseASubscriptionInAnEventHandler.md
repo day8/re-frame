@@ -49,4 +49,4 @@ So, how to write this `inject-sub` interceptor?
 re-frame doesn't yet have a builtin `inject-sub` interceptor to do this injection.
 
 I'd suggest you use this 3rd party library: 
-<https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc\>
+<https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc>
