@@ -33,7 +33,7 @@
   added to the end of a FIFO queue which already contain events.
 
   Usage:
-     (dispatch [:order-pizza {:supreme 2 :meatlovers 1 :veg 1})"
+     (dispatch [:order-pizza {:supreme 2 :meatlovers 1 :veg 1}])"
   [event]
   (router/dispatch event))
 
