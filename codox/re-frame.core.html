@@ -87,7 +87,7 @@ synchronously. It will likely be run 'very soon', although it may be
 added to the end of a FIFO queue which already contain events.
 
 Usage:
-   (dispatch [:order-pizza {:supreme 2 :meatlovers 1 :veg 1})</pre></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event-v)</code></div><div class="doc"><pre class="plaintext">Synchronously (immediately) process `event`. Do not queue.
+   (dispatch [:order-pizza {:supreme 2 :meatlovers 1 :veg 1}])</pre></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event-v)</code></div><div class="doc"><pre class="plaintext">Synchronously (immediately) process `event`. Do not queue.
 
 Generally, don't use this. Instead use `dispatch`. It is an error
 to use `dispatch-sync` within an event handler.
