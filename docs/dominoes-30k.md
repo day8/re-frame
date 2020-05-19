@@ -90,7 +90,7 @@ In this case, the value returned by `h` is a map with only one key:
 ```clj
 {:db  ..some-value..}
 ```
-This is `h` saying "a chnage to application state is required". 
+This is `h` saying "a change to application state is required". 
 
 BTW, here is a more idiomatic rewrite of `h` which uses `destructuring` of the args: 
 ```clj
