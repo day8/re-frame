@@ -1686,7 +1686,7 @@ invariably needed, and it is available by default in the <code>:db</code> key.</
 </code></pre></div>
 
 
-<p>This is <code>h</code> saying "a chnage to application state is required". </p>
+<p>This is <code>h</code> saying "a change to application state is required". </p>
 <p>BTW, here is a more idiomatic rewrite of <code>h</code> which uses <code>destructuring</code> of the args: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span> 
   <span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">item-id</span><span class="p">]]</span>    <span class="c1">;; &lt;--- new: obtain db and item-id directly</span>
