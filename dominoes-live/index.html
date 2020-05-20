@@ -1820,7 +1820,7 @@ the application, which means they return a modified version of <code>db</code>.<
 <h3>:initialize</h3>
 <p>Once on startup, application state must be initialised. We
 want to put a sensible value into <code>app-db</code>, which starts out containing an empty map <code>{}</code>.</p>
-<p>A single <code>(dispatch [: initialise])</code> will happen early in the 
+<p>A single <code>(dispatch [:initialise])</code> will happen early in the 
 app's life (more on this below), and we need to register an <code>event handler</code>
 for it. </p>
 <p>This event handler is slightly unusual because it ignores both of its arguments. 
