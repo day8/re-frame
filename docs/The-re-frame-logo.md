@@ -1,5 +1,5 @@
 
-![logo](images/logo/re-frame_256w.png?raw=true)
+![logo](images/logo/re-frame-colour.png?raw=true)
 
 ## Who?
 

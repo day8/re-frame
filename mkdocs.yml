@@ -20,7 +20,7 @@ theme:
     # The next line is effectively an injection attack on the mkdocs template 
     # Notice that the leading and trailing double quotes are omitted. 
     # That allows me to trick mkdocs into accepting more than one font here.
-    text: Segoe UI", Lato, Roboto, "Fira Sans
+    text: Open Sans", "Fira Sans
     code: Source Code Pro
   features:
     - tabs
@@ -62,6 +62,7 @@ nav:
       - "Interconnections": interconnections.md
       - "Historical": historical.md
     - More Advanced:
+      - Browser Dynamics: browser-dynamics.md
       - Reusable Components: reusable-components.md
       - App Structure: App-Structure.md
       - Loading Initial Data: Loading-Initial-Data.md
@@ -88,7 +89,7 @@ nav:
     - "How do I store normalised data in app-db?": FAQs/DB_Normalisation.md
     - "How do I register a global interceptor": FAQs/GlobalInterceptors.md
     - "How do I turn on/off polling a database every 60 secs": FAQs/PollADatabaseEvery60.md
-    - "re-frame's uses side-effecting registrations. Should I feel dirty?": FAQs/ViewsOnGlobalRegistration.md
+    - "re-frame uses side-effecting registrations. Should I feel dirty?": FAQs/ViewsOnGlobalRegistration.md
   - API:
     - API: codox/index.html
   - Releases:
@@ -105,6 +106,7 @@ markdown_extensions:
   - meta
   - admonition
   - footnotes
+  - pymdownx.inlinehilite
   - toc:
       permalink: true
       toc_depth: 2

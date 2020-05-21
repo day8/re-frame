@@ -16,7 +16,7 @@ are the `ViewFunctions`, which calculate hiccup.
 
 Typically, the Signal Graph is not deep, with only a few interior layers of nodes
 between root and leaves. These interior nodes are the subscription nodes 
-that you create via `regsub`. Or, more accurately, you use `resub` to register 
+that you create via `regsub`. Or, more accurately, you use `regsub` to register 
 how such nodes should be created, if and when they are needed.
 
 Data flows through this graph, being transformed by the journey and, as a result, the data which 
@@ -125,7 +125,7 @@ input values, flowing into the node, and calculate a derived value to be the nod
 ```clj
 (re-frame.core/reg-sub  ;; a part of the re-frame API
   :id                   ;; usage: (subscribe [:id])
-  (fn [db _]            ;; `db` is the map out of `apd-db`
+  (fn [db _]            ;; `db` is the map out of `app-db`
     (:something db)))   ;; trival extraction - no computation
 ```
 
