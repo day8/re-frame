@@ -1296,6 +1296,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#100-rc1-2020-05-16" class="md-nav__link">
+    1.0.0-rc1 (2020-05-16)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#0120-2020-03-08" class="md-nav__link">
     0.12.0 (2020-03-08)
   </a>
@@ -1463,6 +1470,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#100-rc1-2020-05-16" class="md-nav__link">
+    1.0.0-rc1 (2020-05-16)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#0120-2020-03-08" class="md-nav__link">
     0.12.0 (2020-03-08)
   </a>
@@ -1509,25 +1523,36 @@
 
 <h1 id="_1"><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h2 id="100-rc1-2020-05-16">1.0.0-rc1 (2020-05-16)<a class="headerlink" href="#100-rc1-2020-05-16" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
 <ul>
-<li><a href="https://github.com/day8/re-frame/issues/478">#478</a> - Add support for cljs-oss/canary builds</li>
+<li>Add support for cljs-oss/canary builds. See <a href="https://github.com/day8/re-frame/issues/478">#478</a>.</li>
+<li>Add global interceptors. See <a href="https://github.com/day8/re-frame/issues/570">#570</a>.</li>
+<li>Add cljdoc config. See <a href="https://github.com/day8/re-frame/issues/592">#592</a></li>
+<li>Add missing docstrings to re-frame.core cs. See <a href="https://github.com/day8/re-frame/issues/588">#588</a></li>
 </ul>
 <h4>Fixed</h4>
 <ul>
-<li><a href="https://github.com/day8/re-frame/issues/216">#216</a>, 
-  <a href="https://github.com/day8/re-frame/issues/456">#456</a> - Create API documentation for re-frame.core</li>
+<li>Fix documentation for re-frame.core ns. See <a href="https://github.com/day8/re-frame/issues/456">#456</a> and <a href="https://github.com/day8/re-frame/issues/216">#216</a></li>
+<li>Fix excessive overwriting handler warnings. See <a href="https://github.com/day8/re-frame/issues/204">#204</a>.</li>
+<li>Consistently use (co)effect helpers. See <a href="https://github.com/day8/re-frame/pull/548">#548</a>. Thanks to <a href="https://github.com/mbertheau">@mbertheau</a>.</li>
+<li>Fix use of deprecated reagent/render for reagent.dom/render. See <a href="https://github.com/day8/re-frame/pull/577">#577</a>. Thanks to <a href="https://github.com/pathammer">@pathammer</a></li>
+<li>Fix support for layer 3 subscriptions in clj environment.
+  See <a href="https://github.com/day8/re-frame/pull/541">#541</a>. Thanks to <a href="https://github.com/dawran6">@dawran6</a>.</li>
+<li>Fix infer externs warnings. See <a href="https://github.com/day8/re-frame/issues/591">#591</a>.</li>
 </ul>
 <h4>Changed</h4>
 <ul>
-<li>Upgrade org.clojure/tools.logging to 1.0.0</li>
-<li>Upgrade shadow-cljs to 2.8.94</li>
-<li>Upgrade binaryage/devtools to 1.0.0</li>
+<li>Change sample apps to use source files from the repo checkout instead of
+  re-frame release artifacts.</li>
+<li>Upgrade shadow-cljs to 2.8.110</li>
+<li>Upgrade lein-shadow to <a href="https://gitlab.com/nikperic/lein-shadow/-/blob/master/CHANGELOG.md#020-2020-05-13">0.2.0</a></li>
+<li>Upgrade ClojureScript to <a href="https://github.com/clojure/clojurescript/blob/master/changes.md#110764">1.10.764</a></li>
 </ul>
 <h4>Removed</h4>
 <ul>
-<li><a href="https://github.com/day8/re-frame/issues/581">#581</a> - Remove doctoc</li>
-<li><a href="https://github.com/day8/re-frame/issues/580">#580</a> - Remove GitBook</li>
+<li>Remove doctoc. See <a href="https://github.com/day8/re-frame/issues/581">#581</a></li>
+<li>Remove GitBook. See <a href="https://github.com/day8/re-frame/issues/580">#580</a></li>
 </ul>
 <hr />
 <h2 id="0120-2020-03-08">0.12.0 (2020-03-08)<a class="headerlink" href="#0120-2020-03-08" title="Permanent link">&para;</a></h2>
