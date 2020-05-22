@@ -1383,7 +1383,9 @@
                 
                   <h1>Reagent</h1>
                 
-                <p><code class="klipse-clojure">
+                <p>Clojurescript is ergonomic, stable, functional language</p>
+<p>Look at the front page of https://www.learnreframe.com/</p>
+<p><code class="klipse-clojure">
 (ns simple.core
   (:require [reagent.dom]
             [re-frame.core :as rf]
@@ -1413,6 +1415,20 @@
 
   </div>
 </div>
+
+<div class="codehilite"><pre><span></span><code>(defn square 
+   [colour size]
+   [:div {:style 
+            {:width (str (or size &quot;20&quot;) &quot;px&quot;)
+             :height (str (or size &quot;20&quot;) &quot;px&quot;)
+             :display &quot;inline-block&quot;
+             :background-color colour}}])
+
+[:div [square &quot;blue&quot; 40] [square &quot;green&quot;]]
+</code></pre></div>
+
+
+<p>XXX work from </p>
                 
                   
                 

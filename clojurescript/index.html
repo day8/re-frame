@@ -1380,156 +1380,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+    
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-      </span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#simple-data-literals" class="md-nav__link">
-    Simple Data Literals
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#collection-data-literals" class="md-nav__link">
-    Collection Data Literals
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#symbols" class="md-nav__link">
-    Symbols
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#evaluation" class="md-nav__link">
-    Evaluation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#evaluating-symbols" class="md-nav__link">
-    Evaluating Symbols
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#evaluating-lists" class="md-nav__link">
-    Evaluating Lists
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#forms" class="md-nav__link">
-    Forms
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#keywords" class="md-nav__link">
-    Keywords
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#special-forms" class="md-nav__link">
-    Special Forms
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#if" class="md-nav__link">
-    if
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fn" class="md-nav__link">
-    fn
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#def" class="md-nav__link">
-    def
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#defn" class="md-nav__link">
-    defn
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#let" class="md-nav__link">
-    let
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#builtin-functions" class="md-nav__link">
-    BuiltIn Functions
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#assoc" class="md-nav__link">
-    assoc
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#map" class="md-nav__link">
-    map
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reduce" class="md-nav__link">
-    reduce
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#immutable-data" class="md-nav__link">
-    Immutable Data
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#installing" class="md-nav__link">
-    Installing
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -1549,15 +1401,13 @@
                   
                 
                 
-                  <h1>Clojurescript</h1>
-                
                 <p>Are you new to ClojureScript? Do you need a fast primer?</p>
-<p>This page will teach you how to <em>read</em>  Clojure in in 9 minutes. 
+<p>This page will teach you how to <em>read</em>  Clojure in in XXX minutes. 
 Learning to <em>write</em> Clojure code will take more time, but probably still less than you think.</p>
 <p>ClojureScript is a modern Lisp. Alan Kay once descibed Lisp as "Maxwell's equations of software".
 Paul Graham has written on how Lisp was a competitive advantage for his startup. For 50 years, 
 the finest minds in computer scinece have
-refined and polished it. Maybe there's something to it for you too?</p>
+refined and polished it. </p>
 <h2 id="simple-data-literals">Simple Data Literals<a class="headerlink" href="#simple-data-literals" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1707,9 +1557,11 @@ refined and polished it. Maybe there's something to it for you too?</p>
 </tr>
 </tbody>
 </table>
-<h2 id="evaluation">Evaluation<a class="headerlink" href="#evaluation" title="Permanent link">&para;</a></h2>
-<p>Now we know enough to talk about "evaluation". </p>
-<p>Let's start exploring how data is evaluated. This is probably an unfamiliar concept for you, right?  Evaluating data. Well,  <strong>in ClojureScript we evaulate data, to create new data.</strong> Dwell on that thought for a minute, it is quite pivotal.</p>
+<h2 id="thats-it-for-syntax">That's It For Syntax<a class="headerlink" href="#thats-it-for-syntax" title="Permanent link">&para;</a></h2>
+<p>We've now covered almost all of Clojure's syntax. Now we know enough to talk about "evaluation". </p>
+<h2 id="next-evaluation">Next, Evaluation<a class="headerlink" href="#next-evaluation" title="Permanent link">&para;</a></h2>
+<p>We will now explore how data is evaluated. This is probably an unfamiliar concept for you, right?  Evaluating data? What?</p>
+<p>Well,  <strong>in ClojureScript we evaulate data, to create new data.</strong> Dwell on that thought for a minute, it is quite central.</p>
 <p>All data litterals other than <code>lists</code> and <code>symbols</code> evaluate to themselves. So that's really easy. </p>
 <table>
 <thead>
@@ -1744,7 +1596,7 @@ refined and polished it. Maybe there's something to it for you too?</p>
 </table>
 <p>Try it for yourself. Enter an expression into the editor and it will be evaluated. The result will be shown in the box below.</p>
 <h2 id="evaluating-symbols">Evaluating Symbols<a class="headerlink" href="#evaluating-symbols" title="Permanent link">&para;</a></h2>
-<p>Symbols don't evaluate to themselves. Instead, they evaluate to the value they are bound to.</p>
+<p>Symbols don't evaluate to themselves. Instead, they evaluate to the value they are bound to. (More on how symbols get bound to values very soon)</p>
 <table>
 <thead>
 <tr>
@@ -1767,7 +1619,7 @@ refined and polished it. Maybe there's something to it for you too?</p>
 <tr>
 <td><code class="highlight"><span class="p">[</span><span class="mi">1</span> <span class="nv">foo</span><span class="p">]</span></code></td>
 <td><code class="highlight"><span class="p">[</span><span class="mi">1</span> <span class="mi">4</span><span class="p">]</span></code></td>
-<td></td>
+<td>Each element is evaluated, and  <code class="highlight"><span class="nv">foo</span></code> evaluated to  <code class="highlight"><span class="mi">4</span></code></td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">[</span><span class="nv">foo</span> <span class="nv">bar</span><span class="p">]</span></code></td>
@@ -1777,18 +1629,18 @@ refined and polished it. Maybe there's something to it for you too?</p>
 </tbody>
 </table>
 <h2 id="evaluating-lists">Evaluating Lists<a class="headerlink" href="#evaluating-lists" title="Permanent link">&para;</a></h2>
-<p>The evaluation of lists is really important to understand.</p>
-<p>Lists evaluate to the return value of a function call:</p>
+<p>The evaluation of lists is very important to understand.</p>
+<p>Lists evaluate to the return value of a function call, where:</p>
 <ul>
 <li>the 1st element of the list is assumed to be a function</li>
-<li>the other elements in the list are assumed to be the arguments for the function call</li>
+<li>the other elements in the list are assumed to be the actual arguments for the function call</li>
 <li>the function is called with the arguments</li>
 <li>the return value of that function is the final evaluation of the list</li>
 </ul>
 <table>
 <thead>
 <tr>
-<th>Includes List</th>
+<th>List</th>
 <th>Evaluates To</th>
 <th>Comments</th>
 </tr>
@@ -1807,7 +1659,7 @@ refined and polished it. Maybe there's something to it for you too?</p>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="mi">3</span></code></td>
-<td><code class="highlight"><span class="nv">+</span></code> is a symbol which evaluates to a function.<br>And that function adds together its arguments</td>
+<td>The symbol <code class="highlight"><span class="nv">+</span></code> is bound to a builin function.<br>And that function adds together its arguments</td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span></code></td>
@@ -1821,7 +1673,13 @@ refined and polished it. Maybe there's something to it for you too?</p>
 </tr>
 </tbody>
 </table>
-<p>Sometimes you just want a list to be a list, and not a function call</p>
+<div class="admonition note">
+<p class="admonition-title">No operators</p>
+<p>In Clojure, <code class="highlight"><span class="nv">+</span></code> is a builtin synbol bound to a function. Not an operator. <br>
+Same with <code class="highlight"><span class="nv">-</span></code>,  <code class="highlight"><span class="nv">/</span></code> ,  <code class="highlight"><span class="nv">&gt;</span></code>,  <code class="highlight"><span class="nv">=</span></code>, etc. <br>
+Because there are no operators, there's no operator precidence to worry about.</p>
+</div>
+<p>Occasionally, you just want a list to evaluate to a list, and not a function call</p>
 <table>
 <thead>
 <tr>
@@ -1856,7 +1714,7 @@ refined and polished it. Maybe there's something to it for you too?</p>
 <hr />
 <h2 id="forms">Forms<a class="headerlink" href="#forms" title="Permanent link">&para;</a></h2>
 <p>A list like this<code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code> is known as <strong>a form</strong>. </p>
-<p><strong>Forms can be nested</strong>.  When they are, evaluation of form arguments often involves evaluating child forms first. </p>
+<p><strong>Forms can be nested</strong>.  When they are, evaluation of form elements will involves evaluating child forms. </p>
 <table>
 <thead>
 <tr>
@@ -1886,7 +1744,7 @@ refined and polished it. Maybe there's something to it for you too?</p>
 </ul>
 <hr />
 <h2 id="keywords">Keywords<a class="headerlink" href="#keywords" title="Permanent link">&para;</a></h2>
-<p>Keywords are like symbols excecpt they evaluate to themselves and not to some bound value. This makes them like most other data litterals.</p>
+<p>Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This makes them like most other data litterals.</p>
 <p>Keywords are invaluable as <code>identities</code> (eg. keys in maps) and they are used very widely. </p>
 <p>A keyword is a name that starts with a colon.</p>
 <table>
@@ -1911,12 +1769,12 @@ refined and polished it. Maybe there's something to it for you too?</p>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">= + </span><span class="ss">:+</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="nv">false</span></code></td>
-<td>Is not the same as <code class="highlight"><span class="nv">+</span></code>, which is a symbol</td>
+<td>Is not the same as <code class="highlight"><span class="nv">+</span></code>, which is a symbol which evaluates<br>to a builtin function</td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">= </span><span class="ss">:bar</span> <span class="ss">:bar</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="nv">true</span></code></td>
-<td>An important quality. Different instances evaluate to<br>equal. Like numbers do. Or strings.</td>
+<td>An important quality. Different instances evaluate to<br>equal. Like numbers do, and strings.</td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">= </span><span class="ss">:bar</span> <span class="ss">:foo</span><span class="p">)</span></code></td>
@@ -1982,7 +1840,7 @@ refined and polished it. Maybe there's something to it for you too?</p>
 </tr>
 </tbody>
 </table>
-<p>To give you a taste of where this is heading, here they are used as the keys in a map:</p>
+<p>To give you a taste of where this can go, here they are used as the keys in a map:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:user/id</span>      <span class="mi">1</span>
  <span class="ss">:user/name</span>    <span class="s">&quot;Barry&quot;</span>
  <span class="ss">:user/age</span>     <span class="mi">28</span>
@@ -1998,14 +1856,13 @@ refined and polished it. Maybe there's something to it for you too?</p>
 </ul>
 <hr />
 <h2 id="special-forms">Special Forms<a class="headerlink" href="#special-forms" title="Permanent link">&para;</a></h2>
-<p>Some <code>Forms</code> are special, and each of them is special in its own way. We'll now review the important ones.</p>
+<p>Some <code>Forms</code> are special, and each is special in its own way. Let's review the important ones.</p>
 <h2 id="if"><code class="highlight"><span class="nv">if</span></code><a class="headerlink" href="#if" title="Permanent link">&para;</a></h2>
 <p><code class="highlight"><span class="nv">if</span></code> forms get special treatment. </p>
-<p>The code <code class="highlight"><span class="p">(</span><span class="k">if </span><span class="nv">true</span> <span class="mi">4</span> <span class="mi">3</span><span class="p">)</span></code> is a four element list. And normal evaluation 
+<p>The code <code class="highlight"><span class="p">(</span><span class="k">if </span><span class="nv">true</span> <span class="mi">4</span> <span class="mi">3</span><span class="p">)</span></code> is a four element list. Normal evaluation rules
 would mean evaluating all four elements of the list and then calling the <code class="highlight"><span class="nv">if</span></code> function with three arguments.  </p>
-<p>Except that <code class="highlight"><span class="nv">if</span></code> forms are special because
-not all the arguments are evaluated. The 1st <code>test</code> argument is evaluated and then either the 3rd or the 4th argument
-is evaluated depending on the result of that <code>test</code>. To put that the other way, one of the 3rd or 4th argument will <strong><em>not</em></strong> be evaluated and it is that feature which makes <code class="highlight"><span class="nv">if</span></code> special. </p>
+<p>Except that isn't what happens. <code class="highlight"><span class="nv">if</span></code> forms are special, and not all elements are evaluated. The 1st <code>test</code> element is evaluated and then either the 3rd or the 4th argument
+is evaluated depending on the result of that <code>test</code>. To put that the other way, one of the 3rd or 4th elements will <strong><em>not</em></strong> be evaluated. </p>
 <table>
 <thead>
 <tr>
@@ -2018,17 +1875,17 @@ is evaluated depending on the result of that <code>test</code>. To put that the 
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="k">if </span><span class="nv">true</span> <span class="mi">4</span> <span class="mi">3</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="mi">4</span></code></td>
-<td>Only <code>true</code> and <code>4</code> arguments are evaluated</td>
+<td>Only  <code class="highlight"><span class="nv">true</span></code> and  <code class="highlight"><span class="mi">4</span></code> elements are evaluated<br>The <code class="highlight"><span class="mi">3</span></code> element is not evaluated</td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="k">if </span><span class="nv">false</span> <span class="mi">4</span> <span class="mi">3</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="mi">3</span></code></td>
-<td>Only <code>false</code> and <code>3</code> arguments are evaluated</td>
+<td>Only <code>false</code> and <code>3</code> elements are evaluated</td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="k">if </span><span class="nv">false</span> <span class="mi">4</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="nv">nil</span></code></td>
-<td><code>else</code> form not provided for evaluation, so<br> evaluates to <code class="highlight"><span class="nv">nil</span></code></td>
+<td><code>else</code> form not provided for evaluation, so<br>the <code class="highlight"><span class="nv">if</span></code> evaluates to <code class="highlight"><span class="nv">nil</span></code></td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">odd?</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span></code></td>
@@ -2066,44 +1923,46 @@ is evaluated depending on the result of that <code>test</code>. To put that the 
 <hr />
 <h2 id="fn"><code class="highlight"><span class="nv">fn</span></code><a class="headerlink" href="#fn" title="Permanent link">&para;</a></h2>
 <p>Evaluating an <code class="highlight"><span class="nv">fn</span></code> form creates an function.</p>
-<p>Here is a very simple example: <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span></code>.</p>
+<p>Here is a very simple example <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span></code>:</p>
 <ul>
 <li>
-<p>as you can see, a <code class="highlight"><span class="nv">fn</span></code> form has two elements:</p>
+<p>as you can see, an <code class="highlight"><span class="nv">fn</span></code> form has two elements:</p>
 <ul>
 <li>a vector of symbols - in this case <code class="highlight"><span class="p">[</span><span class="nv">x</span><span class="p">]</span></code></li>
 <li>a <code>body</code> -  in this case <code class="highlight"><span class="nv">x</span></code></li>
 </ul>
 </li>
 <li>
-<p>an <code class="highlight"><span class="nv">fn</span></code> form is "special" because these two elements are not <code>evaluated</code> (as happens with normal forms). </p>
+<p>an <code class="highlight"><span class="nv">fn</span></code> form is "special" because these two elements are not <code>evaluated</code>. </p>
 </li>
-<li>it is only when this function is called that  <code>body</code> will be evaluated</li>
-<li>and, when that evaluation happens, <code>body</code> can refer to the symbols in the vector, which will be bound to the actual argument values of the function call</li>
-<li>Our simple example function above only takes one argument <code class="highlight"><span class="p">[</span><span class="nv">x</span><span class="p">]</span></code> </li>
-<li>and, if the body <code class="highlight"><span class="nv">x</span></code> is evaluated, it will evaluate to whatever  <code class="highlight"><span class="nv">x</span></code> is bound to (that's what symbols do) and that will be the actual argument. </li>
+<li>it is only, later, when this function is called  that <code>body</code> will be evaluated</li>
+<li>and, when that evaluation happens, <code>body</code> can refer to symbols in the vector, which will be bound to the actual argument values of the function call</li>
+<li>our simple example function above only takes one argument <code class="highlight"><span class="p">[</span><span class="nv">x</span><span class="p">]</span></code> </li>
+<li>and when the body is evaluated, the symbol <code class="highlight"><span class="nv">x</span></code> will evaluate to whatever <code class="highlight"><span class="nv">x</span></code> is bound to (that's what symbols do, afterall) and that will be the actual argument</li>
 <li>the function will return the evaluation of the <code>body</code>, which, in the case above, is the value of the argument supplied. </li>
-<li>consequently, if we called this function with one agument <code class="highlight"><span class="mi">3</span></code>, this function would return <code class="highlight"><span class="mi">3</span></code></li>
-<li>and if we called this function with one argument <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code>, this function would return <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code></li>
+<li>consequently, if we called this function with the argument <code class="highlight"><span class="mi">3</span></code>, this function would return <code class="highlight"><span class="mi">3</span></code></li>
+<li>also, if we called this function with the argument <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code>, it would return <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code></li>
 </ul>
 <p>Q: how do we call this function?</p>
-<p>A: Just like we call all functions. Place it as the 1st element of a form. Provide one other element in the list, which is the actual argument. And then evaluate the list. That's how function calls always happen. So, like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">;; This is a two element list:</span>
-<span class="c1">;;   - the 1st element is a function created via `fn`</span>
-<span class="c1">;;   - the 2nd element is &quot;a value&quot;</span>
-<span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span> <span class="s">&quot;a value&quot;</span><span class="p">)</span>
+<p>A: Just like we call all functions. Place it as the 1st element of a form. Add a 2nd element in the list, which is the actual argument. And then evaluate this list. That's how function calls always happen. So, like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">; a line which starts with a semi-colon is a comment</span>
+
+<span class="c1">; The following is a two element list:</span>
+<span class="c1">;   - the 1st element is a function created by an `fn` form</span>
+<span class="c1">;   - the 2nd element is &quot;the actual arg&quot;  </span>
+<span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span> <span class="s">&quot;the actual arg&quot;</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>The function is called with one actual argument <code class="highlight"><span class="s">&quot;a value&quot;</span></code>. The entire form will evaluate to <code class="highlight"><span class="s">&quot;a value&quot;</span></code>.</p>
+<p>The function is called with one actual argument: <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code>. And the form will evaluate to <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code>.</p>
 <div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span> <span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">])</span>
 </code></pre></div>
 
 
-<p>The function is called with one actual argument <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code>. The entire form will evaluate to <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code>.</p>
-<p>Here is another simple example: <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span> <span class="p">(</span><span class="nb">inc </span><span class="nv">val</span><span class="p">))</span></code>.  The symbol for the actual argument is now <code class="highlight"><span class="nv">val</span></code>. So that's different. And the body is now <code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="nv">val</span><span class="p">)</span></code>. </p>
+<p>The function is called with one argument <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code>. And the form will evaluate to <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code>.</p>
+<p>How about we create another fucntion: <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span> <span class="p">(</span><span class="nb">+ val </span><span class="mi">1</span><span class="p">))</span></code>.  The symbol for the actual argument is now <code class="highlight"><span class="nv">val</span></code>. So that's different. And the body is now the form <code class="highlight"><span class="p">(</span><span class="nb">+ val </span><span class="mi">1</span><span class="p">)</span></code>. </p>
 <p>What if we evaluated it like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span> <span class="p">(</span><span class="nb">inc </span><span class="nv">val</span><span class="p">))</span> <span class="mi">4</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span> <span class="p">(</span><span class="nb">+ val </span><span class="mi">1</span><span class="p">))</span> <span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
 
 
@@ -2122,75 +1981,99 @@ is evaluated depending on the result of that <code>test</code>. To put that the 
 
 
 <p>or</p>
-<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span> <span class="p">(</span><span class="nb">+ val </span><span class="mi">1</span><span class="p">))</span> <span class="mi">3</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">yes?</span><span class="p">]</span> <span class="p">{</span><span class="ss">:a</span> <span class="p">(</span><span class="k">if </span><span class="nv">yes?</span> <span class="s">&quot;yes&quot;</span><span class="p">)})</span> <span class="nv">true</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>or</p>
-<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">include?</span><span class="p">]</span> <span class="p">{</span><span class="ss">:a</span> <span class="p">(</span><span class="k">if </span><span class="nv">include?</span> <span class="s">&quot;included&quot;</span> <span class="s">&quot;not included&quot;</span><span class="p">)})</span> <span class="nv">true</span><span class="p">)</span>
-</code></pre></div>
-
-
-<p>Wide code like this is hard to read. We'd formally split the code normally split it over a few lines.</p>
+<p>what if we called this function with <code class="highlight"><span class="nv">false</span></code>.</p>
 <hr />
 <h2 id="def"><code class="highlight"><span class="nv">def</span></code><a class="headerlink" href="#def" title="Permanent link">&para;</a></h2>
-<p>The <code>def</code> form creates a symbol and binds a value to it. <strong>Finally</strong>, we get to create out own symbols!!</p>
-<p>This form is "special"
-because it adds to the global set of defined symbols and that alteration is a side-effect.
-Functions don't normally cause side effect - they are normally pure.</p>
+<p>The <code class="highlight"><span class="nv">def</span></code> form creates a symbol and binds a value to it. <strong>Finally</strong>, we get to create out own symbols!!</p>
+<p>Example use:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">gurus</span> <span class="mi">2</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>Now  <code class="highlight"><span class="nv">gurus</span></code> is a defined symbol. And it is bound to the value <code class="highlight"><span class="mi">2</span></code>. If I use this symbol in other code, it will evaluate to <code class="highlight"><span class="mi">2</span></code>.</p>
+<p>This defines the symbol <code class="highlight"><span class="nv">gurus</span></code> and binds it to the value <code class="highlight"><span class="mi">2</span></code>. If, later, you were use this symbol in other code, it would evaluate to <code class="highlight"><span class="mi">2</span></code>.</p>
+<p><code class="highlight"><span class="nv">def</span></code> is a "special form" on two counts:</p>
+<ul>
+<li>when evaluated, it adds to the global set of defined symbols and such mutation is known as a side-effect.
+Functions don't normally cause side effect - they are normally pure.</li>
+<li>in a normal form for some <code>f</code>, like this <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">gurus</span> <span class="mi">2</span><span class="p">)</span></code>, the <code class="highlight"><span class="nv">gurus</span></code> element would be evaluated. But not with a <code class="highlight"><span class="nv">def</span></code> form. It is, instead, the new symbol to define.</li>
+</ul>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">skeptics</span> <span class="p">(</span><span class="nb">inc </span><span class="nv">gurus</span><span class="p">))</span>    <span class="c1">;; using the symbol `gurus` !!</span>
 </code></pre></div>
 
 
-<p>Now  <code class="highlight"><span class="nv">skeptics</span></code> is a defined symbol and it is bound to the value <code class="highlight"><span class="mi">3</span></code>. </p>
-<p>Consider:</p>
+<p>Now  <code class="highlight"><span class="nv">skeptics</span></code> is a defined symbol and it is bound to the evaluation of  <code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="nv">gurus</span><span class="p">)</span></code> which is the value <code class="highlight"><span class="mi">3</span></code>. </p>
+<p>Consider these two:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">beach-list</span> <span class="p">[</span><span class="ss">:hat</span> <span class="ss">:sunglasses</span> <span class="ss">:towel</span><span class="p">])</span>
 <span class="p">(</span><span class="k">def </span><span class="nv">beach-items</span> <span class="p">(</span><span class="nb">count </span><span class="nv">beach-list</span><span class="p">))</span>     <span class="c1">;; count is a builtin function</span>
 </code></pre></div>
 
 
 <p>Now  <code class="highlight"><span class="nv">beach-items</span></code> is a defined symbol and it is bound to <code class="highlight"><span class="mi">3</span></code></p>
-<p>Let's now bind a function to a symbol:</p>
+<p>Now, let's take this further and bind a function to a symbol:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">my-inc</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span> <span class="p">(</span><span class="nb">+ val </span><span class="mi">1</span><span class="p">))</span>
+</code></pre></div>
+
+
+<p>We're creating a function via  <code class="highlight"><span class="nv">fn</span></code>, and we are binding to a symbol using  <code class="highlight"><span class="nv">def</span></code>. Two steps. Using that combination, we've created something similar to the builtin <code class="highlight"><span class="nv">inc</span></code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">my-inc</span> <span class="mi">4</span><span class="p">)</span> 
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="mi">5</span></code></p>
+<p>And again:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">square-it</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="p">(</span><span class="nb">* </span><span class="nv">x</span> <span class="nv">x</span><span class="p">)))</span>
 </code></pre></div>
 
 
-<p>We can use this symbol <code class="highlight"><span class="nv">square-it</span></code> as the 1st element in a list (it is now bound to a function), like this:</p>
+<p>We can use this symbol <code class="highlight"><span class="nv">square-it</span></code> in a form (it is now bound to a function), like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">square-it</span> <span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>The value bound to  <code class="highlight"><span class="nv">square-it</span></code> (a function) will be called with the argument  <code class="highlight"><span class="mi">3</span></code> which evaluates to the value <code class="highlight"><span class="mi">9</span></code> </p>
+<p>The value bound to  <code class="highlight"><span class="nv">square-it</span></code> (a function) will be called with the argument  <code class="highlight"><span class="mi">3</span></code>, which evaluates to the value <code class="highlight"><span class="mi">9</span></code> </p>
 <hr />
 <h2 id="defn"><code class="highlight"><span class="nv">defn</span></code><a class="headerlink" href="#defn" title="Permanent link">&para;</a></h2>
-<p>Instead of combining <code class="highlight"><span class="nv">def</span></code> and <code class="highlight"><span class="nv">fn</span></code>, there is 
-a simpler, one form method: <code class="highlight"><span class="nv">defn</span></code>. It is unusal in the same way that <code class="highlight"><span class="nv">def</span></code> is unusual: it causes side effects (adds the symbol to the execution context). </p>
-<p>Used like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">square-it</span>  <span class="c1">;; function symbol (name)</span>
-  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>            <span class="c1">;; args </span>
-  <span class="p">(</span><span class="nb">* </span><span class="nv">x</span> <span class="nv">x</span><span class="p">))</span>       <span class="c1">;; function body</span>
+<p>Combining <code class="highlight"><span class="nv">def</span></code> and <code class="highlight"><span class="nv">fn</span></code> is clumsy. So there is 
+a simpler, one form method called <code class="highlight"><span class="nv">defn</span></code>. It is special in all the same ways that <code class="highlight"><span class="nv">fn</span></code>  and <code class="highlight"><span class="nv">def</span></code> are special. </p>
+<p>It is used like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nb">dec </span>     <span class="c1">; `dec` is the symbol being defined</span>
+  <span class="p">[</span><span class="nv">val</span><span class="p">]</span>        <span class="c1">; a vector of symbols for the actual arguments </span>
+  <span class="p">(</span><span class="nb">- val </span><span class="mi">1</span><span class="p">))</span>   <span class="c1">; function body - is evaluated when function is called - uses `val`</span>
 </code></pre></div>
 
 
-<p>This binds the symbol <code class="highlight"><span class="nv">sqr</span></code> to a function. This could been done on one line, but we're now starting to format our code correctly. 2 space indents. </p>
-<p>As before, you can now call the function using the symbol.</p>
+<p>This could have been done on one line, but we're now starting to format our code correctly. 2 space indents. </p>
+<p>Used like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">dec </span><span class="mi">4</span><span class="p">)</span> 
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="mi">3</span></code></p>
+<p>Define another:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">square-it</span>  <span class="c1">; `square-it` is the symbol being defined</span>
+  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>            <span class="c1">; a vector of symbols for the actual arguments </span>
+  <span class="p">(</span><span class="nb">* </span><span class="nv">x</span> <span class="nv">x</span><span class="p">))</span>       <span class="c1">; function body - is evaluated when function is called - uses `x`</span>
+</code></pre></div>
+
+
+<p>This binds the symbol <code class="highlight"><span class="nv">square-it</span></code> to a function. </p>
+<p>Use the symbol in a form:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">square-it</span> <span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>which evaluates to <code class="highlight"><span class="mi">9</span></code>. </p>
+<p>which will evaluates to <code class="highlight"><span class="mi">9</span></code>. </p>
 <p>Or I could call it like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">square-it</span> <span class="p">(</span><span class="nb">inc </span><span class="mi">3</span><span class="p">))</span>
 </code></pre></div>
 
 
 <p>which evaluates to <code class="highlight"><span class="mi">16</span></code> .</p>
-<p>Define another function using <code class="highlight"><span class="nv">defn</span></code>: </p>
+<p>Define another: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">greet</span>
   <span class="p">[</span><span class="nv">username</span><span class="p">]</span>
   <span class="p">(</span><span class="nb">str </span><span class="s">&quot;Hello &quot;</span> <span class="nv">username</span><span class="p">)))</span> 
@@ -2208,36 +2091,37 @@ a simpler, one form method: <code class="highlight"><span class="nv">defn</span>
 <hr />
 <h2 id="let"><code class="highlight"><span class="nv">let</span></code><a class="headerlink" href="#let" title="Permanent link">&para;</a></h2>
 <p><code class="highlight"><span class="nv">let</span></code> allows you to create a form with <code>bindings</code> and a <code>body</code> </p>
-<div class="codehilite"><pre><span></span><code><span class="c1">;; let bindings are represented as pairs within a vector</span>
-<span class="c1">;; In this case, only one pair. The symbol `a` is bound to &quot;pen&quot;</span>
+<div class="codehilite"><pre><span></span><code><span class="c1">; let bindings are represented as pairs within a vector</span>
+<span class="c1">; In this case, only one pair. The symbol `a` is bound to &quot;pen&quot;</span>
 <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span> <span class="s">&quot;pen&quot;</span><span class="p">]</span>   
-  <span class="nv">a</span><span class="p">)</span>          <span class="c1">;; the evaluation of a `let` form is the evaluation of the body </span>
-              <span class="c1">;; here the body evaluates to &quot;pen&quot;</span>
+  <span class="nv">a</span><span class="p">)</span>          <span class="c1">; the evaluation of a `let` form is the evaluation of the body </span>
 </code></pre></div>
 
 
-<p>evaluates to <code class="highlight"><span class="s">&quot;pen&quot;</span></code> </p>
+<p>This <code class="highlight"><span class="nv">let</span></code> form evaluates to <code class="highlight"><span class="s">&quot;pen&quot;</span></code> </p>
+<p>Another variation:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span> <span class="s">&quot;pen&quot;</span><span class="p">]</span>   
-  <span class="ss">:other</span><span class="p">)</span>         <span class="c1">;; oops not even using the bound sysmbol `a`</span>
+  <span class="ss">:other</span><span class="p">)</span>         <span class="c1">; oops not even using the bound sysmbol `a`</span>
 </code></pre></div>
 
 
-<p>evaluates to <code class="highlight"><span class="ss">:other</span></code> </p>
-<p>Noitce the way this is formatted (two space indents)</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;pen&quot;</span>         <span class="c1">;; this pair means `a` is bound to &quot;pen&quot; </span>
-      <span class="nv">b</span>  <span class="s">&quot;sword&quot;</span><span class="p">]</span>      <span class="c1">;; this pair means `b` is bound to &quot;sword&quot;</span>
-  <span class="p">(</span><span class="nb">&gt; </span><span class="nv">a</span> <span class="nv">b</span><span class="p">))</span>             <span class="c1">;; is &quot;pen&quot; greater than &quot;sword&quot; ??</span>
+<p>This <code class="highlight"><span class="nv">let</span></code> form evaluates to <code class="highlight"><span class="ss">:other</span></code> </p>
+<p>Notice the way a <code class="highlight"><span class="nv">let</span></code> form  is formatted (two space indents)</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;pen&quot;</span>         <span class="c1">; this pair means `a` is bound to &quot;pen&quot; </span>
+      <span class="nv">b</span>  <span class="s">&quot;sword&quot;</span><span class="p">]</span>      <span class="c1">; this pair means `b` is bound to &quot;sword&quot;</span>
+  <span class="p">(</span><span class="nb">&gt; </span><span class="nv">a</span> <span class="nv">b</span><span class="p">))</span>             <span class="c1">; is &quot;pen&quot; greater than &quot;sword&quot; ??</span>
 </code></pre></div>
 
 
-<p>evaluates to <code class="highlight"><span class="nv">false</span></code> (wait, what? That isn't in the story I was told.)</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;pen&quot;</span>
-      <span class="nv">b</span>  <span class="s">&quot;sword&quot;</span><span class="p">]</span>   
+<p>evaluates to <code class="highlight"><span class="nv">false</span></code>. Wait, what? That isn't in the story I was told.</p>
+<p>We need to make some changes:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;a pen&quot;</span>
+      <span class="nv">b</span>  <span class="s">&quot;the sword&quot;</span><span class="p">]</span>   
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="nv">a</span> <span class="nv">b</span><span class="p">)</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">))</span> 
 </code></pre></div>
 
 
-<p>evaluates to <code class="highlight"><span class="s">&quot;sword&quot;</span></code></p>
+<p>evaluates to <code class="highlight"><span class="s">&quot;a pen&quot;</span></code>. Phew! Thank goodness for cheep lexograpic hacks which confirm wisdom.</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;pen&quot;</span>
       <span class="nv">b</span>  <span class="s">&quot;sword&quot;</span><span class="p">]</span>   
   <span class="p">{</span><span class="ss">:winner</span> <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="nv">a</span> <span class="nv">b</span><span class="p">)</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">)})</span> 
@@ -2272,15 +2156,70 @@ a simpler, one form method: <code class="highlight"><span class="nv">defn</span>
 <ul>
 <li>when there are no items make the text "there are no items"  (and not "there is 0 items")</li>
 </ul>
+<h2 id="thats-it-for-forms-and-special-forms">That's It For Forms And Special Forms<a class="headerlink" href="#thats-it-for-forms-and-special-forms" title="Permanent link">&para;</a></h2>
+<p>We've just reviewed how to compute in Clojure. We execute data, to produce new data. </p>
 <h2 id="builtin-functions">BuiltIn Functions<a class="headerlink" href="#builtin-functions" title="Permanent link">&para;</a></h2>
-<p>So that's it for syntax and special forms. </p>
+<p>Clojure's provides a substantial library of biltin functions. 
+To write Clojure well, you'll have to master this library, but that takes time.</p>
+<p>But in the meantime, to read the Reagent and re-frame tutorials, there's a couple of functions which are essential.</p>
 <p>Along the way, we have introduced a few builtin functions but there are a couple which are used all the time. And we'll need to understand them. </p>
-<h2 id="assoc">assoc<a class="headerlink" href="#assoc" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="nv">assoc</span></code> </p>
-<h2 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="nv">map</span></code></p>
-<h2 id="reduce">reduce<a class="headerlink" href="#reduce" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="nv">reduce</span></code></p>
+<h2 id="assoc"><code class="highlight"><span class="nv">assoc</span></code><a class="headerlink" href="#assoc" title="Permanent link">&para;</a></h2>
+<p><code class="highlight"><span class="nv">assoc</span></code>  allows you to add a key/value pair to a map. </p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Evaluates To</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="highlight"><span class="p">(</span><span class="nb">assoc </span><span class="p">{}</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">)</span></code></td>
+<td><code class="highlight"><span class="p">{</span><span class="ss">:a</span> <span class="mi">4</span><span class="p">}</span></code></td>
+<td>adding a pair to an empty map <code class="highlight"><span class="p">{}</span></code></td>
+</tr>
+<tr>
+<td><code class="highlight"><span class="p">(</span><span class="nb">assoc </span><span class="nv">nil</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">)</span></code></td>
+<td><code class="highlight"><span class="p">{</span><span class="ss">:a</span> <span class="mi">4</span><span class="p">}</span></code></td>
+<td><code class="highlight"><span class="nv">nil</span></code> is treated as <code class="highlight"><span class="p">{}</span></code></td>
+</tr>
+<tr>
+<td><code class="highlight"><span class="p">(</span><span class="nb">assoc </span><span class="p">{</span><span class="ss">:b</span> <span class="mi">1</span><span class="p">}</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">)</span></code></td>
+<td><code class="highlight"><span class="p">{</span><span class="ss">:b</span> <span class="mi">1</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">}</span></code></td>
+<td></td>
+</tr>
+<tr>
+<td><code class="highlight"><span class="p">(</span><span class="nb">assoc </span><span class="p">{}</span> <span class="ss">:b</span> <span class="mi">1</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">)</span></code></td>
+<td><code class="highlight"><span class="p">{</span><span class="ss">:b</span> <span class="mi">1</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">}</span></code></td>
+<td>add two a pairs</td>
+</tr>
+</tbody>
+</table>
+<p><code class="highlight"><span class="nv">dissoc</span></code> allows you to remove a key/value.</p>
+<h2 id="map"><code class="highlight"><span class="nv">map</span></code><a class="headerlink" href="#map" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Evaluates To</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="highlight"><span class="p">(</span><span class="nb">map inc </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span></code></td>
+<td><code class="highlight"><span class="p">(</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span></code></td>
+<td>applies  <code class="highlight"><span class="nv">inc</span></code> to each element<br>Like <code class="highlight"><span class="p">[(</span><span class="nb">inc </span><span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="nb">inc </span><span class="mi">2</span><span class="p">)</span> <span class="p">(</span><span class="nb">inc </span><span class="mi">3</span><span class="p">)]</span></code> except result is  up with a list</td>
+</tr>
+<tr>
+<td><code class="highlight"><span class="p">(</span><span class="nb">map + </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span> <span class="p">[</span><span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">])</span></code></td>
+<td><code class="highlight"><span class="p">(</span><span class="mi">5</span> <span class="mi">7</span> <span class="mi">9</span><span class="p">)</span></code></td>
+<td>applies  <code class="highlight"><span class="nv">+</span></code> to pairs of elements<br>Like <code class="highlight"><span class="p">[(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="nb">+ </span><span class="mi">2</span> <span class="mi">5</span><span class="p">)</span> <span class="p">(</span><span class="nb">+ </span><span class="mi">3</span> <span class="mi">6</span><span class="p">)]</span></code>, except result is a list</td>
+</tr>
+</tbody>
+</table>
+<h2 id="reduce"><code class="highlight"><span class="nv">reduce</span></code><a class="headerlink" href="#reduce" title="Permanent link">&para;</a></h2>
 <p>XXX conj, assoc, map ,reduce, filter, old? </p>
 <h2 id="immutable-data">Immutable Data<a class="headerlink" href="#immutable-data" title="Permanent link">&para;</a></h2>
 <p>XXX boolean and and or ???  https://j19sch.github.io/blog/clj3-and-or-being-weird/</p>
@@ -2288,8 +2227,23 @@ a simpler, one form method: <code class="highlight"><span class="nv">defn</span>
 <p>XXX arrow functions </p>
 <p>XXX interop </p>
 <p>XXX Reagent like code</p>
+<p>XXX Immutable 
+XXX atoms and deref </p>
+<p>; short-hand for creating a simple function:
+; #(...) =&gt; (fn [args] (...))</p>
+<h1 id="3-fn-x-3-x">(<em> 3 %)         ; =&gt; (fn [x] (</em> 3 x))<a class="headerlink" href="#3-fn-x-3-x" title="Permanent link">&para;</a></h1>
+<h1 id="3-1-2-fn-x-y-3-x-y">(<em> 3 (+ %1 %2)) ; =&gt; (fn [x y] (</em> 3 (+ x y)))<a class="headerlink" href="#3-1-2-fn-x-y-3-x-y" title="Permanent link">&para;</a></h1>
 <h2 id="installing">Installing<a class="headerlink" href="#installing" title="Permanent link">&para;</a></h2>
 <p>To install Clojure and Leiningen (a build tool) following <a href="https://purelyfunctional.tv/guide/how-to-install-clojure/">these instructions</a>. </p>
+<p>Here's a good intro on writing a fucntion:
+https://blog.cleancoder.com/uncle-bob/2020/04/09/ALittleMoreClojure.html</p>
+<p>The cheatsheet: 
+https://clojure.org/api/cheatsheet</p>
+<p>We haven't covered:</p>
+<ul>
+<li>macros </li>
+<li>(js/console.log "Hello World!")</li>
+</ul>
                 
                   
                 
