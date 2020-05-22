@@ -91,12 +91,12 @@ at gunpoint - I'd reluctantly point out:
 
 -->
 
-## The Dominoes
+## Six Dominoes
 
 Each iteration of the re-frame loop has 6 stages, and because these stages happen one after the other, 
 we talk about this process as a six domino cascade.
 
-One domino triggers the next, which triggers the next, et cetera, boom, boom, boom, until we are 
+One domino triggers the next, which triggers the next, boom, boom, boom, until we are 
 back at the beginning of the loop, and the dominoes reset to attention 
 again, ready for the next iteration of the same cascade.
 

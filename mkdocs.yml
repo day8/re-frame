@@ -20,7 +20,7 @@ theme:
     # The next line is effectively an injection attack on the mkdocs template 
     # Notice that the leading and trailing double quotes are omitted. 
     # That allows me to trick mkdocs into accepting more than one font here.
-    text: Open Sans", "Fira Sans
+    text: Segoe UI", "Open Sans
     code: Source Code Pro
   features:
     - tabs
@@ -36,32 +36,30 @@ nav:
   - Home: index.md
   - Docs:
     - "re-frame": re-frame.md
-    - The Basics:
-      - Homoiconic: homoiconic.md
-      - It Is A Loop: it-is-a-loop.md
-      - Dominoes Intro: dominoes-60k.md
-      - App State: application-state.md
-      - Dominoes Code: dominoes-30k.md
-      - Browser Dynamics: browser-dynamics.md
-      - Dominoes Live: dominoes-live.md
-    - "Intermediate 2 & 3":
+    - THE BASICS:
+      - A Data Loop: a-loop.md
+      - State: application-state.md
+      - Code: dominoes-30k.md
+      - Live: dominoes-live.md
+    - "INTERMEDIATE 2 & 3":
       - Event Infographic: event-handling-infographic.md
       - Effectful Handlers: EffectfulHandlers.md
       - Interceptors.md
       - Effects.md
       - Coeffects.md
-    - "Intermediate 4,5 & 6":
+    - "INTERMEDIATE 4,5 & 6":
       - Subscriptions: subscriptions.md
       - Correcting a wrong: correcting-a-wrong.md
       - Flow Mechanics: flow-mechanics.md
-    - "Start Coding": start-coding.md
-    - "Mental Model Omnibus":
+    - "START CODING": start-coding.md
+    - "MENTAL MODEL OMNIBUS":
       - "Other Models": all-models-are-wrong.md 
       - "On Dynamics":  on-dynamics.md
       - "Data Oriented Design": data-oriented-design.md
       - "Interconnections": interconnections.md
       - "Historical": historical.md
-    - More Advanced:
+    - MORE ADVANCED:
+    
       - Browser Dynamics: browser-dynamics.md
       - Reusable Components: reusable-components.md
       - App Structure: App-Structure.md

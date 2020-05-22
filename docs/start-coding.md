@@ -1,7 +1,13 @@
 
 
-Use a
-template to scaffold your project:
+## Install Clojure 
+
+Install Clojure and Leiningen (a build tool) by following [these instructions](https://purelyfunctional.tv/guide/how-to-install-clojure/).
+
+
+## Use A Template 
+
+Create a scaffold for your first project:
 
   - Client only:  <https://github.com/day8/re-frame-template>
   - Full Stack: <http://www.luminusweb.net/>

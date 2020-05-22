@@ -1,5 +1,5 @@
 
-<img width="350" src="../images/logo/re-frame_256w.png?raw=true">
+<img src="../images/logo/re-frame-colour.png?raw=true">
 
 A framework for building Modern Web Apps in ClojureScript. It leverages React, via [Reagent].
 
