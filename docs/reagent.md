@@ -2,6 +2,11 @@
 klipse: true
 ---
 
+Clojurescript is ergonomic, stable, functional language
+
+Look at the front page of https://www.learnreframe.com/
+
+
 <code class="klipse-clojure">
 (ns simple.core
   (:require [reagent.dom]
@@ -41,3 +46,18 @@ klipse: true
   
   </div>
 </div>
+
+
+```
+(defn square 
+   [colour size]
+   [:div {:style 
+            {:width (str (or size "20") "px")
+             :height (str (or size "20") "px")
+             :display "inline-block"
+             :background-color colour}}])
+
+[:div [square "blue" 40] [square "green"]]
+```
+
+XXX work from 

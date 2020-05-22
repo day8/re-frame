@@ -35,7 +35,7 @@ the view is 100% concerned with hiccup generation only. Maybe, like this:
    @(rf/subscribe [:time-str])])
 ```
 
-So, we'll this `time-str` subscription handler:
+So, we'll add this `time-str` subscription handler:
 ```clj
 (reg-sub 
   :time-str 

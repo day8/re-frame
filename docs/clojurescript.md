@@ -4,13 +4,13 @@ klipse: true
 
 Are you new to ClojureScript? Do you need a fast primer?
 
-This page will teach you how to *read*  Clojure in in 9 minutes. 
+This page will teach you how to *read*  Clojure in in XXX minutes. 
 Learning to _write_ Clojure code will take more time, but probably still less than you think.
 
 ClojureScript is a modern Lisp. Alan Kay once descibed Lisp as "Maxwell's equations of software".
 Paul Graham has written on how Lisp was a competitive advantage for his startup. For 50 years, 
 the finest minds in computer scinece have
-refined and polished it. Maybe there's something to it for you too?
+refined and polished it. 
 
 ## Simple Data Literals
 
@@ -61,12 +61,16 @@ A symbol is a name that is bound to a value.
 | symbol   | `#!clj yours`           | You'll soon see how to create your own symbols and bind them to values |
 
 
+## That's It For Syntax
 
-## Evaluation 
+We've now covered almost all of Clojure's syntax. Now we know enough to talk about "evaluation". 
 
-Now we know enough to talk about "evaluation". 
 
-Let's start exploring how data is evaluated. This is probably an unfamiliar concept for you, right?  Evaluating data. Well,  **in ClojureScript we evaulate data, to create new data.** Dwell on that thought for a minute, it is quite pivotal.
+## Next, Evaluation 
+
+We will now explore how data is evaluated. This is probably an unfamiliar concept for you, right?  Evaluating data? What?
+
+Well,  **in ClojureScript we evaulate data, to create new data.** Dwell on that thought for a minute, it is quite central.
 
 All data litterals other than `lists` and `symbols` evaluate to themselves. So that's really easy. 
 
@@ -84,38 +88,42 @@ Try it for yourself. Enter an expression into the editor and it will be evaluate
 
 ## Evaluating Symbols 
 
-Symbols don't evaluate to themselves. Instead, they evaluate to the value they are bound to.
+Symbols don't evaluate to themselves. Instead, they evaluate to the value they are bound to. (More on how symbols get bound to values very soon)
 
 |  Expression     |   Evaluates To               |  Comments                                     |
 |-----------------|------------------------------|-----------------------------------------------|
 | `#!clj foo`     | `#!clj 4`                    | Assuming  the symbol `#!clj foo` is bound to the value  `#!clj 4` |         
 | `#!clj bar`     | `#!clj [1 2 3]`              | Assuming  the symbol `#!clj bar` is bound to the value  `#!clj [1 2 3]`   |             
-| `#!clj [1 foo]` | `#!clj [1 4]`                |                                               |
+| `#!clj [1 foo]` | `#!clj [1 4]`                | Each element is evaluated, and  `#!clj foo` evaluated to  `#!clj 4` |
 | `#!clj [foo bar]` | `#!clj [4 [1 2 3]]`        |                                               |
 
 
 ## Evaluating Lists
 
-The evaluation of lists is really important to understand.
+The evaluation of lists is very important to understand.
 
-Lists evaluate to the return value of a function call:
+Lists evaluate to the return value of a function call, where:
 
   - the 1st element of the list is assumed to be a function
-  - the other elements in the list are assumed to be the arguments for the function call
+  - the other elements in the list are assumed to be the actual arguments for the function call
   - the function is called with the arguments
   - the return value of that function is the final evaluation of the list
 
 
-|  Includes List          |   Evaluates To         |  Comments                                     |
-|-------------------------|------------------------|-----------------------------------------------|
-| `#!clj (inc 3)`         | `#!clj 4`              | First, evaluate each element of the list (there are two):<br>&nbsp;&nbsp;• the symbol  `#!clj inc` evaluates to a builtin function<br>&nbsp;&nbsp;• and `#!clj 3` evaluates to `#!clj 3`<br>Now, we evaluate the list itself which means calling the function<br>with the argument. Which is the value `#!clj 4`                  | 
-| `#!clj [3 (inc 3)]`     | `#!clj [3 4]`          |                                                                     |        
-| `#!clj (+ 1 2)`         | `#!clj 3`              | `#!clj +` is a symbol which evaluates to a function.<br>And that function adds together its arguments |      
-| `#!clj (+ 1 2 3)`       | `#!clj 6`              | Surprise! Turns out this  `#!clj +`  function can handle a variable<br>number of arguments.  |       
-| `#!clj [1 (+ 1 2 3)]`   | `#!clj [1 6]`          |                                                                      |
+|  List                   |   Evaluates To         |  Comments                                              |
+|-------------------------|------------------------|--------------------------------------------------------|
+| `#!clj (inc 3)`         | `#!clj 4`              | First, evaluate each element of the list (there are two):<br>&nbsp;&nbsp;• the symbol  `#!clj inc` evaluates to a builtin function<br>&nbsp;&nbsp;• and `#!clj 3` evaluates to `#!clj 3`<br>Now, we evaluate the list itself which means calling the function<br>with the argument. Which is the value `#!clj 4`         | 
+| `#!clj [3 (inc 3)]`     | `#!clj [3 4]`          |                                                        |        
+| `#!clj (+ 1 2)`         | `#!clj 3`              | The symbol `#!clj +` is bound to a builin function.<br>And that function adds together its arguments |      
+| `#!clj (+ 1 2 3)`       | `#!clj 6`              | Surprise! Turns out this  `#!clj +`  function can handle a variable<br>number of arguments.          |       
+| `#!clj [1 (+ 1 2 3)]`   | `#!clj [1 6]`          |                                                        |
 
+!!! Note "No operators" 
+    In Clojure, `#!clj +` is a builtin synbol bound to a function. Not an operator. <br>
+    Same with `#!clj -`,  `#!clj /` ,  `#!clj >`,  `#!clj =`, etc. <br>
+    Because there are no operators, there's no operator precidence to worry about.
 
-Sometimes you just want a list to be a list, and not a function call
+Occasionally, you just want a list to evaluate to a list, and not a function call
 
 |   List          |   Evaluates To         |  Comments                                     |
 |-------------------------|------------------------|-----------------------------------------------|
@@ -133,7 +141,7 @@ Exercises:
 
 A list like this`#!clj (+ 1 2)` is known as **a form**. 
 
-**Forms can be nested**.  When they are, evaluation of form arguments often involves evaluating child forms first. 
+**Forms can be nested**.  When they are, evaluation of form elements will involves evaluating child forms. 
 
 |  Nested Forms          |   Evaluates To         |  Comments                                     |
 |------------------------|------------------------|-----------------------------------------------|
@@ -150,7 +158,7 @@ Try:
 ---
 ## Keywords
 
-Keywords are like symbols excecpt they evaluate to themselves and not to some bound value. This makes them like most other data litterals.
+Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This makes them like most other data litterals.
 
 Keywords are invaluable as `identities` (eg. keys in maps) and they are used very widely. 
 
@@ -161,8 +169,8 @@ A keyword is a name that starts with a colon.
 |-------------------------|------------------------------|-------------------------------------------------|
 | `#!clj :foo`            | `#!clj :foo`                 | It evaluates to itself.                         |  
 | `#!clj :bar`            | `#!clj :bar`                 | It evaluates to itself                          |  
-| `#!clj (= + :+)`        | `#!clj false`                | Is not the same as `#!clj +`, which is a symbol |  
-| `#!clj (= :bar :bar)`   | `#!clj true`                 | An important quality. Different instances evaluate to<br>equal. Like numbers do. Or strings.| 
+| `#!clj (= + :+)`        | `#!clj false`                | Is not the same as `#!clj +`, which is a symbol which evaluates<br>to a builtin function |  
+| `#!clj (= :bar :bar)`   | `#!clj true`                 | An important quality. Different instances evaluate to<br>equal. Like numbers do, and strings.| 
 | `#!clj (= :bar :foo)`   | `#!clj false`                |                                                 | 
 | `#!clj [1 2 :bar]`      | `#!clj [1 2 :bar]`           | Evaluates like a data litteral                  | 
 | `#!clj {1 :bar}`        | `#!clj {1 :bar}`             |                                                 | 
@@ -181,7 +189,7 @@ Keywords can have a `namespace`.
 | `#!clj (keyword "a" "b")`    | `#!clj :a/b`                 | `#!clj keyword`  is a builtin function        |
 
 
-To give you a taste of where this is heading, here they are used as the keys in a map:
+To give you a taste of where this can go, here they are used as the keys in a map:
 ```clj
 {:user/id      1
  :user/name    "Barry"
@@ -196,28 +204,27 @@ Experiments:
   -  `#!clj (keyword (namespace :a/b) (name :a/b))`
 
 ---
-## Special Forms 
+## Special Forms
 
-Some `Forms` are special, and each of them is special in its own way. We'll now review the important ones.
+Some `Forms` are special, and each is special in its own way. Let's review the important ones.
 
-## `#!clj if` 
+## `#!clj if`
 
 `#!clj if` forms get special treatment. 
 
-The code `#!clj (if true 4 3)` is a four element list. And normal evaluation 
+The code `#!clj (if true 4 3)` is a four element list. Normal evaluation rules
 would mean evaluating all four elements of the list and then calling the `#!clj if` function with three arguments.  
 
-Except that `#!clj if` forms are special because
-not all the arguments are evaluated. The 1st `test` argument is evaluated and then either the 3rd or the 4th argument
-is evaluated depending on the result of that `test`. To put that the other way, one of the 3rd or 4th argument will ***not*** be evaluated and it is that feature which makes `#!clj if` special. 
+Except that isn't what happens. `#!clj if` forms are special, and not all elements are evaluated. The 1st `test` element is evaluated and then either the 3rd or the 4th argument
+is evaluated depending on the result of that `test`. To put that the other way, one of the 3rd or 4th elements will ***not*** be evaluated. 
 
 
 
 |   Example                    |  Evaluates To               |  Comments                                     |
 |------------------------------|-----------------------------|-----------------------------------------------|
-|   `#!clj (if true 4 3)`      |  `#!clj 4`                  |  Only `true` and `4` arguments are evaluated  |
-|   `#!clj (if false 4 3)`     |  `#!clj 3`                  |  Only `false` and `3` arguments are evaluated |
-|   `#!clj (if false 4)`       |  `#!clj nil`                |  `else` form not provided for evaluation, so<br> evaluates to `#!clj nil` |
+|   `#!clj (if true 4 3)`      |  `#!clj 4`                  |  Only  `#!clj true` and  `#!clj 4` elements are evaluated<br>The `#!clj 3` element is not evaluated |
+|   `#!clj (if false 4 3)`     |  `#!clj 3`                  |  Only `false` and `3` elements are evaluated |
+|   `#!clj (if false 4)`       |  `#!clj nil`                |  `else` form not provided for evaluation, so<br>the `#!clj if` evaluates to `#!clj nil` |
 |   `#!clj (if (odd? 3) 3 4)`  |  `#!clj 3`                  |  `#!clj (odd? 3)` evaluates to  `#!clj true`             |
 |   `#!clj (= 4 (inc 3))`      |  `#!clj true`               |   |
 |   `#!clj (if (= 4 (inc 3)) :t :f)`  |  `#!clj :t`   |   |
@@ -232,47 +239,50 @@ Exercises:
   -  `#!clj when` is an alternative to  `#!clj if` when there is no `else` part. Try it out.
 
 ---
-## `#!clj fn` 
+## `#!clj fn`
 
 Evaluating an `#!clj fn` form creates an function.
 
-Here is a very simple example: `#!clj (fn [x] x)`.
+Here is a very simple example `#!clj (fn [x] x)`:
 
-  - as you can see, a `#!clj fn` form has two elements:
+  - as you can see, an `#!clj fn` form has two elements:
     - a vector of symbols - in this case `#!clj [x]`
     - a `body` -  in this case `#!clj x`
 
-  - an `#!clj fn` form is "special" because these two elements are not `evaluated` (as happens with normal forms). 
-  - it is only when this function is called that  `body` will be evaluated
-  - and, when that evaluation happens, `body` can refer to the symbols in the vector, which will be bound to the actual argument values of the function call
-  - Our simple example function above only takes one argument `#!clj [x]` 
-  - and, if the body `#!clj x` is evaluated, it will evaluate to whatever  `#!clj x` is bound to (that's what symbols do) and that will be the actual argument. 
+  - an `#!clj fn` form is "special" because these two elements are not `evaluated`. 
+  - it is only, later, when this function is called  that `body` will be evaluated
+  - and, when that evaluation happens, `body` can refer to symbols in the vector, which will be bound to the actual argument values of the function call
+  - our simple example function above only takes one argument `#!clj [x]` 
+  - and when the body is evaluated, the symbol `#!clj x` will evaluate to whatever `#!clj x` is bound to (that's what symbols do, afterall) and that will be the actual argument
   - the function will return the evaluation of the `body`, which, in the case above, is the value of the argument supplied. 
-  - consequently, if we called this function with one agument `#!clj 3`, this function would return `#!clj 3`
-  - and if we called this function with one argument `#!clj [:a :b]`, this function would return `#!clj [:a :b]`
+  - consequently, if we called this function with the argument `#!clj 3`, this function would return `#!clj 3`
+  - also, if we called this function with the argument `#!clj [:a :b]`, it would return `#!clj [:a :b]`
 
 Q: how do we call this function?
 
-A: Just like we call all functions. Place it as the 1st element of a form. Provide one other element in the list, which is the actual argument. And then evaluate the list. That's how function calls always happen. So, like this:
+A: Just like we call all functions. Place it as the 1st element of a form. Add a 2nd element in the list, which is the actual argument. And then evaluate this list. That's how function calls always happen. So, like this:
 ```clj
-;; This is a two element list:
-;;   - the 1st element is a function created via `fn`
-;;   - the 2nd element is "a value"
-((fn [x] x) "a value")
+; a line which starts with a semi-colon is a comment
+
+; The following is a two element list:
+;   - the 1st element is a function created by an `fn` form
+;   - the 2nd element is "the actual arg"  
+((fn [x] x) "the actual arg")
 ```
-The function is called with one actual argument `#!clj "a value"`. The entire form will evaluate to `#!clj "a value"`.
+The function is called with one actual argument: `#!clj "the actual arg"`. And the form will evaluate to `#!clj "the actual arg"`.
 
 ```clj
 ((fn [x] x) [:a :b])
 ```
-The function is called with one actual argument `#!clj [:a :b]`. The entire form will evaluate to `#!clj [:a :b]`.
+The function is called with one argument `#!clj [:a :b]`. And the form will evaluate to `#!clj [:a :b]`.
 
-Here is another simple example: `#!clj (fn [val] (inc val))`.  The symbol for the actual argument is now `#!clj val`. So that's different. And the body is now `#!clj (inc val)`. 
+How about we create another fucntion: `#!clj (fn [val] (+ val 1))`.  The symbol for the actual argument is now `#!clj val`. So that's different. And the body is now the form `#!clj (+ val 1)`. 
 
 What if we evaluated it like this:
 ```clj
-((fn [val] (inc val)) 4)
+((fn [val] (+ val 1)) 4)
 ```
+
 
 Try It:
 ```clj
@@ -288,74 +298,99 @@ or
 ```
 or
 
-```cljs
-((fn [val] (+ val 1)) 3)
-```
-or
-```cljs
-((fn [include?] {:a (if include? "included" "not included")}) true)
-```
-Wide code like this is hard to read. We'd formally split the code normally split it over a few lines.
 
+```cljs
+((fn [yes?] {:a (if yes? "yes")}) true)
+```
+what if we called this function with `#!clj false`.
 
 
 ---
 ## `#!clj def`
 
-The `def` form creates a symbol and binds a value to it. **Finally**, we get to create out own symbols!!
+The `#!clj def` form creates a symbol and binds a value to it. **Finally**, we get to create out own symbols!!
 
-This form is "special"
-because it adds to the global set of defined symbols and that alteration is a side-effect.
-Functions don't normally cause side effect - they are normally pure.
-
+Example use:
 ```clj
 (def gurus 2)
 ```
-Now  `#!clj gurus` is a defined symbol. And it is bound to the value `#!clj 2`. If I use this symbol in other code, it will evaluate to `#!clj 2`.
+This defines the symbol `#!clj gurus` and binds it to the value `#!clj 2`. If, later, you were use this symbol in other code, it would evaluate to `#!clj 2`.
+
+`#!clj def` is a "special form" on two counts:
+
+  - when evaluated, it adds to the global set of defined symbols and such mutation is known as a side-effect.
+Functions don't normally cause side effect - they are normally pure.
+  - in a normal form for some `f`, like this `#!clj (f gurus 2)`, the `#!clj gurus` element would be evaluated. But not with a `#!clj def` form. It is, instead, the new symbol to define.
+
+
 
 ```clj
 (def skeptics (inc gurus))    ;; using the symbol `gurus` !!
 ```
-Now  `#!clj skeptics` is a defined symbol and it is bound to the value `#!clj 3`. 
+Now  `#!clj skeptics` is a defined symbol and it is bound to the evaluation of  `#!clj (inc gurus)` which is the value `#!clj 3`. 
 
-Consider:
+Consider these two:
 ```clj
 (def beach-list [:hat :sunglasses :towel])
 (def beach-items (count beach-list))     ;; count is a builtin function
 ```
 Now  `#!clj beach-items` is a defined symbol and it is bound to `#!clj 3`
 
-Let's now bind a function to a symbol:
+Now, let's take this further and bind a function to a symbol:
+```clj
+(def my-inc (fn [val] (+ val 1))
+```
+We're creating a function via  `#!clj fn`, and we are binding to a symbol using  `#!clj def`. Two steps. Using that combination, we've created something similar to the builtin `#!clj inc`.
+```clj
+(my-inc 4) 
+```
+evaluates to `#!clj 5`
+
+And again:
 ```clj
 (def square-it (fn [x] (* x x)))
 ```
-We can use this symbol `#!clj square-it` as the 1st element in a list (it is now bound to a function), like this:
+We can use this symbol `#!clj square-it` in a form (it is now bound to a function), like this:
 ```clj
 (square-it 3)
 ```
-The value bound to  `#!clj square-it` (a function) will be called with the argument  `#!clj 3` which evaluates to the value `#!clj 9` 
+The value bound to  `#!clj square-it` (a function) will be called with the argument  `#!clj 3`, which evaluates to the value `#!clj 9` 
 
 
 
 ---
 ## `#!clj defn` 
 
-Instead of combining `#!clj def` and `#!clj fn`, there is 
-a simpler, one form method: `#!clj defn`. It is unusal in the same way that `#!clj def` is unusual: it causes side effects (adds the symbol to the execution context). 
+Combining `#!clj def` and `#!clj fn` is clumsy. So there is 
+a simpler, one form method called `#!clj defn`. It is special in all the same ways that `#!clj fn`  and `#!clj def` are special. 
+
+It is used like this:
+```clj
+(defn dec      ; `dec` is the symbol being defined
+  [val]        ; a vector of symbols for the actual arguments 
+  (- val 1))   ; function body - is evaluated when function is called - uses `val`
+```
+This could have been done on one line, but we're now starting to format our code correctly. 2 space indents. 
 
 Used like this:
 ```clj
-(defn square-it  ;; function symbol (name)
-  [x]            ;; args 
-  (* x x))       ;; function body
+(dec 4) 
 ```
-This binds the symbol `#!clj sqr` to a function. This could been done on one line, but we're now starting to format our code correctly. 2 space indents. 
+evaluates to `#!clj 3`
 
-As before, you can now call the function using the symbol.
+Define another:
+```clj
+(defn square-it  ; `square-it` is the symbol being defined
+  [x]            ; a vector of symbols for the actual arguments 
+  (* x x))       ; function body - is evaluated when function is called - uses `x`
+```
+This binds the symbol `#!clj square-it` to a function. 
+
+Use the symbol in a form:
 ```clj
 (square-it 3)
 ```
-which evaluates to `#!clj 9`. 
+which will evaluates to `#!clj 9`. 
 
 Or I could call it like this:
 ```clj
@@ -363,7 +398,7 @@ Or I could call it like this:
 ```
 which evaluates to `#!clj 16` .
 
-Define another function using `#!clj defn`: 
+Define another: 
 ```clj
 (defn greet
   [username]
@@ -388,34 +423,35 @@ As you can imagine, in a functional language, creating functions is a big deal. 
 `#!clj let` allows you to create a form with `bindings` and a `body` 
 
 ```clj
-;; let bindings are represented as pairs within a vector
-;; In this case, only one pair. The symbol `a` is bound to "pen"
+; let bindings are represented as pairs within a vector
+; In this case, only one pair. The symbol `a` is bound to "pen"
 (let [a "pen"]   
-  a)          ;; the evaluation of a `let` form is the evaluation of the body 
-              ;; here the body evaluates to "pen"
+  a)          ; the evaluation of a `let` form is the evaluation of the body 
 ```
-evaluates to `#!clj "pen"` 
+This `#!clj let` form evaluates to `#!clj "pen"` 
 
+Another variation:
 ```clj
 (let [a "pen"]   
-  :other)         ;; oops not even using the bound sysmbol `a`
+  :other)         ; oops not even using the bound sysmbol `a`
 ```
-evaluates to `#!clj :other` 
+This `#!clj let` form evaluates to `#!clj :other` 
 
-Noitce the way this is formatted (two space indents)
+Notice the way a `#!clj let` form  is formatted (two space indents)
 ```clj
-(let [a  "pen"         ;; this pair means `a` is bound to "pen" 
-      b  "sword"]      ;; this pair means `b` is bound to "sword"
-  (> a b))             ;; is "pen" greater than "sword" ??
+(let [a  "pen"         ; this pair means `a` is bound to "pen" 
+      b  "sword"]      ; this pair means `b` is bound to "sword"
+  (> a b))             ; is "pen" greater than "sword" ??
 ```
-evaluates to `#!clj false` (wait, what? That isn't in the story I was told.)
+evaluates to `#!clj false`. Wait, what? That isn't in the story I was told.
 
+We need to make some changes:
 ```clj
-(let [a  "pen"
-      b  "sword"]   
+(let [a  "a pen"
+      b  "the sword"]   
   (if (> a b) a b)) 
 ```
-evaluates to `#!clj "sword"`
+evaluates to `#!clj "a pen"`. Phew! Thank goodness for cheep lexograpic hacks which confirm wisdom.
 
 ```clj
 (let [a  "pen"
@@ -425,7 +461,6 @@ evaluates to `#!clj "sword"`
 evaluates to `#!clj {:winner "sword"}`
 
 Often, a `#!clj let` is used within a `#!clj defn` like this:
-
 ```clj
 (defn items-text 
   [items] 
@@ -452,25 +487,46 @@ Exercise:
   - when there are no items make the text "there are no items"  (and not "there is 0 items")
 
 
+## That's It For Forms And Special Forms
+
+We've just reviewed how to compute in Clojure. We execute data, to produce new data. 
 
 ## BuiltIn Functions 
 
-So that's it for syntax and special forms. 
+Clojure's provides a substantial library of biltin functions. 
+To write Clojure well, you'll have to master this library, but that takes time.
+
+But in the meantime, to read the Reagent and re-frame tutorials, there's a couple of functions which are essential.
+
 
 Along the way, we have introduced a few builtin functions but there are a couple which are used all the time. And we'll need to understand them. 
 
-## assoc
+## `#!clj assoc` 
 
-`#!clj assoc` 
-
-## map 
-
-`#!clj map`
+`#!clj assoc`  allows you to add a key/value pair to a map. 
 
 
-## reduce
+|   Example                    |  Evaluates To               |  Comments                                     |
+|------------------------------|-----------------------------|-----------------------------------------------|
+|   `#!clj (assoc {} :a 4)`    |  `#!clj {:a 4}`             |  adding a pair to an empty map `#!clj {}`     | 
+|   `#!clj (assoc nil :a 4)`   |  `#!clj {:a 4}`             |  `#!clj nil` is treated as `#!clj {}`         | 
+|   `#!clj (assoc {:b 1} :a 4)` |  `#!clj {:b 1 :a 4}`       |                                               | 
+|   `#!clj (assoc {} :b 1 :a 4)` |  `#!clj {:b 1 :a 4}`       |   add two a pairs                                            | 
 
-`#!clj reduce`
+`#!clj dissoc` allows you to remove a key/value.
+
+## `#!clj map` 
+
+
+|   Example                    |  Evaluates To               |  Comments                                     |
+|------------------------------|-----------------------------|-----------------------------------------------|
+| `#!clj (map inc [1 2 3])`    |  `#!clj (2 3 4)`        |  applies  `#!clj inc` to each element<br>Like `#!clj [(inc 1) (inc 2) (inc 3)]` except result is  up with a list    | 
+| `#!clj (map + [1 2 3] [4 5 6])` | `#!clj (5 7 9)`          |  applies  `#!clj +` to pairs of elements<br>Like `#!clj [(+ 1 4) (+ 2 5) (+ 3 6)]`, except result is a list
+
+
+## `#!clj reduce`
+
+
 
 XXX conj, assoc, map ,reduce, filter, old? 
 
@@ -489,6 +545,16 @@ XXX interop
 
 XXX Reagent like code
 
+XXX Immutable 
+XXX atoms and deref 
+
+
+; short-hand for creating a simple function:
+; #(...) => (fn [args] (...))
+
+#(* 3 %)         ; => (fn [x] (* 3 x))
+
+#(* 3 (+ %1 %2)) ; => (fn [x y] (* 3 (+ x y)))
 
 ## Installing 
 
@@ -496,3 +562,13 @@ XXX Reagent like code
 To install Clojure and Leiningen (a build tool) following [these instructions](https://purelyfunctional.tv/guide/how-to-install-clojure/). 
 
 
+Here's a good intro on writing a fucntion:
+https://blog.cleancoder.com/uncle-bob/2020/04/09/ALittleMoreClojure.html
+
+The cheatsheet: 
+https://clojure.org/api/cheatsheet
+
+We haven't covered:
+
+  - macros 
+  - (js/console.log "Hello World!")

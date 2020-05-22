@@ -23,7 +23,7 @@ making mental simulations easier, while others do the opposite and make it virtu
 apps on the "impossible" end of that continuum, will breed nasty bugs and be scary to maintain.
 
 As programmers, we often talk about static concerns like DRY and "cohesion vs coupling". Yes, they are all useful, 
-but it would better for us to focus more on the qualities which make the dynamics easier or harder to simulate.
+but it would be better for us to focus more on the qualities which make the dynamics easier or harder to simulate.
 
 ## A Central Claim 
 
@@ -162,12 +162,12 @@ adopting a Cortex structure, we still recommend a precautionary reboot.
 
 re-frame apps are simple to simulate in your head, and there are consequences - all of them good. 
 
-When talking to an experienced programmers recently, I was thrilled when he said the following (in a slightly distracted way, almost as if surprised by the realisation): 
+When talking to an experienced programmer recently, I was thrilled when he said the following (in a slightly distracted way, almost as if surprised by the realisation): 
 
 > Been using re-frame for nine months now. You know what's odd? I find myself writing fewer tests these days, since I started using re-frame. 
 
 So, an experienced (self regulating) programmer who has previously written a lot of tests, 
-is insticntively writing fewer tests, surprising even himself a bit, 
+is instinctively writing fewer tests, surprising even himself a bit, 
 because his intuitions are telling him it is safe to do so. 
 It is empirically simpler. Experientially simpler. 
 I can give you all the theory in the world for why re-frame is good. But there's 

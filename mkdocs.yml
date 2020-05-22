@@ -59,7 +59,6 @@ nav:
       - "Interconnections": interconnections.md
       - "Historical": historical.md
     - MORE ADVANCED:
-    
       - Browser Dynamics: browser-dynamics.md
       - Reusable Components: reusable-components.md
       - App Structure: App-Structure.md
