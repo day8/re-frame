@@ -1,6 +1,6 @@
 
 
-<p align="center"><a href="https://day8.github.io/re-frame" target="_blank" rel="noopener noreferrer"><img width="250" src="docs/images/logo/re-frame-colour.png?raw=true" alt="re-frame logo"></a></p>
+<p align="center"><a href="https://day8.github.io/re-frame" target="_blank" rel="noopener noreferrer"><img src="docs/images/logo/re-frame-colour.png?raw=true" alt="re-frame logo"></a></p>
 
 ## Derived Values, Flowing
 
