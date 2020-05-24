@@ -17,11 +17,53 @@ h1[id=_1] {
     display: none;
 }
 
-.not-found-container {
-    display: flex;
-    flow-direction: row;
+/* slightly smaller font in code blocks */
+.md-typeset code {
+  font-size: .79em
 }
 
-.not-found-text {
-    margin-left: 31px;
+
+/* 404 page */
+.not-found-container {
+  display: flex;
+  flow-direction: row;
 }
+.not-found-text {
+  margin-left: 31px;
+}
+
+/* The default gaps above and below paragraphs is fairly excessive.
+   Default is about 1em. Reduce that slightly.
+*/
+.md-typeset p {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+
+/*give he code blocks a bit more definition with a border */
+.md-typeset pre>code {
+  border: 1px solid #e4e4e4;
+}
+
+/* 
+Bring the top of the code block "up" closer to the end of the paragraph above,
+leaving less whitespace.
+Paragraphs have a lower margin of about 0.75em (see above), so we are closing most of the gap. 
+*/
+.codehilite {
+  margin-top: -0.6em;
+}
+
+/* make the Nav font just fractionally smaller 
+   It was 0.7rem - not even sure what a rem is. 
+*/
+.md-nav {
+  font-size: 0.65rem
+}
+/* 
+.md-header {
+  background-color: rgb(44, 44, 50)
+}
+
+*/
