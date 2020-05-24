@@ -74,7 +74,7 @@ it returns a map of `effects` which describe those changes. Effects as data.
 Here's a sketch (we are at 30,000 feet):
 ```clj
 (defn h                             ;; maybe choose a better name like `delete-item`
- [coeffects event]                  ;; `coeffects` holds the current state of the world.  
+ [coeffects event]                  ;; `coeffects` holds the current state of the world
  (let [item-id (second event)       ;; extract id from event vector
        db      (:db coeffects)]     ;; extract the current application state
    {:db  (dissoc-in db [:items item-id])})) ;; effect is "change app state to ..."

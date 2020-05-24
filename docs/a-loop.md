@@ -1,7 +1,4 @@
 
-
-#
-
 ## Homoiconic
 
 ClojureScript is a modern LISP, and LISPs are **homoiconic**.  

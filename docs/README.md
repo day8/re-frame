@@ -64,9 +64,6 @@ Notably adds
 Removes 'Made with Material for MkDocs' from footer.
 Attribution in documentation, not footer.
 
-`overrides/partials/logo.html`
-Changes default material icon to material/home.
-
 `overrides/partials/nav.html`
 Adds logo above left nav. (Deprecated?)
 

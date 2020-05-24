@@ -11,6 +11,9 @@ copyright: Copyright &copy; 2015-2020 Michael Thompson
 theme:
   name: material
   custom_dir: docs/theme
+  icon: 
+    logo: material/home
+    repo: fontawesome/brands/git-alt
   language: en
   palette:
     primary: light-blue
@@ -87,6 +90,7 @@ nav:
     - "How do I register a global interceptor": FAQs/GlobalInterceptors.md
     - "How do I turn on/off polling a database every 60 secs": FAQs/PollADatabaseEvery60.md
     - "re-frame uses side-effecting registrations. Should I feel dirty?": FAQs/ViewsOnGlobalRegistration.md
+    - "Why is my input field laggy?": FAQs/laggy-input.md
   - API:
     - API: codox/index.html
   - Releases:
