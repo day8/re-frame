@@ -58,5 +58,5 @@ Can be seen in the clojars badge above.
 
 ## Licence
 
-re-frame is [MIT licenced](Licence.txt)
+re-frame is [MIT licenced](license.txt)
 
