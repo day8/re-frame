@@ -40,6 +40,9 @@ h1[id=_1] {
   margin-bottom: 0.75em;
 }
 
+body {
+  background-image: linear-gradient(rgb(255, 255, 255) 0%, rgb(255, 255, 255) 88%, rgb(251, 253, 255) 100%);
+}
 
 /*give he code blocks a bit more definition with a border */
 .md-typeset pre>code {

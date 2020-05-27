@@ -1639,8 +1639,8 @@ two things:</p>
 </ol>
 <p>Except, the <code>handler</code> is turned into an interceptor too (we'll see how shortly).</p>
 <p>So <code>:some-id</code> is only associated with one thing: a 3-chain of interceptors,
-with the <code>handler</code> wrapped in an interceptor, called say <code>h</code>, and put on the
-end of the other two: <code>[in1 in2 h]</code>.</p>
+with the <code>handler</code> wrapped in an interceptor, called say <code>i</code>, and put on the
+end of the other two: <code>[in1 in2 i]</code>.</p>
 <p>Except, the registration function itself, <code>reg-event-db</code>, actually takes this 3-chain
 and inserts its own standard interceptors, called say <code>std1</code> and <code>std2</code>
 (which do useful things, again more soon) at the front,
