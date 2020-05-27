@@ -29,7 +29,7 @@
   - an enthusiastic community, video training and 3rd party libraries
   
 
-  - re-frame-10x is only half finished. It is entirely useful and fucntional, but I'd love to take it the rest of the way. 
+  - re-frame-10x is only half finished. It is entirely useful and functional, but I'd love to take it the rest of the way. 
   - is functional and has a data oriented design  (has unique features)
 
 It is Boringly simple

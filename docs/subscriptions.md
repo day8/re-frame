@@ -91,7 +91,7 @@ But this only happens if the handler's output is different to the "last time" it
 If a handler's return value "this time" is 
 the same as "last time", data is not propagated to the sub-graph. No need. Nothing has changed. 
 
-The computation for each node is performed by a pure fucntion and a pure function will return 
+The computation for each node is performed by a pure function and a pure function will return 
 the same value each time it is called with the same arguments. So, if we were to give a downstream node
 the same inputs as last time, it would produce the same outputs as last time, including the same hiccup at the leaves.
 

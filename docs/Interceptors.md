@@ -96,8 +96,8 @@ two things:
 Except, the `handler` is turned into an interceptor too (we'll see how shortly).
 
 So `:some-id` is only associated with one thing: a 3-chain of interceptors,
-with the `handler` wrapped in an interceptor, called say `h`, and put on the
-end of the other two: `[in1 in2 h]`.
+with the `handler` wrapped in an interceptor, called say `i`, and put on the
+end of the other two: `[in1 in2 i]`.
 
 Except, the registration function itself, `reg-event-db`, actually takes this 3-chain
 and inserts its own standard interceptors, called say `std1` and `std2`

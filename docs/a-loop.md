@@ -220,8 +220,8 @@ To render the right DOM, `ViewFunctions` must obtain state using the signal grap
 They use a `subscribe` facility which reactively delivers this state. They automatically re-run 
 in response to changes in the Signal Graph, keeping the UI up to date. 
 
-So, after the application state changes in domino 3, data flowes through the Signal Graph of domino 4, causing 
-the `ViewFucntions` to re-render the UI presented to the user.
+So, after the application state changes in domino 3, data flows through the Signal Graph of domino 4, causing 
+the `ViewFunctions` to re-render the UI presented to the user.
 
 
 ## Domino 6 - DOM

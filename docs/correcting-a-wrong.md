@@ -62,7 +62,7 @@ We could rewrite it to use the `:<-` syntactic sugar:
 (reg-sub 
   :time-str 
 
-  :<- [:time]    ;; <-- this is syntactic sugar for signals fucntion
+  :<- [:time]    ;; <-- this is syntactic sugar for signals function
 
   (fn [t _] 
     (-> t
