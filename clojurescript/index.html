@@ -1330,18 +1330,32 @@
                   
                 
                 
-                <p>Are you new to ClojureScript? Need a quick primer?</p>
-<p>This page will teach you how to <em>read</em>  Clojure in in 20 minutes. Plus a bit of writing.
-Fully learning to <em>write</em> Clojure code will take more time, but probably still less than you think.</p>
+                <blockquote>
+<p>This document is currently in beta test.<br><br>
+This single page aims to teach a Javascript developer just enough Clojure that they can start to read re-frame and Reagent code.</p>
+<p>When you review, can you tell me:</p>
+<ol>
+<li>How long it takes you  (my current guess is 30 mins)</li>
+<li>What worked for you, and does not work.  What puzzled you. What jarred.  What is overexplained. What is underexplained. etc. </li>
+</ol>
+<p>It isn't polished or 100% complete yet. But it is getting close. It has not inline/on-page REPL yet. There are a few XXXs around where those REPLs will be in the near future. <br></p>
+<p>Many Thanks!</p>
+</blockquote>
+<p>Are you new to ClojureScript, and do you need a quick primer?</p>
+<p>If so, this page will teach you how to <em>read</em>  Clojure in 30 minutes. Specifically, I
+want you to be able to read and understand the Reagent and re-frame code. Writing is not 
+important yet but there is some live coding on this page.</p>
 <p>ClojureScript is a modern Lisp. Alan Kay once descibed Lisp as "Maxwell's equations of software".
-Paul Graham believed Lisp was a competitive advantage for his startup. For 50 years, 
-some of the finest minds in software have admired it, used it and refined it.</p>
+Paul Graham believed Lisp was a competitive advantage for his startup. Dijkstra wrote glowingly of it. 
+For 50 years, 
+some of the finest minds in software have admired it, used it and refined it. It is a foliated masterpiece.</p>
 <p>As the owner of a company which develops software products, I believe ClojureScript gives us a
 competitive edge. As a programmer, I feel like it has provided me with excellent,
-nourishing brain food. It is a stable productive place, with little churn. In contrast, I look across 
-to the Javascript landscape and it looks like cruel and unusual punishment.</p>
-<p>So, 20 mins ...</p>
+nourishing brain food. It is a stable, productive place, with little churn. In contrast, I look across 
+to the Javascript landscape and I see cruel and unusual punishment.</p>
+<p>So, 30 mins ...</p>
 <h2 id="simple-data-literals">Simple Data Literals<a class="headerlink" href="#simple-data-literals" title="Permanent link">&para;</a></h2>
+<p>I have good news. You are going to be shocked and delighted at the simplicity of the syntax. </p>
 <table>
 <thead>
 <tr>
@@ -1379,6 +1393,7 @@ to the Javascript landscape and it looks like cruel and unusual punishment.</p>
 </tbody>
 </table>
 <h2 id="collection-data-literals">Collection Data Literals<a class="headerlink" href="#collection-data-literals" title="Permanent link">&para;</a></h2>
+<p>Lists use  <code class="highlight"><span class="p">()</span></code>, vectors use  <code class="highlight"><span class="p">[]</span></code> and maps use  <code class="highlight"><span class="p">{}</span></code>, like this:</p>
 <table>
 <thead>
 <tr>
@@ -1390,13 +1405,13 @@ to the Javascript landscape and it looks like cruel and unusual punishment.</p>
 <tbody>
 <tr>
 <td>list</td>
-<td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code></td>
+<td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="s">&quot;yes&quot;</span><span class="p">)</span></code></td>
 <td>Can be heterogeneous.<br>Empty list is <code class="highlight"><span class="p">()</span></code><br>No commas necessary.</td>
 </tr>
 <tr>
 <td>vector</td>
 <td><code class="highlight"><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span></code></td>
-<td>No commas necessary.<br>Empty vector is <code class="highlight"><span class="p">[]</span></code></td>
+<td>Again, no commas necessary.<br>Empty vector is <code class="highlight"><span class="p">[]</span></code></td>
 </tr>
 <tr>
 <td>vector</td>
@@ -1406,12 +1421,12 @@ to the Javascript landscape and it looks like cruel and unusual punishment.</p>
 <tr>
 <td>map</td>
 <td><code class="highlight"><span class="p">{</span><span class="mi">1</span> <span class="s">&quot;Hello&quot;</span><span class="p">}</span></code></td>
-<td>A dictionary, or an associative array.</td>
+<td>A dictionary, or hashmap.<br>Each pair is a <code>key</code> and a <code>value</code>.<br>One pair here.<code class="highlight"><span class="mi">1</span></code> is key,<br> <code class="highlight"><span class="s">&quot;hello&quot;</span></code> is the value</td>
 </tr>
 <tr>
 <td>map</td>
 <td><code class="highlight"><span class="p">{</span><span class="mi">1</span> <span class="s">&quot;Hello&quot;</span> <span class="mi">2</span> <span class="nv">nil</span><span class="p">}</span></code></td>
-<td>No delimiter necessary between pairs.</td>
+<td>No delimiter necessary between pairs.<br>Two key/value pairs.</td>
 </tr>
 <tr>
 <td>map</td>
@@ -1486,11 +1501,12 @@ to the Javascript landscape and it looks like cruel and unusual punishment.</p>
 </tbody>
 </table>
 <h2 id="thats-it-for-syntax">That's It For Syntax<a class="headerlink" href="#thats-it-for-syntax" title="Permanent link">&para;</a></h2>
-<p>We've now covered most of Clojure's syntax. </p>
+<p>We've now covered most of Clojure's syntax. Seriously.</p>
 <h2 id="evaluation">Evaluation<a class="headerlink" href="#evaluation" title="Permanent link">&para;</a></h2>
 <p>Time to explore how data is evaluated. Wait. Really? Evaluating data?  </p>
 <p><strong>In ClojureScript we evaulate data, to create new data</strong>.</p>
-<p>All data litterals other than <code>lists</code> and <code>symbols</code> evaluate to themselves. So that's really easy.</p>
+<p>I have good news. You are going to be shocked and delighted at how simple evaluation is. </p>
+<p>First, all data litterals other than <code>lists</code> and <code>symbols</code> evaluate to themselves.</p>
 <table>
 <thead>
 <tr>
@@ -1523,10 +1539,11 @@ to the Javascript landscape and it looks like cruel and unusual punishment.</p>
 </tbody>
 </table>
 <p>Try it for yourself. Enter an expression into the following editor and it will be evaluated. The result will be shown in the box below.</p>
-<p>XXX</p>
+<p>XXX inline REPL goes here</p>
 <p>So, let's talk about the two exceptions <code>lists</code> and <code>symbols</code>. </p>
 <h2 id="evaluating-symbols">Evaluating Symbols<a class="headerlink" href="#evaluating-symbols" title="Permanent link">&para;</a></h2>
-<p>Symbols don't evaluate to themselves. Instead, they evaluate to the value to which they are "bound". (More on how symbols get bound to values soon)</p>
+<p>Symbols don't evaluate to themselves. Instead, they evaluate to the value to which they are "bound". (More on how symbols are bound to values soon)</p>
+<p>Example evaluations:</p>
 <table>
 <thead>
 <tr>
@@ -1554,30 +1571,34 @@ to the Javascript landscape and it looks like cruel and unusual punishment.</p>
 <tr>
 <td><code class="highlight"><span class="p">[</span><span class="nv">foo</span> <span class="nv">bar</span><span class="p">]</span></code></td>
 <td><code class="highlight"><span class="p">[</span><span class="mi">4</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]]</span></code></td>
-<td></td>
+<td><code class="highlight"><span class="nv">foo</span></code> evaluates to  <code class="highlight"><span class="mi">4</span></code>,  <code class="highlight"><span class="nv">bar</span></code> evaluates to  <code class="highlight"><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span></code><br>(because that's what we are assuming these symbols are bound to)</td>
 </tr>
 </tbody>
 </table>
 <h2 id="evaluating-lists">Evaluating Lists<a class="headerlink" href="#evaluating-lists" title="Permanent link">&para;</a></h2>
-<p>The evaluation of <code>lists</code> is how function calls occur. In a functional language, function calls
-are a big deal, so understanding this is important. </p>
-<p>Here's a list  <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span> <span class="nv">arg3</span><span class="p">)</span></code>. It has four elements. This list will be evaluated in two steps:</p>
+<p>A <code>list</code> evaluates to a function call. And, in a functional language, function calls are a big deal,
+so this section is very important. </p>
+<p>Here's an example list  <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span> <span class="nv">arg3</span><span class="p">)</span></code>. It has four elements. A list is evaluated in two steps:</p>
 <ol>
-<li>each element in the list is evaluated (all four of them) </li>
-<li>a function call occurs<ul>
-<li>the evaluation of the 1st element is the function called </li>
-<li>the evaluation of the other elements (3 in the case above) become the actual arguments to this function call </li>
+<li>first, each element in the list is evaluated (all four of them in this example)</li>
+<li>then, a function call occurs<ul>
+<li>the evaluation of the 1st element will be the function called </li>
+<li>the evaluation of the other elements (3 in the case above) will be the actual arguments in this function call </li>
 </ul>
 </li>
 </ol>
-<p>The entire list evaluates to be the return value of the function call.</p>
+<p>The entire list evaluates to the return value of the function call. So, if this example function call returned <code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="mi">3</span><span class="p">)</span></code> then <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span> <span class="nv">arg3</span><span class="p">)</span></code> would evaluate to <code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="mi">3</span><span class="p">)</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Symbols evaluating to functions</p>
-<p>In Clojure code, the 1st element of a list is often a symbol. Eg.  <code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="mi">3</span><span class="p">)</span></code>.  <code class="highlight"><span class="nv">inc</span></code> is a symbol.</p>
-<p>We already know that symbols evaluate to what they are bound to, so in step 1, a symbol, like <code class="highlight"><span class="nv">inc</span></code> will evaluate to the function it is bound to. And it is that function which will be called in step 2.</p>
-<p>The symbol <code class="highlight"><span class="nv">inc</span></code> is bound to a function in the standard library. And, perhaps surprisingly for you, the symbol <code class="highlight"><span class="nv">+</span></code> is also a symbol which is bound to a function in the standard library (which, less surprisingly, adds its arguments together).</p>
+<p>In normal Clojure code, the 1st element of a list is often a symbol. For example, in some of the examples to follow we'll be looking at <code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="mi">3</span><span class="p">)</span></code>.  <code class="highlight"><span class="nv">inc</span></code> is a symbol.</p>
+<p>In step 1, all elements of the list are evaluated. If the first element of the list is a symbol, we learned 
+already that it will evaluate to what it is bound to. So, if a symbol, like <code class="highlight"><span class="nv">inc</span></code>, is bound to a 
+function, it is <strong><em>that</em></strong> function which is called in step 2.</p>
+<p>So <code class="highlight"><span class="nv">inc</span></code> is a symbol, not a function. But it is bound to a function. A subtle but important distinction. </p>
+<p>If, instead <code class="highlight"><span class="nv">inc</span></code> was bound to <code class="highlight"><span class="mi">27</span></code> we couldn't use it in the first position of a list, because it is bound to a number, not a function. We'd get an error.</p>
+<p>Also, perhaps surprisingly for you, the symbol <code class="highlight"><span class="nv">+</span></code> is also bound to a fucntion in the standard library. Less surprisingly, this function adds its arguments together. More soon.</p>
 </div>
-<p>Examples:</p>
+<p>Example list evaluations:</p>
 <table>
 <thead>
 <tr>
@@ -1618,7 +1639,7 @@ are a big deal, so understanding this is important. </p>
 <p class="admonition-title">No operators</p>
 <p>In Clojure, <code class="highlight"><span class="nv">+</span></code> is a builtin symbol bound to a function. Not an operator. <br>
 Same with <code class="highlight"><span class="nv">-</span></code>,  <code class="highlight"><span class="nv">/</span></code> ,  <code class="highlight"><span class="nv">&gt;</span></code>,  <code class="highlight"><span class="nv">=</span></code>, etc. <br>
-Because there are no operators, there's no operator precedence to discuss.</p>
+Because there are no operators, there's no operator precedence to discuss. Simple syntax, right?</p>
 </div>
 <p>Occasionally, you just want a list to evaluate to a list, and not to a function call</p>
 <table>
@@ -1633,17 +1654,17 @@ Because there are no operators, there's no operator precedence to discuss.</p>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></code></td>
 <td></td>
-<td>Error!<br>A list will be evaluated as function call, and that 1st element will not<br>evaluate to a function. It is a number.</td>
+<td>Error!<br>A list will be evaluated as function call, but that 1st element will not<br>evaluate to a function. It is a number.</td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></code></td>
-<td>No function call happens.<br>That leading quote character says to <strong><em>not</em></strong> evaluate the list as<br>a function call and to instead just let the list evaluate to itself<br>(like other data literals do).</td>
+<td>No function call happens.<br>That leading quote character says to <strong><em>not</em></strong> evaluate the list as<br>a function call and to instead just let the list evaluate to itself<br>(as most other data literals do).</td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">list </span><span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></code></td>
-<td>The builtin function, bound to the symbol<code class="highlight"><span class="nv">list</span></code>, will make<br>a list from its arguments</td>
+<td>The builtin function, bound to the symbol<code class="highlight"><span class="nv">list</span></code>, will make<br>a list from its actual arguments</td>
 </tr>
 </tbody>
 </table>
@@ -1652,10 +1673,12 @@ Because there are no operators, there's no operator precedence to discuss.</p>
 <li>is <code>(+ 1)</code> an error? How about <code>(+)</code> or <code>(*)</code>?</li>
 <li>try <code>(odd? 5)</code> </li>
 </ul>
+<p>XXX inline REPL goes here</p>
+<p>Are you starting to get the idea about how <strong><em>we evaulate data, to create new data</em></strong>.</p>
 <hr />
 <h2 id="forms">Forms<a class="headerlink" href="#forms" title="Permanent link">&para;</a></h2>
-<p>A list like this <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code> is known as <strong>a form</strong> and <strong>forms can be nested</strong> like this:  <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="p">(</span><span class="nb">inc </span><span class="mi">10</span><span class="p">))</span></code>. </p>
-<p>In your mind's eye, see this as <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span><span class="p">)</span></code> where:</p>
+<p>A list like this <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code> is known as <strong>a form</strong> and <strong>forms can be nested</strong> like this:  <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="p">(</span><span class="nb">inc </span><span class="mi">10</span><span class="p">))</span></code>. Let's consider how nested forms are evaluated.</p>
+<p>In your mind's eye, see this nested example as <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span><span class="p">)</span></code> where:</p>
 <ul>
 <li><code class="highlight"><span class="nv">f</span></code> is <code class="highlight"><span class="nv">+</span></code></li>
 <li><code class="highlight"><span class="nv">arg1</span></code> is <code class="highlight"><span class="mi">1</span></code></li>
@@ -1666,8 +1689,11 @@ Because there are no operators, there's no operator precedence to discuss.</p>
 <li><code class="highlight"><span class="nv">+</span></code> will evaluate to the builtin function bound to that symbol </li>
 <li><code class="highlight"><span class="mi">1</span></code> evaluates to  <code class="highlight"><span class="mi">1</span></code></li>
 <li><code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="mi">10</span><span class="p">)</span></code> is a form which means we have to apply the same process to its evaluation: (1) evaluate the elements (2) perform the function call</li>
-<li>with all three elements evaluated, the function is called with the two actual argumetns of <code class="highlight"><span class="mi">1</span></code> and <code class="highlight"><span class="mi">11</span></code> </li>
+<li>with all three elements evaluated, the function is called with the two actual arguments of <code class="highlight"><span class="mi">1</span></code> and <code class="highlight"><span class="mi">11</span></code> </li>
+<li>the return value from the function call is <code class="highlight"><span class="mi">12</span></code> </li>
+<li>the evaluation of the nested form is <code class="highlight"><span class="mi">12</span></code> </li>
 </ul>
+<p>More:</p>
 <table>
 <thead>
 <tr>
@@ -1703,7 +1729,7 @@ Because there are no operators, there's no operator precedence to discuss.</p>
 <hr />
 <h2 id="keywords">Keywords<a class="headerlink" href="#keywords" title="Permanent link">&para;</a></h2>
 <p>Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This makes them like most other data litterals.</p>
-<p>Keywords are invaluable as <code>identities</code> (eg. keys in maps) and they are used very widely. </p>
+<p>Keywords are <strong><em>invaluable</em></strong> as <code>identities</code> (eg. keys in maps) and they are used very widely. </p>
 <p>A keyword is a name that starts with a colon.</p>
 <table>
 <thead>
@@ -1810,9 +1836,9 @@ Because there are no operators, there's no operator precedence to discuss.</p>
 <hr />
 <h2 id="kebab-case-please">Kebab Case Please<a class="headerlink" href="#kebab-case-please" title="Permanent link">&para;</a></h2>
 <p>We don't use <code class="highlight"><span class="nv">_</span></code> in names. Instead we use <code class="highlight"><span class="nv">-</span></code>. </p>
-<p>That leads to kebab casing like this <code>:the-winner-is</code>, and not snake casing <code>:the_winner_is</code>. 
-And certainly no camel casing or pascal case like <code>:TheWinnerIs</code>. </p>
-<p>This applies to both symbols and keywords. </p>
+<p>That leads to Kebab Casing like this <code>:the-winner-is</code>, and not Snake Casing <code>:the_winner_is</code>. 
+And Pascal case is reserved for a situation which we don't cover in this tutorial. </p>
+<p>This applies to both symbols and keywords.</p>
 <p>We can use <code class="highlight"><span class="nv">-</span></code> in names because it isn't an operator. 
 In the form <code class="highlight"><span class="p">(</span><span class="nb">- </span><span class="mi">3</span> <span class="mi">2</span><span class="p">)</span></code>,  <code class="highlight"><span class="nv">-</span></code> is a one character name which is the ultimate in kebab case.
 It also happens to look like the minus operator in other languages. </p>
@@ -1854,6 +1880,9 @@ This is a convension. It is used for predicates which test for thruth. </p>
 </table>
 <p>Again, we can use <code class="highlight"><span class="nv">?</span></code> in names because it is not 
 an operator, as it is in other lanugages. </p>
+<h2 id="syntax-and-evaluation">Syntax And Evaluation<a class="headerlink" href="#syntax-and-evaluation" title="Permanent link">&para;</a></h2>
+<p>At this point,  you know both syntax and standard evaluation. You have seen how to create data. And you've seen how to compute new data. </p>
+<p>Now, we need to understand some special cases. </p>
 <hr />
 <h2 id="special-forms">Special Forms<a class="headerlink" href="#special-forms" title="Permanent link">&para;</a></h2>
 <p>Some <code>Forms</code> are special because they evaluate differently to the "normal" rules outlined above. Let's review the important ones.</p>
@@ -1914,6 +1943,10 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">No Statements</p>
+<p>Notice how <code class="highlight"><span class="nv">if</span></code> is an expression in Clojure. It doesn't have "statements" like some other languages. Everything is an expression! Everything can be evaluated. </p>
+</div>
 <p>Exercises: </p>
 <ul>
 <li>check if <code>(if true)</code> is valid. </li>
@@ -1933,13 +1966,13 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 <li>it is only later, when this function is called,  that <code>body</code> will be evaluated, 
     and when that happens, <code>body</code> can refer to symbols in the vector, which will be bound to the actual arguments of the function call</li>
 <li>our simple example function above only takes one argument <code class="highlight"><span class="p">[</span><span class="nv">x</span><span class="p">]</span></code> </li>
-<li>and, when the <code>body</code> is evaluated, the symbol <code class="highlight"><span class="nv">x</span></code> will be bound to the actual argument of the function call</li>
+<li>and, when the <code>body</code> is evaluated, at call time, the symbol <code class="highlight"><span class="nv">x</span></code> will be bound to the actual argument of that function call</li>
 <li>the function will return the evaluation of the <code>body</code>, which, in the case above, is the same value as the actual argument.</li>
 <li>consequently, if we called this function with the argument <code class="highlight"><span class="mi">3</span></code>, this function would return <code class="highlight"><span class="mi">3</span></code></li>
 <li>and, if we called this function with the argument <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code>, it would return <code class="highlight"><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]</span></code></li>
 </ul>
 <p><strong><em>Question</em></strong>: so, how do we call this function?</p>
-<p><strong><em>Answer</em></strong>: place it as the first element in a form. Then add a 2nd element in that form, which is the actual argument. Like this:</p>
+<p><strong><em>Answer</em></strong>: easy, just place it as the first element in a form. Then add a 2nd element in that form, which is the actual argument. Like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="c1">; Aside: a line which starts with a semi-colon is a comment</span>
 
 <span class="c1">; The following is a two element list:</span>
@@ -1949,7 +1982,21 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 </code></pre></div>
 
 
-<p>This calls the function with one actual argument: <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code>. This form will evaluate to <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code>.</p>
+<p>Let's think about what is happening here:</p>
+<ol>
+<li>This is a list, so it will evaluate to a function call</li>
+<li>This is a two step process. </li>
+<li>First, evelauate all the elements of the list</li>
+<li>Element #1 will evaluate to a function </li>
+<li>Element #2 will evaluate to <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
+<li>Then, the function call happens </li>
+<li><code>x</code> will be bound to <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
+<li>the body of the function will be evaluated</li>
+<li>The body is just <code class="highlight"><span class="nv">x</span></code>, which is a symbol bound to <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
+<li>So the body evaluates to  <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
+<li>So the function will return <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
+<li>And that then is the evaluation of the form</li>
+</ol>
 <p>Another call:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span> <span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">])</span>
 </code></pre></div>
@@ -2001,7 +2048,7 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 <ul>
 <li>when evaluated, it adds to the global set of defined symbols. Such mutation is known as a side-effect.
 Functions don't normally cause side effect - they are normally pure.</li>
-<li>in a normal form for some <code class="highlight"><span class="nv">f</span></code>, like this <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">gurus</span> <span class="mi">2</span><span class="p">)</span></code>, the <code class="highlight"><span class="nv">gurus</span></code> element would be evaluated. But the evaluation rules in a <code class="highlight"><span class="nv">def</span></code> form are different because that's the symbol to define. It doesn't get evaluated. But the 3rd element certainly does.</li>
+<li>in a normal Clojure form, like say <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">gurus</span> <span class="mi">2</span><span class="p">)</span></code>, the <code class="highlight"><span class="nv">gurus</span></code> element would be evaluated before the call. But the evaluation rules in a <code class="highlight"><span class="nv">def</span></code> form are different because, instead, <code class="highlight"><span class="nv">gurus</span></code> is the symbol to define. It doesn't get evaluated. But the 3rd element certainly does.</li>
 </ul>
 <p>The 3rd element of a <code class="highlight"><span class="nv">def</span></code> is evaluated: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">skeptics</span> <span class="p">(</span><span class="nb">inc </span><span class="nv">gurus</span><span class="p">))</span>    <span class="c1">;; using the symbol `gurus` !!</span>
@@ -2042,7 +2089,7 @@ Functions don't normally cause side effect - they are normally pure.</li>
 <h2 id="defn"><code class="highlight"><span class="nv">defn</span></code><a class="headerlink" href="#defn" title="Permanent link">&para;</a></h2>
 <p>Creating a function happens a lot, and combining <code class="highlight"><span class="nv">def</span></code> and <code class="highlight"><span class="nv">fn</span></code> each time would be verbose. So, there is 
 a terser method which combines the two, called <code class="highlight"><span class="nv">defn</span></code>.</p>
-<p>It is used like this:</p>
+<p>Used like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nb">dec </span>     <span class="c1">; `dec` is the symbol being defined</span>
   <span class="p">[</span><span class="nv">n</span><span class="p">]</span>          <span class="c1">; a vector of symbols for the actual arguments </span>
   <span class="p">(</span><span class="nb">- </span><span class="nv">n</span> <span class="mi">1</span><span class="p">))</span>     <span class="c1">; function body - evaluated when function is called - uses `n`</span>
@@ -2089,7 +2136,7 @@ a terser method which combines the two, called <code class="highlight"><span cla
 
 
 <p>evaluates to <code class="highlight"><span class="s">&quot;Hello world&quot;</span></code>.</p>
-<p>In a functional language, creating functions is a big deal. You'll be using <code class="highlight"><span class="nv">defn</span></code> a lot. </p>
+<p>In a functional language, creating functions is a big deal. You'll be using <code class="highlight"><span class="nv">defn</span></code> a lot.</p>
 <hr />
 <h2 id="let"><code class="highlight"><span class="nv">let</span></code><a class="headerlink" href="#let" title="Permanent link">&para;</a></h2>
 <p>Here's another special form you'll be using a lot. <code class="highlight"><span class="nv">let</span></code> allows you to create a form with two parts: <code>bindings</code> and a <code>body</code> </p>
@@ -2109,14 +2156,14 @@ a terser method which combines the two, called <code class="highlight"><span cla
 
 
 <p>This <code class="highlight"><span class="nv">let</span></code> form evaluates to <code class="highlight"><span class="ss">:foo</span></code> </p>
-<p>Notice the way this <code class="highlight"><span class="nv">let</span></code> form  is formatted (two space indents)</p>
+<p>Notice the way this <code class="highlight"><span class="nv">let</span></code> form  is formatted:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;pen&quot;</span>         <span class="c1">; this pair means `a` is bound to &quot;pen&quot; </span>
       <span class="nv">b</span>  <span class="s">&quot;sword&quot;</span><span class="p">]</span>      <span class="c1">; this pair means `b` is bound to &quot;sword&quot;</span>
   <span class="p">(</span><span class="nb">&gt; </span><span class="nv">a</span> <span class="nv">b</span><span class="p">))</span>             <span class="c1">; is &quot;pen&quot; greater than &quot;sword&quot; ??</span>
 </code></pre></div>
 
 
-<p>evaluates to <code class="highlight"><span class="nv">false</span></code>. Wait, no. That isn't convential wisdom. Damn you lexographic comparisons.</p>
+<p>evaluates to <code class="highlight"><span class="nv">false</span></code>. Wait, no. That isn't convential wisdom. Damn you lexographic comparisons!!</p>
 <p>We need to make some changes:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;the pen&quot;</span>
       <span class="nv">b</span>  <span class="s">&quot;a sword&quot;</span><span class="p">]</span>   
@@ -2159,22 +2206,55 @@ a terser method which combines the two, called <code class="highlight"><span cla
 <ul>
 <li>when there are no items make the text "there are no items"  (and not "there is 0 items")</li>
 </ul>
-<h2 id="special-functions">Special Functions<a class="headerlink" href="#special-functions" title="Permanent link">&para;</a></h2>
-<p>Here's a form <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span><span class="p">)</span></code>.  In that fisrt, f, position we've now used <code>symbols</code>, <code>fn</code> forms and <code>special forms</code>. </p>
-<p>But Clojure data can act as functions to.  </p>
-<div class="codehilite"><pre><span></span><code>
+<h2 id="data-functions">Data Functions<a class="headerlink" href="#data-functions" title="Permanent link">&para;</a></h2>
+<p>Clojure sometimes allows data to act as functions. For example, a map can act as a function. 
+Conceptually, a function "maps" from actual arguments to return value,
+and when you think about it, thats exactly what a hasmap does too. Hence the name.</p>
+<p>This is easiest to explain via code. </p>
+<div class="codehilite"><pre><span></span><code><span class="p">({</span><span class="ss">:a</span> <span class="mi">11</span><span class="p">}</span> <span class="ss">:a</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>symbols are the most often case</p>
-<p>A function is ultimately a mapping from one thing to another. So a map is certainly a function. It maps from one thing (a key) to another (the value for that key). </p>
-<p>XXX</p>
-<p>Data can behave live </p>
-<p>A keyword 
-A map </p>
-<p>We've just reviewed how to compute in Clojure. We execute data, to produce new data. </p>
+<p>evaluates to <code class="highlight"><span class="mi">11</span></code>. We are looking up the key <code class="highlight"><span class="ss">:a</span></code> in the map and obtaining the associated value <code class="highlight"><span class="mi">11</span></code></p>
+<div class="codehilite"><pre><span></span><code><span class="p">({</span><span class="ss">:a</span> <span class="mi">11</span> <span class="ss">:b</span> <span class="mi">21</span><span class="p">}</span> <span class="ss">:b</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="mi">21</span></code></p>
+<div class="codehilite"><pre><span></span><code><span class="p">({</span><span class="ss">:a</span> <span class="mi">11</span> <span class="ss">:b</span> <span class="mi">21</span><span class="p">}</span> <span class="ss">:c</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="nv">nil</span></code>. There is no key <code class="highlight"><span class="ss">:c</span></code> in the map.</p>
+<div class="codehilite"><pre><span></span><code><span class="p">({</span><span class="ss">:a</span> <span class="mi">11</span> <span class="ss">:b</span> <span class="mi">21</span><span class="p">}</span> <span class="ss">:c</span> <span class="ss">:not-found</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="ss">:not-found</span></code>. This time we supplied a default value.</p>
+<p>A <code>keyword</code> can also be used as a function, provided its actual argument is a map.  </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="ss">:a</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">11</span><span class="p">})</span>
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="mi">11</span></code></p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="ss">:b</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">11</span> <span class="ss">:b</span> <span class="mi">21</span><span class="p">})</span>
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="mi">21</span></code></p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="ss">:c</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">11</span> <span class="ss">:b</span> <span class="mi">21</span><span class="p">})</span>
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="nv">nil</span></code></p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="ss">:c</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">11</span> <span class="ss">:b</span> <span class="mi">21</span><span class="p">}</span> <span class="ss">:not-found</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>evaluates to <code class="highlight"><span class="ss">:not-found</span></code></p>
+<p>This approach of using a keyword as the function, with a map argument happens <strong><em>a lot</em></strong>.</p>
 <h2 id="builtin-functions">BuiltIn Functions<a class="headerlink" href="#builtin-functions" title="Permanent link">&para;</a></h2>
-<p>Clojure's provides a substantial library of biltin functions. There's a couple of functions which are essential.</p>
+<p>Clojure's provides a substantial library of builtin functions. A couple of them are used all the time, and to read Clojure code (our aim here), it is very useful to know what they do.</p>
 <h2 id="assoc"><code class="highlight"><span class="nv">assoc</span></code><a class="headerlink" href="#assoc" title="Permanent link">&para;</a></h2>
 <p><code class="highlight"><span class="nv">assoc</span></code>  allows you to add a key/value pair to a map. </p>
 <table>
@@ -2204,7 +2284,7 @@ A map </p>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">assoc </span><span class="p">{}</span> <span class="ss">:b</span> <span class="mi">1</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">)</span></code></td>
 <td><code class="highlight"><span class="p">{</span><span class="ss">:b</span> <span class="mi">1</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">}</span></code></td>
-<td>add two a pairs</td>
+<td>add two pairs</td>
 </tr>
 </tbody>
 </table>
@@ -2222,7 +2302,7 @@ A map </p>
 <table>
 <thead>
 <tr>
-<th>Example</th>
+<th>Example of map</th>
 <th>Evaluates To</th>
 <th>Comments</th>
 </tr>
@@ -2230,12 +2310,12 @@ A map </p>
 <tbody>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">map </span><span class="nv">plus-one</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span></code></td>
-<td><code class="highlight"><span class="p">(</span><span class="mi">2</span> <span class="mi">4</span> <span class="mi">6</span><span class="p">)</span></code></td>
+<td><code class="highlight"><span class="p">(</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span></code></td>
 <td>Applies  <code class="highlight"><span class="nv">plus-one</span></code> to each element of the collection.<br>Think <code class="highlight"><span class="p">[(</span><span class="nf">plus-one</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="nf">plus-one</span> <span class="mi">2</span><span class="p">)</span> <span class="p">(</span><span class="nf">plus-one</span> <span class="mi">3</span><span class="p">)]</span></code><br>except the result is a list, not a vector.</td>
 </tr>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">map inc </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span></code></td>
-<td><code class="highlight"><span class="p">(</span><span class="mi">2</span> <span class="mi">4</span> <span class="mi">6</span><span class="p">)</span></code></td>
+<td><code class="highlight"><span class="p">(</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span></code></td>
 <td>Same as above. But now using the builtin function  <code class="highlight"><span class="nv">inc</span></code></td>
 </tr>
 </tbody>
@@ -2269,7 +2349,7 @@ A map </p>
 <tr>
 <td><code class="highlight"><span class="p">(</span><span class="nb">map </span><span class="ss">:a</span> <span class="p">[{</span><span class="ss">:a</span> <span class="mi">1</span><span class="p">}</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">11</span><span class="p">}])</span></code></td>
 <td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">11</span><span class="p">)</span></code></td>
-<td>XXX explain</td>
+<td>We just learned that <code>keywords</code> can act like functions.<br>Think <code class="highlight"><span class="p">[(</span><span class="ss">:a</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span><span class="p">})</span> <span class="p">(</span><span class="ss">:a</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">11</span><span class="p">})]</span></code>, except<br>result is a list</td>
 </tr>
 </tbody>
 </table>
@@ -2279,7 +2359,7 @@ A map </p>
 
 
 <h2 id="reduce"><code class="highlight"><span class="nv">reduce</span></code><a class="headerlink" href="#reduce" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="nv">reduce</span></code> is the 600 pound gorilla in the functional world. </p>
+<p><code class="highlight"><span class="nv">reduce</span></code> is the 600 pound gorilla of functions. </p>
 <p>It takes three arguments:</p>
 <ul>
 <li>a function which "accumulates"</li>
@@ -2295,16 +2375,16 @@ A map </p>
 <p>An accumulation function, <code class="highlight"><span class="nv">+</span></code> above, must accept two arguments: </p>
 <ul>
 <li>the current, running accumulation, up to the current element</li>
-<li>the new element </li>
+<li>the new element to process</li>
 </ul>
-<p>The accumulation function should combine the running "total" with the new value, and return the new accumulation. <code class="highlight"><span class="nv">+</span></code> works because it can take two arguments and it will return a new accumulation of the two.</p>
+<p>The accumulation function should combine the current, running accumulation, with the new element, and return an updated accumulation. <code class="highlight"><span class="nv">+</span></code> works because it can take two arguments and it will return a new accumulation of the two.</p>
 <p>Because there are three elements in the collection, there are three steps in the reduction.</p>
 <p>This is effectively what reduce will compute for the example above: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">+ </span><span class="mi">0</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">2</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>evaluates to <code class="highlight"><span class="mi">7</span></code> and in this case <code class="highlight"><span class="nv">reduce</span></code> is used to sum the collection </p>
+<p>evaluates to <code class="highlight"><span class="mi">7</span></code> and, in this case <code class="highlight"><span class="nv">reduce</span></code>, is used to sum the collection </p>
 <p>Or, to explain it step by step:</p>
 <table>
 <thead>
@@ -2354,6 +2434,7 @@ A map </p>
 </code></pre></div>
 
 
+<p>Effectively, what gets evaluated:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">max </span><span class="p">(</span><span class="nb">max </span><span class="p">(</span><span class="nb">max </span><span class="mi">0</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">2</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
 
@@ -2373,21 +2454,81 @@ A map </p>
 </code></pre></div>
 
 
-<h2 id="destructuring">Destructuring<a class="headerlink" href="#destructuring" title="Permanent link">&para;</a></h2>
-<p>Destructuring is a way to declaratively access/extract values in data structures. It is normally used within let and defn. </p>
-<p>Assume we have a collection of some kind. And we want to extract values from it. </p>
-<p><code>{:age       4 
-  :licenced? false
-  :favorites [:icecraeme :hot-chips ] ....}</code></p>
+<p>Or this one: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">only-even</span>
+  <span class="p">[</span><span class="nv">acc</span> <span class="nv">val</span><span class="p">]</span>            <span class="c1">;; &lt;-- accumulated value, new value</span>
+  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">even?</span> <span class="nv">val</span><span class="p">)</span> 
+    <span class="nv">acc</span> 
+    <span class="p">(</span><span class="nb">conj </span><span class="nv">acc</span> <span class="nv">val</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nb">reduce </span><span class="nv">only-even</span>    
+        <span class="p">[]</span>             <span class="c1">;; &lt;--- empty vector</span>
+        <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">])</span>   
+</code></pre></div>
+
+
+<h2 id="the-arrow-macros">The Arrow Macros<a class="headerlink" href="#the-arrow-macros" title="Permanent link">&para;</a></h2>
+<p>Clojure has a feature called <code>macros</code>. The full specifics of macros are out of scope
+for us here because they are a more advanced topic. But I will provide an overview 
+of them because we need to be able to read them.</p>
+<p>Macros are functions. Except, they run at compile time, not run time, and their job 
+is to rewrite/reoganise other forms. I'll pause a while and let that sink in. This is quite 
+an amazing thought, if you have never been exposed to it before. They are functions. 
+They run at compile time. They can reoganise your code. </p>
+<p>Wait, reoganise my code? Remember that all LISP syntax is just data litterals. All of it. 
+When you are writing code, you are just assembling data litterals, mostly lists. So a 
+function can take you code (which is a data structure) and manipulate it, to produce 
+another data structure. That is how a macro rewrites your code. </p>
+<p>Honestly, the only takeway you really need at this point, is that macros rewrite your code (in useful ways). </p>
+<p>Let's talk examples ... he's something we talked about not long ago. </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">max </span><span class="p">(</span><span class="nb">max </span><span class="p">(</span><span class="nb">max </span><span class="mi">0</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">2</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>these heavily nested forms can be rewritten as using the <code>thread first</code> macro <code class="highlight"><span class="nv">-&gt;</span></code> :</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nb">max </span><span class="mi">0</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">+ </span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">+ </span><span class="mi">4</span><span class="p">)))</span>
+</code></pre></div>
+
+
+<p>Now, that looks like a function call, right, where <code>-&gt;</code> is a function being called. And, in a way, that is what's happening, but this function is getting called at compile time, not run time. </p>
+<p>What the <code>thread first</code> macro does is to rewrite the forms. </p>
+<p>Glance back at the heavily nested version above. And then back again to the <code>thread first</code> version.  They are the same thing. The <code>thread first</code> macro version allows you to organise your forms in a way that depicts data flow. </p>
+<p>Read the thread first version like this: 
+  1. First, <code class="highlight"><span class="p">(</span><span class="nb">max </span><span class="mi">0</span> <span class="mi">1</span><span class="p">)</span></code> is evaluated to  <code class="highlight"><span class="mi">1</span></code> 
+  2. Then that value becomes the 1st argument to the next form down creating  <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code> 
+  3. Then the evaluation of that becomes the first argument to the next form creating  <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">3</span> <span class="mi">4</span><span class="p">)</span></code> 
+  4. The result is  <code class="highlight"><span class="mi">7</span></code> </p>
+<p>It is as if the evaluation of the higher form is "flowing down" and into the form underneath. That's the mental model. And it is useful. Except what's really going on is that the macro is rewriting your forms at compile time to be deeply nested. </p>
+<p>How about this one:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">-&gt; </span><span class="p">{}</span>
+    <span class="p">(</span><span class="nb">assoc </span><span class="ss">:a</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">assoc </span><span class="ss">:b</span> <span class="mi">2</span><span class="p">))</span>
+</code></pre></div>
+
+
+<p>Read that as:
+  1. First, <code class="highlight"><span class="p">{}</span></code> is evaluated to  <code class="highlight"><span class="p">{}</span></code> 
+  2. Then that value becomes the 1st argument to the next form down creating  <code class="highlight"><span class="p">(</span><span class="nb">assoc </span><span class="p">{}</span> <span class="ss">:a</span> <span class="mi">1</span><span class="p">)</span></code> 
+  3. And the evaluation of that becomes the first argument to the next form creating  <code class="highlight"><span class="p">(</span><span class="nb">assoc </span><span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span><span class="p">}</span> <span class="ss">:b</span> <span class="mi">2</span><span class="p">)</span></code> 
+  4. The result is  <code class="highlight"><span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span> <span class="ss">:b</span> <span class="mi">2</span><span class="p">}</span></code> </p>
+<p>So, at compile time, the thread first macro would rewrite this as: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="nb">assoc </span><span class="p">{}</span> <span class="ss">:a</span> <span class="mi">1</span><span class="p">)</span> <span class="ss">:b</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>We could write it that way ourselves, of course, but humans seems to better understand the "data flow" version better than the nested forms version. </p>
+<p><code class="highlight"><span class="nv">-&gt;</span></code> is known as a threading macro and it belongs to a family. . And there are a few different ones in the family. </p>
+<p>Writing macros or even knowing what they are is out of scope for this tutorial. Instead, all we need to do for the moment is understand how to read them. </p>
+<p>What they all do is "thread" a value through forms. </p>
 <h2 id="immutable-data">Immutable Data<a class="headerlink" href="#immutable-data" title="Permanent link">&para;</a></h2>
 <p>XXX boolean and and or ???  https://j19sch.github.io/blog/clj3-and-or-being-weird/</p>
 <p>XXX destructuring ??</p>
-<p>XXX keywords and maps are functions </p>
 <p>XXX arrow functions </p>
 <p>XXX interop </p>
 <p>XXX Reagent like code</p>
-<p>XXX Immutable 
-XXX atoms and deref </p>
+<p>XXX atoms and deref - defer this to later</p>
 <p>; short-hand for creating a simple function:
 ; #(...) =&gt; (fn [args] (...))</p>
 <h1 id="3-fn-x-3-x">(<em> 3 %)         ; =&gt; (fn [x] (</em> 3 x))<a class="headerlink" href="#3-fn-x-3-x" title="Permanent link">&para;</a></h1>
