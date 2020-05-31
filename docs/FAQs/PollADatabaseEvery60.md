@@ -56,9 +56,9 @@ With that design work done, let's now implement it by registering an
   (let [live-intervals (atom {})]                 ;; storage for live intervals
     (fn [{:keys [action id frequency event]}]     ;; the handler
       (if (= action :start) 
-        (swap! live-intervals assoc id (js/setInterval #(dispatch event) frequency))) 
+        (swap! live-intervals assoc id (js/setInterval #(dispatch event) frequency)) 
         (do (js/clearInterval (get @live-intervals id)) 
-            (swap! live-intervals dissoc id))))
+            (swap! live-intervals dissoc id))))))
 ```
 
 You'd probably want a bit more error checking, but that's the (untested) sketch.
