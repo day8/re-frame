@@ -1480,9 +1480,9 @@ data in this format:</p>
   <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">live-intervals</span> <span class="p">(</span><span class="nf">atom</span> <span class="p">{})]</span>                 <span class="c1">;; storage for live intervals</span>
     <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">action</span> <span class="nv">id</span> <span class="nv">frequency</span> <span class="nv">event</span><span class="p">]}]</span>     <span class="c1">;; the handler</span>
       <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="nv">action</span> <span class="ss">:start</span><span class="p">)</span> 
-        <span class="p">(</span><span class="nf">swap!</span> <span class="nv">live-intervals</span> <span class="nb">assoc </span><span class="nv">id</span> <span class="p">(</span><span class="nf">js/setInterval</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="nv">event</span><span class="p">)</span> <span class="nv">frequency</span><span class="p">)))</span> 
+        <span class="p">(</span><span class="nf">swap!</span> <span class="nv">live-intervals</span> <span class="nb">assoc </span><span class="nv">id</span> <span class="p">(</span><span class="nf">js/setInterval</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="nv">event</span><span class="p">)</span> <span class="nv">frequency</span><span class="p">))</span> 
         <span class="p">(</span><span class="k">do </span><span class="p">(</span><span class="nf">js/clearInterval</span> <span class="p">(</span><span class="nb">get </span><span class="o">@</span><span class="nv">live-intervals</span> <span class="nv">id</span><span class="p">))</span> 
-            <span class="p">(</span><span class="nf">swap!</span> <span class="nv">live-intervals</span> <span class="nb">dissoc </span><span class="nv">id</span><span class="p">))))</span>
+            <span class="p">(</span><span class="nf">swap!</span> <span class="nv">live-intervals</span> <span class="nb">dissoc </span><span class="nv">id</span><span class="p">))))))</span>
 </code></pre></div>
 
 
