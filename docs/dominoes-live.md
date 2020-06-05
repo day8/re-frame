@@ -223,7 +223,7 @@ Notes:
 Once on startup, application state must be initialised. We
 want to put a sensible value into `app-db`, which starts out containing an empty map `{}`.
 
-A single `(dispatch [:initialise])` will happen early in the 
+A single `(dispatch [:initialize])` will happen early in the 
 app's life (more on this below), and we need to register an `event handler`
 for it. 
 
