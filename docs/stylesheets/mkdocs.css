@@ -17,6 +17,14 @@ h1[id=_1] {
     display: none;
 }
 
+
+.md-typeset h1 {
+  color: #00aeff;
+}
+.md-typeset h2 {
+  color: #02a6f2;
+}
+
 /* slightly smaller font in code blocks */
 .md-typeset code {
   font-size: .79em

@@ -13,16 +13,9 @@ So, Clojurists place particular emphasis on the primacy of data.
 
 They meditate on aphorisms like **_data is the ultimate in late binding_**. They 
 exalt inequalities like `data > functions > macros`. (Disappointingly,
-they also re-watch Rich Hickey videos a bit too much and wish
+they also re-watch Rich Hickey videos a bit too much, while wishing
 their hair was darker and more curly.)
 
-<!-- 
-... That's the dark side.
-
-Speaking of which, whenever Darth Vader encounters a Clojurist, he comments "the duality-of-data-and-code is strong with this one". 
-
-You get the idea. 
--->
 
 I cannot stress enough what a big deal this is. It will seem 
 like a syntax curiosity at first but, when the penny drops for 
