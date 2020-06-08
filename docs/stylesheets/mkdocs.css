@@ -18,6 +18,8 @@ h1[id=_1] {
 }
 
 
+/* Make the heading shades of blue.
+*/
 .md-typeset h1 {
   color: #00aeff;
 }

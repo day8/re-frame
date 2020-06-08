@@ -14,7 +14,7 @@ An app is a "sequential process", and over time a sequential process will shift 
 often from one behaviour to another. Code branches will conditionally execute subject to predicates on state, 
 and, then, in a feedback loop, the code which executes will update that state. 
 
-Wait! Did someone just say feedback loop?
+Wait, no! Did someone just say feedback loop?
 Even just a few steps into any mental stimulation, there
 can be a lot to juggle, and we could be near the limits of our cognitive budget.
 
@@ -24,7 +24,7 @@ systems on the "impossible" end of that continuum, will breed nasty bugs and be 
 
 As programmers, we often talk about static concerns like DRY and "cohesion vs coupling". Yes, they are all useful, 
 but I believe it would be better for us to focus more on the qualities which make the dynamics easier or harder to simulate.
-What simplifying "abstractions" exist to help us manage the complexity of runtime dynamics?
+What simplifying abstractions or techniques exist to help us manage the complexity of these runtime dynamics?
 
 ## The Claim 
 
@@ -36,7 +36,7 @@ It is the purpose of this page to explore and justify this claim.
 > **There's almost no more important point to make about re-frame than this one**
 
 I would like re-frame to deliver an excellent developer experience. And, I believe that nothing 
-contributes to that goal more than it having "a simple dynamic model". Almost nothing makes a programmer's job easier than 
+contributes to this goal more than it having "a simple dynamic model". Almost nothing makes a programmer's job easier than 
 a simple dynamic model. Almost nothing reduces bugs more than a simple dynamic model.
 
 Okay, smartypants, how?
@@ -46,10 +46,10 @@ Okay, smartypants, how?
 When scientists or engineers study "Dynamics", they look at 
 how a system develops or changes over time/space, and at the causes of those changes. 
 
-With our apps, looking at "dynamics" means understanding at the interactions occuring between computation and state over time. 
+With our apps, looking at "dynamics" means understanding the interactions occurring between computation and state, over time. 
 
-State is effectively congealed time. It is accreted from computation, but equally, predicates on state feedback to 
-control computational itself, including, for example what branching and looping occurs.
+State is effectively congealed time (history). It is accreted from computation, but equally, predicates on state feedback to 
+control computational itself, including for example, what branching and looping occurs.
 
 re-frame apps "move forward", through computational/state space, one event after another. 
 Each event is entirely processed
@@ -79,7 +79,7 @@ re-frame's overarching process for handling a single event is one part "Finite S
 The event-handling process walks step by step through a linear set of logical states,
 which you know already as "The Dominoes". Only one state at a time is happening, and in each state
 there is specific behaviour, and each of them is sufficiently isolated from the others 
-that it can be understood and analysed independently. You can safely "zoom in" to understand each part.
+that it can be understood and analysed independently. You can comfortably "zoom in" to understand each part.
 
 The re-frame docs don't formally talk about FSMs and, instead, present it as a "data flow" which 
 causes transitions from one state to another. 
@@ -94,7 +94,7 @@ simple kind of computation, making it easy to simulate in your head.
 !!! Note "Less Is Scary"
     Offering programmers less computational power makes them uncomfortable. 
     We live in a world where requirements change on us all the time and often 
-    in unexpected and unwelcome ways. For our own protection, 
+    in unexpected and unwelcome ways. For our protection, 
     so we can handle these unexpected requirements, we are attracted to more power, not less.
 
 But let's now zoom in further. But what about the dynamics one level down again, within each step? 
@@ -104,25 +104,26 @@ But let's now zoom in further. But what about the dynamics one level down again,
 One step down, at the Domino level, we are back to programming with the Turing complete power of ClojureScript.
 Thankfully, to harness and control that frightening power, you write pure functions, and you use immutable data.
 
-These two are a potent duo. I asked earlier what simplifying "abstractions" might exist to help us tame the complexity
-of runtime dynamics and these two are very powerful dampeners. 
-
 Pure functions stand outside of "time". To understand them, you don't need to know "when" they are run and what 
 the state of the system might be at that point. Instead, you need only know what actual argument values they are provided.
 The tyranny of time is still there on the inside of the pure function, because there is a flow of execution within the 
 function itself. You might still need to simulate that in your head.  But a pure function delivers a smaller
 dynamic process to understand - one that is more cognitively tractable. 
 
-What is provided to a function is data, and what they return is data (generally). And immutable data acts as a 
-further, time-insulating layer between pure functions, allowing them to be composed in a maximally planar 
-and mathematical way.
+What is provided to a function is data, and what they return is data. Using immutable data acts to 
+insulate pure functions from "place" - where data is put. 
+
+Once functions are decoupled from both "time" and "place" they can be composed in a maximally planar and mathematical way.
+I asked earlier what simplifying "abstractions" might exist to help us tame the complexity
+of runtime dynamics, and these two are a very potent duo. They act to dampen runtime dynamics powerfully.
+
 
 !!! Note "Banana Issues"
     Non-pure functions "reach out" and grab a banana (a value) from the global space beyond their arguments.
 
-    Initially, it can seems inocent enough. But now, to understand the function's internal dynamics, you also need to understand
+    Initially, it can seem innocent enough. But now, to understand the function's internal dynamics, you also need to understand
     the dynamics for everything that might change that banana over time. Unfortunately, as you 
-    pull the banana back towards you, you might discover there's a Gorilla holding it. 
+    pull the banana back towards you, you might discover a Gorilla is holding it. 
     And that Gorilla is sitting in a jungle, so you get that too. Plus some Monsoonal weather.
     There's often a lot of new runtime dynamics coming your way, attached to that banana. 
 
@@ -182,7 +183,7 @@ When talking to an experienced programmer recently, I was thrilled when he said 
 
 > Been using re-frame for nine months now. You know what's odd? I find myself writing fewer tests these days, since I started using re-frame. 
 
-So, an experienced (self regulating) programmer who has previously written a lot of tests, 
+So, an experienced (self-regulating) programmer who has previously written a lot of tests, 
 is instinctively writing fewer tests, surprising even himself a bit, 
 because his intuitions are telling him it is safe to do so. 
 It is empirically simpler. Experientially simpler. 

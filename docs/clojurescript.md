@@ -18,13 +18,13 @@ klipse: true
 
 Are you new to ClojureScript?  This page will teach you to ***read Clojure*** in 20 minutes.
 
-Specifically, it will teach you enough to read `Reagent` and `re-frame` code (ClojureScript libraries for building Web UIs).
+Specifically, it will teach you enough to read `Reagent` and `re-frame` code (building Web UIs).
 Learning to *write ClojureScript* is a larger skill, which will require more than 20 mins, 
-but this page contains interactive, live coding to start you in that direction. 
+but this page does contain some interactive, live coding to get you started. 
 
 ## In A Nutshell, Why?
 
-ClojureScript is a modern LISP. 
+Clojure is a modern LISP. 
 
 Alan Kay once descibed LISP as "Maxwell's equations of software".
 Paul Graham says LISP was a competitive advantage for his startup.
@@ -32,12 +32,10 @@ Dijkstra has written glowingly of it.
 For 50 years, some of the finest minds in software have admired it, used it and refined it. 
 
 In the years leading up to 2010, Rich Hickey created Clojure, introducing a number of key inovations 
-(ultimately copied by other functional languages), and he did it well away from 
-acedemia, because he wanted a pragmatic language for commercial developers. 
+(later adopted by other functional languages), and he did it well away from 
+acedemia, because he wanted a pragmatic language for commercial developers.
 
-Overall, Clojure is a foliated masterpiece.  
-
-ClojureScript is the version of Clojure which targets the browser. 
+Overall, Clojure is a foliated masterpiece. 
 
 As the owner of a company which develops software products, I believe ClojureScript gives us a
 competitive edge. As a programmer, I feel like it has provided me with excellent,
@@ -47,12 +45,17 @@ In contrast, when I look across to the Javascript landscape, it appears like a c
 washing machine with not much new or interesting to teach me. Learning a LISP will likely
 make you better developer for life, even if you aren't using LISP.
 
+> ClojureScript is the version of Clojure which targets the browser. 
+
 So, 20 mins ...
 
+
+
 ---
+I have good news: you are going to be surprised and delighted at the simplicity of the syntax. 
 ## Simple Data Literals
 
-I have good news: you are going to be surprised and delighted at the simplicity of the syntax. 
+
 
 
 |   Type       |   Example                           |   Comment            |  
@@ -96,30 +99,30 @@ Hashmaps are often just called maps.
 
 ## Symbols 
 
-A symbol is a name that is bound to a value. 
+A symbol is a name that is bound to a value. Here, we mean "bound" in the sense of "is tied to" or "is associated with" or "refers to".
 
 
 |  Type    |   Example               |   Comment            |  
 |----------|-------------------------|----------------------|
 | symbol   | `#!clj inc`             | The symbol `#!clj inc` is bound to one of Clojure's builtin functions.<br>This function will return its argument incremented |
 | symbol   | `#!clj +`               | The symbol `#!clj +` is also bound to a builtin function. It adds its arguments.<br>note: `#!clj +` is not an operator in ClojureScript, it is a function |
-| symbol   | `#!clj yours`           | You'll soon see how to create your own symbols and bind them to values |
+| symbol   | `#!clj yours`           | Soon you'll see how you can create a symbol and bind it to a value. But that is a few minutes away down the page, so until then, you'll just have to take it on trust that this is possible/easy.  |
 
-You'll have to wait until about half way through this tutorial to see how to actually create a symbol and bind a value to it. in the meantime, just know they exist and understand that they are effectly a name for another value.
 
 ## That's It For Syntax
 
 We've now covered most of Clojure's syntax.  
 
-But, how can that be?  Haven't we only looked at data litterals? Well, yes, but Clojure is `Homoiconic` which means "code is data" - you write Clojure code using Clojure's data litterals. And, because we've covered the data litterals, we also covered just about all the syntax.
+But, how can that be?  Haven't we only looked at data litterals? Well, yes, but 
+Clojure is `Homoiconic` which means "code is data" - you write Clojure code 
+using Clojure's data litterals and we just covered data litterals. 
 
-
+---
 ## Evaluation 
 
-You are going to be delighted at how simple evaluation is. The overarching 
-concept is: **we evaulate data, to create new data**.
+You are going to be delighted at how simple evaluation is.
 
-All data litterals other than `lists` and `symbols` **evaluate** to themselves.
+***First***, all data litterals other than `lists` and `symbols` **evaluate** to themselves.
 
 |  Value                |   Evaluates To                    |  Comment    |
 |-----------------------|-----------------------------------|-------------|
@@ -143,33 +146,36 @@ So, let's talk about the two exceptions `lists` and `symbols` ...
 
 Symbols don't evaluate to themselves. Instead, they evaluate to the value to which they are "bound". 
 
-Here, we mean "bound" in the sense of "is tied to" or "is associated with" or "refers to".
 
-
-Example evaluations:
+Example symbol evaluations:
 
 |  Expression     |   Evaluates To               |  Comments                                     |
 |-----------------|------------------------------|-----------------------------------------------|
 | `#!clj foo`     | `#!clj 4`                    | Assuming  the symbol `#!clj foo` is bound to the value  `#!clj 4`       |         
 | `#!clj bar`     | `#!clj [1 2 3]`              | Assuming  the symbol `#!clj bar` is bound to the value  `#!clj [1 2 3]` |             
 | `#!clj [1 foo]` | `#!clj [1 4]`                | Each element is evaluated, and  `#!clj foo` evaluated to  `#!clj 4`     |
-| `#!clj [foo bar]` | `#!clj [4 [1 2 3]]`        |  `#!clj foo` evaluates to  `#!clj 4`,  `#!clj bar` evaluates to  `#!clj [1 2 3]`<br>(we are assuming these bindings - making them up)                                            |
+| `#!clj [foo bar]` | `#!clj [4 [1 2 3]]`        | Assuming `#!clj foo` evaluates to  `#!clj 4`,  `#!clj bar` evaluates to  `#!clj [1 2 3]` |
 
- 
-Soon you'll see how you can create a symbol and bind it to a value. But that is a few minutes away down the page, so until then, you'll just have to take it on trust that this is possible/easy. 
 
-***Symbols are often bound to functions***. For example, the symbol `#!clj inc` is bound to a function in Clojure's standard library. So, if you evaulate `#!clj inc` you get the function!! And there's a symbol `#!clj count` which is bound to another function in the standard library. 
+!!! Note "Symbols are often bound to functions"
 
-Also - and this one will be a surprise - the symbol `#!clj +` is bound to a function.  Wait. Isn't `#!clj +` an operator?  No. Clojure doesn't have operators. Instead, `#!clj +` is a symbol, and it is bound to a function (which adds).
+    I can tell you that the symbol `#!clj inc`
+    is bound to a function in Clojure's standard library. So, if you evaulate `#!clj inc`, you get the function!! 
+
+    There's another symbol, `#!clj count`, which is bound to different function in the standard library. 
+
+    And, finally - this one will be a surprise - the symbol `#!clj +` is bound to a function.  Wait. Isn't `#!clj +` an operator?  No. Clojure doesn't have operators. Instead, `#!clj +` is a symbol, and it is bound to a function (which adds).
 
 ## Evaluating Lists
 
 A `list` evaluates to a function call.
 
-Oh, okay! Now it is getting intersting. Clojure is a functional language, so you can imagine that function calls are a big deal,
+Oh, now we're cooking with gas!  Clojure is a functional language, so you can imagine that function calls are a big deal,
 so this section is important. 
 
-Here's an example list  `#!clj (f arg1 arg2 arg3)`. Being surounded by `#!clj ( )` means it is a list. It has four elements. Such a list is evaluated in two steps:
+Here's an example list  `#!clj (f arg1 arg2 arg3)`. Being surounded by `#!clj ( )` means it is a list. It has four elements. 
+
+Such **a list is evaluated in two steps**:
 
   1. first, each element in the list is evaluated (all four of them in this example)
   2. then, a function call occurs where:
@@ -178,13 +184,13 @@ Here's an example list  `#!clj (f arg1 arg2 arg3)`. Being surounded by `#!clj ( 
 
 The entire list evaluates to the return value of the function call. So, if this example function call returned the string `#!clj "maybe Satoshi"`, then the list `#!clj (f arg1 arg2 arg3)` would evaluate to `#!clj "maybe Satoshi"`.
 
-!!! Note "Symbols evaluating to functions"
-    In normal Clojure code, the 1st element of a list is often a symbol. So, let's talk about that. 
+!!! Note "More on symbols bound to functions"
+    In Clojure code, the 1st element of a list is often a symbol. So, let's talk more about that. 
     
     Here's an example: `#!clj (inc 3)`.  That's a two element list, and the first element is the symbol `#!clj inc`. The 2nd element is the value `#!clj 3`
     
     When evaluating this list, in step 1 all elements of the list are evaluated and, if the first element of the list is a symbol, we learned 
-    already that it will evaluate to what it is bound to. So, if a symbol, like `#!clj inc`, is bound to a 
+    earlier that it will evaluate to what it is bound to. So, if a symbol, like `#!clj inc`, is bound to a 
     function, it is ***that*** function which is called in step 2.
 
     So `#!clj inc` is a symbol, not a function. But it _is_ bound to a function. A subtle but important distinction. 
@@ -203,9 +209,10 @@ Example list evaluations, involving symbols:
 | `#!clj [1 (+ 1 2 3)]`   | `#!clj [1 6]`          |  |
 
 !!! Note "No operators" 
-    In Clojure, `#!clj +` is a builtin symbol bound to a function. Not an operator. <br>
-    Same with `#!clj -`,  `#!clj /` ,  `#!clj >`,  `#!clj =`, etc. <br>
-    Because there are no operators, there's no operator precedence to discuss. Simple syntax, right?
+    We now know that `#!clj +` is a builtin symbol bound to a function, not an operator. <br>
+    It is the same with `#!clj -`,  `#!clj /` ,  `#!clj >`,  `#!clj =`, etc.<br>
+    Because these are just names, you can also have `#!clj not=`<br>
+    And because there are no operators, there's no operator precedence to discuss. Simple syntax, right?
 
 Let's start evaluating, live. Type into the following editor. Click Ctrl-click to evaluate. Possible experiments: 
 
@@ -217,7 +224,10 @@ XXX inline REPL goes here. In the meantime use [this external one](https://jared
 
 ## Not Evaluating
 
-If you **don't** want the normal evaluation for a `list`, you use a leading  `#!clj '`  charater. That means "don't evaluate as a function call, evaluate as a plain list". 
+We've now reviewed how `lists` and `symbols` have special evaluation. 
+But what if we didn't want that? What if we wanted a `list` to evaluate to itself, like the other data litterals? 
+
+Answer: you use a leading  `#!clj '`  charater on the `list`. That character means "don't evaluate as a function call, evaluate as a plain list". 
 
 
 |   Data          |   Evaluates To         |  Comments                                     |
@@ -235,7 +245,7 @@ The same applies to symbols, although it is more unusual to see this in producti
 |   Data           |   Evaluates To         |  Comments                                     |
 |------------------|------------------------|-----------------------------------------------|
 | `#!clj mine`     | `#!clj "something"`    | Normal evaluation: assumimg that `#!clj mine`  is bound to `#!clj "something"` |
-| `#!clj 'mine`    | `#!clj mine`           | A leading `#!clj '`  character mean not normal evaluation.<br>Evaluates to the symbol itself, not what it is bound to.  |
+| `#!clj 'mine`    | `#!clj mine`           | A leading `#!clj '`  character means not normal evaluation.<br>Evaluates to the symbol itself, not what it is bound to.  |
 
 ---
 
