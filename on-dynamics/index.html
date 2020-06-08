@@ -1498,7 +1498,7 @@ and in their heads, they'll be performing a runtime simulation of their code. </
 <p>An app is a "sequential process", and over time a sequential process will shift from one state to another, and consequently,
 often from one behaviour to another. Code branches will conditionally execute subject to predicates on state, 
 and, then, in a feedback loop, the code which executes will update that state. </p>
-<p>Wait! Did someone just say feedback loop?
+<p>Wait, no! Did someone just say feedback loop?
 Even just a few steps into any mental stimulation, there
 can be a lot to juggle, and we could be near the limits of our cognitive budget.</p>
 <p>Certain kinds of interactions between time, state &amp; computation reduce complexity, 
@@ -1506,7 +1506,7 @@ making mental simulations easier, while others do the opposite and make it virtu
 systems on the "impossible" end of that continuum, will breed nasty bugs and be scary to maintain.</p>
 <p>As programmers, we often talk about static concerns like DRY and "cohesion vs coupling". Yes, they are all useful, 
 but I believe it would be better for us to focus more on the qualities which make the dynamics easier or harder to simulate.
-What simplifying "abstractions" exist to help us manage the complexity of runtime dynamics?</p>
+What simplifying abstractions or techniques exist to help us manage the complexity of these runtime dynamics?</p>
 <h2 id="the-claim">The Claim<a class="headerlink" href="#the-claim" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p><strong>re-frame has a simple dynamic process</strong></p>
@@ -1516,15 +1516,15 @@ What simplifying "abstractions" exist to help us manage the complexity of runtim
 <p><strong>There's almost no more important point to make about re-frame than this one</strong></p>
 </blockquote>
 <p>I would like re-frame to deliver an excellent developer experience. And, I believe that nothing 
-contributes to that goal more than it having "a simple dynamic model". Almost nothing makes a programmer's job easier than 
+contributes to this goal more than it having "a simple dynamic model". Almost nothing makes a programmer's job easier than 
 a simple dynamic model. Almost nothing reduces bugs more than a simple dynamic model.</p>
 <p>Okay, smartypants, how?</p>
 <h2 id="re-frame-time">re-frame Time<a class="headerlink" href="#re-frame-time" title="Permanent link">&para;</a></h2>
 <p>When scientists or engineers study "Dynamics", they look at 
 how a system develops or changes over time/space, and at the causes of those changes. </p>
-<p>With our apps, looking at "dynamics" means understanding at the interactions occuring between computation and state over time. </p>
-<p>State is effectively congealed time. It is accreted from computation, but equally, predicates on state feedback to 
-control computational itself, including, for example what branching and looping occurs.</p>
+<p>With our apps, looking at "dynamics" means understanding the interactions occurring between computation and state, over time. </p>
+<p>State is effectively congealed time (history). It is accreted from computation, but equally, predicates on state feedback to 
+control computational itself, including for example, what branching and looping occurs.</p>
 <p>re-frame apps "move forward", through computational/state space, one event after another. 
 Each event is entirely processed
 from beginning to end before the next event on the queue is processed. re-frame doesn't support 
@@ -1546,7 +1546,7 @@ But there might be a cost: your programming keyboard has now become a loaded gun
 <p>The event-handling process walks step by step through a linear set of logical states,
 which you know already as "The Dominoes". Only one state at a time is happening, and in each state
 there is specific behaviour, and each of them is sufficiently isolated from the others 
-that it can be understood and analysed independently. You can safely "zoom in" to understand each part.</p>
+that it can be understood and analysed independently. You can comfortably "zoom in" to understand each part.</p>
 <p>The re-frame docs don't formally talk about FSMs and, instead, present it as a "data flow" which 
 causes transitions from one state to another. 
 But the dominos are a simple FSM "in nature". Consequently, each event is processed using a
@@ -1560,29 +1560,29 @@ Instead of providing computation with many degrees of freedom and occasional mag
 <p class="admonition-title">Less Is Scary</p>
 <p>Offering programmers less computational power makes them uncomfortable. 
 We live in a world where requirements change on us all the time and often 
-in unexpected and unwelcome ways. For our own protection, 
+in unexpected and unwelcome ways. For our protection, 
 so we can handle these unexpected requirements, we are attracted to more power, not less.</p>
 </div>
 <p>But let's now zoom in further. But what about the dynamics one level down again, within each step? </p>
 <h2 id="pure-functions">Pure Functions<a class="headerlink" href="#pure-functions" title="Permanent link">&para;</a></h2>
 <p>One step down, at the Domino level, we are back to programming with the Turing complete power of ClojureScript.
 Thankfully, to harness and control that frightening power, you write pure functions, and you use immutable data.</p>
-<p>These two are a potent duo. I asked earlier what simplifying "abstractions" might exist to help us tame the complexity
-of runtime dynamics and these two are very powerful dampeners. </p>
 <p>Pure functions stand outside of "time". To understand them, you don't need to know "when" they are run and what 
 the state of the system might be at that point. Instead, you need only know what actual argument values they are provided.
 The tyranny of time is still there on the inside of the pure function, because there is a flow of execution within the 
 function itself. You might still need to simulate that in your head.  But a pure function delivers a smaller
 dynamic process to understand - one that is more cognitively tractable. </p>
-<p>What is provided to a function is data, and what they return is data (generally). And immutable data acts as a 
-further, time-insulating layer between pure functions, allowing them to be composed in a maximally planar 
-and mathematical way.</p>
+<p>What is provided to a function is data, and what they return is data. Using immutable data acts to 
+insulate pure functions from "place" - where data is put. </p>
+<p>Once functions are decoupled from both "time" and "place" they can be composed in a maximally planar and mathematical way.
+I asked earlier what simplifying "abstractions" might exist to help us tame the complexity
+of runtime dynamics, and these two are a very potent duo. They act to dampen runtime dynamics powerfully.</p>
 <div class="admonition note">
 <p class="admonition-title">Banana Issues</p>
 <p>Non-pure functions "reach out" and grab a banana (a value) from the global space beyond their arguments.</p>
-<p>Initially, it can seems inocent enough. But now, to understand the function's internal dynamics, you also need to understand
+<p>Initially, it can seem innocent enough. But now, to understand the function's internal dynamics, you also need to understand
 the dynamics for everything that might change that banana over time. Unfortunately, as you 
-pull the banana back towards you, you might discover there's a Gorilla holding it. 
+pull the banana back towards you, you might discover a Gorilla is holding it. 
 And that Gorilla is sitting in a jungle, so you get that too. Plus some Monsoonal weather.
 There's often a lot of new runtime dynamics coming your way, attached to that banana. </p>
 </div>
@@ -1624,7 +1624,7 @@ adopting a Cortex structure, we still recommend a precautionary reboot.</p>
 <blockquote>
 <p>Been using re-frame for nine months now. You know what's odd? I find myself writing fewer tests these days, since I started using re-frame. </p>
 </blockquote>
-<p>So, an experienced (self regulating) programmer who has previously written a lot of tests, 
+<p>So, an experienced (self-regulating) programmer who has previously written a lot of tests, 
 is instinctively writing fewer tests, surprising even himself a bit, 
 because his intuitions are telling him it is safe to do so. 
 It is empirically simpler. Experientially simpler. </p>
