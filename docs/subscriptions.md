@@ -81,7 +81,7 @@ And, when a `ViewFunction` is no longer rendered, the sub-graph needed to servic
 its needs will be destroyed, unless it is still needed to 
 service the needs of another, current `ViewFunction`.
 
-## Propogation Pruning 
+## Propagation Pruning 
 
 The Signal Graph is reactive. When a node's inputs change, the node's subscription handler (function)
 re-runs automatically. The value it returns then becomes the node's new output value, and it will 
@@ -97,7 +97,7 @@ the same inputs as last time, it would produce the same outputs as last time, in
 
 ## Different How?
 
-Data values "this time" and "last time" are regarded as "being the same" if CojureScript's `=` says they are.
+Data values "this time" and "last time" are regarded as "being the same" if ClojureScript's `=` says they are.
 
 
 ## Why Layer 2?
@@ -142,7 +142,7 @@ This registers a `computation function` - a pretty simple one which just does an
 
   ;; computation function
   (fn [[a b] _]                   ;; input values supplied in a vector
-      (calulate-it a b)))
+      (calculate-it a b)))
 ```
 You supply two functions: 
 
