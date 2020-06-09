@@ -637,8 +637,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#propogation-pruning" class="md-nav__link">
-    Propogation Pruning
+  <a href="#propagation-pruning" class="md-nav__link">
+    Propagation Pruning
   </a>
   
 </li>
@@ -1457,8 +1457,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#propogation-pruning" class="md-nav__link">
-    Propogation Pruning
+  <a href="#propagation-pruning" class="md-nav__link">
+    Propagation Pruning
   </a>
   
 </li>
@@ -1577,7 +1577,7 @@ all the way to <code>app-db</code>. So it is "the data thirsty demands" of curre
 <p>And, when a <code>ViewFunction</code> is no longer rendered, the sub-graph needed to service 
 its needs will be destroyed, unless it is still needed to 
 service the needs of another, current <code>ViewFunction</code>.</p>
-<h2 id="propogation-pruning">Propogation Pruning<a class="headerlink" href="#propogation-pruning" title="Permanent link">&para;</a></h2>
+<h2 id="propagation-pruning">Propagation Pruning<a class="headerlink" href="#propagation-pruning" title="Permanent link">&para;</a></h2>
 <p>The Signal Graph is reactive. When a node's inputs change, the node's subscription handler (function)
 re-runs automatically. The value it returns then becomes the node's new output value, and it will 
 flow to downstream nodes in the graph, causing them to also re-run. </p>
@@ -1588,7 +1588,7 @@ the same as "last time", data is not propagated to the sub-graph. No need. Nothi
 the same value each time it is called with the same arguments. So, if we were to give a downstream node
 the same inputs as last time, it would produce the same outputs as last time, including the same hiccup at the leaves.</p>
 <h2 id="different-how">Different How?<a class="headerlink" href="#different-how" title="Permanent link">&para;</a></h2>
-<p>Data values "this time" and "last time" are regarded as "being the same" if CojureScript's <code>=</code> says they are.</p>
+<p>Data values "this time" and "last time" are regarded as "being the same" if ClojureScript's <code>=</code> says they are.</p>
 <h2 id="why-layer-2">Why Layer 2?<a class="headerlink" href="#why-layer-2" title="Permanent link">&para;</a></h2>
 <p>Why is a layer of "extractors" necessary? </p>
 <p><strong>It is an efficiency thing.</strong> <code>app-db</code> will be changed by almost every <code>event</code>, often in a small, 
@@ -1621,7 +1621,7 @@ input values, flowing into the node, and calculate a derived value to be the nod
 
   <span class="c1">;; computation function</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[[</span><span class="nv">a</span> <span class="nv">b</span><span class="p">]</span> <span class="nv">_</span><span class="p">]</span>                   <span class="c1">;; input values supplied in a vector</span>
-      <span class="p">(</span><span class="nf">calulate-it</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">)))</span>
+      <span class="p">(</span><span class="nf">calculate-it</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">)))</span>
 </code></pre></div>
 
 
@@ -1656,7 +1656,7 @@ Registering a handler only says how to create a Signal Graph node when and if it
 
   <span class="c1">;; computation function</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[[</span><span class="nv">a</span> <span class="nv">b</span><span class="p">]</span> <span class="nv">_</span><span class="p">]</span>
-       <span class="p">(</span><span class="nf">calulate-it</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">)))</span>
+       <span class="p">(</span><span class="nf">calculate-it</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">)))</span>
 </code></pre></div>
 
 

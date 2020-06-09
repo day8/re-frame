@@ -1645,8 +1645,8 @@ ability to attach an <code>:on-dispose</code> handler to the returned reaction, 
   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">app-db</span> <span class="nv">event</span><span class="p">]</span>  <span class="c1">;; app-db not used, name shown for clarity</span>
     <span class="p">(</span><span class="nf">reaction</span>         <span class="c1">;; wrap the computation in a reaction</span>
       <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">todos</span>   <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:todos</span><span class="p">])</span>   <span class="c1">;; input signal #1</span>
-        <span class="nv">showing</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:showing</span><span class="p">])</span> <span class="c1">;; input signal #2</span>
-        <span class="nv">filter-fn</span> <span class="p">(</span><span class="nf">case</span> <span class="nv">showing</span>
+            <span class="nv">showing</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:showing</span><span class="p">])</span> <span class="c1">;; input signal #2</span>
+            <span class="nv">filter-fn</span> <span class="p">(</span><span class="nf">case</span> <span class="nv">showing</span>
                         <span class="ss">:active</span> <span class="p">(</span><span class="nb">complement </span><span class="ss">:done</span><span class="p">)</span>
                         <span class="ss">:done</span>   <span class="ss">:done</span>
                         <span class="ss">:all</span>    <span class="nv">identity</span><span class="p">)]</span>
