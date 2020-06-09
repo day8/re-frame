@@ -174,7 +174,7 @@ The layer `Layer 3` subscription above can be rewritten using some syntactic sug
 
   ;; computation function
   (fn [[a b] _]
-       (calulate-it a b)))
+       (calculate-it a b)))
 ```
 
 ## Review TodoMVC
