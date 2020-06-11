@@ -289,7 +289,7 @@ XXX inline REPL goes here. In the meantime use [this external one](https://jared
 ---
 ## Keywords
 
-Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This makes them like most other data litterals.
+Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This means they evaluate like most other data litterals.
 
 Keywords are ***invaluable*** as `identities` and they are used widely, partiuclarly as keys in hashmaps.
 
@@ -1004,27 +1004,39 @@ Work out the evaluation of:
 ```
 
 
+## The Hard Bit
+
+Everything we have covered so far has been fairly straight-forward. Clojure has simple syntax and simple evaluation semantics. The learning curve has been gentle. 
+
+The steeper part of the Clojure learning curve is when you have to **_write code using pure functions and immutable data_**.
+If, previously, you have only used imperative, place-oriented languages (eg. OO laguages),
+this is the paradigm change. When i first started writing Clojure code, 
+I can remember having "10 mins of impotent rage" trying to 
+figure out "how do I get stuff done!!!" when I can't change anything. But then it slowly clicked. 
+
+But, of course, the purpose of this tutorial is to teach you to **_read_** Clojure, which is an easier skill. So, onward ...
+
+
 ## Immutable Data
 
 ClojureScript uses immtutable data structures by default.
 
-This presents an interesting learning challenge, because they require 
-you to think a little differently.
+**The rule**: once you create data, you can't mutate it (change it). Ever. 
 
-**The rule**: once you create data, you can't mutate it. Ever. But you can create a 
-revision (a copy) of that data, which is modified in some way. But, then, you 
-can't change this revision either.  But, you can create a further revision (copy) of the revision, etc. 
+But you can create a revision (a copy) of that data, which is modified in some way. 
+The original data is untouched. But, then, you 
+can't change this revision either. But, you can create a further revision (copy) of the revision, etc. 
 
-Evaluate the following: 
+Let's see this in action. Evaluate the following: 
 ```clj
-(let [car1   {:doors 2}                  ;; an original hashmap 
-      car2   (assoc car1 :seats 4)       ;; add a key/value pair, a new revision is created
-      car3   (assoc car2 :engine :big)]  ;; add a key/value pair, a new revision is created
-  [car1 car2 car3])                      ;; notice that car1 is as it was
+(let [car1  {:doors 2}                 ; an original hashmap 
+      car2  (assoc car1 :seats 4)      ; add a key/value pair, a new revision is created
+      car3  (assoc car2 :engine :big)] ; add a key/value pair, a new revision is created
+  [car1 car2 car3])                    ; the value associated with car1 is untouched
 ```
-you'll see `#!clj  [{:doors 2} {:doors 2, :seats 4}  {:doors 2, :seats 4, :engine :big} ]`. 
+you'll see a vector of three values `#!clj  [{:doors 2} {:doors 2, :seats 4}  {:doors 2, :seats 4, :engine :big} ]`. 
 
-Notice how `#!clj car1` is unchanged. 
+Notice how `#!clj car1` is unchanged, even though we did an `#!clj assoc` into `#!clj car1` . Same with XXXXXXXXX
 
 When you are used to imperative, in-place modification of data, it can initially be mysterfying as to how you can achieve anything. Rest assured, you can. 
 
@@ -1034,8 +1046,9 @@ More experiements. If we evaluate this:
 ```
 there will be three revisions of a hashmap. The original one bound to  `#!clj score` which is  `#!clj {:a 1 :b 2}`. Then there's the one which results from `#!clj (assoc score :c 3)`. And then there is the final one `#!clj {:a 1 :b 2 :c 3 :d 4}`. 
 
-If you are new to Immutable Data, you probably have two worries:
-  1. Surely this is inefficient?  Don't worry, via clever algorithms, efficiency is never an issue.
+If you are new to Immutable Data, you probably have two concerns:
+
+  1. Surely this is inefficient?  Don't worry, via clever algorithms, efficiency is seldom an issue.
   2. How do you get anything done? (Don't worry, there are answers here too). 
 
 Using Immutable data dovetails with pure functions, to reduce cognative load and bring a great simplicity to your programming. 

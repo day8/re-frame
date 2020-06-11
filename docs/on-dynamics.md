@@ -6,25 +6,9 @@
 
 When programmers work, they need to reason about the **runtime dynamics** of their code - about
 what happens over time, as it runs. They'll be staring, without seeing, at a spot in space, 
-and in their heads, they'll be performing a runtime simulation of their code. 
+and in their heads, they'll be performing a runtime simulation of their code.
 
 But, as Dijkstra notes, this is hard.
-
-An app is a "sequential process", and over time a sequential process will shift from one state to another, and consequently,
-often from one behaviour to another. Code branches will conditionally execute subject to predicates on state, 
-and, then, in a feedback loop, the code which executes will update that state. 
-
-Wait, no! Did someone just say feedback loop?
-Even just a few steps into any mental stimulation, there
-can be a lot to juggle, and we could be near the limits of our cognitive budget.
-
-Certain kinds of interactions between time, state & computation reduce complexity, 
-making mental simulations easier, while others do the opposite and make it virtually impossible. And, any
-systems on the "impossible" end of that continuum, will breed nasty bugs and be scary to maintain.
-
-As programmers, we often talk about static concerns like DRY and "cohesion vs coupling". Yes, they are all useful, 
-but I believe it would be better for us to focus more on the qualities which make the dynamics easier or harder to simulate.
-What simplifying abstractions or techniques exist to help us manage the complexity of these runtime dynamics?
 
 ## The Claim 
 
@@ -35,30 +19,51 @@ It is the purpose of this page to explore and justify this claim.
 
 > **There's almost no more important point to make about re-frame than this one**
 
-I would like re-frame to deliver an excellent developer experience. And, I believe that nothing 
-contributes to this goal more than it having "a simple dynamic model". Almost nothing makes a programmer's job easier than 
+The primary design goal for re-frame is that it delivers an excellent developer experience. 
+I believe that nothing contributes to this goal more than it having "a simple dynamic model".
+Almost nothing makes a programmer's job easier than 
 a simple dynamic model. Almost nothing reduces bugs more than a simple dynamic model.
 
-Okay, smartypants, how?
+## On Dynamics
+
+When scientists or engineers study "Dynamics" they look at how a system develops or
+changes over time/space, and at the causes of those changes. Think of Hydrodynamics, Thermodynamics and Social Dynamics.
+
+A Web App is a "sequential process", and over time a sequential process will shift from one `State` to another, and consequently,
+often from one behaviour to another. The system "Dynamics" involve interactions between `Computation` and `State`, across time.
+
+`State` is effectively congealed time -  history materialised - and it is accreted by rounds of `Computation`. Although it is 
+Computation which creates the state, this Computation is itself controlled by the State because, for example, predicates on State 
+determine which branches of Computation are executed. So, there's a feedback loop between these two. 
+
+For a programmer, even just a few steps into any mental stimulation, there
+can be a lot to juggle, and we could be near the limits of our cognitive budget. Which leads to Dijkstra's lament. 
+
+Certain kinds of interactions between time, `State` & `Computation` reduce dynamic complexity, 
+making mental simulations easier, while others do the opposite and make it virtually impossible. And, any
+systems on the "impossible" end of that continuum, will breed nasty bugs and be scary to maintain.
+
+As programmers, we often talk about static concerns like DRY, line count, and "cohesion vs coupling". 
+And while, yes, they are all useful, perhaps we should pay more attention to the qualities which 
+make runtimes easier or harder to simulate in our heads.
+
 
 ## re-frame Time 
 
-When scientists or engineers study "Dynamics", they look at 
-how a system develops or changes over time/space, and at the causes of those changes. 
+re-frame apps "move forward", through this computational/state space, 
+one event after another. Time is discrete. 
 
-With our apps, looking at "dynamics" means understanding the interactions occurring between computation and state, over time. 
-
-State is effectively congealed time (history). It is accreted from computation, but equally, predicates on state feedback to 
-control computational itself, including for example, what branching and looping occurs.
-
-re-frame apps "move forward", through computational/state space, one event after another. 
 Each event is entirely processed
-from beginning to end before the next event on the queue is processed. re-frame doesn't support 
-the idea that a process can be "suspended" and then, later, restarted.
+from beginning to end before the next event on the queue is processed.
+re-frame does not support the idea that an event can be "suspended" 
+and then, later, restarted. It is only ever doing one thing at a time.
 
+And, when one of these events changes application state, it does so 
+transactionally (instantly), in one fell swoop, not incrementally.
 
-So, at the highest level, re-frame delivers dynamics in discrete units, which can be understood and analysed independently. 
-And, when one of these events changes application state, it does so transactionally (instantly), in one fell swoop, not incrementally.
+So, at the highest level, re-frame delivers dynamics in discrete units, 
+which can be understood and analysed independently. This serves to simplify 
+the dynamics. 
 
 But, how about one level down, **_within_** the processing of a single event? What about those dynamics? 
 
@@ -76,9 +81,9 @@ But there might be a cost: your programming keyboard has now become a loaded gun
 
 re-frame's overarching process for handling a single event is one part "Finite State Machine" and one part dataflow.
 
-The event-handling process walks step by step through a linear set of logical states,
+The event-handling process proceeds step by step through a linear set of logical states,
 which you know already as "The Dominoes". Only one state at a time is happening, and in each state
-there is specific behaviour, and each of them is sufficiently isolated from the others 
+there is specific behaviour/computation, and each of them is sufficiently isolated from the others 
 that it can be understood and analysed independently. You can comfortably "zoom in" to understand each part.
 
 The re-frame docs don't formally talk about FSMs and, instead, present it as a "data flow" which 
@@ -97,25 +102,25 @@ simple kind of computation, making it easy to simulate in your head.
     in unexpected and unwelcome ways. For our protection, 
     so we can handle these unexpected requirements, we are attracted to more power, not less.
 
-But let's now zoom in further. But what about the dynamics one level down again, within each step? 
+But let's now go deeper again. But what about the dynamics one level down, within each step? 
 
 ## Pure Functions 
 
 One step down, at the Domino level, we are back to programming with the Turing complete power of ClojureScript.
-Thankfully, to harness and control that frightening power, you write pure functions, and you use immutable data.
+Thankfully, to harness and control that frightening power, you write pure functions and use immutable data.
 
 Pure functions stand outside of "time". To understand them, you don't need to know "when" they are run and what 
-the state of the system might be at that point. Instead, you need only know what actual argument values they are provided.
-The tyranny of time is still there on the inside of the pure function, because there is a flow of execution within the 
-function itself. You might still need to simulate that in your head.  But a pure function delivers a smaller
+the state of the system might be at that point. Instead, you need only know the value of their actual arguments.  
+The tyranny of time is still present on the inside of the pure function, because there is a flow of execution within the 
+function itself. So, you might still need to simulate that in your head.  But a pure function delivers a smaller
 dynamic process to understand - one that is more cognitively tractable. 
 
-What is provided to a function is data, and what they return is data. Using immutable data acts to 
+What is provided as arguments to a function is data, and what they return is data. Using immutable data acts to 
 insulate pure functions from "place" - where data is put. 
 
-Once functions are decoupled from both "time" and "place" they can be composed in a maximally planar and mathematical way.
-I asked earlier what simplifying "abstractions" might exist to help us tame the complexity
-of runtime dynamics, and these two are a very potent duo. They act to dampen runtime dynamics powerfully.
+Once functions are decoupled from both "time" and "place" they can be composed in a maximally mathematical way.
+I asked earlier what simplifying "abstractions" might exist to help us dampen the complexity
+of runtime dynamics, and these two are a very potent duo. 
 
 
 !!! Note "Banana Issues"
@@ -125,7 +130,7 @@ of runtime dynamics, and these two are a very potent duo. They act to dampen run
     the dynamics for everything that might change that banana over time. Unfortunately, as you 
     pull the banana back towards you, you might discover a Gorilla is holding it. 
     And that Gorilla is sitting in a jungle, so you get that too. Plus some Monsoonal weather.
-    There's often a lot of new runtime dynamics coming your way, attached to that banana. 
+    There's often a lot of new runtime dynamics coming your way, attached to that initial banana. 
 
 ## Declarative 
 
@@ -158,7 +163,7 @@ I was as guilty as the rest.
 
 re-frame puts state in the one place and updates it once per event cycle, in one fell swoop. 
 You never need to worry that the app is in some slightly inconsistent intermediate state.
-You don't need to worry about the dynamics of communicating changes from one "store" of state to another.
+And you don't need to worry about the dynamics of communicating changes from one "store" of state to another.
 
 Also, in one fell swoop, you can check if **_all the state in your app_** (all of it!) 
 conforms to a schema. And that includes any data which just arrived
@@ -179,21 +184,31 @@ adopting a Cortex structure, we still recommend a precautionary reboot.
 
 re-frame apps are simple to simulate in your head, and there are consequences - all of them good.
 
-When talking to an experienced programmer recently, I was thrilled when he said the following (in a slightly distracted way, almost as if surprised by the realisation): 
+This simplicity arises from a combination of factors. On this page, we have reviewed re-frame layer by layer, starting at a high level with how
+events are handled one after the other in a discrete way. Then, how a single event is handled step by step in a FSM-like way. Then, how 
+pure functions and immutable data dramatically dampen dynamics. Then, through to how declarative data-based DSLs are used 
+in multiple places. An, finally, at how there is only one store of State and how it is updated only once per event cycle in a transactional way.
 
-> Been using re-frame for nine months now. You know what's odd? I find myself writing fewer tests these days, since I started using re-frame. 
+Recently, at a local Clojure meetup, I was talking to an experienced programmer, and I was thrilled to hear him say the following (in a slightly distracted way, almost as if surprised by the realisation): 
+
+> Been using re-frame for nine months now. Do you know what's odd? I find myself writing fewer tests these days since I started using re-frame. 
 
 So, an experienced (self-regulating) programmer who has previously written a lot of tests, 
-is instinctively writing fewer tests, surprising even himself a bit, 
-because his intuitions are telling him it is safe to do so. 
-It is empirically simpler. Experientially simpler. 
+is instinctively writing fewer tests, surprising even himself a bit with the decision. 
+I believe his intuitions are telling him it is safe to do so. He is reacting to the simplicity he is experiencing.
 
-N of 1, sure. But there's almost no better recommendation than this. 
+N of 1, sure. But there's almost no better recommendation than this. I was delighted.
 
 
 
 <!-- 
-### Our Goal 
+### Reified Dynamics
+
+Our goal is to turn Dynamics into data. 
+By tracing all forms. 
+End up with a data structure for each event which completely captures all the execution trace. 
+
+
 
 XXX 
 

@@ -1,3 +1,13 @@
+> Document is WIP 
+<br>
+
+> To understand how something works, figure out how to break it
+>   -- N.N.Talib
+
+All libraries/frameworks should come with a "what breaks this" section - this is that document for re-frame. 
+
+
+
 ## Pros
 
   - is very productive 
@@ -49,13 +59,12 @@ So I'll do that now.
 
 
 I will not try to contrast re-frame with your other framework options. I wish I could provide you with
-that, but to do that well, you need deep knowledge of all the frameworks, and I don't know of
+that, but to do that well, i would need deep knowledge of all the frameworks, and I don't know of
 anyone who really has that. Certainly not me. I try to keep an eye on them, but by "deep knowledge"
-I mean you need to have used it in anger, professionally for a year. Anything less and the comparisions tend to be too shallow and misleading - which means: not unsful.
+I mean you need to have used it in anger, professionally for a couple of years. Anything less and 
+the comparisions tend to be too shallow and misleading - which means: not unsful - particularly when they
+are written by someone with a 
 
-
-> To understand how something works, figure out how to break it
->   -- N.N.Talib
 
 
 Rather than telling you what's awesome, I should take Talib's advice and tell you what breaks re-frame. What doesn't work. In that way you will know it better than any amount of "its so awesome". 

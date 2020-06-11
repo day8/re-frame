@@ -6,30 +6,36 @@
 
 ## Question
 
-How do I load the data for a view, on navigation to that view? 
+How do I load the data for a view, when the user navigates to that view? 
 
-## Just Don't
+## For Javascript The Developer
 
-Are you from the Javascript React world?  If so, this first section is for you.
+Are you from the Javascript/React world?  If so, this first section is for you.
 
-In re-frame, Components are functions, not classes. They compute a materialized view of values which are reactively delivered,  and they don't have state (there are exceptions to every rule).
+In re-frame, Components are functions. They compute a materialized view of values which are reactively delivered,  and they don't have state.
 
-On the other hand, React has a more OO sense of Components: they have state and behaviour.  And even React's more modern, function components come with Hooks which are ordered, and often imperative and effectful. 
+On the other hand, React has a more OO sense of Components. They are classes with state and behaviour.  And even React's more modern, so-called function components come with Hooks which are ordered, and often imperative and effectful. 
 
-So, re-frame and React are different philosophically regarding Components.  But there is one point on which they differ the most:
+So, with respect to Components, re-frame and React are technically different.  But it is on a philosophical point that they differ the most:
 
 - In re-frame, **Components are not causal**, they are reactive. 
 - Whereas React Components are often deeply causal, via Collocated queries, ComponentDidMount, Hooks and Suspense, etc.  In React, Components initiate things - like HTTP requests.  
-- In re-frame, ***it is events which are causal***. 
+- In re-frame, ***it is events which are causal*** (never components).
 
+### Why this difference?
 
->  We humans have a cognitive bias: "what is focal is presumed causal".  
+>  Humans have a cognitive bias: "what is focal is presumed causal".  
 
-Political leaders know this. They like presenting good news themselves because they like to be seen as causal of good stuff, but they'll get a press secretary to deliver bad news. Movie directors know how to use this when framing their protagonists within the story.
+Political leaders know this. They like presenting good news themselves because they like to 
+be "seen" as causal of good stuff, but they'll get a press secretary to deliver bad news.
+Movie directors know how to use this when framing their protagonists within the story.
 
-Unfortunately, the React team have lost themselves in this bias. They keep trying to make the most focal part of the system (components) also be the causal part. Stop doing that!  Events are what's causal.
+Unfortunately, the React team have lost themselves in this bias. They keep trying to make the
+most focal part of the system (components) also be the causal part. Please stop doing that! It is a mistake. Events are what's causal - they embody the user's intent.
 
-Just to be clear, I love React.  What an utterly brilliant idea and a great execution. I'm deeply grateful because, wow!, did it change things.  It is just that I preferred React when it was only trying to be the V part of MVC. 
+Just to be clear, I love React.  What an utterly brilliant idea and great execution.
+I'm deeply grateful because, wow!, did it change things.
+It is just that I preferred React when it was only trying to be the V part of MVC. Everything since has been downhill. 
 
 Perhaps read the further explanation in [PurelyFunctional.tv's writeup](https://purelyfunctional.tv/article/react-vs-re-frame/) under the heading "Reacters load data on mount". 
 
