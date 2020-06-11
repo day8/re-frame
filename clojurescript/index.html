@@ -1805,7 +1805,7 @@ Well, in your mind's eye, see this nested example as <code class="highlight"><sp
 <p>XXX inline REPL goes here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <hr />
 <h2 id="keywords">Keywords<a class="headerlink" href="#keywords" title="Permanent link">&para;</a></h2>
-<p>Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This makes them like most other data litterals.</p>
+<p>Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This means they evaluate like most other data litterals.</p>
 <p>Keywords are <strong><em>invaluable</em></strong> as <code>identities</code> and they are used widely, partiuclarly as keys in hashmaps.</p>
 <p>A keyword is a name that starts with a colon. Let's evaluate some:</p>
 <table>
@@ -2676,23 +2676,30 @@ It is as if the evaluation of the higher form is "flowing down" and into the for
 </code></pre></div>
 
 
+<h2 id="the-hard-bit">The Hard Bit<a class="headerlink" href="#the-hard-bit" title="Permanent link">&para;</a></h2>
+<p>Everything we have covered so far has been fairly straight-forward. Clojure has simple syntax and simple evaluation semantics. The learning curve has been gentle. </p>
+<p>The steeper part of the Clojure learning curve is when you have to <strong><em>write code using pure functions and immutable data</em></strong>.
+If, previously, you have only used imperative, place-oriented languages (eg. OO laguages),
+this is the paradigm change. When i first started writing Clojure code, 
+I can remember having "10 mins of impotent rage" trying to 
+figure out "how do I get stuff done!!!" when I can't change anything. But then it slowly clicked. </p>
+<p>But, of course, the purpose of this tutorial is to teach you to <strong><em>read</em></strong> Clojure, which is an easier skill. So, onward ...</p>
 <h2 id="immutable-data">Immutable Data<a class="headerlink" href="#immutable-data" title="Permanent link">&para;</a></h2>
 <p>ClojureScript uses immtutable data structures by default.</p>
-<p>This presents an interesting learning challenge, because they require 
-you to think a little differently.</p>
-<p><strong>The rule</strong>: once you create data, you can't mutate it. Ever. But you can create a 
-revision (a copy) of that data, which is modified in some way. But, then, you 
-can't change this revision either.  But, you can create a further revision (copy) of the revision, etc. </p>
-<p>Evaluate the following: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">car1</span>   <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span><span class="p">}</span>                  <span class="c1">;; an original hashmap </span>
-      <span class="nv">car2</span>   <span class="p">(</span><span class="nb">assoc </span><span class="nv">car1</span> <span class="ss">:seats</span> <span class="mi">4</span><span class="p">)</span>       <span class="c1">;; add a key/value pair, a new revision is created</span>
-      <span class="nv">car3</span>   <span class="p">(</span><span class="nb">assoc </span><span class="nv">car2</span> <span class="ss">:engine</span> <span class="ss">:big</span><span class="p">)]</span>  <span class="c1">;; add a key/value pair, a new revision is created</span>
-  <span class="p">[</span><span class="nv">car1</span> <span class="nv">car2</span> <span class="nv">car3</span><span class="p">])</span>                      <span class="c1">;; notice that car1 is as it was</span>
+<p><strong>The rule</strong>: once you create data, you can't mutate it (change it). Ever. </p>
+<p>But you can create a revision (a copy) of that data, which is modified in some way. 
+The original data is untouched. But, then, you 
+can't change this revision either. But, you can create a further revision (copy) of the revision, etc. </p>
+<p>Let's see this in action. Evaluate the following: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">car1</span>  <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span><span class="p">}</span>                 <span class="c1">; an original hashmap </span>
+      <span class="nv">car2</span>  <span class="p">(</span><span class="nb">assoc </span><span class="nv">car1</span> <span class="ss">:seats</span> <span class="mi">4</span><span class="p">)</span>      <span class="c1">; add a key/value pair, a new revision is created</span>
+      <span class="nv">car3</span>  <span class="p">(</span><span class="nb">assoc </span><span class="nv">car2</span> <span class="ss">:engine</span> <span class="ss">:big</span><span class="p">)]</span> <span class="c1">; add a key/value pair, a new revision is created</span>
+  <span class="p">[</span><span class="nv">car1</span> <span class="nv">car2</span> <span class="nv">car3</span><span class="p">])</span>                    <span class="c1">; the value associated with car1 is untouched</span>
 </code></pre></div>
 
 
-<p>you'll see <code class="highlight"><span class="p">[{</span><span class="ss">:doors</span> <span class="mi">2</span><span class="p">}</span> <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span>, <span class="ss">:seats</span> <span class="mi">4</span><span class="p">}</span>  <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span>, <span class="ss">:seats</span> <span class="mi">4</span>, <span class="ss">:engine</span> <span class="ss">:big</span><span class="p">}</span> <span class="p">]</span></code>. </p>
-<p>Notice how <code class="highlight"><span class="nv">car1</span></code> is unchanged. </p>
+<p>you'll see a vector of three values <code class="highlight"><span class="p">[{</span><span class="ss">:doors</span> <span class="mi">2</span><span class="p">}</span> <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span>, <span class="ss">:seats</span> <span class="mi">4</span><span class="p">}</span>  <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span>, <span class="ss">:seats</span> <span class="mi">4</span>, <span class="ss">:engine</span> <span class="ss">:big</span><span class="p">}</span> <span class="p">]</span></code>. </p>
+<p>Notice how <code class="highlight"><span class="nv">car1</span></code> is unchanged, even though we did an <code class="highlight"><span class="nv">assoc</span></code> into <code class="highlight"><span class="nv">car1</span></code> . Same with XXXXXXXXX</p>
 <p>When you are used to imperative, in-place modification of data, it can initially be mysterfying as to how you can achieve anything. Rest assured, you can. </p>
 <p>More experiements. If we evaluate this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="nb">assoc </span><span class="nv">score</span> <span class="ss">:c</span> <span class="mi">3</span><span class="p">)</span> <span class="ss">:d</span> <span class="mi">4</span><span class="p">)</span>
@@ -2700,9 +2707,11 @@ can't change this revision either.  But, you can create a further revision (copy
 
 
 <p>there will be three revisions of a hashmap. The original one bound to  <code class="highlight"><span class="nv">score</span></code> which is  <code class="highlight"><span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span> <span class="ss">:b</span> <span class="mi">2</span><span class="p">}</span></code>. Then there's the one which results from <code class="highlight"><span class="p">(</span><span class="nb">assoc </span><span class="nv">score</span> <span class="ss">:c</span> <span class="mi">3</span><span class="p">)</span></code>. And then there is the final one <code class="highlight"><span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span> <span class="ss">:b</span> <span class="mi">2</span> <span class="ss">:c</span> <span class="mi">3</span> <span class="ss">:d</span> <span class="mi">4</span><span class="p">}</span></code>. </p>
-<p>If you are new to Immutable Data, you probably have two worries:
-  1. Surely this is inefficient?  Don't worry, via clever algorithms, efficiency is never an issue.
-  2. How do you get anything done? (Don't worry, there are answers here too). </p>
+<p>If you are new to Immutable Data, you probably have two concerns:</p>
+<ol>
+<li>Surely this is inefficient?  Don't worry, via clever algorithms, efficiency is seldom an issue.</li>
+<li>How do you get anything done? (Don't worry, there are answers here too). </li>
+</ol>
 <p>Using Immutable data dovetails with pure functions, to reduce cognative load and bring a great simplicity to your programming. </p>
 <p>All grand claims. We'll need to see how this plays out in bigger programs. </p>
 <p>Evaluate the following: </p>
