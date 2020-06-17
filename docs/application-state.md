@@ -41,7 +41,7 @@ Further Notes:
 2. In the documentation and code, I make a distinction between `app-db` (the `ratom`) and
    `db` which is the `value`  (A map) currently stored **inside** this `ratom`. Be aware of that naming as you read code.
 3. re-frame creates and manages an `app-db` for you, so
-   you don't need to declare one yourself (see the [the first FAQ](FAQs/Inspecting-app-db.md) if you want
+   you don't need to declare one yourself (see [the first FAQ](FAQs/Inspecting-app-db.md) if you want
    to inspect the value it holds).
 4. `app-db` doesn't actually have to be a `ratom` containing a map.  It could, for example,
    be a [datascript database](https://github.com/tonsky/datascript).  In fact, any database which
