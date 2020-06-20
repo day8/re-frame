@@ -116,7 +116,7 @@ suggested by [Lambda Island Videos](https://lambdaisland.com/):
 
 ## Say It Again
 
-So, using you new found knowledge, if, in code review, you saw this view function:
+So, using your new-found knowledge, if, in code review, you saw this view function:
 ```clj
 (defn show-items
   []

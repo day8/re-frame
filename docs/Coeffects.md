@@ -32,7 +32,7 @@ We refer to these inputs collectively as the event handler's `coeffects`.  When 
 application state is needed, we use the registration function `reg-event-fx` and the event handler has
 a signature like this:
 ```clj
-(fn [coeffects event]     ;; first arg is often abreviated to cofx 
+(fn [coeffects event]     ;; first arg is often abbreviated to cofx 
     ... return a map of effects)
 ```
 
