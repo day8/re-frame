@@ -15,7 +15,7 @@ The responsibilities:
 1. **rendering**:
 
     - provide a way for the user to observe a value. That value could be as simple as a string, or as complicated as an entire Pivot Table. 
-    - optionally, show editing affordances so facilitate user modification of the value.
+    - optionally, show editing affordances to facilitate user modification of the value.
       A spinner supplies up/down buttons. A text input draws a box and has subtle colour
       changes on mouse-over to imply editability, 
       and, of course, a "click" will initiate editing. Or the value could be a complete 
@@ -93,7 +93,7 @@ Notes:
 
 - This is a `re-frame Component` because it uses `subscribe` and `dispatch` for I/O
 - It has two Reagent sub-components - the reusable `simple-text-input` component we created above
-- It parameterises the I/O for the sub-components by passing in a value and a callbacks to each
+- It parameterises the I/O for the sub-components by passing in a value and a callback to each
 
 ## Many Instances
 
@@ -157,7 +157,7 @@ Some Components need more than one `identity`.
 For example, a Component might need:
 
 - one `identity` for the list of alternative "things" a user can choose (think items in a dropdown)
-- one `identity` for the current choice (value) held elsewhere else within `app-db`
+- one `identity` for the current choice (value) held elsewhere within `app-db`
 
 This Component will need two args/props for these two `identities`. 
 
@@ -174,7 +174,7 @@ Or, in another situation, an `id` provided to a component might reference an ent
 So, the Component might have to subscribe to the primary entity and then, in a second step, 
 subscribe to the derived entity. 
 
-If we take these ideas far enough, we leave benhind discussions about re-frame and start, instead, to
+If we take these ideas far enough, we leave behind discussions about re-frame and start, instead, to
 discuss the pros and cons of the "data model" you have created in `app-db`.
 
 ## The Unit Of Reuse
@@ -252,7 +252,7 @@ the cost benefit analysis for your situation.
 BTW, in a more complicated case, you can imagine a Component being provided
 with more than just a couple of `I/O` functions. Instead, it could be supplied
 with a `map` which nominates many, many `I/O` functions which provide to it
-the necessary "access" it required. 
+the necessary "access" it requires. 
 
 <!-- 
 

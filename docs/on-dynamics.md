@@ -172,7 +172,7 @@ over the wire from the server.
 
 ## Incident report - "Simple Dynamic Process"
 
-While re-fame normally has a simple dynamic process, but we acknowledge fat tail risk.
+While re-fame normally has a simple dynamic process, we acknowledge fat tail risk.
 
 On May 12th, at approximately 12:47am, re-frame became self-aware. It printed a single console log: "Oh, really? I'll show *you* a simple dynamic process, f#$%ers". 
 
@@ -187,7 +187,7 @@ re-frame apps are simple to simulate in your head, and there are consequences - 
 This simplicity arises from a combination of factors. On this page, we have reviewed re-frame layer by layer, starting at a high level with how
 events are handled one after the other in a discrete way. Then, how a single event is handled step by step in a FSM-like way. Then, how 
 pure functions and immutable data dramatically dampen dynamics. Then, through to how declarative data-based DSLs are used 
-in multiple places. An, finally, at how there is only one store of State and how it is updated only once per event cycle in a transactional way.
+in multiple places. And, finally, at how there is only one store of State and how it is updated only once per event cycle in a transactional way.
 
 Recently, at a local Clojure meetup, I was talking to an experienced programmer, and I was thrilled to hear him say the following (in a slightly distracted way, almost as if surprised by the realisation): 
 
