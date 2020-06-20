@@ -351,7 +351,7 @@ Both of these queries are trivial. They are known as "accessor", or level 2, sub
 `view` functions compute Hiccup.  They are "Data in, Hiccup out" and they are Reagent 
 components. 
 
-An SPA will have lots of `view` functions, and collectively, 
+A SPA will have lots of `view` functions, and collectively, 
 they render the app's UI.
  
 ## Subscribing
@@ -492,7 +492,7 @@ Nothing happens without an `event`.
 (run)
 </code>
 
-The run function renders the app in the DOM element whose id is `app`: this DOM element is located at the top of the page. 
+The run function renders the app in the DOM element whose id is `dominoes-live-app`: this DOM element is located at the top of the page. 
 This is the element we used to show how the app looks at the top of this page
 
 To save you the trouble of scrolling up to the top of the page, I decided to render the whole app as a 
