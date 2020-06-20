@@ -153,8 +153,8 @@ You might be tempted to do this:
   :process-x
   (fn
    [db event-v]
-   (assoc db :processing-X  true)    ;; hog the CPU
-   (do-long-process-x)))    ;; update state, so reagent components render a modal 
+   (assoc db :processing-X  true) ;; update state, so reagent components render a modal 
+   (do-long-process-x)))          ;; hog the CPU
 ```
 
 But that is just plain wrong. 
@@ -172,7 +172,7 @@ about in the Wiki, and `re-dispatch` within an`-fx` handler:
   (fn 
     [{db :db} event-v]
     {:dispatch  [:do-work-process-x]   ;; do processing later, give CPU back to browser.     
-     :db (assoc  db  :processing-X true)})) ;; ao the modal gets rendered
+     :db (assoc  db  :processing-X true)})) ;; so the modal gets rendered
 
 (re-frame.core/reg-event-db
   :do-work-process-x
@@ -193,7 +193,7 @@ seconds. That nice little Dialog telling you the button was clicked and
 action is being taken won't show.
 
 In these kinds of cases, where you are only going to give the UI 
-**one chance to update** (not a repeated chances every few milli seconds), 
+**one chance to update** (not a repeated chance every few milli seconds), 
 then you had better be sure the DOM is fully synced. 
 
 To do this, you put meta data on the event being dispatched:
@@ -203,7 +203,7 @@ To do this, you put meta data on the event being dispatched:
   (fn 
     [{db :db} event-v]
     {:dispatch  ^:flush-dom [:do-work-process-x]   ;; <--- NOW WITH METADATA         
-     :db (assoc  db  :processing-X true)}))  ;; ao the modal gets rendered
+     :db (assoc  db  :processing-X true)}))  ;; so the modal gets rendered
 ```
 
 Notice the `^:flush-dom` metadata on the event being dispatched.  Use 
