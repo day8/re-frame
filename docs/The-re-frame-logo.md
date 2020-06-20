@@ -27,7 +27,7 @@ Another group speculates that he created the logo as a bifarious rainbow
 homage to Frank Lloyd Wright's architectural masterpiece, the Guggenheim
 Museum. Which is surely a classic case of premature abstraction and
 over-engineering. Their theory, not the Guggenheim. They sometimes
-indent by 5 spaces - beacuse "art" - and need ultrawide monitors
+indent by 5 spaces - because "art" - and need ultrawide monitors
 for yaml.
 
 ![](images/logo/Guggenheim.jpg)

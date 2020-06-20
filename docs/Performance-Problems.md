@@ -47,7 +47,7 @@ is not `=` to last time).
 
 **Third**, because Reagent gets 361 `falses`, it will further rerender 
 all 361 sub-components even though 360 of them produce the same 
-hiccup as last time - only one position in the gird has changed. 
+hiccup as last time - only one position in the grid has changed. 
 
 So, when a new stone is placed on the board, and the game state changes, 
 that triggers a large amount of unnecessary calculation, just to figure 
