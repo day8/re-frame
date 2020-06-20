@@ -191,7 +191,7 @@ contrived in other kinds of architecture (in my experience).
 
 So, members of the jury, I put it to you that:
   - the first 3 dominoes implement an [Event-driven finite-state machine](https://en.wikipedia.org/wiki/Event-driven_finite-state_machine)
-  - the last 3 dominoes render of the FSM's current state for the user to observe
+  - the last 3 dominoes render the FSM's current state for the user to observe
 
 Depending on your app, this may or may not be a useful mental model,
 but one thing is for sure ...
