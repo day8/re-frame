@@ -1527,7 +1527,7 @@ the resulting six domino cascade.</p>
 to completely grok the terse code presented below. We're still at 30,000 feet. More details later. </p>
 </div>
 <h2 id="domino-1">Domino 1<a class="headerlink" href="#domino-1" title="Permanent link">&para;</a></h2>
-<p>In order for it to be clicked, that 3rd delete button must have already have been rendered. And rendering 
+<p>In order for it to be clicked, that 3rd delete button must have already been rendered. And rendering 
 in re-frame is done by a <code>ViewFunction</code>. Perhaps it was rendered like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">delete-button</span> 
   <span class="p">[</span><span class="nv">item-id</span><span class="p">]</span>
@@ -1558,7 +1558,7 @@ They are the language of your re-frame system. </p>
 compute the <code>effect</code> of the event <code>[:delete-item 2486]</code>.</p>
 <p>On startup, re-frame apps register handlers for events using <code>reg-event-fx</code>. So,
 in our imaginary app, because <code>h</code> is the handler function for <code>:delete-item</code> events, 
-and it would have been registered like this:</p>
+it would have been registered like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>   <span class="c1">;; a part of the re-frame API</span>
   <span class="ss">:delete-item</span>                <span class="c1">;; the kind of event</span>
   <span class="nv">h</span><span class="p">)</span>                          <span class="c1">;; the handler function for this kind of event</span>

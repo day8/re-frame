@@ -1491,7 +1491,7 @@ src
 <p>As an app gets bigger, you'll tend to get clashes on ids - event-ids, or query-ids (subscriptions), etc. </p>
 <p>One panel will need to <code>dispatch</code> an <code>:edit</code> event and so will 
 another, but the two panels will have different handlers. 
-So, how do you avoid a clash? How you you distinguish between 
+So, how do you avoid a clash? How do you distinguish between 
 one <code>:edit</code> event and another?</p>
 <p>Your goal should be to use event-ids which encode both the event 
 itself (<code>:edit</code> ?) and the context (<code>:panel1</code> or <code>:panel2</code> ?). </p>

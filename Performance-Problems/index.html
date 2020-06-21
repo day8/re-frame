@@ -1468,7 +1468,7 @@ times in a row, and every time we get a <code>false</code> (because games state
 is not <code>=</code> to last time). </p>
 <p><strong>Third</strong>, because Reagent gets 361 <code>falses</code>, it will further rerender 
 all 361 sub-components even though 360 of them produce the same 
-hiccup as last time - only one position in the gird has changed. </p>
+hiccup as last time - only one position in the grid has changed. </p>
 <p>So, when a new stone is placed on the board, and the game state changes, 
 that triggers a large amount of unnecessary calculation, just to figure 
 out that there's only a rendering change at one point in the 19x19 grid. </p>

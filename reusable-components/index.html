@@ -1528,7 +1528,7 @@
 <p><strong>rendering</strong>:</p>
 <ul>
 <li>provide a way for the user to observe a value. That value could be as simple as a string, or as complicated as an entire Pivot Table. </li>
-<li>optionally, show editing affordances so facilitate user modification of the value.
+<li>optionally, show editing affordances to facilitate user modification of the value.
   A spinner supplies up/down buttons. A text input draws a box and has subtle colour
   changes on mouse-over to imply editability, 
   and, of course, a "click" will initiate editing. Or the value could be a complete 
@@ -1600,7 +1600,7 @@ with a cohesive purpose. </p>
 <ul>
 <li>This is a <code>re-frame Component</code> because it uses <code>subscribe</code> and <code>dispatch</code> for I/O</li>
 <li>It has two Reagent sub-components - the reusable <code>simple-text-input</code> component we created above</li>
-<li>It parameterises the I/O for the sub-components by passing in a value and a callbacks to each</li>
+<li>It parameterises the I/O for the sub-components by passing in a value and a callback to each</li>
 </ul>
 <h2 id="many-instances">Many Instances<a class="headerlink" href="#many-instances" title="Permanent link">&para;</a></h2>
 <p>If an app displays multiple instances of a <code>re-frame Component</code>, how do these 
@@ -1651,7 +1651,7 @@ and each can represent a different customer - just supply the customer <code>id<
 <p>For example, a Component might need:</p>
 <ul>
 <li>one <code>identity</code> for the list of alternative "things" a user can choose (think items in a dropdown)</li>
-<li>one <code>identity</code> for the current choice (value) held elsewhere else within <code>app-db</code></li>
+<li>one <code>identity</code> for the current choice (value) held elsewhere within <code>app-db</code></li>
 </ul>
 <p>This Component will need two args/props for these two <code>identities</code>. </p>
 <h2 id="derived-identities">Derived Identities<a class="headerlink" href="#derived-identities" title="Permanent link">&para;</a></h2>
@@ -1663,7 +1663,7 @@ value onto the original <code>id</code>.  There are many possibilities.</p>
 "contains", within its value, the <code>identity</code> of a further entity - a reference to a reference.
 So, the Component might have to subscribe to the primary entity and then, in a second step, 
 subscribe to the derived entity. </p>
-<p>If we take these ideas far enough, we leave benhind discussions about re-frame and start, instead, to
+<p>If we take these ideas far enough, we leave behind discussions about re-frame and start, instead, to
 discuss the pros and cons of the "data model" you have created in <code>app-db</code>.</p>
 <h2 id="the-unit-of-reuse">The Unit Of Reuse<a class="headerlink" href="#the-unit-of-reuse" title="Permanent link">&para;</a></h2>
 <p>Have you noticed the need for close coordination between a re-frame Component and the subscriptions and dispatches which service it?  </p>
@@ -1729,7 +1729,7 @@ the cost benefit analysis for your situation. </p>
 <p>BTW, in a more complicated case, you can imagine a Component being provided
 with more than just a couple of <code>I/O</code> functions. Instead, it could be supplied
 with a <code>map</code> which nominates many, many <code>I/O</code> functions which provide to it
-the necessary "access" it required. </p>
+the necessary "access" it requires. </p>
 <!--
 
 ### Sufficiently Complex Components

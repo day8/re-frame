@@ -1537,8 +1537,8 @@ and have that new value change what is rendered in your reagent components.</p>
   <span class="ss">:process-x</span>
   <span class="p">(</span><span class="nf">fn</span>
    <span class="p">[</span><span class="nv">db</span> <span class="nv">event-v</span><span class="p">]</span>
-   <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:processing-X</span>  <span class="nv">true</span><span class="p">)</span>    <span class="c1">;; hog the CPU</span>
-   <span class="p">(</span><span class="nf">do-long-process-x</span><span class="p">)))</span>    <span class="c1">;; update state, so reagent components render a modal </span>
+   <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:processing-X</span>  <span class="nv">true</span><span class="p">)</span> <span class="c1">;; update state, so reagent components render a modal </span>
+   <span class="p">(</span><span class="nf">do-long-process-x</span><span class="p">)))</span>          <span class="c1">;; hog the CPU</span>
 </code></pre></div>
 
 
@@ -1555,7 +1555,7 @@ about in the Wiki, and <code>re-dispatch</code> within an<code>-fx</code> handle
   <span class="p">(</span><span class="k">fn </span>
     <span class="p">[{</span><span class="nv">db</span> <span class="ss">:db</span><span class="p">}</span> <span class="nv">event-v</span><span class="p">]</span>
     <span class="p">{</span><span class="ss">:dispatch</span>  <span class="p">[</span><span class="ss">:do-work-process-x</span><span class="p">]</span>   <span class="c1">;; do processing later, give CPU back to browser.     </span>
-     <span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span> <span class="nv">db</span>  <span class="ss">:processing-X</span> <span class="nv">true</span><span class="p">)}))</span> <span class="c1">;; ao the modal gets rendered</span>
+     <span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span> <span class="nv">db</span>  <span class="ss">:processing-X</span> <span class="nv">true</span><span class="p">)}))</span> <span class="c1">;; so the modal gets rendered</span>
 
 <span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
   <span class="ss">:do-work-process-x</span>
@@ -1574,7 +1574,7 @@ code will have got control back, and will keep control for the next 5
 seconds. That nice little Dialog telling you the button was clicked and 
 action is being taken won't show.</p>
 <p>In these kinds of cases, where you are only going to give the UI 
-<strong>one chance to update</strong> (not a repeated chances every few milli seconds), 
+<strong>one chance to update</strong> (not a repeated chance every few milli seconds), 
 then you had better be sure the DOM is fully synced. </p>
 <p>To do this, you put meta data on the event being dispatched:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
@@ -1582,7 +1582,7 @@ then you had better be sure the DOM is fully synced. </p>
   <span class="p">(</span><span class="k">fn </span>
     <span class="p">[{</span><span class="nv">db</span> <span class="ss">:db</span><span class="p">}</span> <span class="nv">event-v</span><span class="p">]</span>
     <span class="p">{</span><span class="ss">:dispatch</span>  <span class="o">^</span><span class="ss">:flush-dom</span> <span class="p">[</span><span class="ss">:do-work-process-x</span><span class="p">]</span>   <span class="c1">;; &lt;--- NOW WITH METADATA         </span>
-     <span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span> <span class="nv">db</span>  <span class="ss">:processing-X</span> <span class="nv">true</span><span class="p">)}))</span>  <span class="c1">;; ao the modal gets rendered</span>
+     <span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span> <span class="nv">db</span>  <span class="ss">:processing-X</span> <span class="nv">true</span><span class="p">)}))</span>  <span class="c1">;; so the modal gets rendered</span>
 </code></pre></div>
 
 
