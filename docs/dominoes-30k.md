@@ -21,7 +21,7 @@ the resulting six domino cascade.
 
 ## Domino 1
 
-In order for it to be clicked, that 3rd delete button must have already have been rendered. And rendering 
+In order for it to be clicked, that 3rd delete button must have already been rendered. And rendering 
 in re-frame is done by a `ViewFunction`. Perhaps it was rendered like this: 
 ```clj
 (defn delete-button 
@@ -56,7 +56,7 @@ compute the `effect` of the event `[:delete-item 2486]`.
 
 On startup, re-frame apps register handlers for events using `reg-event-fx`. So,
 in our imaginary app, because `h` is the handler function for `:delete-item` events, 
-and it would have been registered like this:
+it would have been registered like this:
 ```clj 
 (re-frame.core/reg-event-fx   ;; a part of the re-frame API
   :delete-item                ;; the kind of event

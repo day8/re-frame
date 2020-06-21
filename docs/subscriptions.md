@@ -163,7 +163,7 @@ You supply two functions:
 
 ## Syntactic Sugar
 
-The layer `Layer 3` subscription above can be rewritten using some syntactic sugar:
+The `Layer 3` subscription above can be rewritten using some syntactic sugar:
 ```clj
 (reg-sub 
   :id

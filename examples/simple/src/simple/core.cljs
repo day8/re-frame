@@ -70,7 +70,7 @@
    "Time color: "
    [:input {:type "text"
             :value @(rf/subscribe [:time-color])
-            :on-change #(rf/dispatch [:time-color-change (-> % .-target .-value)])}]])  ;; <---
+            :on-blur #(rf/dispatch [:time-color-change (-> % .-target .-value)])}]])  ;; <---
 
 (defn ui
   []

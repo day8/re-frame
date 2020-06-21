@@ -176,7 +176,7 @@
   ;; value at `:todos` path within `db`, rather than the full `db`.
   ;; And, further, it means the event handler returns just the value to be
   ;; put into the `[:todos]` path, and not the entire `db`.
-  ;; So, againt, a path interceptor acts like clojure's `update-in`
+  ;; So, again, a path interceptor acts like clojure's `update-in`
   (fn [todos [_ text]]
     (let [id (allocate-next-id todos)]
       (assoc todos id {:id id :title text :done false}))))

@@ -301,7 +301,7 @@ to stub out `subscribe`. Like this:
 ```
 
 For more integration level testing, you can use `with-mounted-component`
-from the [reagent-template](https://github.com/reagent-project/reagent-template/blob/master/src/leiningen/new/reagent/test/cljs/reagent/core_test.cljs)
+from the [reagent-template](https://github.com/reagent-project/reagent-template/blob/master/resources/leiningen/new/reagent/test/cljs/reagent/core_test.cljs)
 to render the component in the browser and validate the generated DOM.
 
 ## View Functions - Part 2C

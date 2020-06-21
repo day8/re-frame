@@ -95,7 +95,7 @@ or perhaps:
 ```
 
 So that `specific-interceptor` could be something required for just this one
-event handler, and it can be combined the standard ones.
+event handler, and it can be combined with the standard ones.
 
 Wait on! "I see a problem", you say.  `standard-interceptors` is a `vector`, and it
 is within another `vector` along side `specific-interceptor` - so that's
@@ -143,7 +143,7 @@ an example using Prismatic Schema
 
 ;; As exactly as possible, describe the correct shape of app-db 
 ;; Add a lot of helpful comments. This will be an important resource
-;; for someone looking at you code for the first time.
+;; for someone looking at your code for the first time.
 (def schema           
   {:a {:b s/Str
        :c s/Int}

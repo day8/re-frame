@@ -58,7 +58,7 @@ As an app gets bigger, you'll tend to get clashes on ids - event-ids, or query-i
  
 One panel will need to `dispatch` an `:edit` event and so will 
 another, but the two panels will have different handlers. 
-So, how do you avoid a clash? How you you distinguish between 
+So, how do you avoid a clash? How do you distinguish between 
 one `:edit` event and another?
 
 Your goal should be to use event-ids which encode both the event 
