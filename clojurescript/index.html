@@ -1353,7 +1353,7 @@ Dijkstra has written glowingly of it.
 For 50 years, some of the finest minds in software have admired it, used it and refined it. </p>
 <p>In the years leading up to 2010, Rich Hickey created Clojure, introducing a number of key inovations 
 (later adopted by other functional languages), and he did it well away from 
-acedemia, because he wanted a pragmatic language for commercial developers.</p>
+acedemia, because he wanted to create a pragmatic language for commercial developers.</p>
 <p>Overall, Clojure is a foliated masterpiece. </p>
 <p>As the owner of a company which develops software products, I believe ClojureScript gives us a
 competitive edge. As a programmer, I feel like it has provided me with excellent,
@@ -1362,7 +1362,7 @@ nourishing brain food. It is a stable, productive place, with little churn.</p>
 washing machine with not much new or interesting to teach me. Learning a LISP will likely
 make you better developer for life, even if you aren't using LISP.</p>
 <blockquote>
-<p>ClojureScript is the version of Clojure which targets the browser. </p>
+<p>Clojure runs on the JVM. ClojureScript runs in the browser. They are essentially the same language but our focus is ClojureScript.</p>
 </blockquote>
 <p>So, 20 mins ...</p>
 <hr />
@@ -1418,8 +1418,13 @@ make you better developer for life, even if you aren't using LISP.</p>
 <tbody>
 <tr>
 <td>list</td>
+<td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span></code></td>
+<td>Empty list is <code class="highlight"><span class="p">()</span></code><br>No commas necessary.<br>But, if present, treated as whitespace.</td>
+</tr>
+<tr>
+<td>list</td>
 <td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="s">&quot;yes&quot;</span><span class="p">)</span></code></td>
-<td>Can be heterogeneous.<br>Empty list is <code class="highlight"><span class="p">()</span></code><br>No commas necessary.<br>If present, treated as whitespace.</td>
+<td>Can be heterogeneous.</td>
 </tr>
 <tr>
 <td>vector</td>
@@ -1434,7 +1439,7 @@ make you better developer for life, even if you aren't using LISP.</p>
 <tr>
 <td>hashmap</td>
 <td><code class="highlight"><span class="p">{</span><span class="mi">1</span> <span class="s">&quot;Hello&quot;</span><span class="p">}</span></code></td>
-<td>A dictionary, or hashmap.<br>Each pair is a <code>key</code> and a <code>value</code>.<br>One pair in this example.<code class="highlight"><span class="mi">1</span></code> is key,<br> <code class="highlight"><span class="s">&quot;hello&quot;</span></code> is the value</td>
+<td>A dictionary, or hashmap.<br>Each pair is a <code>key</code> and a <code>value</code>.<br>One pair in this example.<br><code class="highlight"><span class="mi">1</span></code> is key, <code class="highlight"><span class="s">&quot;hello&quot;</span></code> is the value</td>
 </tr>
 <tr>
 <td>hashmap</td>
@@ -1526,8 +1531,8 @@ Clojure is <code>Homoiconic</code> which means "code is data" - you write Clojur
 using Clojure's data litterals and we just covered data litterals. </p>
 <hr />
 <h2 id="evaluation">Evaluation<a class="headerlink" href="#evaluation" title="Permanent link">&para;</a></h2>
-<p>You are going to be delighted at how simple evaluation is.</p>
-<p><strong><em>First</em></strong>, all data litterals other than <code>lists</code> and <code>symbols</code> <strong>evaluate</strong> to themselves.</p>
+<p>You are going to be surprised and delighted with the simplicty of evaluation.</p>
+<p><strong>1st Evaluation Rule:</strong> all data litterals other than <code>lists</code> and <code>symbols</code> <strong>evaluate</strong> to themselves.</p>
 <table>
 <thead>
 <tr>
@@ -1559,15 +1564,17 @@ using Clojure's data litterals and we just covered data litterals. </p>
 </tr>
 </tbody>
 </table>
-<p>Try it for yourself. Enter an expression into the following editor and it will be evaluated. The result will be shown in the box below.</p>
-<p>XXX inline REPL goes here</p>
-<p>Exercises:</p>
+<p>Below, you can start evaluating live on this page. Enter an expression into the following editor 
+and it will be evaluated. The result of the evaluation will be shown in the box below the editor.</p>
+<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<p>Try these experiements:</p>
 <ul>
 <li>{:a 1 :a 4} -- oops </li>
+<li>XXX?</li>
 </ul>
 <p>So, let's talk about the two exceptions <code>lists</code> and <code>symbols</code> ...</p>
 <h2 id="evaluating-symbols">Evaluating Symbols<a class="headerlink" href="#evaluating-symbols" title="Permanent link">&para;</a></h2>
-<p>Symbols don't evaluate to themselves. Instead, they evaluate to the value to which they are "bound". </p>
+<p><strong>2nd Evaluation Rule:</strong> Symbols don't evaluate to themselves. Instead, they evaluate to the value to which they are "bound". </p>
 <p>Example symbol evaluations:</p>
 <table>
 <thead>
@@ -1607,12 +1614,19 @@ is bound to a function in Clojure's standard library. So, if you evaulate <code 
 <p>There's another symbol, <code class="highlight"><span class="nv">count</span></code>, which is bound to different function in the standard library. </p>
 <p>And, finally - this one will be a surprise - the symbol <code class="highlight"><span class="nv">+</span></code> is bound to a function.  Wait. Isn't <code class="highlight"><span class="nv">+</span></code> an operator?  No. Clojure doesn't have operators. Instead, <code class="highlight"><span class="nv">+</span></code> is a symbol, and it is bound to a function (which adds).</p>
 </div>
+<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<p>Try these experiements:</p>
+<ul>
+<li><code class="highlight"><span class="nv">inc</span></code></li>
+<li><code class="highlight"><span class="p">[</span><span class="nb">inc dec </span><span class="nv">+</span><span class="p">]</span></code>       &lt;--- and array of symbols</li>
+<li><code class="highlight"><span class="p">{</span><span class="nb">inc </span><span class="mi">5</span><span class="p">}</span></code>           &lt;--- strange but possible</li>
+</ul>
 <h2 id="evaluating-lists">Evaluating Lists<a class="headerlink" href="#evaluating-lists" title="Permanent link">&para;</a></h2>
-<p>A <code>list</code> evaluates to a function call.</p>
+<p><strong>3rd Evaluation Rule:</strong> a <code>list</code> evaluates to a function call.</p>
 <p>Oh, now we're cooking with gas!  Clojure is a functional language, so you can imagine that function calls are a big deal,
 so this section is important. </p>
-<p>Here's an example list  <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span> <span class="nv">arg3</span><span class="p">)</span></code>. Being surounded by <code class="highlight"><span class="p">(</span> <span class="p">)</span></code> means it is a list. It has four elements. </p>
-<p>Such <strong>a list is evaluated in two steps</strong>:</p>
+<p>Here's an example list  <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span> <span class="nv">arg3</span><span class="p">)</span></code>. Because it is surounded by parens, <code class="highlight"><span class="p">(</span> <span class="p">)</span></code>, it is a list, and it has four elements. </p>
+<p>Such <strong>a list would be evaluated in two steps</strong>:</p>
 <ol>
 <li>first, each element in the list is evaluated (all four of them in this example)</li>
 <li>then, a function call occurs where:<ul>
@@ -1682,7 +1696,7 @@ And because there are no operators, there's no operator precedence to discuss. S
 <li>try <code>(odd? 5)</code> </li>
 <li>try <code>(count [1 2 3])</code></li>
 </ul>
-<p>XXX inline REPL goes here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <h2 id="not-evaluating">Not Evaluating<a class="headerlink" href="#not-evaluating" title="Permanent link">&para;</a></h2>
 <p>We've now reviewed how <code>lists</code> and <code>symbols</code> have special evaluation. 
 But what if we didn't want that? What if we wanted a <code>list</code> to evaluate to itself, like the other data litterals? </p>
@@ -1802,7 +1816,7 @@ Well, in your mind's eye, see this nested example as <code class="highlight"><sp
 <li><code class="highlight"><span class="p">(</span><span class="nf">odd?</span> <span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nb">dec </span><span class="mi">1</span><span class="p">)))</span></code></li>
 <li><code class="highlight"><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nb">dec </span><span class="mi">1</span><span class="p">))</span> <span class="mi">1</span><span class="p">)</span></code></li>
 </ul>
-<p>XXX inline REPL goes here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <hr />
 <h2 id="keywords">Keywords<a class="headerlink" href="#keywords" title="Permanent link">&para;</a></h2>
 <p>Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This means they evaluate like most other data litterals.</p>
@@ -1911,7 +1925,7 @@ Well, in your mind's eye, see this nested example as <code class="highlight"><sp
 <li><code class="highlight"><span class="p">(</span><span class="nb">keyword </span><span class="p">(</span><span class="nb">name </span><span class="ss">:a</span><span class="p">))</span></code></li>
 <li><code class="highlight"><span class="p">(</span><span class="nb">keyword </span><span class="p">(</span><span class="nb">namespace </span><span class="ss">:a/b</span><span class="p">)</span> <span class="p">(</span><span class="nb">name </span><span class="ss">:a/b</span><span class="p">))</span></code></li>
 </ul>
-<p>XXX inline REPL goes here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <hr />
 <h2 id="kebab-case-please">Kebab Case Please<a class="headerlink" href="#kebab-case-please" title="Permanent link">&para;</a></h2>
 <p>We don't use <code class="highlight"><span class="nv">_</span></code> in names. Instead we use <code class="highlight"><span class="nv">-</span></code>. This applies to both symbols and keywords.</p>
@@ -1964,11 +1978,12 @@ an operator, as it is in other lanugages. </p>
 <h2 id="what-have-you-learned">What Have You Learned ?<a class="headerlink" href="#what-have-you-learned" title="Permanent link">&para;</a></h2>
 <p>So Far:</p>
 <ul>
-<li>Clojure's syntax is the same as its data litterals </li>
+<li>To write Clojure code, you write Clojure data litteral. You code in data. </li>
 <li>data can be evaluated, to create new data</li>
-<li>most data evaluates to itself</li>
-<li>but <code>symbols</code> and <code>lists</code> have special evaluataion semantics </li>
-<li>in particular, evaluating a <code>list</code> calls a function </li>
+<li>1st Evaluation Rule: most data evaluates to itself</li>
+<li>2nd Evaluation Rule: <code>symbols</code> evaluate to what they are bound to </li>
+<li>3rd Evaluation Rule: <code>lists</code> evaluate to a function call's return value</li>
+<li>using "quoting" we can avoid the 2nd and 3rd evaluation rules.</li>
 </ul>
 <p>Now, we review some special cases. </p>
 <hr />
@@ -2033,17 +2048,18 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 </table>
 <div class="admonition note">
 <p class="admonition-title">No Statements</p>
-<p>Notice how <code class="highlight"><span class="nv">if</span></code> is an expression in Clojure, not a statement. (Clojure doesn't have any statements, or operators, it just has data) </p>
+<p>Notice how <code class="highlight"><span class="nv">if</span></code> is a form in Clojure, which evaluates to a value, and not a statement. (Clojure doesn't have any statements, or operators, it just has data and evaluation rules) </p>
 </div>
-<p>Experiements: </p>
+<p>Possible experiements: </p>
 <ul>
 <li>check if <code>(if true)</code> is valid. </li>
-<li>what is <code>(if "hello" true false)</code> or <code>(if [] true false)</code> or <code>(if nil true false)</code></li>
+<li>explore what is "truthy", via  <code>(if "hello" true false)</code> or <code>(if [] true false)</code> or <code>(if nil true false)</code></li>
 </ul>
-<p>XXX inline REPL goes here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <hr />
 <h2 id="fn"><code class="highlight"><span class="nv">fn</span></code><a class="headerlink" href="#fn" title="Permanent link">&para;</a></h2>
-<p>An <code class="highlight"><span class="nv">fn</span></code> form creates a function.</p>
+<p>So. now we are taking a bit step up in knowledge. </p>
+<p>An <code class="highlight"><span class="nv">fn</span></code> form creates a function. </p>
 <p>Here is a very simple example <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span></code>:</p>
 <ul>
 <li>an <code class="highlight"><span class="nv">fn</span></code> form has three elements:<ul>
@@ -2677,12 +2693,10 @@ It is as if the evaluation of the higher form is "flowing down" and into the for
 
 
 <h2 id="the-hard-bit">The Hard Bit<a class="headerlink" href="#the-hard-bit" title="Permanent link">&para;</a></h2>
-<p>Everything we have covered so far has been fairly straight-forward. Clojure has simple syntax and simple evaluation semantics. The learning curve has been gentle. </p>
+<p>The learning curve has been gentle. Clojure has simple syntax and simple evaluation semantics.</p>
 <p>The steeper part of the Clojure learning curve is when you have to <strong><em>write code using pure functions and immutable data</em></strong>.
-If, previously, you have only used imperative, place-oriented languages (eg. OO laguages),
-this is the paradigm change. When i first started writing Clojure code, 
-I can remember having "10 mins of impotent rage" trying to 
-figure out "how do I get stuff done!!!" when I can't change anything. But then it slowly clicked. </p>
+If you have previously only used imperative, place-oriented languages (eg. OO laguages),
+this is the paradigm change which takes time to click. </p>
 <p>But, of course, the purpose of this tutorial is to teach you to <strong><em>read</em></strong> Clojure, which is an easier skill. So, onward ...</p>
 <h2 id="immutable-data">Immutable Data<a class="headerlink" href="#immutable-data" title="Permanent link">&para;</a></h2>
 <p>ClojureScript uses immtutable data structures by default.</p>
