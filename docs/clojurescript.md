@@ -33,7 +33,7 @@ For 50 years, some of the finest minds in software have admired it, used it and 
 
 In the years leading up to 2010, Rich Hickey created Clojure, introducing a number of key inovations 
 (later adopted by other functional languages), and he did it well away from 
-acedemia, because he wanted a pragmatic language for commercial developers.
+acedemia, because he wanted to create a pragmatic language for commercial developers.
 
 Overall, Clojure is a foliated masterpiece. 
 
@@ -45,7 +45,7 @@ In contrast, when I look across to the Javascript landscape, it appears like a c
 washing machine with not much new or interesting to teach me. Learning a LISP will likely
 make you better developer for life, even if you aren't using LISP.
 
-> ClojureScript is the version of Clojure which targets the browser. 
+> Clojure runs on the JVM. ClojureScript runs in the browser. They are essentially the same language but our focus is ClojureScript.
 
 So, 20 mins ...
 
@@ -75,10 +75,11 @@ Exanples:
 
 | Collection   |   Example                           |   Comment            |   
 |--------------|-------------------------------------|----------------------|
-| list         | `#!clj (1 2 "yes")`                 | Can be heterogeneous.<br>Empty list is `#!clj ()`<br>No commas necessary.<br>If present, treated as whitespace.  |  
+| list         | `#!clj (1 2 3)`                     | Empty list is `#!clj ()`<br>No commas necessary.<br>But, if present, treated as whitespace.  |  
+| list         | `#!clj (1 2 "yes")`                 | Can be heterogeneous. |  
 | vector       | `#!clj [1 2 3]`                     | Again, no commas necessary.<br>Empty vector is `#!clj []`| 
 | vector       | `#!clj [1 "hello" \x nil]`          | Can be heterogeneous. | 
-| hashmap      | `#!clj {1 "Hello"}`                 | A dictionary, or hashmap.<br>Each pair is a `key` and a `value`.<br>One pair in this example.`#!clj 1` is key,<br> `#!clj "hello"` is the value| 
+| hashmap      | `#!clj {1 "Hello"}`                 | A dictionary, or hashmap.<br>Each pair is a `key` and a `value`.<br>One pair in this example.<br>`#!clj 1` is key, `#!clj "hello"` is the value| 
 | hashmap      | `#!clj {1 "Hello" 2 nil}`           | No delimiter necessary between pairs.<br>Two key/value pairs in this example.| 
 | hashmap      | `#!clj {1  "Hello"`<br> &nbsp;`#!clj  \b  27`<br> &nbsp;`#!clj  "pi"   3.14}`  | Can be heterogeneous.<br>Still no commas between pairs.   | 
 | set          | `#!clj #{1 "Hello" \a}`  | Can be heterogeneous.<br>Still no commas between pairs.   |     
@@ -120,9 +121,9 @@ using Clojure's data litterals and we just covered data litterals.
 ---
 ## Evaluation 
 
-You are going to be delighted at how simple evaluation is.
+You are going to be surprised and delighted with the simplicty of evaluation.
 
-***First***, all data litterals other than `lists` and `symbols` **evaluate** to themselves.
+**1st Evaluation Rule:** all data litterals other than `lists` and `symbols` **evaluate** to themselves.
 
 |  Value                |   Evaluates To                    |  Comment    |
 |-----------------------|-----------------------------------|-------------|
@@ -132,19 +133,22 @@ You are going to be delighted at how simple evaluation is.
 | `#!clj {1 1 2 2 }`    | `#!clj {1 1 2 2 }`                |  Yep, same       |
 
 
-Try it for yourself. Enter an expression into the following editor and it will be evaluated. The result will be shown in the box below.
+Below, you can start evaluating live on this page. Enter an expression into the following editor 
+and it will be evaluated. The result of the evaluation will be shown in the box below the editor.
 
-XXX inline REPL goes here
+XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
 
-Exercises:
+
+Try these experiements:
 
    - {:a 1 :a 4} -- oops 
+   - XXX?
 
 So, let's talk about the two exceptions `lists` and `symbols` ...
 
 ## Evaluating Symbols 
 
-Symbols don't evaluate to themselves. Instead, they evaluate to the value to which they are "bound". 
+**2nd Evaluation Rule:** Symbols don't evaluate to themselves. Instead, they evaluate to the value to which they are "bound". 
 
 
 Example symbol evaluations:
@@ -166,16 +170,26 @@ Example symbol evaluations:
 
     And, finally - this one will be a surprise - the symbol `#!clj +` is bound to a function.  Wait. Isn't `#!clj +` an operator?  No. Clojure doesn't have operators. Instead, `#!clj +` is a symbol, and it is bound to a function (which adds).
 
+
+XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
+
+Try these experiements:
+
+   - `#!clj inc`
+   - `#!clj [inc dec +]`       <--- and array of symbols
+   - `#!clj {inc 5}`           <--- strange but possible
+
 ## Evaluating Lists
 
-A `list` evaluates to a function call.
+
+**3rd Evaluation Rule:** a `list` evaluates to a function call.
 
 Oh, now we're cooking with gas!  Clojure is a functional language, so you can imagine that function calls are a big deal,
 so this section is important. 
 
-Here's an example list  `#!clj (f arg1 arg2 arg3)`. Being surounded by `#!clj ( )` means it is a list. It has four elements. 
+Here's an example list  `#!clj (f arg1 arg2 arg3)`. Because it is surounded by parens, `#!clj ( )`, it is a list, and it has four elements. 
 
-Such **a list is evaluated in two steps**:
+Such **a list would be evaluated in two steps**:
 
   1. first, each element in the list is evaluated (all four of them in this example)
   2. then, a function call occurs where:
@@ -220,7 +234,8 @@ Let's start evaluating, live. Type into the following editor. Click Ctrl-click t
   - try `(odd? 5)` 
   - try `(count [1 2 3])`
 
-XXX inline REPL goes here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
+XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
+
 
 ## Not Evaluating
 
@@ -273,7 +288,7 @@ More:
 
 |  Nested Forms          |   Evaluates To         |  Comments                                     |
 |------------------------|------------------------|-----------------------------------------------|
-| `#!clj (+ 3 (count [1 2]))`  | `#!clj 5`              | Evaluation trace:<br>&nbsp;&nbsp;• `#!clj +` is evaluated to a function<br>&nbsp;&nbsp;• `#!clj 3` is evaluated to `#!clj 3`<br>&nbsp;&nbsp;• `#!clj (count [1 2])` is evaluated as a function call which returns `#!clj 2`<br>&nbsp;&nbsp;• call function with args `#!clj 3` and `#!clj 2`, which  returns `#!clj 5`   |            
+| `#!clj (+ 3 (count [1 2]))`  | `#!clj 5`        | Evaluation trace:<br>&nbsp;&nbsp;• `#!clj +` is evaluated to a function<br>&nbsp;&nbsp;• `#!clj 3` is evaluated to `#!clj 3`<br>&nbsp;&nbsp;• `#!clj (count [1 2])` is evaluated as a function call which returns `#!clj 2`<br>&nbsp;&nbsp;• call function with args `#!clj 3` and `#!clj 2`, which  returns `#!clj 5`   |            
 | `#!clj (= 2 (inc 1))`  | `#!clj true`           | `#!clj =` is a symbol which is bound to a builtin function.<br>You can guess what it does. |                 
 | `#!clj (= (inc 1) (dec 3))`  | `#!clj true`     |  `#!clj dec` is bound to a bultin, and it decrements its arg by one |          
 
@@ -284,7 +299,8 @@ Evaluate these experiements youself (any surprises?):
   - `#!clj (odd? (inc (dec 1)))`
   - `#!clj (= (inc (dec 1)) 1)`
 
-XXX inline REPL goes here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
+XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
+
 
 ---
 ## Keywords
@@ -332,10 +348,9 @@ Evaluate these experiements youself (any surprises?):
  
   - `#!clj (namespace :a)` 
   - `#!clj (keyword (name :a))`
-  -  `#!clj (keyword (namespace :a/b) (name :a/b))`
+  - `#!clj (keyword (namespace :a/b) (name :a/b))`
 
-XXX inline REPL goes here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
-
+XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
 
 ---
 
@@ -370,15 +385,17 @@ Again, we can use `#!clj ?` in names because it is not
 an operator, as it is in other lanugages. 
 
 ---
-## What Have You Learned ? 
+## What Have You Learned ?
 
 So Far:
  
-  - Clojure's syntax is the same as its data litterals 
+  - To write Clojure code, you write Clojure data litteral. You code in data. 
   - data can be evaluated, to create new data
-  - most data evaluates to itself
-  - but `symbols` and `lists` have special evaluataion semantics 
-  - in particular, evaluating a `list` calls a function 
+  - 1st Evaluation Rule: most data evaluates to itself
+  - 2nd Evaluation Rule: `symbols` evaluate to what they are bound to 
+  - 3rd Evaluation Rule: `lists` evaluate to a function call's return value
+  - using "quoting" we can avoid the 2nd and 3rd evaluation rules.
+
 
 Now, we review some special cases. 
 
@@ -412,20 +429,22 @@ is evaluated depending on the result of that `test`. One element remains unevalu
 
 
 !!! Note "No Statements"
-    Notice how `#!clj if` is an expression in Clojure, not a statement. (Clojure doesn't have any statements, or operators, it just has data) 
+    Notice how `#!clj if` is a form in Clojure, which evaluates to a value, and not a statement. (Clojure doesn't have any statements, or operators, it just has data and evaluation rules) 
 
-Experiements: 
+Possible experiements: 
 
   - check if `(if true)` is valid. 
-  - what is `(if "hello" true false)` or `(if [] true false)` or `(if nil true false)`
+  - explore what is "truthy", via  `(if "hello" true false)` or `(if [] true false)` or `(if nil true false)`
 
 
-XXX inline REPL goes here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
+XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
 
 ---
 ## `#!clj fn`
 
-An `#!clj fn` form creates a function.
+So. now we are taking a bit step up in knowledge. 
+
+An `#!clj fn` form creates a function. 
 
 Here is a very simple example `#!clj (fn [x] x)`:
 
@@ -1006,13 +1025,11 @@ Work out the evaluation of:
 
 ## The Hard Bit
 
-Everything we have covered so far has been fairly straight-forward. Clojure has simple syntax and simple evaluation semantics. The learning curve has been gentle. 
+The learning curve has been gentle. Clojure has simple syntax and simple evaluation semantics.
 
 The steeper part of the Clojure learning curve is when you have to **_write code using pure functions and immutable data_**.
-If, previously, you have only used imperative, place-oriented languages (eg. OO laguages),
-this is the paradigm change. When i first started writing Clojure code, 
-I can remember having "10 mins of impotent rage" trying to 
-figure out "how do I get stuff done!!!" when I can't change anything. But then it slowly clicked. 
+If you have previously only used imperative, place-oriented languages (eg. OO laguages),
+this is the paradigm change which takes time to click. 
 
 But, of course, the purpose of this tutorial is to teach you to **_read_** Clojure, which is an easier skill. So, onward ...
 

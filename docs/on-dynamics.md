@@ -102,21 +102,22 @@ simple kind of computation, making it easy to simulate in your head.
     in unexpected and unwelcome ways. For our protection, 
     so we can handle these unexpected requirements, we are attracted to more power, not less.
 
-But let's now go deeper again. But what about the dynamics one level down, within each step? 
+But let's now go deeper again. But what about the dynamics within each Domino? 
 
 ## Pure Functions 
 
-One step down, at the Domino level, we are back to programming with the Turing complete power of ClojureScript.
+Within a Domino, we are back to programming with the Turing complete power of ClojureScript.
 Thankfully, to harness and control that frightening power, you write pure functions and use immutable data.
 
-Pure functions stand outside of "time". To understand them, you don't need to know "when" they are run and what 
-the state of the system might be at that point. Instead, you need only know the value of their actual arguments.  
-The tyranny of time is still present on the inside of the pure function, because there is a flow of execution within the 
-function itself. So, you might still need to simulate that in your head.  But a pure function delivers a smaller
+Pure functions stand outside of "time". To understand them, you don't need to know "when" they were run and
+the state of the system at that point. Instead, you need only know the value of their actual arguments.
+
+The tyranny of time is still present on the inside of the pure function, because there is an internal flow of execution.
+So, you might still need to simulate that in your head.  But a pure function delivers a smaller
 dynamic process to understand - one that is more cognitively tractable. 
 
-What is provided as arguments to a function is data, and what they return is data. Using immutable data acts to 
-insulate pure functions from "place" - where data is put. 
+What is provided as arguments to a function is data, and what they return is data. Using immutable data for both 
+acts to insulate pure functions from "place" - where data is put.
 
 Once functions are decoupled from both "time" and "place" they can be composed in a maximally mathematical way.
 I asked earlier what simplifying "abstractions" might exist to help us dampen the complexity
