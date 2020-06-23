@@ -1,12 +1,12 @@
-This tutorial explains re-frame Interceptors. Along the way, you'll
-better understand the mechanics of re-frame event handling.
+This tutorial explains re-frame `Interceptors`. Until now, they have been a hidden detail
+but, as we are about to find out, they are both important and useful. 
 
 As you read this, please refer back to the 3rd panel of the
 [Infographic](event-handling-infographic.md).
 
 ## Why Interceptors?
 
-Two reasons.
+There's two reasons.
 
 __First__, we want simple event handlers.
 
@@ -16,9 +16,9 @@ Flowing" story promoted by re-frame.
 
 So, you'll want to use Interceptors because they solve problems, and help you to write nice code.
 
-__Second__, under the covers, Interceptors provide the mechanism by which
-event handlers are executed. They are a central concept and understanding 
-them better will serve you well, even if you don't need to directly use them very often. 
+__Second__, under the covers, Interceptors provide the mechanism underneath Dominos 2 and 3. 
+They are a central concept and understanding them better will serve you well, even if 
+you don't need to directly use them very often. 
 
 ## What Do Interceptors Do?
 
@@ -37,15 +37,16 @@ Interceptors wrap on both sides of an event handler, layer after layer.
 
 ## Wait, I know That Pattern!
 
-Interceptors implement middleware. But differently.
+Interceptors implement `middleware`, but differently.
 
-Traditional middleware - often seen in web servers - creates a data
+Traditional `middleware` - often seen in web servers - creates a data
 processing pipeline (to process arriving HTTP requests) via the nested composition of higher order functions.
 The result is a "stack" of functions. Data representing a request flows through this pipeline,
 first forwards from one end to the other, and then backwards (as the response).
 
 Interceptors achieve the same outcome by assembling functions, as data,
-in a collection (a chain, rather than a stack). Data can then be iteratively
+in a collection - a chain of interceptors, rather than a stack of middleware. 
+Data can then be iteratively
 pipelined, first forwards through the functions in the chain,
 and then backwards along the same chain.
 
@@ -62,9 +63,9 @@ With a web server, the middleware "stack" progressively
 transforms an `HTTP request` in one direction, and, then in the backwards
 sweep, it progressively produces a `response`.
 
-In re-frame, the forwards sweep progressively creates `coeffects`
-(inputs to the event handler), while the backwards sweep processes the `effects`
-(outputs from the event handler).
+In re-frame, the forward sweep progressively creates `coeffects`
+(inputs to the event handler that you write), while the backwards sweep processes the `effects`
+(outputs from the event handler you write).
 
 I'll pause while you read that sentence again. That's the key
 concept, right there.
@@ -77,7 +78,7 @@ Using a 3-arity registration function:
 ```clj
 (reg-event-db
    :some-id
-   [in1 in2]       ;; <--- a chain of 2 interceptors (a vector of 2 interceptors)
+   [in1 in2]       ;; <-- a chain of 2 interceptors (a vector of 2 interceptors)
    (fn [db v]      ;; <-- the handler here, as before
       ....)))
 ```
@@ -87,19 +88,19 @@ Using a 3-arity registration function:
 
 ## Handlers Are Interceptors Too
 
-You might see that registration above as associating `:some-id` with
+You could see that registration above as associating `:some-id` with
 two things:
 
 1. a chain of 2 interceptors `[in1 in2]`
-2. a `handler`.
+2. an `event handler`.
 
-Except, the `handler` is turned into an interceptor too (we'll see how shortly).
+Except, the `event handler` is turned into an interceptor too (we'll see how shortly).
 
-So `:some-id` is only associated with one thing: a 3-chain of interceptors,
-with the `handler` wrapped in an interceptor, called say `i`, and put on the
-end of the other two: `[in1 in2 i]`.
+So, ***actually***, `:some-id` is only associated with one thing: a 3-chain of interceptors,
+with the `event handler` wrapped in an interceptor, called say `i`, and put on the
+end of the other two, forming a vector of three interceptors: `[in1 in2 i]`.
 
-Except, the registration function itself, `reg-event-db`, actually takes this 3-chain
+But wait, there's more. The registration function itself, `reg-event-db`, actually takes this 3-chain
 and inserts its own standard interceptors, called say `std1` and `std2`
 (which do useful things, again more soon) at the front,
 so **ACTUALLY**, there's about 5 interceptors in the chain: `[std1 std2 in1 in2 h]`
@@ -115,9 +116,9 @@ interceptors will be "executed".  And that's how an event gets handled.
 
 Each interceptor has this form:
 ```clj
-{:id      :something             ;; decorative only
- :before  (fn [context] ...)     ;; returns a possibly modified context
- :after   (fn [context] ...)}    ;; same as `:before` 
+{:id      :something             ;; decorative only - can be ignored
+ :before  (fn [context] ...)     ;; returns a possibly modified `context`
+ :after   (fn [context] ...)}    ;; returns a possibly modified `context`
 ```
 
 That's essentially a map of two functions. Now imagine a vector of these maps - that's an interceptor chain.
@@ -130,13 +131,13 @@ Sometimes, the `:before` and `:after` functions are noops - they take a `context
 
 To "execute" an interceptor chain:
 
-  1. create a `context` (a map, described below)
-  2. iterate forwards over the chain, calling the `:before` function on each interceptor
-  3. iterate over the chain in the opposite direction calling the `:after` function on each interceptor
+  1. create a `context` (which is a `map` with a certain structure, described below)
+  2. iterate forwards over the chain, calling the `:before` function on each interceptor, threading `context` through each call. 
+  3. iterate over the chain in the opposite (backwards) direction calling the `:after` function on each interceptor and threading `context` through all the calls
 
-Remember that the last interceptor in the chain is the handler itself (wrapped up to be the `:before`).
+Remember that the last interceptor in the chain is the `event handler` itself (wrapped up to be the `:before`).
 
-That's it. That's how an event gets handled.
+That's it. That's how an event gets handled. This is how Dominoes 2 and 3 happen. 
 
 
 ## What Is Context?
@@ -167,7 +168,7 @@ respectively.
 data like the `:event` being processed, and the initial state of `db`.
 
 The handler-returned side effects are put into `:effects` including,
-but not limited to, new values for `db`.
+but not limited to, new values for `app-db`.
 
 The first few interceptors in a chain (the ones inserted by `reg-event-db`)
 have `:before` functions which __prime__ the `:coeffects`
@@ -181,10 +182,39 @@ Equally, some interceptors in the chain will have an `:after` function
 which processes the side effects accumulated into `:effects`
 including, but not limited to, updates to `app-db`.
 
+## Threading the Context
+
+Above we imagined an interceptor chain like: `[std1 std2 in1 in2 h]`.
+One way to imagine the whole event handling process would be to see it written like this:
+
+```clj
+(let [context {:coeffects {}  :effects {}]    ;; create a context map 
+
+  (-> context              
+      ;; thread `context` through all the `:before` fucntions     
+      ((:before std1) )         ;; noop 
+      ((:before std2) )         ;; adds `:event` and `:db` to `:coeffects`
+      ((:before in1) )
+      ((:before in2) )
+      ((:before h) )            ;; domino 2 - event handler called and result put in `:coeffects`
+
+      ;; Now backwards through the `:after` functions
+      ;; This phase is usually concerned with building up or processing `:coeffects`
+      ;; But could involve side effects like logging, or undo/redo state actions
+      ((:after  h) )            ;; noop
+      ((:after  in1) )
+      ((:after  in1) )
+      ((:after  std2) )         ;; noop
+      ((:after  std1) )         ;; domino 3 - all the `:effects` are processed 
+```
+
+
+
 ## Self Modifying
 
+There's something not shown in the above scematic. 
 Through both stages (the `:before` sweep and the `:after` sweep), 
-`context` also contains a `:queue` key which is the 
+`context` **also** contains a `:queue` key which is the 
 interceptors yet to be processed, and a `:stack` key of the interceptors
 already done.
 
@@ -200,10 +230,9 @@ and removed from the `:queue` by Interceptors already in the chain.
 >   -- Galileo Galilei
 
 This elegant and flexible arrangement was originally
-designed by the talented
-[Pedestal Team](https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md). Thanks!
+designed by the [Pedestal Team](https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md). Thanks!
 
-## Write An Interceptor
+## Let's Write An Interceptor
 
 Dunno about you, but I'm easily offended by underscores.
 
@@ -260,7 +289,7 @@ As you read this, look back to what a `context` looks like.
 
 Notes:
 
-  1. We use `->interceptor` to create an interceptor (which is just a map)
+  1. We use the API function `->interceptor` to create an interceptor (which is just a map)
   2. Our interceptor only has a `:before` function
   3. Our `:before` is given `context`.  It modifies it and returns it.
   4. There is no `:after` for this Interceptor. It has nothing to do
@@ -295,12 +324,12 @@ Interceptor which wraps that handler:
 ```clj
 (defn db-handler->interceptor
   [db-handler-fn]
-  (re-frame.core/->interceptor     ;; a utility function supplied by re-frame
+  (re-frame.core/->interceptor     ;; an API function supplied by re-frame
     :id     :db-handler            ;; ids are decorative only
-    :before (fn [context]
+    :before (fn [context]          ;; this interceptor only has a `:before
               (let [{:keys [db event]} (:coeffects context)    ;; extract db and event from coeffects
-                    new-db (db-handler-fn db event)]           ;; call the handler
-                 (assoc-in context [:effects :db] new-db)))))) ;; put db back into :effects
+                    new-db (db-handler-fn db event)]           ;; call the event handler
+                 (assoc-in context [:effects :db] new-db)))))) ;; put db back into :effects, as `:db` effect
 ```
 
 Notes:
@@ -320,7 +349,7 @@ Feeling confident?  Try writing the wrapper for `-fx` handlers - it is just a sm
 
 In this tutorial, we've learned:
 
-__1.__ When you register an event handler, you can supply a collection of interceptors:
+__1.__ When you register an event handler, you can supply a collection of `Interceptors`:
 ```clj
  (reg-event-db
     :some-id

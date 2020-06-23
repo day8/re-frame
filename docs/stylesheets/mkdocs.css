@@ -24,9 +24,11 @@ h1[id=_1] {
   color: #00aeff;
 }
 
+/* make it blue 
+   Remove whitespace above and below, making following paragraph closer and tighter */
 .md-typeset h2 {
   color: #02a6f2;
-  margin: "1.6rem 0 -0.2rem";   /* remove whitespace above and below, making following paragraph tighter */
+  margin: "1.6rem 0 -0.2rem";   
 }
 
 /* slightly smaller font in code blocks */
