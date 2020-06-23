@@ -24,8 +24,8 @@ h1[id=_1] {
   color: #00aeff;
 }
 
-/* make it blue 
-   Remove whitespace above and below, making following paragraph closer and tighter */
+/* Make headings blue.
+   Trim whitespace above and below. In particular, less gap following paragraph. */
 .md-typeset h2 {
   color: #02a6f2;
   margin: 1.6rem 0 -0.2rem;   

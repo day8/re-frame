@@ -191,38 +191,39 @@ One way to imagine the whole event handling process would be to see it written l
 (let [context {:coeffects {}  :effects {}]    ;; create a context map 
 
   (-> context              
-      ;; thread `context` through all the `:before` fucntions     
-      ((:before std1) )         ;; noop 
-      ((:before std2) )         ;; adds `:event` and `:db` to `:coeffects`
-      ((:before in1) )
-      ((:before in2) )
-      ((:before h) )            ;; domino 2 - event handler called and result put in `:coeffects`
+    ;; thread `context` through calls to all the `:before` fucntions    
+    ;; This phase is usually concerned with building up or processing `:coeffects` 
+    ((:before std1) )      ;; noop 
+    ((:before std2) )      ;; adds `:event` and `:db` to `:coeffects`
+    ((:before in1) )
+    ((:before in2) )
+    ((:before h) )         ;; Domino 2 - handler is called and result goes into `:coeffects`
 
-      ;; Now backwards through the `:after` functions
-      ;; This phase is usually concerned with building up or processing `:coeffects`
-      ;; But could involve side effects like logging, or undo/redo state actions
-      ((:after  h) )            ;; noop
-      ((:after  in1) )
-      ((:after  in1) )
-      ((:after  std2) )         ;; noop
-      ((:after  std1) )         ;; domino 3 - all the `:effects` are processed 
+    ;; Now backwards through the `:after` functions
+    ;; This phase is usually concerned with building up or processing `:effects`
+    ;; But could involve side effects like logging, or undo/redo state actions
+    ((:after  h) )         ;; noop
+    ((:after  in2) )
+    ((:after  in1) )
+    ((:after  std2) )      ;; noop
+    ((:after  std1) )      ;; Domino 3 - all the `:effects` are processed 
 ```
 
 
 
 ## Self Modifying
 
-There's something not shown in the above scematic. 
+There's something not shown in the above schematic. 
 Through both stages (the `:before` sweep and the `:after` sweep), 
-`context` **also** contains a `:queue` key which is the 
-interceptors yet to be processed, and a `:stack` key of the interceptors
-already done.
+`context` **also** contains a `:queue` key which is the queue
+interceptors yet to be processed, and a `:stack` key which is vector of  
+of the interceptors already done.
 
-In advanced cases, these values within a `context` can be modified by the `:before` and `:after` 
-functions through which the `context` is threaded.
+In advanced cases, these two values, within a `context`, can be modified by the 
+`:before` and `:after` functions through which the `context` is threaded.
 
-What I'm saying is that interceptors can be dynamically added
-and removed from the `:queue` by Interceptors already in the chain.
+So interceptors can be dynamically added
+and removed from `:queue` and `:stack` by Interceptors already in the chain.
 
 ## Credit
 
@@ -250,7 +251,7 @@ We'd have to write this event handler:
      (dissoc db key-to-delete)))
 ```
 
-Do you see it there? In the event destructuring!!! Almost mocking us with that
+Do you see it there? That `_` in the event destructuring!!! Almost mocking us with that
 passive aggressive, understated thing it has going on!! Co-workers
 have said I'm "being overly sensitive", perhaps even pixel-ist, but
 you can see it too, right? Of course you can.
