@@ -1722,25 +1722,26 @@ including, but not limited to, updates to <code>app-db</code>.</p>
 <h2 id="threading-the-context">Threading the Context<a class="headerlink" href="#threading-the-context" title="Permanent link">&para;</a></h2>
 <p>Above we imagined an interceptor chain like: <code>[std1 std2 in1 in2 h]</code>.
 One way to imagine the whole event handling process would be to see it written like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">context</span> <span class="p">{</span><span class="ss">:coeffects</span> <span class="p">{}</span>  <span class="ss">:effects</span> <span class="p">{}]</span>    <span class="c1">;; create a context map </span>
+<div class="codehilite"><pre><span></span><code> <span class="c1">;; start by creating a context map </span>
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">context</span> <span class="p">{</span><span class="ss">:coeffects</span> <span class="p">{}</span>  <span class="ss">:effects</span> <span class="p">{}</span> <span class="nv">...</span><span class="p">}]</span>
 
   <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">context</span>              
-    <span class="c1">;; thread `context` through calls to all the `:before` fucntions    </span>
-    <span class="c1">;; This phase is usually concerned with building up or processing `:coeffects` </span>
-    <span class="p">((</span><span class="ss">:before</span> <span class="nv">std1</span><span class="p">)</span> <span class="p">)</span>      <span class="c1">;; noop </span>
-    <span class="p">((</span><span class="ss">:before</span> <span class="nv">std2</span><span class="p">)</span> <span class="p">)</span>      <span class="c1">;; adds `:event` and `:db` to `:coeffects`</span>
+    <span class="c1">;; Thread `context` through all the `:before` functions.</span>
+    <span class="c1">;; This phase is usually concerned with building up `:coeffects`</span>
+    <span class="p">((</span><span class="ss">:before</span> <span class="nv">std1</span><span class="p">)</span> <span class="p">)</span>    <span class="c1">;; noop </span>
+    <span class="p">((</span><span class="ss">:before</span> <span class="nv">std2</span><span class="p">)</span> <span class="p">)</span>    <span class="c1">;; adds `:event` and `:db` to `:coeffects`</span>
     <span class="p">((</span><span class="ss">:before</span> <span class="nv">in1</span><span class="p">)</span> <span class="p">)</span>
     <span class="p">((</span><span class="ss">:before</span> <span class="nv">in2</span><span class="p">)</span> <span class="p">)</span>
-    <span class="p">((</span><span class="ss">:before</span> <span class="nv">h</span><span class="p">)</span> <span class="p">)</span>         <span class="c1">;; Domino 2 - handler is called and result goes into `:coeffects`</span>
+    <span class="p">((</span><span class="ss">:before</span> <span class="nv">h</span><span class="p">)</span> <span class="p">)</span>       <span class="c1">;; Domino 2 - handler called &amp; result put into `:coeffects`</span>
 
     <span class="c1">;; Now backwards through the `:after` functions</span>
     <span class="c1">;; This phase is usually concerned with building up or processing `:effects`</span>
-    <span class="c1">;; But could involve side effects like logging, or undo/redo state actions</span>
-    <span class="p">((</span><span class="ss">:after</span>  <span class="nv">h</span><span class="p">)</span> <span class="p">)</span>         <span class="c1">;; noop</span>
+    <span class="c1">;; But could involve side effects like logging, or undo/redo state actions, etc</span>
+    <span class="p">((</span><span class="ss">:after</span>  <span class="nv">h</span><span class="p">)</span> <span class="p">)</span>       <span class="c1">;; noop</span>
     <span class="p">((</span><span class="ss">:after</span>  <span class="nv">in2</span><span class="p">)</span> <span class="p">)</span>
     <span class="p">((</span><span class="ss">:after</span>  <span class="nv">in1</span><span class="p">)</span> <span class="p">)</span>
-    <span class="p">((</span><span class="ss">:after</span>  <span class="nv">std2</span><span class="p">)</span> <span class="p">)</span>      <span class="c1">;; noop</span>
-    <span class="p">((</span><span class="ss">:after</span>  <span class="nv">std1</span><span class="p">)</span> <span class="p">)</span>      <span class="c1">;; Domino 3 - all the `:effects` are processed </span>
+    <span class="p">((</span><span class="ss">:after</span>  <span class="nv">std2</span><span class="p">)</span> <span class="p">)</span>    <span class="c1">;; noop</span>
+    <span class="p">((</span><span class="ss">:after</span>  <span class="nv">std1</span><span class="p">)</span> <span class="p">)</span>    <span class="c1">;; Domino 3 - all the `:effects` are processed </span>
 </code></pre></div>
 
 
