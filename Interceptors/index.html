@@ -595,6 +595,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#threading-the-context" class="md-nav__link">
+    Threading the Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#self-modifying" class="md-nav__link">
     Self Modifying
   </a>
@@ -609,8 +616,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#write-an-interceptor" class="md-nav__link">
-    Write An Interceptor
+  <a href="#lets-write-an-interceptor" class="md-nav__link">
+    Let's Write An Interceptor
   </a>
   
 </li>
@@ -1507,6 +1514,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#threading-the-context" class="md-nav__link">
+    Threading the Context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#self-modifying" class="md-nav__link">
     Self Modifying
   </a>
@@ -1521,8 +1535,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#write-an-interceptor" class="md-nav__link">
-    Write An Interceptor
+  <a href="#lets-write-an-interceptor" class="md-nav__link">
+    Let's Write An Interceptor
   </a>
   
 </li>
@@ -1570,20 +1584,20 @@
                 
                   <h1>Interceptors</h1>
                 
-                <p>This tutorial explains re-frame Interceptors. Along the way, you'll
-better understand the mechanics of re-frame event handling.</p>
+                <p>This tutorial explains re-frame <code>Interceptors</code>. Until now, they have been a hidden detail
+but, as we are about to find out, they are both important and useful. </p>
 <p>As you read this, please refer back to the 3rd panel of the
 <a href="../event-handling-infographic/">Infographic</a>.</p>
 <h2 id="why-interceptors">Why Interceptors?<a class="headerlink" href="#why-interceptors" title="Permanent link">&para;</a></h2>
-<p>Two reasons.</p>
+<p>There's two reasons.</p>
 <p><strong>First</strong>, we want simple event handlers.</p>
 <p>Interceptors can look after "cross-cutting" concerns like undo, tracing and validation.
 They help us to factor out commonality, hide complexity and introduce further steps into the "Derived Data,
 Flowing" story promoted by re-frame.</p>
 <p>So, you'll want to use Interceptors because they solve problems, and help you to write nice code.</p>
-<p><strong>Second</strong>, under the covers, Interceptors provide the mechanism by which
-event handlers are executed. They are a central concept and understanding 
-them better will serve you well, even if you don't need to directly use them very often. </p>
+<p><strong>Second</strong>, under the covers, Interceptors provide the mechanism underneath Dominos 2 and 3. 
+They are a central concept and understanding them better will serve you well, even if 
+you don't need to directly use them very often. </p>
 <h2 id="what-do-interceptors-do">What Do Interceptors Do?<a class="headerlink" href="#what-do-interceptors-do" title="Permanent link">&para;</a></h2>
 <p>They wrap.</p>
 <p>Specifically, they wrap event handlers.</p>
@@ -1594,13 +1608,14 @@ pair of bread slices around the outside of the existing sandwich to make
 a sandwich of the sandwich. Now it is a very thick sandwich.</p>
 <p>Interceptors wrap on both sides of an event handler, layer after layer.</p>
 <h2 id="wait-i-know-that-pattern">Wait, I know That Pattern!<a class="headerlink" href="#wait-i-know-that-pattern" title="Permanent link">&para;</a></h2>
-<p>Interceptors implement middleware. But differently.</p>
-<p>Traditional middleware - often seen in web servers - creates a data
+<p>Interceptors implement <code>middleware</code>, but differently.</p>
+<p>Traditional <code>middleware</code> - often seen in web servers - creates a data
 processing pipeline (to process arriving HTTP requests) via the nested composition of higher order functions.
 The result is a "stack" of functions. Data representing a request flows through this pipeline,
 first forwards from one end to the other, and then backwards (as the response).</p>
 <p>Interceptors achieve the same outcome by assembling functions, as data,
-in a collection (a chain, rather than a stack). Data can then be iteratively
+in a collection - a chain of interceptors, rather than a stack of middleware. 
+Data can then be iteratively
 pipelined, first forwards through the functions in the chain,
 and then backwards along the same chain.</p>
 <p>Because the interceptor pipeline is composed via a collection (data!), rather than
@@ -1611,9 +1626,9 @@ higher order functions, it is a more flexible arrangement.</p>
 <p>With a web server, the middleware "stack" progressively
 transforms an <code>HTTP request</code> in one direction, and, then in the backwards
 sweep, it progressively produces a <code>response</code>.</p>
-<p>In re-frame, the forwards sweep progressively creates <code>coeffects</code>
-(inputs to the event handler), while the backwards sweep processes the <code>effects</code>
-(outputs from the event handler).</p>
+<p>In re-frame, the forward sweep progressively creates <code>coeffects</code>
+(inputs to the event handler that you write), while the backwards sweep processes the <code>effects</code>
+(outputs from the event handler you write).</p>
 <p>I'll pause while you read that sentence again. That's the key
 concept, right there.</p>
 <h2 id="show-me">Show Me<a class="headerlink" href="#show-me" title="Permanent link">&para;</a></h2>
@@ -1621,7 +1636,7 @@ concept, right there.</p>
 <p>Using a 3-arity registration function:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
    <span class="ss">:some-id</span>
-   <span class="p">[</span><span class="nv">in1</span> <span class="nv">in2</span><span class="p">]</span>       <span class="c1">;; &lt;--- a chain of 2 interceptors (a vector of 2 interceptors)</span>
+   <span class="p">[</span><span class="nv">in1</span> <span class="nv">in2</span><span class="p">]</span>       <span class="c1">;; &lt;-- a chain of 2 interceptors (a vector of 2 interceptors)</span>
    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">v</span><span class="p">]</span>      <span class="c1">;; &lt;-- the handler here, as before</span>
       <span class="nv">....</span><span class="p">)))</span>
 </code></pre></div>
@@ -1631,17 +1646,17 @@ concept, right there.</p>
 <p>Each Event Handler can have its own tailored interceptor chain, provided at registration-time.</p>
 </div>
 <h2 id="handlers-are-interceptors-too">Handlers Are Interceptors Too<a class="headerlink" href="#handlers-are-interceptors-too" title="Permanent link">&para;</a></h2>
-<p>You might see that registration above as associating <code>:some-id</code> with
+<p>You could see that registration above as associating <code>:some-id</code> with
 two things:</p>
 <ol>
 <li>a chain of 2 interceptors <code>[in1 in2]</code></li>
-<li>a <code>handler</code>.</li>
+<li>an <code>event handler</code>.</li>
 </ol>
-<p>Except, the <code>handler</code> is turned into an interceptor too (we'll see how shortly).</p>
-<p>So <code>:some-id</code> is only associated with one thing: a 3-chain of interceptors,
-with the <code>handler</code> wrapped in an interceptor, called say <code>i</code>, and put on the
-end of the other two: <code>[in1 in2 i]</code>.</p>
-<p>Except, the registration function itself, <code>reg-event-db</code>, actually takes this 3-chain
+<p>Except, the <code>event handler</code> is turned into an interceptor too (we'll see how shortly).</p>
+<p>So, <strong><em>actually</em></strong>, <code>:some-id</code> is only associated with one thing: a 3-chain of interceptors,
+with the <code>event handler</code> wrapped in an interceptor, called say <code>i</code>, and put on the
+end of the other two, forming a vector of three interceptors: <code>[in1 in2 i]</code>.</p>
+<p>But wait, there's more. The registration function itself, <code>reg-event-db</code>, actually takes this 3-chain
 and inserts its own standard interceptors, called say <code>std1</code> and <code>std2</code>
 (which do useful things, again more soon) at the front,
 so <strong>ACTUALLY</strong>, there's about 5 interceptors in the chain: <code>[std1 std2 in1 in2 h]</code></p>
@@ -1651,9 +1666,9 @@ with <strong>just</strong> a chain of interceptors. Nothing more.</p>
 interceptors will be "executed".  And that's how an event gets handled.</p>
 <h2 id="the-links-of-the-chain">The Links Of The Chain<a class="headerlink" href="#the-links-of-the-chain" title="Permanent link">&para;</a></h2>
 <p>Each interceptor has this form:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:id</span>      <span class="ss">:something</span>             <span class="c1">;; decorative only</span>
- <span class="ss">:before</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span> <span class="nv">...</span><span class="p">)</span>     <span class="c1">;; returns a possibly modified context</span>
- <span class="ss">:after</span>   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span> <span class="nv">...</span><span class="p">)}</span>    <span class="c1">;; same as `:before` </span>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:id</span>      <span class="ss">:something</span>             <span class="c1">;; decorative only - can be ignored</span>
+ <span class="ss">:before</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span> <span class="nv">...</span><span class="p">)</span>     <span class="c1">;; returns a possibly modified `context`</span>
+ <span class="ss">:after</span>   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span> <span class="nv">...</span><span class="p">)}</span>    <span class="c1">;; returns a possibly modified `context`</span>
 </code></pre></div>
 
 
@@ -1664,12 +1679,12 @@ a <code>:before</code> and <code>:after</code> fn.</p>
 <p>Sometimes, the <code>:before</code> and <code>:after</code> functions are noops - they take a <code>context</code> and return that <code>context</code> unchanged - think <code>identity</code>.</p>
 <p>To "execute" an interceptor chain:</p>
 <ol>
-<li>create a <code>context</code> (a map, described below)</li>
-<li>iterate forwards over the chain, calling the <code>:before</code> function on each interceptor</li>
-<li>iterate over the chain in the opposite direction calling the <code>:after</code> function on each interceptor</li>
+<li>create a <code>context</code> (which is a <code>map</code> with a certain structure, described below)</li>
+<li>iterate forwards over the chain, calling the <code>:before</code> function on each interceptor, threading <code>context</code> through each call. </li>
+<li>iterate over the chain in the opposite (backwards) direction calling the <code>:after</code> function on each interceptor and threading <code>context</code> through all the calls</li>
 </ol>
-<p>Remember that the last interceptor in the chain is the handler itself (wrapped up to be the <code>:before</code>).</p>
-<p>That's it. That's how an event gets handled.</p>
+<p>Remember that the last interceptor in the chain is the <code>event handler</code> itself (wrapped up to be the <code>:before</code>).</p>
+<p>That's it. That's how an event gets handled. This is how Dominoes 2 and 3 happen. </p>
 <h2 id="what-is-context">What Is Context?<a class="headerlink" href="#what-is-context" title="Permanent link">&para;</a></h2>
 <p>Some data called a <code>context</code> is threaded through all the calls.</p>
 <p>This value is passed as the argument to every <code>:before</code> and <code>:after</code>
@@ -1693,7 +1708,7 @@ respectively.</p>
 (sitting presumably on the end of the chain). So that's
 data like the <code>:event</code> being processed, and the initial state of <code>db</code>.</p>
 <p>The handler-returned side effects are put into <code>:effects</code> including,
-but not limited to, new values for <code>db</code>.</p>
+but not limited to, new values for <code>app-db</code>.</p>
 <p>The first few interceptors in a chain (the ones inserted by <code>reg-event-db</code>)
 have <code>:before</code> functions which <strong>prime</strong> the <code>:coeffects</code>
 by adding in <code>:event</code>, and <code>:db</code>.  Of course, other interceptors can
@@ -1704,9 +1719,34 @@ DataScript connection. Interceptors can accumulate interesting information into
 <p>Equally, some interceptors in the chain will have an <code>:after</code> function
 which processes the side effects accumulated into <code>:effects</code>
 including, but not limited to, updates to <code>app-db</code>.</p>
+<h2 id="threading-the-context">Threading the Context<a class="headerlink" href="#threading-the-context" title="Permanent link">&para;</a></h2>
+<p>Above we imagined an interceptor chain like: <code>[std1 std2 in1 in2 h]</code>.
+One way to imagine the whole event handling process would be to see it written like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">context</span> <span class="p">{</span><span class="ss">:coeffects</span> <span class="p">{}</span>  <span class="ss">:effects</span> <span class="p">{}]</span>    <span class="c1">;; create a context map </span>
+
+  <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">context</span>              
+      <span class="c1">;; thread `context` through all the `:before` fucntions     </span>
+      <span class="p">((</span><span class="ss">:before</span> <span class="nv">std1</span><span class="p">)</span> <span class="p">)</span>         <span class="c1">;; noop </span>
+      <span class="p">((</span><span class="ss">:before</span> <span class="nv">std2</span><span class="p">)</span> <span class="p">)</span>         <span class="c1">;; adds `:event` and `:db` to `:coeffects`</span>
+      <span class="p">((</span><span class="ss">:before</span> <span class="nv">in1</span><span class="p">)</span> <span class="p">)</span>
+      <span class="p">((</span><span class="ss">:before</span> <span class="nv">in2</span><span class="p">)</span> <span class="p">)</span>
+      <span class="p">((</span><span class="ss">:before</span> <span class="nv">h</span><span class="p">)</span> <span class="p">)</span>            <span class="c1">;; domino 2 - event handler called and result put in `:coeffects`</span>
+
+      <span class="c1">;; Now backwards through the `:after` functions</span>
+      <span class="c1">;; This phase is usually concerned with building up or processing `:coeffects`</span>
+      <span class="c1">;; But could involve side effects like logging, or undo/redo state actions</span>
+      <span class="p">((</span><span class="ss">:after</span>  <span class="nv">h</span><span class="p">)</span> <span class="p">)</span>            <span class="c1">;; noop</span>
+      <span class="p">((</span><span class="ss">:after</span>  <span class="nv">in1</span><span class="p">)</span> <span class="p">)</span>
+      <span class="p">((</span><span class="ss">:after</span>  <span class="nv">in1</span><span class="p">)</span> <span class="p">)</span>
+      <span class="p">((</span><span class="ss">:after</span>  <span class="nv">std2</span><span class="p">)</span> <span class="p">)</span>         <span class="c1">;; noop</span>
+      <span class="p">((</span><span class="ss">:after</span>  <span class="nv">std1</span><span class="p">)</span> <span class="p">)</span>         <span class="c1">;; domino 3 - all the `:effects` are processed </span>
+</code></pre></div>
+
+
 <h2 id="self-modifying">Self Modifying<a class="headerlink" href="#self-modifying" title="Permanent link">&para;</a></h2>
-<p>Through both stages (the <code>:before</code> sweep and the <code>:after</code> sweep), 
-<code>context</code> also contains a <code>:queue</code> key which is the 
+<p>There's something not shown in the above scematic. 
+Through both stages (the <code>:before</code> sweep and the <code>:after</code> sweep), 
+<code>context</code> <strong>also</strong> contains a <code>:queue</code> key which is the 
 interceptors yet to be processed, and a <code>:stack</code> key of the interceptors
 already done.</p>
 <p>In advanced cases, these values within a <code>context</code> can be modified by the <code>:before</code> and <code>:after</code> 
@@ -1719,9 +1759,8 @@ and removed from the <code>:queue</code> by Interceptors already in the chain.</
   -- Galileo Galilei</p>
 </blockquote>
 <p>This elegant and flexible arrangement was originally
-designed by the talented
-<a href="https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md">Pedestal Team</a>. Thanks!</p>
-<h2 id="write-an-interceptor">Write An Interceptor<a class="headerlink" href="#write-an-interceptor" title="Permanent link">&para;</a></h2>
+designed by the <a href="https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md">Pedestal Team</a>. Thanks!</p>
+<h2 id="lets-write-an-interceptor">Let's Write An Interceptor<a class="headerlink" href="#lets-write-an-interceptor" title="Permanent link">&para;</a></h2>
 <p>Dunno about you, but I'm easily offended by underscores.</p>
 <p>Imagine we had a view which did this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:delete-item</span> <span class="mi">42</span><span class="p">])</span>
@@ -1771,7 +1810,7 @@ being processed, we already know what <code>id</code> it has.</p>
 <p>As you read this, look back to what a <code>context</code> looks like.</p>
 <p>Notes:</p>
 <ol>
-<li>We use <code>-&gt;interceptor</code> to create an interceptor (which is just a map)</li>
+<li>We use the API function <code>-&gt;interceptor</code> to create an interceptor (which is just a map)</li>
 <li>Our interceptor only has a <code>:before</code> function</li>
 <li>Our <code>:before</code> is given <code>context</code>.  It modifies it and returns it.</li>
 <li>There is no <code>:after</code> for this Interceptor. It has nothing to do
@@ -1800,12 +1839,12 @@ whole <code>[std1 std2 in1 in2 h]</code> thing?</p>
 Interceptor which wraps that handler:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">db-handler-&gt;interceptor</span>
   <span class="p">[</span><span class="nv">db-handler-fn</span><span class="p">]</span>
-  <span class="p">(</span><span class="nf">re-frame.core/-&gt;interceptor</span>     <span class="c1">;; a utility function supplied by re-frame</span>
+  <span class="p">(</span><span class="nf">re-frame.core/-&gt;interceptor</span>     <span class="c1">;; an API function supplied by re-frame</span>
     <span class="ss">:id</span>     <span class="ss">:db-handler</span>            <span class="c1">;; ids are decorative only</span>
-    <span class="ss">:before</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span>
+    <span class="ss">:before</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span>          <span class="c1">;; this interceptor only has a `:before</span>
               <span class="p">(</span><span class="k">let </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span> <span class="nv">event</span><span class="p">]}</span> <span class="p">(</span><span class="ss">:coeffects</span> <span class="nv">context</span><span class="p">)</span>    <span class="c1">;; extract db and event from coeffects</span>
-                    <span class="nv">new-db</span> <span class="p">(</span><span class="nf">db-handler-fn</span> <span class="nv">db</span> <span class="nv">event</span><span class="p">)]</span>           <span class="c1">;; call the handler</span>
-                 <span class="p">(</span><span class="nf">assoc-in</span> <span class="nv">context</span> <span class="p">[</span><span class="ss">:effects</span> <span class="ss">:db</span><span class="p">]</span> <span class="nv">new-db</span><span class="p">))))))</span> <span class="c1">;; put db back into :effects</span>
+                    <span class="nv">new-db</span> <span class="p">(</span><span class="nf">db-handler-fn</span> <span class="nv">db</span> <span class="nv">event</span><span class="p">)]</span>           <span class="c1">;; call the event handler</span>
+                 <span class="p">(</span><span class="nf">assoc-in</span> <span class="nv">context</span> <span class="p">[</span><span class="ss">:effects</span> <span class="ss">:db</span><span class="p">]</span> <span class="nv">new-db</span><span class="p">))))))</span> <span class="c1">;; put db back into :effects, as `:db` effect</span>
 </code></pre></div>
 
 
@@ -1823,7 +1862,7 @@ Interceptor which wraps that handler:</p>
 <p>Feeling confident?  Try writing the wrapper for <code>-fx</code> handlers - it is just a small variation.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>In this tutorial, we've learned:</p>
-<p><strong>1.</strong> When you register an event handler, you can supply a collection of interceptors:</p>
+<p><strong>1.</strong> When you register an event handler, you can supply a collection of <code>Interceptors</code>:</p>
 <div class="codehilite"><pre><span></span><code> <span class="p">(</span><span class="nf">reg-event-db</span>
     <span class="ss">:some-id</span>
     <span class="p">[</span><span class="nv">in1</span> <span class="nv">in2</span><span class="p">]</span>       <span class="c1">;; &lt;--- a chain of 2 interceptors</span>
