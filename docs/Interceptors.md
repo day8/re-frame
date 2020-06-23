@@ -188,27 +188,27 @@ Above we imagined an interceptor chain like: `[std1 std2 in1 in2 h]`.
 One way to imagine the whole event handling process would be to see it written like this:
 
 ```clj
-(let [context {:coeffects {}  :effects {}]    ;; create a context map 
+ ;; start by creating a context map 
+(let [context {:coeffects {}  :effects {} ...}]
 
   (-> context              
-    ;; thread `context` through calls to all the `:before` fucntions    
-    ;; This phase is usually concerned with building up or processing `:coeffects` 
-    ((:before std1) )      ;; noop 
-    ((:before std2) )      ;; adds `:event` and `:db` to `:coeffects`
+    ;; Thread `context` through all the `:before` functions.
+    ;; This phase is usually concerned with building up `:coeffects`
+    ((:before std1) )    ;; noop 
+    ((:before std2) )    ;; adds `:event` and `:db` to `:coeffects`
     ((:before in1) )
     ((:before in2) )
-    ((:before h) )         ;; Domino 2 - handler is called and result goes into `:coeffects`
+    ((:before h) )       ;; Domino 2 - handler called & result put into `:coeffects`
 
     ;; Now backwards through the `:after` functions
     ;; This phase is usually concerned with building up or processing `:effects`
-    ;; But could involve side effects like logging, or undo/redo state actions
-    ((:after  h) )         ;; noop
+    ;; But could involve side effects like logging, or undo/redo state actions, etc
+    ((:after  h) )       ;; noop
     ((:after  in2) )
     ((:after  in1) )
-    ((:after  std2) )      ;; noop
-    ((:after  std1) )      ;; Domino 3 - all the `:effects` are processed 
+    ((:after  std2) )    ;; noop
+    ((:after  std1) )    ;; Domino 3 - all the `:effects` are processed 
 ```
-
 
 
 ## Self Modifying
