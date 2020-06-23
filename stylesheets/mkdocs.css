@@ -26,7 +26,7 @@ h1[id=_1] {
 
 .md-typeset h2 {
   color: #02a6f2;
-  margin: "1.6rem 0 -0.2rem"   /* this removes a bit of whitespace above and below */
+  margin: "1.6rem 0 -0.2rem";   /* remove whitespace above and below, making following paragraph tighter */
 }
 
 /* slightly smaller font in code blocks */
