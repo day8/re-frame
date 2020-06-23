@@ -97,13 +97,13 @@ two things:
 Except, the `event handler` is turned into an interceptor too (we'll see how shortly).
 
 So, ***actually***, `:some-id` is only associated with one thing: a 3-chain of interceptors,
-with the `event handler` wrapped in an interceptor, called say `i`, and put on the
-end of the other two, forming a vector of three interceptors: `[in1 in2 i]`.
+with the `event handler` wrapped in an interceptor, called say `ih`, and put on the
+end of the other two, forming a vector of three interceptors: `[in1 in2 ih]`.
 
 But wait, there's more. The registration function itself, `reg-event-db`, actually takes this 3-chain
 and inserts its own standard interceptors, called say `std1` and `std2`
 (which do useful things, again more soon) at the front,
-so **ACTUALLY**, there's about 5 interceptors in the chain: `[std1 std2 in1 in2 h]`
+so **ACTUALLY**, there's about 5 interceptors in the chain: `[std1 std2 in1 in2 ih]`
 
 So, ultimately, that event registration associates the event id `:some-id`
 with __just__ a chain of interceptors. Nothing more.
@@ -123,7 +123,7 @@ Each interceptor has this form:
 
 That's essentially a map of two functions. Now imagine a vector of these maps - that's an interceptor chain.
 
-Above we imagined an interceptor chain of `[std1 std2 in1 in2 h]`. Now we know that this is really
+Above we imagined an interceptor chain of `[std1 std2 in1 in2 ih]`. Now we know that this is really
 a vector of 5 maps: `[{...} {...} {...} {...} {...}]`  where each of the 5 maps have
 a `:before` and `:after` fn.
 
@@ -184,7 +184,7 @@ including, but not limited to, updates to `app-db`.
 
 ## Threading the Context
 
-Above we imagined an interceptor chain like: `[std1 std2 in1 in2 h]`.
+Above we imagined an interceptor chain like: `[std1 std2 in1 in2 ih]`.
 One way to imagine the whole event handling process would be to see it written like this:
 
 ```clj
@@ -198,12 +198,12 @@ One way to imagine the whole event handling process would be to see it written l
     ((:before std2) )    ;; adds `:event` and `:db` to `:coeffects`
     ((:before in1) )
     ((:before in2) )
-    ((:before h) )       ;; Domino 2 - handler called & result put into `:coeffects`
+    ((:before ih) )      ;; Domino 2 - handler called & result put into `:coeffects`
 
     ;; Now backwards through the `:after` functions
     ;; This phase is usually concerned with building up or processing `:effects`
     ;; But could involve side effects like logging, or undo/redo state actions, etc
-    ((:after  h) )       ;; noop
+    ((:after  ih) )      ;; noop
     ((:after  in2) )
     ((:after  in1) )
     ((:after  std2) )    ;; noop
@@ -303,9 +303,9 @@ We're going well. Let's do an advanced wrapping.
 
 Earlier, in the "Handlers Are Interceptors Too" section, I explained that `event handlers`
 are wrapped in an Interceptor and placed on the end of an Interceptor chain.  Remember the
-whole `[std1 std2 in1 in2 h]` thing?
+whole `[std1 std2 in1 in2 ih]` thing?
 
-We'll now look at the `h` bit. How does an `event handler` get wrapped to be an Interceptor?
+We'll now look at the `ih` bit. How does an `event handler` get wrapped to be an Interceptor?
 
 Reminder - there's two kinds of event handler:
 
@@ -354,16 +354,17 @@ __1.__ When you register an event handler, you can supply a collection of `Inter
 ```clj
  (reg-event-db
     :some-id
-    [in1 in2]       ;; <--- a chain of 2 interceptors
+    [in1 in2]       ;; <-- a chain of 2 interceptors
     (fn [db v]      ;; <-- real handler here
        ....)))
 ```
 
 __2.__ When you are registering an event handler, you are associating an event id with a chain of interceptors including:
 
-  - the ones you supply (optional)
-  - an extra one on the end, which wraps the event handler itself
-  - a couple at the beginning of the chain, put there by the `reg-event-db` or `reg-event-fx`.
+  - the ones you supply (optional)  `in1` and `in2`
+  - an extra one on the end, which wraps the event handler itself  (we called it `ih`)
+  - a couple at the beginning of the chain `std1` & `std2`, put there by the `reg-event-db` or `reg-event-fx`.
+  - the entire interceptor chain might end up a vector of 5 - `[std1 std2 in1 in2 ih]`
 
 __3.__ An Interceptor Chain is executed in two stages. First a forwards sweep in which
   all `:before` functions are called, and then second, a backwards sweep in which the
