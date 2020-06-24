@@ -6,7 +6,7 @@
 
 (defn on-load
       [listener]
-      (events/listen js/window "load" listener))
+      (events/listen js/self "load" listener))
 
 (def next-tick goog.async.nextTick)
 
