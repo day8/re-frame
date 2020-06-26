@@ -57,7 +57,7 @@ Consider hiccup. It is a domain-specific language (DSL)
 for describing DOM.  You make a data structure in the right format
 and Reagent acts as the "interpreter" which executes that "language".
 
-We can use pure data litterals:
+We can use pure data literals:
 ```clj
 [:div {:font-size 12} "Hello"]  ;; a data structure containing instructions
 ```
