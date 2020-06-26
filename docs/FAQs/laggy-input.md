@@ -25,14 +25,16 @@ That `on-change` handler is being called after the user types every character.  
   3. But before that event can be processed, the browser schedules an annimation frame. 
   4. In that annimation frame the component is rerendered
   5. But during that reender the `subscribe` will deliver `state A`
-  6. That means the text in the box will revert from `state A` to `state B`
-  7. Now if nothing happened till the next annimation frame the situation would resolve itself. Because `state B` would be rendered. 
-  6. BUT if the user immediaetly types another character, the state dispatched will be `State A + new character`. The extra character 
-     which caused A -> B is now lost. 
+  6. That means the text in the box will revert from `state B` to `state A` (the character just typed won't be in the input)
+  7. Now if nothing happened till the next annimation frame the situation would resolve itself. Because `state B` would be rendered next time because the event which included the 
+  new character would have been processed well before then. 
+  6. BUT if the user immediaetly types another character, the state dispatched will be `State A + new character`. The prevous character typed, 
+     which caused A -> B, is now lost. 
 
 Bottom line: with very fast typing, characters can get dropped. 
 
 There are three solutions:
+
   1. don't use `on-change`, and instead use `on-blur` which is only called when the user has done all their fast typing and they leave the field. 
   2. if you have to use `on-change` then switch to use `dispatch-sync` in `on-change`, instead of `dispatch`. The event will not be placed on the queue. It will be handled immediately. Sychonously. 
   3. use a component from something like re-com because it has been engineered to not have this problem. Or copy the (local state) technique it uses. 
