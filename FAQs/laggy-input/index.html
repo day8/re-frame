@@ -1426,16 +1426,19 @@
 <li>But before that event can be processed, the browser schedules an annimation frame. </li>
 <li>In that annimation frame the component is rerendered</li>
 <li>But during that reender the <code>subscribe</code> will deliver <code>state A</code></li>
-<li>That means the text in the box will revert from <code>state A</code> to <code>state B</code></li>
-<li>Now if nothing happened till the next annimation frame the situation would resolve itself. Because <code>state B</code> would be rendered. </li>
-<li>BUT if the user immediaetly types another character, the state dispatched will be <code>State A + new character</code>. The extra character 
-     which caused A -&gt; B is now lost. </li>
+<li>That means the text in the box will revert from <code>state B</code> to <code>state A</code> (the character just typed won't be in the input)</li>
+<li>Now if nothing happened till the next annimation frame the situation would resolve itself. Because <code>state B</code> would be rendered next time because the event which included the 
+  new character would have been processed well before then. </li>
+<li>BUT if the user immediaetly types another character, the state dispatched will be <code>State A + new character</code>. The prevous character typed, 
+     which caused A -&gt; B, is now lost. </li>
 </ol>
 <p>Bottom line: with very fast typing, characters can get dropped. </p>
-<p>There are three solutions:
-  1. don't use <code>on-change</code>, and instead use <code>on-blur</code> which is only called when the user has done all their fast typing and they leave the field. 
-  2. if you have to use <code>on-change</code> then switch to use <code>dispatch-sync</code> in <code>on-change</code>, instead of <code>dispatch</code>. The event will not be placed on the queue. It will be handled immediately. Sychonously. 
-  3. use a component from something like re-com because it has been engineered to not have this problem. Or copy the (local state) technique it uses. </p>
+<p>There are three solutions:</p>
+<ol>
+<li>don't use <code>on-change</code>, and instead use <code>on-blur</code> which is only called when the user has done all their fast typing and they leave the field. </li>
+<li>if you have to use <code>on-change</code> then switch to use <code>dispatch-sync</code> in <code>on-change</code>, instead of <code>dispatch</code>. The event will not be placed on the queue. It will be handled immediately. Sychonously. </li>
+<li>use a component from something like re-com because it has been engineered to not have this problem. Or copy the (local state) technique it uses. </li>
+</ol>
                 
               
               
