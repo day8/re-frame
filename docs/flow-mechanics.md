@@ -243,7 +243,7 @@ the `reaction` will rerun.
 
 In some cases, the returned `reaction` might not even
 use `app-db` and, instead, it might only use `subscribe` to provide input signals. In that case, the
-registered subscription would belong to "Level 3" of the signal graph (discussed in earlier tutorials).
+registered subscription would belong to "Layer 3" of the signal graph (discussed in earlier tutorials).
 
 Remember to deref any use of `app-db` and `subscribe`.  It is a rookie mistake to forget. I do it regularly.
 
