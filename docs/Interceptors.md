@@ -1,22 +1,18 @@
 This tutorial explains re-frame `Interceptors`. Until now, they have been a hidden detail
 but, as we are about to find out, they are both important and useful. 
 
-As you read this, please refer back to the 3rd panel of the
-[Infographic](event-handling-infographic.md).
-
 ## Why Interceptors?
 
 There's two reasons.
 
 __First__, we want simple event handlers.
 
-Interceptors can look after "cross-cutting" concerns like undo, tracing and validation.
-They help us to factor out commonality, hide complexity and introduce further steps into the "Derived Data,
-Flowing" story promoted by re-frame.
+Interceptors allow us nicely to look after "cross-cutting" concerns like undo, tracing 
+and validation.  They help us to factor out commonality, hide complexity and introduce further steps into the "Derived Data, Flowing" story promoted by re-frame.
 
 So, you'll want to use Interceptors because they solve problems, and help you to write nice code.
 
-__Second__, under the covers, Interceptors provide the mechanism underneath Dominos 2 and 3. 
+__Second__, under the covers, Interceptors provide **the** mechanism underneath Dominos 2 and 3. 
 They are a central concept and understanding them better will serve you well, even if 
 you don't need to directly use them very often. 
 
@@ -168,7 +164,7 @@ respectively.
 data like the `:event` being processed, and the initial state of `db`.
 
 The handler-returned side effects are put into `:effects` including,
-but not limited to, new values for `app-db`.
+but not limited to, a new value for `app-db`.
 
 The first few interceptors in a chain (the ones inserted by `reg-event-db`)
 have `:before` functions which __prime__ the `:coeffects`

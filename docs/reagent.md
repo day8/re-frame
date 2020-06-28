@@ -61,3 +61,16 @@ Look at the front page of https://www.learnreframe.com/
 ```
 
 XXX work from 
+
+## Atoms
+
+Atoms are a clojure language concept. They provide a way to store a mutable value - a value which can change over time. This value in an atom might be an int or a map ... anything. 
+
+You used the function `deref` to o obtain the value held in an atom. So if `a` is an atom, 
+then `(deref a)` will extrct the value. The shorthand is `@a`. 
+
+You can set the value of an atom with `reset!`, like this `(reset! a :foo)`. 
+
+Alternatively, you canuse `swap!` to update the value in an atom. `swap!` takes a pure function as an argument which is to perform this `update`. It is expected to takes the current value in the atom as an argument, and to return the updated value to be put back in the atom. 
+
+For example `(swap! a + 5 6)` will call the function `+` with three values:  the value in `a` and `5` and `6`. So this will effectively add 11 to the value currently in `a` and store that value back into `a`. 

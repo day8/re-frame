@@ -43,9 +43,9 @@ nav:
       - A Data Loop: a-loop.md
       - State: application-state.md
       - Code: dominoes-30k.md
+      - Infographic: event-handling-infographic.md
       - Live: dominoes-live.md
     - "INTERMEDIATE 2 & 3":
-      - Event Infographic: event-handling-infographic.md
       - Effectful Handlers: EffectfulHandlers.md
       - Interceptors.md
       - Effects.md

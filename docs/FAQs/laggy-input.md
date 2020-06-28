@@ -31,7 +31,7 @@ That `on-change` handler is being called after the user types every character.  
   6. BUT if the user immediaetly types another character, the state dispatched will be `State A + new character`. The prevous character typed, 
      which caused A -> B, is now lost. 
 
-Bottom line: with very fast typing, characters can get dropped. 
+Bottom line: with very fast typing, characters can get dropped just before annimation-frames.
 
 There are three solutions:
 
