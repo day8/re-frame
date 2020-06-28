@@ -1,7 +1,11 @@
 
-## Heading
+<a href="../images/event-dispatch.png">
+  <img src="../images/event-dispatch.png">
+</a>
 
-<img src="../images/event-dispatch.png?raw=true">
 <br>
 <br>
-<img src="../images/handling-one-event.png?raw=true">
+
+<a href="../images/event-dispatch.png">
+  <img src="../images/handling-one-event.png">
+</a>
