@@ -13,7 +13,7 @@ So, Clojurists place particular emphasis on the primacy of data.
 
 They meditate on aphorisms like **_data is the ultimate in late binding_**. They 
 exalt inequalities like `data > functions > macros`. (Disappointingly,
-they also re-watch Rich Hickey videos a bit too much, while wishing
+they also re-watch Rich Hickey videos a bit too much, and wish that
 their hair was darker and more curly.)
 
 

@@ -44,6 +44,7 @@ nav:
       - State: application-state.md
       - Code: dominoes-30k.md
       - Infographic: event-handling-infographic.md
+      - Subscriptions: subscriptions.md
       - Live: dominoes-live.md
     - "INTERMEDIATE 2 & 3":
       - Effectful Handlers: EffectfulHandlers.md
@@ -51,7 +52,7 @@ nav:
       - Effects.md
       - Coeffects.md
     - "INTERMEDIATE 4,5 & 6":
-      - Subscriptions: subscriptions.md
+      - Review TodoMVC: review-todomvc.md
       - Correcting a wrong: correcting-a-wrong.md
       - Flow Mechanics: flow-mechanics.md
     - "START CODING": start-coding.md

@@ -176,10 +176,3 @@ The `Layer 3` subscription above can be rewritten using some syntactic sugar:
   (fn [[a b] _]
        (calculate-it a b)))
 ```
-
-## Review TodoMVC
-
-Please carefully review the heavily commented subscription code
-[in the todomvc example](https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs). 
-It will provide more perspective and explanation on how to use `reg-sub` to create `Layer 2` and `Layer 3` subscriptions. Plus real examples of how to use `:<-`
-
