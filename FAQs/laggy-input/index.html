@@ -438,6 +438,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../event-handling-infographic/" title="Infographic" class="md-nav__link">
+      Infographic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../dominoes-live/" title="Live" class="md-nav__link">
       Live
     </a>
@@ -473,18 +485,6 @@
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../event-handling-infographic/" title="Event Infographic" class="md-nav__link">
-      Event Infographic
-    </a>
-  </li>
-
         
           
           
@@ -1432,7 +1432,7 @@
 <li>BUT if the user immediaetly types another character, the state dispatched will be <code>State A + new character</code>. The prevous character typed, 
      which caused A -&gt; B, is now lost. </li>
 </ol>
-<p>Bottom line: with very fast typing, characters can get dropped. </p>
+<p>Bottom line: with very fast typing, characters can get dropped just before annimation-frames.</p>
 <p>There are three solutions:</p>
 <ol>
 <li>don't use <code>on-change</code>, and instead use <code>on-blur</code> which is only called when the user has done all their fast typing and they leave the field. </li>

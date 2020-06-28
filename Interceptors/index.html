@@ -440,6 +440,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../event-handling-infographic/" title="Infographic" class="md-nav__link">
+      Infographic
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../dominoes-live/" title="Live" class="md-nav__link">
       Live
     </a>
@@ -477,18 +489,6 @@
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../event-handling-infographic/" title="Event Infographic" class="md-nav__link">
-      Event Infographic
-    </a>
-  </li>
-
         
           
           
@@ -1586,16 +1586,13 @@
                 
                 <p>This tutorial explains re-frame <code>Interceptors</code>. Until now, they have been a hidden detail
 but, as we are about to find out, they are both important and useful. </p>
-<p>As you read this, please refer back to the 3rd panel of the
-<a href="../event-handling-infographic/">Infographic</a>.</p>
 <h2 id="why-interceptors">Why Interceptors?<a class="headerlink" href="#why-interceptors" title="Permanent link">&para;</a></h2>
 <p>There's two reasons.</p>
 <p><strong>First</strong>, we want simple event handlers.</p>
-<p>Interceptors can look after "cross-cutting" concerns like undo, tracing and validation.
-They help us to factor out commonality, hide complexity and introduce further steps into the "Derived Data,
-Flowing" story promoted by re-frame.</p>
+<p>Interceptors allow us nicely to look after "cross-cutting" concerns like undo, tracing 
+and validation.  They help us to factor out commonality, hide complexity and introduce further steps into the "Derived Data, Flowing" story promoted by re-frame.</p>
 <p>So, you'll want to use Interceptors because they solve problems, and help you to write nice code.</p>
-<p><strong>Second</strong>, under the covers, Interceptors provide the mechanism underneath Dominos 2 and 3. 
+<p><strong>Second</strong>, under the covers, Interceptors provide <strong>the</strong> mechanism underneath Dominos 2 and 3. 
 They are a central concept and understanding them better will serve you well, even if 
 you don't need to directly use them very often. </p>
 <h2 id="what-do-interceptors-do">What Do Interceptors Do?<a class="headerlink" href="#what-do-interceptors-do" title="Permanent link">&para;</a></h2>
@@ -1708,7 +1705,7 @@ respectively.</p>
 (sitting presumably on the end of the chain). So that's
 data like the <code>:event</code> being processed, and the initial state of <code>db</code>.</p>
 <p>The handler-returned side effects are put into <code>:effects</code> including,
-but not limited to, new values for <code>app-db</code>.</p>
+but not limited to, a new value for <code>app-db</code>.</p>
 <p>The first few interceptors in a chain (the ones inserted by <code>reg-event-db</code>)
 have <code>:before</code> functions which <strong>prime</strong> the <code>:coeffects</code>
 by adding in <code>:event</code>, and <code>:db</code>.  Of course, other interceptors can
