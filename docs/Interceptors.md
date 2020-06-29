@@ -206,6 +206,11 @@ One way to imagine the whole event handling process would be to see it written l
     ((:after  std1) )    ;; Domino 3 - all the `:effects` are processed 
 ```
 
+## Inforgraphics
+
+<a href="../images/interceptors.png">
+  <img src="../images/interceptors.png">
+</a>
 
 ## Self Modifying
 
