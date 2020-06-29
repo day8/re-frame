@@ -1626,7 +1626,7 @@ Instead, even simpler, you can just use <code>subscribe</code> within the <code>
 the <code>reaction</code> will rerun.</p>
 <p>In some cases, the returned <code>reaction</code> might not even
 use <code>app-db</code> and, instead, it might only use <code>subscribe</code> to provide input signals. In that case, the
-registered subscription would belong to "Level 3" of the signal graph (discussed in earlier tutorials).</p>
+registered subscription would belong to "Layer 3" of the signal graph (discussed in earlier tutorials).</p>
 <p>Remember to deref any use of <code>app-db</code> and <code>subscribe</code>.  It is a rookie mistake to forget. I do it regularly.</p>
 <p>Instead of using <code>reaction</code> (a macro), you can use <code>reagent/make-reaction</code> (a utility function) which gives you the additional
 ability to attach an <code>:on-dispose</code> handler to the returned reaction, allowing you to do cleanup work when the subscription is no longer needed.
