@@ -1440,7 +1440,7 @@
 for every event handler?</p>
 <h2 id="answer-v100-onwards">Answer (v1.0.0 onwards)<a class="headerlink" href="#answer-v100-onwards" title="Permanent link">&para;</a></h2>
 <p>Yes, re-frame provides an API for registering global interceptors. </p>
-<p>The following (untested) code creates a global interceptor to keep a track of all events:</p>
+<p>The following code creates a global interceptor to keep a track of all events:</p>
 <div class="codehilite"><pre><span></span><code><span class="c1">;; We&#39;ll be recording events into this atom </span>
 <span class="c1">;; The most recent events will be at the front of the list. </span>
 <span class="p">(</span><span class="k">def </span><span class="nv">event-store</span> <span class="p">(</span><span class="nf">atom</span> <span class="p">(</span><span class="nf">list</span><span class="p">)))</span>
@@ -1453,9 +1453,9 @@ for every event handler?</p>
 
 <span class="c1">;; this interceptor will collect events and add them to the atom above</span>
 <span class="p">(</span><span class="k">def </span><span class="nv">event-collector</span>
-  <span class="p">(</span><span class="nf">re-frame.core/-&gt;interceptor</span> <span class="p">{</span>
+  <span class="p">(</span><span class="nf">re-frame.core/-&gt;interceptor</span>
     <span class="ss">:id</span>      <span class="ss">:event-collector</span>
-    <span class="ss">:before</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span>  
+    <span class="ss">:before</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span>
                <span class="p">(</span><span class="nf">swap!</span> <span class="nv">event-store</span> <span class="nv">keep-last-20</span> <span class="p">(</span><span class="nf">re-frame.core/get-coeffect</span> <span class="nv">context</span> <span class="ss">:event</span><span class="p">))</span>
                <span class="nv">context</span><span class="p">)))</span>
 
@@ -1466,8 +1466,8 @@ for every event handler?</p>
 
 
 <h2 id="answer-prior-to-v100">Answer (prior to v1.0.0)<a class="headerlink" href="#answer-prior-to-v100" title="Permanent link">&para;</a></h2>
-<p>Prior to v1.0.0, re-frame provided no API to direct support this feature,
-but there ways of making it happen. </p>
+<p>Prior to v1.0.0, re-frame provided no API to directly support this feature,
+but there are ways of making it happen. </p>
 <p>Let's assume you have an interceptor called <code>omni-ceptor</code> which you want
 automatically added to all your event handlers.</p>
 <p>You'd write a replacement for both <code>reg-event-db</code> and <code>reg-event-fx</code>, and get
