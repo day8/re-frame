@@ -13,7 +13,7 @@ for every event handler?
 
 Yes, re-frame provides an API for registering global interceptors. 
 
-The following (untested) code creates a global interceptor to keep a track of all events:
+The following code creates a global interceptor to keep a track of all events:
 
 ```clj
 ;; We'll be recording events into this atom 
@@ -28,9 +28,9 @@ The following (untested) code creates a global interceptor to keep a track of al
 
 ;; this interceptor will collect events and add them to the atom above
 (def event-collector
-  (re-frame.core/->interceptor {
+  (re-frame.core/->interceptor
     :id      :event-collector
-    :before  (fn [context]  
+    :before  (fn [context]
                (swap! event-store keep-last-20 (re-frame.core/get-coeffect context :event))
                context)))
 
@@ -42,8 +42,8 @@ The following (untested) code creates a global interceptor to keep a track of al
 
 ## Answer (prior to v1.0.0) 
 
-Prior to v1.0.0, re-frame provided no API to direct support this feature,
-but there ways of making it happen. 
+Prior to v1.0.0, re-frame provided no API to directly support this feature,
+but there are ways of making it happen. 
 
 Let's assume you have an interceptor called `omni-ceptor` which you want
 automatically added to all your event handlers.
