@@ -1,9 +1,6 @@
 
-Please take time to carefully review the heavily commented todomvc example in this repo. 
+Congatulations! You now know everything necesary to enjoy the [todomvc example application](https://github.com/day8/re-frame/tree/master/examples/todomvc) within the re-frame repo. 
 
-In particular, be sure to look at the [subscription code](https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs). 
+The code is heavily commented, and it will show you various re-frame features in action, together with providing useful practical advice. 
 
-This code will provide more perspective and explanation on how to use `reg-sub` to create `Layer 2` and `Layer 3` subscriptions. Plus real examples of how to use `:<-`. 
-
-
-
+Don't skip this. Your review will be a very useful part of your learning process, and now is the right moment.

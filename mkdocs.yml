@@ -43,7 +43,7 @@ nav:
       - A Data Loop: a-loop.md
       - State: application-state.md
       - Code: dominoes-30k.md
-      - Infographic: event-handling-infographic.md
+      - Infographics: event-handling-infographic.md
       - Subscriptions: subscriptions.md
       - Live: dominoes-live.md
     - "INTERMEDIATE 2 & 3":
@@ -51,8 +51,8 @@ nav:
       - Interceptors.md
       - Effects.md
       - Coeffects.md
-    - "INTERMEDIATE 4,5 & 6":
       - Review TodoMVC: review-todomvc.md
+    - "INTERMEDIATE 4,5 & 6":
       - Correcting a wrong: correcting-a-wrong.md
       - Flow Mechanics: flow-mechanics.md
     - "START CODING": start-coding.md

@@ -12,11 +12,6 @@ Create a scaffold for your first project:
   - Client only:  <https://github.com/day8/re-frame-template>
   - Full Stack: <http://www.luminusweb.net/>
 
-## Client Only Example
-
-Take time to review the 
-[todomvc example application](https://github.com/day8/re-frame/tree/master/examples/todomvc).
-It contains a lot of helpful practical advice. 
 
 ## Full Stack Example 
 

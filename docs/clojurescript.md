@@ -50,7 +50,6 @@ make you better developer for life, even if you aren't using LISP.
 So, 20 mins ...
 
 
-
 ---
 I have good news: you are going to be surprised and delighted at the simplicity of the syntax. 
 ## Simple Data Literals
