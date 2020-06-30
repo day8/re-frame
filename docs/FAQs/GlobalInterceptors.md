@@ -9,13 +9,34 @@
 Does re-frame allow me to register global interceptors? Ones which are included 
 for every event handler?
 
-## Short Answer 
+## Answer (v1.0.0 onwards)
 
-No, nothing direct.
+Yes, re-frame provides an API for registering global interceptors. 
 
-## Longer Answer 
+The following (untested) code creates a global interceptor to keep a track of all events:
 
-It's easy to make happen.
+```clj
+;; we'll be recording all events into this atom (warning: it will grow unbounded)
+(def  recent-events atom([]))
+
+;; this interceptor will collect events and add them to the atom above
+(def event-collector
+  (re-frame.core/->interceptor {
+    :id      :event-collector
+    :before  (fn [context]  
+               (swap! recent-events conj (re-frame.core/get-coeffect context :event))
+               context)))
+
+;; register this global interceptor early in program's boot process,
+;; using re-frame's API
+(re-frame.core/reg-global-interceptor event-collector)
+```
+
+
+## Answer (prior to v1.0.0) 
+
+Prior to v1.0.0, re-frame provided no API to direct support this feature,
+but there ways of making it happen. 
 
 Let's assume you have an interceptor called `omni-ceptor` which you want
 automatically added to all your event handlers.
