@@ -6,6 +6,6 @@
 <br>
 <br>
 
-<a href="../images/event-dispatch.png">
+<a href="../images/handling-one-event.png">
   <img src="../images/handling-one-event.png">
 </a>
