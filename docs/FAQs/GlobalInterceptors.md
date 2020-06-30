@@ -16,15 +16,22 @@ Yes, re-frame provides an API for registering global interceptors.
 The following (untested) code creates a global interceptor to keep a track of all events:
 
 ```clj
-;; we'll be recording all events into this atom (warning: it will grow unbounded)
-(def  recent-events atom([]))
+;; We'll be recording events into this atom 
+;; The most recent events will be at the front of the list. 
+(def event-store (atom (list)))
+
+
+(defn keep-last-20
+  [existing new-one]
+  (take 20 (conj existing new-one)))
+
 
 ;; this interceptor will collect events and add them to the atom above
 (def event-collector
   (re-frame.core/->interceptor {
     :id      :event-collector
     :before  (fn [context]  
-               (swap! recent-events conj (re-frame.core/get-coeffect context :event))
+               (swap! event-store keep-last-20 (re-frame.core/get-coeffect context :event))
                context)))
 
 ;; register this global interceptor early in program's boot process,
