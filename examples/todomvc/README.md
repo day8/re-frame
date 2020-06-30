@@ -35,29 +35,16 @@ really required to get the job done. So lean and minimal is no longer a goal.
    open http://localhost:8280
    ```
 
-
-## To Compile An Optimised Version
-
-1. Compile
-   ```sh
-   lein do clean, shadow release client
-   ```
-
-2. Open the following in your browser
-   ```sh
-   resources/public/index.html
-   ```
-
-
 ## Exploring The Code
 
-From the re-frame readme:
+From the re-frame docs:
 ```
 To build a re-frame app, you:
   - design your app's data structure (data layer)
   - write and register subscription functions (query layer)
   - write Reagent component functions (view layer)
   - write and register event handler functions (control layer and/or state transition layer)
+  - once in a blue moon you need to write effect handlers
 ```
 
 In `src`, there's a matching set of files (each small):
@@ -70,6 +57,23 @@ src
 └── events.cljs       <--- event handlers (control/update layer)
 ```
 
+For the most immediate feedback, edit some of the hiccup in the `views.cljs` file. When 
+you save the file, shadow-cljs will immediately compile your changes and hot-reload them into the browser. 
+
+
 ## Further Notes
 
 The [official reagent example](https://github.com/reagent-project/reagent/tree/master/examples/todomvc) which is very terse indeed, can be found here.
+
+
+## To Compile An Optimised Version
+
+1. Compile
+   ```sh
+   lein do clean, shadow release client
+   ```
+
+2. Open the following in your browser
+   ```sh
+   resources/public/index.html
+   ```
