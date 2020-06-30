@@ -1441,15 +1441,22 @@ for every event handler?</p>
 <h2 id="answer-v100-onwards">Answer (v1.0.0 onwards)<a class="headerlink" href="#answer-v100-onwards" title="Permanent link">&para;</a></h2>
 <p>Yes, re-frame provides an API for registering global interceptors. </p>
 <p>The following (untested) code creates a global interceptor to keep a track of all events:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">;; we&#39;ll be recording all events into this atom (warning: it will grow unbounded)</span>
-<span class="p">(</span><span class="k">def </span> <span class="nv">recent-events</span> <span class="nv">atom</span><span class="p">([]))</span>
+<div class="codehilite"><pre><span></span><code><span class="c1">;; We&#39;ll be recording events into this atom </span>
+<span class="c1">;; The most recent events will be at the front of the list. </span>
+<span class="p">(</span><span class="k">def </span><span class="nv">event-store</span> <span class="p">(</span><span class="nf">atom</span> <span class="p">(</span><span class="nf">list</span><span class="p">)))</span>
+
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">keep-last-20</span>
+  <span class="p">[</span><span class="nv">existing</span> <span class="nv">new-one</span><span class="p">]</span>
+  <span class="p">(</span><span class="nb">take </span><span class="mi">20</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">existing</span> <span class="nv">new-one</span><span class="p">)))</span>
+
 
 <span class="c1">;; this interceptor will collect events and add them to the atom above</span>
 <span class="p">(</span><span class="k">def </span><span class="nv">event-collector</span>
   <span class="p">(</span><span class="nf">re-frame.core/-&gt;interceptor</span> <span class="p">{</span>
     <span class="ss">:id</span>      <span class="ss">:event-collector</span>
     <span class="ss">:before</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span>  
-               <span class="p">(</span><span class="nf">swap!</span> <span class="nv">recent-events</span> <span class="nb">conj </span><span class="p">(</span><span class="nf">re-frame.core/get-coeffect</span> <span class="nv">context</span> <span class="ss">:event</span><span class="p">))</span>
+               <span class="p">(</span><span class="nf">swap!</span> <span class="nv">event-store</span> <span class="nv">keep-last-20</span> <span class="p">(</span><span class="nf">re-frame.core/get-coeffect</span> <span class="nv">context</span> <span class="ss">:event</span><span class="p">))</span>
                <span class="nv">context</span><span class="p">)))</span>
 
 <span class="c1">;; register this global interceptor early in program&#39;s boot process,</span>
