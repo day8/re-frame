@@ -11,15 +11,6 @@ really required to get the job done. So lean and minimal is no longer a goal.
 
 ## Setup And Run A Development Environment
 
-1. [install Clojure](https://purelyfunctional.tv/guide/how-to-install-clojure/)
-1. `git clone https://github.com/day8/re-frame.git`
-2. `cd re-frame/examples/todomvc`
-3. Run "`lein do clean, shadow watch client`"  to compile the app and start up shadow-cljs hot-reloading
-4. Wait for the compile to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
-5. Open `http://localhost:8280` to see the app
-
-
-
 1. [install Clojure](https://purelyfunctional.tv/guide/how-to-install-clojure/) (Java and Lein)
 
 2. Get the re-frame repo from GitHub:
