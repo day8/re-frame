@@ -1593,17 +1593,22 @@ it returns a map of <code>effects</code> which describe those changes. Effects a
 </code></pre></div>
 
 
-<p>re-frame has ways (described in later tutorials) to inject necessary aspects
+<p>re-frame has ways (described in later tutorials) for you to inject necessary aspects
 of "the world" into that first <code>coeffects</code> argument (map). Different 
 event handlers need to know different "things" about the world to get their job done. But 
 current "application state" is one aspect of the world which is 
-invariably needed, and it is available by default in the <code>:db</code> key.</p>
-<p>In this case, the value returned by <code>h</code> is a map with only one key:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">..some-value..</span><span class="p">}</span>
+invariably needed, and it is available by default in the <code>:db</code> key. So 
+the expression <code>(:db coeffects)</code> gives you the current state (a map) stored in <code>app-db</code>.</p>
+<p>The value returned by <code>h</code> is a map with only one key, kinda like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">a-value</span><span class="p">}</span>
 </code></pre></div>
 
 
-<p>This is <code>h</code> saying "a change to application state is required". </p>
+<p>So, <code>h</code> has computed the effects of the event ... and there was only one effect on this occasion, and it was a change to application state. </p>
+<p>You'll notice something important about the overall flow happening here:
+  1. <code>h</code> has acess to the current application state (a map) via <code>(:db coeffects)</code> 
+  2. it computes a modified application state via <code>(dissoc-in db [:items item-id])</code>
+  3. it returns this modified application state in a map <code>{:db a-value}</code></p>
 <p>BTW, here is a more idiomatic rewrite of <code>h</code> which uses <code>destructuring</code> of the args: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span> 
   <span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">item-id</span><span class="p">]]</span>    <span class="c1">;; &lt;--- new: obtain db and item-id directly</span>
@@ -1612,21 +1617,29 @@ invariably needed, and it is available by default in the <code>:db</code> key.</
 
 
 <h2 id="domino-3">Domino 3<a class="headerlink" href="#domino-3" title="Permanent link">&para;</a></h2>
-<p>An <code>effect handler</code> (function) actions the <code>effects</code> returned by <code>h</code>.</p>
-<p>In domino 2, <code>h</code> returned this data:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="mi">2486</span><span class="p">])}</span>   <span class="c1">;; db is a map of some structure</span>
+<p>One or more <code>effect handler</code> functions will action the <code>effects</code> returned by <code>h</code>.</p>
+<p>In domino 2, <code>h</code> returned this kind of map:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">a-value</span><span class="p">}</span>
 </code></pre></div>
 
 
-<p>Each key of the map identifies one kind 
+<p>Each key of the returned map identifies one kind 
 of <code>effect</code>, and the value for that key supplies further details. 
-The map returned by <code>h</code> only has one key, so there's only one effect.</p>
-<p>A key of <code>:db</code> means to update the app state with the associated value.</p>
-<p>This update of "app state" is a mutative step, facilitated by re-frame
-which has a built-in <code>effects handler</code> for the <code>:db</code> effect.</p>
-<p>Why the name <code>:db</code>?  Well, re-frame sees "app state" as something of an in-memory 
-database. More on this in a following tutorial.</p>
-<p>Just to be clear, if <code>h</code> had returned: </p>
+The map returned by <code>h</code> only has one key, <code>:db</code>, so it is specifying only one effect.</p>
+<p>On startup, a re-frame app can register <code>effects handlers</code> using <code>reg-fx</code>. For example, 
+the effect handler function for a <code>:db</code> effect could be registered like this: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span>       <span class="c1">;; part of the re-frame API</span>
+  <span class="ss">:db</span>                       <span class="c1">;; the effects key </span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span>                 <span class="c1">;; the handler function</span>
+    <span class="p">(</span><span class="nf">reset!</span> <span class="nv">app-db</span> <span class="nv">val</span><span class="p">)))</span>   <span class="c1">;; put the new value into the ratom app-db</span>
+</code></pre></div>
+
+
+<p>Just to be clear, this update of a value in <code>app-db</code> is a mutative, effectful action. That's
+what effect handlers do. They change the world. They are not pure functions. </p>
+<p>Now, you don't actually need to ever register an effects handler for <code>:db</code>
+because re-frame supplies one built in. It manages <code>app-db</code> and so it will look after changes to it.</p>
+<p>But if <code>h</code> had returned: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:wear</span>  <span class="p">{</span><span class="ss">:pants</span> <span class="s">&quot;velour flares&quot;</span>  <span class="ss">:belt</span> <span class="nv">false</span><span class="p">}</span>
  <span class="ss">:tweet</span> <span class="s">&quot;Okay, yes, I am Satoshi. #coverblown&quot;</span><span class="p">}</span>
 </code></pre></div>
@@ -1634,8 +1647,16 @@ database. More on this in a following tutorial.</p>
 
 <p>Then, the two effects handlers registered for <code>:wear</code> and <code>:tweet</code> would 
 be called to action those two effects. And, no, re-frame 
-does not supply standard effect handlers for either, so you would have had 
-to have written them yourself (see how in a later tutorial).</p>
+does not supply standard effect handlers for either, so you would need to have
+written them yourself, and registered them. </p>
+<p>For example:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span>    <span class="c1">;; re-frame API</span>
+  <span class="ss">:wear</span>        <span class="c1">;; the effects key which this handler can action</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span>    <span class="c1">;; val would be, eg, {:pants &quot;velour flares&quot;  :belt false}</span>
+    <span class="nv">...</span><span class="p">))</span>      <span class="c1">;; do what&#39;s necessary to action the necessary side effect</span>
+</code></pre></div>
+
+
 <h2 id="domino-4">Domino 4<a class="headerlink" href="#domino-4" title="Permanent link">&para;</a></h2>
 <p>We now start the <code>v = f(s)</code> part of the flow. </p>
 <p>The application state
