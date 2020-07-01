@@ -180,7 +180,7 @@ including, but not limited to, updates to `app-db`.
 
 ## Threading the Context
 
-Above we imagined an interceptor chain like: `[std1 std2 in1 in2 ih]`.
+Above, we imagined an interceptor chain like: `[std1 std2 in1 in2 ih]`.
 One way to imagine the whole event handling process would be to see it written like this:
 
 ```clj
@@ -194,7 +194,7 @@ One way to imagine the whole event handling process would be to see it written l
     ((:before std2) )    ;; adds `:event` and `:db` to `:coeffects`
     ((:before in1) )
     ((:before in2) )
-    ((:before ih) )      ;; Domino 2 - handler called & result put into `:coeffects`
+    ((:before ih) )      ;; Domino 2 - handler called & return value put into `:effects`
 
     ;; Now backwards through the `:after` functions
     ;; This phase is usually concerned with building up or processing `:effects`
@@ -206,7 +206,7 @@ One way to imagine the whole event handling process would be to see it written l
     ((:after  std1) )    ;; Domino 3 - all the `:effects` are processed 
 ```
 
-## Inforgraphics
+## Infographics
 
 <a href="../images/interceptors.png">
   <img src="../images/interceptors.png">
