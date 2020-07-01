@@ -80,17 +80,24 @@ Here's a sketch (we are at 30,000 feet):
    {:db  (dissoc-in db [:items item-id])})) ;; effect is "change app state to ..."
 ```
 
-re-frame has ways (described in later tutorials) to inject necessary aspects
+re-frame has ways (described in later tutorials) for you to inject necessary aspects
 of "the world" into that first `coeffects` argument (map). Different 
 event handlers need to know different "things" about the world to get their job done. But 
 current "application state" is one aspect of the world which is 
-invariably needed, and it is available by default in the `:db` key.
+invariably needed, and it is available by default in the `:db` key. So 
+the expression `(:db coeffects)` gives you the current state (a map) stored in `app-db`.
 
-In this case, the value returned by `h` is a map with only one key:
+The value returned by `h` is a map with only one key, kinda like this:
 ```clj
-{:db  ..some-value..}
+{:db  a-value}
 ```
-This is `h` saying "a change to application state is required". 
+So, `h` has computed the effects of the event ... and there was only one effect on this occasion, and it was a change to application state. 
+
+You'll notice something important about the overall flow happening here:
+  1. `h` has acess to the current application state (a map) via `(:db coeffects)` 
+  2. it computes a modified application state via `(dissoc-in db [:items item-id])`
+  3. it returns this modified application state in a map `{:db a-value}`
+
 
 BTW, here is a more idiomatic rewrite of `h` which uses `destructuring` of the args: 
 ```clj
@@ -102,33 +109,49 @@ BTW, here is a more idiomatic rewrite of `h` which uses `destructuring` of the a
 
 ## Domino 3
 
-An `effect handler` (function) actions the `effects` returned by `h`.
+One or more `effect handler` functions will action the `effects` returned by `h`.
 
-In domino 2, `h` returned this data:
+In domino 2, `h` returned this kind of map:
 ```clj
-{:db  (dissoc-in db [:items 2486])}   ;; db is a map of some structure
+{:db  a-value}
 ```
-Each key of the map identifies one kind 
+
+Each key of the returned map identifies one kind 
 of `effect`, and the value for that key supplies further details. 
-The map returned by `h` only has one key, so there's only one effect.
+The map returned by `h` only has one key, `:db`, so it is specifying only one effect.
 
-A key of `:db` means to update the app state with the associated value.
+On startup, a re-frame app can register `effects handlers` using `reg-fx`. For example, 
+the effect handler function for a `:db` effect could be registered like this: 
+```clj 
+(re-frame.core/reg-fx       ;; part of the re-frame API
+  :db                       ;; the effects key 
+  (fn [val]                 ;; the handler function
+    (reset! app-db val)))   ;; put the new value into the ratom app-db
+```
 
-This update of "app state" is a mutative step, facilitated by re-frame
-which has a built-in `effects handler` for the `:db` effect.
+Just to be clear, this update of a value in `app-db` is a mutative, effectful action. That's
+what effect handlers do. They change the world. They are not pure functions. 
 
-Why the name `:db`?  Well, re-frame sees "app state" as something of an in-memory 
-database. More on this in a following tutorial.
+Now, you don't actually need to ever register an effects handler for `:db`
+because re-frame supplies one built in. It manages `app-db` and so it will look after changes to it.
 
-Just to be clear, if `h` had returned: 
+But if `h` had returned: 
 ```clj
 {:wear  {:pants "velour flares"  :belt false}
  :tweet "Okay, yes, I am Satoshi. #coverblown"}
 ```
 Then, the two effects handlers registered for `:wear` and `:tweet` would 
 be called to action those two effects. And, no, re-frame 
-does not supply standard effect handlers for either, so you would have had 
-to have written them yourself (see how in a later tutorial).
+does not supply standard effect handlers for either, so you would need to have
+written them yourself, and registered them. 
+
+For example:
+```clj
+(re-frame.core/reg-fx    ;; re-frame API
+  :wear        ;; the effects key which this handler can action
+  (fn [val]    ;; val would be, eg, {:pants "velour flares"  :belt false}
+    ...))      ;; do what's necessary to action the necessary side effect
+```
 
 ## Domino 4
 
