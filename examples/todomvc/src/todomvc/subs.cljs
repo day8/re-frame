@@ -4,7 +4,7 @@
 ;; -------------------------------------------------------------------------------------
 ;; Layer 2
 ;;
-;; See https://github.com/day8/re-frame/blob/master/docs/SubscriptionInfographic.md
+;; See https://day8.github.io/re-frame/subscriptions/
 ;;
 ;; Layer 2 query functions are "extractors". They take from `app-db`
 ;; and don't do any further computation on the extracted values. Any further
@@ -30,7 +30,7 @@
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3
 ;;
-;; See https://github.com/day8/re-frame/blob/master/docs/SubscriptionInfographic.md
+;; See https://day8.github.io/re-frame/subscriptions/
 ;;
 ;; A subscription handler is a function which is re-run when its input signals
 ;; change. Each time it is rerun, it produces a new output (return value).
