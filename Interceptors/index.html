@@ -614,8 +614,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#inforgraphics" class="md-nav__link">
-    Inforgraphics
+  <a href="#infographics" class="md-nav__link">
+    Infographics
   </a>
   
 </li>
@@ -1540,8 +1540,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#inforgraphics" class="md-nav__link">
-    Inforgraphics
+  <a href="#infographics" class="md-nav__link">
+    Infographics
   </a>
   
 </li>
@@ -1743,7 +1743,7 @@ DataScript connection. Interceptors can accumulate interesting information into
 which processes the side effects accumulated into <code>:effects</code>
 including, but not limited to, updates to <code>app-db</code>.</p>
 <h2 id="threading-the-context">Threading the Context<a class="headerlink" href="#threading-the-context" title="Permanent link">&para;</a></h2>
-<p>Above we imagined an interceptor chain like: <code>[std1 std2 in1 in2 ih]</code>.
+<p>Above, we imagined an interceptor chain like: <code>[std1 std2 in1 in2 ih]</code>.
 One way to imagine the whole event handling process would be to see it written like this:</p>
 <div class="codehilite"><pre><span></span><code> <span class="c1">;; start by creating a context map </span>
 <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">context</span> <span class="p">{</span><span class="ss">:coeffects</span> <span class="p">{}</span>  <span class="ss">:effects</span> <span class="p">{}</span> <span class="nv">...</span><span class="p">}]</span>
@@ -1755,7 +1755,7 @@ One way to imagine the whole event handling process would be to see it written l
     <span class="p">((</span><span class="ss">:before</span> <span class="nv">std2</span><span class="p">)</span> <span class="p">)</span>    <span class="c1">;; adds `:event` and `:db` to `:coeffects`</span>
     <span class="p">((</span><span class="ss">:before</span> <span class="nv">in1</span><span class="p">)</span> <span class="p">)</span>
     <span class="p">((</span><span class="ss">:before</span> <span class="nv">in2</span><span class="p">)</span> <span class="p">)</span>
-    <span class="p">((</span><span class="ss">:before</span> <span class="nv">ih</span><span class="p">)</span> <span class="p">)</span>      <span class="c1">;; Domino 2 - handler called &amp; result put into `:coeffects`</span>
+    <span class="p">((</span><span class="ss">:before</span> <span class="nv">ih</span><span class="p">)</span> <span class="p">)</span>      <span class="c1">;; Domino 2 - handler called &amp; return value put into `:effects`</span>
 
     <span class="c1">;; Now backwards through the `:after` functions</span>
     <span class="c1">;; This phase is usually concerned with building up or processing `:effects`</span>
@@ -1768,7 +1768,7 @@ One way to imagine the whole event handling process would be to see it written l
 </code></pre></div>
 
 
-<h2 id="inforgraphics">Inforgraphics<a class="headerlink" href="#inforgraphics" title="Permanent link">&para;</a></h2>
+<h2 id="infographics">Infographics<a class="headerlink" href="#infographics" title="Permanent link">&para;</a></h2>
 <p><a href="../images/interceptors.png">
   <img src="../images/interceptors.png">
 </a></p>
