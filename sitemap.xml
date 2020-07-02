@@ -144,7 +144,11 @@
      <lastmod>2020-07-02</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
-     <loc>https://day8.github.io/re-frame/FAQs/FullStackReframe/</loc>
+     <loc>https://day8.github.io/re-frame/FAQs/GlobalInterceptors/</loc>
+     <lastmod>2020-07-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://day8.github.io/re-frame/FAQs/laggy-input/</loc>
      <lastmod>2020-07-02</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
@@ -164,23 +168,11 @@
      <lastmod>2020-07-02</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
-     <loc>https://day8.github.io/re-frame/FAQs/Why-CLJC/</loc>
-     <lastmod>2020-07-02</lastmod>
-     <changefreq>daily</changefreq>
-    </url><url>
      <loc>https://day8.github.io/re-frame/FAQs/Why-Clear-Sub-Cache/</loc>
      <lastmod>2020-07-02</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://day8.github.io/re-frame/FAQs/CatchingEventExceptions/</loc>
-     <lastmod>2020-07-02</lastmod>
-     <changefreq>daily</changefreq>
-    </url><url>
-     <loc>https://day8.github.io/re-frame/FAQs/DB_Normalisation/</loc>
-     <lastmod>2020-07-02</lastmod>
-     <changefreq>daily</changefreq>
-    </url><url>
-     <loc>https://day8.github.io/re-frame/FAQs/GlobalInterceptors/</loc>
      <lastmod>2020-07-02</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
@@ -192,7 +184,15 @@
      <lastmod>2020-07-02</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
-     <loc>https://day8.github.io/re-frame/FAQs/laggy-input/</loc>
+     <loc>https://day8.github.io/re-frame/FAQs/Why-CLJC/</loc>
+     <lastmod>2020-07-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://day8.github.io/re-frame/FAQs/DB_Normalisation/</loc>
+     <lastmod>2020-07-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://day8.github.io/re-frame/FAQs/FullStackReframe/</loc>
      <lastmod>2020-07-02</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
