@@ -1570,58 +1570,59 @@ They are the language of your re-frame system. </p>
 compute the <code>effect</code> of the event <code>[:delete-item 2486]</code>.</p>
 <p>On startup, re-frame apps register handlers for events using <code>reg-event-fx</code>. So,
 in our imaginary app, because <code>h</code> is the handler function for <code>:delete-item</code> events, 
-it would have been registered like this:</p>
+it must have been registered like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>   <span class="c1">;; a part of the re-frame API</span>
   <span class="ss">:delete-item</span>                <span class="c1">;; the kind of event</span>
   <span class="nv">h</span><span class="p">)</span>                          <span class="c1">;; the handler function for this kind of event</span>
 </code></pre></div>
 
 
-<p>Because <code>h</code> is an event handler, it will be written to take two arguments:</p>
+<p>Because <code>h</code> is an event handler, it is written to take two arguments:</p>
 <ol>
-<li>a <code>coeffects</code> map. This is data which describes the current state of "the world". In the simplest case, it is simply like this: <code>{:db a-value}</code> where <code>a-value</code> is the current application state held in <code>app-db</code>. </li>
-<li>the <code>event</code> to handle. <code>[:delete-item 2486]</code> in this case.</li>
+<li>a <code>coeffects</code> map. This data describes the current state of "the world". In the simplest case, it is a trivial map like this: <code>{:db a-value}</code> where <code>a-value</code> is the current application state held in <code>app-db</code>. </li>
+<li>the <code>event</code> to handle, which would be <code>[:delete-item 2486]</code> in this case.</li>
 </ol>
-<p><code>h</code> will compute how the world should be changed by the event, and 
-it returns a map of <code>effects</code> which describe these necessary changes. Effects as data.</p>
+<p><code>h</code> will compute effects as data. That means: it computes how the world should be changed 
+by the event, and it returns a map of <code>effects</code> which describe the necessary changes.</p>
 <p>Here's a sketch (we are at 30,000 feet):</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span>                             <span class="c1">;; maybe choose a better name like `delete-item`</span>
- <span class="p">[</span><span class="nv">coeffects</span> <span class="nv">event</span><span class="p">]</span>                  <span class="c1">;; `coeffects` holds the current state of the world</span>
- <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">item-id</span> <span class="p">(</span><span class="nb">second </span><span class="nv">event</span><span class="p">)</span>       <span class="c1">;; extract id from event vector</span>
-       <span class="nv">db</span>      <span class="p">(</span><span class="ss">:db</span> <span class="nv">coeffects</span><span class="p">)]</span>     <span class="c1">;; extract the current application state</span>
-   <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])}))</span> <span class="c1">;; effect is &quot;change app state to ...&quot;</span>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span>                           <span class="c1">;; maybe choose a better name like `delete-item`</span>
+ <span class="p">[</span><span class="nv">coeffects</span> <span class="nv">event</span><span class="p">]</span>                <span class="c1">;; `coeffects` holds the current state of the world</span>
+ <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">item-id</span>   <span class="p">(</span><span class="nb">second </span><span class="nv">event</span><span class="p">)</span>   <span class="c1">;; extract id from event vector</span>
+       <span class="nv">state</span>     <span class="p">(</span><span class="ss">:db</span> <span class="nv">coeffects</span><span class="p">)</span>  <span class="c1">;; extract the current application state</span>
+       <span class="nv">new-state</span> <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])]</span>   <span class="c1">;; new app state</span>
+   <span class="p">{</span><span class="ss">:db</span> <span class="nv">new-state</span><span class="p">}))</span>              <span class="c1">;; a map of the necessary effects </span>
 </code></pre></div>
 
 
-<p>re-frame has ways (described in later tutorials) for you to inject necessary aspects
-of "the world" into that first <code>coeffects</code> argument (map). Different 
-event handlers need to know different "things" about the world to get their job done. But 
+<p>There are ways (described in later tutorials) for you to inject necessary aspects
+of "the world" into that first <code>coeffects</code> argument (map). Different
+event handlers need to know different "things" about the world to do their job. But 
 current "application state" is one aspect of the world which is 
 invariably needed, and it is available by default in the <code>:db</code> key. So 
-the expression <code>(:db coeffects)</code> gives you the current state (a map) stored in <code>app-db</code>.</p>
+the current value in <code>app-db</code> is available via the expression <code>(:db coeffects)</code>.</p>
 <p>The value returned by <code>h</code> is a map with only one key, like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">a-value</span><span class="p">}</span>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">updated-value-to-put-into-app-db</span><span class="p">}</span>
 </code></pre></div>
 
 
 <p>So, <code>h</code> computes one effect - which is a change to application state.</p>
-<p>You'll notice the overall flow: </p>
+<p>Please pay particular attention to this overall flow, within <code>h</code>:</p>
 <ol>
-<li><code>h</code> can obtain the current application state (a map) via <code>(:db coeffects)</code> </li>
+<li><code>h</code> obtains the current application state (a map) via <code>(:db coeffects)</code> </li>
 <li>it computes a modified application state via <code>(dissoc-in db [:items item-id])</code></li>
-<li>it returns this modified application state in an effect map <code>{:db new-value}</code></li>
+<li>it returns this modified application state in an effect map <code>{:db new-state}</code></li>
 </ol>
 <p>BTW, here is a more idiomatic (and terser) rewrite of <code>h</code> which uses <code>destructuring</code> of the args: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span> 
   <span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">item-id</span><span class="p">]]</span>    <span class="c1">;; &lt;--- new: obtain db and item-id directly</span>
-  <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])})</span>    <span class="c1">;; same as before</span>
+  <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])})</span>    <span class="c1">;; </span>
 </code></pre></div>
 
 
 <h2 id="domino-3">Domino 3<a class="headerlink" href="#domino-3" title="Permanent link">&para;</a></h2>
 <p><code>effect handler</code> functions action the <code>effects</code> returned by <code>h</code>.</p>
-<p>In domino 2, <code>h</code> returned: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-value-to-put-in-app-db</span><span class="p">}</span>
+<p>In Domino 2, <code>h</code> returned: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">updated-value-to-put-in-app-db</span><span class="p">}</span>
 </code></pre></div>
 
 
@@ -1629,7 +1630,7 @@ the expression <code>(:db coeffects)</code> gives you the current state (a map) 
 of <code>effect</code>, and the value for that key supplies further details. 
 The map returned by <code>h</code> only has one key, <code>:db</code>, so it is specifying only one effect.</p>
 <p>On startup, a re-frame app can register <code>effects handlers</code> using <code>reg-fx</code>. For example, 
-the effect handler function for a <code>:db</code> effect could be registered like this: </p>
+the effect handler function for the <code>:db</code> effect could be registered like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span>       <span class="c1">;; part of the re-frame API</span>
   <span class="ss">:db</span>                       <span class="c1">;; the effects key </span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span>                 <span class="c1">;; the handler function for the effect</span>
@@ -1656,7 +1657,7 @@ written them yourself, and then registered them. </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span>    <span class="c1">;; re-frame API</span>
   <span class="ss">:wear</span>        <span class="c1">;; the effects key which this handler can action</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span>    <span class="c1">;; val would be, eg, {:pants &quot;velour flares&quot;  :belt false}</span>
-    <span class="nv">...</span><span class="p">))</span>      <span class="c1">;; do what&#39;s necessary to action the necessary side effect</span>
+    <span class="nv">...</span><span class="p">))</span>      <span class="c1">;; do what&#39;s necessary to action the side effect</span>
 </code></pre></div>
 
 
