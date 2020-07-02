@@ -99,7 +99,7 @@
 
 (defn todo-app
   []
-  [:div
+  [:<>
    [:section#todoapp
     [task-entry]
     (when (seq @(subscribe [:todos]))
