@@ -79,19 +79,20 @@ nav:
     - "How can I Inspect app-db?": FAQs/Inspecting-app-db.md
     - "How Do I Load On Mount?": FAQs/LoadOnMount.md
     - "Reagent looks terrific. Why do I need re-frame?": FAQs/DoINeedReFrame.md
-    - "How do I do full-stack re-frame?": FAQs/FullStackReframe.md
+    - "How to focus on an HTML element": FocusOnElement.md
+    - "How do I register a global interceptor": FAQs/GlobalInterceptors.md
+    - "Why is my input field laggy?": FAQs/laggy-input.md
     - "How long after I do a dispatch does the event get handled?": FAQs/When-Does-Dispatch-Happen.md
     - "How can I use a subscription in an Event Handler": FAQs/UseASubscriptionInAnEventHandler.md
     - "How do I use logging method X": FAQs/Logging.md
     - "Dispatched Events Are Null": FAQs/Null-Dispatched-Events.md
-    - "Why is re-frame implemented in `.cljc` files": FAQs/Why-CLJC.md
     - "Why do we need to clear the subscription cache when reloading with Figwheel?": FAQs/Why-Clear-Sub-Cache.md
     - "How can I detect exceptions in Event Handlers?": FAQs/CatchingEventExceptions.md
-    - "How do I store normalised data in app-db?": FAQs/DB_Normalisation.md
-    - "How do I register a global interceptor": FAQs/GlobalInterceptors.md
     - "How do I turn on/off polling a database every 60 secs": FAQs/PollADatabaseEvery60.md
     - "re-frame uses side-effecting registrations. Should I feel dirty?": FAQs/ViewsOnGlobalRegistration.md
-    - "Why is my input field laggy?": FAQs/laggy-input.md
+    - "Why is re-frame implemented in `.cljc` files": FAQs/Why-CLJC.md
+    - "How do I store normalised data in app-db?": FAQs/DB_Normalisation.md    
+    - "How do I do full-stack re-frame?": FAQs/FullStackReframe.md
   - API:
     - API: codox/index.html
   - Releases:
