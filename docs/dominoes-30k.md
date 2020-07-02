@@ -65,11 +65,11 @@ it would have been registered like this:
 
 Because `h` is an event handler, it will be written to take two arguments:
 
-  1. a `coeffects` map which contains the current state of the world (including app state)
-  2. the `event` to handle
+  1. a `coeffects` map. This is data which describes the current state of "the world". In the simplest case, it is simply like this: `{:db a-value}` where `a-value` is the current application state held in `app-db`. 
+  2. the `event` to handle. `[:delete-item 2486]` in this case.
 
-It is the job of `h` to compute how the world should be changed by the event, and 
-it returns a map of `effects` which describe those changes. Effects as data.
+`h` will compute how the world should be changed by the event, and 
+it returns a map of `effects` which describe these necessary changes. Effects as data.
 
 Here's a sketch (we are at 30,000 feet):
 ```clj
@@ -87,19 +87,20 @@ current "application state" is one aspect of the world which is
 invariably needed, and it is available by default in the `:db` key. So 
 the expression `(:db coeffects)` gives you the current state (a map) stored in `app-db`.
 
-The value returned by `h` is a map with only one key, kinda like this:
+The value returned by `h` is a map with only one key, like this:
 ```clj
 {:db  a-value}
 ```
-So, `h` has computed the effects of the event ... and there was only one effect on this occasion, and it was a change to application state. 
+So, `h` computes one effect - which is a change to application state.
 
-You'll notice something important about the overall flow happening here:
-  1. `h` has acess to the current application state (a map) via `(:db coeffects)` 
+You'll notice the overall flow: 
+
+  1. `h` can obtain the current application state (a map) via `(:db coeffects)` 
   2. it computes a modified application state via `(dissoc-in db [:items item-id])`
-  3. it returns this modified application state in a map `{:db a-value}`
+  3. it returns this modified application state in an effect map `{:db new-value}`
 
 
-BTW, here is a more idiomatic rewrite of `h` which uses `destructuring` of the args: 
+BTW, here is a more idiomatic (and terser) rewrite of `h` which uses `destructuring` of the args: 
 ```clj
 (defn h 
   [{:keys [db]} [_ item-id]]    ;; <--- new: obtain db and item-id directly
@@ -109,14 +110,14 @@ BTW, here is a more idiomatic rewrite of `h` which uses `destructuring` of the a
 
 ## Domino 3
 
-One or more `effect handler` functions will action the `effects` returned by `h`.
+`effect handler` functions action the `effects` returned by `h`.
 
-In domino 2, `h` returned this kind of map:
+In domino 2, `h` returned: 
 ```clj
-{:db  a-value}
+{:db  new-value-to-put-in-app-db}
 ```
 
-Each key of the returned map identifies one kind 
+Each key of this returned map identifies one kind 
 of `effect`, and the value for that key supplies further details. 
 The map returned by `h` only has one key, `:db`, so it is specifying only one effect.
 
@@ -125,17 +126,18 @@ the effect handler function for a `:db` effect could be registered like this:
 ```clj 
 (re-frame.core/reg-fx       ;; part of the re-frame API
   :db                       ;; the effects key 
-  (fn [val]                 ;; the handler function
+  (fn [val]                 ;; the handler function for the effect
     (reset! app-db val)))   ;; put the new value into the ratom app-db
 ```
 
-Just to be clear, this update of a value in `app-db` is a mutative, effectful action. That's
+Just to be clear, this `reset!` of `app-db` is a mutative, effectful action. That's
 what effect handlers do. They change the world. They are not pure functions. 
 
 Now, you don't actually need to ever register an effects handler for `:db`
-because re-frame supplies one built in. It manages `app-db` and so it will look after changes to it.
+because re-frame supplies one built in. re-frame manages `app-db` and so it 
+will look after changes to it.
 
-But if `h` had returned: 
+But if, instead, `h` had returned: 
 ```clj
 {:wear  {:pants "velour flares"  :belt false}
  :tweet "Okay, yes, I am Satoshi. #coverblown"}
@@ -143,7 +145,7 @@ But if `h` had returned:
 Then, the two effects handlers registered for `:wear` and `:tweet` would 
 be called to action those two effects. And, no, re-frame 
 does not supply standard effect handlers for either, so you would need to have
-written them yourself, and registered them. 
+written them yourself, and then registered them. 
 
 For example:
 ```clj
@@ -155,7 +157,7 @@ For example:
 
 ## Domino 4
 
-We now start the `v = f(s)` part of the flow. 
+The action of updating `app-db` (in Domino 3) will trigger the `v = f(s)` part of the flow. 
 
 The application state
 `s` has just changed (in Domino 3) and now boom, boom go Dominoes 4, 5, 
@@ -172,7 +174,7 @@ to compute and, instead, it acts like a simple extractor or accessor,
 just plucking the list of items out of application state:
 ```clj
 (defn query-fn
-  [db v]         ;; db is the current app state, v the query vector
+  [db v]         ;; db is the current value in app-db, v the query vector
   (:items db))   ;; not much of a materialised view
 ```
 
@@ -182,10 +184,10 @@ like this:
 ```clj
 (re-frame.core/reg-sub  ;; part of the re-frame API
    :query-items         ;; query id  
-   query-fn)            ;; query fn
+   query-fn)            ;; function to perform the query 
 ```
 Which says "if, in domino 5, you see a `(subscribe [:query-items])`, then 
-use `query-fn` to compute it".
+call `query-fn` to compute it".
 
 ## Domino 5
 
