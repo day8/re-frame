@@ -56,55 +56,56 @@ compute the `effect` of the event `[:delete-item 2486]`.
 
 On startup, re-frame apps register handlers for events using `reg-event-fx`. So,
 in our imaginary app, because `h` is the handler function for `:delete-item` events, 
-it would have been registered like this:
+it must have been registered like this:
 ```clj 
 (re-frame.core/reg-event-fx   ;; a part of the re-frame API
   :delete-item                ;; the kind of event
   h)                          ;; the handler function for this kind of event
 ```
 
-Because `h` is an event handler, it will be written to take two arguments:
+Because `h` is an event handler, it is written to take two arguments:
 
-  1. a `coeffects` map. This is data which describes the current state of "the world". In the simplest case, it is simply like this: `{:db a-value}` where `a-value` is the current application state held in `app-db`. 
-  2. the `event` to handle. `[:delete-item 2486]` in this case.
+  1. a `coeffects` map. This data describes the current state of "the world". In the simplest case, it is a trivial map like this: `{:db a-value}` where `a-value` is the current application state held in `app-db`. 
+  2. the `event` to handle, which would be `[:delete-item 2486]` in this case.
 
-`h` will compute how the world should be changed by the event, and 
-it returns a map of `effects` which describe these necessary changes. Effects as data.
+`h` will compute effects as data. That means: it computes how the world should be changed 
+by the event, and it returns a map of `effects` which describe the necessary changes.
 
 Here's a sketch (we are at 30,000 feet):
 ```clj
-(defn h                             ;; maybe choose a better name like `delete-item`
- [coeffects event]                  ;; `coeffects` holds the current state of the world
- (let [item-id (second event)       ;; extract id from event vector
-       db      (:db coeffects)]     ;; extract the current application state
-   {:db  (dissoc-in db [:items item-id])})) ;; effect is "change app state to ..."
+(defn h                           ;; maybe choose a better name like `delete-item`
+ [coeffects event]                ;; `coeffects` holds the current state of the world
+ (let [item-id   (second event)   ;; extract id from event vector
+       state     (:db coeffects)  ;; extract the current application state
+       new-state (dissoc-in db [:items item-id])]   ;; new app state
+   {:db new-state}))              ;; a map of the necessary effects 
 ```
 
-re-frame has ways (described in later tutorials) for you to inject necessary aspects
-of "the world" into that first `coeffects` argument (map). Different 
-event handlers need to know different "things" about the world to get their job done. But 
+There are ways (described in later tutorials) for you to inject necessary aspects
+of "the world" into that first `coeffects` argument (map). Different
+event handlers need to know different "things" about the world to do their job. But 
 current "application state" is one aspect of the world which is 
 invariably needed, and it is available by default in the `:db` key. So 
-the expression `(:db coeffects)` gives you the current state (a map) stored in `app-db`.
+the current value in `app-db` is available via the expression `(:db coeffects)`.
 
 The value returned by `h` is a map with only one key, like this:
 ```clj
-{:db  a-value}
+{:db updated-value-to-put-into-app-db}
 ```
 So, `h` computes one effect - which is a change to application state.
 
-You'll notice the overall flow: 
+Please pay particular attention to this overall flow, within `h`:
 
-  1. `h` can obtain the current application state (a map) via `(:db coeffects)` 
+  1. `h` obtains the current application state (a map) via `(:db coeffects)` 
   2. it computes a modified application state via `(dissoc-in db [:items item-id])`
-  3. it returns this modified application state in an effect map `{:db new-value}`
+  3. it returns this modified application state in an effect map `{:db new-state}`
 
 
 BTW, here is a more idiomatic (and terser) rewrite of `h` which uses `destructuring` of the args: 
 ```clj
 (defn h 
   [{:keys [db]} [_ item-id]]    ;; <--- new: obtain db and item-id directly
-  {:db  (dissoc-in db [:items item-id])})    ;; same as before
+  {:db  (dissoc-in db [:items item-id])})    ;; 
 ```
 
 
@@ -112,9 +113,9 @@ BTW, here is a more idiomatic (and terser) rewrite of `h` which uses `destructur
 
 `effect handler` functions action the `effects` returned by `h`.
 
-In domino 2, `h` returned: 
+In Domino 2, `h` returned: 
 ```clj
-{:db  new-value-to-put-in-app-db}
+{:db  updated-value-to-put-in-app-db}
 ```
 
 Each key of this returned map identifies one kind 
@@ -122,7 +123,7 @@ of `effect`, and the value for that key supplies further details.
 The map returned by `h` only has one key, `:db`, so it is specifying only one effect.
 
 On startup, a re-frame app can register `effects handlers` using `reg-fx`. For example, 
-the effect handler function for a `:db` effect could be registered like this: 
+the effect handler function for the `:db` effect could be registered like this: 
 ```clj 
 (re-frame.core/reg-fx       ;; part of the re-frame API
   :db                       ;; the effects key 
@@ -152,7 +153,7 @@ For example:
 (re-frame.core/reg-fx    ;; re-frame API
   :wear        ;; the effects key which this handler can action
   (fn [val]    ;; val would be, eg, {:pants "velour flares"  :belt false}
-    ...))      ;; do what's necessary to action the necessary side effect
+    ...))      ;; do what's necessary to action the side effect
 ```
 
 ## Domino 4
