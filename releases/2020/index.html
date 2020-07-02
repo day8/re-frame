@@ -1492,6 +1492,12 @@
 
 <h1 id="_1"><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h4>Fixed</h4>
+<ul>
+<li>Fix execution order of global interceptor functions. So that, for example,
+  it is possible to inspect the <code>:db</code> result of an event handler and inject
+  <code>:effects</code> for <code>do-fx</code> in an <code>:after</code> of a global interceptor.</li>
+</ul>
 <h2 id="100-rc3-2020-05-27">1.0.0-rc3 (2020-05-27)<a class="headerlink" href="#100-rc3-2020-05-27" title="Permanent link">&para;</a></h2>
 <h4>Changed</h4>
 <ul>
