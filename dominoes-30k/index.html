@@ -1579,11 +1579,11 @@ it would have been registered like this:</p>
 
 <p>Because <code>h</code> is an event handler, it will be written to take two arguments:</p>
 <ol>
-<li>a <code>coeffects</code> map which contains the current state of the world (including app state)</li>
-<li>the <code>event</code> to handle</li>
+<li>a <code>coeffects</code> map. This is data which describes the current state of "the world". In the simplest case, it is simply like this: <code>{:db a-value}</code> where <code>a-value</code> is the current application state held in <code>app-db</code>. </li>
+<li>the <code>event</code> to handle. <code>[:delete-item 2486]</code> in this case.</li>
 </ol>
-<p>It is the job of <code>h</code> to compute how the world should be changed by the event, and 
-it returns a map of <code>effects</code> which describe those changes. Effects as data.</p>
+<p><code>h</code> will compute how the world should be changed by the event, and 
+it returns a map of <code>effects</code> which describe these necessary changes. Effects as data.</p>
 <p>Here's a sketch (we are at 30,000 feet):</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span>                             <span class="c1">;; maybe choose a better name like `delete-item`</span>
  <span class="p">[</span><span class="nv">coeffects</span> <span class="nv">event</span><span class="p">]</span>                  <span class="c1">;; `coeffects` holds the current state of the world</span>
@@ -1599,17 +1599,19 @@ event handlers need to know different "things" about the world to get their job 
 current "application state" is one aspect of the world which is 
 invariably needed, and it is available by default in the <code>:db</code> key. So 
 the expression <code>(:db coeffects)</code> gives you the current state (a map) stored in <code>app-db</code>.</p>
-<p>The value returned by <code>h</code> is a map with only one key, kinda like this:</p>
+<p>The value returned by <code>h</code> is a map with only one key, like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">a-value</span><span class="p">}</span>
 </code></pre></div>
 
 
-<p>So, <code>h</code> has computed the effects of the event ... and there was only one effect on this occasion, and it was a change to application state. </p>
-<p>You'll notice something important about the overall flow happening here:
-  1. <code>h</code> has acess to the current application state (a map) via <code>(:db coeffects)</code> 
-  2. it computes a modified application state via <code>(dissoc-in db [:items item-id])</code>
-  3. it returns this modified application state in a map <code>{:db a-value}</code></p>
-<p>BTW, here is a more idiomatic rewrite of <code>h</code> which uses <code>destructuring</code> of the args: </p>
+<p>So, <code>h</code> computes one effect - which is a change to application state.</p>
+<p>You'll notice the overall flow: </p>
+<ol>
+<li><code>h</code> can obtain the current application state (a map) via <code>(:db coeffects)</code> </li>
+<li>it computes a modified application state via <code>(dissoc-in db [:items item-id])</code></li>
+<li>it returns this modified application state in an effect map <code>{:db new-value}</code></li>
+</ol>
+<p>BTW, here is a more idiomatic (and terser) rewrite of <code>h</code> which uses <code>destructuring</code> of the args: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span> 
   <span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">item-id</span><span class="p">]]</span>    <span class="c1">;; &lt;--- new: obtain db and item-id directly</span>
   <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])})</span>    <span class="c1">;; same as before</span>
@@ -1617,29 +1619,30 @@ the expression <code>(:db coeffects)</code> gives you the current state (a map) 
 
 
 <h2 id="domino-3">Domino 3<a class="headerlink" href="#domino-3" title="Permanent link">&para;</a></h2>
-<p>One or more <code>effect handler</code> functions will action the <code>effects</code> returned by <code>h</code>.</p>
-<p>In domino 2, <code>h</code> returned this kind of map:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">a-value</span><span class="p">}</span>
+<p><code>effect handler</code> functions action the <code>effects</code> returned by <code>h</code>.</p>
+<p>In domino 2, <code>h</code> returned: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-value-to-put-in-app-db</span><span class="p">}</span>
 </code></pre></div>
 
 
-<p>Each key of the returned map identifies one kind 
+<p>Each key of this returned map identifies one kind 
 of <code>effect</code>, and the value for that key supplies further details. 
 The map returned by <code>h</code> only has one key, <code>:db</code>, so it is specifying only one effect.</p>
 <p>On startup, a re-frame app can register <code>effects handlers</code> using <code>reg-fx</code>. For example, 
 the effect handler function for a <code>:db</code> effect could be registered like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span>       <span class="c1">;; part of the re-frame API</span>
   <span class="ss">:db</span>                       <span class="c1">;; the effects key </span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span>                 <span class="c1">;; the handler function</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">val</span><span class="p">]</span>                 <span class="c1">;; the handler function for the effect</span>
     <span class="p">(</span><span class="nf">reset!</span> <span class="nv">app-db</span> <span class="nv">val</span><span class="p">)))</span>   <span class="c1">;; put the new value into the ratom app-db</span>
 </code></pre></div>
 
 
-<p>Just to be clear, this update of a value in <code>app-db</code> is a mutative, effectful action. That's
+<p>Just to be clear, this <code>reset!</code> of <code>app-db</code> is a mutative, effectful action. That's
 what effect handlers do. They change the world. They are not pure functions. </p>
 <p>Now, you don't actually need to ever register an effects handler for <code>:db</code>
-because re-frame supplies one built in. It manages <code>app-db</code> and so it will look after changes to it.</p>
-<p>But if <code>h</code> had returned: </p>
+because re-frame supplies one built in. re-frame manages <code>app-db</code> and so it 
+will look after changes to it.</p>
+<p>But if, instead, <code>h</code> had returned: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:wear</span>  <span class="p">{</span><span class="ss">:pants</span> <span class="s">&quot;velour flares&quot;</span>  <span class="ss">:belt</span> <span class="nv">false</span><span class="p">}</span>
  <span class="ss">:tweet</span> <span class="s">&quot;Okay, yes, I am Satoshi. #coverblown&quot;</span><span class="p">}</span>
 </code></pre></div>
@@ -1648,7 +1651,7 @@ because re-frame supplies one built in. It manages <code>app-db</code> and so it
 <p>Then, the two effects handlers registered for <code>:wear</code> and <code>:tweet</code> would 
 be called to action those two effects. And, no, re-frame 
 does not supply standard effect handlers for either, so you would need to have
-written them yourself, and registered them. </p>
+written them yourself, and then registered them. </p>
 <p>For example:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span>    <span class="c1">;; re-frame API</span>
   <span class="ss">:wear</span>        <span class="c1">;; the effects key which this handler can action</span>
@@ -1658,7 +1661,7 @@ written them yourself, and registered them. </p>
 
 
 <h2 id="domino-4">Domino 4<a class="headerlink" href="#domino-4" title="Permanent link">&para;</a></h2>
-<p>We now start the <code>v = f(s)</code> part of the flow. </p>
+<p>The action of updating <code>app-db</code> (in Domino 3) will trigger the <code>v = f(s)</code> part of the flow. </p>
 <p>The application state
 <code>s</code> has just changed (in Domino 3) and now boom, boom go Dominoes 4, 5, 
 and 6, at the end of which we have a new view, <code>v</code>, being shown to the user.</p>
@@ -1671,7 +1674,7 @@ Because the items are stored in app state, there's not a lot
 to compute and, instead, it acts like a simple extractor or accessor,
 just plucking the list of items out of application state:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">query-fn</span>
-  <span class="p">[</span><span class="nv">db</span> <span class="nv">v</span><span class="p">]</span>         <span class="c1">;; db is the current app state, v the query vector</span>
+  <span class="p">[</span><span class="nv">db</span> <span class="nv">v</span><span class="p">]</span>         <span class="c1">;; db is the current value in app-db, v the query vector</span>
   <span class="p">(</span><span class="ss">:items</span> <span class="nv">db</span><span class="p">))</span>   <span class="c1">;; not much of a materialised view</span>
 </code></pre></div>
 
@@ -1681,12 +1684,12 @@ just plucking the list of items out of application state:</p>
 like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-sub</span>  <span class="c1">;; part of the re-frame API</span>
    <span class="ss">:query-items</span>         <span class="c1">;; query id  </span>
-   <span class="nv">query-fn</span><span class="p">)</span>            <span class="c1">;; query fn</span>
+   <span class="nv">query-fn</span><span class="p">)</span>            <span class="c1">;; function to perform the query </span>
 </code></pre></div>
 
 
 <p>Which says "if, in domino 5, you see a <code>(subscribe [:query-items])</code>, then 
-use <code>query-fn</code> to compute it".</p>
+call <code>query-fn</code> to compute it".</p>
 <h2 id="domino-5">Domino 5<a class="headerlink" href="#domino-5" title="Permanent link">&para;</a></h2>
 <p>Because the query function for <code>:query-items</code> just re-computed a new value, 
 any view (function) which uses a <code>(subscribe [:query-items])</code> 
