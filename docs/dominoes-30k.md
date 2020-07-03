@@ -19,7 +19,7 @@ the resulting six domino cascade.
     Don't expect 
     to completely grok the terse code presented below. We're still at 30,000 feet. More details later. 
 
-## Domino 1
+## Domino 1 - Event Dispatch
 
 In order for it to be clicked, that 3rd delete button must have already been rendered. And rendering 
 in re-frame is done by a `ViewFunction`. Perhaps it was rendered like this: 
@@ -49,7 +49,7 @@ The first element of an event vector,
 Events express user intent in a domain-specific way.
 They are the language of your re-frame system. 
 
-## Domino 2
+## Domino 2 - Event Handling
 
 An `event handler` (function), which we'll name `h`, is now called to 
 compute the `effect` of the event `[:delete-item 2486]`.
@@ -109,7 +109,7 @@ BTW, here is a more idiomatic (and terser) rewrite of `h` which uses `destructur
 ```
 
 
-## Domino 3
+## Domino 3 - Effect Handling
 
 `effect handler` functions action the `effects` returned by `h`.
 
@@ -156,7 +156,7 @@ For example:
     ...))      ;; do what's necessary to action the side effect
 ```
 
-## Domino 4
+## Domino 4 - Query
 
 The action of updating `app-db` (in Domino 3) will trigger the `v = f(s)` part of the flow. 
 
@@ -190,7 +190,7 @@ like this:
 Which says "if, in domino 5, you see a `(subscribe [:query-items])`, then 
 call `query-fn` to compute it".
 
-## Domino 5
+## Domino 5 - View
 
 Because the query function for `:query-items` just re-computed a new value, 
 any view (function) which uses a `(subscribe [:query-items])` 
@@ -224,7 +224,7 @@ Except there's no SQL available and you would be the one to implement
 the more sophisticated `query-fn` capable of handling the 
 "where" argument. More in later tutorials.
 
-## Domino 6
+## Domino 6 - DOM
 
 The hiccup returned by the view function
 is made into real browser DOM by Reagent/React. No code from you required. Just happens.
