@@ -54,7 +54,7 @@ So, we'll add this `time-str` subscription handler:
 
 Now the subscription does the computation, not the view. Much better. 
 
-You'll notice this new subscription handler belongs to "Layer 3" of the `Signal Graph`. 
+You'll notice this new subscription handler belongs to materialised view of the `Signal Graph`. 
 
 
 We could rewrite it to use the `:<-` syntactic sugar:
@@ -183,7 +183,7 @@ This feature shakes out well because re-frame has a data oriented design.
 
 The following issue comes up a bit.
 
-You will end up with a bunch of `Layer 2` `reg-sub` which
+You will end up with a bunch of extractor `reg-sub`s which
 look the same (they directly extract a path within `app-db`):
 ```clj
 (reg-sub 
