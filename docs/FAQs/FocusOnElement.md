@@ -8,7 +8,7 @@
 
 How do I switch "focus" to a particular HTML element?
 
-## Answer #1
+## HTML autofocus
 
 Perhaps you can use the `autofocus` HTML element attribute like this:
 ```cljs
@@ -39,7 +39,7 @@ But, it turns out this can be rewritten more tersely as:
 
 All these approaches only cause focus once, when the widget is first rendered, but you may need to have more control than that. 
 
-## Answer #2
+## Reagent after-render
 
 If you want to switch focus between elements after they have first rendered,
 you can create an effect handler which makes use of Reagent's `after-render` API to 
