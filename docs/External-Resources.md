@@ -8,8 +8,8 @@
 
 To get a good grounding in Reagent, please be sure to review the docs:
 
-  - [here](http://reagent-project.github.io/)
-  - [and then here](https://github.com/reagent-project/reagent/blob/master/doc/README.md)
+  - [Reagent site](http://reagent-project.github.io/)
+  - [Reagent README](https://github.com/reagent-project/reagent/blob/master/doc/README.md)
 
 For inspiration, perhaps look at one of our other projects: [re-com](https://github.com/Day8/re-com).
 
