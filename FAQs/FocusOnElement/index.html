@@ -21,7 +21,7 @@
     
     
     
-    <title>FocusOnElement</title>
+    <title>How to focus on an HTML element</title>
     
 
     
@@ -135,7 +135,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              FocusOnElement
+              How to focus on an HTML element
             
           </span>
         </div>
@@ -203,14 +203,16 @@
         
           
 
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
   <li class="md-tabs__item">
     
-      <a href="../.." class="md-tabs__link md-tabs__link--active">
+      <a href="../.." class="md-tabs__link">
         Home
       </a>
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../Inspecting-app-db/" class="md-tabs__link">
+        <a href="../Inspecting-app-db/" class="md-tabs__link md-tabs__link--active">
           FAQs
         </a>
       
@@ -900,10 +902,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
     
     <label class="md-nav__link" for="nav-3">
       FAQs
@@ -961,11 +965,67 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../../FocusOnElement.md" title="How to focus on an HTML element" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        How to focus on an HTML element
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="How to focus on an HTML element" class="md-nav__link md-nav__link--active">
       How to focus on an HTML element
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#question" class="md-nav__link">
+    Question
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#answer-1" class="md-nav__link">
+    Answer #1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#answer-2" class="md-nav__link">
+    Answer #2
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -1349,15 +1409,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#answer-v100-onwards" class="md-nav__link">
-    Answer (v1.0.0 onwards)
+  <a href="#answer-1" class="md-nav__link">
+    Answer #1
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#answer-prior-to-v100" class="md-nav__link">
-    Answer (prior to v1.0.0)
+  <a href="#answer-2" class="md-nav__link">
+    Answer #2
   </a>
   
 </li>
@@ -1388,70 +1448,61 @@
 
 <h1 id="_1"><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <h2 id="question">Question<a class="headerlink" href="#question" title="Permanent link">&para;</a></h2>
-<p>Does re-frame allow me to register global interceptors? Ones which are included 
-for every event handler?</p>
-<h2 id="answer-v100-onwards">Answer (v1.0.0 onwards)<a class="headerlink" href="#answer-v100-onwards" title="Permanent link">&para;</a></h2>
-<p>Yes, re-frame provides an API for registering global interceptors. </p>
-<p>The following code creates a global interceptor to keep a track of all events:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">;; We&#39;ll be recording events into this atom </span>
-<span class="c1">;; The most recent events will be at the front of the list. </span>
-<span class="p">(</span><span class="k">def </span><span class="nv">event-store</span> <span class="p">(</span><span class="nf">atom</span> <span class="p">(</span><span class="nf">list</span><span class="p">)))</span>
-
-
-<span class="p">(</span><span class="kd">defn </span><span class="nv">keep-last-20</span>
-  <span class="p">[</span><span class="nv">existing</span> <span class="nv">new-one</span><span class="p">]</span>
-  <span class="p">(</span><span class="nb">take </span><span class="mi">20</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">existing</span> <span class="nv">new-one</span><span class="p">)))</span>
-
-
-<span class="c1">;; this interceptor will collect events and add them to the atom above</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">event-collector</span>
-  <span class="p">(</span><span class="nf">re-frame.core/-&gt;interceptor</span>
-    <span class="ss">:id</span>      <span class="ss">:event-collector</span>
-    <span class="ss">:before</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span>
-               <span class="p">(</span><span class="nf">swap!</span> <span class="nv">event-store</span> <span class="nv">keep-last-20</span> <span class="p">(</span><span class="nf">re-frame.core/get-coeffect</span> <span class="nv">context</span> <span class="ss">:event</span><span class="p">))</span>
-               <span class="nv">context</span><span class="p">)))</span>
-
-<span class="c1">;; register this global interceptor early in program&#39;s boot process,</span>
-<span class="c1">;; using re-frame&#39;s API</span>
-<span class="p">(</span><span class="nf">re-frame.core/reg-global-interceptor</span> <span class="nv">event-collector</span><span class="p">)</span>
+<p>How do I switch "focus" to a particular HTML element?</p>
+<h2 id="answer-1">Answer #1<a class="headerlink" href="#answer-1" title="Permanent link">&para;</a></h2>
+<p>Perhaps you can use the <code>autofocus</code> HTML element attribute like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">view</span> 
+  <span class="p">[]</span>
+  <span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:type</span> <span class="s">&quot;text&quot;</span> <span class="ss">:id</span> <span class="s">&quot;my-id&quot;</span> <span class="ss">:auto-focus</span> <span class="nv">true</span><span class="p">])</span>
 </code></pre></div>
 
 
-<h2 id="answer-prior-to-v100">Answer (prior to v1.0.0)<a class="headerlink" href="#answer-prior-to-v100" title="Permanent link">&para;</a></h2>
-<p>Prior to v1.0.0, re-frame provided no API to directly support this feature,
-but there are ways of making it happen. </p>
-<p>Let's assume you have an interceptor called <code>omni-ceptor</code> which you want
-automatically added to all your event handlers.</p>
-<p>You'd write a replacement for both <code>reg-event-db</code> and <code>reg-event-fx</code>, and get
-these replacements to automatically add <code>omni-ceptor</code> to the interceptor 
-chain at registration time. </p>
-<p>Here's how to write one of these auto-injecting replacements: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-reg-event-db</span>            <span class="c1">;; a replacement for reg-event-db</span>
-
-   <span class="c1">;; 2-arity with no interceptors </span>
-   <span class="p">([</span><span class="nv">id</span> <span class="nv">handler</span><span class="p">]</span> 
-     <span class="p">(</span><span class="nf">my-reg-event-db</span> <span class="nv">id</span> <span class="nv">nil</span> <span class="nv">handler</span><span class="p">))</span>
-
-   <span class="c1">;; 3-arity with interceptors</span>
-   <span class="p">([</span><span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">]</span> 
-     <span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>   <span class="c1">;; which uses reg-event-db </span>
-       <span class="nv">id</span>
-       <span class="p">[</span><span class="nv">omni-ceptor</span> <span class="nv">interceptors</span><span class="p">]</span> <span class="c1">;; &lt;-- inject `omni-ceptor`</span>
-       <span class="nv">handler</span><span class="p">)))</span>
+<p>But this might not work in Safari these days (Safari is the new IE 7 of browsers). </p>
+<p>Instead, the more portable (but more complicated) version of this approach is to use React <code>refs</code> and a form-3 component:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-input</span> <span class="p">[]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">ref </span><span class="p">(</span><span class="nf">atom</span> <span class="nv">nil</span><span class="p">)]</span>
+    <span class="p">(</span><span class="nf">r/create-class</span>
+     <span class="p">{</span><span class="ss">:component-did-mount</span>
+      <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">_</span><span class="p">]</span>
+        <span class="p">(</span><span class="nf">.focus</span> <span class="o">@</span><span class="nv">ref</span><span class="p">))</span>
+      <span class="ss">:reagent-render</span>
+      <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">_</span><span class="p">]</span>
+        <span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:ref</span> <span class="o">#</span><span class="p">(</span><span class="nf">reset!</span> <span class="nb">ref </span><span class="nv">%</span><span class="p">)}])})))</span>
 </code></pre></div>
 
 
-<p>NB: did you know that interceptor chains are flattened and nils are removed?</p>
-<p>With this in place, you would always use <code>my-reg-event-db</code> 
-instead of the standard <code>reg-event-db</code>: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">my-reg-event-db</span> 
-   <span class="ss">:event-id</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">v</span><span class="p">]</span> 
-      <span class="nv">...</span><span class="p">))</span>
+<p>But, it turns out this can be rewritten more tersely as:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:ref</span> <span class="o">#</span><span class="p">(</span><span class="nb">when </span><span class="nv">%</span> <span class="p">(</span><span class="nf">.focus</span> <span class="nv">%</span><span class="p">)}]</span>
 </code></pre></div>
 
 
-<p>And, hey presto, you'd have your <code>omni-ceptor</code> "globally" injected.</p>
+<p>All these approaches only cause focus once, when the widget is first rendered, but you may need to have more control than that. </p>
+<h2 id="answer-2">Answer #2<a class="headerlink" href="#answer-2" title="Permanent link">&para;</a></h2>
+<p>If you want to switch focus between elements after they have first rendered,
+you can create an effect handler which makes use of Reagent's <code>after-render</code> API to 
+register a function which will imperatively set focus:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span> 
+  <span class="ss">:focus-to-element</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">element-id</span><span class="p">]</span> 
+    <span class="p">(</span><span class="nf">reagent/after-render</span>  <span class="o">#</span><span class="p">(</span><span class="nf">some-&gt;</span> <span class="nv">js/document</span> <span class="p">(</span><span class="nf">.getElementById</span> <span class="nv">element-id</span><span class="p">)</span> <span class="nv">.focus</span><span class="p">)))</span>
+</code></pre></div>
+
+
+<p>As written, this code will fail silently if <code>element-id</code> is not found. Instead, you may want to detect and log that problem.</p>
+<p>You can then use this effect within your event handler: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
+  <span class="ss">:something</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="nv">event</span><span class="p">]</span>
+    <span class="p">{</span><span class="ss">:db</span> <span class="nv">....</span>
+     <span class="ss">:focus-to-element</span> <span class="nv">some-element-id</span><span class="p">}))</span>
+</code></pre></div>
+
+
+<p>This does assume you can compute the <code>some-element-id</code> of the HTML element 
+on which you want focus.</p>
+<p>BTW, notice the trick here. We use <code>Reagent/after-render</code> to ensure that the 
+HTML element is rendered <strong>before</strong> we try to focus on it because 
+sometimes the element doesn't even exist in the DOM until the UI is rerendered.</p>
                 
               
               
@@ -1492,6 +1543,58 @@ instead of the standard <code>reg-event-db</code>: </p>
 <footer class="md-footer">
 
   <!-- Link to previous and/or next page -->
+  
+    <div class="md-footer-nav">
+      <nav
+        class="md-footer-nav__inner md-grid"
+        aria-label="Footer"
+      >
+
+        <!-- Link to previous page -->
+        
+          <a
+            href="../DoINeedReFrame/"
+            title="Reagent looks terrific. Why do I need re-frame?"
+            class="md-footer-nav__link md-footer-nav__link--prev"
+            rel="prev"
+          >
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Reagent looks terrific. Why do I need re-frame?
+              </div>
+            </div>
+          </a>
+        
+
+        <!-- Link to next page -->
+        
+          <a
+            href="../GlobalInterceptors/"
+            title="How do I register a global interceptor"
+            class="md-footer-nav__link md-footer-nav__link--next"
+            rel="next"
+          >
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                How do I register a global interceptor
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
 
   <!-- Further information -->
