@@ -228,26 +228,11 @@
 
 
 (def inject-global-interceptors
-  "An interceptor whose `:before` actions the `:before`s of registered global interceptors,
-   and whose `:after` actions the `:after`s of registered global interceptors."
+  "An interceptor which adds registered global interceptors to the context's queue.
+
+   NOTE: :queue is a Clojure.lang.PersistentQueue and not a vector."
   (->interceptor
     :id     :inject-global-interceptors
     :before (fn inject-global-interceptors-before
               [context]
-              (reduce
-                (fn [context {:keys [before]}]
-                  (if before
-                    (before context)
-                    context))
-                context
-                (settings/get-global-interceptors)))
-
-    :after  (fn inject-global-interceptors-after
-              [context]
-              (reduce
-                (fn [context {:keys [after]}]
-                  (if after
-                    (after context)
-                    context))
-                context
-                (settings/get-global-interceptors)))))
+              (update context :queue #(into (settings/get-global-interceptors) %)))))
