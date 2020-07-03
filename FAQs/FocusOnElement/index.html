@@ -1009,15 +1009,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#answer-1" class="md-nav__link">
-    Answer #1
+  <a href="#html-autofocus" class="md-nav__link">
+    HTML autofocus
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#answer-2" class="md-nav__link">
-    Answer #2
+  <a href="#reagent-after-render" class="md-nav__link">
+    Reagent after-render
   </a>
   
 </li>
@@ -1409,15 +1409,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#answer-1" class="md-nav__link">
-    Answer #1
+  <a href="#html-autofocus" class="md-nav__link">
+    HTML autofocus
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#answer-2" class="md-nav__link">
-    Answer #2
+  <a href="#reagent-after-render" class="md-nav__link">
+    Reagent after-render
   </a>
   
 </li>
@@ -1449,7 +1449,7 @@
 <h1 id="_1"><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <h2 id="question">Question<a class="headerlink" href="#question" title="Permanent link">&para;</a></h2>
 <p>How do I switch "focus" to a particular HTML element?</p>
-<h2 id="answer-1">Answer #1<a class="headerlink" href="#answer-1" title="Permanent link">&para;</a></h2>
+<h2 id="html-autofocus">HTML autofocus<a class="headerlink" href="#html-autofocus" title="Permanent link">&para;</a></h2>
 <p>Perhaps you can use the <code>autofocus</code> HTML element attribute like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">view</span> 
   <span class="p">[]</span>
@@ -1477,7 +1477,7 @@
 
 
 <p>All these approaches only cause focus once, when the widget is first rendered, but you may need to have more control than that. </p>
-<h2 id="answer-2">Answer #2<a class="headerlink" href="#answer-2" title="Permanent link">&para;</a></h2>
+<h2 id="reagent-after-render">Reagent after-render<a class="headerlink" href="#reagent-after-render" title="Permanent link">&para;</a></h2>
 <p>If you want to switch focus between elements after they have first rendered,
 you can create an effect handler which makes use of Reagent's <code>after-render</code> API to 
 register a function which will imperatively set focus:</p>
