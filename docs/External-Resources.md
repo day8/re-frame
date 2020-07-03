@@ -39,6 +39,7 @@ Commercial grade video training for re-frame and Reagent:
 
 ## Examples and Applications Using re-frame
 
+* The [Workshub](https://www.works-hub.com/) client is open source and the repo is available [here](https://github.com/WorksHub/client)
 * [RealWorld](https://github.com/jacekschae/conduit) - a well commented codebase with CRUD, auth, advanced patterns, etc) that implements to the [RealWorld Spec and API](https://github.com/gothinkster/realworld).
 * [RealWorld](https://github.com/flexsurfer/conduitrn) - react native version 
 * [BlueGenes](https://github.com/intermine/bluegenes) - searching and analysing genomic data, by the University of Cambridge
@@ -105,8 +106,13 @@ Commercial grade video training for re-frame and Reagent:
 * [cljsrn-re-frame-workers](https://github.com/seantempesta/cljsrn-re-frame-workers): A library supporting react-native-workers with re-frame for ClojureScript and React Native.
 * [re-navigate](https://github.com/vikeri/re-navigate): Example of React Native Navigation with re-frame/re-natal
 
+### Other
+
+* [re-posh](https://github.com/denistakeda/re-posh) is re-frame + Datalog
+
 ### Videos
 
+* [A three part video series](https://www.youtube.com/playlist?list=PLUGfdBfjve9WFJMvE8JrpGYK6OTWWo1QS)
 * [A Video Tour of the Source Code of Ninja Tools](https://carouselapps.com/2015/12/02/tour-of-the-source-code-of-ninja-tools/)
 * [Funding Circle Clojure Meetup: Modular Users Interfaces with Re-frame](https://youtu.be/b_uum_iYShE)
 * [Build your next single page app in ClojureScript and re-frame](https://youtu.be/Pq5oof3SJXA)
