@@ -44,20 +44,20 @@ Too much? Okay, fine, back to the more limited picture.
 Conceptually, all nodes in the `Signal Graph` are a part of the same dataflow, but it will
 be instructive to label them as follows:
 
-   - **layer 1** - `ground truth` - is the root node, `app-db`
-   - **layer 2** - `extractors` - subscriptions which extract data directly from `app-db`, but do no further computation.
-   - **layer 3** - `materialised views` - subscriptions which obtain data from other subscriptions (never `app-db` directly), and compute derived data from their inputs
-   - **layer 4** - `leaf nodes` - the `ViewFunctions` which compute hiccup.
+   1. **Ground truth** - is the root node, `app-db`
+   2. **Extractors** - subscriptions which extract data directly from `app-db`, but do no further computation.
+   3. **Materialised views** - subscriptions which obtain data from other subscriptions (never `app-db` directly), and compute derived data from their inputs
+   4. **Leaf nodes** - the `ViewFunctions` which compute hiccup.
 
 
-The simplest version of the Signal Graph has no `layer 3` nodes.
-It only has `layer 2` subscriptions which extract data from `app-db`, and those values 
+The simplest version of the Signal Graph has no **materialised view** nodes.
+It only has **extractor** subscriptions which extract data from `app-db`, and those values 
 then flow unchanged into `ViewFunctions`.
 
 In more complex cases, a `ViewFunction` needs a materialised view 
-of the data in `app-db` and means `layer 3` subscription nodes. 
-An extractor (layer 2) subscription will extract a fragment of `app-db` 
-which will then flow into a `layer 3` node which will compute 
+of the data in `app-db`. 
+An extractor subscription will extract a fragment of `app-db` 
+which will then flow into a **materialized view** node which will compute 
 the materialised view of that fragment and, only then,
 does data flow into the  `ViewFunction`. 
 
@@ -100,20 +100,20 @@ the same inputs as last time, it would produce the same outputs as last time, in
 Data values "this time" and "last time" are regarded as "being the same" if ClojureScript's `=` says they are.
 
 
-## Why Layer 2?
+## Why Layer 2 - Extractors?
 
 Why is a layer of "extractors" necessary? 
 
 **It is an efficiency thing.** `app-db` will be changed by almost every `event`, often in a small, 
-partial way. But any change whatsoever will cause `Layer 2` subscription to be automatically re-run.
+partial way. But any change whatsoever will cause **extractor** subscription to be automatically re-run.
 All of them. Every time. This is because `app-db` is their input value, and subscriptions re-run when 
 one of their inputs change. 
 
-`Layer 2` handlers extract a fragment from `app-db` and then immediately prune
+Extractors select a fragment from `app-db` and then immediately prune
 further propagation through their sub-graph graph if the fragment hasn't changed from "last time". As a consequence, 
-the CPU intensive work in `layer 3` and `layer 4` is only performed when necessary.
+the CPU intensive work in the materialised views and leaf nodes is only performed when necessary.
 
-`Layer 2` nodes act as the Signal Graph's circuit breakers. We want them to be as computationally simple as possible.
+Extractors act as the Signal Graph's circuit breakers. We want them to be as computationally simple as possible.
 
 ## reg-sub 
 
@@ -121,7 +121,7 @@ Subscription handlers are registered using `reg-sub`. These handlers are the fun
 input values, flowing into the node, and calculate a derived value to be the node's output.
 
 
-`Layer 2` subscriptions are registered like this:
+Extractor subscriptions are registered like this:
 ```clj
 (re-frame.core/reg-sub  ;; a part of the re-frame API
   :id                   ;; usage: (subscribe [:id])
@@ -131,7 +131,7 @@ input values, flowing into the node, and calculate a derived value to be the nod
 
 This registers a `computation function` - a pretty simple one which just does an extraction.
 
-`Layer 3` subscriptions depend on other subscriptions for their inputs, and they are registered like this:
+Materialised view subscriptions depend on other subscriptions for their inputs, and they are registered like this:
 ```clj
 (reg-sub 
   :id
