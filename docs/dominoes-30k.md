@@ -234,6 +234,15 @@ time" will be the same as "last time", **except** for the absence of DOM for the
 deleted item, so the mutation will be to remove those now-missing
 DOM nodes from the browser.
 
+Simply connect mount your app to a DOM node:
+
+```clj
+(defn mount-ui
+  []
+  (rdom/render [my-root-app-ui]                 ;; mount the application's ui
+               (js/document.getElementById "dominoes-live-app")))
+  ```
+
 ## 3-4-5-6 Summary
 
 The key point to understand about our 3-4-5-6 example is:
