@@ -6,77 +6,64 @@
 
 ## Question
 
-Does re-frame allow me to register global interceptors? Ones which are included 
-for every event handler?
+How do I switch "focus" to a particular HTML element?
 
-## Answer (v1.0.0 onwards)
+## Answer #1
 
-Yes, re-frame provides an API for registering global interceptors. 
-
-The following code creates a global interceptor to keep a track of all events:
-
-```clj
-;; We'll be recording events into this atom 
-;; The most recent events will be at the front of the list. 
-(def event-store (atom (list)))
-
-
-(defn keep-last-20
-  [existing new-one]
-  (take 20 (conj existing new-one)))
-
-
-;; this interceptor will collect events and add them to the atom above
-(def event-collector
-  (re-frame.core/->interceptor
-    :id      :event-collector
-    :before  (fn [context]
-               (swap! event-store keep-last-20 (re-frame.core/get-coeffect context :event))
-               context)))
-
-;; register this global interceptor early in program's boot process,
-;; using re-frame's API
-(re-frame.core/reg-global-interceptor event-collector)
+Perhaps you can use the `autofocus` HTML element attribute like this:
+```cljs
+(defn view 
+  []
+  [:input {:type "text" :id "my-id" :auto-focus true])
 ```
 
+But this might not work in Safari these days (Safari is the new IE 7 of browsers). 
 
-## Answer (prior to v1.0.0) 
-
-Prior to v1.0.0, re-frame provided no API to directly support this feature,
-but there are ways of making it happen. 
-
-Let's assume you have an interceptor called `omni-ceptor` which you want
-automatically added to all your event handlers.
-
-You'd write a replacement for both `reg-event-db` and `reg-event-fx`, and get
-these replacements to automatically add `omni-ceptor` to the interceptor 
-chain at registration time. 
-
-Here's how to write one of these auto-injecting replacements: 
+Instead, the more portable (but more complicated) version of this approach is to use React `refs` and a form-3 component:
 ```clj
-(defn my-reg-event-db            ;; a replacement for reg-event-db
-
-   ;; 2-arity with no interceptors 
-   ([id handler] 
-     (my-reg-event-db id nil handler))
-     
-   ;; 3-arity with interceptors
-   ([id interceptors handler] 
-     (re-frame.core/reg-event-db   ;; which uses reg-event-db 
-       id
-       [omni-ceptor interceptors] ;; <-- inject `omni-ceptor`
-       handler)))
-``` 
-
-NB: did you know that interceptor chains are flattened and nils are removed?
-
-With this in place, you would always use `my-reg-event-db` 
-instead of the standard `reg-event-db`: 
-```clj
-(my-reg-event-db 
-   :event-id
-   (fn [db v] 
-      ...))
+(defn my-input []
+  (let [ref (atom nil)]
+    (r/create-class
+     {:component-did-mount
+      (fn [_]
+        (.focus @ref))
+      :reagent-render
+      (fn [_]
+        [:input {:ref #(reset! ref %)}])})))
 ```
 
-And, hey presto, you'd have your `omni-ceptor` "globally" injected.
+But, it turns out this can be rewritten more tersely as:
+```clj
+[:input {:ref #(when % (.focus %)}]
+```
+
+All these approaches only cause focus once, when the widget is first rendered, but you may need to have more control than that. 
+
+## Answer #2
+
+If you want to switch focus between elements after they have first rendered,
+you can create an effect handler which makes use of Reagent's `after-render` API to 
+register a function which will imperatively set focus:
+```clj
+(re-frame.core/reg-fx 
+  :focus-to-element
+  (fn [element-id] 
+    (reagent/after-render  #(some-> js/document (.getElementById element-id) .focus)))
+```
+As written, this code will fail silently if `element-id` is not found. Instead, you may want to detect and log that problem.
+
+You can then use this effect within your event handler: 
+```clj
+(re-frame.core/reg-event-fx
+  :something
+  (fn [cofx event]
+    {:db ....
+     :focus-to-element some-element-id}))
+```
+
+This does assume you can compute the `some-element-id` of the HTML element 
+on which you want focus.
+
+BTW, notice the trick here. We use `Reagent/after-render` to ensure that the 
+HTML element is rendered **before** we try to focus on it because 
+sometimes the element doesn't even exist in the DOM until the UI is rerendered.
