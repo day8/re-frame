@@ -6,7 +6,10 @@
 
 (defn on-load
       [listener]
-      (events/listen js/self "load" listener))
+      ;; events/listen throws an exception in react-native environments because addEventListener is not available.
+      (try
+        (events/listen js/self "load" listener)
+        (catch :default _)))
 
 (def next-tick goog.async.nextTick)
 
