@@ -25,7 +25,7 @@ y'know. Pretty good.
 ## Overview
 
 re-frame is a ClojureScript framework for building user interfaces.
-It is has a data-oriented, functional design.
+It has a data-oriented, functional design.
 
 re-frame has been designed from the ground up to make developers ***very***
 productive when building large Single-Page applications. That's its promise to you.
