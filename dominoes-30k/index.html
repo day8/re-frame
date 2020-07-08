@@ -1737,12 +1737,6 @@ is made into real browser DOM by Reagent/React. No code from you required. Just 
 time" will be the same as "last time", <strong>except</strong> for the absence of DOM for the
 deleted item, so the mutation will be to remove those now-missing
 DOM nodes from the browser.</p>
-<p>Simply connect mount your app to a DOM node:</p>
-<p><code>clj
-(defn mount-ui
-  []
-  (rdom/render [my-root-app-ui]                 ;; mount the application's ui
-               (js/document.getElementById "dominoes-live-app")))</code></p>
 <h2 id="3-4-5-6-summary">3-4-5-6 Summary<a class="headerlink" href="#3-4-5-6-summary" title="Permanent link">&para;</a></h2>
 <p>The key point to understand about our 3-4-5-6 example is:</p>
 <ul>

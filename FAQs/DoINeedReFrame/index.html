@@ -1505,12 +1505,12 @@ another you'll be using "Reagent + a broader architecture".</p>
 <ol>
 <li>Events are cardinal. Nothing happens without an event.</li>
 <li>Events are data  (so they they are loggable, and can be queued, etc).</li>
-<li>Events are handled async  (a critical decision. Engineered to avoid some <code>core.async</code> issues!).</li>
+<li>Dispatched events are handled async - they are put in a queue and handled very soon, but not now (for a variety of subtle reasons).</li>
 <li>For efficiency, subscriptions (reactions) should be layered and de-duplicated.</li>
 <li>Views are never imperative or side effecting (best effort).</li>
 <li>Unidirectional data flow only, ever.</li>
 <li>Interceptors over middleware. Provide cross cutting concerns like logging and debugging.</li>
-<li>Event handlers capture control and contain key code. Ensure purity via coeffects and effects. </li>
+<li>Event handlers capture control and contain key logic. Ensure purity via coeffects and effects. </li>
 <li>All state is stored in one place. </li>
 <li>State is committed-to transactionally, never incrementally or piecemeal.</li>
 </ol>

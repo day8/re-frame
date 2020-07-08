@@ -1500,7 +1500,7 @@ register a function which will imperatively set focus:</p>
 
 <p>This does assume you can compute the <code>some-element-id</code> of the HTML element 
 on which you want focus.</p>
-<p>BTW, notice the trick here. We use <code>Reagent/after-render</code> to ensure that the 
+<p>BTW, notice a trick here. We use <code>Reagent/after-render</code> to ensure that the 
 HTML element is rendered <strong>before</strong> we try to focus on it because 
 sometimes the element doesn't even exist in the DOM until the UI is rerendered.</p>
                 
