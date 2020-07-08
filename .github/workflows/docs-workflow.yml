@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout Current Branch
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Build Codox Documentation
         run: lein codox
       - name: Create Codox Artifact
