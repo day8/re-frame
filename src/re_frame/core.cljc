@@ -264,7 +264,7 @@
 (defn reg-sub-raw
   "This is a low level, advanced function.  You should probably be
   using reg-sub instead.
-  Docs in https://github.com/day8/re-frame/blob/master/docs/SubscriptionFlow.md"
+  Docs in https://github.com/day8/re-frame/blob/master/docs/flow-mechanics.md"
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
 
