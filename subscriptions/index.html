@@ -1531,18 +1531,19 @@
                 <h1 id="on-derived-data">On Derived Data<a class="headerlink" href="#on-derived-data" title="Permanent link">&para;</a></h1>
 <p>The UI is just derived data. </p>
 <p>At each moment, the DOM displayed is a "materialised view" of what is in <code>app-db</code>. </p>
-<p>Domino 3 modifies <code>app-db</code> and then boom, boom, boom go dominoes 4, 5 &amp; 6, automatically producing this "materialised view", via a data flow. </p>
+<p>Domino 3 (effect handler) modifies <code>app-db</code> and then boom, boom, boom go dominoes 4, 5 &amp; 6, 
+automatically producing this "materialised view", via a data flow. </p>
 <h2 id="how-exactly">How Exactly?<a class="headerlink" href="#how-exactly" title="Permanent link">&para;</a></h2>
 <p>Data flows through <strong>The Signal Graph</strong>.</p>
-<p><code>app-db</code> is the ground truth of a re-frame app,
-and it is at the root of a Directed Acyclic Graph (DAG) called the <strong>Signal Graph</strong>.  At the other extent of this graph - at the leaves -
-are the <code>ViewFunctions</code>, which calculate hiccup.</p>
+<p><code>app-db</code> is the ground truth of a re-frame app, and it is at the root of a 
+Directed Acyclic Graph (DAG) called the <strong>Signal Graph</strong>.  At the other extent of this 
+graph - at the leaves - are the <code>View Functions</code>, which calculate hiccup.</p>
 <p>Typically, the Signal Graph is not deep, with only a few interior layers of nodes
-between root and leaves. These interior nodes are the subscription nodes 
-that you create via <code>regsub</code>. Or, more accurately, you use <code>regsub</code> to register 
+between root and leaves. These interior nodes are the subscription nodes
+that you create via <code>regsub</code>. Or, more accurately, you use <code>regsub</code> to register
 how such nodes should be created, if and when they are needed.</p>
-<p>Data flows through this graph, being transformed by the journey and, as a result, the data which 
-arrives at the leaf <code>ViewFunctions</code> will be <strong>a materialised view</strong> of what was originally in <code>app-db</code>. </p>
+<p>Data flows through this graph, being transformed by the journey and, as a result, the data which
+arrives at the leaf <code>View Functions</code> will be <strong>a materialised view</strong> of what was originally in <code>app-db</code>. </p>
 <p>The nodes of the graph are pure functions. When data flows along an arc and into a node, 
 it becomes "an argument" to that node's pure function. That function will be "called" with 
 the input arguments from input arcs, and it will produce a return value, which then flows along 
@@ -1550,8 +1551,8 @@ that node's output arcs to child nodes, where the process repeats.</p>
 <p>It is derived data all the way through the graph. Even the hiccup produced by leaf nodes is 
 just more derived data. A re-frame app is 75% derived data. I just made that number up, 
 but you get the idea: there's a bit of it. </p>
-<p>Indeed, the process doesn't stop with leaf <code>ViewFunctions</code>. Hiccup is turned into DOM, which is more derived data. 
-And the browser turns DOM into pixels - yep, more data.
+<p>Indeed, the process doesn't stop with leaf <code>View Functions</code>. Hiccup is turned into DOM, which is more derived data. 
+And the browser turns DOM into pixels on your monitor - yep, more data.
 And a monitor turns pixels into photons (data, don't fight me here, I'm on a roll), 
 which your eye cells detect and turn into chemicals reactions (data) which cause nerve cell signals (totally data),
 which reaches the priors in your brain (data). Derived data all the way, baby!  Your brain is domino 12. </p>

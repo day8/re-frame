@@ -1358,16 +1358,16 @@
 <p>This document is currently in alpha test.</p>
 <p>If you review it, could you please let me know:</p>
 <ol>
-<li>How long it takes you to read (my current guess is 20 mins)</li>
+<li>How long it takes you to read (my current guess is 40 mins)</li>
 <li>What worked well for you. What puzzled you. What jarred.  What is overexplained. What is underexplained. etc. </li>
 </ol>
 <p>It is not yet completely polished, but it is getting close. It does not yet have an integrated inline/on-page REPL yet. But it will soon. <br></p>
 <p>Open an issue with your thoughts <a href="https://github.com/day8/re-frame/">at the re-freame repo</a> or via twitter <a href="https://twitter.com/wazound">here</a></p>
 <p>Many Thanks!</p>
 </blockquote>
-<p>Are you new to ClojureScript?  This page will teach you to <strong><em>read Clojure</em></strong> in 20 minutes.</p>
+<p>Are you new to ClojureScript?  This page will teach you to <strong><em>read Clojure</em></strong> in 40 minutes.</p>
 <p>Specifically, it will teach you enough to read <code>Reagent</code> and <code>re-frame</code> code (building Web UIs).
-Learning to <em>write ClojureScript</em> is a larger skill, which will require more than 20 mins, 
+Learning to <em>write ClojureScript</em> is a larger skill, which will require more than 40 mins, 
 but this page does contain some interactive, live coding to get you started. </p>
 <h2 id="in-a-nutshell-why">In A Nutshell, Why?<a class="headerlink" href="#in-a-nutshell-why" title="Permanent link">&para;</a></h2>
 <p>Clojure is a modern LISP. </p>
@@ -1388,7 +1388,7 @@ make you better developer for life, even if you aren't using LISP.</p>
 <blockquote>
 <p>Clojure runs on the JVM. ClojureScript runs in the browser. They are essentially the same language but our focus is ClojureScript.</p>
 </blockquote>
-<p>So, 20 mins ...</p>
+<p>So, 40 mins ...</p>
 <hr />
 <p>I have good news: you are going to be surprised and delighted at the simplicity of the syntax. </p>
 <h2 id="simple-data-literals">Simple Data Literals<a class="headerlink" href="#simple-data-literals" title="Permanent link">&para;</a></h2>
@@ -1549,10 +1549,10 @@ make you better developer for life, even if you aren't using LISP.</p>
 </tbody>
 </table>
 <h2 id="thats-it-for-syntax">That's It For Syntax<a class="headerlink" href="#thats-it-for-syntax" title="Permanent link">&para;</a></h2>
-<p>We've now covered most of Clojure's syntax.  </p>
+<p>We've now covered most of Clojure's syntax.</p>
 <p>But, how can that be?  Haven't we only looked at data litterals? Well, yes, but 
 Clojure is <code>Homoiconic</code> which means "code is data" - you write Clojure code 
-using Clojure's data litterals and we just covered data litterals. </p>
+using Clojure's data litterals and we've covered data litterals. </p>
 <hr />
 <h2 id="evaluation">Evaluation<a class="headerlink" href="#evaluation" title="Permanent link">&para;</a></h2>
 <p>You are going to be surprised and delighted with the simplicty of "evaluation".</p>
@@ -1582,18 +1582,19 @@ using Clojure's data litterals and we just covered data litterals. </p>
 <td>Same</td>
 </tr>
 <tr>
-<td><code class="highlight"><span class="p">{</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span> <span class="p">}</span></code></td>
-<td><code class="highlight"><span class="p">{</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span> <span class="p">}</span></code></td>
+<td><code class="highlight"><span class="p">{</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span><span class="p">}</span></code></td>
+<td><code class="highlight"><span class="p">{</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span><span class="p">}</span></code></td>
 <td>Yep, same</td>
 </tr>
 </tbody>
 </table>
 <p>Below, you can start evaluating live on this page. Enter an expression into the following editor 
 and it will be evaluated. The result of the evaluation will be shown in the box below the editor.</p>
-<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<p>XXX inline REPL will go here. In the meantime, use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <p>Try these experiements:</p>
 <ul>
 <li>{:a 1 :a 4} -- oops </li>
+<li>forget to close a parens ??</li>
 <li>XXX other basic examples?</li>
 </ul>
 <p>So, let's now talk about the two exceptions <code>lists</code> and <code>symbols</code> ...</p>
@@ -1636,7 +1637,9 @@ and it will be evaluated. The result of the evaluation will be shown in the box 
 <p>For the moment, you'll have to take my word on this: the symbol <code class="highlight"><span class="nv">inc</span></code>
 is bound to a function in Clojure's standard library. As a result, when you evaulate <code class="highlight"><span class="nv">inc</span></code>, you get the function!! Because that's what <code>inc</code> is bound to.</p>
 <p>There's also another symbol, <code class="highlight"><span class="nv">count</span></code>, which is bound to different function in the standard library. </p>
-<p>And, finally - this one will be a surprise - the symbol <code class="highlight"><span class="nv">+</span></code> is bound to a function.  Wait. Isn't <code class="highlight"><span class="nv">+</span></code> an operator?  No. Clojure doesn't have operators. Instead, <code class="highlight"><span class="nv">+</span></code> is a symbol, and it is bound to a function - which adds - more soon.</p>
+<p>And, finally - this one will be a surprise - the symbol <code class="highlight"><span class="nv">+</span></code> is bound to a function.<br />
+Wait. Isn't <code class="highlight"><span class="nv">+</span></code> an operator?  No. Clojure doesn't have operators. 
+Instead, <code class="highlight"><span class="nv">+</span></code> is a symbol, and it is bound to a function - one which adds. Anyway, more soon.</p>
 </div>
 <p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <p>Try these experiements:</p>
@@ -1709,7 +1712,7 @@ is a function. And it is <strong><em>that</em></strong> function which is called
 </table>
 <div class="admonition note">
 <p class="admonition-title">No operators</p>
-<p>We now know that <code class="highlight"><span class="nv">+</span></code> is a builtin symbol bound to a function, not an operator. <br>
+<p>We now know that <code class="highlight"><span class="nv">+</span></code> is a symbol bound to a builtin function, not an operator. <br>
 It is the same with <code class="highlight"><span class="nv">-</span></code>,  <code class="highlight"><span class="nv">/</span></code> ,  <code class="highlight"><span class="nv">&gt;</span></code>,  <code class="highlight"><span class="nv">=</span></code>, etc.<br>
 Because these are just names, you can also have <code class="highlight"><span class="nv">not=</span></code><br>
 And because there are no operators, there's no operator precedence to discuss. Simple syntax, right?</p>
@@ -1721,73 +1724,6 @@ And because there are no operators, there's no operator precedence to discuss. S
 <li>try <code>(count [1 2 3])</code></li>
 </ul>
 <p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
-<h2 id="not-evaluating">Not Evaluating<a class="headerlink" href="#not-evaluating" title="Permanent link">&para;</a></h2>
-<p>We've now reviewed how <code>lists</code> and <code>symbols</code> have special evaluation. 
-But what if we didn't want that? What if we wanted a <code>list</code> to evaluate to itself, like the other data litterals? </p>
-<p>Answer: you use a leading  <code class="highlight"><span class="o">&#39;</span></code>  charater on the <code>list</code>. That character means "don't evaluate as a function call, evaluate as a plain list". </p>
-<table>
-<thead>
-<tr>
-<th>Data</th>
-<th>Evaluates To</th>
-<th>Comments</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code></td>
-<td></td>
-<td>Oops. Error!<br>That list will be evaluated as function call, but that 1st<br> element <code class="highlight"><span class="mi">1</span></code> will not evaluate to a function. It is a number.</td>
-</tr>
-<tr>
-<td><code class="highlight"><span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code></td>
-<td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code></td>
-<td>No function call happens.<br>That leading quote character says to <strong><em>not</em></strong> evaluate the list as<br>a function call and to instead just let the list evaluate to itself<br>(as most other data literals do).</td>
-</tr>
-<tr>
-<td><code class="highlight"><span class="p">(</span><span class="nb">count </span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">))</span></code></td>
-<td></td>
-<td>oops error. Can't evaluate <code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code> because <code class="highlight"><span class="mi">1</span></code> is not a function.</td>
-</tr>
-<tr>
-<td><code class="highlight"><span class="p">(</span><span class="nb">count </span><span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">))</span></code></td>
-<td><code class="highlight"><span class="mi">2</span></code></td>
-<td>The list is not evaluated, so <code class="highlight"><span class="nv">count</span></code>  has one list argument.<br><code class="highlight"><span class="nv">count</span></code> is builtin function which does what you expect.</td>
-</tr>
-<tr>
-<td><code class="highlight"><span class="o">&#39;</span><span class="p">(</span><span class="nb">inc </span><span class="mi">1</span><span class="p">)</span></code></td>
-<td><code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="mi">1</span><span class="p">)</span></code></td>
-<td>That leading quote character says to <strong><em>not</em></strong> evaluate the list as<br>a function call and let it evaluate to a list<br>with two elements: a symbol and a number.</td>
-</tr>
-<tr>
-<td><code class="highlight"><span class="p">(</span><span class="nb">list </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code></td>
-<td><code class="highlight"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code></td>
-<td>Also, the builtin function, bound to the symbol<code class="highlight"><span class="nv">list</span></code>, will make<br>a list from its actual arguments</td>
-</tr>
-</tbody>
-</table>
-<p>The same applies to symbols, although it is more unusual to see this in production code: </p>
-<table>
-<thead>
-<tr>
-<th>Data</th>
-<th>Evaluates To</th>
-<th>Comments</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code class="highlight"><span class="nv">mine</span></code></td>
-<td><code class="highlight"><span class="s">&quot;something&quot;</span></code></td>
-<td>Normal evaluation: assumimg that <code class="highlight"><span class="nv">mine</span></code>  is bound to <code class="highlight"><span class="s">&quot;something&quot;</span></code></td>
-</tr>
-<tr>
-<td><code class="highlight"><span class="ss">&#39;mine</span></code></td>
-<td><code class="highlight"><span class="nv">mine</span></code></td>
-<td>A leading <code class="highlight"><span class="o">&#39;</span></code>  character means not normal evaluation.<br>Evaluates to the symbol itself, not what it is bound to.</td>
-</tr>
-</tbody>
-</table>
 <hr />
 <h2 id="forms">Forms<a class="headerlink" href="#forms" title="Permanent link">&para;</a></h2>
 <p>A list like this <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code> is known as <strong>a form</strong>.</p>
@@ -2082,8 +2018,7 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 <p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <hr />
 <h2 id="fn"><code class="highlight"><span class="nv">fn</span></code><a class="headerlink" href="#fn" title="Permanent link">&para;</a></h2>
-<p>So. now we are taking a bit step up in knowledge. </p>
-<p>An <code class="highlight"><span class="nv">fn</span></code> form creates a function. </p>
+<p>An <code class="highlight"><span class="nv">fn</span></code> form creates a function. We're taking a big step up here.</p>
 <p>Here is a very simple example <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span></code>:</p>
 <ul>
 <li>an <code class="highlight"><span class="nv">fn</span></code> form has three elements:<ul>
@@ -2105,31 +2040,38 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 <div class="codehilite"><pre><span></span><code><span class="c1">; Aside: a line which starts with a semi-colon is a comment</span>
 
 <span class="c1">; The following is a two element list:</span>
-<span class="c1">;   - the 1st element is a function created by an `fn` form</span>
-<span class="c1">;   - the 2nd element is &quot;the actual arg&quot;  </span>
+<span class="c1">;   - the 1st is (fn [x] x) and that&#39;s a function (created by an `fn` form)</span>
+<span class="c1">;   - the 2nd element is a string &quot;the actual arg&quot;  </span>
 <span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span> <span class="s">&quot;the actual arg&quot;</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>Let's think about what is happening here:</p>
+<p>I'd like you to see this two element list as more like, say:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">count </span><span class="s">&quot;the actual arg&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>Except, in place of the symbol  <code class="highlight"><span class="nv">count</span></code> there is a form <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span></code>.  <code class="highlight"><span class="nv">count</span></code> is symbol which evaluates to a builtin function. Whereas <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span></code> is a form which evaluates to a function. Either way, the first element of the list evaluates to a function and the 2nd element to the list will be the actual argument in this function call.</p>
+<p>Let's work through it in more detail: </p>
 <ol>
-<li>This is a list, so it will evaluate to a function call, in the two step process described above</li>
-<li>First, evaluate all the elements of the list  (there are two)<ul>
+<li>This is a two element list, so it will evaluate to a function call, in the two step process described above</li>
+<li>First, evaluate all the elements of the list  (remember, there are two)<ul>
 <li>The first element (the  <code class="highlight"><span class="nv">fn</span></code> form) will evaluate to a function </li>
-<li>The second element will evaluate to <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
+<li>The second element is a string which will evaluate to itself <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
 </ul>
 </li>
 <li>Second, the function call happens <ul>
+<li>the function <code class="highlight"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span></code> will be called</li>
 <li><code>x</code> will be bound to the actual argument <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
-<li>the body of the function will be evaluated</li>
-<li>The body is just <code class="highlight"><span class="nv">x</span></code>, a symbol which is bound to <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
+<li>calling the function means evaluating the body of the function</li>
+<li>The body of the function is just <code class="highlight"><span class="nv">x</span></code>, a symbol which is bound to the actual argument <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
 <li>So the body evaluates to  <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
 </ul>
 </li>
-<li>So the function will return <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
+<li>The functions return value will be <code class="highlight"><span class="s">&quot;the actual arg&quot;</span></code></li>
 <li>And that then is the evaluation of the entire form</li>
 </ol>
-<p>Here's another call:</p>
+<p>Here's another call to the same function:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span> <span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">])</span>
 </code></pre></div>
 
@@ -2304,7 +2246,7 @@ which combines the two, called <code class="highlight"><span class="nv">defn</sp
 </code></pre></div>
 
 
-<p>evaluates to <code class="highlight"><span class="s">&quot;a pen&quot;</span></code>. Phew! </p>
+<p>evaluates to <code class="highlight"><span class="s">&quot;the pen&quot;</span></code>. Phew! </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;the pen&quot;</span>
       <span class="nv">b</span>  <span class="s">&quot;a sword&quot;</span><span class="p">]</span>   
   <span class="p">{</span><span class="ss">:winner-is</span> <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="nv">a</span> <span class="nv">b</span><span class="p">)</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">)})</span> 
@@ -2313,6 +2255,29 @@ which combines the two, called <code class="highlight"><span class="nv">defn</sp
 
 <p>evaluates to <code class="highlight"><span class="p">{</span><span class="ss">:winner-is</span> <span class="s">&quot;the pen&quot;</span><span class="p">}</span></code></p>
 <p><code class="highlight"><span class="nv">let</span></code> is often used within a <code class="highlight"><span class="nv">defn</span></code>: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">greet</span>
+  <span class="p">[</span><span class="nb">name </span><span class="nv">friendly?</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">greeting</span> <span class="p">(</span><span class="k">if </span><span class="nv">friendly?</span> <span class="s">&quot;Hello &quot;</span> <span class="s">&quot;Go away &quot;</span><span class="p">)]</span>
+    <span class="p">[</span><span class="ss">:div</span> <span class="nv">greeting</span> <span class="nv">name</span><span class="p">])</span>
+</code></pre></div>
+
+
+<p>XXX experiement with greet </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">greet</span> <span class="s">&quot;Mum&quot;</span> <span class="nv">true</span><span class="p">)</span>
+</code></pre></div>
+
+
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">greet</span> <span class="s">&quot;Noisy Neighbours&quot;</span> <span class="nv">false</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>In this particular, we could have got away with no using a <code>let</code>, like this: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">greet</span>
+  <span class="p">[</span><span class="nb">name </span><span class="nv">friendly?</span><span class="p">]</span>
+  <span class="p">[</span><span class="ss">:div</span> <span class="p">(</span><span class="k">if </span><span class="nv">friendly?</span> <span class="s">&quot;Hello &quot;</span> <span class="s">&quot;Go away &quot;</span><span class="p">)</span> <span class="nv">name</span><span class="p">)</span>
+</code></pre></div>
+
+
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">items-text</span> 
   <span class="p">[</span><span class="nv">items</span><span class="p">]</span> 
   <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">num</span>    <span class="p">(</span><span class="nb">count </span><span class="nv">items</span><span class="p">)</span>
@@ -2395,7 +2360,8 @@ which combines the two, called <code class="highlight"><span class="nv">defn</sp
 <p>This approach of using a keyword as the function, with a hashmap argument happens <strong><em>a lot</em></strong> in ClojureScript Code.</p>
 <hr />
 <h2 id="builtin-functions">BuiltIn Functions<a class="headerlink" href="#builtin-functions" title="Permanent link">&para;</a></h2>
-<p>Clojure's has a substantial library of builtin functions. A few in particular are used all the time, and to read Clojure code (our aim here), you must know them. </p>
+<p>Clojure's has a substantial library of builtin functions. A few in particular 
+are used all the time, and to read Clojure code (our aim here), you must know them. </p>
 <h2 id="assoc"><code class="highlight"><span class="nv">assoc</span></code><a class="headerlink" href="#assoc" title="Permanent link">&para;</a></h2>
 <p><code class="highlight"><span class="nv">assoc</span></code>  allows you to add a key/value pair to a hashmap. </p>
 <table>
@@ -2668,9 +2634,9 @@ And this <code>thread first</code> function (marco) will rewrite/reorganise the 
 <li>Then the evaluation of that form becomes the first argument to the next form, which is <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">4</span><span class="p">)</span></code> , effectively creating  <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">3</span> <span class="mi">4</span><span class="p">)</span></code> </li>
 <li>The result is  <code class="highlight"><span class="mi">7</span></code> </li>
 </ol>
-<p>Notice how the value for the previous form's evaluation is always "threaded" into the form below as the 1st argument. Hence the name "thread first".</p>
+<p>Notice how the value for the previous form's evaluation is always "threaded" into the form below as the 1st argument. Hence the name "thread first macro".</p>
 <p>Deeply nested forms can be a bit hard to read, so the <code>thread first</code> macro arrangement allows you to visulaise the computation as a cascading data flow.
-It is as if the evaluation of the higher form is "flowing down" and into the form underneath. That's the mental model, and most find it useful. </p>
+It is as if the evaluation of the higher form is "flowing down" and into the form underneath. That's a useful mental model for many. </p>
 <p>How about this use of <code class="highlight"><span class="nv">-&gt;</span></code>:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">-&gt; </span><span class="p">{}</span>
     <span class="p">(</span><span class="nb">assoc </span><span class="ss">:a</span> <span class="mi">1</span><span class="p">)</span>    <span class="c1">; (assoc {} :a 1)</span>
@@ -2717,10 +2683,11 @@ It is as if the evaluation of the higher form is "flowing down" and into the for
 
 
 <h2 id="the-hard-bit">The Hard Bit<a class="headerlink" href="#the-hard-bit" title="Permanent link">&para;</a></h2>
-<p>The learning curve has been gentle. Clojure has simple syntax and simple evaluation semantics.</p>
-<p>The steeper part of the Clojure learning curve is when you have to <strong><em>write code using pure functions and immutable data</em></strong>.
+<p>The learning curve so far as been gentle. Clojure has simple syntax and simple evaluation semantics. </p>
+<p>The steeper part of the Clojure learning curve, and the part that takes most of the time to master,
+is figuring out how to <strong><em>write code using pure functions and immutable data</em></strong>.
 If you have previously only used imperative, place-oriented languages (eg. OO laguages),
-this is the paradigm change which takes time to click. </p>
+this paradigm change takes time to click.</p>
 <p>But, of course, the purpose of this tutorial is to teach you to <strong><em>read</em></strong> Clojure, which is an easier skill. So, onward ...</p>
 <h2 id="immutable-data">Immutable Data<a class="headerlink" href="#immutable-data" title="Permanent link">&para;</a></h2>
 <p>ClojureScript uses immtutable data structures by default.</p>
