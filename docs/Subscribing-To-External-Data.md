@@ -134,7 +134,7 @@ A few things to notice:
 
 1. We are using the low level `reg-sub-raw` to register our handler (and not the more normal `reg-sub`)
    so we can get an `:on-dispose` callback when the subscription is no longer needed.
-   [See the `reg-sub-raw` docs at the end of this tutorial](SubscriptionFlow.md)
+   [See the `reg-sub-raw` docs at the end of this tutorial](flow-mechanics.md)
    
 2. You have to write  `issue-items-query!`.  Are you making a Restful GET? 
    Are you writing JSON packets down a websocket?  The query has to be made.
