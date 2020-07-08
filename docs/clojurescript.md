@@ -6,7 +6,7 @@ klipse: true
 >
 > If you review it, could you please let me know:
 >
->   1. How long it takes you to read (my current guess is 20 mins)
+>   1. How long it takes you to read (my current guess is 40 mins)
 >   2. What worked well for you. What puzzled you. What jarred.  What is overexplained. What is underexplained. etc. 
 >
 > It is not yet completely polished, but it is getting close. It does not yet have an integrated inline/on-page REPL yet. But it will soon. <br>
@@ -16,10 +16,10 @@ klipse: true
 > Many Thanks!
 
 
-Are you new to ClojureScript?  This page will teach you to ***read Clojure*** in 20 minutes.
+Are you new to ClojureScript?  This page will teach you to ***read Clojure*** in 40 minutes.
 
 Specifically, it will teach you enough to read `Reagent` and `re-frame` code (building Web UIs).
-Learning to *write ClojureScript* is a larger skill, which will require more than 20 mins, 
+Learning to *write ClojureScript* is a larger skill, which will require more than 40 mins, 
 but this page does contain some interactive, live coding to get you started. 
 
 ## In A Nutshell, Why?
@@ -47,7 +47,7 @@ make you better developer for life, even if you aren't using LISP.
 
 > Clojure runs on the JVM. ClojureScript runs in the browser. They are essentially the same language but our focus is ClojureScript.
 
-So, 20 mins ...
+So, 40 mins ...
 
 
 ---
@@ -111,36 +111,37 @@ A symbol is a name that is bound to a value. Here, we mean "bound" in the sense 
 
 ## That's It For Syntax
 
-We've now covered most of Clojure's syntax.  
+We've now covered most of Clojure's syntax.
 
 But, how can that be?  Haven't we only looked at data litterals? Well, yes, but 
 Clojure is `Homoiconic` which means "code is data" - you write Clojure code 
-using Clojure's data litterals and we just covered data litterals. 
+using Clojure's data litterals and we've covered data litterals. 
 
 ---
-## Evaluation 
+## Evaluation
 
 You are going to be surprised and delighted with the simplicty of "evaluation".
 
 **1st Evaluation Rule:** all data litterals other than `lists` and `symbols` **evaluate** to themselves.
 
-|  Value                |   Evaluates To                    |  Comment    |
-|-----------------------|-----------------------------------|-------------|
-| `#!clj \a`            | `#!clj \a`                        |  Same       |        
-| `#!clj 1`             | `#!clj 1`                         |  Same       |
-| `#!clj [1 1]`         | `#!clj [1 1]`                     |  Same       |
-| `#!clj {1 1 2 2 }`    | `#!clj {1 1 2 2 }`                |  Yep, same       |
+|  Value              |   Evaluates To              |  Comment    |
+|---------------------|-----------------------------|-------------|
+| `#!clj \a`          | `#!clj \a`                  |  Same       |        
+| `#!clj 1`           | `#!clj 1`                   |  Same       |
+| `#!clj [1 1]`       | `#!clj [1 1]`               |  Same       |
+| `#!clj {1 1 2 2}`   | `#!clj {1 1 2 2}`           |  Yep, same  |
 
 
 Below, you can start evaluating live on this page. Enter an expression into the following editor 
 and it will be evaluated. The result of the evaluation will be shown in the box below the editor.
 
-XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
+XXX inline REPL will go here. In the meantime, use [this external one](https://jaredforsyth.com/reepl/)
 
 
 Try these experiements:
 
    - {:a 1 :a 4} -- oops 
+   - forget to close a parens ??
    - XXX other basic examples?
 
 So, let's now talk about the two exceptions `lists` and `symbols` ...
@@ -167,7 +168,9 @@ Example symbol evaluations:
 
     There's also another symbol, `#!clj count`, which is bound to different function in the standard library. 
 
-    And, finally - this one will be a surprise - the symbol `#!clj +` is bound to a function.  Wait. Isn't `#!clj +` an operator?  No. Clojure doesn't have operators. Instead, `#!clj +` is a symbol, and it is bound to a function - which adds - more soon.
+    And, finally - this one will be a surprise - the symbol `#!clj +` is bound to a function.  
+    Wait. Isn't `#!clj +` an operator?  No. Clojure doesn't have operators. 
+    Instead, `#!clj +` is a symbol, and it is bound to a function - one which adds. Anyway, more soon.
 
 
 XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
@@ -222,7 +225,7 @@ Example list evaluations, involving symbols:
 | `#!clj [1 (+ 1 2 3)]`   | `#!clj [1 6]`          |  |
 
 !!! Note "No operators" 
-    We now know that `#!clj +` is a builtin symbol bound to a function, not an operator. <br>
+    We now know that `#!clj +` is a symbol bound to a builtin function, not an operator. <br>
     It is the same with `#!clj -`,  `#!clj /` ,  `#!clj >`,  `#!clj =`, etc.<br>
     Because these are just names, you can also have `#!clj not=`<br>
     And because there are no operators, there's no operator precedence to discuss. Simple syntax, right?
@@ -236,30 +239,6 @@ Let's start evaluating, live. Type into the following editor. Click Ctrl-click t
 XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
 
 
-## Not Evaluating
-
-We've now reviewed how `lists` and `symbols` have special evaluation. 
-But what if we didn't want that? What if we wanted a `list` to evaluate to itself, like the other data litterals? 
-
-Answer: you use a leading  `#!clj '`  charater on the `list`. That character means "don't evaluate as a function call, evaluate as a plain list". 
-
-
-|   Data          |   Evaluates To         |  Comments                                     |
-|-------------------------|------------------------|-----------------------------------------------|
-| `#!clj (1 2)`           |                        | Oops. Error!<br>That list will be evaluated as function call, but that 1st<br> element `#!clj 1` will not evaluate to a function. It is a number.  |
-| `#!clj '(1 2)`          | `#!clj (1 2)`          | No function call happens.<br>That leading quote character says to ***not*** evaluate the list as<br>a function call and to instead just let the list evaluate to itself<br>(as most other data literals do).  |
-| `#!clj (count (1 2))`   |                        |  oops error. Can't evaluate `#!clj (1 2)` because `#!clj 1` is not a function.  |
-| `#!clj (count '(1 2))`  | `#!clj 2`              | The list is not evaluated, so `#!clj count`  has one list argument.<br>`#!clj count` is builtin function which does what you expect. |
-| `#!clj '(inc 1)`          | `#!clj (inc 1)`      |That leading quote character says to ***not*** evaluate the list as<br>a function call and let it evaluate to a list<br>with two elements: a symbol and a number.  |
-| `#!clj (list 1 2)`      | `#!clj (1 2)`          | Also, the builtin function, bound to the symbol`#!clj list`, will make<br>a list from its actual arguments  |
-
-
-The same applies to symbols, although it is more unusual to see this in production code: 
-
-|   Data           |   Evaluates To         |  Comments                                     |
-|------------------|------------------------|-----------------------------------------------|
-| `#!clj mine`     | `#!clj "something"`    | Normal evaluation: assumimg that `#!clj mine`  is bound to `#!clj "something"` |
-| `#!clj 'mine`    | `#!clj mine`           | A leading `#!clj '`  character means not normal evaluation.<br>Evaluates to the symbol itself, not what it is bound to.  |
 
 ---
 
@@ -441,9 +420,7 @@ XXX inline REPL will go here. In the meantime use [this external one](https://ja
 ---
 ## `#!clj fn`
 
-So. now we are taking a bit step up in knowledge. 
-
-An `#!clj fn` form creates a function. 
+An `#!clj fn` form creates a function. We're taking a big step up here.
 
 Here is a very simple example `#!clj (fn [x] x)`:
 
@@ -466,26 +443,34 @@ Here is a very simple example `#!clj (fn [x] x)`:
 ; Aside: a line which starts with a semi-colon is a comment
 
 ; The following is a two element list:
-;   - the 1st element is a function created by an `fn` form
-;   - the 2nd element is "the actual arg"  
+;   - the 1st is (fn [x] x) and that's a function (created by an `fn` form)
+;   - the 2nd element is a string "the actual arg"  
 ((fn [x] x) "the actual arg")
 ```
-Let's think about what is happening here:
 
-  1. This is a list, so it will evaluate to a function call, in the two step process described above
-  3. First, evaluate all the elements of the list  (there are two)
+I'd like you to see this two element list as more like, say:
+```clj
+(count "the actual arg")
+```
+Except, in place of the symbol  `#!clj count` there is a form `#!clj (fn [x] x)`.  `#!clj count` is symbol which evaluates to a builtin function. Whereas `#!clj (fn [x] x)` is a form which evaluates to a function. Either way, the first element of the list evaluates to a function and the 2nd element to the list will be the actual argument in this function call.
+
+Let's work through it in more detail: 
+
+  1. This is a two element list, so it will evaluate to a function call, in the two step process described above
+  3. First, evaluate all the elements of the list  (remember, there are two)
     - The first element (the  `#!clj fn` form) will evaluate to a function 
-    - The second element will evaluate to `#!clj "the actual arg"`
+    - The second element is a string which will evaluate to itself `#!clj "the actual arg"`
   5. Second, the function call happens 
+    - the function `#!clj (fn [x] x)` will be called
     - `x` will be bound to the actual argument `#!clj "the actual arg"`
-    - the body of the function will be evaluated
-    - The body is just `#!clj x`, a symbol which is bound to `#!clj "the actual arg"`
+    - calling the function means evaluating the body of the function
+    - The body of the function is just `#!clj x`, a symbol which is bound to the actual argument `#!clj "the actual arg"`
     - So the body evaluates to  `#!clj "the actual arg"`
-  9. So the function will return `#!clj "the actual arg"`
+  9. The functions return value will be `#!clj "the actual arg"`
   10. And that then is the evaluation of the entire form
 
 
-Here's another call:
+Here's another call to the same function:
 ```clj
 ((fn [x] x) [:a :b])
 ```
@@ -669,7 +654,7 @@ We need to make some changes:
       b  "a sword"]   
   (if (> a b) a b)) 
 ```
-evaluates to `#!clj "a pen"`. Phew! 
+evaluates to `#!clj "the pen"`. Phew! 
 
 ```clj
 (let [a  "the pen"
@@ -679,6 +664,30 @@ evaluates to `#!clj "a pen"`. Phew!
 evaluates to `#!clj {:winner-is "the pen"}`
 
 `#!clj let` is often used within a `#!clj defn`: 
+```clj 
+(defn greet
+  [name friendly?]
+  (let [greeting (if friendly? "Hello " "Go away ")]
+    [:div greeting name])
+```
+
+XXX experiement with greet 
+
+```clj
+(greet "Mum" true)
+```
+
+```clj
+(greet "Noisy Neighbours" false)
+```
+
+In this particular, we could have got away with no using a `let`, like this: 
+```clj 
+(defn greet
+  [name friendly?]
+  [:div (if friendly? "Hello " "Go away ") name)
+```
+
 ```clj
 (defn items-text 
   [items] 
@@ -705,6 +714,7 @@ Exercise:
   - when there are no items make the text "there are no items"  (and not "there is 0 items")
 
 
+
 ## What have You Learned ? 
 
 So Far:
@@ -714,7 +724,6 @@ So Far:
   - lists (forms) evaluate to function calls 
   - there are special forms (exceptions to the normal evaluation rules for forms)
   - `#!clj defn` allows us to bind a function to a symbol 
-
 
 ## Data Functions
 
@@ -769,10 +778,12 @@ evaluates to `#!clj :not-found`
 
 This approach of using a keyword as the function, with a hashmap argument happens ***a lot*** in ClojureScript Code.
 
+
 ---
 ## BuiltIn Functions 
 
-Clojure's has a substantial library of builtin functions. A few in particular are used all the time, and to read Clojure code (our aim here), you must know them. 
+Clojure's has a substantial library of builtin functions. A few in particular 
+are used all the time, and to read Clojure code (our aim here), you must know them. 
 
 
 ## `#!clj assoc` 
@@ -968,10 +979,10 @@ Read the `thread first` version (above) like this:
   3. Then the evaluation of that form becomes the first argument to the next form, which is `#!clj (+ 4)` , effectively creating  `#!clj (+ 3 4)` 
   4. The result is  `#!clj 7` 
 
-Notice how the value for the previous form's evaluation is always "threaded" into the form below as the 1st argument. Hence the name "thread first".
+Notice how the value for the previous form's evaluation is always "threaded" into the form below as the 1st argument. Hence the name "thread first macro".
 
 Deeply nested forms can be a bit hard to read, so the `thread first` macro arrangement allows you to visulaise the computation as a cascading data flow.
-It is as if the evaluation of the higher form is "flowing down" and into the form underneath. That's the mental model, and most find it useful. 
+It is as if the evaluation of the higher form is "flowing down" and into the form underneath. That's a useful mental model for many. 
 
 How about this use of `#!clj ->`:
 ```clj
@@ -1024,14 +1035,14 @@ Work out the evaluation of:
 
 ## The Hard Bit
 
-The learning curve has been gentle. Clojure has simple syntax and simple evaluation semantics.
+The learning curve so far as been gentle. Clojure has simple syntax and simple evaluation semantics. 
 
-The steeper part of the Clojure learning curve is when you have to **_write code using pure functions and immutable data_**.
+The steeper part of the Clojure learning curve, and the part that takes most of the time to master,
+is figuring out how to **_write code using pure functions and immutable data_**.
 If you have previously only used imperative, place-oriented languages (eg. OO laguages),
-this is the paradigm change which takes time to click. 
+this paradigm change takes time to click.
 
 But, of course, the purpose of this tutorial is to teach you to **_read_** Clojure, which is an easier skill. So, onward ...
-
 
 ## Immutable Data
 

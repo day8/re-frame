@@ -4,23 +4,24 @@ The UI is just derived data.
 
 At each moment, the DOM displayed is a "materialised view" of what is in `app-db`. 
 
-Domino 3 modifies `app-db` and then boom, boom, boom go dominoes 4, 5 & 6, automatically producing this "materialised view", via a data flow. 
+Domino 3 (effect handler) modifies `app-db` and then boom, boom, boom go dominoes 4, 5 & 6, 
+automatically producing this "materialised view", via a data flow. 
 
 ## How Exactly?
 
 Data flows through **The Signal Graph**.
 
-`app-db` is the ground truth of a re-frame app,
-and it is at the root of a Directed Acyclic Graph (DAG) called the **Signal Graph**.  At the other extent of this graph - at the leaves -
-are the `ViewFunctions`, which calculate hiccup.
+`app-db` is the ground truth of a re-frame app, and it is at the root of a 
+Directed Acyclic Graph (DAG) called the **Signal Graph**.  At the other extent of this 
+graph - at the leaves - are the `View Functions`, which calculate hiccup.
 
 Typically, the Signal Graph is not deep, with only a few interior layers of nodes
-between root and leaves. These interior nodes are the subscription nodes 
-that you create via `regsub`. Or, more accurately, you use `regsub` to register 
+between root and leaves. These interior nodes are the subscription nodes
+that you create via `regsub`. Or, more accurately, you use `regsub` to register
 how such nodes should be created, if and when they are needed.
 
-Data flows through this graph, being transformed by the journey and, as a result, the data which 
-arrives at the leaf `ViewFunctions` will be **a materialised view** of what was originally in `app-db`. 
+Data flows through this graph, being transformed by the journey and, as a result, the data which
+arrives at the leaf `View Functions` will be **a materialised view** of what was originally in `app-db`. 
 
 The nodes of the graph are pure functions. When data flows along an arc and into a node, 
 it becomes "an argument" to that node's pure function. That function will be "called" with 
@@ -31,8 +32,8 @@ It is derived data all the way through the graph. Even the hiccup produced by le
 just more derived data. A re-frame app is 75% derived data. I just made that number up, 
 but you get the idea: there's a bit of it. 
 
-Indeed, the process doesn't stop with leaf `ViewFunctions`. Hiccup is turned into DOM, which is more derived data. 
-And the browser turns DOM into pixels - yep, more data.
+Indeed, the process doesn't stop with leaf `View Functions`. Hiccup is turned into DOM, which is more derived data. 
+And the browser turns DOM into pixels on your monitor - yep, more data.
 And a monitor turns pixels into photons (data, don't fight me here, I'm on a roll), 
 which your eye cells detect and turn into chemicals reactions (data) which cause nerve cell signals (totally data),
 which reaches the priors in your brain (data). Derived data all the way, baby!  Your brain is domino 12. 
