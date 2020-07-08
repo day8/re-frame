@@ -36,7 +36,7 @@ often from one behaviour to another. The system "Dynamics" involve interactions 
 Computation which creates the state, this Computation is itself controlled by the State because, for example, predicates on State 
 determine which branches of Computation are executed. So, there's a feedback loop between these two. 
 
-For a programmer, even just a few steps into any mental stimulation, there
+For a programmer, even just a few steps into any mental simulation, there
 can be a lot to juggle, and we could be near the limits of our cognitive budget. Which leads to Dijkstra's lament. 
 
 Certain kinds of interactions between time, `State` & `Computation` reduce dynamic complexity, 
