@@ -64,6 +64,6 @@ You can then use this effect within your event handler:
 This does assume you can compute the `some-element-id` of the HTML element 
 on which you want focus.
 
-BTW, notice the trick here. We use `Reagent/after-render` to ensure that the 
+BTW, notice a trick here. We use `Reagent/after-render` to ensure that the 
 HTML element is rendered **before** we try to focus on it because 
 sometimes the element doesn't even exist in the DOM until the UI is rerendered.

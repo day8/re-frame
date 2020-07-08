@@ -2,7 +2,7 @@
 klipse: true
 ---
 
-> This document is currently in beta test.
+> This document is currently in alpha test.
 >
 > If you review it, could you please let me know:
 >
@@ -120,7 +120,7 @@ using Clojure's data litterals and we just covered data litterals.
 ---
 ## Evaluation 
 
-You are going to be surprised and delighted with the simplicty of evaluation.
+You are going to be surprised and delighted with the simplicty of "evaluation".
 
 **1st Evaluation Rule:** all data litterals other than `lists` and `symbols` **evaluate** to themselves.
 
@@ -141,9 +141,9 @@ XXX inline REPL will go here. In the meantime use [this external one](https://ja
 Try these experiements:
 
    - {:a 1 :a 4} -- oops 
-   - XXX?
+   - XXX other basic examples?
 
-So, let's talk about the two exceptions `lists` and `symbols` ...
+So, let's now talk about the two exceptions `lists` and `symbols` ...
 
 ## Evaluating Symbols 
 
@@ -162,12 +162,12 @@ Example symbol evaluations:
 
 !!! Note "Symbols are often bound to functions"
 
-    I can tell you that the symbol `#!clj inc`
-    is bound to a function in Clojure's standard library. So, if you evaulate `#!clj inc`, you get the function!! 
+    For the moment, you'll have to take my word on this: the symbol `#!clj inc`
+    is bound to a function in Clojure's standard library. As a result, when you evaulate `#!clj inc`, you get the function!! Because that's what `inc` is bound to.
 
-    There's another symbol, `#!clj count`, which is bound to different function in the standard library. 
+    There's also another symbol, `#!clj count`, which is bound to different function in the standard library. 
 
-    And, finally - this one will be a surprise - the symbol `#!clj +` is bound to a function.  Wait. Isn't `#!clj +` an operator?  No. Clojure doesn't have operators. Instead, `#!clj +` is a symbol, and it is bound to a function (which adds).
+    And, finally - this one will be a surprise - the symbol `#!clj +` is bound to a function.  Wait. Isn't `#!clj +` an operator?  No. Clojure doesn't have operators. Instead, `#!clj +` is a symbol, and it is bound to a function - which adds - more soon.
 
 
 XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
@@ -183,28 +183,28 @@ Try these experiements:
 
 **3rd Evaluation Rule:** a `list` evaluates to a function call.
 
-Oh, now we're cooking with gas!  Clojure is a functional language, so you can imagine that function calls are a big deal,
+Okay, now we're cooking with gas!  Clojure is a functional language so, 
+as you can imagine, function calls are a big deal,
 so this section is important. 
 
-Here's an example list  `#!clj (f arg1 arg2 arg3)`. Because it is surounded by parens, `#!clj ( )`, it is a list, and it has four elements. 
+Here's an example list  `#!clj (f arg1 arg2 arg3)`. Because it is surounded by parens, `#!clj ( )`, it is a list, and we can see it has four elements. 
 
-Such **a list would be evaluated in two steps**:
+Such a list is **evaluated in two steps**:
 
   1. first, each element in the list is evaluated (all four of them in this example)
   2. then, a function call occurs where:
      - the evaluation of the 1st element will be the function called 
      - the evaluation of the other elements (3 in the case above) will be the actual arguments in this function call 
 
-The entire list evaluates to the return value of the function call. So, if this example function call returned the string `#!clj "maybe Satoshi"`, then the list `#!clj (f arg1 arg2 arg3)` would evaluate to `#!clj "maybe Satoshi"`.
+The list evaluates to the return value of this function call. So, if this example function call returned the string `#!clj "maybe Satoshi"`, then the list `#!clj (f arg1 arg2 arg3)` would evaluate to `#!clj "maybe Satoshi"`.
 
 !!! Note "More on symbols bound to functions"
     In Clojure code, the 1st element of a list is often a symbol. So, let's talk more about that. 
     
     Here's an example: `#!clj (inc 3)`.  That's a two element list, and the first element is the symbol `#!clj inc`. The 2nd element is the value `#!clj 3`
     
-    When evaluating this list, in step 1 all elements of the list are evaluated and, if the first element of the list is a symbol, we learned 
-    earlier that it will evaluate to what it is bound to. So, if a symbol, like `#!clj inc`, is bound to a 
-    function, it is ***that*** function which is called in step 2.
+    When evaluating this list, in step 1 all elements of the list are evaluated and, if the first element of the list is a symbol, like `#!clj inc`, it will evaluate to what it is bound to, which 
+    is a function. And it is ***that*** function which is called in step 2.
 
     So `#!clj inc` is a symbol, not a function. But it _is_ bound to a function. A subtle but important distinction. 
     
