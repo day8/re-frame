@@ -63,17 +63,17 @@ re-frame provides a function `reg-fx` through which you can register
 your own `Effect Handlers`. Use it like this:
 ```clj
 (reg-fx         ;; <-- registration function
-   :butterfly   ;;  <1> event key
+   :butterfly   ;;  <1> effect key
    (fn [value]  ;;  <2> effect handler
       ...
       ))
 ```
 
-__<1>__  __Event Key__  Later, when an effects map contains
+__<1>__  __Effect Key__  Later, when an effects map contains
 the key `:butterfly`, the function we are registering will be used to action it.
 
 __<2>__  __Effect handler__ The function which actions the side effect. Later, it will be called
-with one argument - the value in the effects map, for this key.
+with one argument - the value associated with the key in the effects map.
 
 So, if an event handler returned these two effects:
 ```clj

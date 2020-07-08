@@ -44,22 +44,22 @@ Too much? Okay, fine, back to the more limited picture.
 Conceptually, all nodes in the `Signal Graph` are a part of the same dataflow, but it will
 be instructive to label them as follows:
 
-   1. **Ground truth** - is the root node, `app-db`
-   2. **Extractors** - subscriptions which extract data directly from `app-db`, but do no further computation.
-   3. **Materialised views** - subscriptions which obtain data from other subscriptions (never `app-db` directly), and compute derived data from their inputs
-   4. **Leaf nodes** - the `ViewFunctions` which compute hiccup.
+   - `Layer 1` - **Ground truth** - is the root node, `app-db`
+   - `Layer 2` - **Extractors** - subscriptions which extract data directly from `app-db`, but do no further computation.
+   - `Layer 3` - **Materialised View** - subscriptions which obtain data from other subscriptions (never `app-db` directly), 
+      and compute derived data from their inputs
+   - `Layer 4` - **View Functions** - the leaf nodes which compute hiccup.
 
 
-The simplest version of the Signal Graph has no **materialised view** nodes.
-It only has **extractor** subscriptions which extract data from `app-db`, and those values 
-then flow unchanged into `ViewFunctions`.
+The simplest version of the Signal Graph has no `Layer 3` (Materialised View) nodes.
+It only has `Layer 2` (Extractor) subscriptions which take data from `app-db`, and those values 
+then flow unchanged into `Layer 4` (View Functions). 
 
-In more complex cases, a `ViewFunction` needs a materialised view 
+In more complex cases, a `View Function` needs a materialised view 
 of the data in `app-db`. 
-An extractor subscription will extract a fragment of `app-db` 
-which will then flow into a **materialized view** node which will compute 
-the materialised view of that fragment and, only then,
-does data flow into the  `ViewFunction`. 
+A `Layer 2` (extractor) subscription will obtain a fragment of `app-db` 
+which will then flow into a `Layer 3` (materialized view) node which will compute 
+derived data from it and, only then, does data flow into the  `Layer 4` (View Function) 
 
 
 ## As Infographic
@@ -69,17 +69,17 @@ does data flow into the  `ViewFunction`.
 ## Graph Creation
 
 Although data flows through the `Signal Graph` from `app-db` towards the 
-`ViewFunctions`, graph formation happens in the opposite direction.
+`View Functions`, graph formation happens in the opposite direction.
 
-When a `ViewFunction` uses a subscription, like this `(subscribe [:something :needed])`, 
+When a `View Function` uses a subscription, like this `(subscribe [:something :needed])`, 
 the sub-graph of nodes needed to service
-that subscription is created. The necessary sub-graph will "grow backwards" from the `ViewFunction` 
+that subscription is created. The necessary sub-graph will "grow backwards" from the `View Function` 
 all the way to `app-db`. So it is "the data thirsty demands" of currently rendered
-`ViewFunctions` which dictate what nodes exist in the `Signal Graph`. 
+`View Functions` which dictate what nodes exist in the `Signal Graph`. 
 
-And, when a `ViewFunction` is no longer rendered, the sub-graph needed to service 
+And, when a `View Function` is no longer rendered, the sub-graph needed to service 
 its needs will be destroyed, unless it is still needed to 
-service the needs of another, current `ViewFunction`.
+service the needs of another, current `View Function`.
 
 ## Propagation Pruning 
 
@@ -105,15 +105,15 @@ Data values "this time" and "last time" are regarded as "being the same" if Cloj
 Why is a layer of "extractors" necessary? 
 
 **It is an efficiency thing.** `app-db` will be changed by almost every `event`, often in a small, 
-partial way. But any change whatsoever will cause **extractor** subscription to be automatically re-run.
+partial way. But any change whatsoever will cause all `Layer2` (extractor) subscription to be automatically re-run.
 All of them. Every time. This is because `app-db` is their input value, and subscriptions re-run when 
 one of their inputs change. 
 
 Extractors select a fragment from `app-db` and then immediately prune
 further propagation through their sub-graph graph if the fragment hasn't changed from "last time". As a consequence, 
-the CPU intensive work in the materialised views and leaf nodes is only performed when necessary.
+the CPU intensive work in the `Layer 3` (materialised view) and `Layer 4` (View Functions) is only performed when necessary.
 
-Extractors act as the Signal Graph's circuit breakers. We want them to be as computationally simple as possible.
+`Layer 2` (extractors) act as the Signal Graph's circuit breakers. We want them to be as computationally simple as possible.
 
 ## reg-sub 
 
@@ -125,30 +125,32 @@ Extractor subscriptions are registered like this:
 ```clj
 (re-frame.core/reg-sub  ;; a part of the re-frame API
   :id                   ;; usage: (subscribe [:id])
-  (fn [db _]            ;; `db` is the map out of `app-db`
+  (fn [db query-v]      ;; `db` is the map out of `app-db`
     (:something db)))   ;; trival extraction - no computation
 ```
 
-This registers a `computation function` - a pretty simple one which just does an extraction.
+This registers a `computation function` - a pretty simple one which just does an extraction. The argument `query-v` 
+is the `query vector` supplied in the subscription. In our simple case here, we're not using it. But if the subscription was for
+`(subscribe [:id "blue" :yeah])` then the `query-v` given to the handler would be `[:id "blue" :yeah]`.
 
-Materialised view subscriptions depend on other subscriptions for their inputs, and they are registered like this:
+`Layer 3` (aterialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:
 ```clj
 (reg-sub 
   :id
 
   ;; signals function
-  (fn [_ _]
-    [(subscribe [:a]) (subscribe [:b 2])])     ;; <-- these are the inputs
+  (fn [query-v] 
+    [(subscribe [:a]) (subscribe [:b 2])])     ;; <-- these inputs are provided to the computation function 
 
   ;; computation function
-  (fn [[a b] _]                   ;; input values supplied in a vector
+  (fn [[a b] query-v]                  ;; input values supplied in a vector
       (calculate-it a b)))
 ```
 You supply two functions: 
 
 1. a `signals function` which returns the input signals for this kind of node. It 
    can return either a single signal, or a vector of signals, or a map where the 
-   values are the signals. In the example above, it is returning a vector of signals.
+   values are the signals. In the example above, it is returning a 2-vector of signals.
 
 2. a `computation function` which takes 
   the input values provided by the `signals function`, supplied as the first argument,
@@ -158,12 +160,12 @@ You supply two functions:
 !!! Note "Registration Doesn't Mean A Node Exists"
     When you use `reg-sub` to register a handler, you are not immediately 
     creating a node in the Signal Graph. 
-    At any one time, only those nodes required to service the needs of **current** `ViewFunctions` will exist. 
+    At any one time, only those nodes required to service the needs of **current** `View Functions` will exist. 
     Registering a handler only says how to create a Signal Graph node when and if it is needed.
 
 ## Syntactic Sugar
 
-The **materialized view** subscription above can be rewritten using some syntactic sugar:
+The `Layer 3` (materialized view) subscription above can be rewritten using some syntactic sugar:
 ```clj
 (reg-sub 
   :id
@@ -173,6 +175,6 @@ The **materialized view** subscription above can be rewritten using some syntact
   :<- [:b 2]      ;; means (subscribe [:b 2] is an input)
 
   ;; computation function
-  (fn [[a b] _]
+  (fn [[a b] query-v]
        (calculate-it a b)))
 ```
