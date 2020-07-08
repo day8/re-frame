@@ -77,7 +77,7 @@ Here's a sketch (we are at 30,000 feet):
  [coeffects event]                ;; `coeffects` holds the current state of the world
  (let [item-id   (second event)   ;; extract id from event vector
        state     (:db coeffects)  ;; extract the current application state
-       new-state (dissoc-in db [:items item-id])]   ;; new app state
+       new-state (dissoc-in state [:items item-id])]   ;; new app state
    {:db new-state}))              ;; a map of the necessary effects 
 ```
 
