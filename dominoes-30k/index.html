@@ -468,43 +468,43 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-1" class="md-nav__link">
-    Domino 1
+  <a href="#domino-1-event-dispatch" class="md-nav__link">
+    Domino 1 - Event Dispatch
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-2" class="md-nav__link">
-    Domino 2
+  <a href="#domino-2-event-handling" class="md-nav__link">
+    Domino 2 - Event Handling
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-3" class="md-nav__link">
-    Domino 3
+  <a href="#domino-3-effect-handling" class="md-nav__link">
+    Domino 3 - Effect Handling
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-4" class="md-nav__link">
-    Domino 4
+  <a href="#domino-4-query" class="md-nav__link">
+    Domino 4 - Query
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-5" class="md-nav__link">
-    Domino 5
+  <a href="#domino-5-view" class="md-nav__link">
+    Domino 5 - View
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-6" class="md-nav__link">
-    Domino 6
+  <a href="#domino-6-dom" class="md-nav__link">
+    Domino 6 - DOM
   </a>
   
 </li>
@@ -1454,43 +1454,43 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-1" class="md-nav__link">
-    Domino 1
+  <a href="#domino-1-event-dispatch" class="md-nav__link">
+    Domino 1 - Event Dispatch
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-2" class="md-nav__link">
-    Domino 2
+  <a href="#domino-2-event-handling" class="md-nav__link">
+    Domino 2 - Event Handling
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-3" class="md-nav__link">
-    Domino 3
+  <a href="#domino-3-effect-handling" class="md-nav__link">
+    Domino 3 - Effect Handling
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-4" class="md-nav__link">
-    Domino 4
+  <a href="#domino-4-query" class="md-nav__link">
+    Domino 4 - Query
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-5" class="md-nav__link">
-    Domino 5
+  <a href="#domino-5-view" class="md-nav__link">
+    Domino 5 - View
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#domino-6" class="md-nav__link">
-    Domino 6
+  <a href="#domino-6-dom" class="md-nav__link">
+    Domino 6 - DOM
   </a>
   
 </li>
@@ -1550,7 +1550,7 @@ the resulting six domino cascade.</p>
 <p>Don't expect 
 to completely grok the terse code presented below. We're still at 30,000 feet. More details later. </p>
 </div>
-<h2 id="domino-1">Domino 1<a class="headerlink" href="#domino-1" title="Permanent link">&para;</a></h2>
+<h2 id="domino-1-event-dispatch">Domino 1 - Event Dispatch<a class="headerlink" href="#domino-1-event-dispatch" title="Permanent link">&para;</a></h2>
 <p>In order for it to be clicked, that 3rd delete button must have already been rendered. And rendering 
 in re-frame is done by a <code>ViewFunction</code>. Perhaps it was rendered like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">delete-button</span> 
@@ -1577,7 +1577,7 @@ in re-frame is done by a <code>ViewFunction</code>. Perhaps it was rendered like
 <code>event</code>.</p>
 <p>Events express user intent in a domain-specific way.
 They are the language of your re-frame system. </p>
-<h2 id="domino-2">Domino 2<a class="headerlink" href="#domino-2" title="Permanent link">&para;</a></h2>
+<h2 id="domino-2-event-handling">Domino 2 - Event Handling<a class="headerlink" href="#domino-2-event-handling" title="Permanent link">&para;</a></h2>
 <p>An <code>event handler</code> (function), which we'll name <code>h</code>, is now called to 
 compute the <code>effect</code> of the event <code>[:delete-item 2486]</code>.</p>
 <p>On startup, re-frame apps register handlers for events using <code>reg-event-fx</code>. So,
@@ -1631,7 +1631,7 @@ the current value in <code>app-db</code> is available via the expression <code>(
 </code></pre></div>
 
 
-<h2 id="domino-3">Domino 3<a class="headerlink" href="#domino-3" title="Permanent link">&para;</a></h2>
+<h2 id="domino-3-effect-handling">Domino 3 - Effect Handling<a class="headerlink" href="#domino-3-effect-handling" title="Permanent link">&para;</a></h2>
 <p><code>effect handler</code> functions action the <code>effects</code> returned by <code>h</code>.</p>
 <p>In Domino 2, <code>h</code> returned: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">updated-value-to-put-in-app-db</span><span class="p">}</span>
@@ -1673,7 +1673,7 @@ written them yourself, and then registered them. </p>
 </code></pre></div>
 
 
-<h2 id="domino-4">Domino 4<a class="headerlink" href="#domino-4" title="Permanent link">&para;</a></h2>
+<h2 id="domino-4-query">Domino 4 - Query<a class="headerlink" href="#domino-4-query" title="Permanent link">&para;</a></h2>
 <p>The action of updating <code>app-db</code> (in Domino 3) will trigger the <code>v = f(s)</code> part of the flow. </p>
 <p>The application state
 <code>s</code> has just changed (in Domino 3) and now boom, boom go Dominoes 4, 5, 
@@ -1703,7 +1703,7 @@ like this:</p>
 
 <p>Which says "if, in domino 5, you see a <code>(subscribe [:query-items])</code>, then 
 call <code>query-fn</code> to compute it".</p>
-<h2 id="domino-5">Domino 5<a class="headerlink" href="#domino-5" title="Permanent link">&para;</a></h2>
+<h2 id="domino-5-view">Domino 5 - View<a class="headerlink" href="#domino-5-view" title="Permanent link">&para;</a></h2>
 <p>Because the query function for <code>:query-items</code> just re-computed a new value, 
 any view (function) which uses a <code>(subscribe [:query-items])</code> 
 is called automatically (reactively) to re-compute new DOM (in response to a change in its source data).</p>
@@ -1730,13 +1730,19 @@ representing <code>select * from Items where colour="blue"</code>.</p>
 <p>Except there's no SQL available and you would be the one to implement
 the more sophisticated <code>query-fn</code> capable of handling the 
 "where" argument. More in later tutorials.</p>
-<h2 id="domino-6">Domino 6<a class="headerlink" href="#domino-6" title="Permanent link">&para;</a></h2>
+<h2 id="domino-6-dom">Domino 6 - DOM<a class="headerlink" href="#domino-6-dom" title="Permanent link">&para;</a></h2>
 <p>The hiccup returned by the view function
 is made into real browser DOM by Reagent/React. No code from you required. Just happens.</p>
 <p>The DOM computed "this
 time" will be the same as "last time", <strong>except</strong> for the absence of DOM for the
 deleted item, so the mutation will be to remove those now-missing
 DOM nodes from the browser.</p>
+<p>Simply connect mount your app to a DOM node:</p>
+<p><code>clj
+(defn mount-ui
+  []
+  (rdom/render [my-root-app-ui]                 ;; mount the application's ui
+               (js/document.getElementById "dominoes-live-app")))</code></p>
 <h2 id="3-4-5-6-summary">3-4-5-6 Summary<a class="headerlink" href="#3-4-5-6-summary" title="Permanent link">&para;</a></h2>
 <p>The key point to understand about our 3-4-5-6 example is:</p>
 <ul>

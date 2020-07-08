@@ -1533,7 +1533,7 @@ the view is 100% concerned with hiccup generation only. Maybe, like this:</p>
 
 
 <p>Now the subscription does the computation, not the view. Much better. </p>
-<p>You'll notice this new subscription handler belongs to "Layer 3" of the <code>Signal Graph</code>. </p>
+<p>You'll notice this new subscription handler belongs to materialised view of the <code>Signal Graph</code>. </p>
 <p>We could rewrite it to use the <code>:&lt;-</code> syntactic sugar:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> 
   <span class="ss">:time-str</span> 
@@ -1640,7 +1640,7 @@ though they involve the same event id, <code>:some-event</code>, the query vecto
 <p>This feature shakes out well because re-frame has a data oriented design. </p>
 <h2 id="a-final-faq">A Final FAQ<a class="headerlink" href="#a-final-faq" title="Permanent link">&para;</a></h2>
 <p>The following issue comes up a bit.</p>
-<p>You will end up with a bunch of <code>Layer 2</code> <code>reg-sub</code> which
+<p>You will end up with a bunch of extractor <code>reg-sub</code>s which
 look the same (they directly extract a path within <code>app-db</code>):</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> 
    <span class="ss">:a</span> 

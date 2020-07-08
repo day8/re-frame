@@ -531,8 +531,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-layer-2" class="md-nav__link">
-    Why Layer 2?
+  <a href="#why-layer-2-extractors" class="md-nav__link">
+    Why Layer 2 - Extractors?
   </a>
   
 </li>
@@ -1488,8 +1488,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-layer-2" class="md-nav__link">
-    Why Layer 2?
+  <a href="#why-layer-2-extractors" class="md-nav__link">
+    Why Layer 2 - Extractors?
   </a>
   
 </li>
@@ -1559,19 +1559,19 @@ which reaches the priors in your brain (data). Derived data all the way, baby!  
 <h2 id="the-four-layers">The Four Layers<a class="headerlink" href="#the-four-layers" title="Permanent link">&para;</a></h2>
 <p>Conceptually, all nodes in the <code>Signal Graph</code> are a part of the same dataflow, but it will
 be instructive to label them as follows:</p>
-<ul>
-<li><strong>layer 1</strong> - <code>ground truth</code> - is the root node, <code>app-db</code></li>
-<li><strong>layer 2</strong> - <code>extractors</code> - subscriptions which extract data directly from <code>app-db</code>, but do no further computation.</li>
-<li><strong>layer 3</strong> - <code>materialised views</code> - subscriptions which obtain data from other subscriptions (never <code>app-db</code> directly), and compute derived data from their inputs</li>
-<li><strong>layer 4</strong> - <code>leaf nodes</code> - the <code>ViewFunctions</code> which compute hiccup.</li>
-</ul>
-<p>The simplest version of the Signal Graph has no <code>layer 3</code> nodes.
-It only has <code>layer 2</code> subscriptions which extract data from <code>app-db</code>, and those values 
+<ol>
+<li><strong>Ground truth</strong> - is the root node, <code>app-db</code></li>
+<li><strong>Extractors</strong> - subscriptions which extract data directly from <code>app-db</code>, but do no further computation.</li>
+<li><strong>Materialised views</strong> - subscriptions which obtain data from other subscriptions (never <code>app-db</code> directly), and compute derived data from their inputs</li>
+<li><strong>Leaf nodes</strong> - the <code>ViewFunctions</code> which compute hiccup.</li>
+</ol>
+<p>The simplest version of the Signal Graph has no <strong>materialised view</strong> nodes.
+It only has <strong>extractor</strong> subscriptions which extract data from <code>app-db</code>, and those values 
 then flow unchanged into <code>ViewFunctions</code>.</p>
 <p>In more complex cases, a <code>ViewFunction</code> needs a materialised view 
-of the data in <code>app-db</code> and means <code>layer 3</code> subscription nodes. 
-An extractor (layer 2) subscription will extract a fragment of <code>app-db</code> 
-which will then flow into a <code>layer 3</code> node which will compute 
+of the data in <code>app-db</code>. 
+An extractor subscription will extract a fragment of <code>app-db</code> 
+which will then flow into a <strong>materialized view</strong> node which will compute 
 the materialised view of that fragment and, only then,
 does data flow into the  <code>ViewFunction</code>. </p>
 <h2 id="as-infographic">As Infographic<a class="headerlink" href="#as-infographic" title="Permanent link">&para;</a></h2>
@@ -1599,20 +1599,20 @@ the same value each time it is called with the same arguments. So, if we were to
 the same inputs as last time, it would produce the same outputs as last time, including the same hiccup at the leaves.</p>
 <h2 id="different-how">Different How?<a class="headerlink" href="#different-how" title="Permanent link">&para;</a></h2>
 <p>Data values "this time" and "last time" are regarded as "being the same" if ClojureScript's <code>=</code> says they are.</p>
-<h2 id="why-layer-2">Why Layer 2?<a class="headerlink" href="#why-layer-2" title="Permanent link">&para;</a></h2>
+<h2 id="why-layer-2-extractors">Why Layer 2 - Extractors?<a class="headerlink" href="#why-layer-2-extractors" title="Permanent link">&para;</a></h2>
 <p>Why is a layer of "extractors" necessary? </p>
 <p><strong>It is an efficiency thing.</strong> <code>app-db</code> will be changed by almost every <code>event</code>, often in a small, 
-partial way. But any change whatsoever will cause <code>Layer 2</code> subscription to be automatically re-run.
+partial way. But any change whatsoever will cause <strong>extractor</strong> subscription to be automatically re-run.
 All of them. Every time. This is because <code>app-db</code> is their input value, and subscriptions re-run when 
 one of their inputs change. </p>
-<p><code>Layer 2</code> handlers extract a fragment from <code>app-db</code> and then immediately prune
+<p>Extractors select a fragment from <code>app-db</code> and then immediately prune
 further propagation through their sub-graph graph if the fragment hasn't changed from "last time". As a consequence, 
-the CPU intensive work in <code>layer 3</code> and <code>layer 4</code> is only performed when necessary.</p>
-<p><code>Layer 2</code> nodes act as the Signal Graph's circuit breakers. We want them to be as computationally simple as possible.</p>
+the CPU intensive work in the materialised views and leaf nodes is only performed when necessary.</p>
+<p>Extractors act as the Signal Graph's circuit breakers. We want them to be as computationally simple as possible.</p>
 <h2 id="reg-sub">reg-sub<a class="headerlink" href="#reg-sub" title="Permanent link">&para;</a></h2>
 <p>Subscription handlers are registered using <code>reg-sub</code>. These handlers are the functions which take 
 input values, flowing into the node, and calculate a derived value to be the node's output.</p>
-<p><code>Layer 2</code> subscriptions are registered like this:</p>
+<p>Extractor subscriptions are registered like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-sub</span>  <span class="c1">;; a part of the re-frame API</span>
   <span class="ss">:id</span>                   <span class="c1">;; usage: (subscribe [:id])</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>            <span class="c1">;; `db` is the map out of `app-db`</span>
@@ -1621,7 +1621,7 @@ input values, flowing into the node, and calculate a derived value to be the nod
 
 
 <p>This registers a <code>computation function</code> - a pretty simple one which just does an extraction.</p>
-<p><code>Layer 3</code> subscriptions depend on other subscriptions for their inputs, and they are registered like this:</p>
+<p>Materialised view subscriptions depend on other subscriptions for their inputs, and they are registered like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> 
   <span class="ss">:id</span>
 
@@ -1656,7 +1656,7 @@ At any one time, only those nodes required to service the needs of <strong>curre
 Registering a handler only says how to create a Signal Graph node when and if it is needed.</p>
 </div>
 <h2 id="syntactic-sugar">Syntactic Sugar<a class="headerlink" href="#syntactic-sugar" title="Permanent link">&para;</a></h2>
-<p>The <code>Layer 3</code> subscription above can be rewritten using some syntactic sugar:</p>
+<p>The <strong>materialized view</strong> subscription above can be rewritten using some syntactic sugar:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> 
   <span class="ss">:id</span>
 

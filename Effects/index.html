@@ -1613,16 +1613,16 @@ your own side effects.</p>
 <p>re-frame provides a function <code>reg-fx</code> through which you can register
 your own <code>Effect Handlers</code>. Use it like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-fx</span>         <span class="c1">;; &lt;-- registration function</span>
-   <span class="ss">:butterfly</span>   <span class="c1">;;  &lt;1&gt;</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">value</span><span class="p">]</span>  <span class="c1">;;  &lt;2&gt;</span>
+   <span class="ss">:butterfly</span>   <span class="c1">;;  &lt;1&gt; event key</span>
+   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">value</span><span class="p">]</span>  <span class="c1">;;  &lt;2&gt; effect handler</span>
       <span class="nv">...</span>
       <span class="p">))</span>
 </code></pre></div>
 
 
-<p><strong>&lt;1&gt;</strong>  the key for the effect.  When later an effects map contains
+<p><strong>&lt;1&gt;</strong>  <strong>Event Key</strong>  Later, when an effects map contains
 the key <code>:butterfly</code>, the function we are registering will be used to action it.</p>
-<p><strong>&lt;2&gt;</strong>  the function which actions the side effect. Later, it will be called
+<p><strong>&lt;2&gt;</strong>  <strong>Effect handler</strong> The function which actions the side effect. Later, it will be called
 with one argument - the value in the effects map, for this key.</p>
 <p>So, if an event handler returned these two effects:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span>   <span class="p">[</span><span class="ss">:save-maiden</span> <span class="mi">42</span><span class="p">]</span>
