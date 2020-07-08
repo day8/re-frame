@@ -90,6 +90,13 @@ jobs:
         if: steps.maven-cache.outputs.cache-hit == 'true'
         run: |
           CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }} CLOJARS_TOKEN=${{ secrets.CLOJARS_TOKEN }} GITHUB_USERNAME=${{ github.actor }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} lein -o release
+      # This creates a 'GitHub Release' from the tag and includes link to the releases page
+      # on the re-frame website. We do not use draft or prerelease features as we always want
+      # the latest release to show in the right hand column of the project page regardless
+      # of if it is a stable release.
+      #
+      # IMPORTANT: The release year is hard-coded and must be updated in this file once per year for the moment.
+      # Unfortunately I could not find a way to inject the year using the GitHub Actions ${{ expr }} syntax.
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
