@@ -1597,12 +1597,12 @@ it must have been registered like this:</p>
 <p><code>h</code> will compute effects as data. That means: it computes how the world should be changed 
 by the event, and it returns a map of <code>effects</code> which describe the necessary changes.</p>
 <p>Here's a sketch (we are at 30,000 feet):</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span>                           <span class="c1">;; maybe choose a better name like `delete-item`</span>
- <span class="p">[</span><span class="nv">coeffects</span> <span class="nv">event</span><span class="p">]</span>                <span class="c1">;; `coeffects` holds the current state of the world</span>
- <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">item-id</span>   <span class="p">(</span><span class="nb">second </span><span class="nv">event</span><span class="p">)</span>   <span class="c1">;; extract id from event vector</span>
-       <span class="nv">state</span>     <span class="p">(</span><span class="ss">:db</span> <span class="nv">coeffects</span><span class="p">)</span>  <span class="c1">;; extract the current application state</span>
-       <span class="nv">new-state</span> <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">state</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])]</span>   <span class="c1">;; new app state</span>
-   <span class="p">{</span><span class="ss">:db</span> <span class="nv">new-state</span><span class="p">}))</span>              <span class="c1">;; a map of the necessary effects </span>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span>                          <span class="c1">;; maybe choose a better name like `delete-item`</span>
+ <span class="p">[</span><span class="nv">coeffects</span> <span class="nv">event</span><span class="p">]</span>               <span class="c1">;; `coeffects` holds the current state of the world</span>
+ <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">item-id</span>  <span class="p">(</span><span class="nb">second </span><span class="nv">event</span><span class="p">)</span>   <span class="c1">;; extract id from event vector</span>
+       <span class="nv">db</span>       <span class="p">(</span><span class="ss">:db</span> <span class="nv">coeffects</span><span class="p">)</span>  <span class="c1">;; extract the current application state</span>
+       <span class="nv">new-db</span>   <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])]</span>   <span class="c1">;; new app state</span>
+   <span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span><span class="p">}))</span>                <span class="c1">;; a map of the necessary effects </span>
 </code></pre></div>
 
 
@@ -1613,18 +1613,19 @@ current "application state" is one aspect of the world which is
 invariably needed, and it is available by default in the <code>:db</code> key. So 
 the current value in <code>app-db</code> is available via the expression <code>(:db coeffects)</code>.</p>
 <p>The value returned by <code>h</code> is a map with only one key, like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">updated-value-to-put-into-app-db</span><span class="p">}</span>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span><span class="p">}</span>     <span class="c1">;; `new-db` is the newly computed application state</span>
 </code></pre></div>
 
 
-<p>So, <code>h</code> computes one effect - which is a change to application state.</p>
+<p>So, <code>h</code> computes one effect, and returns it. And that effect says to make a change to 
+application state.</p>
 <p>Please pay particular attention to this overall flow, within <code>h</code>:</p>
 <ol>
 <li><code>h</code> obtains the current application state (a map) via <code>(:db coeffects)</code> </li>
 <li>it computes a modified application state via <code>(dissoc-in db [:items item-id])</code></li>
-<li>it returns this modified application state in an effect map <code>{:db new-state}</code></li>
+<li>it returns this modified application state in an effects map <code>{:db new-db}</code></li>
 </ol>
-<p>BTW, here is a more idiomatic (and terser) rewrite of <code>h</code> which uses <code>destructuring</code> of the args: </p>
+<p>BTW, here is a more idiomatic (and terser) rewrite of <code>h</code> using <a href="https://clojure.org/guides/destructuring">destructuring</a> of the args: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">h</span> 
   <span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">item-id</span><span class="p">]]</span>    <span class="c1">;; &lt;--- new: obtain db and item-id directly</span>
   <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])})</span>    <span class="c1">;; </span>
@@ -1634,7 +1635,7 @@ the current value in <code>app-db</code> is available via the expression <code>(
 <h2 id="domino-3-effect-handling">Domino 3 - Effect Handling<a class="headerlink" href="#domino-3-effect-handling" title="Permanent link">&para;</a></h2>
 <p><code>effect handler</code> functions action the <code>effects</code> returned by <code>h</code>.</p>
 <p>In Domino 2, <code>h</code> returned: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">updated-value-to-put-in-app-db</span><span class="p">}</span>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-db</span><span class="p">}</span>   <span class="c1">;; `new-db` is the new, computed application state</span>
 </code></pre></div>
 
 
@@ -1651,10 +1652,10 @@ the effect handler function for the <code>:db</code> effect could be registered 
 
 
 <p>Just to be clear, this <code>reset!</code> of <code>app-db</code> is a mutative, effectful action. That's
-what effect handlers do. They change the world. They are not pure functions. </p>
-<p>Now, you don't actually need to ever register an effects handler for <code>:db</code>
+what effect handlers do. They change the world. They are not pure functions.</p>
+<p>Now, you don't need to ever register an effects handler for <code>:db</code>
 because re-frame supplies one built in. re-frame manages <code>app-db</code> and so it 
-will look after changes to it.</p>
+will look after an changes (effects) to it.</p>
 <p>But if, instead, <code>h</code> had returned: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:wear</span>  <span class="p">{</span><span class="ss">:pants</span> <span class="s">&quot;velour flares&quot;</span>  <span class="ss">:belt</span> <span class="nv">false</span><span class="p">}</span>
  <span class="ss">:tweet</span> <span class="s">&quot;Okay, yes, I am Satoshi. #coverblown&quot;</span><span class="p">}</span>
