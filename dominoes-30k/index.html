@@ -1601,7 +1601,7 @@ by the event, and it returns a map of <code>effects</code> which describe the ne
  <span class="p">[</span><span class="nv">coeffects</span> <span class="nv">event</span><span class="p">]</span>                <span class="c1">;; `coeffects` holds the current state of the world</span>
  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">item-id</span>   <span class="p">(</span><span class="nb">second </span><span class="nv">event</span><span class="p">)</span>   <span class="c1">;; extract id from event vector</span>
        <span class="nv">state</span>     <span class="p">(</span><span class="ss">:db</span> <span class="nv">coeffects</span><span class="p">)</span>  <span class="c1">;; extract the current application state</span>
-       <span class="nv">new-state</span> <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])]</span>   <span class="c1">;; new app state</span>
+       <span class="nv">new-state</span> <span class="p">(</span><span class="nf">dissoc-in</span> <span class="nv">state</span> <span class="p">[</span><span class="ss">:items</span> <span class="nv">item-id</span><span class="p">])]</span>   <span class="c1">;; new app state</span>
    <span class="p">{</span><span class="ss">:db</span> <span class="nv">new-state</span><span class="p">}))</span>              <span class="c1">;; a map of the necessary effects </span>
 </code></pre></div>
 
