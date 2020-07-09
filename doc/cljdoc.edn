@@ -1,2 +1,1 @@
-{:cljdoc.api/namespaces [re-frame.core]
- :doc/format :markdown}
+{:cljdoc.api/namespaces [re-frame.core]}
