@@ -54,7 +54,7 @@ The re-frame documentation is [available here](http://day8.github.io/re-frame/).
 
 ## The Current Version 
 
-Can be seen in the clojars badge above. 
+Can be seen in the clojars badge above. And for full dependency information see the [Clojars page](https://clojars.org/re-frame/)
 
 ## Licence
 
