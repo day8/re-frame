@@ -69,10 +69,89 @@
   `reg-sub` arguments are:
     - a `query-id` (typically a namespaced keyword)
     - a function which returns the inputs required by this kind of node (can be supplied  in one of three ways)
-    - a function which computes the value of this kind of node
+    - a function which computes the value of this kind of node (can be supplied in one of three ways)
 
-  The `computation function` is always the last argument supplied and it is expected to have the signature:
-    `(input-values, query-vector) -> a-value`
+  The `computation function` is always the last argument supplied and has three ways to be called.
+  Two of these methods are syntactic sugar to provide easier access to functional abstractions around your data.
+
+  1. A function that will accept two parameters, the `input-values` and `query-vector`. This is the 
+     standard way to provide a `computation-function`
+     ```clj
+      (reg-sub
+        :query-id
+        (fn [input-values query-vector]
+          (:foo input-values)))
+     ```
+
+  2. A single sugary tuple of `:->` and a 1-arity `computation-function`:
+     ```clj
+     (reg-sub
+       :query-id
+       :-> computation-fn)
+     ```
+
+     This sugary variation allows you to pass a function that will expect only one parameter, 
+     namely the `input-values` and entirely omit the `query-vector`. A typical `computation-function`
+     expects two pramenters which can cause unfortunate results when attempting to use
+     clojure standard library functions, or other functions, in a functional manner.
+
+     For example, a significant number of subscriptions exist only to get a value 
+     from the `input-values`. As shown below, this subscription will simply retrieve
+     the value associated with the `:foo` key in our db:
+     ```clj
+     (reg-sub
+       :query-id
+       (fn [db _]    ;; :<---- trivial boilerplate we might want to skip over
+         (:foo db)))
+     ```
+
+     This is slightly more boilerplate than we might like to do, 
+     as we can use a keyword directly as a function, and we might like to do this:
+     ```clj
+     (reg-sub
+       :query-id
+       :foo)  ;; :<---- This could be dangerous. If `:foo` is not in db, we get the `query-vector` instead of `nil`.
+     ```
+
+     By using `:->` our function would not contain the `query-vector`, and any
+     missing keys would be represented as such:
+     ```clj
+     (reg-sub
+       :query-id
+       :-> :foo)
+     ```
+
+     This form allows us to ignore the `query-vector` if our `computation-function` 
+     has no need for it, and be safe from any accidents. Any 1-arity function can be provided, 
+     and for more complicated use cases, `partial`, `comp`, and anonymous functions can still be used.
+
+  3. A single sugary tuple of `:=>` and a multi-arity `computation-function`
+     ```clj
+     (reg-sub
+       :query-id
+       :=> computation-fn)
+     ```
+
+     The `query-vector` can be broken into two components `[query-id & optional-values]`, and
+     some subscriptions require the `optional-values` for extra work within the subscription.
+     To use them in variation #1, we need to destructure our `computation-function` parameters
+     in order to use them.
+     ```clj
+     (reg-sub
+       :query-id
+       (fn [db [_ foo]] 
+         [db foo]))
+     ```
+
+     Again we are writing boilerplate just to reach our values, and we might prefer to
+     have direction access through a parameter vector like `[input-values optional-values]` 
+     instead, so we might be able to use a multi-arity function directly as our `computation-function`.
+     A rewrite of the above sub using this sugary syntax would look like this:
+     ```clj
+     (reg-sub
+       :query-id
+       :=> vector)  ;; :<---- Could also be `(fn [db foo] [db foo])`
+     ```
 
   When `computation function` is called, the `query-vector` argument will be the vector supplied to the
   the `subscribe` which caused the node to be created. So, if the call was `(subscribe [:sub-id 3 \"blue\"])`,
@@ -181,6 +260,17 @@
        (fn [a query-vec]      ;; only one pair, so 1st argument is a single value
          ...))
      ```
+
+  Syntactic sugar for both the `signal-fn` and `computation-fn` can be used together
+  and the direction of arrows shows the flow of data and functions. The example from
+  directly above is reproduced here:
+  ```clj
+  (reg-sub
+    :a-b-sub
+    :<- [:a-sub]
+    :<- [:b-sub]
+    :-> (partial zipmap [:a :b]))
+  ```
 
   For further understanding, read `/docs`, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs
