@@ -1540,7 +1540,7 @@ Directed Acyclic Graph (DAG) called the <strong>Signal Graph</strong>.  At the o
 graph - at the leaves - are the <code>View Functions</code>, which calculate hiccup.</p>
 <p>Typically, the Signal Graph is not deep, with only a few interior layers of nodes
 between root and leaves. These interior nodes are the subscription nodes
-that you create via <code>regsub</code>. Or, more accurately, you use <code>regsub</code> to register
+that you create via <code>reg-sub</code>. Or, more accurately, you use <code>reg-sub</code> to register
 how such nodes should be created, if and when they are needed.</p>
 <p>Data flows through this graph, being transformed by the journey and, as a result, the data which
 arrives at the leaf <code>View Functions</code> will be <strong>a materialised view</strong> of what was originally in <code>app-db</code>. </p>
@@ -1624,7 +1624,7 @@ input values, flowing into the node, and calculate a derived value to be the nod
 <p>This registers a <code>computation function</code> - a pretty simple one which just does an extraction. The argument <code>query-v</code> 
 is the <code>query vector</code> supplied in the subscription. In our simple case here, we're not using it. But if the subscription was for
 <code>(subscribe [:id "blue" :yeah])</code> then the <code>query-v</code> given to the handler would be <code>[:id "blue" :yeah]</code>.</p>
-<p><code>Layer 3</code> (aterialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:</p>
+<p><code>Layer 3</code> (materialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> 
   <span class="ss">:id</span>
 
