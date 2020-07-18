@@ -137,7 +137,7 @@ what effect handlers do. They change the world. They are not pure functions.
 
 Now, you don't need to ever register an effects handler for `:db`
 because re-frame supplies one built in. re-frame manages `app-db` and so it 
-will look after an changes (effects) to it.
+will look for any changes (effects) to it.
 
 But if, instead, `h` had returned: 
 ```clj
