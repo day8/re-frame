@@ -6,7 +6,11 @@
 
 All libraries/frameworks should come with a "what breaks this" section - this is that document for re-frame. 
 
+The essence of science is earnestness of inquiry. 
 
+> Eddington defined science as “the earnest endeavour to put into order the facts of experience” 
+
+So what are we doing here?  Marketing (Narative warefare) for the re-frame framework or computer science. 
 
 ## Pros
 
