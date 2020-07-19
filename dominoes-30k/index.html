@@ -1655,7 +1655,7 @@ the effect handler function for the <code>:db</code> effect could be registered 
 what effect handlers do. They change the world. They are not pure functions.</p>
 <p>Now, you don't need to ever register an effects handler for <code>:db</code>
 because re-frame supplies one built in. re-frame manages <code>app-db</code> and so it 
-will look after an changes (effects) to it.</p>
+will look for any changes (effects) to it.</p>
 <p>But if, instead, <code>h</code> had returned: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:wear</span>  <span class="p">{</span><span class="ss">:pants</span> <span class="s">&quot;velour flares&quot;</span>  <span class="ss">:belt</span> <span class="nv">false</span><span class="p">}</span>
  <span class="ss">:tweet</span> <span class="s">&quot;Okay, yes, I am Satoshi. #coverblown&quot;</span><span class="p">}</span>
