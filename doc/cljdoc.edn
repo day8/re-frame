@@ -1,1 +1,2 @@
-{:cljdoc.api/namespaces [re-frame.core]}
+{:cljdoc.doc/tree []
+ :cljdoc.api/namespaces [re-frame.core]}
