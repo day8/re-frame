@@ -1,0 +1,4 @@
+{:transforms
+ [[:span.project-version]
+  [:substitute
+   [:span.project-version ""]]]}

@@ -24,6 +24,7 @@
 
   :codox {:namespaces  [re-frame.core]
           :metadata    {:doc/format :markdown}
+          :themes      [:default :re-frame]
           :output-path "target/codox"}
 
   :profiles {:debug {:debug true}
@@ -33,7 +34,7 @@
 
   :clean-targets  [:target-path "run/compiled"]
 
-  :resource-paths ["run/resources"]
+  :resource-paths ["resources"]
   :jvm-opts       ["-Xmx1g"]
   :source-paths   ["src"]
   :test-paths     ["test"]
