@@ -1,2 +1,2 @@
-{:cljdoc.doc/tree []
- :cljdoc.api/namespaces [re-frame.core]}
+{:cljdoc.doc/tree [["README" {:file "README.md"}]]
+ :cljdoc.api/namespaces []}
