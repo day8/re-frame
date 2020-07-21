@@ -1,4 +1,22 @@
 {:transforms
- [[:span.project-version]
+ [[:head]
+  [:append
+   [:link
+    {:rel "stylesheet"
+     :type "text/css"
+     :href "styles/codox-re-frame.css"}]]
+
+  [:div#header]
   [:substitute
-   [:span.project-version ""]]]}
+   [:div]]
+
+  [:div.sidebar.primary]
+  [:substitute
+   [:div]]
+
+  [:span.project-version]
+  [:substitute
+   [:span.project-version ""]]]
+
+ :resources
+ ["styles/codox-re-frame.css"]}

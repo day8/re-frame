@@ -1,0 +1,14 @@
+
+body {
+    font-family: "Segoe UI", "Open Sans",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+}
+
+div.sidebar.secondary {
+    top: 0 !important;
+    left: 0 !important;
+}
+
+div.namespace-docs {
+    top: 0 !important;
+    left: 219px !important;
+}
