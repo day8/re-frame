@@ -1,0 +1,22 @@
+{% extends "overrides/main.html" %}
+
+{% block tabs %}
+{{ super() }}
+
+<iframe style="border: none; flex-grow: 1" src="http://day8.github.io/re-frame/codox/re-frame.core.html"></iframe>
+
+<style>
+    /**
+     * It appears to be impossible to get both the tabbar navigation AND no content in a page other than the first
+     * item in the nav tree. So that we can use flex-grow above for the iframe to take up all the available space and
+     * so that this unwanted content of "API: API" is hidden we use inline CSS here to cause main.md-main to be
+     * display:none on this page only.
+     */
+    main.md-main {
+        display: none;
+    }
+</style>
+
+{% endblock %}
+{% block content %}{% endblock %}
+{% block footer %}{% endblock %}

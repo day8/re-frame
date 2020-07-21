@@ -94,7 +94,7 @@ nav:
     - "How do I store normalised data in app-db?": FAQs/DB_Normalisation.md    
     - "How do I do full-stack re-frame?": FAQs/FullStackReframe.md
   - API:
-    - API: codox/index.html
+    - API: api.md
   - Releases:
     - 2020: releases/2020.md
     - 2019: releases/2019.md
