@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC ""
+    "">
+<html><head><meta charset="UTF-8" /><title>Builtin Fx Handlers</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1  current"><a href="std-fx.html"><div class="inner"><span>Builtin Fx Handlers</span></div></a></li><li class="depth-1 "><a href="std-cofx.html"><div class="inner"><span>Builtin Co-effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 "><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="document" id="content"><div class="doc"><div class="markdown"><div class="sidebar secondary" style="width: 218px; left: 161px;">
+    <h3 class="current">
+        <a href="#top">
+            <span class="inner">Fx</span>
+        </a>
+    </h3>
+    <ul>
+        <li class="depth-1">
+            <a href="#dispatch-later">
+                <div class="inner">
+                    <span>:dispatch-later</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="#dispatch">
+                <div class="inner">
+                    <span>:dispatch</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="#dispatch-n">
+                <div class="inner">
+                    <span>:dispatch-n</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="#deregister-event-handler">
+                <div class="inner">
+                    <span>:deregister-event-handler</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="#db">
+                <div class="inner">
+                    <span>:db</span>
+                </div>
+            </a>
+        </li>                                
+    </ul>
+</div>
+<h1><a href="#builtin-fx-handlers" name="builtin-fx-handlers"></a>Builtin Fx Handlers</h1>
+<h2><a href="#dispatch-later" name="dispatch-later"></a><a name="dispatch-later"></a> :dispatch-later</h2>
+<p><code>dispatch</code> one or more events after given delays. Expects a collection of maps with two keys: <code>ms</code> and <code>:dispatch</code></p>
+<p>usage:  <code>clojure
+  {:dispatch-later [;; in 200ms do this: (dispatch [:event-id "param"])
+                    {:ms       200
+                     :dispatch [:event-id "param"]}
+		    {:ms       100
+		     :dispatch [:also :this :in :100ms]}]}
+</code></p>
+<p>Note: <code>nil</code> entries in the collection are ignored which means events can be added conditionally:  <code>clojure
+   {:dispatch-later [ (when (&gt; 3 5) {:ms 200 :dispatch [:conditioned-out]})
+                      {:ms 100 :dispatch [:another-one]}]}
+</code></p>
+<h2><a href="#dispatch" name="dispatch"></a><a name="dispatch"></a> :dispatch</h2>
+<p><code>dispatch</code> one event. Expects a single vector.</p>
+<p>usage:</p>
+<pre><code class="clojure">{:dispatch [:event-id "param"] }
+</code></pre>
+<h2><a href="#dispatch-n" name="dispatch-n"></a><a name="dispatch-n"></a> :dispatch-n</h2>
+<p><code>dispatch</code> more than one event. Expects a list or vector of events. Something for which <code>sequential?</code> returns true.</p>
+<p>usage:</p>
+<pre><code class="clojure">{:dispatch-n (list [:do :all] [:three :of] [:these])}
+</code></pre>
+<p>Note: <code>nil</code> events are ignored which means events can be added conditionally:</p>
+<pre><code class="clojure">{:dispatch-n (list (when (&gt; 3 5) [:conditioned-out])
+                      [:another-one])}
+</code></pre>
+<h2><a href="#deregister-event-handler" name="deregister-event-handler"></a><a name="deregister-event-handler"></a> :deregister-event-handler</h2>
+<p>removes a previously registered event handler. Expects either a single id (typically a namespaced keyword),  or a seq of ids.</p>
+<p>usage:</p>
+<pre><code class="clojure">{:deregister-event-handler :my-id)}
+</code></pre>
+<p>or:</p>
+<pre><code class="clojure">{:deregister-event-handler [:one-id :another-id]}
+</code></pre>
+<h2><a href="#db" name="db"></a><a name="db"></a> :db</h2>
+<p>reset! app-db with a new value. <code>value</code> is expected to be a map.</p>
+<p>usage:</p>
+<pre><code class="clojure">{:db  {:key1 value1 key2 value2}}
+</code></pre></div></div></div></body></html>
