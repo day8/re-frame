@@ -264,7 +264,8 @@
 (defn reg-sub-raw
   "This is a low level, advanced function.  You should probably be
   using reg-sub instead.
-  Docs in https://github.com/day8/re-frame/blob/master/docs/flow-mechanics.md"
+  Docs in
+  <a href=\"http://day8.github.io/re-frame/flow-mechanics/\" target=\"_blank\">http://day8.github.io/re-frame/flow-mechanics/</a>"
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
 
@@ -452,9 +453,9 @@
   Output includes:
   1. the event vector
   2. a `clojure.data/diff` of db, before vs after, which shows
-     the changes caused by the event handler.  You will absolutely have
-     to understand https://clojuredocs.org/clojure.data/diff to
-     understand the output.
+     the changes caused by the event handler. To understand the output,
+     you should understand:
+     <a href=\"https://clojuredocs.org/clojure.data/diff\" target=\"_blank\">https://clojuredocs.org/clojure.data/diff</a>.
 
   You'd typically include this interceptor after (to the right of) any
   path interceptor.
@@ -536,7 +537,7 @@
   reset ALL FLAGS every time (overwriting what was there previously)
   and fully recalculate the list of duplicates (displayed at the bottom?).
 
-  https://twitter.com/nathanmarz/status/879722740776939520
+  <a href=\"https://twitter.com/nathanmarz/status/879722740776939520\" target=\"_blank\">https://twitter.com/nathanmarz/status/879722740776939520</a>
 
   By applying `f` in an `:enrich` interceptor, after every CRUD event,
   we keep the handlers simple and yet we ensure this important step
