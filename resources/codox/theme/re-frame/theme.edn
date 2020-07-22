@@ -10,7 +10,11 @@
   [:substitute
    [:div]]
 
-  [:div.sidebar.primary]
+  [:div.sidebar.primary :first-child]
+  [:substitute
+   [:div]]
+
+  [:ul.index-link]
   [:substitute
    [:div]]
 
