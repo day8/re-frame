@@ -1136,6 +1136,9 @@ To install Clojure and Leiningen (a build tool) following [these instructions](h
 Here's a good intro on writing a function:
 https://blog.cleancoder.com/uncle-bob/2020/04/09/ALittleMoreClojure.html
 
+Gently paced video series showing you ClojureScript coding/tooling from the basics up: 
+https://www.youtube.com/watch?v=SljDPNwAFOc&list=PLaGDS2KB3-ArG0WqAytE9GsZgrM-USsZA
+
 The cheatsheet: 
 https://clojure.org/api/cheatsheet
 

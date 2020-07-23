@@ -19,8 +19,8 @@ It is the purpose of this page to explore and justify this claim.
 
 > **There's almost no more important point to make about re-frame than this one**
 
-The primary design goal for re-frame is that it delivers an excellent developer experience. 
-I believe that nothing contributes to this goal more than it having "a simple dynamic model".
+re-frame's primary design goal is that it delivers an excellent developer experience. 
+And nothing contributes to this goal more than it having "a simple dynamic model".
 Almost nothing makes a programmer's job easier than 
 a simple dynamic model. Almost nothing reduces bugs more than a simple dynamic model.
 
@@ -47,23 +47,20 @@ As programmers, we often talk about static concerns like DRY, line count, and "c
 And while, yes, they are all useful, perhaps we should pay more attention to the qualities which 
 make runtimes easier or harder to simulate in our heads.
 
+## re-frame Time
 
-## re-frame Time 
-
-re-frame apps "move forward", through this computational/state space, 
-one event after another. Time is discrete. 
+A re-frame app progresses one event at a time through its computational/state space. So, the unit of time is an event.
 
 Each event is entirely processed
 from beginning to end before the next event on the queue is processed.
 re-frame does not support the idea that an event can be "suspended" 
-and then, later, restarted. It is only ever doing one thing at a time.
+and then, later, restarted. A re-frame app is only ever doing one thing (one event) at a time.
 
 And, when one of these events changes application state, it does so 
 transactionally (instantly), in one fell swoop, not incrementally.
 
-So, at the highest level, re-frame delivers dynamics in discrete units, 
-which can be understood and analysed independently. This serves to simplify 
-the dynamics. 
+So, at the highest level, re-frame delivers dynamics in discrete units, with a clear start and end, 
+which can then be understood and analysed independently. This helps to simplify the dynamics. 
 
 But, how about one level down, **_within_** the processing of a single event? What about those dynamics? 
 
@@ -84,11 +81,11 @@ re-frame's overarching process for handling a single event is one part "Finite S
 The event-handling process proceeds step by step through a linear set of logical states,
 which you know already as "The Dominoes". Only one state at a time is happening, and in each state
 there is specific behaviour/computation, and each of them is sufficiently isolated from the others 
-that it can be understood and analysed independently. You can comfortably "zoom in" to understand each part.
+that it can be understood and analysed independently. You can comfortably "zoom in" to understand each part, ignoring the rest.
 
 The re-frame docs don't formally talk about FSMs and, instead, present it as a "data flow" which 
 causes transitions from one state to another. 
-But the dominos are a simple FSM "in nature". Consequently, each event is processed using a
+But the dominos are like a simple FSM "in nature". And, consequently, each event is processed using a
 simple kind of computation, making it easy to simulate in your head. 
 
 
@@ -102,7 +99,7 @@ simple kind of computation, making it easy to simulate in your head.
     in unexpected and unwelcome ways. For our protection, 
     so we can handle these unexpected requirements, we are attracted to more power, not less.
 
-But let's now go deeper again. But what about the dynamics within each Domino? 
+But let's now go deeper again. But what about the dynamics within each individual Domino? 
 
 ## Pure Functions 
 
@@ -110,24 +107,24 @@ Within a Domino, we are back to programming with the Turing complete power of Cl
 Thankfully, to harness and control that frightening power, you write pure functions and use immutable data.
 
 Pure functions stand outside of "time". To understand them, you don't need to know "when" they were run and
-the state of the system at that point. Instead, you need only know the value of their actual arguments.
+the state of the system at that point. Instead, you need only know the value of the actual arguments.
 
 The tyranny of time is still present on the inside of the pure function, because there is an internal flow of execution.
 So, you might still need to simulate that in your head.  But a pure function delivers a smaller
-dynamic process to understand - one that is more cognitively tractable. 
+dynamic process to understand - one that is more cognitively tractable.
 
 What is provided as arguments to a function is data, and what they return is data. Using immutable data for both 
 acts to insulate pure functions from "place" - where data is put.
 
 Once functions are decoupled from both "time" and "place" they can be composed in a maximally mathematical way.
 I asked earlier what simplifying "abstractions" might exist to help us dampen the complexity
-of runtime dynamics, and these two are a very potent duo. 
+of runtime dynamics, and these two are a potent duo.
 
 
 !!! Note "Banana Issues"
     Non-pure functions "reach out" and grab a banana (a value) from the global space beyond their arguments.
 
-    Initially, it can seem innocent enough. But now, to understand the function's internal dynamics, you also need to understand
+    Initially, it can seem innocent enough. But now, to understand the function's internal dynamics, you must understand
     the dynamics for everything that might change that banana over time. Unfortunately, as you 
     pull the banana back towards you, you might discover a Gorilla is holding it. 
     And that Gorilla is sitting in a jungle, so you get that too. Plus some Monsoonal weather.
@@ -137,20 +134,19 @@ of runtime dynamics, and these two are a very potent duo.
 
 Declarative programming means saying "make _X_ happen", but not needing to specify how. 
 
-So, it abstracts away the process, and it collapses the associated dynamics.
+So, it abstracts away the process, which collapses the associated dynamics.
 
 re-frame has a lot of "declarative" happening. Reagent is a powerful declarative DOM capability. Events are declarative. 
 Effects are declarative. The Signal Graph is declarative. 
 
-And all this "declarative" is done with data-based DSLs, as is the Lisp way. 
-
+And all this "declarative" is done with data-based DSLs, as is the Clojure way. 
 
 !!! Note "Data DSLs"
     Have you noticed that "declarative" is better when the DSL is defined in data? 
 
     For example, Hiccup is an excellent DSL, and it is data. In the simple case, just data literals, but computation can be added to generate the data. 
     SQL is string-based. As literals that's okay, but it completely sucks if we have to start computing the string.
-    And regexs? Oof. A string-based DSL for a powerful, occasionally surprising computational paradigm. Forget "now you have two problems". Now you have an N x N matrix of interacting problems.
+    And regexs? Oof. A string-based DSL for a powerful, occasionally surprising computational paradigm. 
 
 ## State Management 
 
