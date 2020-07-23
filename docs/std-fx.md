@@ -2,7 +2,7 @@
 <div class="sidebar secondary" style="width: 218px; left: 161px;">
     <h3 class="current">
         <a href="#top">
-            <span class="inner">Fx</span>
+            <span class="inner">Builtin Effects</span>
         </a>
     </h3>
     <ul>
@@ -45,7 +45,7 @@
 </div>
 
 
-# Builtin Fx Handlers
+# Builtin Effects
 
 ## <a name="dispatch-later"></a> :dispatch-later
 
