@@ -1541,8 +1541,8 @@ and in their heads, they'll be performing a runtime simulation of their code.</p
 <blockquote>
 <p><strong>There's almost no more important point to make about re-frame than this one</strong></p>
 </blockquote>
-<p>The primary design goal for re-frame is that it delivers an excellent developer experience. 
-I believe that nothing contributes to this goal more than it having "a simple dynamic model".
+<p>re-frame's primary design goal is that it delivers an excellent developer experience. 
+And nothing contributes to this goal more than it having "a simple dynamic model".
 Almost nothing makes a programmer's job easier than 
 a simple dynamic model. Almost nothing reduces bugs more than a simple dynamic model.</p>
 <h2 id="on-dynamics">On Dynamics<a class="headerlink" href="#on-dynamics" title="Permanent link">&para;</a></h2>
@@ -1562,17 +1562,15 @@ systems on the "impossible" end of that continuum, will breed nasty bugs and be 
 And while, yes, they are all useful, perhaps we should pay more attention to the qualities which 
 make runtimes easier or harder to simulate in our heads.</p>
 <h2 id="re-frame-time">re-frame Time<a class="headerlink" href="#re-frame-time" title="Permanent link">&para;</a></h2>
-<p>re-frame apps "move forward", through this computational/state space, 
-one event after another. Time is discrete. </p>
+<p>A re-frame app progresses one event at a time through its computational/state space. So, the unit of time is an event.</p>
 <p>Each event is entirely processed
 from beginning to end before the next event on the queue is processed.
 re-frame does not support the idea that an event can be "suspended" 
-and then, later, restarted. It is only ever doing one thing at a time.</p>
+and then, later, restarted. A re-frame app is only ever doing one thing (one event) at a time.</p>
 <p>And, when one of these events changes application state, it does so 
 transactionally (instantly), in one fell swoop, not incrementally.</p>
-<p>So, at the highest level, re-frame delivers dynamics in discrete units, 
-which can be understood and analysed independently. This serves to simplify 
-the dynamics. </p>
+<p>So, at the highest level, re-frame delivers dynamics in discrete units, with a clear start and end, 
+which can then be understood and analysed independently. This helps to simplify the dynamics. </p>
 <p>But, how about one level down, <strong><em>within</em></strong> the processing of a single event? What about those dynamics? </p>
 <h2 id="processing-an-event">Processing An Event<a class="headerlink" href="#processing-an-event" title="Permanent link">&para;</a></h2>
 <p>Do you remember those "theory of computation" lectures at Uni? The most limited 
@@ -1588,10 +1586,10 @@ But there might be a cost: your programming keyboard has now become a loaded gun
 <p>The event-handling process proceeds step by step through a linear set of logical states,
 which you know already as "The Dominoes". Only one state at a time is happening, and in each state
 there is specific behaviour/computation, and each of them is sufficiently isolated from the others 
-that it can be understood and analysed independently. You can comfortably "zoom in" to understand each part.</p>
+that it can be understood and analysed independently. You can comfortably "zoom in" to understand each part, ignoring the rest.</p>
 <p>The re-frame docs don't formally talk about FSMs and, instead, present it as a "data flow" which 
 causes transitions from one state to another. 
-But the dominos are a simple FSM "in nature". Consequently, each event is processed using a
+But the dominos are like a simple FSM "in nature". And, consequently, each event is processed using a
 simple kind of computation, making it easy to simulate in your head. </p>
 <div class="admonition note">
 <p class="admonition-title">Less Is More</p>
@@ -1605,24 +1603,24 @@ We live in a world where requirements change on us all the time and often
 in unexpected and unwelcome ways. For our protection, 
 so we can handle these unexpected requirements, we are attracted to more power, not less.</p>
 </div>
-<p>But let's now go deeper again. But what about the dynamics within each Domino? </p>
+<p>But let's now go deeper again. But what about the dynamics within each individual Domino? </p>
 <h2 id="pure-functions">Pure Functions<a class="headerlink" href="#pure-functions" title="Permanent link">&para;</a></h2>
 <p>Within a Domino, we are back to programming with the Turing complete power of ClojureScript.
 Thankfully, to harness and control that frightening power, you write pure functions and use immutable data.</p>
 <p>Pure functions stand outside of "time". To understand them, you don't need to know "when" they were run and
-the state of the system at that point. Instead, you need only know the value of their actual arguments.</p>
+the state of the system at that point. Instead, you need only know the value of the actual arguments.</p>
 <p>The tyranny of time is still present on the inside of the pure function, because there is an internal flow of execution.
 So, you might still need to simulate that in your head.  But a pure function delivers a smaller
-dynamic process to understand - one that is more cognitively tractable. </p>
+dynamic process to understand - one that is more cognitively tractable.</p>
 <p>What is provided as arguments to a function is data, and what they return is data. Using immutable data for both 
 acts to insulate pure functions from "place" - where data is put.</p>
 <p>Once functions are decoupled from both "time" and "place" they can be composed in a maximally mathematical way.
 I asked earlier what simplifying "abstractions" might exist to help us dampen the complexity
-of runtime dynamics, and these two are a very potent duo. </p>
+of runtime dynamics, and these two are a potent duo.</p>
 <div class="admonition note">
 <p class="admonition-title">Banana Issues</p>
 <p>Non-pure functions "reach out" and grab a banana (a value) from the global space beyond their arguments.</p>
-<p>Initially, it can seem innocent enough. But now, to understand the function's internal dynamics, you also need to understand
+<p>Initially, it can seem innocent enough. But now, to understand the function's internal dynamics, you must understand
 the dynamics for everything that might change that banana over time. Unfortunately, as you 
 pull the banana back towards you, you might discover a Gorilla is holding it. 
 And that Gorilla is sitting in a jungle, so you get that too. Plus some Monsoonal weather.
@@ -1630,16 +1628,16 @@ There's often a lot of new runtime dynamics coming your way, attached to that in
 </div>
 <h2 id="declarative">Declarative<a class="headerlink" href="#declarative" title="Permanent link">&para;</a></h2>
 <p>Declarative programming means saying "make <em>X</em> happen", but not needing to specify how. </p>
-<p>So, it abstracts away the process, and it collapses the associated dynamics.</p>
+<p>So, it abstracts away the process, which collapses the associated dynamics.</p>
 <p>re-frame has a lot of "declarative" happening. Reagent is a powerful declarative DOM capability. Events are declarative. 
 Effects are declarative. The Signal Graph is declarative. </p>
-<p>And all this "declarative" is done with data-based DSLs, as is the Lisp way. </p>
+<p>And all this "declarative" is done with data-based DSLs, as is the Clojure way. </p>
 <div class="admonition note">
 <p class="admonition-title">Data DSLs</p>
 <p>Have you noticed that "declarative" is better when the DSL is defined in data? </p>
 <p>For example, Hiccup is an excellent DSL, and it is data. In the simple case, just data literals, but computation can be added to generate the data. 
 SQL is string-based. As literals that's okay, but it completely sucks if we have to start computing the string.
-And regexs? Oof. A string-based DSL for a powerful, occasionally surprising computational paradigm. Forget "now you have two problems". Now you have an N x N matrix of interacting problems.</p>
+And regexs? Oof. A string-based DSL for a powerful, occasionally surprising computational paradigm. </p>
 </div>
 <h2 id="state-management">State Management<a class="headerlink" href="#state-management" title="Permanent link">&para;</a></h2>
 <p>Nothing screams "complicated dynamics" more than needing to "distribute state". 
