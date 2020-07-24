@@ -47,6 +47,11 @@
 
 # Builtin Effects
 
+
+In addition to the functions is `re-frame.core`, re-frame provides built-in 
+effects which also contribute to the API. 
+
+
 ## <a name="dispatch-later"></a> :dispatch-later
 
 `dispatch` one or more events after given delays. Expects a collection
@@ -74,29 +79,33 @@ conditionally:
 
 usage:
 ```clojure
-{:dispatch [:event-id "param"] }
+{:dispatch [:event-id "param1" :param2] }
 ```
    
 ## <a name="dispatch-n"></a> :dispatch-n
 
-`dispatch` more than one event. Expects a list or vector of events. Something for which
-`sequential?` returns true.
+`dispatch` more than one events. Expects a seq of event vectors (typically a list of them). 
 
 usage:
 ```clojure
 {:dispatch-n (list [:do :all] [:three :of] [:these])}
 ```
 
-Note: `nil` events are ignored which means events can be added conditionally:
-```clojure
-{:dispatch-n (list (when (> 3 5) [:conditioned-out])
+Notes:
+
+  1. The events will be dispatched in the order provided. And, because events are handled FIFO, the events will subsequently be processed in the order provided.
+  2. nils in the event collection are ignored which means events can be added
+conditionally:
+
+  ```clojure
+  {:dispatch-n (list (when (> 3 5) [:conditioned-out])
                       [:another-one])}
-```
+  ```
 
 ## <a name="deregister-event-handler"></a> :deregister-event-handler
 
-removes a previously registered event handler. Expects either a single id (typically a namespaced keyword),
- or a seq of ids.
+Removes a previously registered event handler. Expects either a single id
+(typically a keyword), or a seq of ids.
 
 usage:
 ```clojure
