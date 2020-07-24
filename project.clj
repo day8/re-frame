@@ -23,7 +23,7 @@
   :git-inject {:version-pattern #"v(\d+\.\d+\.\d+.*)"}
 
   :codox {:namespaces  [re-frame.core]
-          :doc-files   ["docs/std-fx.md"]
+          :doc-files   ["docs/api-intro.md" "docs/api-builtin-effects.md"]
           :metadata    {:doc/format :markdown}
           :themes      [:default :re-frame]
           :output-path "target/codox"}
