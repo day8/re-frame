@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC ""
+    "">
+<html><head><meta charset="UTF-8" /><title># API Overview</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1  current"><a href="api-intro.html"><div class="inner"><span># API Overview</span></div></a></li><li class="depth-1 "><a href="api-builtin-effects.html"><div class="inner"><span>Builtin Effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 "><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="document" id="content"><div class="doc"><div class="markdown"><h2><a href="#api-overview" name="api-overview"></a>API Overview</h2>
+<p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you’ll need to <code>require</code> it, perhaps like this …</p>
+<p>```clj  (ns app.namespace  (:require [re-frame.core :as rf]))</p>
+<pre><code>... now use rf/reg-event-fx or rf/subscribe
+</code></pre>
+<p>```</p>
+<p>When you are writing an app’s <code>View Functions</code>, you’ll use: <code>dispatch</code> and <code>subscribe</code>. Very occasionally <code>dispatch-sync</code>.</p>
+<p>Your other code will register handlers using: <code>reg-event-db</code>, <code>reg-event-fx</code> and <code>reg-sub</code>.<br />Very occasionally you might use <code>reg-fx</code> and <code>reg-cofx</code>. </p>
+<p>And, finally, you may perhaps use builtin <code>Interceptors</code> like <code>path</code>, <code>on-change</code>, <code>enrich</code>, <code>after</code>, etc.</p>
+<h2><a href="#built-in-effect-handlers" name="built-in-effect-handlers"></a>Built-in Effect Handlers</h2>
+<p>In addition to the functions is <code>re-frame.core</code>, re-frame provides built-in effects which also contribute to the API: </p>
+<h3><a href="#dispatch-later" name="dispatch-later"></a>:dispatch-later</h3>
+<p><code>dispatch</code> one or more events after given delays. Expects a collection of maps with two keys: <code>:ms</code> and <code>:dispatch</code></p>
+<p>Example usage:</p>
+<pre><code class="clj">{:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}    
+                  {:ms 100 :dispatch [:also :this :in :100ms]}]}
+</code></pre>
+<p>Which means: in 200ms do this: <code>(dispatch [:event-id "param"])</code> and in 100ms …</p>
+<p>Note: nil entries in the collection are ignored which means events can be added conditionally:</p>
+<pre><code class="clj">{:dispatch-later [ (when (&gt; 3 5) {:ms 200 :dispatch [:conditioned-out]})
+                   {:ms 100 :dispatch [:another-one]}]}
+</code></pre>
+<hr />
+<h3><a href="#dispatch" name="dispatch"></a>:dispatch</h3>
+<p><code>dispatch</code> one event. Expects a single vector.</p>
+<p>usage:</p>
+<pre><code class="clj">{:dispatch [:event-id "param1" :param2] }
+</code></pre>
+<hr />
+<h3><a href="#dispatch-n" name="dispatch-n"></a>:dispatch-n</h3>
+<p><code>dispatch</code> one or more events. Expects a seq of events, typically a <code>list</code>. </p>
+<p>Example usage:</p>
+<pre><code class="clj">{:dispatch-n (list [:do :all] [:three :of] [:these])}
+</code></pre>
+<p>Notes:</p>
+<ol>
+  <li>The events will be dispatched in the order provided. And, because events are handled FIFO, the events will subsequently be processed in the order provided.</li>
+  <li>nils in the event collection are ignored which means events can be added conditionally:  <code>clj
+  {:dispatch-n (list (when (a-predicate?) [:conditioned-out])
+                 [:another-one])}
+</code></li>
+</ol>
+<hr />
+<h3><a href="#deregister-event-handler" name="deregister-event-handler"></a>:deregister-event-handler</h3>
+<p>Removes a previously registered event handler. Expects either a single id (typically a keyword), or a seq of ids.</p>
+<p>Example usage:</p>
+<pre><code class="clj">{:deregister-event-handler :my-id)}
+</code></pre>
+<p>or:</p>
+<pre><code class="clj">{:deregister-event-handler [:one-id :another-id]}
+</code></pre>
+<hr />
+<h3><a href="#db" name="db"></a>:db</h3>
+<p>reset! app-db with a new value. Expects a map. </p>
+<p>Example usage:</p>
+<pre><code class="clj">{:db  {:key1 value1 :key2 value2}}
+</code></pre></div></div></div></body></html>

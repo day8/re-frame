@@ -11,7 +11,7 @@
         <meta name="description" content="Derived data, flowing">
       
       
-        <link rel="canonical" href="https://day8.github.io/re-frame/3rd-party-examples/">
+        <link rel="canonical" href="https://day8.github.io/re-frame/api-builtin-effects/">
       
       
         <meta name="author" content="Mike Thompson">
@@ -21,7 +21,7 @@
     
     
     
-    <title>3rd party examples</title>
+    <title>Api builtin effects</title>
     
 
     
@@ -72,6 +72,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#builtin-effects" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -130,7 +135,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              3rd party examples
+              Api builtin effects
             
           </span>
         </div>
@@ -1318,12 +1323,72 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dispatch-later" class="md-nav__link">
+     :dispatch-later
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dispatch" class="md-nav__link">
+     :dispatch
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dispatch-n" class="md-nav__link">
+     :dispatch-n
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deregister-event-handler" class="md-nav__link">
+     :deregister-event-handler
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+     :db
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/day8/re-frame/edit/master/docs/3rd-party-examples.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/day8/re-frame/edit/master/docs/api-builtin-effects.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
                   </a>
                 
@@ -1331,9 +1396,106 @@
                   
                 
                 
-                  <h1>3rd party examples</h1>
-                
-                
+                <div class="sidebar secondary" style="width: 218px; left: 161px;">
+    <h3 class="current">
+        <a href="#top">
+            <span class="inner">Builtin Effects</span>
+        </a>
+    </h3>
+    <ul>
+        <li class="depth-1">
+            <a href="#dispatch-later">
+                <div class="inner">
+                    <span>:dispatch-later</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="#dispatch">
+                <div class="inner">
+                    <span>:dispatch</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="#dispatch-n">
+                <div class="inner">
+                    <span>:dispatch-n</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="#deregister-event-handler">
+                <div class="inner">
+                    <span>:deregister-event-handler</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="#db">
+                <div class="inner">
+                    <span>:db</span>
+                </div>
+            </a>
+        </li>                                
+    </ul>
+</div>
+
+<h1 id="builtin-effects">Builtin Effects<a class="headerlink" href="#builtin-effects" title="Permanent link">&para;</a></h1>
+<h2 id="dispatch-later"><a name="dispatch-later"></a> :dispatch-later<a class="headerlink" href="#dispatch-later" title="Permanent link">&para;</a></h2>
+<p><code>dispatch</code> one or more events after given delays. Expects a collection
+of maps with two keys: <code>ms</code> and <code>:dispatch</code></p>
+<p>usage:
+  <code>clojure
+  {:dispatch-later [;; in 200ms do this: (dispatch [:event-id "param"])
+                    {:ms       200
+                     :dispatch [:event-id "param"]}
+            {:ms       100
+             :dispatch [:also :this :in :100ms]}]}</code></p>
+<p>Note: <code>nil</code> entries in the collection are ignored which means events can be added
+conditionally:
+   <code>clojure
+   {:dispatch-later [ (when (&gt; 3 5) {:ms 200 :dispatch [:conditioned-out]})
+                      {:ms 100 :dispatch [:another-one]}]}</code></p>
+<h2 id="dispatch"><a name="dispatch"></a> :dispatch<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h2>
+<p><code>dispatch</code> one event. Expects a single vector.</p>
+<p>usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]</span> <span class="p">}</span>
+</code></pre></div>
+
+
+<h2 id="dispatch-n"><a name="dispatch-n"></a> :dispatch-n<a class="headerlink" href="#dispatch-n" title="Permanent link">&para;</a></h2>
+<p><code>dispatch</code> more than one event. Expects a list or vector of events. Something for which
+<code>sequential?</code> returns true.</p>
+<p>usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch-n</span> <span class="p">(</span><span class="nb">list </span><span class="p">[</span><span class="ss">:do</span> <span class="ss">:all</span><span class="p">]</span> <span class="p">[</span><span class="ss">:three</span> <span class="ss">:of</span><span class="p">]</span> <span class="p">[</span><span class="ss">:these</span><span class="p">])}</span>
+</code></pre></div>
+
+
+<p>Note: <code>nil</code> events are ignored which means events can be added conditionally:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch-n</span> <span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nb">&gt; </span><span class="mi">3</span> <span class="mi">5</span><span class="p">)</span> <span class="p">[</span><span class="ss">:conditioned-out</span><span class="p">])</span>
+                      <span class="p">[</span><span class="ss">:another-one</span><span class="p">])}</span>
+</code></pre></div>
+
+
+<h2 id="deregister-event-handler"><a name="deregister-event-handler"></a> :deregister-event-handler<a class="headerlink" href="#deregister-event-handler" title="Permanent link">&para;</a></h2>
+<p>removes a previously registered event handler. Expects either a single id (typically a namespaced keyword),
+ or a seq of ids.</p>
+<p>usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:deregister-event-handler</span> <span class="ss">:my-id</span><span class="p">)}</span>
+</code></pre></div>
+
+
+<p>or:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:deregister-event-handler</span> <span class="p">[</span><span class="ss">:one-id</span> <span class="ss">:another-id</span><span class="p">]}</span>
+</code></pre></div>
+
+
+<h2 id="db"><a name="db"></a> :db<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
+<p>reset! app-db with a new value. <code>value</code> is expected to be a map.</p>
+<p>usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="p">{</span><span class="ss">:key1</span> <span class="nv">value1</span> <span class="nv">key2</span> <span class="nv">value2</span><span class="p">}}</span>
+</code></pre></div>
                 
               
               
