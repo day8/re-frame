@@ -630,7 +630,26 @@
 ;;                   (assoc-effect context :http-ajax {...}])))))
 ;;
 (defn ->interceptor
-  "Create an interceptor from named arguments"
+  "A utility function for creating interceptors. 
+   
+   Accepts three optional, named arguments:
+     - `:id` - an id for the interceptor (decorative only)
+     - `:before` - the before function 
+     - `:after`  - the after function 
+   
+   Example use:
+   ```clj
+   (def my-interceptor
+     (->interceptor                
+       :id     :my-interceptor       
+       :before (fn [context]            ;; you normally want to change :coeffects
+                  ... in here use get-coeffect  and assoc-coeffect)
+   
+       :after  (fn [context]                         ;; you normally want to change :effects
+                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+                   (assoc-effect context :http-ajax {...}])))))
+   ```
+   "
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
 
