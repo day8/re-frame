@@ -24,32 +24,38 @@
 
 ;; -- dispatch ----------------------------------------------------------------
 (defn dispatch
-  "Enqueue `event` for processing by event handling machinery.
+  "Queue `event` for processing by event handling machinery.
 
-  `event` is a vector of length >= 1. The 1st element identifies the kind of event.
+  `event` is a vector with length >= 1. The 1st element identifies the kind of event.
 
   Note: the event handler is not run immediately - it is not run
   synchronously. It will likely be run 'very soon', although it may be
   added to the end of a FIFO queue which already contain events.
 
   Usage:
-     (dispatch [:order-pizza {:supreme 2 :meatlovers 1 :veg 1}])"
+   
+     (dispatch [:order-pizza {:supreme 2 :meatlovers 1 :veg 1}])
+   "
   [event]
   (router/dispatch event))
 
 (defn dispatch-sync
-  "Synchronously (immediately) process `event`. Do not queue.
+  "Synchronously (immediately) process `event`. Does not queue the event 
+   for handling later as `dispatch` does.
 
   Generally, don't use this. Instead use `dispatch`. It is an error
   to use `dispatch-sync` within an event handler.
 
   Useful when any delay in processing is a problem:
+   
      1. the `:on-change` handler of a text field where we are expecting fast typing.
-     2  when initialising your app - see 'main' in todomvc examples
+     2  when initialising your app - see 'main' in examples/todomvc/src/core.cljs
      3. in a unit test where we don't want the action 'later'
 
   Usage:
-     (dispatch-sync [:sing :falsetto 634])"
+   
+     (dispatch-sync [:sing :falsetto 634])
+  "
   [event-v]
   (router/dispatch-sync event-v))
 
@@ -556,20 +562,27 @@
   leading underscore on the event-v!
   Your event handlers will look like this:
 
-      (defn my-handler
-        [db [x y z]]    ;; <-- instead of [_ x y z]
-        ....)"
+      (reg-event-db
+        :event-id 
+        [... trim-v ...]
+        (fn [db [x y z]]    ;; <-- instead of [_ x y z]
+          ...)
+     ```
+    "
   std-interceptors/trim-v)
 
 (def after
-  "returns an interceptor which runs a given function `f` in the `:after`
+  "An interceptor factory, which is to say, a function which will return an interceptor. 
+  
+  Returns an interceptor which runs a given function `f` in the `:after`
   position, presumably for side effects.
 
   `f` is called with two arguments: the `:effects` value for `:db`
-  (or the `coeffect` value of db if no db effect is returned) and the event.
+  (or the `:coeffect` value of `:db` if no `:db` effect is returned) and the event.
   Its return value is ignored, so `f` can only side-effect.
 
-  Examples use can be seen in the /examples/todomvc:
+  An examples of use can be seen in /examples/todomvc/events.cljs:
+   
      - `f` runs schema validation (reporting any errors found).
      - `f` writes to localstorage."
   std-interceptors/after)
@@ -577,26 +590,29 @@
 (def on-changes
   "An interceptor factory, which is to say, a function which will return an interceptor. 
    
-   The returned interceptor will observe N paths within `db`, and if any of them
+   Returns an interceptor which will observe N paths within `db`, and if any of them
    test not identical? to their previous value  (as a result of a event handler
    being run), then it runs `f` to compute a new value, which is then assoc-ed
    into the given `out-path` within `db`.
 
    Example Usage:
 
-   ```clj
+```clj
       (defn my-f
         [a-val b-val]
         ... some computation on a and b in here)
+   
+      ;; use it
+      (def my-interceptor (on-changes my-f [:c]  [:a] [:b]))
 
       (reg-event-db 
         :event-id 
-        [(on-changes my-f [:c]  [:a] [:b]) ... other interceptors]  <-- used here
+        [... my-interceptor ...]  ;; <-- ultimately used here
         (fn [db v]
            ...))
-    ```
+```
    
-    Put this Interceptor on the right handlers (ones which might change :a or :b)
+    Put this Interceptor on handlers which might change paths :a or :b
     and it will: 
    
      - call `f` each time the value at path [:a] or [:b] changes
@@ -636,11 +652,11 @@
    Accepts three optional, named arguments:
    
      - `:id` - an id for the interceptor (decorative only)
-     - `:before` - the before function 
-     - `:after`  - the after function 
+     - `:before` - the interceptor's before function 
+     - `:after`  - the interceptor's after function 
    
    Example use:
-   ```clj
+
    (def my-interceptor
      (->interceptor                
        :id     :my-interceptor       
@@ -650,13 +666,13 @@
        :after  (fn [context]                         ;; you normally want to change :effects
                  (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
                    (assoc-effect context :http-ajax {...}])))))
-   ```
+
    "
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
 
 (defn get-coeffect
-  "A utility function, used when writing interceptors, typically within a `:before` function. 
+  "A utility function, typically used when writing an interceptor's `:before `function.  
    
    When called with one argument, it returns the `:coeffects` map from with that `context`.
    
@@ -671,7 +687,7 @@
    (interceptor/get-coeffect context key not-found)))
 
 (defn assoc-coeffect
-  "A utility function, used when writing interceptors, typically within a `:before` function. 
+  "A utility function, typically used when writing an interceptor's `:before` function. 
    
    Adds or updates a key/value pair in the `:coeffects` map within `context`. "
   [context key value]
@@ -693,14 +709,14 @@
    (interceptor/get-effect context key not-found)))
 
 (defn assoc-effect
-   "A utility function, used when writing interceptors, typically within an `:after` function. 
+   "A utility function, typically used when writing an interceptor's `:after `function. 
    
    Adds or updates a key/value pair in the `:effects` map within `context`. "
   [context key value]
   (interceptor/assoc-effect context key value))
 
 (defn enqueue
-  "An advanced utility function, used when writing interceptors, typically within a `:before` function. 
+  "An advanced utility function, typically used when writing an interceptor's `:before `function. 
   
   Adds a collection of `interceptors` to the end of `context's` execution `:queue`, and then
   returns the updated `context`."
@@ -714,9 +730,9 @@
   "Internally, re-frame uses the logging functions: `warn`, `log`, `error`, `group` and `groupEnd`
 
    By default, these functions map directly to the default `js/console` implementations,
-   but you can override with your own fns (set or subset).
+   but you can override with your own fns (set or subset) if you wish to handle the logging yourself.
    
-   `new-loggers` should be a map with the same keys as `loggers` 
+   `new-loggers` should be a map with the same keys as standard `loggers` 
 
    Example Usage:
    ```clj
@@ -729,19 +745,19 @@
 
 
 (defn console
-  "A utility function designed to be used by libraries which are extending re-frame, like 
-   perhaps an effect handler, which want to produce output via re-frame's loggers. 
+  "A utility function for use in libraries which extend re-frame, like 
+   perhaps an effect handler, when they want to produce log output.
    
-   It will write `args` to the js/console at `level`.
+   It will write the given `args` to js/console at the given `level`.
    
    `level` can be one of `:log` `:error` `:warn` `:debug` `:group` `:groupEnd`.
    
    Example usage: 
    
-   ```clj 
+
      (console :error \"Oh, dear God, it happened:\" a-var \"and\" another)
      (console :warn \"Possible breach of containment wall at:\" dt)
-   ```
+
    "
   [level & args]
   (apply loggers/console (into [level] args)))
