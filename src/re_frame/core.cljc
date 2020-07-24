@@ -93,7 +93,7 @@
   two are really just sugary variations.
 
   1. No input signals given:
-      ```clj
+     ```clj
      (reg-sub
        :query-id
        a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
@@ -124,32 +124,33 @@
      the structure returned by the `signal-fn`).
 
      This example `signal-fn` returns a vector of input signals.
-       ```clj
+     ```clj
        (fn [query-vec dynamic-vec]
          [(subscribe [:a-sub])
           (subscribe [:b-sub])])
-       ```
+      ```
+       
      The associated computation function must be written
      to expect a vector of values for its first argument:
-       ```clj
-       (fn [[a b] query-vec]     ;; 1st argument is a seq of two values
-         ....)
-        ```
+     ```clj
+     (fn [[a b] query-vec]     ;; 1st argument is a seq of two values
+       ....)
+     ```
 
      If, on the other hand, the signal function was simpler and returned a singleton, like this:
-        ```clj
-        (fn [query-vec dynamic-vec]
-          (subscribe [:a-sub]))
-        ```
+     ```clj
+     (fn [query-vec dynamic-vec]
+       (subscribe [:a-sub]))
+     ```
      then the associated computation function must be written to expect a single value
      as the 1st argument:
-        ```clj
-        (fn [a query-vec]       ;; 1st argument is a single value
-          ...)
-        ```
+     ```clj
+       (fn [a query-vec]       ;; 1st argument is a single value
+         ...)
+      ```
 
      Further Note: variation #1 above, in which an `input-fn` was not supplied, like this:
-       ```clj
+     ```clj
      (reg-sub
        :query-id
        a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
@@ -164,7 +165,6 @@
      ```
 
   3. Syntax Sugar
-
      ```clj
      (reg-sub
        :a-b-sub
@@ -188,8 +188,8 @@
          ...))
      ```
 
-  For further understanding, read `/docs`, and look at the detailed comments in
-  /examples/todomvc/src/subs.cljs
+    For further understanding, read the tutorials, and look at the detailed comments in
+    /examples/todomvc/src/subs.cljs
   "
   [query-id & args]
   (apply subs/reg-sub (into [query-id] args)))
@@ -341,8 +341,8 @@
 
    This `coeffect handler` is expected to modify and return its first, `coeffects` argument.
 
-   Example Of how `inject-cofx` and `reg-cofx` work together
-   ---------------------------------------------------------
+   ## Example of `inject-cofx` and `reg-cofx` working together
+
 
    1. Early in app startup, you register a `coeffect handler` for `:datetime`:
 
@@ -361,8 +361,7 @@
            [coeffect event]
            ... in here can access (:now coeffect) to obtain current datetime ... )))
 
-   Background
-   ----------
+   ## Background
 
    `coeffects` are the input resources required by an event handler
    to perform its job. The two most obvious ones are `db` and `event`.
@@ -450,13 +449,12 @@
 
 ;; -- interceptors ------------------------------------------------------------
 
-;; Standard interceptors.
-;; Detailed docs on each in std-interceptors.cljs
 (def debug
   "An interceptor which logs/instruments an event handler's actions to
   `js/console.debug`. See examples/todomvc/src/events.cljs for use.
 
   Output includes:
+   
   1. the event vector
   2. a `clojure.data/diff` of db, before vs after, which shows
      the changes caused by the event handler. To understand the output,
@@ -567,7 +565,7 @@
         [... trim-v ...]
         (fn [db [x y z]]    ;; <-- instead of [_ x y z]
           ...)
-     ```
+
     "
   std-interceptors/trim-v)
 
@@ -623,12 +621,12 @@
 
 
 (defn reg-global-interceptor
-  "Registers `interceptor` as a global interceptor. Global interceptors are
-   included in the processing of every event.
+  "Registers the given `interceptor` as a global interceptor. Global interceptors are
+   included in the processing chain of every event.
 
    When you register an event handler you have the option of supplying an
    interceptor chain. Any global interceptors you register are effectively
-   prepending to this chain. 
+   prepending to this chain.
   
    Global interceptors are run in the order that they are registered."
   [interceptor]
@@ -657,6 +655,7 @@
    
    Example use:
 
+   ```clj
    (def my-interceptor
      (->interceptor                
        :id     :my-interceptor       
@@ -666,6 +665,7 @@
        :after  (fn [context]                         ;; you normally want to change :effects
                  (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
                    (assoc-effect context :http-ajax {...}])))))
+   ```
 
    "
   [& {:as m :keys [id before after]}]
