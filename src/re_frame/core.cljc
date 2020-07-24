@@ -575,22 +575,30 @@
   std-interceptors/after)
 
 (def on-changes
-  "Interceptor factory which acts a bit like `reaction`  (but it flows into
-  `db`, rather than out). It observes N paths within `db` and if any of them
-  test not identical? to their previous value  (as a result of a event handler
-  being run) then it runs `f` to compute a new value, which is then assoc-ed
-  into the given `out-path` within `db`.
+  "An interceptor factory, which is to say, a function which will return an interceptor. 
+   
+   The returned interceptor will observe N paths within `db`, and if any of them
+   test not identical? to their previous value  (as a result of a event handler
+   being run), then it runs `f` to compute a new value, which is then assoc-ed
+   into the given `out-path` within `db`.
 
-  Usage:
+   Example Usage:
 
+   ```clj
       (defn my-f
         [a-val b-val]
         ... some computation on a and b in here)
 
-      (on-changes my-f [:c]  [:a] [:b])
-
-  Put this Interceptor on the right handlers (ones which might change :a or :b).
-  It will:
+      (reg-event-db 
+        :event-id 
+        [(on-changes my-f [:c]  [:a] [:b]) ... other interceptors]  <-- used here
+        (fn [db v]
+           ...))
+    ```
+   
+    Put this Interceptor on the right handlers (ones which might change :a or :b)
+    and it will: 
+   
      - call `f` each time the value at path [:a] or [:b] changes
      - call `f` with the values extracted from [:a] [:b]
      - assoc the return value from `f` into the path  [:c]
@@ -604,35 +612,29 @@
 
    When you register an event handler you have the option of supplying an
    interceptor chain. Any global interceptors you register are effectively
-   prepending to this chain in the order that they are registered."
+   prepending to this chain. 
+  
+   Global interceptors are run in the order that they are registered."
   [interceptor]
   (settings/reg-global-interceptor interceptor))
 
 (defn clear-global-interceptor ;; think unreg-global-interceptor
-  "When called with no args, unregisters all global interceptors. When given
-   one arg, assumed to be the `id` of a currently registered global
+  "Unregisters (removes) global interceptors. 
+   
+   When called with no arguments, it unregisters all global interceptors. When given
+   one argument, assumed to be the `id` of a currently registered global
    interceptor, it unregisters the associated interceptor."
   ([]
    (settings/clear-global-interceptors))
   ([id]
    (settings/clear-global-interceptors id)))
 
-;; Utility functions for creating your own interceptors
-;;
-;;  (def my-interceptor
-;;     (->interceptor                ;; used to create an interceptor
-;;       :id     :my-interceptor     ;; an id - decorative only
-;;       :before (fn [context]                         ;; you normally want to change :coeffects
-;;                  ... use get-coeffect  and assoc-coeffect
-;;                       )
-;;       :after  (fn [context]                         ;; you normally want to change :effects
-;;                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
-;;                   (assoc-effect context :http-ajax {...}])))))
-;;
+
 (defn ->interceptor
   "A utility function for creating interceptors. 
    
    Accepts three optional, named arguments:
+   
      - `:id` - an id for the interceptor (decorative only)
      - `:before` - the before function 
      - `:after`  - the after function 
@@ -654,9 +656,12 @@
   (utils/apply-kw interceptor/->interceptor m))
 
 (defn get-coeffect
-  "When called with one arg, returns the coeffects map from the `context`.
-   When called with two or three args, behaves like `clojure.core/get`, 
-   returns the value mapped to `key` in the coeffects map, `not-found` or
+  "A utility function, used when writing interceptors, typically within a `:before` function. 
+   
+   When called with one argument, it returns the `:coeffects` map from with that `context`.
+   
+   When called with two or three arguments, behaves like `clojure.core/get` and
+   returns the value mapped to `key` in the `:coeffects` map within `context`, `not-found` or
    `nil` if `key` is not present."
   ([context]
    (interceptor/get-coeffect context))
@@ -666,14 +671,18 @@
    (interceptor/get-coeffect context key not-found)))
 
 (defn assoc-coeffect
-  "Returns a new `context` with a new coeffects map that contains `key`
-   mapped to the `value`."
+  "A utility function, used when writing interceptors, typically within a `:before` function. 
+   
+   Adds or updates a key/value pair in the `:coeffects` map within `context`. "
   [context key value]
   (interceptor/assoc-coeffect context key value))
 
 (defn get-effect
-  "When called with one arg, returns the effects map from the `context`.
-   When called with two or three args, behaves like `clojure.core/get`, 
+  "A utility function, used when writing interceptors, typically within an `:after` function. 
+   
+   When called with one argument, returns the `:effects` map from the `context`.
+   
+   When called with two or three arguments, behaves like `clojure.core/get` and 
    returns the value mapped to `key` in the effects map, `not-found` or
    `nil` if `key` is not present."
   ([context]
@@ -684,53 +693,68 @@
    (interceptor/get-effect context key not-found)))
 
 (defn assoc-effect
-  "Returns a new `context` with a new effects map that contains `key`
-   mapped to the `value`."
+   "A utility function, used when writing interceptors, typically within an `:after` function. 
+   
+   Adds or updates a key/value pair in the `:effects` map within `context`. "
   [context key value]
   (interceptor/assoc-effect context key value))
 
 (defn enqueue
-  "Add a collection of `interceptors` to the end of `context's` execution `:queue`.
-  Returns the updated `context`.
-
-  In an advanced case, this function could allow an interceptor to add new
-  interceptors to the `:queue` of a context."
+  "An advanced utility function, used when writing interceptors, typically within a `:before` function. 
+  
+  Adds a collection of `interceptors` to the end of `context's` execution `:queue`, and then
+  returns the updated `context`."
   [context interceptors]
   (interceptor/enqueue context interceptors))
 
 
 ;; --  logging ----------------------------------------------------------------
-;; Internally, re-frame uses the logging functions: warn, log, error, group and groupEnd
-;; By default, these functions map directly to the js/console implementations,
-;; but you can override with your own fns (set or subset).
-;; Example Usage:
-;;   (defn my-fn [& args]  (post-it-somewhere (apply str args)))  ;; here is my alternative
-;;   (re-frame.core/set-loggers!  {:warn my-fn :log my-fn})       ;; override the defaults with mine
+
 (defn set-loggers!
-  "Change the set (or a subset) of logging functions used by re-frame.
-  `new-loggers` should be a map with the same keys as `loggers` (above)"
+  "Internally, re-frame uses the logging functions: `warn`, `log`, `error`, `group` and `groupEnd`
+
+   By default, these functions map directly to the default `js/console` implementations,
+   but you can override with your own fns (set or subset).
+   
+   `new-loggers` should be a map with the same keys as `loggers` 
+
+   Example Usage:
+   ```clj
+     (defn my-fn [& args]  (post-it-somewhere (apply str args)))  ;; here is my alternative
+     (re-frame.core/set-loggers!  {:warn my-fn :log my-fn})       ;; override the defaults with mine
+   ```   
+   "
   [new-loggers]
   (loggers/set-loggers! new-loggers))
 
-(defn console
-  "Logs `args` to the console at `level`. 
-   Level can be one of `:log` `:error` `:warn` `:debug` `:group` `:groupEnd`.
-   If you are writing an extension to re-frame, like prehaps an effect handler,
-   you may want to use re-frame logging so that users can configure logging 
-   from a central location.
 
-   usage: (console :error \"Oh, dear God, it happened:\" a-var \"and\" another)
-          (console :warn \"Possible breach of containment wall at:\" dt)"
+(defn console
+  "A utility function designed to be used by libraries which are extending re-frame, like 
+   perhaps an effect handler, which want to produce output via re-frame's loggers. 
+   
+   It will write `args` to the js/console at `level`.
+   
+   `level` can be one of `:log` `:error` `:warn` `:debug` `:group` `:groupEnd`.
+   
+   Example usage: 
+   
+   ```clj 
+     (console :error \"Oh, dear God, it happened:\" a-var \"and\" another)
+     (console :warn \"Possible breach of containment wall at:\" dt)
+   ```
+   "
   [level & args]
   (apply loggers/console (into [level] args)))
 
 ;; -- unit testing ------------------------------------------------------------
 
 (defn make-restore-fn
-  "Checkpoints the state of re-frame and returns a function which, when
-  later called, will restore re-frame to that checkpointed state.
+  "A utility function, typically used in testing. 
+   
+   Checkpoints the state of re-frame and returns a function which, when
+   later called, will restore re-frame to that checkpointed state.
 
-  Checkpoint includes app-db, all registered handlers and all subscriptions.
+   Checkpoint includes app-db, all registered handlers and all subscriptions.
   "
   []
   (let [handlers @registrar/kind->id->handler
