@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC ""
     "">
-<html><head><meta charset="UTF-8" /><title>Builtin Effects</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1 "><a href="api-intro.html"><div class="inner"><span># API Overview</span></div></a></li><li class="depth-1  current"><a href="api-builtin-effects.html"><div class="inner"><span>Builtin Effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 "><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="document" id="content"><div class="doc"><div class="markdown"><div class="sidebar secondary" style="width: 218px; left: 161px;">
+<html><head><meta charset="UTF-8" /><title>Builtin Effects</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1 "><a href="api-intro.html"><div class="inner"><span>Overview</span></div></a></li><li class="depth-1  current"><a href="api-builtin-effects.html"><div class="inner"><span>Builtin Effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 "><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="document" id="content"><div class="doc"><div class="markdown"><div class="sidebar secondary" style="width: 218px; left: 161px;">
     <h3 class="current">
         <a href="#top">
             <span class="inner">Builtin Effects</span>
@@ -45,6 +45,7 @@
     </ul>
 </div>
 <h1><a href="#builtin-effects" name="builtin-effects"></a>Builtin Effects</h1>
+<p>In addition to the functions is <code>re-frame.core</code>, re-frame provides built-in effects which also contribute to the API. </p>
 <h2><a href="#dispatch-later" name="dispatch-later"></a><a name="dispatch-later"></a> :dispatch-later</h2>
 <p><code>dispatch</code> one or more events after given delays. Expects a collection of maps with two keys: <code>ms</code> and <code>:dispatch</code></p>
 <p>usage:  <code>clojure
@@ -61,19 +62,24 @@
 <h2><a href="#dispatch" name="dispatch"></a><a name="dispatch"></a> :dispatch</h2>
 <p><code>dispatch</code> one event. Expects a single vector.</p>
 <p>usage:</p>
-<pre><code class="clojure">{:dispatch [:event-id "param"] }
+<pre><code class="clojure">{:dispatch [:event-id "param1" :param2] }
 </code></pre>
 <h2><a href="#dispatch-n" name="dispatch-n"></a><a name="dispatch-n"></a> :dispatch-n</h2>
-<p><code>dispatch</code> more than one event. Expects a list or vector of events. Something for which <code>sequential?</code> returns true.</p>
+<p><code>dispatch</code> more than one events. Expects a seq of event vectors (typically a list of them). </p>
 <p>usage:</p>
 <pre><code class="clojure">{:dispatch-n (list [:do :all] [:three :of] [:these])}
 </code></pre>
-<p>Note: <code>nil</code> events are ignored which means events can be added conditionally:</p>
-<pre><code class="clojure">{:dispatch-n (list (when (&gt; 3 5) [:conditioned-out])
+<p>Notes:</p>
+<ol>
+  <li>The events will be dispatched in the order provided. And, because events are handled FIFO, the events will subsequently be processed in the order provided.</li>
+  <li>nils in the event collection are ignored which means events can be added conditionally:</li>
+</ol>
+<p><code>clojure
+  {:dispatch-n (list (when (&gt; 3 5) [:conditioned-out])
                       [:another-one])}
-</code></pre>
+</code></p>
 <h2><a href="#deregister-event-handler" name="deregister-event-handler"></a><a name="deregister-event-handler"></a> :deregister-event-handler</h2>
-<p>removes a previously registered event handler. Expects either a single id (typically a namespaced keyword),  or a seq of ids.</p>
+<p>Removes a previously registered event handler. Expects either a single id (typically a keyword), or a seq of ids.</p>
 <p>usage:</p>
 <pre><code class="clojure">{:deregister-event-handler :my-id)}
 </code></pre>

@@ -1442,6 +1442,8 @@
 </div>
 
 <h1 id="builtin-effects">Builtin Effects<a class="headerlink" href="#builtin-effects" title="Permanent link">&para;</a></h1>
+<p>In addition to the functions is <code>re-frame.core</code>, re-frame provides built-in 
+effects which also contribute to the API. </p>
 <h2 id="dispatch-later"><a name="dispatch-later"></a> :dispatch-later<a class="headerlink" href="#dispatch-later" title="Permanent link">&para;</a></h2>
 <p><code>dispatch</code> one or more events after given delays. Expects a collection
 of maps with two keys: <code>ms</code> and <code>:dispatch</code></p>
@@ -1460,27 +1462,29 @@ conditionally:
 <h2 id="dispatch"><a name="dispatch"></a> :dispatch<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h2>
 <p><code>dispatch</code> one event. Expects a single vector.</p>
 <p>usage:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]</span> <span class="p">}</span>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param1&quot;</span> <span class="ss">:param2</span><span class="p">]</span> <span class="p">}</span>
 </code></pre></div>
 
 
 <h2 id="dispatch-n"><a name="dispatch-n"></a> :dispatch-n<a class="headerlink" href="#dispatch-n" title="Permanent link">&para;</a></h2>
-<p><code>dispatch</code> more than one event. Expects a list or vector of events. Something for which
-<code>sequential?</code> returns true.</p>
+<p><code>dispatch</code> more than one events. Expects a seq of event vectors (typically a list of them). </p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch-n</span> <span class="p">(</span><span class="nb">list </span><span class="p">[</span><span class="ss">:do</span> <span class="ss">:all</span><span class="p">]</span> <span class="p">[</span><span class="ss">:three</span> <span class="ss">:of</span><span class="p">]</span> <span class="p">[</span><span class="ss">:these</span><span class="p">])}</span>
 </code></pre></div>
 
 
-<p>Note: <code>nil</code> events are ignored which means events can be added conditionally:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch-n</span> <span class="p">(</span><span class="nb">list </span><span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nb">&gt; </span><span class="mi">3</span> <span class="mi">5</span><span class="p">)</span> <span class="p">[</span><span class="ss">:conditioned-out</span><span class="p">])</span>
-                      <span class="p">[</span><span class="ss">:another-one</span><span class="p">])}</span>
-</code></pre></div>
-
-
+<p>Notes:</p>
+<ol>
+<li>The events will be dispatched in the order provided. And, because events are handled FIFO, the events will subsequently be processed in the order provided.</li>
+<li>nils in the event collection are ignored which means events can be added
+conditionally:</li>
+</ol>
+<p><code>clojure
+  {:dispatch-n (list (when (&gt; 3 5) [:conditioned-out])
+                      [:another-one])}</code></p>
 <h2 id="deregister-event-handler"><a name="deregister-event-handler"></a> :deregister-event-handler<a class="headerlink" href="#deregister-event-handler" title="Permanent link">&para;</a></h2>
-<p>removes a previously registered event handler. Expects either a single id (typically a namespaced keyword),
- or a seq of ids.</p>
+<p>Removes a previously registered event handler. Expects either a single id
+(typically a keyword), or a seq of ids.</p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:deregister-event-handler</span> <span class="ss">:my-id</span><span class="p">)}</span>
 </code></pre></div>
