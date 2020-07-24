@@ -4,7 +4,7 @@
   :license      {:name "MIT"}
 
   :dependencies [[org.clojure/clojure       "1.10.1"   :scope "provided"]
-                 [org.clojure/clojurescript  ~(or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.764")
+                 [org.clojure/clojurescript  ~(or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.773")
                   :scope "provided"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
