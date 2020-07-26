@@ -30,9 +30,10 @@
    'very soon', bit not now. And if the queue already contains events, 
    they will be processed first. 
    
-  Usage:  
-
-      (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
+   Usage:
+   ```clj
+   (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
+   ```
    "
   [event]
   (router/dispatch event))
@@ -52,8 +53,9 @@
      3. in a unit test where immediate, synchronous processing is useful.
 
    Usage:
-   
-     (dispatch-sync [:sing :falsetto 634])
+   ```clj
+   (dispatch-sync [:sing :falsetto 634])
+   ```
   "
   [event-v]
   (router/dispatch-sync event-v))
@@ -209,29 +211,30 @@
   signals (atoms, reactions, etc), NOT values. This argument exists for
   historical reasons and is borderline deprecated these days.
 
-  Example Usage:
-  --------------
-
-    (subscribe [:items])
-    (subscribe [:items \"blue\" :small])
-    (subscribe [:items {:colour \"blue\"  :size :small}])
-
+### Example Usage:
+   
+   ```clj
+   (subscribe [:items])
+   (subscribe [:items \"blue\" :small])
+   (subscribe [:items {:colour \"blue\"  :size :small}])
+   ```
+  
   Note: for any given call to `subscribe` there must have been a previous call
   to `reg-sub`, registering the query handler (function) for the `query-id` given.
 
-  Hint
-  ----
+  ### Hint
 
   When used in a view function BE SURE to `deref` the returned value.
   In fact, to avoid any mistakes, some prefer to define:
-
-     (def <sub  (comp deref re-frame.core/subscribe))
+   
+  ```clj
+  (def <sub  (comp deref re-frame.core/subscribe))
+  ```
 
   And then, within their views, they call  `(<sub [:items :small])` rather
   than using `subscribe` directly.
 
-  De-duplication
-  --------------
+  ### De-duplication
 
   Two, or more, concurrent subscriptions for the same query will source reactive
   updates from the one executing handler.
@@ -286,15 +289,15 @@
   value is ignored.
 
   Example Use
-  -----------
-
   First, registration ... associate `:effect2` with a handler.
-
+ 
+  ```clj
   (reg-fx
      :effect2
      (fn [value]
         ... do something side-effect-y))
-
+  ```
+   
   Then, later, if an event handler were to return this effects map ...
 
   {...
@@ -413,13 +416,15 @@
 (defn reg-event-fx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain.
-  `id` is typically a namespaced keyword  (but can be anything)
-  `handler` is a function: (coeffects-map event-vector) -> effects-map
-  `interceptors` is a collection of interceptors. Will be flattened and nils removed.
-  `handler` is wrapped in its own interceptor and added to the end of the interceptor
+  
+    - `id` is typically a namespaced keyword  (but can be anything)
+    - `handler` is a function: (coeffects-map event-vector) -> effects-map
+    - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
+    - `handler` is wrapped in its own interceptor and added to the end of the interceptor
    chain, so that, in the end, only a chain is registered.
-   Special effects and coeffects interceptors are added to the front of the
-   interceptor chain.  These interceptors inject the value of app-db into coeffects,
+   
+   This function will add special effects and coeffects interceptors to the front of 
+   `interceptors`. These additional interceptors inject the value of app-db into coeffects,
    and, later, action effects."
   ([id handler]
    (reg-event-fx id nil handler))
@@ -566,7 +571,6 @@
         [... trim-v ...]    ;; <-- added to the interceptors 
         (fn [db [x y z]]    ;; <-- instead of [_ x y z]
           ...)
-
     "
   std-interceptors/trim-v)
 
