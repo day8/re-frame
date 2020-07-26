@@ -18,23 +18,20 @@
     [clojure.set               :as set]))
 
 
-;; -- API ---------------------------------------------------------------------
-;;
-;; This namespace represents the re-frame API
-
 ;; -- dispatch ----------------------------------------------------------------
 (defn dispatch
-  "Queue `event` for processing by event handling machinery.
+  "Queue `event` for processing by the event handling machinery.
 
-  `event` is a vector with length >= 1. The 1st element identifies the kind of event.
+   `event` is a vector and the first element is typically a keyword which 
+   identifies the kind of event.
 
-  Note: the event handler is not run immediately - it is not run
-  synchronously. It will likely be run 'very soon', although it may be
-  added to the end of a FIFO queue which already contain events.
-
-  Usage:
+   The event will be added to the end of a FIFO processing queue. So, 
+   event handling does not happen immediately. It will likely happen 
+   'very soon', bit not now. And if the queue already contains events, 
+   they will be processed first. 
    
-     (dispatch [:order-pizza {:supreme 2 :meatlovers 1 :veg 1}])
+   Usage:  
+     (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
    "
   [event]
   (router/dispatch event))
@@ -43,16 +40,17 @@
   "Synchronously (immediately) process `event`. Does not queue the event 
    for handling later as `dispatch` does.
 
-  Generally, don't use this. Instead use `dispatch`. It is an error
-  to use `dispatch-sync` within an event handler.
+   Generally, don't use this and, instead, use `dispatch`. It is an error
+   to use `dispatch-sync` within an event handler because you can't immediately 
+   process an new event when one is already being processed.
 
-  Useful when any delay in processing is a problem:
+   Useful when any delay in processing will be a problem:
    
      1. the `:on-change` handler of a text field where we are expecting fast typing.
      2  when initialising your app - see 'main' in examples/todomvc/src/core.cljs
-     3. in a unit test where we don't want the action 'later'
+     3. in a unit test where immediate, synchronous processing is useful.
 
-  Usage:
+   Usage:
    
      (dispatch-sync [:sing :falsetto 634])
   "
@@ -556,8 +554,8 @@
 
 (def trim-v
   "An interceptor which removes the first element of the event vector,
-  allowing you to write more aesthetically pleasing event handlers. No
-  leading underscore on the event-v!
+  before it is supplied to the event handler, allowing you to write more 
+   aesthetically pleasing event handlers. No leading underscore on the event-v!
   Your event handlers will look like this:
 
       (reg-event-db
@@ -601,7 +599,7 @@
         ... some computation on a and b in here)
    
       ;; use it
-      (def my-interceptor (on-changes my-f [:c]  [:a] [:b]))
+      (def my-interceptor (on-changes my-f [:c] [:a] [:b]))
 
       (reg-event-db 
         :event-id 
@@ -655,17 +653,15 @@
    
    Example use:
 
-   ```clj
-   (def my-interceptor
-     (->interceptor                
-       :id     :my-interceptor       
-       :before (fn [context]            ;; you normally want to change :coeffects
-                  ... in here use get-coeffect  and assoc-coeffect)
+     (def my-interceptor
+       (->interceptor                
+         :id     :my-interceptor       
+         :before (fn [context]            ;; you normally want to change :coeffects
+                    ... in here use get-coeffect  and assoc-coeffect)
    
-       :after  (fn [context]                         ;; you normally want to change :effects
-                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
-                   (assoc-effect context :http-ajax {...}])))))
-   ```
+         :after  (fn [context]                         ;; you normally want to change :effects
+                   (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+                     (assoc-effect context :http-ajax {...}])))))
 
    "
   [& {:as m :keys [id before after]}]
@@ -801,10 +797,12 @@
 (defn add-post-event-callback
   "Registers a function `f` to be called after each event is processed
    `f` will be called with two arguments:
+   
     - `event`: a vector. The event just processed.
     - `queue`: a PersistentQueue, possibly empty, of events yet to be processed.
 
    This is useful in advanced cases like:
+   
      - you are implementing a complex bootstrap pipeline
      - you want to create your own handling infrastructure, with perhaps multiple
        handlers for the one event, etc.  Hook in here.
