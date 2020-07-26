@@ -8,17 +8,21 @@
   <li><code>:after</code> - the interceptor’s after function</li>
 </ul>
 <p>Example use:</p>
-<pre><code class="clj">(def my-interceptor
-  (-&gt;interceptor                
-    :id     :my-interceptor       
-    :before (fn [context]            ;; you normally want to change :coeffects
-               ... in here use get-coeffect  and assoc-coeffect)
-
-    :after  (fn [context]                         ;; you normally want to change :effects
-              (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
-                (assoc-effect context :http-ajax {...}])))))
-</code></pre></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers a function <code>f</code> to be called after each event is processed  <code>f</code> will be called with two arguments:  - <code>event</code>: a vector. The event just processed.  - <code>queue</code>: a PersistentQueue, possibly empty, of events yet to be processed.</p>
-<p>This is useful in advanced cases like:  - you are implementing a complex bootstrap pipeline  - you want to create your own handling infrastructure, with perhaps multiple  handlers for the one event, etc. Hook in here.  - libraries providing ‘isomorphic javascript’ rendering on Nodejs or Nashorn.</p>
+<p>(def my-interceptor  (-&gt;interceptor<br /> :id :my-interceptor<br /> :before (fn [context] ;; you normally want to change :coeffects  … in here use get-coeffect and assoc-coeffect)</p>
+<pre><code>  :after  (fn [context]                         ;; you normally want to change :effects
+            (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+              (assoc-effect context :http-ajax {...}])))))
+</code></pre></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers a function <code>f</code> to be called after each event is processed  <code>f</code> will be called with two arguments:</p>
+<ul>
+  <li><code>event</code>: a vector. The event just processed.</li>
+  <li><code>queue</code>: a PersistentQueue, possibly empty, of events yet to be processed.</li>
+</ul>
+<p>This is useful in advanced cases like:</p>
+<ul>
+  <li>you are implementing a complex bootstrap pipeline</li>
+  <li>you want to create your own handling infrastructure, with perhaps multiple  handlers for the one event, etc. Hook in here.</li>
+  <li>libraries providing ‘isomorphic javascript’ rendering on Nodejs or Nashorn.</li>
+</ul>
 <p>‘id’ is typically a keyword. Supplied at “add time” so it can subsequently be used at “remove time” to get rid of the right callback.</p></div></div></div><div class="public anchor" id="var-after"><h3>after</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor. </p>
 <p>Returns an interceptor which runs a given function <code>f</code> in the <code>:after</code> position, presumably for side effects.</p>
 <p><code>f</code> is called with two arguments: the <code>:effects</code> value for <code>:db</code> (or the <code>:coeffect</code> value of <code>:db</code> if no <code>:db</code> effect is returned) and the event. Its return value is ignored, so <code>f</code> can only side-effect.</p>
@@ -49,16 +53,15 @@
    (fn [db v]
      ...))
 </code></pre>
-<p>To make this code fragment work, you’ll also have to set goog.DEBUG to false in your production builds - look in <code>project.clj</code> of /examples/todomvc.</p></div></div></div><div class="public anchor" id="var-dispatch"><h3>dispatch</h3><div class="usage"><code>(dispatch event)</code></div><div class="doc"><div class="markdown"><p>Queue <code>event</code> for processing by event handling machinery.</p>
-<p><code>event</code> is a vector with length &gt;= 1. The 1st element identifies the kind of event.</p>
-<p>Note: the event handler is not run immediately - it is not run synchronously. It will likely be run ‘very soon’, although it may be added to the end of a FIFO queue which already contain events.</p>
-<p>Usage:</p>
-<p>(dispatch [:order-pizza {:supreme 2 :meatlovers 1 :veg 1}])</p></div></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event-v)</code></div><div class="doc"><div class="markdown"><p>Synchronously (immediately) process <code>event</code>. Does not queue the event  for handling later as <code>dispatch</code> does.</p>
-<p>Generally, don’t use this. Instead use <code>dispatch</code>. It is an error to use <code>dispatch-sync</code> within an event handler.</p>
-<p>Useful when any delay in processing is a problem:</p>
+<p>To make this code fragment work, you’ll also have to set goog.DEBUG to false in your production builds - look in <code>project.clj</code> of /examples/todomvc.</p></div></div></div><div class="public anchor" id="var-dispatch"><h3>dispatch</h3><div class="usage"><code>(dispatch event)</code></div><div class="doc"><div class="markdown"><p>Queue <code>event</code> for processing by the event handling machinery.</p>
+<p><code>event</code> is a vector and the first element is typically a keyword which identifies the kind of event.</p>
+<p>The event will be added to the end of a FIFO processing queue. So, event handling does not happen immediately. It will likely happen ‘very soon’, bit not now. And if the queue already contains events, they will be processed first. </p>
+<p>Usage:<br /> (dispatch [:order-pizza “me” {:supreme 2 :meatlovers 1 :veg 1}])</p></div></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event-v)</code></div><div class="doc"><div class="markdown"><p>Synchronously (immediately) process <code>event</code>. Does not queue the event for handling later as <code>dispatch</code> does.</p>
+<p>Generally, don’t use this and, instead, use <code>dispatch</code>. It is an error to use <code>dispatch-sync</code> within an event handler because you can’t immediately process an new event when one is already being processed.</p>
+<p>Useful when any delay in processing will be a problem:</p>
 <ol>
   <li>the <code>:on-change</code> handler of a text field where we are expecting fast typing.  2 when initialising your app - see ‘main’ in examples/todomvc/src/core.cljs</li>
-  <li>in a unit test where we don’t want the action ‘later’</li>
+  <li>in a unit test where immediate, synchronous processing is useful.</li>
 </ol>
 <p>Usage:</p>
 <p>(dispatch-sync [:sing :falsetto 634])</p></div></div></div><div class="public anchor" id="var-enqueue"><h3>enqueue</h3><div class="usage"><code>(enqueue context interceptors)</code></div><div class="doc"><div class="markdown"><p>An advanced utility function, typically used when writing an interceptor’s <code>:before</code>function. </p>
@@ -103,7 +106,7 @@
         ... some computation on a and b in here)
    
       ;; use it
-      (def my-interceptor (on-changes my-f [:c]  [:a] [:b]))
+      (def my-interceptor (on-changes my-f [:c] [:a] [:b]))
 
       (reg-event-db 
         :event-id 
@@ -238,7 +241,7 @@ as the 1st argument:
 <p>(def &lt;sub (comp deref re-frame.core/subscribe))</p>
 <p>And then, within their views, they call <code>(&lt;sub [:items :small])</code> rather than using <code>subscribe</code> directly.</p>
 <h2><a href="#de-duplication" name="de-duplication"></a>De-duplication</h2>
-<p>Two, or more, concurrent subscriptions for the same query will source reactive updates from the one executing handler.</p></div></div></div><div class="public anchor" id="var-trim-v"><h3>trim-v</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor which removes the first element of the event vector, allowing you to write more aesthetically pleasing event handlers. No leading underscore on the event-v! Your event handlers will look like this:</p>
+<p>Two, or more, concurrent subscriptions for the same query will source reactive updates from the one executing handler.</p></div></div></div><div class="public anchor" id="var-trim-v"><h3>trim-v</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor which removes the first element of the event vector, before it is supplied to the event handler, allowing you to write more  aesthetically pleasing event handlers. No leading underscore on the event-v! Your event handlers will look like this:</p>
 <pre><code>(reg-event-db
   :event-id 
   [... trim-v ...]
