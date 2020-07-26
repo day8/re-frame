@@ -8,10 +8,15 @@
   <li><code>:after</code> - the interceptor’s after function</li>
 </ul>
 <p>Example use:</p>
-<p>(def my-interceptor  (-&gt;interceptor<br /> :id :my-interceptor<br /> :before (fn [context] ;; you normally want to change :coeffects  … in here use get-coeffect and assoc-coeffect)</p>
-<pre><code>  :after  (fn [context]                         ;; you normally want to change :effects
-            (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
-              (assoc-effect context :http-ajax {...}])))))
+<pre><code class="clj">(def my-interceptor
+  (-&gt;interceptor                
+    :id     :my-interceptor       
+    :before (fn [context]            ;; you normally want to change :coeffects
+              ... in here use get-coeffect  and assoc-coeffect)
+
+    :after  (fn [context]                         ;; you normally want to change :effects
+              (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+                (assoc-effect context :http-ajax {...}])))))
 </code></pre></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers a function <code>f</code> to be called after each event is processed  <code>f</code> will be called with two arguments:</p>
 <ul>
   <li><code>event</code>: a vector. The event just processed.</li>
@@ -56,7 +61,8 @@
 <p>To make this code fragment work, you’ll also have to set goog.DEBUG to false in your production builds - look in <code>project.clj</code> of /examples/todomvc.</p></div></div></div><div class="public anchor" id="var-dispatch"><h3>dispatch</h3><div class="usage"><code>(dispatch event)</code></div><div class="doc"><div class="markdown"><p>Queue <code>event</code> for processing by the event handling machinery.</p>
 <p><code>event</code> is a vector and the first element is typically a keyword which identifies the kind of event.</p>
 <p>The event will be added to the end of a FIFO processing queue. So, event handling does not happen immediately. It will likely happen ‘very soon’, bit not now. And if the queue already contains events, they will be processed first. </p>
-<p>Usage:<br /> (dispatch [:order-pizza “me” {:supreme 2 :meatlovers 1 :veg 1}])</p></div></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event-v)</code></div><div class="doc"><div class="markdown"><p>Synchronously (immediately) process <code>event</code>. Does not queue the event for handling later as <code>dispatch</code> does.</p>
+<p>Usage: </p>
+<p>(dispatch [:order-pizza “me” {:supreme 2 :meatlovers 1 :veg 1}])</p></div></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event-v)</code></div><div class="doc"><div class="markdown"><p>Synchronously (immediately) process <code>event</code>. Does not queue the event for handling later as <code>dispatch</code> does.</p>
 <p>Generally, don’t use this and, instead, use <code>dispatch</code>. It is an error to use <code>dispatch-sync</code> within an event handler because you can’t immediately process an new event when one is already being processed.</p>
 <p>Useful when any delay in processing will be a problem:</p>
 <ol>
