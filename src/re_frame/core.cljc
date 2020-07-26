@@ -31,6 +31,7 @@
    they will be processed first. 
    
    Usage:  
+   
      (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
    "
   [event]
@@ -652,17 +653,17 @@
      - `:after`  - the interceptor's after function 
    
    Example use:
-
-     (def my-interceptor
-       (->interceptor                
-         :id     :my-interceptor       
-         :before (fn [context]            ;; you normally want to change :coeffects
-                    ... in here use get-coeffect  and assoc-coeffect)
+   ```clj
+   (def my-interceptor
+     (->interceptor                
+       :id     :my-interceptor       
+       :before (fn [context]            ;; you normally want to change :coeffects
+                 ... in here use get-coeffect  and assoc-coeffect)
    
-         :after  (fn [context]                         ;; you normally want to change :effects
-                   (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
-                     (assoc-effect context :http-ajax {...}])))))
-
+       :after  (fn [context]                         ;; you normally want to change :effects
+                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+                   (assoc-effect context :http-ajax {...}])))))
+   ```
    "
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
