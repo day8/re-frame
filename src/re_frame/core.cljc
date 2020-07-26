@@ -254,22 +254,24 @@
    (registrar/clear-handlers subs/kind query-id)))
 
 (defn clear-subscription-cache!
-  "Causes all subscriptions to be removed from the cache.
-  Does this by:
-     1. running `on-dispose` on all cached subscriptions
-     2. Each `on-dispose` will perform the removal of themselves.
+  "Removes all subscriptions from the cache.
 
-  This is for development time use. Useful when reloading Figwheel code
-  after a React exception, because React components won't have been
+  This is for development time use. Useful when hot realoding reloading 
+  to subscription code or after a React/render exception, because React components won't have been
   cleaned up properly. And this, in turn, means the subscriptions within those
-  components won't have been cleaned up correctly. So this forces the issue."
+  components won't have been cleaned up correctly. So this forces the issue.
+     
+   Implementation note: it calls `on-dispose` for each cached item, 
+   and it is that fucntion which actually performs the cache removal.
+   "
   []
   (subs/clear-subscription-cache!))
 
 (defn reg-sub-raw
   "This is a low level, advanced function.  You should probably be
-  using reg-sub instead.
-  Docs in
+  using `reg-sub` instead.
+   
+  Some docs are available in
   <a href=\"http://day8.github.io/re-frame/flow-mechanics/\" target=\"_blank\">http://day8.github.io/re-frame/flow-mechanics/</a>"
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
@@ -592,13 +594,12 @@
    being run), then it runs `f` to compute a new value, which is then assoc-ed
    into the given `out-path` within `db`.
 
-   Example Usage:
+  Example Usage:
 
-   ```clj
       (defn my-f
         [a-val b-val]
         ... some computation on a and b in here)
-   
+
       ;; use it
       (def my-interceptor (on-changes my-f [:c] [:a] [:b]))
 
@@ -607,7 +608,7 @@
         [... my-interceptor ...]  ;; <-- ultimately used here
         (fn [db v]
            ...))
-   ```
+
    
     Put this Interceptor on handlers which might change paths :a or :b
     and it will: 
@@ -667,7 +668,7 @@
   (utils/apply-kw interceptor/->interceptor m))
 
 (defn get-coeffect
-  "A utility function, typically used when writing an interceptor's `:before `function.  
+  "A utility function, typically used when writing an interceptor's `:before` function.  
    
    When called with one argument, it returns the `:coeffects` map from with that `context`.
    
@@ -704,14 +705,14 @@
    (interceptor/get-effect context key not-found)))
 
 (defn assoc-effect
-   "A utility function, typically used when writing an interceptor's `:after `function. 
+   "A utility function, typically used when writing an interceptor's `:after` function. 
    
    Adds or updates a key/value pair in the `:effects` map within `context`. "
   [context key value]
   (interceptor/assoc-effect context key value))
 
 (defn enqueue
-  "An advanced utility function, typically used when writing an interceptor's `:before `function. 
+  "An advanced utility function, typically used when writing an interceptor's `:before` function. 
   
   Adds a collection of `interceptors` to the end of `context's` execution `:queue`, and then
   returns the updated `context`."
@@ -727,13 +728,16 @@
    By default, these functions map directly to the default `js/console` implementations,
    but you can override with your own fns (set or subset) if you wish to handle the logging yourself.
    
-   `new-loggers` should be a map with the same keys as standard `loggers` 
+   `new-loggers` should be a map containing a subset of they keys for the standard `loggers`.
 
-   Example Usage:
-   ```clj
-     (defn my-fn [& args]  (post-it-somewhere (apply str args)))  ;; here is my alternative
-     (re-frame.core/set-loggers!  {:warn my-fn :log my-fn})       ;; override the defaults with mine
-   ```   
+  Example Usage:
+   
+      (defn my-logger      ;; here is my alternative logging function
+        [& args]  
+        (post-it-somewhere (apply str args))) 
+   
+      ;; now install my alternative loggers 
+      (re-frame.core/set-loggers!  {:warn my-logger :log my-logger})      
    "
   [new-loggers]
   (loggers/set-loggers! new-loggers))
@@ -747,12 +751,10 @@
    
    `level` can be one of `:log` `:error` `:warn` `:debug` `:group` `:groupEnd`.
    
-   Example usage: 
-   
+  Example usage:
 
-     (console :error \"Oh, dear God, it happened:\" a-var \"and\" another)
-     (console :warn \"Possible breach of containment wall at:\" dt)
-
+      (console :error \"Oh, dear God, it happened:\" a-var \"and\" another)
+      (console :warn \"Possible breach of containment wall at:\" dt)
    "
   [level & args]
   (apply loggers/console (into [level] args)))
@@ -787,9 +789,10 @@
       nil)))
 
 (defn purge-event-queue
-  "Remove all events queued for processing"
+  "Removes all events currently queued for processing"
   []
   (router/purge re-frame.router/event-queue))
+
 
 ;; -- Event Processing Callbacks  ---------------------------------------------
 
@@ -817,8 +820,8 @@
 
 
 (defn remove-post-event-callback
-  "Unregisters the function identified by `id` to be called after each event is
-   processed."
+  "Unregisters a post event callback function, identified by `id`. Such a 
+   function would  have been registered in the first place via `add-post-event-callback`"
   [id]
   (router/remove-post-event-callback re-frame.router/event-queue id))
 
@@ -829,12 +832,12 @@
   "Deprecated. Use `reg-event-db` instead."
   {:deprecated "0.8.0"}
   [& args]
-  (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\" (look for registration of" (str (first args)) ")")
+  (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
   (apply reg-event-db args))
 
 (defn register-sub
   "Deprecated. Use `reg-sub-raw` instead."
   {:deprecated "0.8.0"}
   [& args]
-  (console :warn  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\" (look for registration of" (str (first args)) ")")
+  (console :warn  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\" (look for registration of " (str (first args)) ")")
   (apply reg-sub-raw args))
