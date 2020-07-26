@@ -38,7 +38,7 @@ get to leverage 50 years of foliated excellence from the very best minds availab
 And then there's also a thriving ClojureScript community which delivers modern ideas and best-in-class tooling.
 
 Although re-frame leverages React (via Reagent), it only needs 
-React to be a V in MVC, and no more. re-frame takes a different road to the currently-pervasive idea that Views should be causal (colocated queries, ComponentDidMount, hooks, etc).
+React to be the V in MVC, and no more. re-frame takes a different road to the currently-pervasive idea that Views should be causal (colocated queries, ComponentDidMount, hooks, etc).
 In re-frame, events are causal, and views are purely reactive. 
 
 ## Documentation 

@@ -30,9 +30,9 @@
    'very soon', bit not now. And if the queue already contains events, 
    they will be processed first. 
    
-   Usage:  
-   
-     (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
+  Usage:  
+
+      (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
    "
   [event]
   (router/dispatch event))
@@ -517,7 +517,6 @@
   contributing to the derived data, flowing vibe.
 
   Example Use:
-  ------------
 
   Imagine that todomvc needed to do duplicate detection - if any two todos had
   the same text, then highlight their background, and report them via a warning
@@ -557,11 +556,12 @@
   "An interceptor which removes the first element of the event vector,
   before it is supplied to the event handler, allowing you to write more 
    aesthetically pleasing event handlers. No leading underscore on the event-v!
+   
   Your event handlers will look like this:
 
       (reg-event-db
         :event-id 
-        [... trim-v ...]
+        [... trim-v ...]    ;; <-- added to the interceptors 
         (fn [db [x y z]]    ;; <-- instead of [_ x y z]
           ...)
 
@@ -594,7 +594,7 @@
 
    Example Usage:
 
-```clj
+   ```clj
       (defn my-f
         [a-val b-val]
         ... some computation on a and b in here)
@@ -607,7 +607,7 @@
         [... my-interceptor ...]  ;; <-- ultimately used here
         (fn [db v]
            ...))
-```
+   ```
    
     Put this Interceptor on handlers which might change paths :a or :b
     and it will: 
@@ -653,17 +653,15 @@
      - `:after`  - the interceptor's after function 
    
    Example use:
-   ```clj
-   (def my-interceptor
-     (->interceptor                
-       :id     :my-interceptor       
-       :before (fn [context]            ;; you normally want to change :coeffects
-                 ... in here use get-coeffect  and assoc-coeffect)
-   
-       :after  (fn [context]                         ;; you normally want to change :effects
-                 (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
-                   (assoc-effect context :http-ajax {...}])))))
-   ```
+
+      (def my-interceptor
+        (->interceptor                
+         :id     :my-interceptor       
+         :before (fn [context]            ;; you normally want to change :coeffects
+                   ... in here use get-coeffect  and assoc-coeffect)
+         :after  (fn [context]                         ;; you normally want to change :effects
+                   (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+                     (assoc-effect context :http-ajax {...}])))))
    "
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
