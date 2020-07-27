@@ -27,7 +27,7 @@
   <li>you want to create your own handling infrastructure, with perhaps multiple  handlers for the one event, etc. Hook in here.</li>
   <li>libraries providing ‘isomorphic javascript’ rendering on Nodejs or Nashorn.</li>
 </ul>
-<p>‘id’ is typically a keyword. Supplied at “add time” so it can subsequently be used at “remove time” to get rid of the right callback.</p></div></div></div><div class="public anchor" id="var-after"><h3>after</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor.</p>
+<p>‘id’ is typically a keyword. Supplied at “add time” so it can subsequently be used at “remove time” to get rid of the right callback.</p></div></div></div><div class="public anchor" id="var-after"><h3>after</h3><div class="usage"><code>(after f)</code></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor.</p>
 <p>Returns an interceptor which runs a given function <code>f</code> in the <code>:after</code> position, presumably for side effects.</p>
 <p><code>f</code> is called with two arguments: the <code>:effects</code> value for <code>:db</code> (or the <code>:coeffect</code> value of <code>:db</code> if no <code>:db</code> effect is returned) and the event. Its return value is ignored, so <code>f</code> can only side-effect.</p>
 <p>An examples of use can be seen in /examples/todomvc/events.cljs:</p>
@@ -75,7 +75,7 @@
 <p>Usage:</p>
 <pre><code class="clj">(dispatch-sync [:sing :falsetto 634])
 </code></pre></div></div></div><div class="public anchor" id="var-enqueue"><h3>enqueue</h3><div class="usage"><code>(enqueue context interceptors)</code></div><div class="doc"><div class="markdown"><p>An advanced utility function, typically used when writing an interceptor’s <code>:before</code> function.</p>
-<p>Adds a collection of <code>interceptors</code> to the end of <code>context's</code> execution <code>:queue</code>, and then returns the updated <code>context</code>.</p></div></div></div><div class="public anchor" id="var-enrich"><h3>enrich</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>Interceptor factory which runs the given function <code>f</code> in the <code>after handler</code> position. <code>f</code> is called with two arguments: <code>db</code> and <code>v</code>, and is expected to return a modified <code>db</code>.</p>
+<p>Adds a collection of <code>interceptors</code> to the end of <code>context's</code> execution <code>:queue</code>, and then returns the updated <code>context</code>.</p></div></div></div><div class="public anchor" id="var-enrich"><h3>enrich</h3><div class="usage"><code>(enrich f)</code></div><div class="doc"><div class="markdown"><p>Interceptor factory which runs the given function <code>f</code> in the <code>after handler</code> position. <code>f</code> is called with two arguments: <code>db</code> and <code>v</code>, and is expected to return a modified <code>db</code>.</p>
 <p>Unlike the <code>after</code> interceptor which is only about side effects, <code>enrich</code> expects <code>f</code> to process and alter the given <code>db</code> coeffect in some useful way, contributing to the derived data, flowing vibe.</p>
 <p>Example Use:</p>
 <p>Imagine that todomvc needed to do duplicate detection - if any two todos had the same text, then highlight their background, and report them via a warning at the bottom of the panel.</p>
@@ -119,7 +119,7 @@
 <p>If an event handler directly accesses these resources, it stops being pure and, consequently, it becomes harder to test, etc. So we don’t want that.</p>
 <p>Instead, the interceptor created by this function is a way to ‘inject’ ‘necessary resources’ into the <code>:coeffects</code> (map) subsequently given to the event handler at call time.</p></div></div></div><div class="public anchor" id="var-make-restore-fn"><h3>make-restore-fn</h3><div class="usage"><code>(make-restore-fn)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used in testing.</p>
 <p>Checkpoints the state of re-frame and returns a function which, when later called, will restore re-frame to that checkpointed state.</p>
-<p>Checkpoint includes app-db, all registered handlers and all subscriptions.</p></div></div></div><div class="public anchor" id="var-on-changes"><h3>on-changes</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor.</p>
+<p>Checkpoint includes app-db, all registered handlers and all subscriptions.</p></div></div></div><div class="public anchor" id="var-on-changes"><h3>on-changes</h3><div class="usage"><code>(on-changes f out-path &amp; in-paths)</code></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor.</p>
 <p>Returns an interceptor which will observe N paths within <code>db</code>, and if any of them test not identical? to their previous value (as a result of a event handler being run), then it runs <code>f</code> to compute a new value, which is then assoc-ed into the given <code>out-path</code> within <code>db</code>.</p>
 <p>Example Usage:</p>
 <pre><code>(defn my-f
@@ -140,7 +140,7 @@
   <li>call <code>f</code> each time the value at path [:a] or [:b] changes</li>
   <li>call <code>f</code> with the values extracted from [:a] [:b]</li>
   <li>assoc the return value from <code>f</code> into the path [:c]</li>
-</ul></div></div></div><div class="public anchor" id="var-path"><h3>path</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>returns an interceptor whose <code>:before</code> substitutes the coeffects <code>:db</code> with a sub-path of <code>:db</code>. Within <code>:after</code> it grafts the handler’s return value back into db, at the right path.</p>
+</ul></div></div></div><div class="public anchor" id="var-path"><h3>path</h3><div class="usage"><code>(path &amp; args)</code></div><div class="doc"><div class="markdown"><p>returns an interceptor whose <code>:before</code> substitutes the coeffects <code>:db</code> with a sub-path of <code>:db</code>. Within <code>:after</code> it grafts the handler’s return value back into db, at the right path.</p>
 <p>So, its overall action is to make the event handler behave like the function you might give to clojure’s <code>update-in</code>.</p>
 <p>Examples:</p>
 <pre><code>(path :some :path)
