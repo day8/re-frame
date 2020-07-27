@@ -20,7 +20,7 @@
 
 ;; -- dispatch ----------------------------------------------------------------
 (defn dispatch
-  "Queue `event` for processing by the event handling machinery.
+  "Queue `event` for processing by re-frame's event handling machinery.
 
    `event` is a vector and the first element is typically a keyword which
    identifies the kind of event.
@@ -39,12 +39,12 @@
   (router/dispatch event))
 
 (defn dispatch-sync
-  "Synchronously (immediately) process `event`. Does not queue the event
+  "Synchronously (immediately) process `event`. It does not queue the event
    for handling later as `dispatch` does.
 
    Generally, don't use this and, instead, use `dispatch`. It is an error
    to use `dispatch-sync` within an event handler because you can't immediately
-   process an new event when one is already being processed.
+   process an new event when one is already part way through being processed.
 
    Useful when any delay in processing will be a problem:
 
@@ -71,11 +71,13 @@
   'the template' or 'the mechanism' by which nodes in the Signal Graph can be created.
 
   Repeating: calling `reg-sub` does not create a node. It only creates the template
-  from which nodes can be created later.
+  from which nodes can be created later, when they are bought into existence via use of 
+  `subscribe` in a `View Function`.
 
   `reg-sub` arguments are:
+  
   - a `query-id` (typically a namespaced keyword)
-  - a function which returns the inputs required by this kind of node (can be supplied  in one of three ways)
+  - a function which returns the inputs required by this kind of node (which can be supplied in one of three ways)
   - a function which computes the value of this kind of node
 
   The `computation function` is always the last argument supplied and it is expected to have the signature:
@@ -90,16 +92,16 @@
  values \"flow into\" the `computation function` gets when it is called.
 
   `reg-sub` can be called in one of three ways, because there are three ways to define the input signals part.
-  But note, the 2nd method, in which a `signal-fn` is explicitly supplied, is the most canonical and instructive. The other
+  But note, the 2nd method, in which a `signals function` is explicitly supplied, is the most canonical and instructive. The other
   two are really just sugary variations.
 
-  First, No input signals given:
+  First, No input signal fucntion given:
 
       (reg-sub
         :query-id
         a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
 
-     In the absence of an explicit `input-fn`, the node's input signal defaults to `app-db`
+     In the absence of an explicit `signals function`, the node's input signal defaults to `app-db`
      and, as a result, the value within `app-db` (a map) is
      is given as the 1st argument when `a-computation-fn` is called.
 
@@ -113,23 +115,23 @@
 
   This is the most canonical and instructive of the three variations.
 
-  When a node is created from the template, the `signal-fn` will be called and it
+  When a node is created from the template, the `signal function` will be called and it
   is expected to return the input signal(s) as either a singleton, if there is only
   one, or a sequence if there are many, or a map with the signals as the values.
 
-  The values from returned nominated signals will be supplied as the 1st argument to
+  The current values of the returned signals will be supplied as the 1st argument to
   the `a-computation-fn` when it is called - and subject to what this `signal-fn` returns,
   this value will be either a singleton, sequence or map of them (paralleling
-  the structure returned by the `signal-fn`).
+  the structure returned by the `signal function`).
 
-  This example `signal-fn` returns a vector of input signals.
+  This example `signal function` returns a 2-vector of input signals.
 
       (fn [query-vec dynamic-vec]
          [(subscribe [:a-sub])
           (subscribe [:b-sub])])
 
   The associated computation function must be written
-  to expect a vector of values for its first argument:
+  to expect a 2-vector of values for its first argument:
 
       (fn [[a b] query-vec]     ;; 1st argument is a seq of two values
         ....)
@@ -137,7 +139,7 @@
   If, on the other hand, the signal function was simpler and returned a singleton, like this:
 
      (fn [query-vec dynamic-vec]
-       (subscribe [:a-sub]))
+       (subscribe [:a-sub]))      ;; <-- returning a singleton
 
   then the associated computation function must be written to expect a single value
   as the 1st argument:
@@ -156,7 +158,7 @@
 
       (reg-sub
         :query-id
-        (fn [_ _]  re-frame/app-db)   ;; <--- explicit input-fn
+        (fn [_ _]  re-frame/app-db)   ;; <--- explicit signal-fn
         a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
 
   Third, Syntax Sugar
@@ -188,8 +190,8 @@
   (apply subs/reg-sub (into [query-id] args)))
 
 (defn subscribe
-  "Given a `query` vector, returns a Reagent `reaction` which, over
-  time, reactively delivers a stream of values. So in FRP-ish terms,
+  "Given a `query` vector, returns a Reagent `reaction` which will, over
+  time, reactively deliver a stream of values. So in FRP-ish terms,
   it returns a `Signal`.
 
   To obtain the returned Signal/Stream's current value, it must be `deref`ed.
@@ -235,11 +237,13 @@
    (subs/subscribe query dynv)))
 
 (defn clear-sub ;; think unreg-sub
-  "When called with no args, unregisters all subscription handlers. When given
-   one arg, assumed to be a `query-id` of a registered subscription handler,
-   unregisters the associated handler.
+  "When called with no args, unregisters all subscription handlers.
+  
+  When given
+  one arg, assumed to be a `query-id` of a registered subscription handler,
+  unregisters the associated handler.
 
-   NOTE: Depending on the usecase it may also be necessary to call
+  NOTE: Depending on the usecase it may also be necessary to call
          `clear-subscription-cache!`."
   ([]
    (registrar/clear-handlers subs/kind))
@@ -249,8 +253,8 @@
 (defn clear-subscription-cache!
   "Removes all subscriptions from the cache.
 
-  This is for development time use. Useful when hot realoding reloading
-  to subscription code or after a React/render exception, because React components won't have been
+  For use at development time or test time. Useful when hot realoding reloading
+  to subscription handler code or after a React/render exception, because React components won't have been
   cleaned up properly. And this, in turn, means the subscriptions within those
   components won't have been cleaned up correctly. So this forces the issue.
 
