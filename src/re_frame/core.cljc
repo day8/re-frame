@@ -211,22 +211,20 @@
   signals (atoms, reactions, etc), NOT values. This argument exists for
   historical reasons and is borderline deprecated these days.
 
-### Example Usage:
-   
-   ```clj
-   (subscribe [:items])
-   (subscribe [:items \"blue\" :small])
-   (subscribe [:items {:colour \"blue\"  :size :small}])
-   ```
+  #### Example Usage:
+  ```clj
+  (subscribe [:items])
+  (subscribe [:items \"blue\" :small])
+  (subscribe [:items {:colour \"blue\"  :size :small}])
+  ```
   
   Note: for any given call to `subscribe` there must have been a previous call
   to `reg-sub`, registering the query handler (function) for the `query-id` given.
 
-  ### Hint
+  #### Hint
 
   When used in a view function BE SURE to `deref` the returned value.
   In fact, to avoid any mistakes, some prefer to define:
-   
   ```clj
   (def <sub  (comp deref re-frame.core/subscribe))
   ```
@@ -282,11 +280,11 @@
 
 ;; -- effects -----------------------------------------------------------------
 (defn reg-fx
-  "Register the given effect `handler` for the given `id`.
+  "Register the given effect `handler` for the given `id`:
 
-  `id` is keyword, often namespaced.
-  `handler` is a side-effecting function which takes a single argument and whose return
-  value is ignored.
+    - `id` is keyword, often namespaced.
+    - `handler` is a side-effecting function which takes a single argument and whose return
+      value is ignored.
 
   Example Use
   First, registration ... associate `:effect2` with a handler.
@@ -308,6 +306,7 @@
   [id handler]
   (fx/reg-fx id handler))
 
+
 (defn clear-fx ;; think unreg-fx
   "When called with no args, unregisters all effect handlers. When given one arg,
    assumed to be the `id` of a registered effect handler, unregisters the 
@@ -320,13 +319,14 @@
 ;; -- coeffects ---------------------------------------------------------------
 (defn reg-cofx
   "Register the given coeffect `handler` for the given `id`, for later use
-  within `inject-cofx`.
+   within `inject-cofx`: 
 
-  `id` is keyword, often namespaced.
-  `handler` is a function which takes either one or two arguements, the first of which is
-  always `coeffects` and which returns an updated `coeffects`.
+    - `id` is keyword, often namespaced.
+    - `handler` is a function which takes either one or two arguements, the first of which is
+       always `coeffects` and which returns an updated `coeffects`.
 
-  See the docs for `inject-cofx` for example use."
+   See the docs for `inject-cofx` for example use.
+   "
   [id handler]
   (cofx/reg-cofx id handler))
 
@@ -340,12 +340,13 @@
 
    Within the created interceptor, this 'looked up' `coeffect handler` will
    be called (within the `:before`) with two arguments:
+   
      - the current value of `:coeffects`
      - optionally, the originally supplied arbitrary `value`
 
    This `coeffect handler` is expected to modify and return its first, `coeffects` argument.
 
-   ## Example of `inject-cofx` and `reg-cofx` working together
+   ##### Example of `inject-cofx` and `reg-cofx` working together
 
 
    1. Early in app startup, you register a `coeffect handler` for `:datetime`:
@@ -365,7 +366,7 @@
            [coeffect event]
            ... in here can access (:now coeffect) to obtain current datetime ... )))
 
-   ## Background
+   ##### Background
 
    `coeffects` are the input resources required by an event handler
    to perform its job. The two most obvious ones are `db` and `event`.
@@ -399,14 +400,15 @@
 
 (defn reg-event-db
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
-  an `interceptors` chain.
-  `id` is typically a namespaced keyword  (but can be anything)
-  `handler` is a function: (db event) -> db
-  `interceptors` is a collection of interceptors. Will be flattened and nils removed.
-  `handler` is wrapped in its own interceptor and added to the end of the interceptor
-   chain, so that, in the end, only a chain is registered.
-   Special effects and coeffects interceptors are added to the front of this
-   chain."
+  an `interceptors` chain:
+   
+    - `id` is typically a namespaced keyword  (but can be anything)
+    - `handler` is a function: (db event) -> db
+    - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
+  
+   Note: `handler` is wrapped in its own interceptor and added to the end of the interceptor
+       chain, so that, in the end, only a chain is registered.
+  "
   ([id handler]
    (reg-event-db id nil handler))
   ([id interceptors handler]
@@ -415,17 +417,15 @@
 
 (defn reg-event-fx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
-  an `interceptors` chain.
+  an `interceptors` chain:
   
     - `id` is typically a namespaced keyword  (but can be anything)
     - `handler` is a function: (coeffects-map event-vector) -> effects-map
     - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
-    - `handler` is wrapped in its own interceptor and added to the end of the interceptor
-   chain, so that, in the end, only a chain is registered.
-   
-   This function will add special effects and coeffects interceptors to the front of 
-   `interceptors`. These additional interceptors inject the value of app-db into coeffects,
-   and, later, action effects."
+  
+   Note: `handler` is wrapped in its own interceptor and added to the end of the interceptor
+       chain, so that, in the end, only a chain is registered.
+   "
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
@@ -468,9 +468,9 @@
      <a href=\"https://clojuredocs.org/clojure.data/diff\" target=\"_blank\">https://clojuredocs.org/clojure.data/diff</a>.
 
   You'd typically include this interceptor after (to the right of) any
-  path interceptor.
+  `path` interceptor.
 
-  Warning:  calling clojure.data/diff on large, complex data structures
+  Warning:  calling `clojure.data/diff` on large, complex data structures
   can be slow. So, you won't want this interceptor present in production
   code. So condition it out like this :
 
