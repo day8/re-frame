@@ -1333,6 +1333,30 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-rough-map" class="md-nav__link">
+    A Rough Map
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#more-obscure" class="md-nav__link">
+    More Obscure
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1353,7 +1377,7 @@
                 
                 <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h1>
 <p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you'll 
-need to <code>require</code> it, perhaps like this: </p>
+need to <code>require</code> it, perhaps like this:</p>
 <div class="codehilite"><pre><span></span><code>  <span class="p">(</span><span class="kd">ns </span><span class="nv">app.namespace</span>
     <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">re-frame.core</span> <span class="ss">:as</span> <span class="nv">rf</span><span class="p">]))</span>
 
@@ -1361,11 +1385,52 @@ need to <code>require</code> it, perhaps like this: </p>
 </code></pre></div>
 
 
-<p>When you are writing an app's <code>View Functions</code>, you'll use 
-<code>dispatch</code> and <code>subscribe</code> and, very occasionally, <code>dispatch-sync</code>.</p>
-<p>Other code will register handlers using <code>reg-event-db</code>, <code>reg-event-fx</code> and <code>reg-sub</code>.<br />
-Very occasionally  you might use <code>reg-fx</code> and <code>reg-cofx</code>. </p>
-<p>And, finally, you may perhaps use builtin <code>Interceptors</code> like <code>path</code>, <code>on-change</code>, <code>enrich</code>, <code>after</code>, etc.</p>
+<h2 id="a-rough-map">A Rough Map<a class="headerlink" href="#a-rough-map" title="Permanent link">&para;</a></h2>
+<p>When you are writing an app's <code>View Functions</code>, you'll use:</p>
+<ul>
+<li><code>dispatch</code> (or very occasionally, <code>dispatch-sync</code>)</li>
+<li><code>subscribe</code></li>
+</ul>
+<p>In your other namespaces, you register:</p>
+<ul>
+<li>event handlerss - <code>reg-event-db</code> and <code>reg-event-fx</code></li>
+<li>subscription handlers - <code>reg-sub</code> (and rarely <code>reg-sub-raw</code>)</li>
+<li>rarely, effect handlers - <code>reg-fx</code> </li>
+<li>rarely, coeffect handlers - <code>reg-cofx</code> with <code>inject-cofx</code></li>
+</ul>
+<p>There is API to clear all these registrations, but this is almost never used.</p>
+<p>When registering <code>event handlers</code>, you might use builtin interceptors: </p>
+<ul>
+<li><code>path</code></li>
+<li><code>on-change</code></li>
+<li><code>enrich</code></li>
+<li><code>after</code></li>
+<li><code>trim-v</code></li>
+<li><code>debug</code></li>
+</ul>
+<p>Install global interceptors via <code>reg-global-interceptors</code> and remove them via <code>clear-global-interceptor</code>.</p>
+<p>And, when writing event handlers you might want to use the <strong>builtin effects</strong>. These are supplied on their own page - see navigation on the left.</p>
+<h2 id="more-obscure">More Obscure<a class="headerlink" href="#more-obscure" title="Permanent link">&para;</a></h2>
+<p>Testing or dev-time related utilities:</p>
+<ul>
+<li><code>clear-subscription-cache!</code></li>
+<li><code>make-restore-fn</code></li>
+<li><code>purge-event-queue</code></li>
+</ul>
+<p>Logging/debugging:</p>
+<ul>
+<li><code>console</code></li>
+<li><code>set-loggers</code></li>
+</ul>
+<p>If you need to write an Interceptor, use these utilities (see how they are used in re-frame code for builtin Interceptors):</p>
+<ul>
+<li><code>-&gt;interceptor</code></li>
+<li><code>get-coeffect</code> </li>
+<li><code>assoc-coeffect</code></li>
+<li><code>get-effect</code></li>
+<li><code>assoc-effect</code></li>
+<li><code>enqueue</code></li>
+</ul>
                 
               
               

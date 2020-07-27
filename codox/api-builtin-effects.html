@@ -47,7 +47,7 @@
 <h1><a href="#builtin-effects" name="builtin-effects"></a>Builtin Effects</h1>
 <p>In addition to the functions is <code>re-frame.core</code>, re-frame provides built-in effects which also contribute to the API. </p>
 <h2><a href="#dispatch-later" name="dispatch-later"></a><a name="dispatch-later"></a> :dispatch-later</h2>
-<p><code>dispatch</code> one or more events after given delays. Expects a collection of maps with two keys: <code>ms</code> and <code>:dispatch</code></p>
+<p><code>dispatch</code> one or more events after given delays. Expects a collection of maps, each with two keys: <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
 <p>usage:  <code>clojure
   {:dispatch-later [;; in 200ms do this: (dispatch [:event-id "param"])
                     {:ms       200

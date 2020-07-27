@@ -1,12 +1,55 @@
 <!DOCTYPE html PUBLIC ""
     "">
 <html><head><meta charset="UTF-8" /><title>Overview</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1  current"><a href="api-intro.html"><div class="inner"><span>Overview</span></div></a></li><li class="depth-1 "><a href="api-builtin-effects.html"><div class="inner"><span>Builtin Effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 "><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="document" id="content"><div class="doc"><div class="markdown"><h1><a href="#overview" name="overview"></a>Overview</h1>
-<p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you’ll need to <code>require</code> it, perhaps like this: </p>
+<p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you’ll need to <code>require</code> it, perhaps like this:</p>
 <pre><code class="clj">  (ns app.namespace
     (:require [re-frame.core :as rf]))
 
     ... now use rf/reg-event-fx or rf/subscribe
 </code></pre>
-<p>When you are writing an app’s <code>View Functions</code>, you’ll use <code>dispatch</code> and <code>subscribe</code> and, very occasionally, <code>dispatch-sync</code>.</p>
-<p>Other code will register handlers using <code>reg-event-db</code>, <code>reg-event-fx</code> and <code>reg-sub</code>.<br />Very occasionally you might use <code>reg-fx</code> and <code>reg-cofx</code>. </p>
-<p>And, finally, you may perhaps use builtin <code>Interceptors</code> like <code>path</code>, <code>on-change</code>, <code>enrich</code>, <code>after</code>, etc.</p></div></div></div></body></html>
+<h2><a href="#a-rough-map" name="a-rough-map"></a>A Rough Map</h2>
+<p>When you are writing an app’s <code>View Functions</code>, you’ll use:</p>
+<ul>
+  <li><code>dispatch</code> (or very occasionally, <code>dispatch-sync</code>)</li>
+  <li><code>subscribe</code></li>
+</ul>
+<p>In your other namespaces, you register:</p>
+<ul>
+  <li>event handlerss - <code>reg-event-db</code> and <code>reg-event-fx</code></li>
+  <li>subscription handlers - <code>reg-sub</code> (and rarely <code>reg-sub-raw</code>)</li>
+  <li>rarely, effect handlers - <code>reg-fx</code></li>
+  <li>rarely, coeffect handlers - <code>reg-cofx</code> with <code>inject-cofx</code></li>
+</ul>
+<p>There is API to clear all these registrations, but this is almost never used.</p>
+<p>When registering <code>event handlers</code>, you might use builtin interceptors: </p>
+<ul>
+  <li><code>path</code></li>
+  <li><code>on-change</code></li>
+  <li><code>enrich</code></li>
+  <li><code>after</code></li>
+  <li><code>trim-v</code></li>
+  <li><code>debug</code></li>
+</ul>
+<p>Install global interceptors via <code>reg-global-interceptors</code> and remove them via <code>clear-global-interceptor</code>.</p>
+<p>And, when writing event handlers you might want to use the <strong>builtin effects</strong>. These are supplied on their own page - see navigation on the left.</p>
+<h2><a href="#more-obscure" name="more-obscure"></a>More Obscure</h2>
+<p>Testing or dev-time related utilities:</p>
+<ul>
+  <li><code>clear-subscription-cache!</code></li>
+  <li><code>make-restore-fn</code></li>
+  <li><code>purge-event-queue</code></li>
+</ul>
+<p>Logging/debugging:</p>
+<ul>
+  <li><code>console</code></li>
+  <li><code>set-loggers</code></li>
+</ul>
+<p>If you need to write an Interceptor, use these utilities (see how they are used in re-frame code for builtin Interceptors):</p>
+<ul>
+  <li><code>-&gt;interceptor</code></li>
+  <li><code>get-coeffect</code></li>
+  <li><code>assoc-coeffect</code></li>
+  <li><code>get-effect</code></li>
+  <li><code>assoc-effect</code></li>
+  <li><code>enqueue</code></li>
+</ul></div></div></div></body></html>

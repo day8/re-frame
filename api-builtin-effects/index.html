@@ -1446,7 +1446,7 @@
 effects which also contribute to the API. </p>
 <h2 id="dispatch-later"><a name="dispatch-later"></a> :dispatch-later<a class="headerlink" href="#dispatch-later" title="Permanent link">&para;</a></h2>
 <p><code>dispatch</code> one or more events after given delays. Expects a collection
-of maps with two keys: <code>ms</code> and <code>:dispatch</code></p>
+of maps, each with two keys: <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
 <p>usage:
   <code>clojure
   {:dispatch-later [;; in 200ms do this: (dispatch [:event-id "param"])
