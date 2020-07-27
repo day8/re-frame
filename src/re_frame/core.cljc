@@ -475,7 +475,7 @@
   "
   std-interceptors/debug)
 
-(def path
+(defn path
   "returns an interceptor whose `:before` substitutes the coeffects `:db` with
   a sub-path of `:db`. Within `:after` it grafts the handler's return value
   back into db, at the right path.
@@ -502,9 +502,10 @@
     1. `path` may appear more than once in an interceptor chain. Progressive narrowing.
     2. if `:effects` contains no `:db` effect, can't graft a value back in.
   "
-  std-interceptors/path)
+  [& args]
+  (apply std-interceptors/path args))
 
-(def enrich
+(defn enrich
   "Interceptor factory which runs the given function `f` in the `after handler`
   position.  `f` is called with two arguments: `db` and `v`, and is expected to
   return a modified `db`.
@@ -547,7 +548,8 @@
 
   This brings huge simplicity at the expense of some re-computation
   each time. This may be a very satisfactory trade-off in many cases."
-  std-interceptors/enrich)
+  [f]
+  (std-interceptors/enrich f))
 
 (def trim-v
   "An interceptor which removes the first element of the event vector,
@@ -564,7 +566,7 @@
     "
   std-interceptors/trim-v)
 
-(def after
+(defn after
   "An interceptor factory, which is to say, a function which will return an interceptor.
 
   Returns an interceptor which runs a given function `f` in the `:after`
@@ -578,9 +580,10 @@
 
      - `f` runs schema validation (reporting any errors found).
      - `f` writes to localstorage."
-  std-interceptors/after)
+  [f]
+  (std-interceptors/after f))
 
-(def on-changes
+(defn on-changes
   "An interceptor factory, which is to say, a function which will return an interceptor.
 
   Returns an interceptor which will observe N paths within `db`, and if any of them
@@ -611,7 +614,8 @@
      - call `f` with the values extracted from [:a] [:b]
      - assoc the return value from `f` into the path  [:c]
   "
-  std-interceptors/on-changes)
+  [f out-path & in-paths]
+  (apply std-interceptors/on-changes (into [f out-path] in-paths)))
 
 
 (defn reg-global-interceptor
