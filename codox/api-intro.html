@@ -2,10 +2,11 @@
     "">
 <html><head><meta charset="UTF-8" /><title>Overview</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1  current"><a href="api-intro.html"><div class="inner"><span>Overview</span></div></a></li><li class="depth-1 "><a href="api-builtin-effects.html"><div class="inner"><span>Builtin Effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 "><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="document" id="content"><div class="doc"><div class="markdown"><h1><a href="#overview" name="overview"></a>Overview</h1>
 <p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you’ll need to <code>require</code> it, perhaps like this: </p>
-<p>```clj  (ns app.namespace  (:require [re-frame.core :as rf]))</p>
-<pre><code> ... now use rf/reg-event-fx or rf/subscribe
+<pre><code class="clj">  (ns app.namespace
+    (:require [re-frame.core :as rf]))
+
+    ... now use rf/reg-event-fx or rf/subscribe
 </code></pre>
-<p>```</p>
 <p>When you are writing an app’s <code>View Functions</code>, you’ll use <code>dispatch</code> and <code>subscribe</code> and, very occasionally, <code>dispatch-sync</code>.</p>
 <p>Other code will register handlers using <code>reg-event-db</code>, <code>reg-event-fx</code> and <code>reg-sub</code>.<br />Very occasionally you might use <code>reg-fx</code> and <code>reg-cofx</code>. </p>
 <p>And, finally, you may perhaps use builtin <code>Interceptors</code> like <code>path</code>, <code>on-change</code>, <code>enrich</code>, <code>after</code>, etc.</p></div></div></div></body></html>

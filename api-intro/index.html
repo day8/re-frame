@@ -1354,14 +1354,13 @@
                 <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h1>
 <p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you'll 
 need to <code>require</code> it, perhaps like this: </p>
-<p>```clj
-    (ns app.namespace
-      (:require [re-frame.core :as rf]))</p>
-<div class="codehilite"><pre><span></span><code> ... now use rf/reg-event-fx or rf/subscribe
+<div class="codehilite"><pre><span></span><code>  <span class="p">(</span><span class="kd">ns </span><span class="nv">app.namespace</span>
+    <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">re-frame.core</span> <span class="ss">:as</span> <span class="nv">rf</span><span class="p">]))</span>
+
+    <span class="nv">...</span> <span class="nv">now</span> <span class="nv">use</span> <span class="nv">rf/reg-event-fx</span> <span class="nb">or </span><span class="nv">rf/subscribe</span>
 </code></pre></div>
 
 
-<p>```</p>
 <p>When you are writing an app's <code>View Functions</code>, you'll use 
 <code>dispatch</code> and <code>subscribe</code> and, very occasionally, <code>dispatch-sync</code>.</p>
 <p>Other code will register handlers using <code>reg-event-db</code>, <code>reg-event-fx</code> and <code>reg-sub</code>.<br />
