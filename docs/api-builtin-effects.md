@@ -55,7 +55,7 @@ effects which also contribute to the API.
 ## <a name="dispatch-later"></a> :dispatch-later
 
 `dispatch` one or more events after given delays. Expects a collection
-of maps with two keys: `ms` and `:dispatch`
+of maps, each with two keys: `:ms` (milliseconds) and `:dispatch` (the event).
 
 usage:
   ```clojure
