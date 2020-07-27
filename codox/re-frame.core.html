@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC ""
     "">
-<html><head><meta charset="UTF-8" /><title>re-frame.core documentation</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1 "><a href="api-intro.html"><div class="inner"><span>Overview</span></div></a></li><li class="depth-1 "><a href="api-builtin-effects.html"><div class="inner"><span>Builtin Effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 current"><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="sidebar secondary"><h3><a href="#top"><span class="inner">Public Vars</span></a></h3><ul><li class="depth-1"><a href="re-frame.core.html#var--.3Einterceptor"><div class="inner"><span>-&gt;interceptor</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-add-post-event-callback"><div class="inner"><span>add-post-event-callback</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-after"><div class="inner"><span>after</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-assoc-coeffect"><div class="inner"><span>assoc-coeffect</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-assoc-effect"><div class="inner"><span>assoc-effect</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-cofx"><div class="inner"><span>clear-cofx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-event"><div class="inner"><span>clear-event</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-fx"><div class="inner"><span>clear-fx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-global-interceptor"><div class="inner"><span>clear-global-interceptor</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-sub"><div class="inner"><span>clear-sub</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-subscription-cache.21"><div class="inner"><span>clear-subscription-cache!</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-console"><div class="inner"><span>console</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-debug"><div class="inner"><span>debug</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-dispatch"><div class="inner"><span>dispatch</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-dispatch-sync"><div class="inner"><span>dispatch-sync</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-enqueue"><div class="inner"><span>enqueue</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-enrich"><div class="inner"><span>enrich</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-get-coeffect"><div class="inner"><span>get-coeffect</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-get-effect"><div class="inner"><span>get-effect</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-inject-cofx"><div class="inner"><span>inject-cofx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-make-restore-fn"><div class="inner"><span>make-restore-fn</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-on-changes"><div class="inner"><span>on-changes</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-path"><div class="inner"><span>path</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-purge-event-queue"><div class="inner"><span>purge-event-queue</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-cofx"><div class="inner"><span>reg-cofx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-event-ctx"><div class="inner"><span>reg-event-ctx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-event-db"><div class="inner"><span>reg-event-db</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-event-fx"><div class="inner"><span>reg-event-fx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-fx"><div class="inner"><span>reg-fx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-global-interceptor"><div class="inner"><span>reg-global-interceptor</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-sub"><div class="inner"><span>reg-sub</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-sub-raw"><div class="inner"><span>reg-sub-raw</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-register-handler"><div class="inner"><span>register-handler</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-register-sub"><div class="inner"><span>register-sub</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-remove-post-event-callback"><div class="inner"><span>remove-post-event-callback</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-set-loggers.21"><div class="inner"><span>set-loggers!</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-subscribe"><div class="inner"><span>subscribe</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-trim-v"><div class="inner"><span>trim-v</span></div></a></li></ul></div><div class="namespace-docs" id="content"><h1 class="anchor" id="top">re-frame.core</h1><div class="doc"><div class="markdown"></div></div><div class="public anchor" id="var--.3Einterceptor"><h3>-&gt;interceptor</h3><div class="usage"><code>(-&gt;interceptor &amp; {:as m, :keys [id before after]})</code></div><div class="doc"><div class="markdown"><p>A utility function for creating interceptors. </p>
+<html><head><meta charset="UTF-8" /><title>re-frame.core documentation</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1 "><a href="api-intro.html"><div class="inner"><span>Overview</span></div></a></li><li class="depth-1 "><a href="api-builtin-effects.html"><div class="inner"><span>Builtin Effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 current"><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="sidebar secondary"><h3><a href="#top"><span class="inner">Public Vars</span></a></h3><ul><li class="depth-1"><a href="re-frame.core.html#var--.3Einterceptor"><div class="inner"><span>-&gt;interceptor</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-add-post-event-callback"><div class="inner"><span>add-post-event-callback</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-after"><div class="inner"><span>after</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-assoc-coeffect"><div class="inner"><span>assoc-coeffect</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-assoc-effect"><div class="inner"><span>assoc-effect</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-cofx"><div class="inner"><span>clear-cofx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-event"><div class="inner"><span>clear-event</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-fx"><div class="inner"><span>clear-fx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-global-interceptor"><div class="inner"><span>clear-global-interceptor</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-sub"><div class="inner"><span>clear-sub</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-clear-subscription-cache.21"><div class="inner"><span>clear-subscription-cache!</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-console"><div class="inner"><span>console</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-debug"><div class="inner"><span>debug</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-dispatch"><div class="inner"><span>dispatch</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-dispatch-sync"><div class="inner"><span>dispatch-sync</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-enqueue"><div class="inner"><span>enqueue</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-enrich"><div class="inner"><span>enrich</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-get-coeffect"><div class="inner"><span>get-coeffect</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-get-effect"><div class="inner"><span>get-effect</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-inject-cofx"><div class="inner"><span>inject-cofx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-make-restore-fn"><div class="inner"><span>make-restore-fn</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-on-changes"><div class="inner"><span>on-changes</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-path"><div class="inner"><span>path</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-purge-event-queue"><div class="inner"><span>purge-event-queue</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-cofx"><div class="inner"><span>reg-cofx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-event-ctx"><div class="inner"><span>reg-event-ctx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-event-db"><div class="inner"><span>reg-event-db</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-event-fx"><div class="inner"><span>reg-event-fx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-fx"><div class="inner"><span>reg-fx</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-global-interceptor"><div class="inner"><span>reg-global-interceptor</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-sub"><div class="inner"><span>reg-sub</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-reg-sub-raw"><div class="inner"><span>reg-sub-raw</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-register-handler"><div class="inner"><span>register-handler</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-register-sub"><div class="inner"><span>register-sub</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-remove-post-event-callback"><div class="inner"><span>remove-post-event-callback</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-set-loggers.21"><div class="inner"><span>set-loggers!</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-subscribe"><div class="inner"><span>subscribe</span></div></a></li><li class="depth-1"><a href="re-frame.core.html#var-trim-v"><div class="inner"><span>trim-v</span></div></a></li></ul></div><div class="namespace-docs" id="content"><h1 class="anchor" id="top">re-frame.core</h1><div class="doc"><div class="markdown"></div></div><div class="public anchor" id="var--.3Einterceptor"><h3>-&gt;interceptor</h3><div class="usage"><code>(-&gt;interceptor &amp; {:as m, :keys [id before after]})</code></div><div class="doc"><div class="markdown"><p>A utility function for creating interceptors.</p>
 <p>Accepts three optional, named arguments:</p>
 <ul>
   <li><code>:id</code> - an id for the interceptor (decorative only)</li>
@@ -8,7 +8,15 @@
   <li><code>:after</code> - the interceptor’s after function</li>
 </ul>
 <p>Example use:</p>
-<p>(def my-interceptor  (-&gt;interceptor<br /> :id :my-interceptor<br /> :before (fn [context] ;; you normally want to change :coeffects  … in here use get-coeffect and assoc-coeffect)  :after (fn [context] ;; you normally want to change :effects  (let [db (get-effect context :db)] ;; (get-in context [:effects :db])  (assoc-effect context :http-ajax {…}])))))</p></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers a function <code>f</code> to be called after each event is processed  <code>f</code> will be called with two arguments:</p>
+<pre><code>(def my-interceptor
+  (-&gt;interceptor
+   :id     :my-interceptor
+   :before (fn [context]            ;; you normally want to change :coeffects
+             ... in here use get-coeffect  and assoc-coeffect)
+   :after  (fn [context]                         ;; you normally want to change :effects
+             (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
+               (assoc-effect context :http-ajax {...}])))))
+</code></pre></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers a function <code>f</code> to be called after each event is processed  <code>f</code> will be called with two arguments:</p>
 <ul>
   <li><code>event</code>: a vector. The event just processed.</li>
   <li><code>queue</code>: a PersistentQueue, possibly empty, of events yet to be processed.</li>
@@ -19,20 +27,20 @@
   <li>you want to create your own handling infrastructure, with perhaps multiple  handlers for the one event, etc. Hook in here.</li>
   <li>libraries providing ‘isomorphic javascript’ rendering on Nodejs or Nashorn.</li>
 </ul>
-<p>‘id’ is typically a keyword. Supplied at “add time” so it can subsequently be used at “remove time” to get rid of the right callback.</p></div></div></div><div class="public anchor" id="var-after"><h3>after</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor. </p>
+<p>‘id’ is typically a keyword. Supplied at “add time” so it can subsequently be used at “remove time” to get rid of the right callback.</p></div></div></div><div class="public anchor" id="var-after"><h3>after</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor.</p>
 <p>Returns an interceptor which runs a given function <code>f</code> in the <code>:after</code> position, presumably for side effects.</p>
 <p><code>f</code> is called with two arguments: the <code>:effects</code> value for <code>:db</code> (or the <code>:coeffect</code> value of <code>:db</code> if no <code>:db</code> effect is returned) and the event. Its return value is ignored, so <code>f</code> can only side-effect.</p>
 <p>An examples of use can be seen in /examples/todomvc/events.cljs:</p>
 <ul>
   <li><code>f</code> runs schema validation (reporting any errors found).</li>
   <li><code>f</code> writes to localstorage.</li>
-</ul></div></div></div><div class="public anchor" id="var-assoc-coeffect"><h3>assoc-coeffect</h3><div class="usage"><code>(assoc-coeffect context key value)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used when writing an interceptor’s <code>:before</code> function. </p>
-<p>Adds or updates a key/value pair in the <code>:coeffects</code> map within <code>context</code>. </p></div></div></div><div class="public anchor" id="var-assoc-effect"><h3>assoc-effect</h3><div class="usage"><code>(assoc-effect context key value)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used when writing an interceptor’s <code>:after</code> function. </p>
-<p>Adds or updates a key/value pair in the <code>:effects</code> map within <code>context</code>. </p></div></div></div><div class="public anchor" id="var-clear-cofx"><h3>clear-cofx</h3><div class="usage"><code>(clear-cofx)</code><code>(clear-cofx id)</code></div><div class="doc"><div class="markdown"><p>When called with no args, unregisters all coeffect handlers. When given one arg, assumed to be the <code>id</code> of a registered coeffect handler, unregisters the associated handler.</p></div></div></div><div class="public anchor" id="var-clear-event"><h3>clear-event</h3><div class="usage"><code>(clear-event)</code><code>(clear-event id)</code></div><div class="doc"><div class="markdown"><p>When called with no args, unregisters all event handlers. When given one arg, assumed to be the <code>id</code> of a registered event handler, unregisters the associated handler.</p></div></div></div><div class="public anchor" id="var-clear-fx"><h3>clear-fx</h3><div class="usage"><code>(clear-fx)</code><code>(clear-fx id)</code></div><div class="doc"><div class="markdown"><p>When called with no args, unregisters all effect handlers. When given one arg, assumed to be the <code>id</code> of a registered effect handler, unregisters the associated handler.</p></div></div></div><div class="public anchor" id="var-clear-global-interceptor"><h3>clear-global-interceptor</h3><div class="usage"><code>(clear-global-interceptor)</code><code>(clear-global-interceptor id)</code></div><div class="doc"><div class="markdown"><p>Unregisters (removes) global interceptors. </p>
+</ul></div></div></div><div class="public anchor" id="var-assoc-coeffect"><h3>assoc-coeffect</h3><div class="usage"><code>(assoc-coeffect context key value)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used when writing an interceptor’s <code>:before</code> function.</p>
+<p>Adds or updates a key/value pair in the <code>:coeffects</code> map within <code>context</code>. </p></div></div></div><div class="public anchor" id="var-assoc-effect"><h3>assoc-effect</h3><div class="usage"><code>(assoc-effect context key value)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used when writing an interceptor’s <code>:after</code> function.</p>
+<p>Adds or updates a key/value pair in the <code>:effects</code> map within <code>context</code>. </p></div></div></div><div class="public anchor" id="var-clear-cofx"><h3>clear-cofx</h3><div class="usage"><code>(clear-cofx)</code><code>(clear-cofx id)</code></div><div class="doc"><div class="markdown"><p>When called with no args, unregisters all coeffect handlers. When given one arg, assumed to be the <code>id</code> of a registered coeffect handler, unregisters the associated handler.</p></div></div></div><div class="public anchor" id="var-clear-event"><h3>clear-event</h3><div class="usage"><code>(clear-event)</code><code>(clear-event id)</code></div><div class="doc"><div class="markdown"><p>When called with no args, unregisters all event handlers. When given one arg, assumed to be the <code>id</code> of a registered event handler, unregisters the associated handler.</p></div></div></div><div class="public anchor" id="var-clear-fx"><h3>clear-fx</h3><div class="usage"><code>(clear-fx)</code><code>(clear-fx id)</code></div><div class="doc"><div class="markdown"><p>When called with no args, unregisters all effect handlers. When given one arg, assumed to be the <code>id</code> of a registered effect handler, unregisters the associated handler.</p></div></div></div><div class="public anchor" id="var-clear-global-interceptor"><h3>clear-global-interceptor</h3><div class="usage"><code>(clear-global-interceptor)</code><code>(clear-global-interceptor id)</code></div><div class="doc"><div class="markdown"><p>Unregisters (removes) global interceptors.</p>
 <p>When called with no arguments, it unregisters all global interceptors. When given one argument, assumed to be the <code>id</code> of a currently registered global interceptor, it unregisters the associated interceptor.</p></div></div></div><div class="public anchor" id="var-clear-sub"><h3>clear-sub</h3><div class="usage"><code>(clear-sub)</code><code>(clear-sub query-id)</code></div><div class="doc"><div class="markdown"><p>When called with no args, unregisters all subscription handlers. When given one arg, assumed to be a <code>query-id</code> of a registered subscription handler, unregisters the associated handler.</p>
 <p>NOTE: Depending on the usecase it may also be necessary to call  <code>clear-subscription-cache!</code>.</p></div></div></div><div class="public anchor" id="var-clear-subscription-cache.21"><h3>clear-subscription-cache!</h3><div class="usage"><code>(clear-subscription-cache!)</code></div><div class="doc"><div class="markdown"><p>Removes all subscriptions from the cache.</p>
 <p>This is for development time use. Useful when hot realoding reloading to subscription code or after a React/render exception, because React components won’t have been cleaned up properly. And this, in turn, means the subscriptions within those components won’t have been cleaned up correctly. So this forces the issue.</p>
-<p>Implementation note: it calls <code>on-dispose</code> for each cached item,  and it is that fucntion which actually performs the cache removal.</p></div></div></div><div class="public anchor" id="var-console"><h3>console</h3><div class="usage"><code>(console level &amp; args)</code></div><div class="doc"><div class="markdown"><p>A utility function for use in libraries which extend re-frame, like  perhaps an effect handler, when they want to produce log output.</p>
+<p>Implementation note: it calls <code>on-dispose</code> for each cached item,  and it is that fucntion which actually performs the cache removal.</p></div></div></div><div class="public anchor" id="var-console"><h3>console</h3><div class="usage"><code>(console level &amp; args)</code></div><div class="doc"><div class="markdown"><p>A utility function for use in libraries which extend re-frame, like perhaps an effect handler, when they want to produce log output.</p>
 <p>It will write the given <code>args</code> to js/console at the given <code>level</code>.</p>
 <p><code>level</code> can be one of <code>:log</code> <code>:error</code> <code>:warn</code> <code>:debug</code> <code>:group</code> <code>:groupEnd</code>.</p>
 <p>Example usage:</p>
@@ -54,7 +62,7 @@
 </code></pre>
 <p>To make this code fragment work, you’ll also have to set goog.DEBUG to false in your production builds - look in <code>project.clj</code> of /examples/todomvc.</p></div></div></div><div class="public anchor" id="var-dispatch"><h3>dispatch</h3><div class="usage"><code>(dispatch event)</code></div><div class="doc"><div class="markdown"><p>Queue <code>event</code> for processing by the event handling machinery.</p>
 <p><code>event</code> is a vector and the first element is typically a keyword which identifies the kind of event.</p>
-<p>The event will be added to the end of a FIFO processing queue. So, event handling does not happen immediately. It will likely happen ‘very soon’, bit not now. And if the queue already contains events, they will be processed first. </p>
+<p>The event will be added to the end of a FIFO processing queue. So, event handling does not happen immediately. It will likely happen ‘very soon’, bit not now. And if the queue already contains events, they will be processed first.</p>
 <p>Usage:</p>
 <pre><code class="clj">(dispatch [:order-pizza "me" {:supreme 2 :meatlovers 1 :veg 1}])
 </code></pre></div></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event-v)</code></div><div class="doc"><div class="markdown"><p>Synchronously (immediately) process <code>event</code>. Does not queue the event for handling later as <code>dispatch</code> does.</p>
@@ -66,7 +74,7 @@
 </ol>
 <p>Usage:</p>
 <pre><code class="clj">(dispatch-sync [:sing :falsetto 634])
-</code></pre></div></div></div><div class="public anchor" id="var-enqueue"><h3>enqueue</h3><div class="usage"><code>(enqueue context interceptors)</code></div><div class="doc"><div class="markdown"><p>An advanced utility function, typically used when writing an interceptor’s <code>:before</code> function. </p>
+</code></pre></div></div></div><div class="public anchor" id="var-enqueue"><h3>enqueue</h3><div class="usage"><code>(enqueue context interceptors)</code></div><div class="doc"><div class="markdown"><p>An advanced utility function, typically used when writing an interceptor’s <code>:before</code> function.</p>
 <p>Adds a collection of <code>interceptors</code> to the end of <code>context's</code> execution <code>:queue</code>, and then returns the updated <code>context</code>.</p></div></div></div><div class="public anchor" id="var-enrich"><h3>enrich</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>Interceptor factory which runs the given function <code>f</code> in the <code>after handler</code> position. <code>f</code> is called with two arguments: <code>db</code> and <code>v</code>, and is expected to return a modified <code>db</code>.</p>
 <p>Unlike the <code>after</code> interceptor which is only about side effects, <code>enrich</code> expects <code>f</code> to process and alter the given <code>db</code> coeffect in some useful way, contributing to the derived data, flowing vibe.</p>
 <p>Example Use:</p>
@@ -77,9 +85,9 @@
 <a href="https://twitter.com/nathanmarz/status/879722740776939520" target="_blank">https://twitter.com/nathanmarz/status/879722740776939520</a>
 <p>By applying <code>f</code> in an <code>:enrich</code> interceptor, after every CRUD event, we keep the handlers simple and yet we ensure this important step (of getting warnings right) is not missed on any change.</p>
 <p>We can test <code>f</code> easily - it is a pure function - independently of any CRUD operation.</p>
-<p>This brings huge simplicity at the expense of some re-computation each time. This may be a very satisfactory trade-off in many cases.</p></div></div></div><div class="public anchor" id="var-get-coeffect"><h3>get-coeffect</h3><div class="usage"><code>(get-coeffect context)</code><code>(get-coeffect context key)</code><code>(get-coeffect context key not-found)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used when writing an interceptor’s <code>:before</code> function. </p>
+<p>This brings huge simplicity at the expense of some re-computation each time. This may be a very satisfactory trade-off in many cases.</p></div></div></div><div class="public anchor" id="var-get-coeffect"><h3>get-coeffect</h3><div class="usage"><code>(get-coeffect context)</code><code>(get-coeffect context key)</code><code>(get-coeffect context key not-found)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used when writing an interceptor’s <code>:before</code> function.</p>
 <p>When called with one argument, it returns the <code>:coeffects</code> map from with that <code>context</code>.</p>
-<p>When called with two or three arguments, behaves like <code>clojure.core/get</code> and returns the value mapped to <code>key</code> in the <code>:coeffects</code> map within <code>context</code>, <code>not-found</code> or <code>nil</code> if <code>key</code> is not present.</p></div></div></div><div class="public anchor" id="var-get-effect"><h3>get-effect</h3><div class="usage"><code>(get-effect context)</code><code>(get-effect context key)</code><code>(get-effect context key not-found)</code></div><div class="doc"><div class="markdown"><p>A utility function, used when writing interceptors, typically within an <code>:after</code> function. </p>
+<p>When called with two or three arguments, behaves like <code>clojure.core/get</code> and returns the value mapped to <code>key</code> in the <code>:coeffects</code> map within <code>context</code>, <code>not-found</code> or <code>nil</code> if <code>key</code> is not present.</p></div></div></div><div class="public anchor" id="var-get-effect"><h3>get-effect</h3><div class="usage"><code>(get-effect context)</code><code>(get-effect context key)</code><code>(get-effect context key not-found)</code></div><div class="doc"><div class="markdown"><p>A utility function, used when writing interceptors, typically within an <code>:after</code> function.</p>
 <p>When called with one argument, returns the <code>:effects</code> map from the <code>context</code>.</p>
 <p>When called with two or three arguments, behaves like <code>clojure.core/get</code> and returns the value mapped to <code>key</code> in the effects map, <code>not-found</code> or <code>nil</code> if <code>key</code> is not present.</p></div></div></div><div class="public anchor" id="var-inject-cofx"><h3>inject-cofx</h3><div class="usage"><code>(inject-cofx id)</code><code>(inject-cofx id value)</code></div><div class="doc"><div class="markdown"><p>Given an <code>id</code>, and an optional, arbitrary <code>value</code>, returns an interceptor whose <code>:before</code> adds to the <code>:coeffects</code> (map) by calling a pre-registered ‘coeffect handler’ identified by the <code>id</code>.</p>
 <p>The previous association of a <code>coeffect handler</code> with an <code>id</code> will have happened via a call to <code>re-frame.core/reg-cofx</code> - generally on program startup.</p>
@@ -90,22 +98,29 @@
 </ul>
 <p>This <code>coeffect handler</code> is expected to modify and return its first, <code>coeffects</code> argument.</p>
 <h5><a href="#example-of-and-working-together" name="example-of-and-working-together"></a>Example of <code>inject-cofx</code> and <code>reg-cofx</code> working together</h5>
-<ol>
-  <li>Early in app startup, you register a <code>coeffect handler</code> for <code>:datetime</code>:</li>
-</ol>
-<p>(re-frame.core/reg-cofx  :datetime ;; usage (inject-cofx :datetime)  (fn coeffect-handler  [coeffect]  (assoc coeffect :now (js/Date.)))) ;; modify and return first arg</p>
-<ol>
-  <li>Later, add an interceptor to an -fx event handler, using <code>inject-cofx</code>:</li>
-</ol>
-<p>(re-frame.core/reg-event-fx ;; we are registering an event handler  :event-id  [ … (inject-cofx :datetime) … ] ;; &lt;– create an injecting interceptor  (fn event-handler  [coeffect event]  … in here can access (:now coeffect) to obtain current datetime … )))</p>
+<p>First - Early in app startup, you register a <code>coeffect handler</code> for <code>:datetime</code>:</p>
+<pre><code>(re-frame.core/reg-cofx
+  :datetime                        ;; usage  (inject-cofx :datetime)
+  (fn coeffect-handler
+    [coeffect]
+    (assoc coeffect :now (js/Date.))))   ;; modify and return first arg
+</code></pre>
+<p>Second - Later, add an interceptor to an -fx event handler, using <code>inject-cofx</code>:</p>
+<pre><code>(re-frame.core/reg-event-fx        ;; we are registering an event handler
+   :event-id
+   [ ... (inject-cofx :datetime) ... ]    ;; &lt;-- create an injecting interceptor
+   (fn event-handler
+     [coeffect event]
+     ... in here can access (:now coeffect) to obtain current datetime ... )))
+</code></pre>
 <h5><a href="#background" name="background"></a>Background</h5>
 <p><code>coeffects</code> are the input resources required by an event handler to perform its job. The two most obvious ones are <code>db</code> and <code>event</code>. But sometimes an event handler might need other resources.</p>
 <p>Perhaps an event handler needs a random number or a GUID or the current datetime. Perhaps it needs access to a DataScript database connection.</p>
 <p>If an event handler directly accesses these resources, it stops being pure and, consequently, it becomes harder to test, etc. So we don’t want that.</p>
-<p>Instead, the interceptor created by this function is a way to ‘inject’ ‘necessary resources’ into the <code>:coeffects</code> (map) subsequently given to the event handler at call time.</p></div></div></div><div class="public anchor" id="var-make-restore-fn"><h3>make-restore-fn</h3><div class="usage"><code>(make-restore-fn)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used in testing. </p>
+<p>Instead, the interceptor created by this function is a way to ‘inject’ ‘necessary resources’ into the <code>:coeffects</code> (map) subsequently given to the event handler at call time.</p></div></div></div><div class="public anchor" id="var-make-restore-fn"><h3>make-restore-fn</h3><div class="usage"><code>(make-restore-fn)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used in testing.</p>
 <p>Checkpoints the state of re-frame and returns a function which, when later called, will restore re-frame to that checkpointed state.</p>
-<p>Checkpoint includes app-db, all registered handlers and all subscriptions.</p></div></div></div><div class="public anchor" id="var-on-changes"><h3>on-changes</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor. </p>
-<p>Returns an interceptor which will observe N paths within <code>db</code>, and if any of them  test not identical? to their previous value (as a result of a event handler  being run), then it runs <code>f</code> to compute a new value, which is then assoc-ed  into the given <code>out-path</code> within <code>db</code>.</p>
+<p>Checkpoint includes app-db, all registered handlers and all subscriptions.</p></div></div></div><div class="public anchor" id="var-on-changes"><h3>on-changes</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor factory, which is to say, a function which will return an interceptor.</p>
+<p>Returns an interceptor which will observe N paths within <code>db</code>, and if any of them test not identical? to their previous value (as a result of a event handler being run), then it runs <code>f</code> to compute a new value, which is then assoc-ed into the given <code>out-path</code> within <code>db</code>.</p>
 <p>Example Usage:</p>
 <pre><code>(defn my-f
   [a-val b-val]
@@ -114,13 +129,13 @@
 ;; use it
 (def my-interceptor (on-changes my-f [:c] [:a] [:b]))
 
-(reg-event-db 
-  :event-id 
+(reg-event-db
+  :event-id
   [... my-interceptor ...]  ;; &lt;-- ultimately used here
   (fn [db v]
      ...))
 </code></pre>
-<p>Put this Interceptor on handlers which might change paths :a or :b  and it will: </p>
+<p>Put this Interceptor on handlers which might change paths :a or :b  and it will:</p>
 <ul>
   <li>call <code>f</code> each time the value at path [:a] or [:b] changes</li>
   <li>call <code>f</code> with the values extracted from [:a] [:b]</li>
@@ -140,10 +155,10 @@
   (fn [b v]       ;; 1st arg is now not db. Is the value from path [:a :b] within db
     ... new-b))   ;; returns a new value for that path (not the entire db)
 </code></pre>
-<p>Notes:  1. <code>path</code> may appear more than once in an interceptor chain. Progressive narrowing.  2. if <code>:effects</code> contains no <code>:db</code> effect, can’t graft a value back in.</p></div></div></div><div class="public anchor" id="var-purge-event-queue"><h3>purge-event-queue</h3><div class="usage"><code>(purge-event-queue)</code></div><div class="doc"><div class="markdown"><p>Removes all events currently queued for processing</p></div></div></div><div class="public anchor" id="var-reg-cofx"><h3>reg-cofx</h3><div class="usage"><code>(reg-cofx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given coeffect <code>handler</code> for the given <code>id</code>, for later use within <code>inject-cofx</code>: </p>
+<p>Notes:  1. <code>path</code> may appear more than once in an interceptor chain. Progressive narrowing.  2. if <code>:effects</code> contains no <code>:db</code> effect, can’t graft a value back in.</p></div></div></div><div class="public anchor" id="var-purge-event-queue"><h3>purge-event-queue</h3><div class="usage"><code>(purge-event-queue)</code></div><div class="doc"><div class="markdown"><p>Removes all events currently queued for processing</p></div></div></div><div class="public anchor" id="var-reg-cofx"><h3>reg-cofx</h3><div class="usage"><code>(reg-cofx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given coeffect <code>handler</code> for the given <code>id</code>, for later use within <code>inject-cofx</code>:</p>
 <ul>
   <li><code>id</code> is keyword, often namespaced.</li>
-  <li><code>handler</code> is a function which takes either one or two arguements, the first of which is always <code>coeffects</code> and which returns an updated <code>coeffects</code>.</li>
+  <li><code>handler</code> is a function which takes either one or two arguements, the first of which is  always <code>coeffects</code> and which returns an updated <code>coeffects</code>.</li>
 </ul>
 <p>See the docs for <code>inject-cofx</code> for example use.</p></div></div></div><div class="public anchor" id="var-reg-event-ctx"><h3>reg-event-ctx</h3><div class="usage"><code>(reg-event-ctx id handler)</code><code>(reg-event-ctx id interceptors handler)</code></div><div class="doc"><div class="markdown"><p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide an <code>interceptors</code> chain. <code>id</code> is typically a namespaced keyword (but can be anything) <code>handler</code> is a function: (context-map event-vector) -&gt; context-map</p>
 <p>This form of registration is almost never used. </p></div></div></div><div class="public anchor" id="var-reg-event-db"><h3>reg-event-db</h3><div class="usage"><code>(reg-event-db id handler)</code><code>(reg-event-db id interceptors handler)</code></div><div class="doc"><div class="markdown"><p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide an <code>interceptors</code> chain:</p>
@@ -161,14 +176,10 @@
 <p>Note: <code>handler</code> is wrapped in its own interceptor and added to the end of the interceptor  chain, so that, in the end, only a chain is registered.</p></div></div></div><div class="public anchor" id="var-reg-fx"><h3>reg-fx</h3><div class="usage"><code>(reg-fx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given effect <code>handler</code> for the given <code>id</code>:</p>
 <ul>
   <li><code>id</code> is keyword, often namespaced.</li>
-  <li><code>handler</code> is a side-effecting function which takes a single argument and whose return value is ignored.</li>
+  <li><code>handler</code> is a side-effecting function which takes a single argument and whose return  value is ignored.</li>
 </ul>
 <p>Example Use First, registration … associate <code>:effect2</code> with a handler.</p>
-<pre><code class="clj">(reg-fx
-   :effect2
-   (fn [value]
-      ... do something side-effect-y))
-</code></pre>
+<p>(reg-fx  :effect2  (fn [value]  … do something side-effect-y))</p>
 <p>Then, later, if an event handler were to return this effects map …</p>
 <p>{…  :effect2 [1 2]}</p>
 <p>… then the <code>handler</code> <code>fn</code> we registered previously, using <code>reg-fx</code>, will be  called with an argument of <code>[1 2]</code>.</p></div></div></div><div class="public anchor" id="var-reg-global-interceptor"><h3>reg-global-interceptor</h3><div class="usage"><code>(reg-global-interceptor interceptor)</code></div><div class="doc"><div class="markdown"><p>Registers the given <code>interceptor</code> as a global interceptor. Global interceptors are included in the processing chain of every event.</p>
@@ -181,85 +192,79 @@
 <p>When <code>computation function</code> is called, the <code>query-vector</code> argument will be the vector supplied to the  the <code>subscribe</code> which caused the node to be created. So, if the call was <code>(subscribe [:sub-id 3 "blue"])</code>,  then the <code>query-vector</code> supplied to the computaton function will be <code>[:sub-id 3 "blue"]</code>.</p>
 <p>The arguments supplied between the <code>query-id</code> and the <code>computation-function</code> can vary in 3 ways,  but whatever is there defines the <code>input signals</code> part of the template, controlling what input values “flow into” the <code>computation function</code> gets when it is called.</p>
 <p><code>reg-sub</code> can be called in one of three ways, because there are three ways to define the input signals part.  But note, the 2nd method, in which a <code>signal-fn</code> is explicitly supplied, is the most canonical and instructive. The other  two are really just sugary variations.</p>
-<ol>
-  <li>
-    <p>
-    </p><p>No input signals given:</p>
-    <pre><code class="clj">(reg-sub
-  :query-id
-  a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
-</code></pre><p></p>
-    <p>In the absence of an explicit <code>input-fn</code>, the node’s input signal defaults to <code>app-db</code> and, as a result, the value within <code>app-db</code> (a map) is is given as the 1st argument when <code>a-computation-fn</code> is called.</p>
-  </li>
-  <li>
-    <p>A signal function is explicitly supplied:</p>
-    <pre><code class="clj">(reg-sub
-  :query-id
-  signal-fn     ;; &lt;-- here
-  computation-fn)
+<p>First, No input signals given:</p>
+<pre><code> (reg-sub
+   :query-id
+   a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
+
+In the absence of an explicit `input-fn`, the node's input signal defaults to `app-db`
+and, as a result, the value within `app-db` (a map) is
+is given as the 1st argument when `a-computation-fn` is called.
 </code></pre>
-    <p>This is the most canonical and instructive of the three variations.</p>
-    <p>When a node is created from the template, the <code>signal-fn</code> will be called and it is expected to return the input signal(s) as either a singleton, if there is only one, or a sequence if there are many, or a map with the signals as the values.</p>
-    <p>The values from returned nominated signals will be supplied as the 1st argument to the <code>a-computation-fn</code> when it is called - and subject to what this <code>signal-fn</code> returns, this value will be either a singleton, sequence or map of them (paralleling the structure returned by the <code>signal-fn</code>).</p>
-    <p>This example <code>signal-fn</code> returns a vector of input signals.</p>
-    <pre><code class="clj">  (fn [query-vec dynamic-vec]
+<p>Second, A signal function is explicitly supplied:</p>
+<pre><code> (reg-sub
+   :query-id
+   signal-fn     ;; &lt;-- here
+   computation-fn)
+</code></pre>
+<p>This is the most canonical and instructive of the three variations.</p>
+<p>When a node is created from the template, the <code>signal-fn</code> will be called and it  is expected to return the input signal(s) as either a singleton, if there is only  one, or a sequence if there are many, or a map with the signals as the values.</p>
+<p>The values from returned nominated signals will be supplied as the 1st argument to  the <code>a-computation-fn</code> when it is called - and subject to what this <code>signal-fn</code> returns,  this value will be either a singleton, sequence or map of them (paralleling  the structure returned by the <code>signal-fn</code>).</p>
+<p>This example <code>signal-fn</code> returns a vector of input signals.</p>
+<pre><code> (fn [query-vec dynamic-vec]
     [(subscribe [:a-sub])
      (subscribe [:b-sub])])
- ```
-
-The associated computation function must be written
-to expect a vector of values for its first argument:
 </code></pre>
-    <p>(fn [[a b] query-vec] ;; 1st argument is a seq of two values  ….)</p>
-    <pre><code><br />If, on the other hand, the signal function was simpler and returned a singleton, like this:
+<p>The associated computation function must be written  to expect a vector of values for its first argument:</p>
+<pre><code> (fn [[a b] query-vec]     ;; 1st argument is a seq of two values
+   ....)
 </code></pre>
-    <p>(fn [query-vec dynamic-vec]  (subscribe [:a-sub]))</p>
-    <pre><code>then the associated computation function must be written to expect a single value
-as the 1st argument:
+<p>If, on the other hand, the signal function was simpler and returned a singleton, like this:</p>
+<pre><code>(fn [query-vec dynamic-vec]
+  (subscribe [:a-sub]))
 </code></pre>
-    <p>(fn [a query-vec] ;; 1st argument is a single value  …)  ```</p>
-    <p>Further Note: variation #1 above, in which an <code>input-fn</code> was not supplied, like this:</p>
-    <pre><code class="clj">(reg-sub
-  :query-id
-  a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
+<p>then the associated computation function must be written to expect a single value  as the 1st argument:</p>
+<pre><code> (fn [a query-vec]       ;; 1st argument is a single value
+    ...)
 </code></pre>
-    <p>is the equivalent of using this 2nd variation and explicitly suppling a <code>signal-fn</code> which returns <code>app-db</code>:</p>
-    <pre><code class="clj">(reg-sub
-  :query-id
-  (fn [_ _]  re-frame/app-db)   ;; &lt;--- explicit input-fn
-  a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
+<p>Further Note: variation #1 above, in which an <code>input-fn</code> was not supplied, like this:</p>
+<pre><code> (reg-sub
+   :query-id
+   a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
 </code></pre>
-  </li>
-  <li>
-    <p>Syntax Sugar</p>
-    <pre><code class="clj">(reg-sub
-  :a-b-sub
-  :&lt;- [:a-sub]
-  :&lt;- [:b-sub]
-  (fn [[a b] query-vec]    ;; 1st argument is a seq of two values
-    {:a a :b b}))
+<p>is the equivalent of using this  2nd variation and explicitly suppling a <code>signal-fn</code> which returns <code>app-db</code>:</p>
+<pre><code> (reg-sub
+   :query-id
+   (fn [_ _]  re-frame/app-db)   ;; &lt;--- explicit input-fn
+   a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
 </code></pre>
-    <p>This 3rd variation is just syntactic sugar for the 2nd. Instead of providing an <code>signals-fn</code> you provide one or more pairs of <code>:&lt;-</code> and a subscription vector.</p>
-    <p>If you supply only one pair a singleton will be supplied to the computation function, as if you had supplied a <code>signal-fn</code> returning only a single value:</p>
-    <pre><code class="clj">(reg-sub
-  :a-sub
-  :&lt;- [:a-sub]
-  (fn [a query-vec]      ;; only one pair, so 1st argument is a single value
-    ...))
+<p>Third, Syntax Sugar</p>
+<pre><code> (reg-sub
+   :a-b-sub
+   :&lt;- [:a-sub]
+   :&lt;- [:b-sub]
+   (fn [[a b] query-vec]    ;; 1st argument is a seq of two values
+     {:a a :b b}))
 </code></pre>
-  </li>
-</ol>
+<p>This 3rd variation is just syntactic sugar for the 2nd. Instead of providing an  <code>signals-fn</code> you provide one or more pairs of <code>:&lt;-</code> and a subscription vector.</p>
+<p>If you supply only one pair a singleton will be supplied to the computation function,  as if you had supplied a <code>signal-fn</code> returning only a single value:</p>
+<pre><code> (reg-sub
+   :a-sub
+   :&lt;- [:a-sub]
+   (fn [a query-vec]      ;; only one pair, so 1st argument is a single value
+     ...))
+</code></pre>
 <p>For further understanding, read the tutorials, and look at the detailed comments in  /examples/todomvc/src/subs.cljs</p></div></div></div><div class="public anchor" id="var-reg-sub-raw"><h3>reg-sub-raw</h3><div class="usage"><code>(reg-sub-raw query-id handler-fn)</code></div><div class="doc"><div class="markdown"><p>This is a low level, advanced function. You should probably be using <code>reg-sub</code> instead.</p>
 <p>Some docs are available in <a href="http://day8.github.io/re-frame/flow-mechanics/" target="_blank"></a><a href="http://day8.github.io/re-frame/flow-mechanics/">http://day8.github.io/re-frame/flow-mechanics/</a></p></div></div></div><div class="public anchor" id="var-register-handler"><h3>register-handler</h3><h4 class="deprecated">deprecated in 0.8.0</h4><div class="usage"><code>(register-handler &amp; args)</code></div><div class="doc"><div class="markdown"><p>Deprecated. Use <code>reg-event-db</code> instead.</p></div></div></div><div class="public anchor" id="var-register-sub"><h3>register-sub</h3><h4 class="deprecated">deprecated in 0.8.0</h4><div class="usage"><code>(register-sub &amp; args)</code></div><div class="doc"><div class="markdown"><p>Deprecated. Use <code>reg-sub-raw</code> instead.</p></div></div></div><div class="public anchor" id="var-remove-post-event-callback"><h3>remove-post-event-callback</h3><div class="usage"><code>(remove-post-event-callback id)</code></div><div class="doc"><div class="markdown"><p>Unregisters a post event callback function, identified by <code>id</code>. Such a function would have been registered in the first place via <code>add-post-event-callback</code></p></div></div></div><div class="public anchor" id="var-set-loggers.21"><h3>set-loggers!</h3><div class="usage"><code>(set-loggers! new-loggers)</code></div><div class="doc"><div class="markdown"><p>Internally, re-frame uses the logging functions: <code>warn</code>, <code>log</code>, <code>error</code>, <code>group</code> and <code>groupEnd</code></p>
-<p>By default, these functions map directly to the default <code>js/console</code> implementations,  but you can override with your own fns (set or subset) if you wish to handle the logging yourself.</p>
+<p>By default, these functions map directly to the default <code>js/console</code> implementations, but you can override with your own fns (set or subset) if you wish to handle the logging yourself.</p>
 <p><code>new-loggers</code> should be a map containing a subset of they keys for the standard <code>loggers</code>.</p>
 <p>Example Usage:</p>
 <pre><code>(defn my-logger      ;; here is my alternative logging function
-  [&amp; args]  
-  (post-it-somewhere (apply str args))) 
+  [&amp; args]
+  (post-it-somewhere (apply str args)))
 
-;; now install my alternative loggers 
-(re-frame.core/set-loggers!  {:warn my-logger :log my-logger})      
+;; now install my alternative loggers
+(re-frame.core/set-loggers!  {:warn my-logger :log my-logger})
 </code></pre></div></div></div><div class="public anchor" id="var-subscribe"><h3>subscribe</h3><div class="usage"><code>(subscribe query)</code><code>(subscribe query dynv)</code></div><div class="doc"><div class="markdown"><p>Given a <code>query</code> vector, returns a Reagent <code>reaction</code> which, over time, reactively delivers a stream of values. So in FRP-ish terms, it returns a <code>Signal</code>.</p>
 <p>To obtain the returned Signal/Stream’s current value, it must be <code>deref</code>ed.</p>
 <p><code>query</code> is a vector of at least one element. The first element is the <code>query-id</code>, typically a namespaced keyword. The rest of the vector’s elements are optional, additional values which parameterise the query performed.</p>
@@ -279,8 +284,8 @@ as the 1st argument:
 <p>Two, or more, concurrent subscriptions for the same query will source reactive updates from the one executing handler.</p></div></div></div><div class="public anchor" id="var-trim-v"><h3>trim-v</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor which removes the first element of the event vector, before it is supplied to the event handler, allowing you to write more  aesthetically pleasing event handlers. No leading underscore on the event-v!</p>
 <p>Your event handlers will look like this:</p>
 <pre><code>(reg-event-db
-  :event-id 
-  [... trim-v ...]    ;; &lt;-- added to the interceptors 
+  :event-id
+  [... trim-v ...]    ;; &lt;-- added to the interceptors
   (fn [db [x y z]]    ;; &lt;-- instead of [_ x y z]
     ...)
 </code></pre></div></div></div></div></body></html>
