@@ -16,18 +16,19 @@
    :after  (fn [context]                         ;; you normally want to change :effects
              (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
                (assoc-effect context :http-ajax {...}])))))
-</code></pre></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers a function <code>f</code> to be called after each event is processed  <code>f</code> will be called with two arguments:</p>
+</code></pre></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers a function <code>f</code> to be called after each event is processed. </p>
+<p><code>f</code> will be called with two arguments:</p>
 <ul>
   <li><code>event</code>: a vector. The event just processed.</li>
   <li><code>queue</code>: a PersistentQueue, possibly empty, of events yet to be processed.</li>
 </ul>
-<p>This is useful in advanced cases like:</p>
+<p>This facility is useful in advanced cases like:</p>
 <ul>
   <li>you are implementing a complex bootstrap pipeline</li>
   <li>you want to create your own handling infrastructure, with perhaps multiple  handlers for the one event, etc. Hook in here.</li>
   <li>libraries providing ‘isomorphic javascript’ rendering on Nodejs or Nashorn.</li>
 </ul>
-<p>‘id’ is typically a keyword. Supplied at “add time” so it can subsequently be used at “remove time” to get rid of the right callback.</p></div></div></div><div class="public anchor" id="var-after"><h3>after</h3><div class="usage"><code>(after f)</code></div><div class="doc"><div class="markdown"><p>Returns an interceptor which runs the given function <code>f</code> in the <code>:after</code> position, presumably for side effects.</p>
+<p><code>id</code> is typically a keyword. If it supplied when an <code>f</code> is added, it can be subsequently be used to identify it for removal. See <code>remove-post-event-callback</code>.</p></div></div></div><div class="public anchor" id="var-after"><h3>after</h3><div class="usage"><code>(after f)</code></div><div class="doc"><div class="markdown"><p>Returns an interceptor which runs the given function <code>f</code> in the <code>:after</code> position, presumably for side effects.</p>
 <p><code>f</code> is called with two arguments: the <code>:effects</code> value for <code>:db</code> (or the <code>:coeffect</code> value of <code>:db</code> if no <code>:db</code> effect is returned) and the event. Its return value is ignored, so <code>f</code> can only side-effect.</p>
 <p>An examples of use can be seen in /examples/todomvc/events.cljs:</p>
 <ul>
@@ -40,8 +41,8 @@
 <p>When called with no arguments, it unregisters all global interceptors. When given one argument, assumed to be the <code>id</code> of a currently registered global interceptor, it unregisters the associated interceptor.</p></div></div></div><div class="public anchor" id="var-clear-sub"><h3>clear-sub</h3><div class="usage"><code>(clear-sub)</code><code>(clear-sub query-id)</code></div><div class="doc"><div class="markdown"><p>When called with no args, unregisters all subscription handlers.</p>
 <p>When given one arg, assumed to be a <code>query-id</code> of a registered subscription handler, unregisters the associated handler.</p>
 <p>NOTE: Depending on the usecase it may also be necessary to call  <code>clear-subscription-cache!</code>.</p></div></div></div><div class="public anchor" id="var-clear-subscription-cache.21"><h3>clear-subscription-cache!</h3><div class="usage"><code>(clear-subscription-cache!)</code></div><div class="doc"><div class="markdown"><p>Removes all subscriptions from the cache.</p>
-<p>For use at development time or test time. Useful when hot realoding reloading to subscription handler code or after a React/render exception, because React components won’t have been cleaned up properly. And this, in turn, means the subscriptions within those components won’t have been cleaned up correctly. So this forces the issue.</p></div></div></div><div class="public anchor" id="var-console"><h3>console</h3><div class="usage"><code>(console level &amp; args)</code></div><div class="doc"><div class="markdown"><p>A utility function for use in libraries which extend re-frame, like perhaps an effect handler, when they want to produce log output.</p>
-<p>It will write the given <code>args</code> to js/console at the given <code>level</code>.</p>
+<p>For use at development time or test time. Useful when hot realoding reloading to subscription handler code or after a React/render exception, because React components won’t have been cleaned up properly. And this, in turn, means the subscriptions within those components won’t have been cleaned up correctly. So this forces the issue.</p></div></div></div><div class="public anchor" id="var-console"><h3>console</h3><div class="usage"><code>(console level &amp; args)</code></div><div class="doc"><div class="markdown"><p>A utility logging function to be used by libraries which extend re-frame, like perhaps an effect handler.</p>
+<p>It will write the given <code>args</code> to js/console at the given log <code>level</code>.</p>
 <p><code>level</code> can be one of <code>:log</code> <code>:error</code> <code>:warn</code> <code>:debug</code> <code>:group</code> <code>:groupEnd</code>.</p>
 <p>Example usage:</p>
 <pre><code>(console :error "Oh, dear God, it happened:" a-var "and" another)
@@ -64,19 +65,21 @@
 <p><code>event</code> is a vector and the first element is typically a keyword which identifies the kind of event.</p>
 <p>The event will be added to the end of a FIFO processing queue. So, event handling does not happen immediately. It will likely happen ‘very soon’, bit not now. And if the queue already contains events, they will be processed first.</p>
 <p>Usage:</p>
-<pre><code>(dispatch [:order-pizza "me" {:supreme 2 :meatlovers 1 :veg 1}])
-</code></pre></div></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event-v)</code></div><div class="doc"><div class="markdown"><p>Synchronously (immediately) process <code>event</code>. It does not queue the event for handling later as <code>dispatch</code> does.</p>
+<pre><code>(dispatch [:order "pizza" {:supreme 2 :meatlovers 1 :veg 1}])
+</code></pre></div></div></div><div class="public anchor" id="var-dispatch-sync"><h3>dispatch-sync</h3><div class="usage"><code>(dispatch-sync event)</code></div><div class="doc"><div class="markdown"><p>Synchronously (immediately) process <code>event</code>. It does not queue the event for handling later as <code>dispatch</code> does.</p>
+<p><code>event</code>is a vector and the first element is typically a keyword which identifies the kind of event.</p>
 <p>Generally, don’t use this and, instead, use <code>dispatch</code>. It is an error to use <code>dispatch-sync</code> within an event handler because you can’t immediately process an new event when one is already part way through being processed.</p>
 <p>Useful when any delay in processing will be a problem:</p>
 <ol>
-  <li>the <code>:on-change</code> handler of a text field where we are expecting fast typing.</li>
+  <li>the <code>:on-change</code> handler of a text field where we are expecting fast typing</li>
   <li>when initialising your app - see ‘main’ in examples/todomvc/src/core.cljs</li>
-  <li>in a unit test where immediate, synchronous processing is useful.</li>
+  <li>in a unit test where immediate, synchronous processing is useful</li>
 </ol>
 <p>Usage:</p>
-<pre><code>(dispatch-sync [:sing :falsetto 634])
-</code></pre></div></div></div><div class="public anchor" id="var-enqueue"><h3>enqueue</h3><div class="usage"><code>(enqueue context interceptors)</code></div><div class="doc"><div class="markdown"><p>An advanced utility function, typically used when writing an interceptor’s <code>:before</code> function.</p>
-<p>Adds a collection of <code>interceptors</code> to the end of <code>context's</code> execution <code>:queue</code>, and then returns the updated <code>context</code>.</p></div></div></div><div class="public anchor" id="var-enrich"><h3>enrich</h3><div class="usage"><code>(enrich f)</code></div><div class="doc"><div class="markdown"><p>Returns an Interceptor which runs the given function <code>f</code> in the <code>after handler</code> position. </p>
+<pre><code>(dispatch-sync [:sing :falsetto "piano accordion"])
+</code></pre></div></div></div><div class="public anchor" id="var-enqueue"><h3>enqueue</h3><div class="usage"><code>(enqueue context interceptors)</code></div><div class="doc"><div class="markdown"><p>A utility function, used when writing an interceptor’s <code>:before</code> function.</p>
+<p>Adds the given collection of <code>interceptors</code> to those already in <code>context's</code> execution <code>:queue</code>. It returns the updated <code>context</code>.</p>
+<p>So, it provides a way for one Interceptor to add more interceptors to the currently executing interceptor chain.</p></div></div></div><div class="public anchor" id="var-enrich"><h3>enrich</h3><div class="usage"><code>(enrich f)</code></div><div class="doc"><div class="markdown"><p>Returns an Interceptor which will run the given function <code>f</code> in the <code>:after</code> position. </p>
 <p><code>f</code> is called with two arguments: <code>db</code> and <code>v</code>, and is expected to return a modified <code>db</code>.</p>
 <p>Unlike the <code>after</code> interceptor which is only about side effects, <code>enrich</code> expects <code>f</code> to process and alter the given <code>db</code> coeffect in some useful way, contributing to the derived data, flowing vibe.</p>
 <h4><a href="#example-use-" name="example-use-"></a>Example Use:</h4>
@@ -119,9 +122,9 @@
 <p><code>coeffects</code> are the input resources required by an event handler to perform its job. The two most obvious ones are <code>db</code> and <code>event</code>. But sometimes an event handler might need other resources.</p>
 <p>Perhaps an event handler needs a random number or a GUID or the current datetime. Perhaps it needs access to a DataScript database connection.</p>
 <p>If an event handler directly accesses these resources, it stops being pure and, consequently, it becomes harder to test, etc. So we don’t want that.</p>
-<p>Instead, the interceptor created by this function is a way to ‘inject’ ‘necessary resources’ into the <code>:coeffects</code> (map) subsequently given to the event handler at call time.</p></div></div></div><div class="public anchor" id="var-make-restore-fn"><h3>make-restore-fn</h3><div class="usage"><code>(make-restore-fn)</code></div><div class="doc"><div class="markdown"><p>A utility function, typically used in testing.</p>
-<p>Checkpoints the state of re-frame and returns a function which, when later called, will restore re-frame to that checkpointed state.</p>
-<p>Checkpoint includes app-db, all registered handlers and all subscriptions.</p></div></div></div><div class="public anchor" id="var-on-changes"><h3>on-changes</h3><div class="usage"><code>(on-changes f out-path &amp; in-paths)</code></div><div class="doc"><div class="markdown"><p>Returns an interceptor which will observe N paths within <code>db</code>, and if any of them test not identical? to their previous value (as a result of a event handler being run), then it will run <code>f</code> to compute a new value, which is then assoc-ed into the given <code>out-path</code> within <code>db</code>.</p>
+<p>Instead, the interceptor created by this function is a way to ‘inject’ ‘necessary resources’ into the <code>:coeffects</code> (map) subsequently given to the event handler at call time.</p></div></div></div><div class="public anchor" id="var-make-restore-fn"><h3>make-restore-fn</h3><div class="usage"><code>(make-restore-fn)</code></div><div class="doc"><div class="markdown"><p>This is a utility function, typically used in testing.</p>
+<p>It checkpoints the current state of re-frame and returns a function which, when later called, will restore re-frame to the checkpointed state.</p>
+<p>The checkpoint includes <code>app-db</code>, all registered handlers and all subscriptions.</p></div></div></div><div class="public anchor" id="var-on-changes"><h3>on-changes</h3><div class="usage"><code>(on-changes f out-path &amp; in-paths)</code></div><div class="doc"><div class="markdown"><p>Returns an interceptor which will observe N paths within <code>db</code>, and if any of them test not identical? to their previous value (as a result of a event handler being run), then it will run <code>f</code> to compute a new value, which is then assoc-ed into the given <code>out-path</code> within <code>db</code>.</p>
 <p>Example Usage:</p>
 <pre><code>(defn my-f
   [a-val b-val]
@@ -141,8 +144,8 @@
   <li>call <code>f</code> each time the value at path [:a] or [:b] changes</li>
   <li>call <code>f</code> with the values extracted from [:a] [:b]</li>
   <li>assoc the return value from <code>f</code> into the path [:c]</li>
-</ul></div></div></div><div class="public anchor" id="var-path"><h3>path</h3><div class="usage"><code>(path &amp; args)</code></div><div class="doc"><div class="markdown"><p>returns an interceptor whose <code>:before</code> substitutes the coeffects <code>:db</code> with a sub-path of <code>:db</code>. Within <code>:after</code> it grafts the handler’s return value back into db, at the right path.</p>
-<p>So, its overall action is to make the event handler behave like the function you might give to clojure’s <code>update-in</code>.</p>
+</ul></div></div></div><div class="public anchor" id="var-path"><h3>path</h3><div class="usage"><code>(path &amp; args)</code></div><div class="doc"><div class="markdown"><p>Returns an interceptor which acts somewhat like <code>clojure.core/update-in</code>, in the sense that the event handler is given a specific part of <code>app-db</code> to change, not all of <code>app-db</code>. </p>
+<p>The interceptor has both a <code>:before</code> and <code>:after</code> functions. The <code>:before</code> replaces<br />the <code>:db</code> key within coeffects with a sub-path within <code>app-db</code>. The <code>:after</code> reverses the process, and it grafts the handler’s return value back into db, at the right path.</p>
 <p>Examples:</p>
 <pre><code>(path :some :path)
 (path [:some :path])
@@ -152,11 +155,15 @@
 <p>Example Use:</p>
 <pre><code>(reg-event-db
   :event-id
-  (path [:a :b])  ;; used here, in interceptor chain
-  (fn [b v]       ;; 1st arg is now not db. Is the value from path [:a :b] within db
+  (path [:a :b])  ;; &lt;-- used here, in interceptor chain
+  (fn [b v]       ;; 1st arg is not db. Is the value from path [:a :b] within db
     ... new-b))   ;; returns a new value for that path (not the entire db)
 </code></pre>
-<p>Notes:  1. <code>path</code> may appear more than once in an interceptor chain. Progressive narrowing.  2. if <code>:effects</code> contains no <code>:db</code> effect, can’t graft a value back in.</p></div></div></div><div class="public anchor" id="var-purge-event-queue"><h3>purge-event-queue</h3><div class="usage"><code>(purge-event-queue)</code></div><div class="doc"><div class="markdown"><p>Removes all events currently queued for processing</p></div></div></div><div class="public anchor" id="var-reg-cofx"><h3>reg-cofx</h3><div class="usage"><code>(reg-cofx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given coeffect <code>handler</code> for the given <code>id</code>, for later use within <code>inject-cofx</code>:</p>
+<p>Notes:</p>
+<ol>
+  <li><code>path</code> may appear more than once in an interceptor chain. Progressive narrowing.</li>
+  <li>if <code>:effects</code> contains no <code>:db</code> effect, can’t graft a value back in.</li>
+</ol></div></div></div><div class="public anchor" id="var-purge-event-queue"><h3>purge-event-queue</h3><div class="usage"><code>(purge-event-queue)</code></div><div class="doc"><div class="markdown"><p>Removes all events currently queued for processing</p></div></div></div><div class="public anchor" id="var-reg-cofx"><h3>reg-cofx</h3><div class="usage"><code>(reg-cofx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given coeffect <code>handler</code> for the given <code>id</code>, for later use within <code>inject-cofx</code>:</p>
 <ul>
   <li><code>id</code> is keyword, often namespaced.</li>
   <li><code>handler</code> is a function which takes either one or two arguements, the first of which is  always <code>coeffects</code> and which returns an updated <code>coeffects</code>.</li>
@@ -181,18 +188,13 @@
 <p>Note: <code>handler</code> is wrapped in its own interceptor and added to the end of the interceptor chain, so that, in the end, only a chain is registered.</p></div></div></div><div class="public anchor" id="var-reg-fx"><h3>reg-fx</h3><div class="usage"><code>(reg-fx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given effect <code>handler</code> for the given <code>id</code>:</p>
 <ul>
   <li><code>id</code> is keyword, often namespaced.</li>
-  <li><code>handler</code> is a side-effecting function which takes a single argument and whose return value is ignored.</li>
+  <li><code>handler</code> is a side-effecting function which takes a single argument and whose return  value is ignored.</li>
 </ul>
 <p>To use, first, associate <code>:effect2</code> with a handler.</p>
-<pre><code>(reg-fx
-   :effect2
-   (fn [value]
-      ... do something side-effect-y))
-</code></pre>
+<p>(reg-fx  :effect2  (fn [value]  … do something side-effect-y))</p>
 <p>Then, later, if an event handler were to return this effects map …</p>
-<pre><code>{:effect2  [1 2]}
-</code></pre>
-<p>then the <code>handler</code> <code>fn</code> we registered previously, using <code>reg-fx</code>, will be  called with an argument of <code>[1 2]</code>.</p></div></div></div><div class="public anchor" id="var-reg-global-interceptor"><h3>reg-global-interceptor</h3><div class="usage"><code>(reg-global-interceptor interceptor)</code></div><div class="doc"><div class="markdown"><p>Registers the given <code>interceptor</code> as a global interceptor. Global interceptors are included in the processing chain of every event.</p>
+<p>{:effect2 [1 2]}</p>
+<p>then the <code>handler</code> <code>fn</code> we registered previously, using <code>reg-fx</code>, will be called with an argument of <code>[1 2]</code>.</p></div></div></div><div class="public anchor" id="var-reg-global-interceptor"><h3>reg-global-interceptor</h3><div class="usage"><code>(reg-global-interceptor interceptor)</code></div><div class="doc"><div class="markdown"><p>Registers the given <code>interceptor</code> as a global interceptor. Global interceptors are included in the processing chain of every event.</p>
 <p>When you register an event handler you have the option of supplying an interceptor chain. Any global interceptors you register are effectively prepending to this chain.</p>
 <p>Global interceptors are run in the order that they are registered.</p></div></div></div><div class="public anchor" id="var-reg-sub"><h3>reg-sub</h3><div class="usage"><code>(reg-sub query-id &amp; args)</code></div><div class="doc"><div class="markdown"><p>For a given <code>query-id</code>, register two functions: a <code>computation</code> function and an <code>input signals</code> function.</p>
 <p>During program execution, a call to <code>subscribe</code>, such as <code>(subscribe [:sub-id 3 "blue"])</code>,  will create a new <code>:sub-id</code> node in the Signal Graph. And, at that time, re-frame  needs to know how to create the node. By calling <code>reg-sub</code>, you are registering  ‘the template’ or ‘the mechanism’ by which nodes in the Signal Graph can be created.</p>
@@ -270,8 +272,9 @@ is given as the 1st argument when `a-computation-fn` is called.
      ...))
 </code></pre>
 <p>For further understanding, read the tutorials, and look at the detailed comments in  /examples/todomvc/src/subs.cljs</p></div></div></div><div class="public anchor" id="var-reg-sub-raw"><h3>reg-sub-raw</h3><div class="usage"><code>(reg-sub-raw query-id handler-fn)</code></div><div class="doc"><div class="markdown"><p>This is a low level, advanced function. You should probably be using <code>reg-sub</code> instead.</p>
-<p>Some docs are available in <a href="http://day8.github.io/re-frame/flow-mechanics/" target="_blank"></a><a href="http://day8.github.io/re-frame/flow-mechanics/">http://day8.github.io/re-frame/flow-mechanics/</a></p></div></div></div><div class="public anchor" id="var-register-handler"><h3>register-handler</h3><h4 class="deprecated">deprecated in 0.8.0</h4><div class="usage"><code>(register-handler &amp; args)</code></div><div class="doc"><div class="markdown"><p>Deprecated. Use <code>reg-event-db</code> instead.</p></div></div></div><div class="public anchor" id="var-register-sub"><h3>register-sub</h3><h4 class="deprecated">deprecated in 0.8.0</h4><div class="usage"><code>(register-sub &amp; args)</code></div><div class="doc"><div class="markdown"><p>Deprecated. Use <code>reg-sub-raw</code> instead.</p></div></div></div><div class="public anchor" id="var-remove-post-event-callback"><h3>remove-post-event-callback</h3><div class="usage"><code>(remove-post-event-callback id)</code></div><div class="doc"><div class="markdown"><p>Unregisters a post event callback function, identified by <code>id</code>. Such a function would have been registered in the first place via <code>add-post-event-callback</code></p></div></div></div><div class="public anchor" id="var-set-loggers.21"><h3>set-loggers!</h3><div class="usage"><code>(set-loggers! new-loggers)</code></div><div class="doc"><div class="markdown"><p>Internally, re-frame uses the logging functions: <code>warn</code>, <code>log</code>, <code>error</code>, <code>group</code> and <code>groupEnd</code></p>
-<p>By default, these functions map directly to the default <code>js/console</code> implementations, but you can override with your own fns (set or subset) if you wish to handle the logging yourself.</p>
+<p>Some docs are available in <a href="http://day8.github.io/re-frame/flow-mechanics/" target="_blank"></a><a href="http://day8.github.io/re-frame/flow-mechanics/">http://day8.github.io/re-frame/flow-mechanics/</a></p></div></div></div><div class="public anchor" id="var-register-handler"><h3>register-handler</h3><h4 class="deprecated">deprecated in 0.8.0</h4><div class="usage"><code>(register-handler &amp; args)</code></div><div class="doc"><div class="markdown"><p>Deprecated. Use <code>reg-event-db</code> instead.</p></div></div></div><div class="public anchor" id="var-register-sub"><h3>register-sub</h3><h4 class="deprecated">deprecated in 0.8.0</h4><div class="usage"><code>(register-sub &amp; args)</code></div><div class="doc"><div class="markdown"><p>Deprecated. Use <code>reg-sub-raw</code> instead.</p></div></div></div><div class="public anchor" id="var-remove-post-event-callback"><h3>remove-post-event-callback</h3><div class="usage"><code>(remove-post-event-callback id)</code></div><div class="doc"><div class="markdown"><p>Unregisters a post event callback function, identified by <code>id</code>. </p>
+<p>Such a function must have been previously registered via <code>add-post-event-callback</code></p></div></div></div><div class="public anchor" id="var-set-loggers.21"><h3>set-loggers!</h3><div class="usage"><code>(set-loggers! new-loggers)</code></div><div class="doc"><div class="markdown"><p>Internally, re-frame outputs warnings, errors etc via logging functions: <code>warn</code>, <code>log</code>, <code>error</code>, <code>group</code> and <code>groupEnd</code></p>
+<p>By default, these functions map directly to their default <code>js/console</code> implementations, but you can override that with your own functions (set or subset). </p>
 <p><code>new-loggers</code> should be a map containing a subset of they keys for the standard <code>loggers</code>.</p>
 <p>Example Usage:</p>
 <pre><code>(defn my-logger      ;; here is my alternative logging function
