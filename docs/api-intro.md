@@ -9,7 +9,7 @@ need to `require` it, perhaps like this:
 ;; now you can use rf/reg-event-fx or rf/subscribe
 ```
 
-## A Rough Map 
+## Commonly Used
 
 When you are writing an app's `View Functions`, use:
 
@@ -39,9 +39,9 @@ Global interceptors can be useful:
   - register then via `reg-global-interceptors` 
   - rarely, remove them via `clear-global-interceptor`
 
-And, when writing event handlers you might want to use the **builtin effects**. These are supplied on their own page - see navigation on the left.
+And, when writing event handlers you might want to use the **builtin effects**. These are detailed on their own page - see navigation on the left.
 
-## More Obscure
+## More Rarely Used
 
 Testing or dev-time related utilities:
 

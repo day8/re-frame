@@ -32,31 +32,34 @@
 
   Usage:
       
-      (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
-   "
+      (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
+  "
   [event]
   (router/dispatch event))
 
 (defn dispatch-sync
   "Synchronously (immediately) process `event`. It does not queue the event
-   for handling later as `dispatch` does.
+  for handling later as `dispatch` does.
+  
+  `event `is a vector and the first element is typically a keyword 
+  which identifies the kind of event.
 
-   Generally, don't use this and, instead, use `dispatch`. It is an error
-   to use `dispatch-sync` within an event handler because you can't immediately
-   process an new event when one is already part way through being processed.
+  Generally, don't use this and, instead, use `dispatch`. It is an error
+  to use `dispatch-sync` within an event handler because you can't immediately
+  process an new event when one is already part way through being processed.
 
-   Useful when any delay in processing will be a problem:
+  Useful when any delay in processing will be a problem:
 
-     1. the `:on-change` handler of a text field where we are expecting fast typing.
-     2. when initialising your app - see 'main' in examples/todomvc/src/core.cljs
-     3. in a unit test where immediate, synchronous processing is useful.
+    1. the `:on-change` handler of a text field where we are expecting fast typing
+    2. when initialising your app - see 'main' in examples/todomvc/src/core.cljs
+    3. in a unit test where immediate, synchronous processing is useful
 
-   Usage:
+  Usage:
 
-       (dispatch-sync [:sing :falsetto 634])
+      (dispatch-sync [:sing :falsetto \"piano accordion\"])
   "
-  [event-v]
-  (router/dispatch-sync event-v))
+  [event]
+  (router/dispatch-sync event))
 
 
 ;; -- subscriptions -----------------------------------------------------------
@@ -240,7 +243,8 @@
   unregisters the associated handler.
 
   NOTE: Depending on the usecase it may also be necessary to call
-         `clear-subscription-cache!`."
+         `clear-subscription-cache!`.
+  "
   ([]
    (registrar/clear-handlers subs/kind))
   ([query-id]
@@ -275,14 +279,14 @@
     - `handler` is a side-effecting function which takes a single argument and whose return
       value is ignored.
 
-  To use, first, associate `:effect2` with a handler.
+   To use, first, associate `:effect2` with a handler.
 
       (reg-fx
          :effect2
          (fn [value]
             ... do something side-effect-y))
 
-  Then, later, if an event handler were to return this effects map ...
+   Then, later, if an event handler were to return this effects map ...
 
       {:effect2  [1 2]}
 
@@ -437,8 +441,8 @@
 
 (defn clear-event ;; think unreg-event-*
   "When called with no args, unregisters all event handlers. When given one arg,
-   assumed to be the `id` of a registered event handler, unregisters the
-   associated handler."
+  assumed to be the `id` of a registered event handler, unregisters the
+  associated handler."
   ([]
    (registrar/clear-handlers events/kind))
   ([id]
@@ -477,12 +481,12 @@
   std-interceptors/debug)
 
 (defn path
-  "returns an interceptor whose `:before` substitutes the coeffects `:db` with
-  a sub-path of `:db`. Within `:after` it grafts the handler's return value
-  back into db, at the right path.
-
-  So, its overall action is to make the event handler behave like the function
-  you might give to clojure's `update-in`.
+  "Returns an interceptor which acts somewhat like `clojure.core/update-in`, in the sense that 
+  the event handler is given a specific part of `app-db` to change, not all of `app-db`. 
+   
+  The interceptor has both a `:before` and `:after` functions. The `:before` replaces  
+  the `:db` key within coeffects with a sub-path within `app-db`. The `:after` reverses the process, 
+  and it grafts the handler's return value back into db, at the right path.
 
   Examples:
 
@@ -495,11 +499,12 @@
 
       (reg-event-db
         :event-id
-        (path [:a :b])  ;; used here, in interceptor chain
-        (fn [b v]       ;; 1st arg is now not db. Is the value from path [:a :b] within db
+        (path [:a :b])  ;; <-- used here, in interceptor chain
+        (fn [b v]       ;; 1st arg is not db. Is the value from path [:a :b] within db
           ... new-b))   ;; returns a new value for that path (not the entire db)
 
   Notes:
+  
     1. `path` may appear more than once in an interceptor chain. Progressive narrowing.
     2. if `:effects` contains no `:db` effect, can't graft a value back in.
   "
@@ -507,7 +512,7 @@
   (apply std-interceptors/path args))
 
 (defn enrich
-  "Returns an Interceptor which runs the given function `f` in the `after handler`
+  "Returns an Interceptor which will run the given function `f` in the `:after`
   position.  
    
   `f` is called with two arguments: `db` and `v`, and is expected to
@@ -709,10 +714,14 @@
   (interceptor/assoc-effect context key value))
 
 (defn enqueue
-  "An advanced utility function, typically used when writing an interceptor's `:before` function.
+  "A utility function, used when writing an interceptor's `:before` function.
 
-  Adds a collection of `interceptors` to the end of `context's` execution `:queue`, and then
-  returns the updated `context`."
+  Adds the given collection of `interceptors` to those already in `context's` 
+  execution `:queue`. It returns the updated `context`.
+   
+  So, it provides a way for one Interceptor to add more interceptors to the 
+  currently executing interceptor chain.
+  "
   [context interceptors]
   (interceptor/enqueue context interceptors))
 
@@ -720,10 +729,10 @@
 ;; --  logging ----------------------------------------------------------------
 
 (defn set-loggers!
-  "Internally, re-frame uses the logging functions: `warn`, `log`, `error`, `group` and `groupEnd`
+  "Internally, re-frame outputs warnings, errors etc via logging functions: `warn`, `log`, `error`, `group` and `groupEnd`
 
-  By default, these functions map directly to the default `js/console` implementations,
-  but you can override with your own fns (set or subset) if you wish to handle the logging yourself.
+  By default, these functions map directly to their default `js/console` implementations,
+  but you can override that with your own functions (set or subset). 
 
   `new-loggers` should be a map containing a subset of they keys for the standard `loggers`.
 
@@ -741,10 +750,10 @@
 
 
 (defn console
-  "A utility function for use in libraries which extend re-frame, like
-  perhaps an effect handler, when they want to produce log output.
+  "A utility logging function to be used by libraries which 
+  extend re-frame, like perhaps an effect handler.
 
-  It will write the given `args` to js/console at the given `level`.
+  It will write the given `args` to js/console at the given log `level`.
 
   `level` can be one of `:log` `:error` `:warn` `:debug` `:group` `:groupEnd`.
 
@@ -759,12 +768,12 @@
 ;; -- unit testing ------------------------------------------------------------
 
 (defn make-restore-fn
-  "A utility function, typically used in testing.
+  "This is a utility function, typically used in testing.
 
-  Checkpoints the state of re-frame and returns a function which, when
-  later called, will restore re-frame to that checkpointed state.
+  It checkpoints the current state of re-frame and returns a function which, when
+  later called, will restore re-frame to the checkpointed state.
 
-  Checkpoint includes app-db, all registered handlers and all subscriptions.
+  The checkpoint includes `app-db`, all registered handlers and all subscriptions.
   "
   []
   (let [handlers @registrar/kind->id->handler
@@ -794,21 +803,22 @@
 ;; -- Event Processing Callbacks  ---------------------------------------------
 
 (defn add-post-event-callback
-  "Registers a function `f` to be called after each event is processed
+  "Registers a function `f` to be called after each event is processed. 
+   
    `f` will be called with two arguments:
 
     - `event`: a vector. The event just processed.
     - `queue`: a PersistentQueue, possibly empty, of events yet to be processed.
 
-   This is useful in advanced cases like:
+   This facility is useful in advanced cases like:
 
      - you are implementing a complex bootstrap pipeline
      - you want to create your own handling infrastructure, with perhaps multiple
        handlers for the one event, etc.  Hook in here.
      - libraries providing 'isomorphic javascript' rendering on  Nodejs or Nashorn.
 
-  'id' is typically a keyword. Supplied at \"add time\" so it can subsequently
-  be used at \"remove time\" to get rid of the right callback.
+  `id` is typically a keyword. If it supplied when an `f` is added, it can be 
+  subsequently be used to identify it for removal. See `remove-post-event-callback`.
   "
   ([f]
    (add-post-event-callback f f))   ;; use f as its own identifier
@@ -817,8 +827,9 @@
 
 
 (defn remove-post-event-callback
-  "Unregisters a post event callback function, identified by `id`. Such a
-  function would  have been registered in the first place via `add-post-event-callback`"
+  "Unregisters a post event callback function, identified by `id`. 
+   
+  Such a function must have been previously registered via `add-post-event-callback`"
   [id]
   (router/remove-post-event-callback re-frame.router/event-queue id))
 
