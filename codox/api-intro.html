@@ -8,20 +8,20 @@
 ;; now you can use rf/reg-event-fx or rf/subscribe
 </code></pre>
 <h2><a href="#commonly-used" name="commonly-used"></a>Commonly Used</h2>
-<p>When you are writing an app’s <code>View Functions</code>, use:</p>
+<p>When you are writing <code>View Functions</code>: </p>
 <ul>
   <li><code>dispatch</code> (or very occasionally, <code>dispatch-sync</code>)</li>
   <li><code>subscribe</code></li>
 </ul>
-<p>In your other namespaces, you register:</p>
+<p>When you are registering handlers:</p>
 <ul>
-  <li>event handlerss - <code>reg-event-db</code> and <code>reg-event-fx</code></li>
+  <li>event handlers - <code>reg-event-db</code> and <code>reg-event-fx</code></li>
   <li>subscription handlers - <code>reg-sub</code> (and rarely <code>reg-sub-raw</code>)</li>
   <li>rarely, effect handlers - <code>reg-fx</code></li>
   <li>rarely, coeffect handlers - <code>reg-cofx</code> with <code>inject-cofx</code></li>
 </ul>
 <p>There is API to clear all these registrations, but this is almost never used.</p>
-<p>When registering <code>event handlers</code>, you might use builtin interceptors: </p>
+<p>When you register <code>event handlers</code>, you might use builtin interceptors: </p>
 <ul>
   <li><code>path</code></li>
   <li><code>on-change</code></li>
@@ -30,12 +30,12 @@
   <li><code>trim-v</code></li>
   <li><code>debug</code></li>
 </ul>
-<p>Global interceptors can be useful:</p>
+<p>Global interceptors can be very useful:</p>
 <ul>
   <li>register then via <code>reg-global-interceptors</code></li>
   <li>rarely, remove them via <code>clear-global-interceptor</code></li>
 </ul>
-<p>And, when writing event handlers you might want to use the <strong>builtin effects</strong>. These are detailed on their own page - see navigation on the left.</p>
+<p>And, when you are writing event handlers, you might want to use the <strong>builtin effects</strong>. These are detailed on their own page - see navigation on the left.</p>
 <h2><a href="#more-rarely-used" name="more-rarely-used"></a>More Rarely Used</h2>
 <p>Testing or dev-time related utilities:</p>
 <ul>
@@ -48,7 +48,7 @@
   <li><code>console</code></li>
   <li><code>set-loggers</code></li>
 </ul>
-<p>If you need to write an Interceptor, use these utilities. To see how they are used, look at the <a href="https://github.com/day8/re-frame/blob/master/src/re_frame/std_interceptors.cljc">re-frame code for builtin Interceptors</a>:</p>
+<p>If you write an Interceptor, use these utilities. To see how they are used, look at the <a href="https://github.com/day8/re-frame/blob/master/src/re_frame/std_interceptors.cljc">re-frame code for builtin Interceptors</a>:</p>
 <ul>
   <li><code>-&gt;interceptor</code></li>
   <li><code>get-coeffect</code></li>
