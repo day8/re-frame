@@ -22,18 +22,17 @@
 (defn dispatch
   "Queue `event` for processing by re-frame's event handling machinery.
 
-   `event` is a vector and the first element is typically a keyword which
-   identifies the kind of event.
+  `event` is a vector and the first element is typically a keyword which
+  identifies the kind of event.
 
-   The event will be added to the end of a FIFO processing queue. So,
-   event handling does not happen immediately. It will likely happen
-   'very soon', bit not now. And if the queue already contains events,
-   they will be processed first.
+  The event will be added to the end of a FIFO processing queue. So,
+  event handling does not happen immediately. It will likely happen
+  'very soon', bit not now. And if the queue already contains events,
+  they will be processed first.
 
-   Usage:
-   ```clj
-   (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
-   ```
+  Usage:
+      
+      (dispatch [:order-pizza \"me\" {:supreme 2 :meatlovers 1 :veg 1}])
    "
   [event]
   (router/dispatch event))
@@ -49,13 +48,12 @@
    Useful when any delay in processing will be a problem:
 
      1. the `:on-change` handler of a text field where we are expecting fast typing.
-     2  when initialising your app - see 'main' in examples/todomvc/src/core.cljs
+     2. when initialising your app - see 'main' in examples/todomvc/src/core.cljs
      3. in a unit test where immediate, synchronous processing is useful.
 
    Usage:
-   ```clj
-   (dispatch-sync [:sing :falsetto 634])
-   ```
+
+       (dispatch-sync [:sing :falsetto 634])
   "
   [event-v]
   (router/dispatch-sync event-v))
@@ -206,12 +204,11 @@
   historical reasons and is borderline deprecated these days.
 
   #### Example Usage:
-  ```clj
-  (subscribe [:items])
-  (subscribe [:items \"blue\" :small])
-  (subscribe [:items {:colour \"blue\"  :size :small}])
-  ```
 
+      (subscribe [:items])
+      (subscribe [:items \"blue\" :small])
+      (subscribe [:items {:colour \"blue\"  :size :small}])
+ 
   Note: for any given call to `subscribe` there must have been a previous call
   to `reg-sub`, registering the query handler (function) for the `query-id` given.
 
@@ -219,14 +216,13 @@
 
   When used in a view function BE SURE to `deref` the returned value.
   In fact, to avoid any mistakes, some prefer to define:
-  ```clj
-  (def <sub  (comp deref re-frame.core/subscribe))
-  ```
-
+  
+      (def <sub  (comp deref re-frame.core/subscribe))
+ 
   And then, within their views, they call  `(<sub [:items :small])` rather
   than using `subscribe` directly.
 
-  ### De-duplication
+  #### De-duplication
 
   Two, or more, concurrent subscriptions for the same query will source reactive
   updates from the one executing handler.
@@ -257,10 +253,7 @@
   to subscription handler code or after a React/render exception, because React components won't have been
   cleaned up properly. And this, in turn, means the subscriptions within those
   components won't have been cleaned up correctly. So this forces the issue.
-
-   Implementation note: it calls `on-dispose` for each cached item,
-   and it is that fucntion which actually performs the cache removal.
-   "
+  "
   []
   (subs/clear-subscription-cache!))
 
@@ -278,33 +271,35 @@
 (defn reg-fx
   "Register the given effect `handler` for the given `id`:
 
-  - `id` is keyword, often namespaced.
-  - `handler` is a side-effecting function which takes a single argument and whose return
-    value is ignored.
+    - `id` is keyword, often namespaced.
+    - `handler` is a side-effecting function which takes a single argument and whose return
+      value is ignored.
 
-  Example Use
-  First, registration ... associate `:effect2` with a handler.
+  To use, first, associate `:effect2` with a handler.
 
-  (reg-fx
-     :effect2
-     (fn [value]
-        ... do something side-effect-y))
+      (reg-fx
+         :effect2
+         (fn [value]
+            ... do something side-effect-y))
 
   Then, later, if an event handler were to return this effects map ...
 
-  {...
-   :effect2  [1 2]}
+      {:effect2  [1 2]}
 
-   ... then the `handler` `fn` we registered previously, using `reg-fx`, will be
-   called with an argument of `[1 2]`."
+   then the `handler` `fn` we registered previously, using `reg-fx`, will be
+   called with an argument of `[1 2]`.
+   "
   [id handler]
   (fx/reg-fx id handler))
 
 
 (defn clear-fx ;; think unreg-fx
-  "When called with no args, unregisters all effect handlers. When given one arg,
+  "When called with no args, unregisters all effect handlers. 
+   
+  When given one arg,
   assumed to be the `id` of a registered effect handler, unregisters the
-  associated handler."
+  associated handler.
+  "
   ([]
    (registrar/clear-handlers fx/kind))
   ([id]
@@ -320,7 +315,7 @@
        always `coeffects` and which returns an updated `coeffects`.
 
   See the docs for `inject-cofx` for example use.
-   "
+  "
   [id handler]
   (cofx/reg-cofx id handler))
 
@@ -400,8 +395,8 @@
     - `handler` is a function: (db event) -> db
     - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
-   Note: `handler` is wrapped in its own interceptor and added to the end of the interceptor
-       chain, so that, in the end, only a chain is registered.
+  Note: `handler` is wrapped in its own interceptor and added to the end of the interceptor
+  chain, so that, in the end, only a chain is registered.
   "
   ([id handler]
    (reg-event-db id nil handler))
@@ -417,9 +412,9 @@
     - `handler` is a function: (coeffects-map event-vector) -> effects-map
     - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
-   Note: `handler` is wrapped in its own interceptor and added to the end of the interceptor
-       chain, so that, in the end, only a chain is registered.
-   "
+  Note: `handler` is wrapped in its own interceptor and added to the end of the interceptor
+  chain, so that, in the end, only a chain is registered.
+  "
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
@@ -428,11 +423,13 @@
 
 (defn reg-event-ctx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
-  an `interceptors` chain.
-  `id` is typically a namespaced keyword  (but can be anything)
-  `handler` is a function: (context-map event-vector) -> context-map
+  an `interceptors` chain:
+   
+    - `id` is typically a namespaced keyword  (but can be anything)
+    - `handler` is a function: (context-map event-vector) -> context-map
 
-  This form of registration is almost never used. "
+  This form of registration is almost never used.
+  "
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
@@ -455,11 +452,11 @@
 
   Output includes:
 
-  1. the event vector
-  2. a `clojure.data/diff` of db, before vs after, which shows
-     the changes caused by the event handler. To understand the output,
-     you should understand:
-     <a href=\"https://clojuredocs.org/clojure.data/diff\" target=\"_blank\">https://clojuredocs.org/clojure.data/diff</a>.
+    1. the event vector
+    2. a `clojure.data/diff` of db, before vs after, which shows
+       the changes caused by the event handler. To understand the output,
+       you should understand:
+       <a href=\"https://clojuredocs.org/clojure.data/diff\" target=\"_blank\">https://clojuredocs.org/clojure.data/diff</a>.
 
   You'd typically include this interceptor after (to the right of) any
   `path` interceptor.
@@ -469,13 +466,13 @@
   code. So condition it out like this :
 
       (re-frame.core/reg-event-db
-         :evt-id
-         [(when ^boolean goog.DEBUG re-frame.core/debug)]  ;; <-- conditional
-         (fn [db v]
+        :evt-id
+        [(when ^boolean goog.DEBUG re-frame.core/debug)]  ;; <-- conditional
+        (fn [db v]
            ...))
 
-  To make this code fragment work, you'll also have to set goog.DEBUG to
-  false in your production builds - look in `project.clj` of /examples/todomvc.
+  To make this code fragment work, you'll also have to set `goog.DEBUG` to
+  `false` in your production builds. For an example, look in `project.clj` of /examples/todomvc.
   "
   std-interceptors/debug)
 
@@ -510,15 +507,17 @@
   (apply std-interceptors/path args))
 
 (defn enrich
-  "Interceptor factory which runs the given function `f` in the `after handler`
-  position.  `f` is called with two arguments: `db` and `v`, and is expected to
+  "Returns an Interceptor which runs the given function `f` in the `after handler`
+  position.  
+   
+  `f` is called with two arguments: `db` and `v`, and is expected to
   return a modified `db`.
 
   Unlike the `after` interceptor which is only about side effects, `enrich`
   expects `f` to process and alter the given `db` coeffect in some useful way,
   contributing to the derived data, flowing vibe.
 
-  Example Use:
+  #### Example Use:
 
   Imagine that todomvc needed to do duplicate detection - if any two todos had
   the same text, then highlight their background, and report them via a warning
@@ -571,9 +570,7 @@
   std-interceptors/trim-v)
 
 (defn after
-  "An interceptor factory, which is to say, a function which will return an interceptor.
-
-  Returns an interceptor which runs a given function `f` in the `:after`
+  "Returns an interceptor which runs the given function `f` in the `:after`
   position, presumably for side effects.
 
   `f` is called with two arguments: the `:effects` value for `:db`
@@ -588,11 +585,9 @@
   (std-interceptors/after f))
 
 (defn on-changes
-  "An interceptor factory, which is to say, a function which will return an interceptor.
-
-  Returns an interceptor which will observe N paths within `db`, and if any of them
+  "Returns an interceptor which will observe N paths within `db`, and if any of them
   test not identical? to their previous value  (as a result of a event handler
-  being run), then it runs `f` to compute a new value, which is then assoc-ed
+  being run), then it will run `f` to compute a new value, which is then assoc-ed
   into the given `out-path` within `db`.
 
   Example Usage:
@@ -611,8 +606,8 @@
            ...))
 
 
-    Put this Interceptor on handlers which might change paths :a or :b
-    and it will:
+    If you put this Interceptor on handlers which might change paths :a or :b,
+    it will:
 
      - call `f` each time the value at path [:a] or [:b] changes
      - call `f` with the values extracted from [:a] [:b]

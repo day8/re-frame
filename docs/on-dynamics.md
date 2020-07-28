@@ -14,53 +14,61 @@ But, as Dijkstra notes, this is hard.
 
 > **re-frame has a simple dynamic process**
 
-It is the purpose of this page to explore and justify this claim. 
+It is the purpose of this page to explain and justify this claim. 
 
 
 > **There's almost no more important point to make about re-frame than this one**
 
-re-frame's primary design goal is that it delivers an excellent developer experience. 
-And nothing contributes to this goal more than it having "a simple dynamic model".
+re-frame's primary design goal is to deliver an excellent developer experience. 
+And there were no sacred cows in this persuit. For example, even functional purity 
+is sacrificed in places to deliver an simpler/easier developer experience.
+
+But nothing contributes to the goal more than re-frame having "a simple dynamic model".
 Almost nothing makes a programmer's job easier than 
 a simple dynamic model. Almost nothing reduces bugs more than a simple dynamic model.
 
 ## On Dynamics
 
-When scientists or engineers study "Dynamics" they look at how a system develops or
+When scientists or engineers study "Dynamics" they observe how a system develops or
 changes over time/space, and at the causes of those changes. Think of Hydrodynamics, Thermodynamics and Social Dynamics.
 
 A Web App is a "sequential process", and over time a sequential process will shift from one `State` to another, and consequently,
-often from one behaviour to another. The system "Dynamics" involve interactions between `Computation` and `State`, across time.
+often from one behaviour to another. The "Dynamics" of such a system involve interactions between `Computation` and `State`, across time.
 
-`State` is effectively congealed time -  history materialised - and it is accreted by rounds of `Computation`. Although it is 
-Computation which creates the state, this Computation is itself controlled by the State because, for example, predicates on State 
+`State` is effectively congealed time -  history materialised - and it is accreted by rounds of `Computation`.Although 
+Computation which creates the State, this Computation is itself controlled by the State because, for example, predicates on State 
 determine which branches of Computation are executed. So, there's a feedback loop between these two. 
 
 For a programmer, even just a few steps into any mental simulation, there
-can be a lot to juggle, and we could be near the limits of our cognitive budget. Which leads to Dijkstra's lament. 
+can be a lot to juggle, and we could be near the limits of our cognitive budget. 
+Which leads to Dijkstra's lament. 
 
 Certain kinds of interactions between time, `State` & `Computation` reduce dynamic complexity, 
 making mental simulations easier, while others do the opposite and make it virtually impossible. And, any
 systems on the "impossible" end of that continuum, will breed nasty bugs and be scary to maintain.
 
-As programmers, we often talk about static concerns like DRY, line count, and "cohesion vs coupling". 
-And while, yes, they are all useful, perhaps we should pay more attention to the qualities which 
-make runtimes easier or harder to simulate in our heads.
+## Dynamic vs Static Concerns
+
+Programmers often focus on static aspect of their systems. For example, they talk about concerns like DRY, line count, and "cohesion vs coupling". And, yes, that's useful, but perhaps we should pay more attention to the qualities which make runtimes easier or harder to simulate in our heads. **This doesn't get talked about nearly enough.**
+
+The goal with re-frame was to have the simplest dynamic model possible, because that, above all else, drives developer productivity. ( Well, that, and the immediate feedback provided by fast hot code reloading)
+
+Let's talk about how re-frame delivers a simple dynamic model. We'll start off at a high level and then work our way down.
 
 ## re-frame Time
 
-A re-frame app progresses one event at a time through its computational/state space. So, the unit of time is an event.
+A re-frame app progresses one event at a time through its computational/state space. The unit of time is one event.
 
 Each event is entirely processed
 from beginning to end before the next event on the queue is processed.
 re-frame does not support the idea that an event can be "suspended" 
 and then, later, restarted. A re-frame app is only ever doing one thing (one event) at a time.
 
-And, when one of these events changes application state, it does so 
+Also, when an event changes application state, it does so 
 transactionally (instantly), in one fell swoop, not incrementally.
 
-So, at the highest level, re-frame delivers dynamics in discrete units, with a clear start and end, 
-which can then be understood and analysed independently. This helps to simplify the dynamics. 
+So, at a high level, re-frame delivers dynamics in discrete units, with a clear start and end, 
+which can then be understood and analysed independently.
 
 But, how about one level down, **_within_** the processing of a single event? What about those dynamics? 
 

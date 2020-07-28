@@ -18,34 +18,38 @@ klipse: true
 
 Are you new to ClojureScript?  This page will teach you to ***read Clojure*** in 40 minutes.
 
-Specifically, it will teach you enough to read `Reagent` and `re-frame` code (building Web UIs).
+This tutorial is a part of the re-frame documentation suite, so it has a specific focus: 
+it will teach you enough ClojureScript to read `Reagent` and `re-frame` code (for building Web UIs).
 Learning to *write ClojureScript* is a larger skill, which will require more than 40 mins, 
-but this page does contain some interactive, live coding to get you started. 
+but this page does contain some interactive, live coding to get you started.
 
 ## In A Nutshell, Why?
 
-Clojure is a modern LISP. 
+Clojure is a modern LISP.
 
 Alan Kay once descibed LISP as "Maxwell's equations of software".
 Paul Graham says LISP was a competitive advantage for his startup.
 Dijkstra has written glowingly of it.
-For 50 years, some of the finest minds in software have admired it, used it and refined it. 
+For 50 years, some of the finest minds in software have admired it, used it and refined it.
 
-In the years leading up to 2010, Rich Hickey created Clojure, introducing a number of key inovations 
-(later adopted by other functional languages), and he did it well away from 
-acedemia, because he wanted to create a pragmatic language for commercial developers.
+In the years leading up to 2010, Rich Hickey created Clojure, introducing key inovations
+(subsequently adopted by other functional languages), 
+and he did it well away from 
+acedemia (LISP's traditional home), because he wanted to create a pragmatic language for commercial developers.
 
-Overall, Clojure is a foliated masterpiece. 
+Overall, Clojure is a foliated masterpiece. Lisp went through its washing machine phase of churn in the 70s and 80s and these days 
+it is like a beautiful, deep clear water lake, rayifing 50 years of evolutuon. 
 
-As the owner of a company which develops software products, I believe ClojureScript gives us a
+As the owner of a company which develops software products, I'm quite sure ClojureScript gives us a
 competitive edge. As a programmer, I feel like it has provided me with excellent,
-nourishing brain food. It is a stable, productive place, with little churn.
+nourishing brain food. It is a stable, productive place.
 
 In contrast, when I look across to the Javascript landscape, it appears like a churning 
 washing machine with not much new or interesting to teach me. Learning a LISP will likely
-make you better developer for life, even if you aren't using LISP.
+make you better developer for life, even if you aren't using LISP. (The same goes for  
+Haskel, Erlang, C, J, Prolog and Smalltalk).
 
-> Clojure runs on the JVM. ClojureScript runs in the browser. They are essentially the same language but our focus is ClojureScript.
+> Clojure runs on the JVM. ClojureScript runs in the browser. They are essentially the same language but our focus here is ClojureScript.
 
 So, 40 mins ...
 
