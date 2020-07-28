@@ -2,13 +2,13 @@
     "">
 <html><head><meta charset="UTF-8" /><title>Overview</title><link rel="stylesheet" type="text/css" href="css/default.css" /><link rel="stylesheet" type="text/css" href="css/highlight.css" /><script type="text/javascript" src="js/highlight.min.js"></script><script type="text/javascript" src="js/jquery.min.js"></script><script type="text/javascript" src="js/page_effects.js"></script><script>hljs.initHighlightingOnLoad();</script><link rel="stylesheet" type="text/css" href="styles/codox-re-frame.css" /></head><body><div></div><div class="sidebar primary"><h3 class="no-link"><span class="inner">Project</span></h3><div></div><h3 class="no-link"><span class="inner">Topics</span></h3><ul><li class="depth-1  current"><a href="api-intro.html"><div class="inner"><span>Overview</span></div></a></li><li class="depth-1 "><a href="api-builtin-effects.html"><div class="inner"><span>Builtin Effects</span></div></a></li></ul><h3 class="no-link"><span class="inner">Namespaces</span></h3><ul><li class="depth-1 "><a href="re-frame.core.html"><div class="inner"><span>re-frame.core</span></div></a></li></ul></div><div class="document" id="content"><div class="doc"><div class="markdown"><h1><a href="#overview" name="overview"></a>Overview</h1>
 <p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you’ll need to <code>require</code> it, perhaps like this:</p>
-<pre><code class="clj">  (ns app.namespace
-    (:require [re-frame.core :as rf]))
+<pre><code class="clj">(ns app.namespace
+  (:require [re-frame.core :as rf]))
 
-    ... now use rf/reg-event-fx or rf/subscribe
+;; now you can use rf/reg-event-fx or rf/subscribe
 </code></pre>
 <h2><a href="#a-rough-map" name="a-rough-map"></a>A Rough Map</h2>
-<p>When you are writing an app’s <code>View Functions</code>, you’ll use:</p>
+<p>When you are writing an app’s <code>View Functions</code>, use:</p>
 <ul>
   <li><code>dispatch</code> (or very occasionally, <code>dispatch-sync</code>)</li>
   <li><code>subscribe</code></li>
@@ -30,7 +30,11 @@
   <li><code>trim-v</code></li>
   <li><code>debug</code></li>
 </ul>
-<p>Install global interceptors via <code>reg-global-interceptors</code> and remove them via <code>clear-global-interceptor</code>.</p>
+<p>Global interceptors can be useful:</p>
+<ul>
+  <li>register then via <code>reg-global-interceptors</code></li>
+  <li>rarely, remove them via <code>clear-global-interceptor</code></li>
+</ul>
 <p>And, when writing event handlers you might want to use the <strong>builtin effects</strong>. These are supplied on their own page - see navigation on the left.</p>
 <h2><a href="#more-obscure" name="more-obscure"></a>More Obscure</h2>
 <p>Testing or dev-time related utilities:</p>
@@ -44,7 +48,7 @@
   <li><code>console</code></li>
   <li><code>set-loggers</code></li>
 </ul>
-<p>If you need to write an Interceptor, use these utilities (see how they are used in re-frame code for builtin Interceptors):</p>
+<p>If you need to write an Interceptor, use these utilities. To see how they are used, look at the <a href="https://github.com/day8/re-frame/blob/master/src/re_frame/std_interceptors.cljc">re-frame code for builtin Interceptors</a>:</p>
 <ul>
   <li><code>-&gt;interceptor</code></li>
   <li><code>get-coeffect</code></li>

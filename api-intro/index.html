@@ -1378,15 +1378,15 @@
                 <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h1>
 <p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you'll 
 need to <code>require</code> it, perhaps like this:</p>
-<div class="codehilite"><pre><span></span><code>  <span class="p">(</span><span class="kd">ns </span><span class="nv">app.namespace</span>
-    <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">re-frame.core</span> <span class="ss">:as</span> <span class="nv">rf</span><span class="p">]))</span>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">app.namespace</span>
+  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">re-frame.core</span> <span class="ss">:as</span> <span class="nv">rf</span><span class="p">]))</span>
 
-    <span class="nv">...</span> <span class="nv">now</span> <span class="nv">use</span> <span class="nv">rf/reg-event-fx</span> <span class="nb">or </span><span class="nv">rf/subscribe</span>
+<span class="c1">;; now you can use rf/reg-event-fx or rf/subscribe</span>
 </code></pre></div>
 
 
 <h2 id="a-rough-map">A Rough Map<a class="headerlink" href="#a-rough-map" title="Permanent link">&para;</a></h2>
-<p>When you are writing an app's <code>View Functions</code>, you'll use:</p>
+<p>When you are writing an app's <code>View Functions</code>, use:</p>
 <ul>
 <li><code>dispatch</code> (or very occasionally, <code>dispatch-sync</code>)</li>
 <li><code>subscribe</code></li>
@@ -1408,7 +1408,11 @@ need to <code>require</code> it, perhaps like this:</p>
 <li><code>trim-v</code></li>
 <li><code>debug</code></li>
 </ul>
-<p>Install global interceptors via <code>reg-global-interceptors</code> and remove them via <code>clear-global-interceptor</code>.</p>
+<p>Global interceptors can be useful:</p>
+<ul>
+<li>register then via <code>reg-global-interceptors</code> </li>
+<li>rarely, remove them via <code>clear-global-interceptor</code></li>
+</ul>
 <p>And, when writing event handlers you might want to use the <strong>builtin effects</strong>. These are supplied on their own page - see navigation on the left.</p>
 <h2 id="more-obscure">More Obscure<a class="headerlink" href="#more-obscure" title="Permanent link">&para;</a></h2>
 <p>Testing or dev-time related utilities:</p>
@@ -1422,7 +1426,8 @@ need to <code>require</code> it, perhaps like this:</p>
 <li><code>console</code></li>
 <li><code>set-loggers</code></li>
 </ul>
-<p>If you need to write an Interceptor, use these utilities (see how they are used in re-frame code for builtin Interceptors):</p>
+<p>If you need to write an Interceptor, use these utilities. To see how they are used, look 
+at the <a href="https://github.com/day8/re-frame/blob/master/src/re_frame/std_interceptors.cljc">re-frame code for builtin Interceptors</a>:</p>
 <ul>
 <li><code>-&gt;interceptor</code></li>
 <li><code>get-coeffect</code> </li>

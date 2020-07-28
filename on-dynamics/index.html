@@ -721,6 +721,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#dynamic-vs-static-concerns" class="md-nav__link">
+    Dynamic vs Static Concerns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#re-frame-time" class="md-nav__link">
     re-frame Time
   </a>
@@ -1454,6 +1461,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#dynamic-vs-static-concerns" class="md-nav__link">
+    Dynamic vs Static Concerns
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#re-frame-time" class="md-nav__link">
     re-frame Time
   </a>
@@ -1537,40 +1551,44 @@ and in their heads, they'll be performing a runtime simulation of their code.</p
 <blockquote>
 <p><strong>re-frame has a simple dynamic process</strong></p>
 </blockquote>
-<p>It is the purpose of this page to explore and justify this claim. </p>
+<p>It is the purpose of this page to explain and justify this claim. </p>
 <blockquote>
 <p><strong>There's almost no more important point to make about re-frame than this one</strong></p>
 </blockquote>
-<p>re-frame's primary design goal is that it delivers an excellent developer experience. 
-And nothing contributes to this goal more than it having "a simple dynamic model".
+<p>re-frame's primary design goal is to deliver an excellent developer experience. 
+And there were no sacred cows in this persuit. For example, even functional purity 
+is sacrificed in places to deliver an simpler/easier developer experience.</p>
+<p>But nothing contributes to the goal more than re-frame having "a simple dynamic model".
 Almost nothing makes a programmer's job easier than 
 a simple dynamic model. Almost nothing reduces bugs more than a simple dynamic model.</p>
 <h2 id="on-dynamics">On Dynamics<a class="headerlink" href="#on-dynamics" title="Permanent link">&para;</a></h2>
-<p>When scientists or engineers study "Dynamics" they look at how a system develops or
+<p>When scientists or engineers study "Dynamics" they observe how a system develops or
 changes over time/space, and at the causes of those changes. Think of Hydrodynamics, Thermodynamics and Social Dynamics.</p>
 <p>A Web App is a "sequential process", and over time a sequential process will shift from one <code>State</code> to another, and consequently,
-often from one behaviour to another. The system "Dynamics" involve interactions between <code>Computation</code> and <code>State</code>, across time.</p>
-<p><code>State</code> is effectively congealed time -  history materialised - and it is accreted by rounds of <code>Computation</code>. Although it is 
-Computation which creates the state, this Computation is itself controlled by the State because, for example, predicates on State 
+often from one behaviour to another. The "Dynamics" of such a system involve interactions between <code>Computation</code> and <code>State</code>, across time.</p>
+<p><code>State</code> is effectively congealed time -  history materialised - and it is accreted by rounds of <code>Computation</code>.Although 
+Computation which creates the State, this Computation is itself controlled by the State because, for example, predicates on State 
 determine which branches of Computation are executed. So, there's a feedback loop between these two. </p>
 <p>For a programmer, even just a few steps into any mental simulation, there
-can be a lot to juggle, and we could be near the limits of our cognitive budget. Which leads to Dijkstra's lament. </p>
+can be a lot to juggle, and we could be near the limits of our cognitive budget. 
+Which leads to Dijkstra's lament. </p>
 <p>Certain kinds of interactions between time, <code>State</code> &amp; <code>Computation</code> reduce dynamic complexity, 
 making mental simulations easier, while others do the opposite and make it virtually impossible. And, any
 systems on the "impossible" end of that continuum, will breed nasty bugs and be scary to maintain.</p>
-<p>As programmers, we often talk about static concerns like DRY, line count, and "cohesion vs coupling". 
-And while, yes, they are all useful, perhaps we should pay more attention to the qualities which 
-make runtimes easier or harder to simulate in our heads.</p>
+<h2 id="dynamic-vs-static-concerns">Dynamic vs Static Concerns<a class="headerlink" href="#dynamic-vs-static-concerns" title="Permanent link">&para;</a></h2>
+<p>Programmers often focus on static aspect of their systems. For example, they talk about concerns like DRY, line count, and "cohesion vs coupling". And, yes, that's useful, but perhaps we should pay more attention to the qualities which make runtimes easier or harder to simulate in our heads. <strong>This doesn't get talked about nearly enough.</strong></p>
+<p>The goal with re-frame was to have the simplest dynamic model possible, because that, above all else, drives developer productivity. ( Well, that, and the immediate feedback provided by fast hot code reloading)</p>
+<p>Let's talk about how re-frame delivers a simple dynamic model. We'll start off at a high level and then work our way down.</p>
 <h2 id="re-frame-time">re-frame Time<a class="headerlink" href="#re-frame-time" title="Permanent link">&para;</a></h2>
-<p>A re-frame app progresses one event at a time through its computational/state space. So, the unit of time is an event.</p>
+<p>A re-frame app progresses one event at a time through its computational/state space. The unit of time is one event.</p>
 <p>Each event is entirely processed
 from beginning to end before the next event on the queue is processed.
 re-frame does not support the idea that an event can be "suspended" 
 and then, later, restarted. A re-frame app is only ever doing one thing (one event) at a time.</p>
-<p>And, when one of these events changes application state, it does so 
+<p>Also, when an event changes application state, it does so 
 transactionally (instantly), in one fell swoop, not incrementally.</p>
-<p>So, at the highest level, re-frame delivers dynamics in discrete units, with a clear start and end, 
-which can then be understood and analysed independently. This helps to simplify the dynamics. </p>
+<p>So, at a high level, re-frame delivers dynamics in discrete units, with a clear start and end, 
+which can then be understood and analysed independently.</p>
 <p>But, how about one level down, <strong><em>within</em></strong> the processing of a single event? What about those dynamics? </p>
 <h2 id="processing-an-event">Processing An Event<a class="headerlink" href="#processing-an-event" title="Permanent link">&para;</a></h2>
 <p>Do you remember those "theory of computation" lectures at Uni? The most limited 
