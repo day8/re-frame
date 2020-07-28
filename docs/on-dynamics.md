@@ -5,7 +5,7 @@
 
 
 When programmers work, they need to reason about the **runtime dynamics** of their code - about
-what happens over time, as it runs. They'll be staring, without seeing, at a spot in space, 
+what happens when it runs. They'll be staring, without seeing, at a spot in space, 
 and in their heads, they'll be performing a runtime simulation of their code.
 
 But, as Dijkstra notes, this is hard.
@@ -20,28 +20,35 @@ It is the purpose of this page to explain and justify this claim.
 > **There's almost no more important point to make about re-frame than this one**
 
 re-frame's primary design goal is to deliver an excellent developer experience. 
-And there were no sacred cows in this persuit. For example, even functional purity 
-is sacrificed in places to deliver an simpler/easier developer experience.
+And there were no sacred cows in this pursuit. Even functional purity 
+was sacrificed in places (gasp!) to deliver a simpler/easier developer experience.
 
-But nothing contributes to the goal more than re-frame having "a simple dynamic model".
-Almost nothing makes a programmer's job easier than 
-a simple dynamic model. Almost nothing reduces bugs more than a simple dynamic model.
+But, it was worth it, because nothing contributes to the goal more than 
+re-frame having "a simple dynamic model". Almost nothing makes a programmer's 
+job easier than a simple dynamic model. Almost nothing reduces bugs more than
+a simple dynamic model.
 
 ## On Dynamics
 
 When scientists or engineers study "Dynamics" they observe how a system develops or
-changes over time/space, and at the causes of those changes. Think of Hydrodynamics, Thermodynamics and Social Dynamics.
+changes over time/space, and at the causes of those changes. Think of Hydrodynamics,
+Thermodynamics and Social Dynamics.
 
-A Web App is a "sequential process", and over time a sequential process will shift from one `State` to another, and consequently,
-often from one behaviour to another. The "Dynamics" of such a system involve interactions between `Computation` and `State`, across time.
+A Web App is a "sequential process", and over time a sequential process will shift 
+from one `State` to another, and consequently, often from one behaviour to another. 
+The "Dynamics" of such a system involve interactions between `Computation` and `State`,
+across time.
 
-`State` is effectively congealed time -  history materialised - and it is accreted by rounds of `Computation`.Although 
-Computation which creates the State, this Computation is itself controlled by the State because, for example, predicates on State 
-determine which branches of Computation are executed. So, there's a feedback loop between these two. 
+`State` is effectively congealed time -  history materialised - and it is accreted 
+by rounds of `Computation`. Although Computation creates the State, it is itself 
+controlled by the State because, for example, predicates on State determine
+which branches of Computation are executed. So, there's a feedback loop between these two. 
+
+Egads, did someone just say feedback loop?
 
 For a programmer, even just a few steps into any mental simulation, there
 can be a lot to juggle, and we could be near the limits of our cognitive budget. 
-Which leads to Dijkstra's lament. 
+Which, of course, leads to Dijkstra's lament. 
 
 Certain kinds of interactions between time, `State` & `Computation` reduce dynamic complexity, 
 making mental simulations easier, while others do the opposite and make it virtually impossible. And, any
@@ -49,15 +56,17 @@ systems on the "impossible" end of that continuum, will breed nasty bugs and be 
 
 ## Dynamic vs Static Concerns
 
-Programmers often focus on static aspect of their systems. For example, they talk about concerns like DRY, line count, and "cohesion vs coupling". And, yes, that's useful, but perhaps we should pay more attention to the qualities which make runtimes easier or harder to simulate in our heads. **This doesn't get talked about nearly enough.**
+Programmers are surprisingly focused on the static aspect of their systems. For example,
+they talk about concerns like DRY, line count, and "cohesion vs coupling". And, yes, that's useful, but perhaps we should pay more attention to the qualities which make runtimes easier or harder to simulate in our heads. **This doesn't get talked about nearly enough.**
 
-The goal with re-frame was to have the simplest dynamic model possible, because that, above all else, drives developer productivity. ( Well, that, and the immediate feedback provided by fast hot code reloading)
+The goal with re-frame was to have the simplest dynamic model possible, because that, above all else, drives developer productivity. (Well, that, and the immediate feedback provided by fast hot code reloading)
 
-Let's talk about how re-frame delivers a simple dynamic model. We'll start off at a high level and then work our way down.
+So, let's talk about how re-frame delivers a simple dynamic model. And, we'll start off at a high level and then work our way down.
 
 ## re-frame Time
 
-A re-frame app progresses one event at a time through its computational/state space. The unit of time is one event.
+A re-frame app progresses one event at a time through its computational/state space.
+The unit of time is one event.
 
 Each event is entirely processed
 from beginning to end before the next event on the queue is processed.
@@ -91,7 +100,7 @@ which you know already as "The Dominoes". Only one state at a time is happening,
 there is specific behaviour/computation, and each of them is sufficiently isolated from the others 
 that it can be understood and analysed independently. You can comfortably "zoom in" to understand each part, ignoring the rest.
 
-The re-frame docs don't formally talk about FSMs and, instead, present it as a "data flow" which 
+The re-frame docs don't formally talk about FSMs and, instead, presents it as a "data flow" which 
 causes transitions from one state to another. 
 But the dominos are like a simple FSM "in nature". And, consequently, each event is processed using a
 simple kind of computation, making it easy to simulate in your head. 
