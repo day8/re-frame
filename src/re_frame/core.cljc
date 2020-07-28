@@ -19,16 +19,17 @@
 
 
 ;; -- dispatch ----------------------------------------------------------------
+
 (defn dispatch
-  "Queue `event` for processing by re-frame's event handling machinery.
+  "Queue `event` for processing (handling). 
 
-  `event` is a vector and the first element is typically a keyword which
-  identifies the kind of event.
+  `event` is a vector and the first element is typically a keyword
+  which identifies the kind of event.
 
-  The event will be added to the end of a FIFO processing queue. So,
-  event handling does not happen immediately. It will likely happen
-  'very soon', bit not now. And if the queue already contains events,
-  they will be processed first.
+  The event will be added to a FIFO processing queue, so event
+  handling does not happen immediately. It will happen 'very soon'
+  bit not now. And if the queue already contains events, they
+  will be processed first.
 
   Usage:
       
@@ -38,17 +39,19 @@
   (router/dispatch event))
 
 (defn dispatch-sync
-  "Synchronously (immediately) process `event`. It does not queue the event
-  for handling later as `dispatch` does.
+  "Synchronously (immediately) process `event`. It does **not** queue
+  the event for handling later as `dispatch` does.
   
   `event `is a vector and the first element is typically a keyword 
   which identifies the kind of event.
 
-  Generally, don't use this and, instead, use `dispatch`. It is an error
-  to use `dispatch-sync` within an event handler because you can't immediately
-  process an new event when one is already part way through being processed.
+  Generally, avoid using this function, and instead, use `dispatch`. It 
+  is an error to use `dispatch-sync` within an event handler because 
+  you can't immediately process an new event when one is already
+  part way through being processed.
 
-  Useful when any delay in processing will be a problem:
+  Can be useful in a narrow set of cases where any delay in 
+  processing is a problem:
 
     1. the `:on-change` handler of a text field where we are expecting fast typing
     2. when initialising your app - see 'main' in examples/todomvc/src/core.cljs
@@ -64,39 +67,49 @@
 
 ;; -- subscriptions -----------------------------------------------------------
 (defn reg-sub
-  "For a given `query-id`, register two functions: a `computation` function and an `input signals` function.
-
-  During program execution, a call to `subscribe`, such as `(subscribe [:sub-id 3 \"blue\"])`,
-  will create a new `:sub-id` node in the Signal Graph. And, at that time, re-frame
-  needs to know how to create the node.   By calling `reg-sub`, you are registering
-  'the template' or 'the mechanism' by which nodes in the Signal Graph can be created.
-
-  Repeating: calling `reg-sub` does not create a node. It only creates the template
-  from which nodes can be created later, when they are bought into existence via use of 
-  `subscribe` in a `View Function`.
-
-  `reg-sub` arguments are:
+  "A call to `reg-sub` associates two functions with a `query-id`. 
+   
+  These two functions combine to provide the 'mechanism' for creating a node 
+  in the Signal Graph, for the specified `query-id`. 
   
-  - a `query-id` (typically a namespaced keyword)
-  - a function which returns the inputs required by this kind of node (which can be supplied in one of three ways)
-  - a function which computes the value of this kind of node
+  The three arguments are: 
+   
+  - `query-id` - typically a namespaced keyword (later used in subscribe)
+  - optionally, an `input signals` function which returns the input data
+    flows required by this kind of node. 
+  - a `computation function` which computes the value of the node (from the input data flows)
+     
+  Later, during app execution, a call to `(subscribe [:sub-id 3 :blue])`,
+  will trigger the need for a new Signal Graph node (for the query `[:sub-id 3 :blue]`).
+  And that means creating a new `:sub-id` node. To do that the two functions 
+  associated with `:sub-id` are looked up and used.
 
-  The `computation function` is always the last argument supplied and it is expected to have the signature:
-    `(input-values, query-vector) -> a-value`
+  Just to repeat:  calling `reg-sub` does not immediately create a node. It only registers 
+  'the mechanism' (the two functions) by which nodes can be created later, when a node is 
+  bought into existence by the use of `subscribe` in a `View Function`.
 
-  When `computation function` is called, the `query-vector` argument will be the vector supplied to the
-  the `subscribe` which caused the node to be created. So, if the call was `(subscribe [:sub-id 3 \"blue\"])`,
-  then the `query-vector` supplied to the computaton function will be `[:sub-id 3 \"blue\"]`.
+  The `computation function` is expected to take two arguments:
+  
+    - `input-values` - the values which flow into this node
+    - `query-vector` - the vector given to `subscribe`
+  
+  and it returns a computed value (which then becomes the output of the node)
 
-  The arguments supplied between the `query-id` and the `computation-function` can vary in 3 ways,
-  but whatever is there defines the `input signals` part of the template, controlling what input
- values \"flow into\" the `computation function` gets when it is called.
+  When `computation function` is called, the 2nd `query-vector` argument will be that 
+  vector supplied to the `subscribe`. So, if the call was `(subscribe [:sub-id 3 :blue])`,
+  then the `query-vector` supplied to the computaton function will be `[:sub-id 3 :blue]`.
 
-  `reg-sub` can be called in one of three ways, because there are three ways to define the input signals part.
-  But note, the 2nd method, in which a `signals function` is explicitly supplied, is the most canonical and instructive. The other
-  two are really just sugary variations.
+  The argument(s) supplied between `query-id` and the `computation-function` 
+  can vary in 3 ways, but whatever is there defines the `input signals` part 
+  of `the mechanism`, specifying what input values \"flow into\" the 
+  `computation function` (as the 1st argument) when it is called.
 
-  First, No input signal fucntion given:
+  `reg-sub` can be called in one of three ways, because there are three ways 
+  to define the input signals part. But note, the 2nd method, in which a 
+  `signals function` is explicitly supplied, is the most canonical and 
+  instructive. The other two are really just sugary variations.
+
+  First variation - no input signal function given:
 
       (reg-sub
         :query-id
@@ -107,7 +120,7 @@
      is given as the 1st argument when `a-computation-fn` is called.
 
 
-  Second, A signal function is explicitly supplied:
+  Second variation - a signal function is explicitly supplied:
 
       (reg-sub
         :query-id
@@ -162,7 +175,7 @@
         (fn [_ _]  re-frame/app-db)   ;; <--- explicit signal-fn
         a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
 
-  Third, Syntax Sugar
+  Third variation - syntax Sugar
 
       (reg-sub
         :a-b-sub
@@ -213,7 +226,8 @@
       (subscribe [:items {:colour \"blue\"  :size :small}])
  
   Note: for any given call to `subscribe` there must have been a previous call
-  to `reg-sub`, registering the query handler (function) for the `query-id` given.
+  to `reg-sub`, registering the query handler (functions) associated with 
+  `query-id`.
 
   #### Hint
 
@@ -352,12 +366,13 @@
 
   Second - Later, add an interceptor to an -fx event handler, using `inject-cofx`:
 
-      (re-frame.core/reg-event-fx        ;; we are registering an event handler
-         :event-id
-         [ ... (inject-cofx :datetime) ... ]    ;; <-- create an injecting interceptor
-         (fn event-handler
-           [coeffect event]
-           ... in here can access (:now coeffect) to obtain current datetime ... )))
+      (re-frame.core/reg-event-fx            ;; when registering an event handler
+        :event-id
+        [ ... (inject-cofx :datetime) ... ]  ;; <-- create an injecting interceptor
+        (fn event-handler
+          [coeffect event]
+            ;;... in here can access (:now coeffect) to obtain current datetime ... 
+          )))
 
   ##### Background
 
@@ -582,7 +597,7 @@
   (or the `:coeffect` value of `:db` if no `:db` effect is returned) and the event.
   Its return value is ignored, so `f` can only side-effect.
 
-  An examples of use can be seen in /examples/todomvc/events.cljs:
+  An example of use can be seen in the re-frame github repo in `/examples/todomvc/events.cljs`:
 
      - `f` runs schema validation (reporting any errors found).
      - `f` writes to localstorage."
@@ -611,12 +626,12 @@
            ...))
 
 
-    If you put this Interceptor on handlers which might change paths :a or :b,
-    it will:
+  If you put this Interceptor on handlers which might change paths `:a` or `:b`,
+  it will:
 
-     - call `f` each time the value at path [:a] or [:b] changes
-     - call `f` with the values extracted from [:a] [:b]
-     - assoc the return value from `f` into the path  [:c]
+    - call `f` each time the value at path `[:a]` or `[:b]` changes
+    - call `f` with the values extracted from `[:a]` `[:b]`
+    - assoc the return value from `f` into the path  `[:c]`
   "
   [f out-path & in-paths]
   (apply std-interceptors/on-changes (into [f out-path] in-paths)))
@@ -626,7 +641,7 @@
   "Registers the given `interceptor` as a global interceptor. Global interceptors are
    included in the processing chain of every event.
 
-   When you register an event handler you have the option of supplying an
+   When you register an event handler, you have the option of supplying an
    interceptor chain. Any global interceptors you register are effectively
    prepending to this chain.
 
@@ -637,9 +652,11 @@
 (defn clear-global-interceptor ;; think unreg-global-interceptor
   "Unregisters (removes) global interceptors.
 
-   When called with no arguments, it unregisters all global interceptors. When given
+   When called with no arguments, it unregisters all global interceptors. 
+   
+   When given
    one argument, assumed to be the `id` of a currently registered global
-   interceptor, it unregisters the associated interceptor."
+   interceptor, it removes the associated interceptor."
   ([]
    (settings/clear-global-interceptors))
   ([id]
@@ -665,7 +682,7 @@
          :after  (fn [context]                         ;; you normally want to change :effects
                    (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
                      (assoc-effect context :http-ajax {...}])))))
-   "
+  "
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
 
