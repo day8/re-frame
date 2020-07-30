@@ -1,6 +1,6 @@
 # On DSLs and Machines 
 
-**Data Oriented programming is when "code is data".** It means data is evaluated/executed. 
+**Data Oriented programming is when "data is code".** It means data is evaluated/executed. 
 
 This data must be in a specific format - it must conform to a DSL - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.
 
@@ -95,13 +95,13 @@ Hiccup is the DOM of your application, etc.  And it is all data.
 Look carefully into re-frame, and you'll see the primacy of data everywhere.
 Data is the ultimate in late binding.
 
-!!! Note "String-Oriented Programming"
+!!! Note "String Is Code"
 
-    There is also string-oriented programming which is what you often employ with regex or SQL. 
+    There is also string-oriented programming which is what you often employ with regexes or SQL. 
     
-    I'm sure we have all used a string in the right format with a regex engine. And if you give a database the right SQL string, it knows how to interpret it. 
+    We have all used a string which contins the right format with a regex engine. And we've all given a database an SQL string which it knows how to interpret.
     
-    When the strings concerned are literals, this is straighforward. But it quickly gets ugly if we have to start computing the strings - if we have to use string interpolation to build up the string to be executed. And, of course, this happens a lot in the case of SQL. 
+    When the strings concerned are literals, this can be straightforward. But it quickly gets ugly if we have to start computing the strings - if we have to use string interpolation to build up the string to be executed. And, of course, this happens a lot with SQL. And it is awful. And consequently, there are a thousand workarounds.
 
     Data is a better medium for computing code, than strings. Datalog (data) is better than SQL (strings).
 
@@ -113,16 +113,19 @@ Data is the ultimate in late binding.
 
     For example, with hiccup at runtime two things are happening: 
 
-      - one execution context (ClojureScript) which creates the data `(into [:div] (map renderer items))`
-      - one execution context which interpets the data - Reagent.
+      - one execution context (ClojureScript) creates the data `(into [:div] (map renderer items))`
+      - one execution context interpets the data (as code) - Reagent.
 
     Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). And the other context executes it. 
 
+    So, one context generates "the code" (the data or the string,) and the other context executes it. 
+
+
 !!! Note "Other Meanings"
     
-    The term Data Oriented Design means something quite different in the gaming world. There, it
+    The term Data-Oriented Design means something quite different in the gaming world. There, it
     is an optimisation technique which seeks to layout data structures in a way which aligns with CPU caches,
-    so as to achieve performance efficiencies.
+    to achieve performance efficiencies.
 
 
 On the subject of DSLs, I'd strongly, strongly recommend James Reeves' excellent talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
