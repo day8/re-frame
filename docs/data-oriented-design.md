@@ -95,31 +95,34 @@ Hiccup is the DOM of your application, etc.  And it is all data.
 Look carefully into re-frame, and you'll see the primacy of data everywhere.
 Data is the ultimate in late binding.
 
-
-
 !!! Note "String-Oriented Programming"
 
-    There is also string-oriented programming which is what you get up to with regex or SQL. 
+    There is also string-oriented programming which is what you often employ with regex or SQL. 
     
-    A string in the right format is executable by a regex engine. And if you give a database the right
-    SQL string, it knows how to interpret it. 
+    I'm sure we have all used a string in the right format with a regex engine. And if you give a database the right SQL string, it knows how to interpret it. 
     
-    When the strings concerned are plain literals, this isn't too bad. But it gets ugly quickly if we have to start computing the strings - if we have to use string interpolation to build up the string which will be executed.
+    When the strings concerned are literals, this is straighforward. But it quickly gets ugly if we have to start computing the strings - if we have to use string interpolation to build up the string to be executed. And, of course, this happens a lot in the case of SQL. 
 
-    Data is a better medium for computing code, than strings.
+    Data is a better medium for computing code, than strings. Datalog (data) is better than SQL (strings).
 
 
 !!! Note "Multiple Execution Contexts"
 
-    You'll notice that data-oriented programming or string-oriented programming involves 
-    multiple execution contexts. 
+    You'll notice that both data-oriented programming or string-oriented programming involves
+    multiple execution contexts, at runtime. 
 
-    For example, you need:
+    For example, with hiccup at runtime two things are happening: 
 
       - one execution context (ClojureScript) which creates the data `(into [:div] (map renderer items))`
       - one execution context which interpets the data - Reagent.
 
-    Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). The other context executes it. 
+    Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). And the other context executes it. 
+
+!!! Note "Other Meanings"
+    
+    The term Data Oriented Design means something quite different in the gaming world. There, it
+    is an optimisation technique which seeks to layout data structures in a way which aligns with CPU caches,
+    so as to achieve performance efficiencies.
 
 
 On the subject of DSLs, I'd strongly, strongly recommend James Reeves' excellent talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
