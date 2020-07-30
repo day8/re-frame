@@ -6,18 +6,26 @@
      :type "text/css"
      :href "styles/codox-re-frame.css"}]]
 
+  ;; Remove the codox header. Since we load codox in an iframe the mkdocs site
+  ;; provides the page header.
   [:div#header]
   [:substitute
    [:div]]
 
-  [:div.sidebar.primary :first-child]
+  ;; Remove the headings in the primary sidebar on the far left; i.e.
+  ;; 'Project', 'Topics' and 'Namespaces'. As we only have a few top level
+  ;; codox navigation links the headings are unnecessary.
+  [:div.sidebar.primary :h3]
   [:substitute
    [:div]]
 
+  ;; Remove the top level codox navigation to the index page.
   [:ul.index-link]
   [:substitute
    [:div]]
 
+  ;; Remove any mention of the version as it is not correctly picked up from
+  ;; the git tag via lein-git-inject.
   [:span.project-version]
   [:substitute
    [:span.project-version ""]]]
