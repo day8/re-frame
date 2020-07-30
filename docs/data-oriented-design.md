@@ -95,7 +95,6 @@ Hiccup is the DOM of your application, etc.  And it is all data.
 Look carefully into re-frame, and you'll see the primacy of data everywhere.
 Data is the ultimate in late binding.
 
-On the subject of DSLs, I'd strongly recommend James Reeves' talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
 
 
 !!! Note "String-Oriented Programming"
@@ -121,3 +120,6 @@ On the subject of DSLs, I'd strongly recommend James Reeves' talk (video): [Tran
       - one execution context which interpets the data - Reagent.
 
     Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). The other context executes it. 
+
+
+On the subject of DSLs, I'd strongly, strongly recommend James Reeves' excellent talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
