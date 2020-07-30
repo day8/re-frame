@@ -1,8 +1,8 @@
 # On DSLs and Machines 
 
-**Data Oriented programming is when "code is data".** It involves data being evaluated/executed. 
+**Data Oriented programming is when "code is data".** It means data is evaluated/executed. 
 
-This data must be in a specific format - it must conform to a DSL - and there must be an interpreter for this DSL. When you feed correctly formated data to the interpreter, it is executed. "Data is code" for this interpreter.
+This data must be in a specific format - it must conform to a DSL - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.
 
 Okay, we'll cycle back this in a minute. But first ...
 
@@ -92,8 +92,20 @@ virtual machine made from the event handlers you register.
 
 Events are the (assembly) language of your application.
 Hiccup is the DOM of your application, etc.  And it is all data.
-Look carefully into re-frame and you'll see the primacy of data everywhere.
+Look carefully into re-frame, and you'll see the primacy of data everywhere.
 Data is the ultimate in late binding.
 
 On the subject of DSLs, I'd strongly recommend James Reeves' talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
+
+
+!!! Note "String-Oriented Programming"
+
+    There is also string-oriented programming which is what you get up to with regex or SQL. 
+    
+    A string in the right format is executable by a regex engine. And if you give a database the right
+    SQL string, it knows how to interpret it. 
+    
+    When the strings concerned are plain literals, this isn't too bad. But it gets ugly quickly if we have to start computing the strings - if we have to use string interpolation to build up the string which will be executed.
+
+    Data is a better medium for computing code, than strings.
 
