@@ -1457,6 +1457,17 @@ SQL string, it knows how to interpret it. </p>
 <p>When the strings concerned are plain literals, this isn't too bad. But it gets ugly quickly if we have to start computing the strings - if we have to use string interpolation to build up the string which will be executed.</p>
 <p>Data is a better medium for computing code, than strings.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Multiple Execution Contexts</p>
+<p>You'll notice that data-oriented programming or string-oriented programming involves 
+multiple execution contexts. </p>
+<p>For example, you need:</p>
+<ul>
+<li>one execution context (ClojureScript) which creates the data <code>(into [:div] (map renderer items))</code></li>
+<li>one execution context which interpets the data - Reagent.</li>
+</ul>
+<p>Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). The other context executes it. </p>
+</div>
                 
               
               
