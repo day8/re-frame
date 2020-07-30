@@ -1367,8 +1367,8 @@
                 
                 
                 <h1 id="on-dsls-and-machines">On DSLs and Machines<a class="headerlink" href="#on-dsls-and-machines" title="Permanent link">&para;</a></h1>
-<p><strong>Data Oriented programming is when "code is data".</strong> It involves data being evaluated/executed. </p>
-<p>This data must be in a specific format - it must conform to a DSL - and there must be an interpreter for this DSL. When you feed correctly formated data to the interpreter, it is executed. "Data is code" for this interpreter.</p>
+<p><strong>Data Oriented programming is when "code is data".</strong> It means data is evaluated/executed. </p>
+<p>This data must be in a specific format - it must conform to a DSL - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.</p>
 <p>Okay, we'll cycle back this in a minute. But first ...</p>
 <p><code>Events</code> are cardinal to re-frame. As you create a re-frame app, you design just the right set of them. 
 These events will model "intent" - mostly the user's. 
@@ -1446,9 +1446,17 @@ virtual machine made from the event handlers you register. </p>
 </blockquote>
 <p>Events are the (assembly) language of your application.
 Hiccup is the DOM of your application, etc.  And it is all data.
-Look carefully into re-frame and you'll see the primacy of data everywhere.
+Look carefully into re-frame, and you'll see the primacy of data everywhere.
 Data is the ultimate in late binding.</p>
 <p>On the subject of DSLs, I'd strongly recommend James Reeves' talk (video): <a href="https://www.youtube.com/watch?v=zznwKCifC1A">Transparency through data</a> </p>
+<div class="admonition note">
+<p class="admonition-title">String-Oriented Programming</p>
+<p>There is also string-oriented programming which is what you get up to with regex or SQL. </p>
+<p>A string in the right format is executable by a regex engine. And if you give a database the right
+SQL string, it knows how to interpret it. </p>
+<p>When the strings concerned are plain literals, this isn't too bad. But it gets ugly quickly if we have to start computing the strings - if we have to use string interpolation to build up the string which will be executed.</p>
+<p>Data is a better medium for computing code, than strings.</p>
+</div>
                 
               
               
