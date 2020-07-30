@@ -109,3 +109,15 @@ On the subject of DSLs, I'd strongly recommend James Reeves' talk (video): [Tran
 
     Data is a better medium for computing code, than strings.
 
+
+!!! Note "Multiple Execution Contexts"
+
+    You'll notice that data-oriented programming or string-oriented programming involves 
+    multiple execution contexts. 
+
+    For example, you need:
+
+      - one execution context (ClojureScript) which creates the data `(into [:div] (map renderer items))`
+      - one execution context which interpets the data - Reagent.
+
+    Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). The other context executes it. 
