@@ -40,17 +40,17 @@
 
 (defn dispatch-sync
   "Synchronously (immediately) process `event`. It does **not** queue
-  the event for handling later as `dispatch` does.
+  the event for handling later as `dispatch` does. 
   
-  `event `is a vector and the first element is typically a keyword 
+  `event` is a vector and the first element is typically a keyword 
   which identifies the kind of event.
 
-  Generally, avoid using this function, and instead, use `dispatch`. It 
-  is an error to use `dispatch-sync` within an event handler because 
+  It is an error to use `dispatch-sync` within an event handler because 
   you can't immediately process an new event when one is already
   part way through being processed.
 
-  Can be useful in a narrow set of cases where any delay in 
+  Generally, avoid using this function, and instead, use `dispatch`. 
+  Only use it in the narrow set of cases where any delay in 
   processing is a problem:
 
     1. the `:on-change` handler of a text field where we are expecting fast typing
@@ -67,30 +67,33 @@
 
 ;; -- subscriptions -----------------------------------------------------------
 (defn reg-sub
-  "A call to `reg-sub` associates two functions with a `query-id`. 
+  "A call to `reg-sub` associates a `query-id` WITH two functions.
    
-  These two functions combine to provide the 'mechanism' for creating a node 
-  in the Signal Graph, for the specified `query-id`. 
+  The two functions provide 'a mechanism' for creating a node 
+  in the Signal Graph. When a node of type `query-id` is needed, 
+  the two functions can be used to create it.
   
   The three arguments are: 
    
   - `query-id` - typically a namespaced keyword (later used in subscribe)
   - optionally, an `input signals` function which returns the input data
     flows required by this kind of node. 
-  - a `computation function` which computes the value of the node (from the input data flows)
+  - a `computation function` which computes the value (output) of the 
+    node (from the input data flows)
      
   Later, during app execution, a call to `(subscribe [:sub-id 3 :blue])`,
-  will trigger the need for a new Signal Graph node (for the query `[:sub-id 3 :blue]`).
-  And that means creating a new `:sub-id` node. To do that the two functions 
-  associated with `:sub-id` are looked up and used.
+  will trigger the need for a new `:sub-id` Signal Graph node (matching the 
+  query `[:sub-id 3 :blue]`). And, to create that node the two functions 
+  associated with `:sub-id` will be looked up and used.
 
-  Just to repeat:  calling `reg-sub` does not immediately create a node. It only registers 
-  'the mechanism' (the two functions) by which nodes can be created later, when a node is 
-  bought into existence by the use of `subscribe` in a `View Function`.
+  Just to be clear: calling `reg-sub` does not immediately create a node. 
+  It only registers 'a mechanism' (the two functions) by which nodes 
+  can be created later, when a node is bought into existence by the 
+  use of `subscribe` in a `View Function`.
 
   The `computation function` is expected to take two arguments:
   
-    - `input-values` - the values which flow into this node
+    - `input-values` - the values which flow into this node (how is it wierd into the graph?)
     - `query-vector` - the vector given to `subscribe`
   
   and it returns a computed value (which then becomes the output of the node)
@@ -99,17 +102,17 @@
   vector supplied to the `subscribe`. So, if the call was `(subscribe [:sub-id 3 :blue])`,
   then the `query-vector` supplied to the computaton function will be `[:sub-id 3 :blue]`.
 
-  The argument(s) supplied between `query-id` and the `computation-function` 
+  The argument(s) supplied to `reg-sub` between `query-id` and the `computation-function` 
   can vary in 3 ways, but whatever is there defines the `input signals` part 
   of `the mechanism`, specifying what input values \"flow into\" the 
   `computation function` (as the 1st argument) when it is called.
 
-  `reg-sub` can be called in one of three ways, because there are three ways 
+  So, `reg-sub` can be called in one of three ways, because there are three ways 
   to define the input signals part. But note, the 2nd method, in which a 
   `signals function` is explicitly supplied, is the most canonical and 
   instructive. The other two are really just sugary variations.
 
-  First variation - no input signal function given:
+  **First variation** - no input signal function given:
 
       (reg-sub
         :query-id
@@ -120,7 +123,7 @@
      is given as the 1st argument when `a-computation-fn` is called.
 
 
-  Second variation - a signal function is explicitly supplied:
+  **Second variation** - a signal function is explicitly supplied:
 
       (reg-sub
         :query-id
@@ -175,7 +178,7 @@
         (fn [_ _]  re-frame/app-db)   ;; <--- explicit signal-fn
         a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
 
-  Third variation - syntax Sugar
+  **Third variation** - syntax Sugar
 
       (reg-sub
         :a-b-sub
@@ -198,17 +201,29 @@
           ...))
 
   For further understanding, read the tutorials, and look at the detailed comments in
-  /examples/todomvc/src/subs.cljs
+  /examples/todomvc/src/subs.cljs.
+        
+  See also: `subscribe`
   "
   [query-id & args]
   (apply subs/reg-sub (into [query-id] args)))
 
 (defn subscribe
   "Given a `query` vector, returns a Reagent `reaction` which will, over
-  time, reactively deliver a stream of values. So in FRP-ish terms,
+  time, reactively deliver a stream of values. So, in FRP-ish terms,
   it returns a `Signal`.
 
-  To obtain the returned Signal/Stream's current value, it must be `deref`ed.
+  To obtain the current value from the Signal, it must be dereferenced: 
+  
+      (let [signal (subscribe [:items])
+            value  (deref signal)]     ;; could be written as @signal
+        ...)
+   
+   which is typically written tersely as simple:
+   
+      (let [items  @(subscribe [:items])] 
+        ...)
+      
 
   `query` is a vector of at least one element. The first element is the
   `query-id`, typically a namespaced keyword. The rest of the vector's
@@ -219,7 +234,7 @@
   signals (atoms, reactions, etc), NOT values. This argument exists for
   historical reasons and is borderline deprecated these days.
 
-  #### Example Usage:
+  **Example Usage**:
 
       (subscribe [:items])
       (subscribe [:items \"blue\" :small])
@@ -229,7 +244,7 @@
   to `reg-sub`, registering the query handler (functions) associated with 
   `query-id`.
 
-  #### Hint
+  **Hint**
 
   When used in a view function BE SURE to `deref` the returned value.
   In fact, to avoid any mistakes, some prefer to define:
@@ -239,10 +254,12 @@
   And then, within their views, they call  `(<sub [:items :small])` rather
   than using `subscribe` directly.
 
-  #### De-duplication
+  **De-duplication**
 
-  Two, or more, concurrent subscriptions for the same query will source reactive
-  updates from the one executing handler.
+  Two, or more, concurrent subscriptions for the same query will 
+  source reactive updates from the one executing handler.
+      
+  See also: `reg-sub`
   "
   ([query]
    (subs/subscribe query))
@@ -314,9 +331,8 @@
 (defn clear-fx ;; think unreg-fx
   "When called with no args, unregisters all effect handlers. 
    
-  When given one arg,
-  assumed to be the `id` of a registered effect handler, unregisters the
-  associated handler.
+  When given one arg, assumed to be the `id` of a previously registered 
+  effect handler, unregisters the associated handler.
   "
   ([]
    (registrar/clear-handlers fx/kind))
@@ -332,7 +348,7 @@
     - `handler` is a function which takes either one or two arguements, the first of which is
        always `coeffects` and which returns an updated `coeffects`.
 
-  See the docs for `inject-cofx` for example use.
+  See also: `inject-cofx` 
   "
   [id handler]
   (cofx/reg-cofx id handler))
@@ -353,7 +369,7 @@
 
   This `coeffect handler` is expected to modify and return its first, `coeffects` argument.
 
-  ##### Example of `inject-cofx` and `reg-cofx` working together
+  **Example of `inject-cofx` and `reg-cofx` working together**
 
 
   First - Early in app startup, you register a `coeffect handler` for `:datetime`:
@@ -374,7 +390,7 @@
             ;;... in here can access (:now coeffect) to obtain current datetime ... 
           )))
 
-  ##### Background
+  **Background**
 
   `coeffects` are the input resources required by an event handler
   to perform its job. The two most obvious ones are `db` and `event`.
@@ -389,7 +405,10 @@
 
   Instead, the interceptor created by this function is a way to 'inject'
   'necessary resources' into the `:coeffects` (map) subsequently given
-  to the event handler at call time."
+  to the event handler at call time.
+          
+  See also `reg-cofx`
+  "
   ([id]
    (cofx/inject-cofx id))
   ([id value]
@@ -455,9 +474,10 @@
    (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (ctx-handler->interceptor handler)])))
 
 (defn clear-event ;; think unreg-event-*
-  "When called with no args, unregisters all event handlers. When given one arg,
-  assumed to be the `id` of a registered event handler, unregisters the
-  associated handler."
+  "When called with no args, unregisters all event handlers.
+   
+  When given one argument, assumed to be the `id` of a previously registered 
+  event handler, unregisters the associated handler."
   ([]
    (registrar/clear-handlers events/kind))
   ([id]
@@ -482,7 +502,7 @@
 
   Warning:  calling `clojure.data/diff` on large, complex data structures
   can be slow. So, you won't want this interceptor present in production
-  code. So condition it out like this :
+  code. So, you should condition it out like this:
 
       (re-frame.core/reg-event-db
         :evt-id

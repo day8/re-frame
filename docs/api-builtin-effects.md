@@ -48,8 +48,8 @@
 # Builtin Effects
 
 
-In addition to the functions is `re-frame.core`, re-frame provides built-in 
-effects which also contribute to the API. 
+In addition to the API provided by `re-frame.core`, re-frame provides a small number of 
+built-in effects which also contribute to the API. 
 
 
 ## <a name="dispatch-later"></a> :dispatch-later
@@ -58,20 +58,20 @@ effects which also contribute to the API.
 of maps, each with two keys: `:ms` (milliseconds) and `:dispatch` (the event).
 
 usage:
-  ```clojure
-  {:dispatch-later [;; in 200ms do this: (dispatch [:event-id "param"])
-                    {:ms       200
-                     :dispatch [:event-id "param"]}
-		    {:ms       100
-		     :dispatch [:also :this :in :100ms]}]}
-  ```
+```clojure
+{:dispatch-later [;; in 200ms do this: (dispatch [:event-id "param"])
+                  {:ms       200
+                   :dispatch [:event-id "param"]}
+		          {:ms       100
+		        :dispatch [:also :this :in :100ms]}]}
+```
 
 Note: `nil` entries in the collection are ignored which means events can be added
 conditionally:
-   ```clojure
-   {:dispatch-later [ (when (> 3 5) {:ms 200 :dispatch [:conditioned-out]})
-                      {:ms 100 :dispatch [:another-one]}]}
-   ```
+```clojure
+{:dispatch-later [ (when (> 3 5) {:ms 200 :dispatch [:conditioned-out]})
+                   {:ms 100 :dispatch [:another-one]}]}
+```
 
 ## <a name="dispatch"></a> :dispatch
 
@@ -97,10 +97,10 @@ Notes:
   2. nils in the event collection are ignored which means events can be added
 conditionally:
 
-  ```clojure
-  {:dispatch-n (list (when (> 3 5) [:conditioned-out])
-                      [:another-one])}
-  ```
+     ```clojure
+     {:dispatch-n (list (when (> 3 5) [:conditioned-out])
+                         [:another-one])}
+     ```
 
 ## <a name="deregister-event-handler"></a> :deregister-event-handler
 

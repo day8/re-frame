@@ -1,29 +1,36 @@
 # Overview
 
-The re-frame API is provided by the single namespace `re-frame.core`. To use re-frame, you'll 
+The re-frame API is composed of: 
+
+  - the namespace `re-frame.core`
+  - a set of built-in effects
+
+If you look to the left, in the navigation panel, you'll see a link to both. 
+
+To use re-frame, you'll 
 need to `require` it, perhaps like this:
 ```clj
-(ns app.namespace
+(ns my-app.namespace
   (:require [re-frame.core :as rf]))
 
-;; now you can use rf/reg-event-fx or rf/subscribe
+;;  use API like rf/reg-event-fx or rf/subscribe
 ```
+
+The `re-frame.core` page provides, alphabetically all functions in that namespace, together with their docstrings. An alternative view is provided below - one which presents the API in terms of purpose and importance.
 
 ## Commonly Used
 
 When you are writing `View Functions`: 
 
-  - `dispatch` (or very occasionally, `dispatch-sync`)
+  - `dispatch` (or occasionally, `dispatch-sync`)
   - `subscribe`
 
-When you are registering handlers:
+When you are registering:
 
   - event handlers - `reg-event-db` and `reg-event-fx`
   - subscription handlers - `reg-sub` (and rarely `reg-sub-raw`)
   - rarely, effect handlers - `reg-fx` 
   - rarely, coeffect handlers - `reg-cofx` with `inject-cofx`
-
-There is API to clear all these registrations, but this is almost never used.
 
 When you register `event handlers`, you might use builtin interceptors: 
 
@@ -38,9 +45,6 @@ Global interceptors can be very useful:
 
   - register then via `reg-global-interceptors` 
   - rarely, remove them via `clear-global-interceptor`
-
-And, when you are writing event handlers, you might want to use 
-the **builtin effects**. These are detailed on their own page - see navigation on the left.
 
 ## More Rarely Used
 
