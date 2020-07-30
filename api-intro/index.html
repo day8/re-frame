@@ -1376,29 +1376,35 @@
                 
                 
                 <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h1>
-<p>The re-frame API is provided by the single namespace <code>re-frame.core</code>. To use re-frame, you'll 
+<p>The re-frame API is composed of: </p>
+<ul>
+<li>the namespace <code>re-frame.core</code></li>
+<li>a set of built-in effects</li>
+</ul>
+<p>If you look to the left, in the navigation panel, you'll see a link to both. </p>
+<p>To use re-frame, you'll 
 need to <code>require</code> it, perhaps like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">app.namespace</span>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">my-app.namespace</span>
   <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">re-frame.core</span> <span class="ss">:as</span> <span class="nv">rf</span><span class="p">]))</span>
 
-<span class="c1">;; now you can use rf/reg-event-fx or rf/subscribe</span>
+<span class="c1">;;  use API like rf/reg-event-fx or rf/subscribe</span>
 </code></pre></div>
 
 
+<p>The <code>re-frame.core</code> page provides, alphabetically all functions in that namespace, together with their docstrings. An alternative view is provided below - one which presents the API in terms of purpose and importance.</p>
 <h2 id="commonly-used">Commonly Used<a class="headerlink" href="#commonly-used" title="Permanent link">&para;</a></h2>
 <p>When you are writing <code>View Functions</code>: </p>
 <ul>
-<li><code>dispatch</code> (or very occasionally, <code>dispatch-sync</code>)</li>
+<li><code>dispatch</code> (or occasionally, <code>dispatch-sync</code>)</li>
 <li><code>subscribe</code></li>
 </ul>
-<p>When you are registering handlers:</p>
+<p>When you are registering:</p>
 <ul>
 <li>event handlers - <code>reg-event-db</code> and <code>reg-event-fx</code></li>
 <li>subscription handlers - <code>reg-sub</code> (and rarely <code>reg-sub-raw</code>)</li>
 <li>rarely, effect handlers - <code>reg-fx</code> </li>
 <li>rarely, coeffect handlers - <code>reg-cofx</code> with <code>inject-cofx</code></li>
 </ul>
-<p>There is API to clear all these registrations, but this is almost never used.</p>
 <p>When you register <code>event handlers</code>, you might use builtin interceptors: </p>
 <ul>
 <li><code>path</code></li>
@@ -1413,8 +1419,6 @@ need to <code>require</code> it, perhaps like this:</p>
 <li>register then via <code>reg-global-interceptors</code> </li>
 <li>rarely, remove them via <code>clear-global-interceptor</code></li>
 </ul>
-<p>And, when you are writing event handlers, you might want to use 
-the <strong>builtin effects</strong>. These are detailed on their own page - see navigation on the left.</p>
 <h2 id="more-rarely-used">More Rarely Used<a class="headerlink" href="#more-rarely-used" title="Permanent link">&para;</a></h2>
 <p>Testing or dev-time related utilities:</p>
 <ul>
