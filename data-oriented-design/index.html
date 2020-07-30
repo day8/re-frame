@@ -1450,22 +1450,27 @@ Look carefully into re-frame, and you'll see the primacy of data everywhere.
 Data is the ultimate in late binding.</p>
 <div class="admonition note">
 <p class="admonition-title">String-Oriented Programming</p>
-<p>There is also string-oriented programming which is what you get up to with regex or SQL. </p>
-<p>A string in the right format is executable by a regex engine. And if you give a database the right
-SQL string, it knows how to interpret it. </p>
-<p>When the strings concerned are plain literals, this isn't too bad. But it gets ugly quickly if we have to start computing the strings - if we have to use string interpolation to build up the string which will be executed.</p>
-<p>Data is a better medium for computing code, than strings.</p>
+<p>There is also string-oriented programming which is what you often employ with regex or SQL. </p>
+<p>I'm sure we have all used a string in the right format with a regex engine. And if you give a database the right SQL string, it knows how to interpret it. </p>
+<p>When the strings concerned are literals, this is straighforward. But it quickly gets ugly if we have to start computing the strings - if we have to use string interpolation to build up the string to be executed. And, of course, this happens a lot in the case of SQL. </p>
+<p>Data is a better medium for computing code, than strings. Datalog (data) is better than SQL (strings).</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Multiple Execution Contexts</p>
-<p>You'll notice that data-oriented programming or string-oriented programming involves 
-multiple execution contexts. </p>
-<p>For example, you need:</p>
+<p>You'll notice that both data-oriented programming or string-oriented programming involves
+multiple execution contexts, at runtime. </p>
+<p>For example, with hiccup at runtime two things are happening: </p>
 <ul>
 <li>one execution context (ClojureScript) which creates the data <code>(into [:div] (map renderer items))</code></li>
 <li>one execution context which interpets the data - Reagent.</li>
 </ul>
-<p>Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). The other context executes it. </p>
+<p>Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). And the other context executes it. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Other Meanings</p>
+<p>The term Data Oriented Design means something quite different in the gaming world. There, it
+is an optimisation technique which seeks to layout data structures in a way which aligns with CPU caches,
+so as to achieve performance efficiencies.</p>
 </div>
 <p>On the subject of DSLs, I'd strongly, strongly recommend James Reeves' excellent talk (video): <a href="https://www.youtube.com/watch?v=zznwKCifC1A">Transparency through data</a> </p>
                 
