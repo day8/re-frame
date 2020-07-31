@@ -6,6 +6,11 @@
      :type "text/css"
      :href "styles/codox-re-frame.css"}]]
 
+  [:body]
+  [:append
+   [:script
+    {:src  "scripts/hashchange.js"}]]
+
   ;; Remove the codox header. Since we load codox in an iframe the mkdocs site
   ;; provides the page header.
   [:div#header]
@@ -31,4 +36,5 @@
    [:span.project-version ""]]]
 
  :resources
- ["styles/codox-re-frame.css"]}
+ ["styles/codox-re-frame.css"
+  "scripts/hashchange.js"]}

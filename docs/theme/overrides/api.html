@@ -3,7 +3,44 @@
 {% block tabs %}
 {{ super() }}
 
-<iframe style="border: none; flex-grow: 1" src="https://day8.github.io/re-frame/codox/api-intro.html"></iframe>
+<!-- Change src to /codox/api-intro.html and codox target to docs/codox in
+     development. -->
+<iframe id="codox" style="border: none; flex-grow: 1" src="https://day8.github.io/re-frame/codox/api-intro.html"></iframe>
+
+<script>
+    /**
+     * This code runs in the parent mkdocs site to interact with the code that
+     * runs inside the child iframe that contains codox-generated API
+     * documentation so that links, including named anchors, can be forwarded
+     * from this parent to the child iframe. Specifically:
+     *
+     * 1. Forwards the hash part of the location (after the '#') to the child
+     *    when the child dom is ready and on any parent hashchange event. As the
+     *    child has both multiple pages and multiple named anchors on each page
+     *    the syntax after the hash is page-href/anchor-href. So we replace
+     *    '/' with '#' when we forward to the child.
+     * 2. Listens for events to change the parent hash from the child, for example
+     *    when a user clicks a link in the child.
+     */
+
+    function forwardHash () {
+        let href = window.location.hash.substring(1).replace(/\//g, '#')
+        let iframe = document.getElementById('codox')
+        iframe.contentWindow.postMessage({
+            type: 'setHref',
+            href: href}, '*')
+    }
+
+    window.addEventListener('message', function(event) {
+        if (event.data.type == 'ready') {
+            forwardHash()
+        } else if (event.data.type == 'setHash') {
+            window.location.href = '#' + event.data.hash
+        }
+    })
+
+    window.addEventListener('hashchange', forwardHash)
+</script>
 
 <style>
     /**
