@@ -1,8 +1,8 @@
 # On DSLs and Machines 
 
-**Data Oriented programming happens when "data is code".**  The data can be evaluated/executed. 
+**Data-Oriented programming happens when "data is code".**  The data can be evaluated/executed. 
 
-This data must be in a specific format - it must conform to a DSL (domain specific language) - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.
+This data must be in a specific format - it must conform to a DSL (domain-specific language) - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.
 
 Okay, we'll cycle back to this in a minute. But first ...
 
@@ -78,7 +78,7 @@ Or, a lot more computation:
 ```clj
 (into [:div] (map render-item items)]
 ```
-Irrespctive of how we create the hiccup-formatted data, it acts as "instructions" for Reagent's hiccup interpeter.
+Irrespective of how we create the hiccup-formatted data, it acts as "instructions" for Reagent's hiccup interpreter.
 
 Back to re-frame. 
 
@@ -100,7 +100,7 @@ Look carefully into re-frame, and you'll see the primacy of data everywhere.
 
     There is also string-oriented programming which is what you often employ with regexes or SQL. 
     
-    We have all used a string containing just the right format with a regex engine. And we've all given a string containing SQL to database engine, which it knows how to interpret it.
+    We have all used a string containing just the right format with a regex engine. And we've all given a string containing SQL to a database engine, which it knows how to interpret it.
     
     When the strings concerned are literals, this can be straightforward. But it quickly gets ugly if we have to start computing the strings - if we have to use string interpolation to build up the string to be executed. And, of course, this happens a lot with SQL, and it is awful. Consequently, there are a thousand workarounds.
 
@@ -125,7 +125,7 @@ Look carefully into re-frame, and you'll see the primacy of data everywhere.
 !!! Note "Other Meanings"
     
     The term Data-Oriented Design means something quite different in the gaming world. There, it
-    is an optimisation technique which tries to layout data structures to exploit CPU cache characteristics and access patterns, to achieve better performance.
+    is an optimisation technique which tries to layout data structures in a way that exploits CPU cache characteristics and access patterns, in order to achieve better performance.
 
 
 On the subject of DSLs, I'd strongly, strongly recommend James Reeves' excellent talk (video): [Transparency through data](https://www.youtube.com/watch?v=zznwKCifC1A) 
