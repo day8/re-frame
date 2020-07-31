@@ -43,7 +43,7 @@ var domready = (function () {
  * so that copy/pasting a link into the location bar behaves as-if the
  * codox-generated content was not within an iframe.
  */
-/*
+
 domready(function() {
     window.parent.postMessage({type: 'ready'}, '*')
 
@@ -64,7 +64,9 @@ domready(function() {
 
 window.addEventListener('message', function(event) {
     if (event.data.type === 'setHref' && event.data.href) {
-        window.location.href = event.data.href
+        // Don't set the location if its the same. Prevents infinite reload loops.
+        if (!window.location.href.endsWith(event.data.href)) {
+            window.location.href = event.data.href
+        }
     }
 });
-*/
