@@ -1411,13 +1411,13 @@ the "virtual machine" on which these instructions execute. When you register
 a new event handler using <code>reg-event-db</code>, 
 it is as if you are adding to the "instruction set" of this "machine".</p>
 <p>When first introducing re-frame, I said it had Data-Oriented Design. 
-And we now know that means "code is data". You assemble data
+And we now know that means "data is code". You assemble data
 in a particular format (a domain-specific language), 
-and that data is then "executed" by an interpreter.</p>
-<p>Consider hiccup. It is a data format which descibes how to create and 
+and that data is then seen as code by an interpreter which executes it.</p>
+<p>Consider hiccup. It is a data format for describing how to create and 
 arranging DOM. Make a data structure in the right format
 and Reagent will act as the "interpreter" which executes that "language" 
-creating the DOM you describe. Code is data. </p>
+creating the DOM you describe. Data is code. </p>
 <p>We can use pure data literals:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:div</span> <span class="p">{</span><span class="ss">:font-size</span> <span class="mi">12</span><span class="p">}</span> <span class="s">&quot;Hello&quot;</span><span class="p">]</span> 
 </code></pre></div>
@@ -1433,7 +1433,7 @@ creating the DOM you describe. Code is data. </p>
 </code></pre></div>
 
 
-<p>No matter which way the hiccup-formatted data is created, it acts as "instructions" for Reagent's instructions.</p>
+<p>No matter which way the hiccup-formatted data is created, it acts as "instructions" for Reagent's interpeter.</p>
 <p>Back to re-frame. </p>
 <p>It asks that <strong>you</strong> create a DSL for your app - events are your DSL.
 (I wasn't kidding when I said events are the "language of your system".) 
@@ -1441,7 +1441,7 @@ And it also asks that <strong>you</strong> provide
 a way to execute the instructions in that DSL (you must provide the event handlers).</p>
 <blockquote>
 <p>When your re-frame application runs, 
-it is executes a "program" - a collection of events - which is data - dynamically created by the user's actions (button clicks etc) - on a 
+it is executing a "program" - a collection of events - which is data - dynamically created by the user's actions (button clicks etc) - on a 
 virtual machine made from the event handlers you register. </p>
 </blockquote>
 <p>Events are the (assembly) language of your application.
