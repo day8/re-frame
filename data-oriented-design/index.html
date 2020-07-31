@@ -1367,8 +1367,8 @@
                 
                 
                 <h1 id="on-dsls-and-machines">On DSLs and Machines<a class="headerlink" href="#on-dsls-and-machines" title="Permanent link">&para;</a></h1>
-<p><strong>Data Oriented programming is when "data is code".</strong> It means data is evaluated/executed. </p>
-<p>This data must be in a specific format - it must conform to a DSL - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.</p>
+<p><strong>Data Oriented programming happens when "data is code".</strong>  The data can be evaluated/executed. </p>
+<p>This data must be in a specific format - it must conform to a DSL (domain specific language) - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.</p>
 <p>Okay, we'll cycle back to this in a minute. But first ...</p>
 <p><code>Events</code> are cardinal to re-frame. As you create a re-frame app, you design just the right set of them. 
 These events will model "intent" - mostly the user's. 
@@ -1378,7 +1378,7 @@ They are the "language of the system", and they will provide the eloquence.</p>
 can draw circles and triangles and add some text. </p>
 <p>And then imagine that we allowed a user to begin using our new drawing application 
 and that, as they did, we captured, into a collection, the events caused by that 
-user's actions (their button clicks, drags, keypresses, etc).</p>
+user's actions (via their button clicks, drags, keypresses, etc).</p>
 <p>The collection of events they generate might look like this:  </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">collected-events</span>
   <span class="p">[</span>
@@ -1405,7 +1405,7 @@ happens to be "executable" by the right machine - an x86 machine in this case.</
 <p>I'd like you to now look back at that collection of events. I'd like you to view it in the 
 same way - data instructions which can be executed - by the right machine.</p>
 <p>Really? What machine?</p>
-<p>A virtual machine. All the Event Handlers you register in your re-frame app 
+<p>A virtual machine. The many Event Handlers you register in your re-frame app 
 collectively implement 
 the "virtual machine" on which these instructions execute. When you register 
 a new event handler using <code>reg-event-db</code>, 
@@ -1414,10 +1414,10 @@ it is as if you are adding to the "instruction set" of this "machine".</p>
 And we now know that means "data is code". You assemble data
 in a particular format (a domain-specific language), 
 and that data is then seen as code by an interpreter which executes it.</p>
-<p>Consider hiccup. It is a data format for describing how to create and 
-arranging DOM. Make a data structure in the right format
+<p>Consider hiccup. It is a data format (DSL) for describing how to create and 
+arrange DOM. Make a data structure in the right format
 and Reagent will act as the "interpreter" which executes that "language" 
-creating the DOM you describe. Data is code. </p>
+creating the DOM you describe. Hiccup is code. (Data is code)</p>
 <p>We can use pure data literals:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:div</span> <span class="p">{</span><span class="ss">:font-size</span> <span class="mi">12</span><span class="p">}</span> <span class="s">&quot;Hello&quot;</span><span class="p">]</span> 
 </code></pre></div>
@@ -1433,9 +1433,9 @@ creating the DOM you describe. Data is code. </p>
 </code></pre></div>
 
 
-<p>No matter which way the hiccup-formatted data is created, it acts as "instructions" for Reagent's interpeter.</p>
+<p>Irrespctive of how we create the hiccup-formatted data, it acts as "instructions" for Reagent's hiccup interpeter.</p>
 <p>Back to re-frame. </p>
-<p>It asks that <strong>you</strong> create a DSL for your app - events are your DSL.
+<p>It asks that <strong>you</strong> create a DSL for your app - the set of events are your DSL.
 (I wasn't kidding when I said events are the "language of your system".) 
 And it also asks that <strong>you</strong> provide 
 a way to execute the instructions in that DSL (you must provide the event handlers).</p>
@@ -1446,13 +1446,12 @@ virtual machine made from the event handlers you register. </p>
 </blockquote>
 <p>Events are the (assembly) language of your application.
 Hiccup is the DOM of your application, etc.  And it is all data.
-Look carefully into re-frame, and you'll see the primacy of data everywhere.
-Data is the ultimate in late binding.</p>
+Look carefully into re-frame, and you'll see the primacy of data everywhere.</p>
 <div class="admonition note">
 <p class="admonition-title">String Is Code</p>
 <p>There is also string-oriented programming which is what you often employ with regexes or SQL. </p>
-<p>We have all used a string which contins the right format with a regex engine. And we've all given a database an SQL string which it knows how to interpret.</p>
-<p>When the strings concerned are literals, this can be straightforward. But it quickly gets ugly if we have to start computing the strings - if we have to use string interpolation to build up the string to be executed. And, of course, this happens a lot with SQL. And it is awful. And consequently, there are a thousand workarounds.</p>
+<p>We have all used a string containing just the right format with a regex engine. And we've all given a string containing SQL to database engine, which it knows how to interpret it.</p>
+<p>When the strings concerned are literals, this can be straightforward. But it quickly gets ugly if we have to start computing the strings - if we have to use string interpolation to build up the string to be executed. And, of course, this happens a lot with SQL, and it is awful. Consequently, there are a thousand workarounds.</p>
 <p>Data is a better medium for computing code, than strings. Datalog (data) is better than SQL (strings).</p>
 </div>
 <div class="admonition note">
@@ -1465,13 +1464,12 @@ multiple execution contexts, at runtime. </p>
 <li>one execution context interpets the data (as code) - Reagent.</li>
 </ul>
 <p>Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). And the other context executes it. </p>
-<p>So, one context generates "the code" (the data or the string,) and the other context executes it. </p>
+<p>So, just to be crystal clear: one context generates "the code" (the data or the string,) and the other context executes it. </p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Other Meanings</p>
 <p>The term Data-Oriented Design means something quite different in the gaming world. There, it
-is an optimisation technique which seeks to layout data structures in a way which aligns with CPU caches,
-to achieve performance efficiencies.</p>
+is an optimisation technique which tries to layout data structures to exploit CPU cache characteristics and access patterns, to achieve better performance.</p>
 </div>
 <p>On the subject of DSLs, I'd strongly, strongly recommend James Reeves' excellent talk (video): <a href="https://www.youtube.com/watch?v=zznwKCifC1A">Transparency through data</a> </p>
                 
