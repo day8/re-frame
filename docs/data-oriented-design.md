@@ -4,7 +4,7 @@
 
 This data must be in a specific format - it must conform to a DSL - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.
 
-Okay, we'll cycle back this in a minute. But first ...
+Okay, we'll cycle back to this in a minute. But first ...
 
 `Events` are cardinal to re-frame. As you create a re-frame app, you design just the right set of them. 
 These events will model "intent" - mostly the user's. 
