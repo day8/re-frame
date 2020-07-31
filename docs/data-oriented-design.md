@@ -55,14 +55,14 @@ a new event handler using `reg-event-db`,
 it is as if you are adding to the "instruction set" of this "machine".
 
 When first introducing re-frame, I said it had Data-Oriented Design. 
-And we now know that means "code is data". You assemble data
+And we now know that means "data is code". You assemble data
 in a particular format (a domain-specific language), 
-and that data is then "executed" by an interpreter.
+and that data is then seen as code by an interpreter which executes it.
 
-Consider hiccup. It is a data format which descibes how to create and 
+Consider hiccup. It is a data format for describing how to create and 
 arranging DOM. Make a data structure in the right format
 and Reagent will act as the "interpreter" which executes that "language" 
-creating the DOM you describe. Code is data. 
+creating the DOM you describe. Data is code. 
 
 We can use pure data literals:
 ```clj
@@ -77,7 +77,7 @@ Or, a lot more computation:
 ```clj
 (into [:div] (map render-item items)]
 ```
-No matter which way the hiccup-formatted data is created, it acts as "instructions" for Reagent's instructions.
+No matter which way the hiccup-formatted data is created, it acts as "instructions" for Reagent's interpeter.
 
 Back to re-frame. 
 
@@ -87,7 +87,7 @@ And it also asks that **you** provide
 a way to execute the instructions in that DSL (you must provide the event handlers).
 
 > When your re-frame application runs, 
-it is executes a "program" - a collection of events - which is data - dynamically created by the user's actions (button clicks etc) - on a 
+it is executing a "program" - a collection of events - which is data - dynamically created by the user's actions (button clicks etc) - on a 
 virtual machine made from the event handlers you register. 
 
 Events are the (assembly) language of your application.
