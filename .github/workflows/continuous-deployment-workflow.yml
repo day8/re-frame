@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-18.04
     container:
       # Source: https://github.com/day8/dockerfile-for-dev-ci-image
-      image: day8au/dev-ci:0.0.6
+      image: day8au/dev-ci:0.0.8
     steps:
       - uses: actions/checkout@v1
       - name: Maven cache
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-18.04
     container:
       # Source: https://github.com/day8/dockerfile-for-dev-ci-image
-      image: day8au/dev-ci:0.0.6
+      image: day8au/dev-ci:0.0.8
     steps:
       - uses: actions/checkout@v1
       - name: Maven cache
