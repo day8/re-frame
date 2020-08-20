@@ -12,7 +12,7 @@ jobs:
       # Source: https://github.com/day8/dockerfile-for-dev-ci-image
       image: day8au/dev-ci:0.0.8
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Maven cache
         id: maven-cache
         uses: actions/cache@v1
@@ -73,7 +73,7 @@ jobs:
       # Source: https://github.com/day8/dockerfile-for-dev-ci-image
       image: day8au/dev-ci:0.0.8
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Maven cache
         id: maven-cache
         uses: actions/cache@v1
