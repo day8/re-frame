@@ -267,27 +267,29 @@
    (subs/subscribe query dynv)))
 
 (defn clear-sub ;; think unreg-sub
-  "When called with no args, unregisters all subscription handlers.
-  
-  When given
-  one arg, assumed to be a `query-id` of a registered subscription handler,
-  unregisters the associated handler.
+  "Unregisters subscription handlers (presumably registered previously via the use of `reg-sub`). 
+   
+  When called with no args, it will unregister all currently registered subscription handlers. 
+   
+  When given one arg, assumed to be the `id` of a previously registered 
+  subscription handler, it will unregister the associated handler. Will produce a warning to 
+  console if it finds no matching registration.
 
-  NOTE: Depending on the usecase it may also be necessary to call
-         `clear-subscription-cache!`.
-  "
+  NOTE: Depending on the usecase, it may be necessary to call `clear-subscription-cache!` afterwards"
   ([]
    (registrar/clear-handlers subs/kind))
   ([query-id]
    (registrar/clear-handlers subs/kind query-id)))
 
+
 (defn clear-subscription-cache!
   "Removes all subscriptions from the cache.
 
-  For use at development time or test time. Useful when hot realoding reloading
-  to subscription handler code or after a React/render exception, because React components won't have been
-  cleaned up properly. And this, in turn, means the subscriptions within those
-  components won't have been cleaned up correctly. So this forces the issue.
+  This function can be used at development time or test time. Useful when hot realoding
+  namespaces containing subscription handlers. Also call it after a React/render exception,
+  because React components won't have been cleaned up properly. And this, in turn, means 
+  the subscriptions within those components won't have been cleaned up correctly. So this 
+  forces the issue.
   "
   []
   (subs/clear-subscription-cache!))
@@ -296,7 +298,7 @@
   "This is a low level, advanced function.  You should probably be
   using `reg-sub` instead.
 
-  Some docs are available in
+  Some explanation is available in the docs at
   <a href=\"http://day8.github.io/re-frame/flow-mechanics/\" target=\"_blank\">http://day8.github.io/re-frame/flow-mechanics/</a>"
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
@@ -329,10 +331,13 @@
 
 
 (defn clear-fx ;; think unreg-fx
-  "When called with no args, unregisters all effect handlers. 
+  "Unregisters effect handlers (presumably registered previously via the use of `reg-fx`). 
+   
+  When called with no args, it will unregister all currently registered effect handlers. 
    
   When given one arg, assumed to be the `id` of a previously registered 
-  effect handler, unregisters the associated handler.
+  effect handler, it will unregister the associated handler. Will produce a warning to 
+  console if it finds no matching registration.
   "
   ([]
    (registrar/clear-handlers fx/kind))
@@ -415,9 +420,13 @@
    (cofx/inject-cofx id value)))
 
 (defn clear-cofx ;; think unreg-cofx
-  "When called with no args, unregisters all coeffect handlers. When given one arg,
-   assumed to be the `id` of a registered coeffect handler, unregisters the
-   associated handler."
+  "Unregisters coeffect handlers (presumably registered previously via the use of `reg-cofx`). 
+   
+  When called with no args, it will unregister all currently registered coeffect handlers. 
+   
+  When given one arg, assumed to be the `id` of a previously registered 
+  coeffect handler, it will unregister the associated handler. Will produce a warning to 
+  console if it finds no matching registration."
   ([]
    (registrar/clear-handlers cofx/kind))
   ([id]
@@ -473,11 +482,14 @@
   ([id interceptors handler]
    (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (ctx-handler->interceptor handler)])))
 
-(defn clear-event ;; think unreg-event-*
-  "When called with no args, unregisters all event handlers.
+(defn clear-event
+  "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`). 
    
-  When given one argument, assumed to be the `id` of a previously registered 
-  event handler, unregisters the associated handler."
+  When called with no args, it will unregister all currently registered event handlers. 
+   
+  When given one arg, assumed to be the `id` of a previously registered 
+  event handler, it will unregister the associated handler. Will produce a warning to 
+  console if it finds no matching registration."
   ([]
    (registrar/clear-handlers events/kind))
   ([id]
@@ -669,14 +681,14 @@
   [interceptor]
   (settings/reg-global-interceptor interceptor))
 
-(defn clear-global-interceptor ;; think unreg-global-interceptor
-  "Unregisters (removes) global interceptors.
-
-   When called with no arguments, it unregisters all global interceptors. 
+(defn clear-global-interceptor
+  "Unregisters global interceptors (presumably registered previously via the use of `reg-global-interceptor`). 
    
-   When given
-   one argument, assumed to be the `id` of a currently registered global
-   interceptor, it removes the associated interceptor."
+  When called with no args, it will unregister all currently registered global interceptors. 
+   
+  When given one arg, assumed to be the `id` of a previously registered 
+  global interceptors, it will unregister the associated interceptor. Will produce a warning to 
+  console if it finds no matching registration."
   ([]
    (settings/clear-global-interceptors))
   ([id]
@@ -697,12 +709,24 @@
       (def my-interceptor
         (->interceptor
          :id     :my-interceptor
-         :before (fn [context]            ;; you normally want to change :coeffects
-                   ... in here use get-coeffect  and assoc-coeffect)
-         :after  (fn [context]                         ;; you normally want to change :effects
-                   (let [db (get-effect context :db)]  ;; (get-in context [:effects :db])
-                     (assoc-effect context :http-ajax {...}])))))
-  "
+         :before (fn [context]
+                   ... modifies and returns `context`)
+         :after  (fn [context] 
+                   ... modifies and returns `context`)))
+   
+  Notes:
+    - `:before` functions modify and return their `context` argument. Unless they 
+      side effect, in which case, they'll perform the side effect and return
+      `context` unchanged.
+    - `:before` fucntions often modify the `:coeffects` map with `context` and, 
+      if they do, then they  should use the utility functions `get-coeffect` and 
+      `assoc-coeffect`.
+    - `:after` functions modify and return their `context` argument. Unless they 
+      side effect, in which case, they'll perform the side effect and return 
+      `context` unchanged.
+    - `:after` functions often modify the `:effects` map with `context` and, 
+      if they do, then they  should use the utility functions `get-effect`
+      and `assoc-effect`"
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
 
@@ -766,16 +790,18 @@
 ;; --  logging ----------------------------------------------------------------
 
 (defn set-loggers!
-  "Internally, re-frame outputs warnings, errors etc via logging functions: `warn`, `log`, `error`, `group` and `groupEnd`
+  "re-frame outputs warnings and errors via the API function `console` 
+   which, by default, delegates to `js/console`'s default implementation for 
+  `log, `error`, `warn` `debug` `group` `groupEnd`. But, using this function,
+   you can override that behaviour with your own functions. 
 
-  By default, these functions map directly to their default `js/console` implementations,
-  but you can override that with your own functions (set or subset). 
-
-  `new-loggers` should be a map containing a subset of they keys for the standard `loggers`.
+  The argument `new-loggers` should be a map containing a subset of they keys 
+  for the standard `loggers`, namely  `:log` `:error` `:warn` `:debug` `:group` 
+  or `:groupEnd`.
 
   Example Usage:
 
-      (defn my-logger      ;; here is my alternative logging function
+      (defn my-logger      ;; my alternative logging function
         [& args]
         (post-it-somewhere (apply str args)))
 
@@ -787,10 +813,12 @@
 
 
 (defn console
-  "A utility logging function to be used by libraries which 
-  extend re-frame, like perhaps an effect handler.
+  "A utility logging function which is used internally within re-frame to produce 
+  warnings and other output. It can also be used by libraries which 
+  extend re-frame, such as effect handlers.
 
-  It will write the given `args` to js/console at the given log `level`.
+  By default, it will output the given `args` to `js/console` at the given log `level`.
+  However, an application using re-frame can redirect `console` output via `set-loggers!`. 
 
   `level` can be one of `:log` `:error` `:warn` `:debug` `:group` `:groupEnd`.
 
@@ -798,7 +826,7 @@
 
       (console :error \"Oh, dear God, it happened:\" a-var \"and\" another)
       (console :warn \"Possible breach of containment wall at:\" dt)
-   "
+  "
   [level & args]
   (apply loggers/console (into [level] args)))
 
@@ -840,7 +868,7 @@
 ;; -- Event Processing Callbacks  ---------------------------------------------
 
 (defn add-post-event-callback
-  "Registers a function `f` to be called after each event is processed. 
+  "Registers the given function `f` to be called after each event is processed. 
    
    `f` will be called with two arguments:
 
@@ -877,12 +905,12 @@
   "Deprecated. Use `reg-event-db` instead."
   {:deprecated "0.8.0"}
   [& args]
-  (console :warn  "re-frame:  \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
+  (console :warn  "re-frame: \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
   (apply reg-event-db args))
 
 (defn register-sub
   "Deprecated. Use `reg-sub-raw` instead."
   {:deprecated "0.8.0"}
   [& args]
-  (console :warn  "re-frame:  \"register-sub\" is deprecated. Use \"reg-sub-raw\" (look for registration of " (str (first args)) ")")
+  (console :warn  "re-frame: \"register-sub\" is used to register the event " (str (first args)) " but it is a deprecated part of the API. Please use \"reg-sub-raw\" instead.")
   (apply reg-sub-raw args))
