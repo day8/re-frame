@@ -442,8 +442,22 @@
     - `handler` is a function: (db event) -> db
     - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
-  Note: `handler` is wrapped in its own interceptor and added to the end of the interceptor
-  chain, so that, in the end, only a chain is registered.
+  Example Usage:
+
+      (reg-event-db 
+        :token 
+        (fn [db event]
+          (assoc db :some-key (get event 2)))  ;; return updated db
+
+  Or perhaps:
+
+      (reg-event-db
+        :namespaced/id           ;; <-- namespaced keywords are often used
+        [one two three]          ;; <-- a seq of interceptors
+        (fn [db [_ arg1 arg2]]   ;; <-- event vector is destructured
+          (-> db 
+            (dissoc arg1)
+            (update :key + arg2))))   ;; return updated db
   "
   ([id handler]
    (reg-event-db id nil handler))
@@ -459,8 +473,23 @@
     - `handler` is a function: (coeffects-map event-vector) -> effects-map
     - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
-  Note: `handler` is wrapped in its own interceptor and added to the end of the interceptor
-  chain, so that, in the end, only a chain is registered.
+
+  Example Usage:
+
+      (reg-event-fx 
+        :token 
+        (fn [cofx event]
+          {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
+
+
+  Or perhaps:
+
+      (reg-event-fx
+        :namespaced/id           ;; <-- namespaced keywords are often used
+        [one two three]          ;; <-- a seq of interceptors
+        (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
+          {:db       (assoc db :some-key arg1)          ;; return a map of effects
+           :dispatch [:some-event arg2]}))
   "
   ([id handler]
    (reg-event-fx id nil handler))
@@ -475,7 +504,7 @@
     - `id` is typically a namespaced keyword  (but can be anything)
     - `handler` is a function: (context-map event-vector) -> context-map
 
-  This form of registration is almost never used.
+  This form of registration is seldomAt dinner wenever used.
   "
   ([id handler]
    (reg-event-ctx id nil handler))
