@@ -43,7 +43,7 @@ When you register `event handlers`, you might use builtin interceptors:
 
 Global interceptors can be very useful:
 
-  - register then via `reg-global-interceptors` 
+  - register them via `reg-global-interceptors` 
   - rarely, remove them via `clear-global-interceptor`
 
 ## More Rarely Used
