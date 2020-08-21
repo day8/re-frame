@@ -18,10 +18,10 @@
 </code></pre>
 <p>Notes:</p>
 <ul>
-  <li><code>:before</code> functions modify and return their <code>context</code> argument. Unless they side effect, in which case, they’ll perform the side effect and return <code>context</code> unchanged.</li>
-  <li><code>:before</code> fucntions often modify the <code>:coeffects</code> map with <code>context</code> and, if they do, then they should use the utility functions <code>get-coeffect</code> and <code>assoc-coeffect</code>.</li>
-  <li><code>:after</code> functions modify and return their <code>context</code> argument. Unless they side effect, in which case, they’ll perform the side effect and return <code>context</code> unchanged.</li>
-  <li><code>:after</code> functions often modify the <code>:effects</code> map with <code>context</code> and, if they do, then they should use the utility functions <code>get-effect</code> and <code>assoc-effect</code></li>
+  <li><code>:before</code> functions modify and return their <code>context</code> argument. Sometimes they only side effect, in which case, they’ll perform the side effect and return <code>context</code> unchanged.</li>
+  <li><code>:before</code> functions often modify the <code>:coeffects</code> map within <code>context</code> and, if they do, then they should use the utility functions <code>get-coeffect</code> and <code>assoc-coeffect</code>.</li>
+  <li><code>:after</code> functions modify and return their <code>context</code> argument. Sometimes they only side effect, in which case, they’ll perform the side effect and return <code>context</code> unchanged.</li>
+  <li><code>:after</code> functions often modify the <code>:effects</code> map within <code>context</code> and, if they do, then they should use the utility functions <code>get-effect</code> and <code>assoc-effect</code></li>
 </ul></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers the given function <code>f</code> to be called after each event is processed. </p>
 <p><code>f</code> will be called with two arguments:</p>
 <ul>
