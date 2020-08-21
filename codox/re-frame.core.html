@@ -188,19 +188,46 @@
   <li><code>id</code> is typically a namespaced keyword (but can be anything)</li>
   <li><code>handler</code> is a function: (context-map event-vector) -&gt; context-map</li>
 </ul>
-<p>This form of registration is almost never used.</p></div></div></div><div class="public anchor" id="var-reg-event-db"><h3>reg-event-db</h3><div class="usage"><code>(reg-event-db id handler)</code><code>(reg-event-db id interceptors handler)</code></div><div class="doc"><div class="markdown"><p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide an <code>interceptors</code> chain:</p>
+<p>This form of registration is seldomAt dinner wenever used.</p></div></div></div><div class="public anchor" id="var-reg-event-db"><h3>reg-event-db</h3><div class="usage"><code>(reg-event-db id handler)</code><code>(reg-event-db id interceptors handler)</code></div><div class="doc"><div class="markdown"><p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide an <code>interceptors</code> chain:</p>
 <ul>
   <li><code>id</code> is typically a namespaced keyword (but can be anything)</li>
   <li><code>handler</code> is a function: (db event) -&gt; db</li>
   <li><code>interceptors</code> is a collection of interceptors. Will be flattened and nils removed.</li>
 </ul>
-<p>Note: <code>handler</code> is wrapped in its own interceptor and added to the end of the interceptor chain, so that, in the end, only a chain is registered.</p></div></div></div><div class="public anchor" id="var-reg-event-fx"><h3>reg-event-fx</h3><div class="usage"><code>(reg-event-fx id handler)</code><code>(reg-event-fx id interceptors handler)</code></div><div class="doc"><div class="markdown"><p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide an <code>interceptors</code> chain:</p>
+<p>Example Usage:</p>
+<pre><code>(reg-event-db 
+  :token 
+  (fn [db event]
+    (assoc db :some-key (get event 2)))  ;; return updated db
+</code></pre>
+<p>Or perhaps:</p>
+<pre><code>(reg-event-db
+  :namespaced/id           ;; &lt;-- namespaced keywords are often used
+  [one two three]          ;; &lt;-- a seq of interceptors
+  (fn [db [_ arg1 arg2]]   ;; &lt;-- event vector is destructured
+    (-&gt; db 
+      (dissoc arg1)
+      (update :key + arg2))))   ;; return updated db
+</code></pre></div></div></div><div class="public anchor" id="var-reg-event-fx"><h3>reg-event-fx</h3><div class="usage"><code>(reg-event-fx id handler)</code><code>(reg-event-fx id interceptors handler)</code></div><div class="doc"><div class="markdown"><p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide an <code>interceptors</code> chain:</p>
 <ul>
   <li><code>id</code> is typically a namespaced keyword (but can be anything)</li>
   <li><code>handler</code> is a function: (coeffects-map event-vector) -&gt; effects-map</li>
   <li><code>interceptors</code> is a collection of interceptors. Will be flattened and nils removed.</li>
 </ul>
-<p>Note: <code>handler</code> is wrapped in its own interceptor and added to the end of the interceptor chain, so that, in the end, only a chain is registered.</p></div></div></div><div class="public anchor" id="var-reg-fx"><h3>reg-fx</h3><div class="usage"><code>(reg-fx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given effect <code>handler</code> for the given <code>id</code>:</p>
+<p>Example Usage:</p>
+<pre><code>(reg-event-fx 
+  :token 
+  (fn [cofx event]
+    {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
+</code></pre>
+<p>Or perhaps:</p>
+<pre><code>(reg-event-fx
+  :namespaced/id           ;; &lt;-- namespaced keywords are often used
+  [one two three]          ;; &lt;-- a seq of interceptors
+  (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
+    {:db       (assoc db :some-key arg1)          ;; return a map of effects
+     :dispatch [:some-event arg2]}))
+</code></pre></div></div></div><div class="public anchor" id="var-reg-fx"><h3>reg-fx</h3><div class="usage"><code>(reg-fx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given effect <code>handler</code> for the given <code>id</code>:</p>
 <ul>
   <li><code>id</code> is keyword, often namespaced.</li>
   <li><code>handler</code> is a side-effecting function which takes a single argument and whose return value is ignored.</li>
