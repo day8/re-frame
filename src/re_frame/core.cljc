@@ -312,20 +312,20 @@
     - `handler` is a side-effecting function which takes a single argument and whose return
       value is ignored.
 
-   To use, first, associate `:effect2` with a handler.
+  To use, first, associate `:effect2` with a handler:
 
       (reg-fx
          :effect2
          (fn [value]
             ... do something side-effect-y))
 
-   Then, later, if an event handler were to return this effects map ...
+  Then, later, if an event handler were to return this effects map:
 
       {:effect2  [1 2]}
 
-   then the `handler` `fn` we registered previously, using `reg-fx`, will be
-   called with an argument of `[1 2]`.
-   "
+  then the `handler` `fn` we registered previously, using `reg-fx`, will be
+  called with an argument of `[1 2]`.
+  "
   [id handler]
   (fx/reg-fx id handler))
 
@@ -715,6 +715,7 @@
                    ... modifies and returns `context`)))
    
   Notes:
+  
     - `:before` functions modify and return their `context` argument. Unless they 
       side effect, in which case, they'll perform the side effect and return
       `context` unchanged.
@@ -792,7 +793,7 @@
 (defn set-loggers!
   "re-frame outputs warnings and errors via the API function `console` 
    which, by default, delegates to `js/console`'s default implementation for 
-  `log, `error`, `warn` `debug` `group` `groupEnd`. But, using this function,
+  `log`, `error`, `warn`, `debug`, `group` and `groupEnd`. But, using this function,
    you can override that behaviour with your own functions. 
 
   The argument `new-loggers` should be a map containing a subset of they keys 
@@ -820,11 +821,11 @@
   By default, it will output the given `args` to `js/console` at the given log `level`.
   However, an application using re-frame can redirect `console` output via `set-loggers!`. 
 
-  `level` can be one of `:log` `:error` `:warn` `:debug` `:group` `:groupEnd`.
+  `level` can be one of `:log`, `:error`, `:warn`, `:debug`, `:group` or `:groupEnd`.
 
   Example usage:
 
-      (console :error \"Oh, dear God, it happened:\" a-var \"and\" another)
+      (console :error \"Sure enough it happened:\" a-var \"and\" another)
       (console :warn \"Possible breach of containment wall at:\" dt)
   "
   [level & args]
