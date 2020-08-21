@@ -16,7 +16,13 @@
    :after  (fn [context] 
              ... modifies and returns `context`)))
 </code></pre>
-<p>Notes:  - <code>:before</code> functions modify and return their <code>context</code> argument. Unless they  side effect, in which case, they’ll perform the side effect and return  <code>context</code> unchanged.  - <code>:before</code> fucntions often modify the <code>:coeffects</code> map with <code>context</code> and,  if they do, then they should use the utility functions <code>get-coeffect</code> and  <code>assoc-coeffect</code>.  - <code>:after</code> functions modify and return their <code>context</code> argument. Unless they  side effect, in which case, they’ll perform the side effect and return  <code>context</code> unchanged.  - <code>:after</code> functions often modify the <code>:effects</code> map with <code>context</code> and,  if they do, then they should use the utility functions <code>get-effect</code>  and <code>assoc-effect</code></p></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers the given function <code>f</code> to be called after each event is processed. </p>
+<p>Notes:</p>
+<ul>
+  <li><code>:before</code> functions modify and return their <code>context</code> argument. Unless they side effect, in which case, they’ll perform the side effect and return <code>context</code> unchanged.</li>
+  <li><code>:before</code> fucntions often modify the <code>:coeffects</code> map with <code>context</code> and, if they do, then they should use the utility functions <code>get-coeffect</code> and <code>assoc-coeffect</code>.</li>
+  <li><code>:after</code> functions modify and return their <code>context</code> argument. Unless they side effect, in which case, they’ll perform the side effect and return <code>context</code> unchanged.</li>
+  <li><code>:after</code> functions often modify the <code>:effects</code> map with <code>context</code> and, if they do, then they should use the utility functions <code>get-effect</code> and <code>assoc-effect</code></li>
+</ul></div></div></div><div class="public anchor" id="var-add-post-event-callback"><h3>add-post-event-callback</h3><div class="usage"><code>(add-post-event-callback f)</code><code>(add-post-event-callback id f)</code></div><div class="doc"><div class="markdown"><p>Registers the given function <code>f</code> to be called after each event is processed. </p>
 <p><code>f</code> will be called with two arguments:</p>
 <ul>
   <li><code>event</code>: a vector. The event just processed.</li>
@@ -50,9 +56,9 @@
 <p>NOTE: Depending on the usecase, it may be necessary to call <code>clear-subscription-cache!</code> afterwards</p></div></div></div><div class="public anchor" id="var-clear-subscription-cache.21"><h3>clear-subscription-cache!</h3><div class="usage"><code>(clear-subscription-cache!)</code></div><div class="doc"><div class="markdown"><p>Removes all subscriptions from the cache.</p>
 <p>This function can be used at development time or test time. Useful when hot realoding namespaces containing subscription handlers. Also call it after a React/render exception, because React components won’t have been cleaned up properly. And this, in turn, means the subscriptions within those components won’t have been cleaned up correctly. So this forces the issue.</p></div></div></div><div class="public anchor" id="var-console"><h3>console</h3><div class="usage"><code>(console level &amp; args)</code></div><div class="doc"><div class="markdown"><p>A utility logging function which is used internally within re-frame to produce warnings and other output. It can also be used by libraries which extend re-frame, such as effect handlers.</p>
 <p>By default, it will output the given <code>args</code> to <code>js/console</code> at the given log <code>level</code>. However, an application using re-frame can redirect <code>console</code> output via <code>set-loggers!</code>. </p>
-<p><code>level</code> can be one of <code>:log</code> <code>:error</code> <code>:warn</code> <code>:debug</code> <code>:group</code> <code>:groupEnd</code>.</p>
+<p><code>level</code> can be one of <code>:log</code>, <code>:error</code>, <code>:warn</code>, <code>:debug</code>, <code>:group</code> or <code>:groupEnd</code>.</p>
 <p>Example usage:</p>
-<pre><code>(console :error "Oh, dear God, it happened:" a-var "and" another)
+<pre><code>(console :error "Sure enough it happened:" a-var "and" another)
 (console :warn "Possible breach of containment wall at:" dt)
 </code></pre></div></div></div><div class="public anchor" id="var-debug"><h3>debug</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>An interceptor which logs/instruments an event handler’s actions to <code>js/console.debug</code>. See examples/todomvc/src/events.cljs for use.</p>
 <p>Output includes:</p>
@@ -197,12 +203,17 @@
 <p>Note: <code>handler</code> is wrapped in its own interceptor and added to the end of the interceptor chain, so that, in the end, only a chain is registered.</p></div></div></div><div class="public anchor" id="var-reg-fx"><h3>reg-fx</h3><div class="usage"><code>(reg-fx id handler)</code></div><div class="doc"><div class="markdown"><p>Register the given effect <code>handler</code> for the given <code>id</code>:</p>
 <ul>
   <li><code>id</code> is keyword, often namespaced.</li>
-  <li><code>handler</code> is a side-effecting function which takes a single argument and whose return  value is ignored.</li>
+  <li><code>handler</code> is a side-effecting function which takes a single argument and whose return value is ignored.</li>
 </ul>
-<p>To use, first, associate <code>:effect2</code> with a handler.</p>
-<p>(reg-fx  :effect2  (fn [value]  … do something side-effect-y))</p>
-<p>Then, later, if an event handler were to return this effects map …</p>
-<p>{:effect2 [1 2]}</p>
+<p>To use, first, associate <code>:effect2</code> with a handler:</p>
+<pre><code>(reg-fx
+   :effect2
+   (fn [value]
+      ... do something side-effect-y))
+</code></pre>
+<p>Then, later, if an event handler were to return this effects map:</p>
+<pre><code>{:effect2  [1 2]}
+</code></pre>
 <p>then the <code>handler</code> <code>fn</code> we registered previously, using <code>reg-fx</code>, will be called with an argument of <code>[1 2]</code>.</p></div></div></div><div class="public anchor" id="var-reg-global-interceptor"><h3>reg-global-interceptor</h3><div class="usage"><code>(reg-global-interceptor interceptor)</code></div><div class="doc"><div class="markdown"><p>Registers the given <code>interceptor</code> as a global interceptor. Global interceptors are included in the processing chain of every event.</p>
 <p>When you register an event handler, you have the option of supplying an interceptor chain. Any global interceptors you register are effectively prepending to this chain.</p>
 <p>Global interceptors are run in the order that they are registered.</p></div></div></div><div class="public anchor" id="var-reg-sub"><h3>reg-sub</h3><div class="usage"><code>(reg-sub query-id &amp; args)</code></div><div class="doc"><div class="markdown"><p>A call to <code>reg-sub</code> associates a <code>query-id</code> WITH two functions.</p>
@@ -284,7 +295,7 @@
 <p>For further understanding, read the tutorials, and look at the detailed comments in /examples/todomvc/src/subs.cljs.</p>
 <p>See also: <code>subscribe</code></p></div></div></div><div class="public anchor" id="var-reg-sub-raw"><h3>reg-sub-raw</h3><div class="usage"><code>(reg-sub-raw query-id handler-fn)</code></div><div class="doc"><div class="markdown"><p>This is a low level, advanced function. You should probably be using <code>reg-sub</code> instead.</p>
 <p>Some explanation is available in the docs at <a href="http://day8.github.io/re-frame/flow-mechanics/" target="_blank"></a><a href="http://day8.github.io/re-frame/flow-mechanics/">http://day8.github.io/re-frame/flow-mechanics/</a></p></div></div></div><div class="public anchor" id="var-register-handler"><h3>register-handler</h3><h4 class="deprecated">deprecated in 0.8.0</h4><div class="usage"><code>(register-handler &amp; args)</code></div><div class="doc"><div class="markdown"><p>Deprecated. Use <code>reg-event-db</code> instead.</p></div></div></div><div class="public anchor" id="var-register-sub"><h3>register-sub</h3><h4 class="deprecated">deprecated in 0.8.0</h4><div class="usage"><code>(register-sub &amp; args)</code></div><div class="doc"><div class="markdown"><p>Deprecated. Use <code>reg-sub-raw</code> instead.</p></div></div></div><div class="public anchor" id="var-remove-post-event-callback"><h3>remove-post-event-callback</h3><div class="usage"><code>(remove-post-event-callback id)</code></div><div class="doc"><div class="markdown"><p>Unregisters a post event callback function, identified by <code>id</code>. </p>
-<p>Such a function must have been previously registered via <code>add-post-event-callback</code></p></div></div></div><div class="public anchor" id="var-set-loggers.21"><h3>set-loggers!</h3><div class="usage"><code>(set-loggers! new-loggers)</code></div><div class="doc"><div class="markdown"><p>re-frame outputs warnings and errors via the API function <code>console</code>  which, by default, delegates to <code>js/console</code>’s default implementation for <code>log,</code>error<code>,</code>warn` <code>debug</code> <code>group</code> <code>groupEnd</code>. But, using this function,  you can override that behaviour with your own functions. </p>
+<p>Such a function must have been previously registered via <code>add-post-event-callback</code></p></div></div></div><div class="public anchor" id="var-set-loggers.21"><h3>set-loggers!</h3><div class="usage"><code>(set-loggers! new-loggers)</code></div><div class="doc"><div class="markdown"><p>re-frame outputs warnings and errors via the API function <code>console</code>  which, by default, delegates to <code>js/console</code>’s default implementation for <code>log</code>, <code>error</code>, <code>warn</code>, <code>debug</code>, <code>group</code> and <code>groupEnd</code>. But, using this function,  you can override that behaviour with your own functions. </p>
 <p>The argument <code>new-loggers</code> should be a map containing a subset of they keys for the standard <code>loggers</code>, namely <code>:log</code> <code>:error</code> <code>:warn</code> <code>:debug</code> <code>:group</code> or <code>:groupEnd</code>.</p>
 <p>Example Usage:</p>
 <pre><code>(defn my-logger      ;; my alternative logging function
