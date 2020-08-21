@@ -716,17 +716,17 @@
    
   Notes:
   
-    - `:before` functions modify and return their `context` argument. Unless they 
-      side effect, in which case, they'll perform the side effect and return
+    - `:before` functions modify and return their `context` argument. Sometimes they 
+      only side effect, in which case, they'll perform the side effect and return
       `context` unchanged.
-    - `:before` fucntions often modify the `:coeffects` map with `context` and, 
-      if they do, then they  should use the utility functions `get-coeffect` and 
+    - `:before` functions often modify the `:coeffects` map within `context` and, 
+      if they do, then they should use the utility functions `get-coeffect` and 
       `assoc-coeffect`.
-    - `:after` functions modify and return their `context` argument. Unless they 
-      side effect, in which case, they'll perform the side effect and return 
+    - `:after` functions modify and return their `context` argument. Sometimes they 
+      only side effect, in which case, they'll perform the side effect and return 
       `context` unchanged.
-    - `:after` functions often modify the `:effects` map with `context` and, 
-      if they do, then they  should use the utility functions `get-effect`
+    - `:after` functions often modify the `:effects` map within `context` and, 
+      if they do, then they should use the utility functions `get-effect`
       and `assoc-effect`"
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
