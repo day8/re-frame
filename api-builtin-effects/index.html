@@ -1342,6 +1342,20 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#ordering" class="md-nav__link">
+    Ordering
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+     :db
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fx" class="md-nav__link">
      :fx
   </a>
@@ -1349,15 +1363,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dispatch-later" class="md-nav__link">
-     :dispatch-later
+  <a href="#dispatch" class="md-nav__link">
+     :dispatch
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#dispatch" class="md-nav__link">
-     :dispatch
+  <a href="#dispatch-later" class="md-nav__link">
+     :dispatch-later
   </a>
   
 </li>
@@ -1372,13 +1386,6 @@
         <li class="md-nav__item">
   <a href="#deregister-event-handler" class="md-nav__link">
      :deregister-event-handler
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#db" class="md-nav__link">
-     :db
   </a>
   
 </li>
@@ -1411,16 +1418,16 @@
     </h3>
     <ul>
         <li class="depth-1">
+            <a href="api-builtin-effects.html#db">
+                <div class="inner">
+                    <span>:db</span>
+                </div>
+            </a>
+        </li>    
+        <li class="depth-1">
             <a href="api-builtin-effects.html#fx">
                 <div class="inner">
                     <span>:fx</span>
-                </div>
-            </a>
-        </li>       
-        <li class="depth-1">
-            <a href="api-builtin-effects.html#dispatch-later">
-                <div class="inner">
-                    <span>:dispatch-later</span>
                 </div>
             </a>
         </li>
@@ -1428,6 +1435,13 @@
             <a href="api-builtin-effects.html#dispatch">
                 <div class="inner">
                     <span>:dispatch</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="api-builtin-effects.html#dispatch-later">
+                <div class="inner">
+                    <span>:dispatch-later</span>
                 </div>
             </a>
         </li>
@@ -1445,54 +1459,82 @@
                 </div>
             </a>
         </li>
-        <li class="depth-1">
-            <a href="api-builtin-effects.html#db">
-                <div class="inner">
-                    <span>:db</span>
-                </div>
-            </a>
-        </li>                                
+
     </ul>
 </div>
 
 <h1 id="builtin-effects">Builtin Effects<a class="headerlink" href="#builtin-effects" title="Permanent link">&para;</a></h1>
-<p>In addition to the API provided by <code>re-frame.core</code>, re-frame provides a small number of 
-built-in effects which also contribute to the API. </p>
+<p>In addition to the API provided in <code>re-frame.core</code>, re-frame supplies a small number of 
+built-in effects which also contribute to the API.</p>
+<h2 id="ordering">Ordering<a class="headerlink" href="#ordering" title="Permanent link">&para;</a></h2>
+<p>An event handler (registered via <code>reg-event-fx</code>) can return a map containing many effects. But maps have no inherent ordering. So, in what order will re-frame action effets?</p>
+<p>For example, an event handler might return:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:some-id</span><span class="p">]</span>
+ <span class="ss">:http</span>     <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span>  <span class="ss">:url</span> <span class="s">&quot;http://somewhere.com/&quot;</span><span class="p">}</span>
+ <span class="ss">:db</span>       <span class="nv">new-db</span><span class="p">}</span>
+</code></pre></div>
+
+
+<p>Will the <code>:dispatch</code> effect be actioned before <code>:http</code>, and what about <code>:db</code>?</p>
+<p><strong><em>Prior to v1.1.0</em></strong>, the answer is: no guarentees were provided about ordering. Actual order is an implementation detail upon which you should not rely.</p>
+<p><strong><em>From v1.1.0 onwards</em></strong>, two things changed:</p>
+<ul>
+<li>re-frame guarenteed that the <code>:db</code> effect will always be actioned first, if present. But other than that, no guarentee is given for the other effects.</li>
+<li>a new effect called <code>:fx</code> was added, and it provides a way for effects to be ordered.</li>
+</ul>
+<p>In fact, with v1.1.0 <strong><em>best practice changed</em></strong> to event handers should only return two effects <code>:db</code> and <code>:fx</code>, in which case <code>:db</code> was always done first and then <code>:fx</code>, and within <code>:fx</code> the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. </p>
+<p>The new approach:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span> 
+ <span class="ss">:fx</span> <span class="p">[</span><span class="nv">...</span><span class="p">]</span>    <span class="c1">;; &lt;-- optional, contains one effect after another</span>
+</code></pre></div>
+
+
+<p>Note: the latest, new method is backward compatible. All your existing code will continue to work (with <code>:db</code> always getting done first now).</p>
+<h2 id="db"><a name="db"></a> :db<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
+<p><code>reset!</code> <code>app-db</code> to be a new value. </p>
+<p>The associated <code>value</code> is expected to be a map. This is always
+executed first before any other effect.</p>
+<p>usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="p">{</span><span class="ss">:key1</span> <span class="nv">value1</span> <span class="nv">key2</span> <span class="nv">value2</span><span class="p">}}</span>   
+</code></pre></div>
+
+
+<p>Normal usage would look like this: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
+  <span class="err">:</span> <span class="nv">token</span> 
+  <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">event</span><span class="p">]</span>
+    <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:some-key</span> <span class="nv">some-val</span><span class="p">)}))</span>     <span class="c1">;; &lt;-- new value computed</span>
+</code></pre></div>
+
+
+<blockquote>
+<p>Note: when present, a <code>:db</code> effect will be actioned before other sibling effects. But prior to v1.1.0 this was not the case.</p>
+</blockquote>
 <h2 id="fx"><a name="fx"></a> :fx<a class="headerlink" href="#fx" title="Permanent link">&para;</a></h2>
-<p>Handle one of more effects. Expects a collection of vectors (tuples) of the form 
-<code>[effect-key effect-value]</code>. <code>nil</code> entries in the collection are ignored so 
-effects can be added conditionally.</p>
-<p>usage:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]]</span>
-      <span class="nv">nil</span>
-      <span class="p">[</span><span class="ss">:http-xhrio</span> <span class="p">{</span><span class="ss">:method</span> <span class="ss">:post</span>
-                     <span class="nv">...</span><span class="p">}]]}</span>
+<p>An effect which actions other effects, sequentially. </p>
+<p>Expects a value which is a sequence, typically a vector. Each element in the sequence represents one effect. Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect (the value given to the registered effect handler as an argument). </p>
+<p>For example:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-db</span> 
+ <span class="ss">:fx</span>  <span class="p">[[</span><span class="ss">:dispatch</span>   <span class="p">[</span><span class="ss">:some-id</span><span class="p">]]</span>
+       <span class="p">[</span><span class="ss">:http-xhrio</span> <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span>  <span class="ss">:url</span> <span class="s">&quot;http://somewhere.com/&quot;</span><span class="p">}]</span>
+       <span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nb">&gt; </span><span class="mi">2</span> <span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="ss">:some-effect-id</span>  <span class="nv">some-payload</span><span class="p">])]}</span>
 </code></pre></div>
 
 
-<h2 id="dispatch-later"><a name="dispatch-later"></a> :dispatch-later<a class="headerlink" href="#dispatch-later" title="Permanent link">&para;</a></h2>
-<p><code>dispatch</code> one or more events after given delays. Expects a collection
-of maps, each with two keys: <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
-<p>usage:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch-later</span> <span class="p">[</span><span class="c1">;; in 200ms do this: (dispatch [:event-id &quot;param&quot;])</span>
-                  <span class="p">{</span><span class="ss">:ms</span>       <span class="mi">200</span>
-                   <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}</span>
-                  <span class="p">{</span><span class="ss">:ms</span>       <span class="mi">100</span>
-                <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:also</span> <span class="ss">:this</span> <span class="ss">:in</span> <span class="ss">:100ms</span><span class="p">]}]}</span>
-</code></pre></div>
-
-
-<p>Note: <code>nil</code> entries in the collection are ignored which means events can be added
-conditionally:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch-later</span> <span class="p">[</span> <span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nb">&gt; </span><span class="mi">3</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:conditioned-out</span><span class="p">]})</span>
-                   <span class="p">{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:another-one</span><span class="p">]}]}</span>
-</code></pre></div>
-
-
+<p>You'll notice the use of <code>when</code> to conditionally include or exclude an effect. Any <code>nil</code> found in the <code>:fx</code> sequence will be ignored. </p>
 <h2 id="dispatch"><a name="dispatch"></a> :dispatch<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h2>
 <p><code>dispatch</code> one event. Expects a single vector.</p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param1&quot;</span> <span class="ss">:param2</span><span class="p">]</span> <span class="p">}</span>
+</code></pre></div>
+
+
+<h2 id="dispatch-later"><a name="dispatch-later"></a> :dispatch-later<a class="headerlink" href="#dispatch-later" title="Permanent link">&para;</a></h2>
+<p><code>dispatch</code> one or more events after a given delay. Expects a payload which is a 
+map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
+<p>usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-db</span> 
+ <span class="ss">:fx</span>  <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]}</span>  <span class="c1">;; dispatch in 200ms</span>
 </code></pre></div>
 
 
@@ -1524,14 +1566,6 @@ conditionally:</p>
 
 <p>or:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:deregister-event-handler</span> <span class="p">[</span><span class="ss">:one-id</span> <span class="ss">:another-id</span><span class="p">]}</span>
-</code></pre></div>
-
-
-<h2 id="db"><a name="db"></a> :db<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
-<p>reset! app-db with a new value. <code>value</code> is expected to be a map. This is always
-executed first before any other effect.</p>
-<p>usage:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="p">{</span><span class="ss">:key1</span> <span class="nv">value1</span> <span class="nv">key2</span> <span class="nv">value2</span><span class="p">}}</span>
 </code></pre></div>
                 
               
