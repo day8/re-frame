@@ -1541,9 +1541,15 @@ map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (th
 </code></pre></div>
 
 
-<p>Multiple:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}</span>
-                        <span class="p">{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]]}</span>
+<p>Multiple with <code>:fx</code> introduced in re-frame v1.1.0:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]</span>
+      <span class="p">[</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]]}</span>
+</code></pre></div>
+
+
+<p>Or deprecated variation prior to re-frame v1.1.0</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}</span>
+                  <span class="p">{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]}</span>
 </code></pre></div>
 
 
