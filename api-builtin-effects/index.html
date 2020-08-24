@@ -1466,8 +1466,8 @@
 <p>In addition to the API provided in <code>re-frame.core</code>, re-frame supplies a small number of 
 built-in effects which also contribute to the API.</p>
 <h2 id="ordering">Ordering<a class="headerlink" href="#ordering" title="Permanent link">&para;</a></h2>
-<p>An event handler (registered via <code>reg-event-fx</code>) can return a map containing many effects. But maps have no inherent ordering. So, in what order will re-frame action effets?</p>
-<p>For example, an event handler might return:</p>
+<p>An event handler (registered via <code>reg-event-fx</code>) can return a map containing many effects, but maps are unordered. So, in what order will re-frame action effects?</p>
+<p>For example, if an event handler returned:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:some-id</span><span class="p">]</span>
  <span class="ss">:http</span>     <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span>  <span class="ss">:url</span> <span class="s">&quot;http://somewhere.com/&quot;</span><span class="p">}</span>
  <span class="ss">:db</span>       <span class="nv">new-db</span><span class="p">}</span>
@@ -1475,43 +1475,41 @@ built-in effects which also contribute to the API.</p>
 
 
 <p>Will the <code>:dispatch</code> effect be actioned before <code>:http</code>, and what about <code>:db</code>?</p>
-<p><strong><em>Prior to v1.1.0</em></strong>, the answer is: no guarantees were provided about ordering. Actual order is an implementation detail upon which you should not rely.</p>
+<p><strong><em>Prior to v1.1.0</em></strong>: re-frame provided no guarantees regarding ordering. It was an implementation detail on which you couldn't rely.</p>
 <p><strong><em>From v1.1.0 onwards</em></strong>, two things changed:</p>
 <ul>
-<li>re-frame guaranteed that the <code>:db</code> effect will always be actioned first, if present. But other than that, no guarantee is given for the other effects.</li>
-<li>a new effect called <code>:fx</code> was added, and it provides a way for effects to be ordered.</li>
+<li>re-frame guarantees that the <code>:db</code> effect will be actioned first, if present. But there remains no guarantee for other effects.</li>
+<li>a new effect, called <code>:fx</code>, is added. It allows you to specify an ordered sequence of effects.</li>
 </ul>
-<p>In fact, with v1.1.0 <strong><em>best practice changed</em></strong> to event handlers should only return two effects <code>:db</code> and <code>:fx</code>, in which case <code>:db</code> was always done first and then <code>:fx</code>, and within <code>:fx</code> the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. </p>
-<p>The new approach:</p>
+<p>With v1.1.0 <strong><em>best practice</em></strong> probably changed: an event handler should return only two effects <code>:db</code> and <code>:fx</code>. The <code>:db</code> effect will be actioned first, and then <code>:fx</code>, but within <code>:fx</code> effects will be actioned in the sequence provided. The true reason for this change is that it makes it easier to compose event handlers from a number of smaller functions, but it incidently also allowed more specificity around ordering. So that was a bonus. </p>
+<p>So, the new approach encourages effects to be something like:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span> 
- <span class="ss">:fx</span> <span class="p">[</span><span class="nv">...</span><span class="p">]</span>    <span class="c1">;; &lt;-- optional, contains one effect after another</span>
+ <span class="ss">:fx</span> <span class="p">[</span><span class="nv">...</span><span class="p">]}</span>   <span class="c1">;; &lt;-- optional, contains one effect after another</span>
 </code></pre></div>
 
 
-<p>Note: the latest, new method is backward compatible. All your existing code will continue to work (with <code>:db</code> always getting done first now).</p>
 <h2 id="db"><a name="db"></a> :db<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <p><code>reset!</code> <code>app-db</code> to be a new value. </p>
 <p>The associated <code>value</code> is expected to be a map. This is always
-executed first before any other effect.</p>
+actioned first, before any other effect.</p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="p">{</span><span class="ss">:key1</span> <span class="nv">value1</span> <span class="nv">key2</span> <span class="nv">value2</span><span class="p">}}</span>   
 </code></pre></div>
 
 
-<p>Normal usage would look like this: </p>
+<p>Real usage might look like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-  <span class="err">:</span> <span class="nv">token</span> 
+  <span class="ss">:token</span> 
   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">event</span><span class="p">]</span>
     <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:some-key</span> <span class="nv">some-val</span><span class="p">)}))</span>     <span class="c1">;; &lt;-- new value computed</span>
 </code></pre></div>
 
 
-<blockquote>
-<p>Note: when present, a <code>:db</code> effect will be actioned before other sibling effects. But prior to v1.1.0 this was not the case.</p>
-</blockquote>
 <h2 id="fx"><a name="fx"></a> :fx<a class="headerlink" href="#fx" title="Permanent link">&para;</a></h2>
 <p>An effect which actions other effects, sequentially. </p>
-<p>Expects a value which is a sequence, typically a vector. Each element in the sequence represents one effect. Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect (the value given to the registered effect handler as an argument). </p>
+<p>Expects a value which is a sequence, typically a vector. 
+Each element in the sequence represents one effect. 
+Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect (the value ultimately given to the registered effect handler as an argument). </p>
 <p>For example:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-db</span> 
  <span class="ss">:fx</span>  <span class="p">[[</span><span class="ss">:dispatch</span>   <span class="p">[</span><span class="ss">:some-id</span><span class="p">]]</span>
@@ -1528,6 +1526,12 @@ executed first before any other effect.</p>
 </code></pre></div>
 
 
+<p>Dispatch multiple events:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event1</span> <span class="s">&quot;param1&quot;</span> <span class="ss">:param2</span><span class="p">]]</span>
+      <span class="p">[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:second</span><span class="p">]]}</span>
+</code></pre></div>
+
+
 <h2 id="dispatch-later"><a name="dispatch-later"></a> :dispatch-later<a class="headerlink" href="#dispatch-later" title="Permanent link">&para;</a></h2>
 <p><code>dispatch</code> one or more events after a given delay. Expects a payload which is a 
 map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
@@ -1537,23 +1541,22 @@ map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (th
 </code></pre></div>
 
 
+<p>Multiple:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]</span>
+      <span class="p">[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]}</span>
+</code></pre></div>
+
+
 <h2 id="deregister-event-handler"><a name="deregister-event-handler"></a> :deregister-event-handler<a class="headerlink" href="#deregister-event-handler" title="Permanent link">&para;</a></h2>
-<p>Removes a previously registered event handler. Expects either a single id
-(typically a keyword), or a seq of ids.</p>
+<p>Removes a previously registered event handler. Expects the id of the event handler. </p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span>
  <span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:deregister-event-handler</span> <span class="ss">:my-id</span><span class="p">]])}</span>
 </code></pre></div>
 
 
-<p>or:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span>
- <span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:deregister-event-handler</span> <span class="p">[</span><span class="ss">:one-id</span> <span class="ss">:another-id</span><span class="p">]]]}</span>
-</code></pre></div>
-
-
 <h2 id="dispatch-n-deprecated"><a name="dispatch-n"></a> :dispatch-n (Deprecated)<a class="headerlink" href="#dispatch-n-deprecated" title="Permanent link">&para;</a></h2>
-<p>Deprecated in favour of using <code>:fx</code> with multiple <code>:dispatch</code> tuples.</p>
+<p>This effect is deprecated in favour of using <code>:fx</code> with multiple <code>:dispatch</code> tuples.</p>
 <p><code>dispatch</code> more than one events. Expects a seq of event vectors (typically a list of them). </p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span>
