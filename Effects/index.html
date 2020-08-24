@@ -1712,11 +1712,13 @@ create your own alternative to <code>reg-event-fx</code> and, in it, inject
 your own version of the <code>do-fx</code> interceptor at the front
 of the interceptor chain.  It is only a few lines of code.</p>
 <h2 id="order-of-effects">Order Of Effects?<a class="headerlink" href="#order-of-effects" title="Permanent link">&para;</a></h2>
-<p>The <code>:db</code> side effect is guaranteed to be handled first.</p>
-<p>Effects in the collection of the <code>:fx</code> side effect are handled in the order
-provided.</p>
-<p>Effects other than <code>:db</code> in the top level map may occur in any order after <code>:db</code>,
-so may occur before or after <code>:fx</code>.</p>
+<p><strong><em>Prior to v1.1.0</em></strong>, the answer is: no guarantees were provided about ordering. Actual order is an implementation detail upon which you should not rely.</p>
+<p><strong><em>From v1.1.0 onwards</em></strong>, two things changed:</p>
+<ul>
+<li>re-frame guaranteed that the <code>:db</code> effect will always be actioned first, if present. But other than that, no guarantee is given for the other effects.</li>
+<li>a new effect called <code>:fx</code> was added, and it provides a way for effects to be ordered.</li>
+</ul>
+<p>In fact, with v1.1.0 <strong><em>best practice changed</em></strong> to event handlers should only return two effects <code>:db</code> and <code>:fx</code>, in which case <code>:db</code> was always done first and then <code>:fx</code>, and within <code>:fx</code> the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. </p>
 <h2 id="effects-with-no-data">Effects With No Data<a class="headerlink" href="#effects-with-no-data" title="Permanent link">&para;</a></h2>
 <p>Some effects have no associated data:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
