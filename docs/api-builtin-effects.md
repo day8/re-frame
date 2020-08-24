@@ -35,20 +35,19 @@
             </a>
         </li>
         <li class="depth-1">
-            <a href="api-builtin-effects.html#dispatch-n">
-                <div class="inner">
-                    <span>:dispatch-n</span>
-                </div>
-            </a>
-        </li>
-        <li class="depth-1">
             <a href="api-builtin-effects.html#deregister-event-handler">
                 <div class="inner">
                     <span>:deregister-event-handler</span>
                 </div>
             </a>
         </li>
-                            
+        <li class="depth-1">
+            <a href="api-builtin-effects.html#dispatch-n">
+                <div class="inner">
+                    <span>:dispatch-n</span>
+                </div>
+            </a>
+        </li>                            
     </ul>
 </div>
 
@@ -146,7 +145,26 @@ usage:
  :fx  [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]]}  ;; dispatch in 200ms
 ```
    
-## <a name="dispatch-n"></a> :dispatch-n
+## <a name="deregister-event-handler"></a> :deregister-event-handler
+
+Removes a previously registered event handler. Expects either a single id
+(typically a keyword), or a seq of ids.
+
+usage:
+```clojure
+{:db new-db
+ :fx [[:deregister-event-handler :my-id]])}
+```
+
+or:
+```clojure
+{:db new-db
+ :fx [[:deregister-event-handler [:one-id :another-id]]]}
+```
+
+## <a name="dispatch-n"></a> :dispatch-n (Deprecated)
+
+Deprecated in favour of `:fx` with multiple `:dispatch` tuples.
 
 `dispatch` more than one events. Expects a seq of event vectors (typically a list of them). 
 
@@ -167,20 +185,3 @@ conditionally:
       :fx [[:dispatch-n (list (when (> 3 5) [:conditioned-out])
                            [:another-one])]]}
      ```
-
-## <a name="deregister-event-handler"></a> :deregister-event-handler
-
-Removes a previously registered event handler. Expects either a single id
-(typically a keyword), or a seq of ids.
-
-usage:
-```clojure
-{:db new-db
- :fx [[:deregister-event-handler :my-id]])}
-```
-
-or:
-```clojure
-{:db new-db
- :fx [[:deregister-event-handler [:one-id :another-id]]]}
-```
