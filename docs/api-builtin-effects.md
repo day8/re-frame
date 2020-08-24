@@ -164,7 +164,7 @@ or:
 
 ## <a name="dispatch-n"></a> :dispatch-n (Deprecated)
 
-Deprecated in favour of `:fx` with multiple `:dispatch` tuples.
+Deprecated in favour of using `:fx` with multiple `:dispatch` tuples.
 
 `dispatch` more than one events. Expects a seq of event vectors (typically a list of them). 
 
