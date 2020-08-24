@@ -15,7 +15,7 @@
                  [org.clojure/tools.logging "0.4.1"]]
 
   :plugins      [[day8/lein-git-inject "0.0.14"]
-                 [lein-shadow          "0.2.0"]
+                 [lein-shadow          "0.2.2"]
                  [lein-codox           "0.10.7"]]
 
   :middleware   [leiningen.git-inject/middleware]
@@ -33,16 +33,21 @@
                      :plugins      [[lein-ancient       "0.6.15"]
                                     [lein-shell         "0.5.0"]]}}
 
-  :clean-targets  [:target-path "run/compiled"]
+  :clean-targets  [:target-path
+                   "shadow-cljs.edn"
+                   "package.json"
+                   "run/compiled"]
 
   :resource-paths ["resources"]
   :jvm-opts       ["-Xmx1g"]
   :source-paths   ["src"]
   :test-paths     ["test"]
 
-  :shell          {:commands {"open" {:windows ["cmd" "/c" "start"]
-                                      :macosx  "open"
-                                      :linux   "xdg-open"}}}
+  :shell          {:commands {"karma" {:windows         ["cmd" "/c" "karma"]
+                                       :default-command "karma"}
+                              "open"  {:windows         ["cmd" "/c" "start"]
+                                       :macosx          "open"
+                                       :linux           "xdg-open"}}}
 
   :deploy-repositories [["clojars" {:sign-releases false
                                     :url "https://clojars.org/repo"
@@ -70,27 +75,17 @@
                           :compiler-options {:pretty-print                       true
                                              :closure-defines                    {re-frame.trace.trace-enabled? true}}}}}
 
-  ;; The git update-index command is required to ignore changes to package.json as
-  ;; 1. package.json must be committed to the repo for npm install --save... to behave correctly, which is used by
-  ;;    lein-shadow to install dependencies that would cause the build to fail if missing; e.g. karma
-  ;; 2. .gitignore does nothing for files that are already committed
-  ;; 3. git recognising package.json modifications would cause day8/lein-git-inject to always incorrectly use
-  ;;    -SNAPSHOT versions.
   :aliases {"test-once"   ["do"
                            ["clean"]
-                           ["shell" "git" "update-index" "--assume-unchanged" "package.json"]
                            ["shadow" "compile" "browser-test"]
                            ["shell" "open" "run/compiled/browser/test/index.html"]]
             "test-auto"   ["do"
                            ["clean"]
-                           ["shell" "git" "update-index" "--assume-unchanged" "package.json"]
                            ["shadow" "watch" "browser-test"]]
             "karma-once"  ["do"
                            ["clean"]
-                           ["shell" "git" "update-index" "--assume-unchanged" "package.json"]
                            ["shadow" "compile" "karma-test"]
                            ["shell" "karma" "start" "--single-run" "--reporters" "junit,dots"]]
             "karma-auto"  ["do"
                            ["clean"]
-                           ["shell" "git" "update-index" "--assume-unchanged" "package.json"]
                            ["shadow" "watch" "karma-test"]]})
