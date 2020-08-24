@@ -107,11 +107,11 @@
 <p><code>dispatch</code> one or more events after a given delay. Expects a payload which is a map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
 <p>usage:</p>
 <pre><code class="clj">{:db  new-db 
- :fx  [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]]}  ;; dispatch in 200ms
+ :fx  [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}]]]}  ;; dispatch in 200ms
 </code></pre>
 <p>Multiple:</p>
-<pre><code class="clojure">{:fx [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]
-      [:dispatch-later {:ms 100 :dispatch [:event-id "param"]}]}
+<pre><code class="clojure">{:fx [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}
+                        {:ms 100 :dispatch [:event-id "param"]}]]]}
 </code></pre>
 <h2><a href="#deregister-event-handler" name="deregister-event-handler"></a><a name="deregister-event-handler"></a> :deregister-event-handler</h2>
 <p>Removes a previously registered event handler. Expects the id of the event handler. </p>

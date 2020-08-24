@@ -1537,13 +1537,13 @@ Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect 
 map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-db</span> 
- <span class="ss">:fx</span>  <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]}</span>  <span class="c1">;; dispatch in 200ms</span>
+ <span class="ss">:fx</span>  <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]]}</span>  <span class="c1">;; dispatch in 200ms</span>
 </code></pre></div>
 
 
 <p>Multiple:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]</span>
-      <span class="p">[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]}</span>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}</span>
+                        <span class="p">{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]]}</span>
 </code></pre></div>
 
 
