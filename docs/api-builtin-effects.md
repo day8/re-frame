@@ -7,16 +7,16 @@
     </h3>
     <ul>
         <li class="depth-1">
+            <a href="api-builtin-effects.html#db">
+                <div class="inner">
+                    <span>:db</span>
+                </div>
+            </a>
+        </li>    
+        <li class="depth-1">
             <a href="api-builtin-effects.html#fx">
                 <div class="inner">
                     <span>:fx</span>
-                </div>
-            </a>
-        </li>       
-        <li class="depth-1">
-            <a href="api-builtin-effects.html#dispatch-later">
-                <div class="inner">
-                    <span>:dispatch-later</span>
                 </div>
             </a>
         </li>
@@ -24,6 +24,13 @@
             <a href="api-builtin-effects.html#dispatch">
                 <div class="inner">
                     <span>:dispatch</span>
+                </div>
+            </a>
+        </li>
+        <li class="depth-1">
+            <a href="api-builtin-effects.html#dispatch-later">
+                <div class="inner">
+                    <span>:dispatch-later</span>
                 </div>
             </a>
         </li>
@@ -41,57 +48,83 @@
                 </div>
             </a>
         </li>
-        <li class="depth-1">
-            <a href="api-builtin-effects.html#db">
-                <div class="inner">
-                    <span>:db</span>
-                </div>
-            </a>
-        </li>                                
+                            
     </ul>
 </div>
 
 
 # Builtin Effects
 
+In addition to the API provided in `re-frame.core`, re-frame supplies a small number of 
+built-in effects which also contribute to the API.
 
-In addition to the API provided by `re-frame.core`, re-frame provides a small number of 
-built-in effects which also contribute to the API. 
+## Ordering
+
+An event handler (registered via `reg-event-fx`) can return a map containing many effects. But maps have no inherent ordering. So, in what order will re-frame action effets?
+
+For example, an event handler might return:
+```clj 
+{:dispatch [:some-id]
+ :http     {:method :GET  :url "http://somewhere.com/"}
+ :db       new-db}
+``` 
+Will the `:dispatch` effect be actioned before `:http`, and what about `:db`?
+
+***Prior to v1.1.0***, the answer is: no guarentees were provided about ordering. Actual order is an implementation detail upon which you should not rely.
+
+***From v1.1.0 onwards***, two things changed:
+
+  - re-frame guarenteed that the `:db` effect will always be actioned first, if present. But other than that, no guarentee is given for the other effects.
+  - a new effect called `:fx` was added, and it provides a way for effects to be ordered.
+
+In fact, with v1.1.0 ***best practice changed*** to event handers should only return two effects `:db` and `:fx`, in which case `:db` was always done first and then `:fx`, and within `:fx` the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. 
+
+The new approach:
+```clj
+{:db new-db 
+ :fx [...]    ;; <-- optional, contains one effect after another
+```
+
+Note: the latest, new method is backward compatible. All your existing code will continue to work (with `:db` always getting done first now).
+
+## <a name="db"></a> :db
+
+`reset!` `app-db` to be a new value. 
+
+The associated `value` is expected to be a map. This is always
+executed first before any other effect.
+
+usage:
+```clojure
+{:db  {:key1 value1 key2 value2}}   
+```
+
+Normal usage would look like this: 
+```clojure
+(reg-event-fx
+  : token 
+  (fn [{:keys [db]} event]
+    {:db  (assoc db :some-key some-val)}))     ;; <-- new value computed
+```
+
+> Note: when present, a `:db` effect will be actioned before other sibling effects. But prior to v1.1.0 this was not the case.
 
 ## <a name="fx"></a> :fx
 
-Handle one of more effects. Expects a collection of vectors (tuples) of the form 
-`[effect-key effect-value]`. `nil` entries in the collection are ignored so 
-effects can be added conditionally.
+An effect which actions other effects, sequentially. 
 
-usage:
-```clojure
-{:fx [[:dispatch [:event-id "param"]]
-      nil
-      [:http-xhrio {:method :post
-                     ...}]]}
-```
-     
-## <a name="dispatch-later"></a> :dispatch-later
+Expects a value which is a sequence, typically a vector. Each element in the sequence represents one effect. Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect (the value given to the registered effect handler as an argument). 
 
-`dispatch` one or more events after given delays. Expects a collection
-of maps, each with two keys: `:ms` (milliseconds) and `:dispatch` (the event).
-
-usage:
-```clojure
-{:dispatch-later [;; in 200ms do this: (dispatch [:event-id "param"])
-                  {:ms       200
-                   :dispatch [:event-id "param"]}
-		          {:ms       100
-		        :dispatch [:also :this :in :100ms]}]}
+For example:
+```clj
+{:db  new-db 
+ :fx  [[:dispatch   [:some-id]]
+       [:http-xhrio {:method :GET  :url "http://somewhere.com/"}]
+       (when (> 2 3) [:some-effect-id  some-payload])]}
 ```
 
-Note: `nil` entries in the collection are ignored which means events can be added
-conditionally:
-```clojure
-{:dispatch-later [ (when (> 3 5) {:ms 200 :dispatch [:conditioned-out]})
-                   {:ms 100 :dispatch [:another-one]}]}
-```
+You'll notice the use of `when` to conditionally include or exclude an effect. Any `nil` found in the `:fx` sequence will be ignored. 
+
 
 ## <a name="dispatch"></a> :dispatch
 
@@ -100,6 +133,17 @@ conditionally:
 usage:
 ```clojure
 {:dispatch [:event-id "param1" :param2] }
+```
+
+## <a name="dispatch-later"></a> :dispatch-later
+
+`dispatch` one or more events after a given delay. Expects a payload which is a 
+map with two keys `:ms` (milliseconds) and `:dispatch` (the event).
+
+usage:
+```clj
+{:db  new-db 
+ :fx  [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]]}  ;; dispatch in 200ms
 ```
    
 ## <a name="dispatch-n"></a> :dispatch-n
@@ -136,14 +180,3 @@ or:
 ```clojure
 {:deregister-event-handler [:one-id :another-id]}
 ```
-
-## <a name="db"></a> :db
-
-reset! app-db with a new value. `value` is expected to be a map. This is always
-executed first before any other effect.
-
-usage:
-```clojure
-{:db  {:key1 value1 key2 value2}}
-```
-
