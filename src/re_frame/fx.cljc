@@ -41,17 +41,23 @@
   value for that key - so in the example above the effect handler for :dispatch
   will be given one arg `[:hello 42]`.
 
-  You cannot rely on the ordering in which effects are executed."
+  You cannot rely on the ordering in which effects are executed, other than that
+  `:db` is guaranteed to be executed first."
   (->interceptor
     :id :do-fx
     :after (fn do-fx-after
              [context]
              (trace/with-trace
                {:op-type :event/do-fx}
-               (doseq [[effect-key effect-value] (:effects context)]
-                 (if-let [effect-fn (get-handler kind effect-key false)]
-                   (effect-fn effect-value)
-                   (console :error "re-frame: no handler registered for effect:" effect-key ". Ignoring.")))))))
+               (let [effects            (:effects context)
+                     effects-without-db (dissoc effects :db)]
+                 ;; :db effect is guaranteed to be handled before all other effects.
+                 (when-let [new-db (:db effects)]
+                   ((get-handler kind :db false) new-db))
+                 (doseq [[effect-key effect-value] effects-without-db]
+                   (if-let [effect-fn (get-handler kind effect-key false)]
+                     (effect-fn effect-value)
+                     (console :warn "re-frame: no handler registered for effect:" effect-key ". Ignoring."))))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 
@@ -78,6 +84,31 @@
           (console :error "re-frame: ignoring bad :dispatch-later value:" effect)
           (set-timeout! #(router/dispatch dispatch) ms)))))
 
+;; :fx
+;;
+;; Handle one or more effects. Expects a collection of vectors (tuples) of the
+;; form [effect-key effect-value]. `nil` entries in the collection are ignored
+;; so effects can be added conditionally.
+;;
+;; usage:
+;;
+;; {:fx [[:dispatch [:event-id "param"]]
+;;       nil
+;;       [:http-xhrio {:method :post
+;;                     ...}]]}
+;;
+
+(reg-fx
+  :fx
+  (fn [seq-of-effects]
+    (if-not (seq? seq-of-effects)
+      (console :error "re-frame: \":fx\" effect expects a seq, but was given " (type seq-of-effects))
+      (doseq [[effect-key effect-value] (remove nil? seq-of-effects)]
+        (when (= :db effect-key)
+          (console :warn "re-frame: \":fx\" effect should not contain a :db effect"))
+        (if-let [effect-fn (get-handler kind effect-key false)]
+          (effect-fn effect-value)
+          (console :warn "re-frame: in \":fx\" effect found " effect-key " which has no associated handler. Ignoring."))))))
 
 ;; :dispatch
 ;;

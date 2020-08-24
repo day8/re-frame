@@ -12,7 +12,7 @@ When an event handler is registered via `reg-event-fx`, it must return effects. 
   :my-event
   (fn [cofx [_ a]]        ;; 1st argument is coeffects, instead of db
     {:db       (assoc (:db cofx) :flag  a)
-     :dispatch [:do-something-else 3]}))   ;; return effects
+     :fx       [[:dispatch [:do-something-else 3]]]})) ;; return effects
 ```
 
 `-fx` handlers return a description of the side-effects required, and that description is a map.
@@ -28,13 +28,14 @@ further data. The type of value depends on the specific side-effect.
 Here's the two instructions from the example above:
 ```clj
 {:db       (assoc db :flag  a)         ;; side effect on app-db
- :dispatch [:do-something-else 3]}     ;; dispatch this event
+ :fx       [[:dispatch [:do-something-else 3]]]}     ;; dispatch this event
 ```
 
 The `:db` key instructs that "app-db" should be `reset!` to the
 value supplied.
 
-And the `:dispatch` key instructs that an event should be
+And the `:fx` key instructs that an ordered list of other effects should be
+executed. In this case a `:dispatch` key instructs that an event should be
 dispatched. The value is the vector to dispatch.
 
 There are many other possible
@@ -182,29 +183,13 @@ of the interceptor chain.  It is only a few lines of code.
 
 ## Order Of Effects?
 
-There isn't one.
+The `:db` side effect is guaranteed to be handled first.
 
-`do-fx` does not currently provide you with control over the order in
-which side effects occur. The `:db` side effect
-might happen before `:dispatch`, or not. You can't rely on it.
+Effects in the collection of the `:fx` side effect are handled in the order
+provided.
 
-!!! Note "Is That A Problem?"
-    If you feel you need ordering, then please
-    open an issue and explain the usecase. The current absence of
-    good usecases is the reason ordering isn't implemented. So give
-    us a usercase and we'll revisit, maybe.
-
-
-!!! Note "For The Record"
-    If, later, ordering was needed, it might be handled via
-    metadata on `:effects`. Also, perhaps by allowing `reg-fx` to optionally
-    take two functions:
-
-    - an effects pre-process fn  <-- new. Takes `:effects` returns `:effects`
-    - the effects handler (as already described above).
-
-    Anyway, these are all just possibilities. But not needed or implemented yet.
-
+Effects other than `:db` in the top level map may occur in any order after `:db`,
+so may occur before or after `:fx`.
 
 ## Effects With No Data
 

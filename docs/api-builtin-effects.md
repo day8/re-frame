@@ -7,6 +7,13 @@
     </h3>
     <ul>
         <li class="depth-1">
+            <a href="api-builtin-effects.html#fx">
+                <div class="inner">
+                    <span>:fx</span>
+                </div>
+            </a>
+        </li>       
+        <li class="depth-1">
             <a href="api-builtin-effects.html#dispatch-later">
                 <div class="inner">
                     <span>:dispatch-later</span>
@@ -51,7 +58,20 @@
 In addition to the API provided by `re-frame.core`, re-frame provides a small number of 
 built-in effects which also contribute to the API. 
 
+## <a name="fx"></a> :fx
 
+Handle one of more effects. Expects a collection of vectors (tuples) of the form 
+`[effect-key effect-value]`. `nil` entries in the collection are ignored so 
+effects can be added conditionally.
+
+usage:
+```clojure
+{:fx [[:dispatch [:event-id "param"]]
+      nil
+      [:http-xhrio {:method :post
+                     ...}]]}
+```
+     
 ## <a name="dispatch-later"></a> :dispatch-later
 
 `dispatch` one or more events after given delays. Expects a collection
@@ -119,7 +139,8 @@ or:
 
 ## <a name="db"></a> :db
 
-reset! app-db with a new value. `value` is expected to be a map.
+reset! app-db with a new value. `value` is expected to be a map. This is always
+executed first before any other effect.
 
 usage:
 ```clojure
