@@ -74,6 +74,8 @@ jobs:
       image: day8au/dev-ci:0.0.8
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Maven cache
         id: maven-cache
         uses: actions/cache@v2
