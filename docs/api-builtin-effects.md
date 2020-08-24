@@ -148,10 +148,16 @@ usage:
  :fx  [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}]]]}  ;; dispatch in 200ms
 ```
 
-Multiple:
+Multiple with `:fx` introduced in re-frame v1.1.0:
 ```clojure
-{:fx [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}
-                        {:ms 100 :dispatch [:event-id "param"]}]]]}
+{:fx [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}]]
+      [:dispatch-later [{:ms 100 :dispatch [:event-id "param"]}]]]}
+```
+
+Or deprecated variation prior to re-frame v1.1.0
+```clojure
+{:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}
+                  {:ms 100 :dispatch [:event-id "param"]}]}
 ```
 
    
