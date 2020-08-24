@@ -31,7 +31,20 @@
   :profiles {:debug {:debug true}
              :dev   {:dependencies [[binaryage/devtools "1.0.2"]]
                      :plugins      [[lein-ancient       "0.6.15"]
-                                    [lein-shell         "0.5.0"]]}}
+                                    [lein-shell         "0.5.0"]]}
+             ;; Codox depends on v5.0.x of ASM[1] whereas shadow-cljs depends on
+             ;; v7.1.x as a transitive dependency of org.graalvm.js/js. If these
+             ;; deps are excluded for shadow-cljs builds, it will fail, but if
+             ;; the deps are not excluded for codox, the api doc build will fail.
+             ;; Therefore we use a profile to change the classpath for codox only.
+             ;;
+             ;; [1]: https://github.com/weavejester/codox/blob/master/codox/project.clj
+             :codox {:dependencies [[thheller/shadow-cljs      "2.11.0"   :scope "provided"
+                                     :exclusions [org.ow2.asm/asm
+                                                  org.ow2.asm/asm-util
+                                                  org.ow2.asm/asm-tree
+                                                  org.ow2.asm/asm-commons
+                                                  org.ow2.asm/asm-analysis]]]}}
 
   :clean-targets  [:target-path
                    "shadow-cljs.edn"
@@ -75,7 +88,9 @@
                           :compiler-options {:pretty-print                       true
                                              :closure-defines                    {re-frame.trace.trace-enabled? true}}}}}
 
-  :aliases {"test-once"   ["do"
+  :aliases {"api-docs"    ["with-profile" "codox" "do"
+                           ["codox"]]
+            "test-once"   ["do"
                            ["clean"]
                            ["shadow" "compile" "browser-test"]
                            ["shell" "open" "run/compiled/browser/test/index.html"]]

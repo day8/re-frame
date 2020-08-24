@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build Codox Documentation
-        run: lein codox
+        run: lein api-docs
       - name: Create Codox Artifact
         working-directory: target
         run: tar Jcf codox.tar.xz codox
