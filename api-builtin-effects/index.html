@@ -1377,15 +1377,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dispatch-n" class="md-nav__link">
-     :dispatch-n
+  <a href="#deregister-event-handler" class="md-nav__link">
+     :deregister-event-handler
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#deregister-event-handler" class="md-nav__link">
-     :deregister-event-handler
+  <a href="#dispatch-n-deprecated" class="md-nav__link">
+     :dispatch-n (Deprecated)
   </a>
   
 </li>
@@ -1446,20 +1446,19 @@
             </a>
         </li>
         <li class="depth-1">
-            <a href="api-builtin-effects.html#dispatch-n">
-                <div class="inner">
-                    <span>:dispatch-n</span>
-                </div>
-            </a>
-        </li>
-        <li class="depth-1">
             <a href="api-builtin-effects.html#deregister-event-handler">
                 <div class="inner">
                     <span>:deregister-event-handler</span>
                 </div>
             </a>
         </li>
-
+        <li class="depth-1">
+            <a href="api-builtin-effects.html#dispatch-n">
+                <div class="inner">
+                    <span>:dispatch-n</span>
+                </div>
+            </a>
+        </li>                            
     </ul>
 </div>
 
@@ -1538,7 +1537,23 @@ map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (th
 </code></pre></div>
 
 
-<h2 id="dispatch-n"><a name="dispatch-n"></a> :dispatch-n<a class="headerlink" href="#dispatch-n" title="Permanent link">&para;</a></h2>
+<h2 id="deregister-event-handler"><a name="deregister-event-handler"></a> :deregister-event-handler<a class="headerlink" href="#deregister-event-handler" title="Permanent link">&para;</a></h2>
+<p>Removes a previously registered event handler. Expects either a single id
+(typically a keyword), or a seq of ids.</p>
+<p>usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span>
+ <span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:deregister-event-handler</span> <span class="ss">:my-id</span><span class="p">]])}</span>
+</code></pre></div>
+
+
+<p>or:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span>
+ <span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:deregister-event-handler</span> <span class="p">[</span><span class="ss">:one-id</span> <span class="ss">:another-id</span><span class="p">]]]}</span>
+</code></pre></div>
+
+
+<h2 id="dispatch-n-deprecated"><a name="dispatch-n"></a> :dispatch-n (Deprecated)<a class="headerlink" href="#dispatch-n-deprecated" title="Permanent link">&para;</a></h2>
+<p>Deprecated in favour of <code>:fx</code> with multiple <code>:dispatch</code> tuples.</p>
 <p><code>dispatch</code> more than one events. Expects a seq of event vectors (typically a list of them). </p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span>
@@ -1558,19 +1573,6 @@ conditionally:</p>
                        [:another-one])]]}</code></p>
 </li>
 </ol>
-<h2 id="deregister-event-handler"><a name="deregister-event-handler"></a> :deregister-event-handler<a class="headerlink" href="#deregister-event-handler" title="Permanent link">&para;</a></h2>
-<p>Removes a previously registered event handler. Expects either a single id
-(typically a keyword), or a seq of ids.</p>
-<p>usage:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span>
- <span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:deregister-event-handler</span> <span class="ss">:my-id</span><span class="p">]])}</span>
-</code></pre></div>
-
-
-<p>or:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span>
- <span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:deregister-event-handler</span> <span class="p">[</span><span class="ss">:one-id</span> <span class="ss">:another-id</span><span class="p">]]]}</span>
-</code></pre></div>
                 
               
               

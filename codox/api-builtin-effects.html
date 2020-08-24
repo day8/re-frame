@@ -36,20 +36,19 @@
             </a>
         </li>
         <li class="depth-1">
-            <a href="api-builtin-effects.html#dispatch-n">
-                <div class="inner">
-                    <span>:dispatch-n</span>
-                </div>
-            </a>
-        </li>
-        <li class="depth-1">
             <a href="api-builtin-effects.html#deregister-event-handler">
                 <div class="inner">
                     <span>:deregister-event-handler</span>
                 </div>
             </a>
         </li>
-                            
+        <li class="depth-1">
+            <a href="api-builtin-effects.html#dispatch-n">
+                <div class="inner">
+                    <span>:dispatch-n</span>
+                </div>
+            </a>
+        </li>                            
     </ul>
 </div>
 <h1><a href="#builtin-effects" name="builtin-effects"></a>Builtin Effects</h1>
@@ -110,7 +109,18 @@
 <pre><code class="clj">{:db  new-db 
  :fx  [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]]}  ;; dispatch in 200ms
 </code></pre>
-<h2><a href="#dispatch-n" name="dispatch-n"></a><a name="dispatch-n"></a> :dispatch-n</h2>
+<h2><a href="#deregister-event-handler" name="deregister-event-handler"></a><a name="deregister-event-handler"></a> :deregister-event-handler</h2>
+<p>Removes a previously registered event handler. Expects either a single id (typically a keyword), or a seq of ids.</p>
+<p>usage:</p>
+<pre><code class="clojure">{:db new-db
+ :fx [[:deregister-event-handler :my-id]])}
+</code></pre>
+<p>or:</p>
+<pre><code class="clojure">{:db new-db
+ :fx [[:deregister-event-handler [:one-id :another-id]]]}
+</code></pre>
+<h2><a href="#dispatch-n-deprecated-" name="dispatch-n-deprecated-"></a><a name="dispatch-n"></a> :dispatch-n (Deprecated)</h2>
+<p>Deprecated in favour of <code>:fx</code> with multiple <code>:dispatch</code> tuples.</p>
 <p><code>dispatch</code> more than one events. Expects a seq of event vectors (typically a list of them). </p>
 <p>usage:</p>
 <pre><code class="clojure">{:db new-db
@@ -126,14 +136,4 @@
                        [:another-one])]]}
 </code></p>
   </li>
-</ol>
-<h2><a href="#deregister-event-handler" name="deregister-event-handler"></a><a name="deregister-event-handler"></a> :deregister-event-handler</h2>
-<p>Removes a previously registered event handler. Expects either a single id (typically a keyword), or a seq of ids.</p>
-<p>usage:</p>
-<pre><code class="clojure">{:db new-db
- :fx [[:deregister-event-handler :my-id]])}
-</code></pre>
-<p>or:</p>
-<pre><code class="clojure">{:db new-db
- :fx [[:deregister-event-handler [:one-id :another-id]]]}
-</code></pre></div></div></div><script src="scripts/hashchange.js"></script></body></html>
+</ol></div></div></div><script src="scripts/hashchange.js"></script></body></html>
