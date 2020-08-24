@@ -145,13 +145,13 @@ map with two keys `:ms` (milliseconds) and `:dispatch` (the event).
 usage:
 ```clj
 {:db  new-db 
- :fx  [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]]}  ;; dispatch in 200ms
+ :fx  [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}]]]}  ;; dispatch in 200ms
 ```
 
 Multiple:
 ```clojure
-{:fx [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]
-      [:dispatch-later {:ms 100 :dispatch [:event-id "param"]}]}
+{:fx [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}
+                        {:ms 100 :dispatch [:event-id "param"]}]]]}
 ```
 
    
