@@ -1576,7 +1576,7 @@ make side effects a noop in testing and event replays.</p>
   <span class="ss">:my-event</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>        <span class="c1">;; 1st argument is coeffects, instead of db</span>
     <span class="p">{</span><span class="ss">:db</span>       <span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="ss">:db</span> <span class="nv">cofx</span><span class="p">)</span> <span class="ss">:flag</span>  <span class="nv">a</span><span class="p">)</span>
-     <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">]}))</span>   <span class="c1">;; return effects</span>
+     <span class="ss">:fx</span>       <span class="p">[[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">]]]}))</span> <span class="c1">;; return effects</span>
 </code></pre></div>
 
 
@@ -1588,13 +1588,14 @@ the particular side effect required, and the value for that key provides
 further data. The type of value depends on the specific side-effect.</p>
 <p>Here's the two instructions from the example above:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span>  <span class="nv">a</span><span class="p">)</span>         <span class="c1">;; side effect on app-db</span>
- <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">]}</span>     <span class="c1">;; dispatch this event</span>
+ <span class="ss">:fx</span>       <span class="p">[[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">]]]}</span>     <span class="c1">;; dispatch this event</span>
 </code></pre></div>
 
 
 <p>The <code>:db</code> key instructs that "app-db" should be <code>reset!</code> to the
 value supplied.</p>
-<p>And the <code>:dispatch</code> key instructs that an event should be
+<p>And the <code>:fx</code> key instructs that an ordered list of other effects should be
+executed. In this case a <code>:dispatch</code> key instructs that an event should be
 dispatched. The value is the vector to dispatch.</p>
 <p>There are many other possible
 effects, like for example <code>:dispatch-later</code>, <code>dispatch-n</code>, <code>:set-local-store</code>, etc.</p>
@@ -1711,28 +1712,11 @@ create your own alternative to <code>reg-event-fx</code> and, in it, inject
 your own version of the <code>do-fx</code> interceptor at the front
 of the interceptor chain.  It is only a few lines of code.</p>
 <h2 id="order-of-effects">Order Of Effects?<a class="headerlink" href="#order-of-effects" title="Permanent link">&para;</a></h2>
-<p>There isn't one.</p>
-<p><code>do-fx</code> does not currently provide you with control over the order in
-which side effects occur. The <code>:db</code> side effect
-might happen before <code>:dispatch</code>, or not. You can't rely on it.</p>
-<div class="admonition note">
-<p class="admonition-title">Is That A Problem?</p>
-<p>If you feel you need ordering, then please
-open an issue and explain the usecase. The current absence of
-good usecases is the reason ordering isn't implemented. So give
-us a usercase and we'll revisit, maybe.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">For The Record</p>
-<p>If, later, ordering was needed, it might be handled via
-metadata on <code>:effects</code>. Also, perhaps by allowing <code>reg-fx</code> to optionally
-take two functions:</p>
-<ul>
-<li>an effects pre-process fn  &lt;-- new. Takes <code>:effects</code> returns <code>:effects</code></li>
-<li>the effects handler (as already described above).</li>
-</ul>
-<p>Anyway, these are all just possibilities. But not needed or implemented yet.</p>
-</div>
+<p>The <code>:db</code> side effect is guaranteed to be handled first.</p>
+<p>Effects in the collection of the <code>:fx</code> side effect are handled in the order
+provided.</p>
+<p>Effects other than <code>:db</code> in the top level map may occur in any order after <code>:db</code>,
+so may occur before or after <code>:fx</code>.</p>
 <h2 id="effects-with-no-data">Effects With No Data<a class="headerlink" href="#effects-with-no-data" title="Permanent link">&para;</a></h2>
 <p>Some effects have no associated data:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>

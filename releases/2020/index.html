@@ -1563,6 +1563,17 @@
 <p>Note: full dependency coordinates (Maven/deps/Lein) are provided on the <a href="https://clojars.org/re-frame/">Clojars page</a></p>
 </blockquote>
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h4>Added</h4>
+<ul>
+<li>Add <code>:fx</code> effect handler. See <a href="https://github.com/day8/re-frame/issues/639">#639</a>.</li>
+</ul>
+<h4>Changed</h4>
+<ul>
+<li>The <code>:db</code> effect is now guaranteed to be handled first. This is in support of the introduction of
+  the new <code>:fx</code> effect handler. See <a href="https://github.com/day8/re-frame/issues/639">#639</a>.</li>
+<li>An unknown key in the effect map returned from a <code>reg-event-fx</code> is now a warning, not an error.
+  See <a href="https://github.com/day8/re-frame/issues/639">#639</a>.</li>
+</ul>
 <h2 id="100-2020-07-20">1.0.0 (2020-07-20)<a class="headerlink" href="#100-2020-07-20" title="Permanent link">&para;</a></h2>
 <p>No changes since 1.0.0-rc6. Final 1.0.0 release.</p>
 <h2 id="100-rc6-2020-07-06">1.0.0-rc6 (2020-07-06)<a class="headerlink" href="#100-rc6-2020-07-06" title="Permanent link">&para;</a></h2>

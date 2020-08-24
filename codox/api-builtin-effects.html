@@ -8,6 +8,13 @@
     </h3>
     <ul>
         <li class="depth-1">
+            <a href="api-builtin-effects.html#fx">
+                <div class="inner">
+                    <span>:fx</span>
+                </div>
+            </a>
+        </li>       
+        <li class="depth-1">
             <a href="api-builtin-effects.html#dispatch-later">
                 <div class="inner">
                     <span>:dispatch-later</span>
@@ -46,6 +53,14 @@
 </div>
 <h1><a href="#builtin-effects" name="builtin-effects"></a>Builtin Effects</h1>
 <p>In addition to the API provided by <code>re-frame.core</code>, re-frame provides a small number of built-in effects which also contribute to the API. </p>
+<h2><a href="#fx" name="fx"></a><a name="fx"></a> :fx</h2>
+<p>Handle one of more effects. Expects a collection of vectors (tuples) of the form <code>[effect-key effect-value]</code>. <code>nil</code> entries in the collection are ignored so effects can be added conditionally.</p>
+<p>usage:</p>
+<pre><code class="clojure">{:fx [[:dispatch [:event-id "param"]]
+      nil
+      [:http-xhrio {:method :post
+                     ...}]]}
+</code></pre>
 <h2><a href="#dispatch-later" name="dispatch-later"></a><a name="dispatch-later"></a> :dispatch-later</h2>
 <p><code>dispatch</code> one or more events after given delays. Expects a collection of maps, each with two keys: <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
 <p>usage:</p>
@@ -88,7 +103,7 @@
 <pre><code class="clojure">{:deregister-event-handler [:one-id :another-id]}
 </code></pre>
 <h2><a href="#db" name="db"></a><a name="db"></a> :db</h2>
-<p>reset! app-db with a new value. <code>value</code> is expected to be a map.</p>
+<p>reset! app-db with a new value. <code>value</code> is expected to be a map. This is always executed first before any other effect.</p>
 <p>usage:</p>
 <pre><code class="clojure">{:db  {:key1 value1 key2 value2}}
 </code></pre></div></div></div><script src="scripts/hashchange.js"></script></body></html>

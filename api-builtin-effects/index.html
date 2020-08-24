@@ -1342,6 +1342,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#fx" class="md-nav__link">
+     :fx
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dispatch-later" class="md-nav__link">
      :dispatch-later
   </a>
@@ -1404,6 +1411,13 @@
     </h3>
     <ul>
         <li class="depth-1">
+            <a href="api-builtin-effects.html#fx">
+                <div class="inner">
+                    <span>:fx</span>
+                </div>
+            </a>
+        </li>       
+        <li class="depth-1">
             <a href="api-builtin-effects.html#dispatch-later">
                 <div class="inner">
                     <span>:dispatch-later</span>
@@ -1444,6 +1458,18 @@
 <h1 id="builtin-effects">Builtin Effects<a class="headerlink" href="#builtin-effects" title="Permanent link">&para;</a></h1>
 <p>In addition to the API provided by <code>re-frame.core</code>, re-frame provides a small number of 
 built-in effects which also contribute to the API. </p>
+<h2 id="fx"><a name="fx"></a> :fx<a class="headerlink" href="#fx" title="Permanent link">&para;</a></h2>
+<p>Handle one of more effects. Expects a collection of vectors (tuples) of the form 
+<code>[effect-key effect-value]</code>. <code>nil</code> entries in the collection are ignored so 
+effects can be added conditionally.</p>
+<p>usage:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]]</span>
+      <span class="nv">nil</span>
+      <span class="p">[</span><span class="ss">:http-xhrio</span> <span class="p">{</span><span class="ss">:method</span> <span class="ss">:post</span>
+                     <span class="nv">...</span><span class="p">}]]}</span>
+</code></pre></div>
+
+
 <h2 id="dispatch-later"><a name="dispatch-later"></a> :dispatch-later<a class="headerlink" href="#dispatch-later" title="Permanent link">&para;</a></h2>
 <p><code>dispatch</code> one or more events after given delays. Expects a collection
 of maps, each with two keys: <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
@@ -1502,7 +1528,8 @@ conditionally:</p>
 
 
 <h2 id="db"><a name="db"></a> :db<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
-<p>reset! app-db with a new value. <code>value</code> is expected to be a map.</p>
+<p>reset! app-db with a new value. <code>value</code> is expected to be a map. This is always
+executed first before any other effect.</p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="p">{</span><span class="ss">:key1</span> <span class="nv">value1</span> <span class="nv">key2</span> <span class="nv">value2</span><span class="p">}}</span>
 </code></pre></div>
