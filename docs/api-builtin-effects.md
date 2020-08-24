@@ -70,14 +70,14 @@ For example, an event handler might return:
 ``` 
 Will the `:dispatch` effect be actioned before `:http`, and what about `:db`?
 
-***Prior to v1.1.0***, the answer is: no guarentees were provided about ordering. Actual order is an implementation detail upon which you should not rely.
+***Prior to v1.1.0***, the answer is: no guarantees were provided about ordering. Actual order is an implementation detail upon which you should not rely.
 
 ***From v1.1.0 onwards***, two things changed:
 
-  - re-frame guarenteed that the `:db` effect will always be actioned first, if present. But other than that, no guarentee is given for the other effects.
+  - re-frame guaranteed that the `:db` effect will always be actioned first, if present. But other than that, no guarantee is given for the other effects.
   - a new effect called `:fx` was added, and it provides a way for effects to be ordered.
 
-In fact, with v1.1.0 ***best practice changed*** to event handers should only return two effects `:db` and `:fx`, in which case `:db` was always done first and then `:fx`, and within `:fx` the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. 
+In fact, with v1.1.0 ***best practice changed*** to event handlers should only return two effects `:db` and `:fx`, in which case `:db` was always done first and then `:fx`, and within `:fx` the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. 
 
 The new approach:
 ```clj
@@ -132,7 +132,7 @@ You'll notice the use of `when` to conditionally include or exclude an effect. A
 
 usage:
 ```clojure
-{:dispatch [:event-id "param1" :param2] }
+{:fx [[:dispatch [:event-id "param1" :param2]]] }
 ```
 
 ## <a name="dispatch-later"></a> :dispatch-later
@@ -152,7 +152,8 @@ usage:
 
 usage:
 ```clojure
-{:dispatch-n (list [:do :all] [:three :of] [:these])}
+{:db new-db
+ :fx [[:dispatch-n (list [:do :all] [:three :of] [:these])]]}
 ```
 
 Notes:
@@ -162,8 +163,9 @@ Notes:
 conditionally:
 
      ```clojure
-     {:dispatch-n (list (when (> 3 5) [:conditioned-out])
-                         [:another-one])}
+     {:db new-db
+      :fx [[:dispatch-n (list (when (> 3 5) [:conditioned-out])
+                           [:another-one])]]}
      ```
 
 ## <a name="deregister-event-handler"></a> :deregister-event-handler
@@ -173,10 +175,12 @@ Removes a previously registered event handler. Expects either a single id
 
 usage:
 ```clojure
-{:deregister-event-handler :my-id)}
+{:db new-db
+ :fx [[:deregister-event-handler :my-id]])}
 ```
 
 or:
 ```clojure
-{:deregister-event-handler [:one-id :another-id]}
+{:db new-db
+ :fx [[:deregister-event-handler [:one-id :another-id]]]}
 ```

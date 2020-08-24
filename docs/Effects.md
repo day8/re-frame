@@ -183,13 +183,14 @@ of the interceptor chain.  It is only a few lines of code.
 
 ## Order Of Effects?
 
-The `:db` side effect is guaranteed to be handled first.
+***Prior to v1.1.0***, the answer is: no guarantees were provided about ordering. Actual order is an implementation detail upon which you should not rely.
 
-Effects in the collection of the `:fx` side effect are handled in the order
-provided.
+***From v1.1.0 onwards***, two things changed:
 
-Effects other than `:db` in the top level map may occur in any order after `:db`,
-so may occur before or after `:fx`.
+  - re-frame guaranteed that the `:db` effect will always be actioned first, if present. But other than that, no guarantee is given for the other effects.
+  - a new effect called `:fx` was added, and it provides a way for effects to be ordered.
+
+In fact, with v1.1.0 ***best practice changed*** to event handlers should only return two effects `:db` and `:fx`, in which case `:db` was always done first and then `:fx`, and within `:fx` the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. 
 
 ## Effects With No Data
 
