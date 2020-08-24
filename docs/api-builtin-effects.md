@@ -59,9 +59,9 @@ built-in effects which also contribute to the API.
 
 ## Ordering
 
-An event handler (registered via `reg-event-fx`) can return a map containing many effects. But maps have no inherent ordering. So, in what order will re-frame action effets?
+An event handler (registered via `reg-event-fx`) can return a map containing many effects, but maps are unordered. So, in what order will re-frame action effects?
 
-For example, an event handler might return:
+For example, if an event handler returned:
 ```clj 
 {:dispatch [:some-id]
  :http     {:method :GET  :url "http://somewhere.com/"}
@@ -69,50 +69,48 @@ For example, an event handler might return:
 ``` 
 Will the `:dispatch` effect be actioned before `:http`, and what about `:db`?
 
-***Prior to v1.1.0***, the answer is: no guarantees were provided about ordering. Actual order is an implementation detail upon which you should not rely.
+***Prior to v1.1.0***: re-frame provided no guarantees regarding ordering. It was an implementation detail on which you couldn't rely.
 
 ***From v1.1.0 onwards***, two things changed:
 
-  - re-frame guaranteed that the `:db` effect will always be actioned first, if present. But other than that, no guarantee is given for the other effects.
-  - a new effect called `:fx` was added, and it provides a way for effects to be ordered.
+  - re-frame guarantees that the `:db` effect will be actioned first, if present. But there remains no guarantee for other effects.
+  - a new effect, called `:fx`, is added. It allows you to specify an ordered sequence of effects.
 
-In fact, with v1.1.0 ***best practice changed*** to event handlers should only return two effects `:db` and `:fx`, in which case `:db` was always done first and then `:fx`, and within `:fx` the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. 
+With v1.1.0 ***best practice*** probably changed: an event handler should return only two effects `:db` and `:fx`. The `:db` effect will be actioned first, and then `:fx`, but within `:fx` effects will be actioned in the sequence provided. The true reason for this change is that it makes it easier to compose event handlers from a number of smaller functions, but it incidently also allowed more specificity around ordering. So that was a bonus. 
 
-The new approach:
+So, the new approach encourages effects to be something like:
 ```clj
 {:db new-db 
- :fx [...]    ;; <-- optional, contains one effect after another
+ :fx [...]}   ;; <-- optional, contains one effect after another
 ```
-
-Note: the latest, new method is backward compatible. All your existing code will continue to work (with `:db` always getting done first now).
 
 ## <a name="db"></a> :db
 
 `reset!` `app-db` to be a new value. 
 
 The associated `value` is expected to be a map. This is always
-executed first before any other effect.
+actioned first, before any other effect.
 
 usage:
 ```clojure
 {:db  {:key1 value1 key2 value2}}   
 ```
 
-Normal usage would look like this: 
+Real usage might look like this: 
 ```clojure
 (reg-event-fx
-  : token 
+  :token 
   (fn [{:keys [db]} event]
     {:db  (assoc db :some-key some-val)}))     ;; <-- new value computed
 ```
-
-> Note: when present, a `:db` effect will be actioned before other sibling effects. But prior to v1.1.0 this was not the case.
 
 ## <a name="fx"></a> :fx
 
 An effect which actions other effects, sequentially. 
 
-Expects a value which is a sequence, typically a vector. Each element in the sequence represents one effect. Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect (the value given to the registered effect handler as an argument). 
+Expects a value which is a sequence, typically a vector. 
+Each element in the sequence represents one effect. 
+Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect (the value ultimately given to the registered effect handler as an argument). 
 
 For example:
 ```clj
@@ -124,7 +122,6 @@ For example:
 
 You'll notice the use of `when` to conditionally include or exclude an effect. Any `nil` found in the `:fx` sequence will be ignored. 
 
-
 ## <a name="dispatch"></a> :dispatch
 
 `dispatch` one event. Expects a single vector.
@@ -132,6 +129,12 @@ You'll notice the use of `when` to conditionally include or exclude an effect. A
 usage:
 ```clojure
 {:fx [[:dispatch [:event-id "param1" :param2]]] }
+```
+
+Dispatch multiple events:
+```clojure
+{:fx [[:dispatch [:event1 "param1" :param2]]
+      [:dispatch [:second]]}
 ```
 
 ## <a name="dispatch-later"></a> :dispatch-later
@@ -144,11 +147,17 @@ usage:
 {:db  new-db 
  :fx  [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]]}  ;; dispatch in 200ms
 ```
+
+Multiple:
+```clojure
+{:fx [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]
+      [:dispatch-later {:ms 100 :dispatch [:event-id "param"]}]}
+```
+
    
 ## <a name="deregister-event-handler"></a> :deregister-event-handler
 
-Removes a previously registered event handler. Expects either a single id
-(typically a keyword), or a seq of ids.
+Removes a previously registered event handler. Expects the id of the event handler. 
 
 usage:
 ```clojure
@@ -156,15 +165,10 @@ usage:
  :fx [[:deregister-event-handler :my-id]])}
 ```
 
-or:
-```clojure
-{:db new-db
- :fx [[:deregister-event-handler [:one-id :another-id]]]}
-```
 
 ## <a name="dispatch-n"></a> :dispatch-n (Deprecated)
 
-Deprecated in favour of using `:fx` with multiple `:dispatch` tuples.
+This effect is deprecated in favour of using `:fx` with multiple `:dispatch` tuples.
 
 `dispatch` more than one events. Expects a seq of event vectors (typically a list of them). 
 
