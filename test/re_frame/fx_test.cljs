@@ -56,7 +56,7 @@
         log-fn           (fn [& args] (swap! logs conj (str/join args)))
         original-loggers (log/get-loggers)]
     (try
-      (log/set-loggers! {:error log-fn})
+      (log/set-loggers! {:warn log-fn})
       (re-frame/dispatch-sync [::missing-handler-test])
       (is (re-matches #"re-frame: no handler registered for effect::fx-not-exist. Ignoring." (first @logs)))
       (is (= (count @logs) 1))
