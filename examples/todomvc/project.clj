@@ -14,7 +14,7 @@
                  [org.clojure/tools.logging  "0.4.1"]
                  [binaryage/devtools         "1.0.2"]
                  [clj-commons/secretary      "1.2.4"]
-                 [day8.re-frame/tracing      "0.5.5"]]
+                 [day8.re-frame/tracing      "0.6.0"]]
 
   :plugins      [[day8/lein-git-inject "0.0.14"]
                  [lein-shadow          "0.2.2"]]
