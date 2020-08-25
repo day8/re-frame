@@ -27,7 +27,7 @@ jobs:
         working-directory: docs
         run: clojure -m ns-to-markdown ../src/re_frame/core.cljc > api-re-frame.core.md
       - name: Upload re-frame.core Documentation Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: api-re-frame.core.md
           path: docs/api-re-frame.core.md
@@ -79,16 +79,14 @@ jobs:
       - name: Checkout Current Branch
         uses: actions/checkout@v2
       - name: Download api-re-frame.core.md Artifact
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2
         with:
           name: api-re-frame.core.md
+          path: docs
       - name: Download Klipse CLJS Cache Artifact
         uses: actions/download-artifact@v1
         with:
           name: klipse-cljs-cache
-      - name: Move api-re-frame.core.md Artifact
-        working-directory: docs
-        run: mv ../api-re-frame.core.md ./
       - name: Extract Klipse CLJS Cache Artifact
         working-directory: docs/klipse
         run: tar Jxf ../../klipse-cljs-cache/klipse-cljs-cache.tar.xz
