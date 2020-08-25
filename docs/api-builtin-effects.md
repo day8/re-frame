@@ -15,12 +15,14 @@ For example, if an event handler returned:
 ``` 
 Will the `:dispatch` effect be actioned before `:http`, and what about `:db`?
 
-***Prior to v1.1.0***: re-frame provided no guarantees regarding ordering. It was an implementation detail on which you couldn't rely.
+!!! tip "Prior to v1.1.0"
+    re-frame provided no guarantees regarding ordering. It was an implementation
+    detail on which you couldn't rely.
 
-***From v1.1.0 onwards***, two things changed:
-
-  - re-frame guarantees that the `:db` effect will be actioned first, if present. But there remains no guarantee for other effects.
-  - a new effect, called `:fx`, is added. It allows you to specify an ordered sequence of effects.
+!!! tip "From v1.1.0 onwards"
+    two things changed:
+    - re-frame guarantees that the `:db` effect will be actioned first, if present. But there remains no guarantee for other effects.
+    - a new effect, called `:fx`, is added. It allows you to specify an ordered sequence of effects.
 
 With v1.1.0 ***best practice*** probably changed: an event handler should return only two effects `:db` and `:fx`. The `:db` effect will be actioned first, and then `:fx`, but within `:fx` effects will be actioned in the sequence provided. The true reason for this change is that it makes it easier to compose event handlers from a number of smaller functions, but it incidently also allowed more specificity around ordering. So that was a bonus. 
 
@@ -91,13 +93,17 @@ map with two keys `:ms` (milliseconds) and `:dispatch` (the event).
 usage:
 ```clj
 {:db  new-db 
- :fx  [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}]]]}  ;; dispatch in 200ms
+ :fx  [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]]}  ;; dispatch in 200ms
 ```
 
-Multiple with `:fx` introduced in re-frame v1.1.0:
+!!! warning "Deprecation"
+    Prior to re-frame v1.1.1 `:dispatch-later` required a collection of maps, 
+    since v1.1.1 it has required a single map. 
+
+Multiple with `:fx` introduced in re-frame v1.1.1:
 ```clojure
-{:fx [[:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}]]
-      [:dispatch-later [{:ms 100 :dispatch [:event-id "param"]}]]]}
+{:fx [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]
+      [:dispatch-later {:ms 100 :dispatch [:event-id "param"]}]]}
 ```
 
 Or deprecated variation prior to re-frame v1.1.0

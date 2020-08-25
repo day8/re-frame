@@ -76,13 +76,19 @@
 ;;    {:dispatch-later [ (when (> 3 5) {:ms 200 :dispatch [:conditioned-out]})
 ;;                       {:ms 100 :dispatch [:another-one]}]}
 ;;
+(defn dispatch-later
+  [{:keys [ms dispatch] :as effect}]
+  (if (or (empty? dispatch) (not (number? ms)))
+    (console :error "re-frame: ignoring bad :dispatch-later value:" effect)
+    (set-timeout! #(router/dispatch dispatch) ms)))
+
 (reg-fx
   :dispatch-later
   (fn [value]
-    (doseq [{:keys [ms dispatch] :as effect} (remove nil? value)]
-        (if (or (empty? dispatch) (not (number? ms)))
-          (console :error "re-frame: ignoring bad :dispatch-later value:" effect)
-          (set-timeout! #(router/dispatch dispatch) ms)))))
+    (if (map? value)
+      (dispatch-later value)
+      (doseq [effect (remove nil? value)]
+        (dispatch-later effect)))))
 
 ;; :fx
 ;;
