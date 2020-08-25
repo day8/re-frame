@@ -94,7 +94,9 @@ nav:
     - "How do I store normalised data in app-db?": FAQs/DB_Normalisation.md    
     - "How do I do full-stack re-frame?": FAQs/FullStackReframe.md
   - API:
-    - API: api.md
+    - Overview: api-intro.md
+    - Builtin Effects: api-builtin-effects.md
+    - re-frame.core: api-re-frame.core.md
   - Releases:
     - 2020: releases/2020.md
     - 2019: releases/2019.md

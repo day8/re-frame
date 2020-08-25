@@ -11,28 +11,26 @@ on:
     branches: 'master'
 
 jobs:
-  # The Codox job generates API documentation from the source code and uploads that as an artifact.
-  codox:
-    name: Codox
+  # The ns-to-markdown job generates API documentation from the source code and uploads that as an artifact.
+  ns-to-markdown:
+    name: re-frame.core Markdown
     runs-on: ubuntu-18.04
     container:
       # Source: https://github.com/day8/dockerfile-for-dev-ci-image
-      image: day8au/dev-ci:0.0.6
+      image: day8au/dev-ci:0.0.8
     steps:
       - name: Checkout Current Branch
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Build Codox Documentation
-        run: lein api-docs
-      - name: Create Codox Artifact
-        working-directory: target
-        run: tar Jcf codox.tar.xz codox
-      - name: Upload Codox Artifact
+      - name: Build re-frame.core Documentation
+        working-directory: docs
+        run: clojure -m ns-to-markdown ..\src\re_frame\core.cljc > api-re-frame.core.md
+      - name: Upload re-frame.core Documentation Artifact
         uses: actions/upload-artifact@v1
         with:
-          name: codox
-          path: target/codox.tar.xz
+          name: api-re-frame.core.md
+          path: docs/api-re-frame.core.md
 
   # Klipse is used to enable live coding in the documentation and it requires precompiled CLJS analysis cache files
   # that are built by this job then uploaded as an artifact.
@@ -67,12 +65,12 @@ jobs:
           name: klipse-cljs-cache
           path: docs/klipse/klipse-cljs-cache.tar.xz
 
-  # MkDocs is the actual static site generator. It downloads the Codox and Klipse cache artifacts then generates
+  # MkDocs is the actual static site generator. It downloads the api-re-frame.core.md and Klipse cache artifacts then generates
   # additional files based on configuration and markdown.
   mkdocs:
     name: MkDocs
     needs:
-      - codox
+      - ns-to-markdown
       - klipse-cljs-cache
     runs-on: ubuntu-18.04
     container:
@@ -80,17 +78,17 @@ jobs:
     steps:
       - name: Checkout Current Branch
         uses: actions/checkout@v2
-      - name: Download Codox Artifact
+      - name: Download api-re-frame.core.md Artifact
         uses: actions/download-artifact@v1
         with:
-          name: codox
+          name: api-re-frame.core.md
       - name: Download Klipse CLJS Cache Artifact
         uses: actions/download-artifact@v1
         with:
           name: klipse-cljs-cache
-      - name: Extract Codox Artifact
+      - name: Move api-re-frame.core.md Artifact
         working-directory: docs
-        run: tar Jxf ../codox/codox.tar.xz
+        run: mv ../api-re-frame.core.md ./
       - name: Extract Klipse CLJS Cache Artifact
         working-directory: docs/klipse
         run: tar Jxf ../../klipse-cljs-cache/klipse-cljs-cache.tar.xz

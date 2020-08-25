@@ -33,3 +33,4 @@ build/
 /shadow-cljs.edn
 /.shadow-cljs/
 /site/
+.cpcache
