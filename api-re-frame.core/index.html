@@ -1958,7 +1958,7 @@
                 
                 <h1 id="re-framecore">re-frame.core<a class="headerlink" href="#re-framecore" title="Permanent link">&para;</a></h1>
 <h2 id="console">console<a class="headerlink" href="#console" title="Permanent link">&para;</a></h2>
-<p><code>(console level &amp; args)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">console</span> <span class="nv">level</span> <span class="o">&amp;</span> <span class="nv">args</span><span class="p">)</span></code></p>
 <p>A utility logging function which is used internally within re-frame to produce 
 warnings and other output. It can also be used by libraries which 
 extend re-frame, such as effect handlers.</p>
@@ -1972,7 +1972,7 @@ However, an application using re-frame can redirect <code>console</code> output 
 
 
 <h2 id="on-changes">on-changes<a class="headerlink" href="#on-changes" title="Permanent link">&para;</a></h2>
-<p><code>(on-changes f out-path &amp; in-paths)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">on-changes</span> <span class="nv">f</span> <span class="nv">out-path</span> <span class="o">&amp;</span> <span class="nv">in-paths</span><span class="p">)</span></code></p>
 <p>Returns an interceptor which will observe N paths within <code>db</code>, and if any of them
 test not identical? to their previous value  (as a result of a event handler
 being run), then it will run <code>f</code> to compute a new value, which is then assoc-ed
@@ -2001,7 +2001,7 @@ it will:</p>
 <li>assoc the return value from <code>f</code> into the path  <code>[:c]</code></li>
 </ul>
 <h2 id="enrich">enrich<a class="headerlink" href="#enrich" title="Permanent link">&para;</a></h2>
-<p><code>(enrich f)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">enrich</span> <span class="nv">f</span><span class="p">)</span></code></p>
 <p>Returns an Interceptor which will run the given function <code>f</code> in the <code>:after</code>
 position.  </p>
 <p><code>f</code> is called with two arguments: <code>db</code> and <code>v</code>, and is expected to
@@ -2036,14 +2036,14 @@ any CRUD operation.</p>
 <p>This brings huge simplicity at the expense of some re-computation
 each time. This may be a very satisfactory trade-off in many cases.</p>
 <h2 id="reg-sub-raw">reg-sub-raw<a class="headerlink" href="#reg-sub-raw" title="Permanent link">&para;</a></h2>
-<p><code>(reg-sub-raw query-id handler-fn)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-sub-raw</span> <span class="nv">query-id</span> <span class="nv">handler-fn</span><span class="p">)</span></code></p>
 <p>This is a low level, advanced function.  You should probably be
 using <code>reg-sub</code> instead.</p>
 <p>Some explanation is available in the docs at
 <a href="http://day8.github.io/re-frame/flow-mechanics/" target="_blank">http://day8.github.io/re-frame/flow-mechanics/</a></p>
 <h2 id="subscribe">subscribe<a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h2>
-<p><code>(subscribe query)</code>
-<code>(subscribe query dynv)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">subscribe</span> <span class="nv">query</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">subscribe</span> <span class="nv">query</span> <span class="nv">dynv</span><span class="p">)</span></code></p>
 <p>Given a <code>query</code> vector, returns a Reagent <code>reaction</code> which will, over
 time, reactively deliver a stream of values. So, in FRP-ish terms,
 it returns a <code>Signal</code>.</p>
@@ -2091,7 +2091,7 @@ than using <code>subscribe</code> directly.</p>
 source reactive updates from the one executing handler.</p>
 <p>See also: <code>reg-sub</code></p>
 <h2 id="reg-global-interceptor">reg-global-interceptor<a class="headerlink" href="#reg-global-interceptor" title="Permanent link">&para;</a></h2>
-<p><code>(reg-global-interceptor interceptor)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-global-interceptor</span> <span class="nv">interceptor</span><span class="p">)</span></code></p>
 <p>Registers the given <code>interceptor</code> as a global interceptor. Global interceptors are
  included in the processing chain of every event.</p>
 <p>When you register an event handler, you have the option of supplying an
@@ -2099,21 +2099,21 @@ source reactive updates from the one executing handler.</p>
  prepending to this chain.</p>
 <p>Global interceptors are run in the order that they are registered.</p>
 <h2 id="assoc-coeffect">assoc-coeffect<a class="headerlink" href="#assoc-coeffect" title="Permanent link">&para;</a></h2>
-<p><code>(assoc-coeffect context key value)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">assoc-coeffect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">value</span><span class="p">)</span></code></p>
 <p>A utility function, typically used when writing an interceptor's <code>:before</code> function.</p>
 <p>Adds or updates a key/value pair in the <code>:coeffects</code> map within <code>context</code>. </p>
 <h2 id="register-sub">register-sub<a class="headerlink" href="#register-sub" title="Permanent link">&para;</a></h2>
-<p><code>(register-sub &amp; args)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">register-sub</span> <span class="o">&amp;</span> <span class="nv">args</span><span class="p">)</span></code></p>
 <p>Deprecated. Use <code>reg-sub-raw</code> instead.</p>
 <h2 id="purge-event-queue">purge-event-queue<a class="headerlink" href="#purge-event-queue" title="Permanent link">&para;</a></h2>
-<p><code>(purge-event-queue)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">purge-event-queue</span><span class="p">)</span></code></p>
 <p>Removes all events currently queued for processing</p>
 <h2 id="remove-post-event-callback">remove-post-event-callback<a class="headerlink" href="#remove-post-event-callback" title="Permanent link">&para;</a></h2>
-<p><code>(remove-post-event-callback id)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">remove-post-event-callback</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters a post event callback function, identified by <code>id</code>. </p>
 <p>Such a function must have been previously registered via <code>add-post-event-callback</code></p>
 <h2 id="path">path<a class="headerlink" href="#path" title="Permanent link">&para;</a></h2>
-<p><code>(path &amp; args)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nb">path </span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">)</span></code></p>
 <p>Returns an interceptor which acts somewhat like <code>clojure.core/update-in</code>, in the sense that 
 the event handler is given a specific part of <code>app-db</code> to change, not all of <code>app-db</code>. </p>
 <p>The interceptor has both a <code>:before</code> and <code>:after</code> functions. The <code>:before</code> replaces<br />
@@ -2142,7 +2142,7 @@ and it grafts the handler's return value back into db, at the right path.</p>
 <li>if <code>:effects</code> contains no <code>:db</code> effect, can't graft a value back in.</li>
 </ol>
 <h2 id="reg-sub">reg-sub<a class="headerlink" href="#reg-sub" title="Permanent link">&para;</a></h2>
-<p><code>(reg-sub query-id &amp; args)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-sub</span> <span class="nv">query-id</span> <span class="o">&amp;</span> <span class="nv">args</span><span class="p">)</span></code></p>
 <p>A call to <code>reg-sub</code> associates a <code>query-id</code> WITH two functions.</p>
 <p>The two functions provide 'a mechanism' for creating a node 
 in the Signal Graph. When a node of type <code>query-id</code> is needed, 
@@ -2272,31 +2272,31 @@ as if you had supplied a <code>signal-fn</code> returning only a single value:</
 /examples/todomvc/src/subs.cljs.</p>
 <p>See also: <code>subscribe</code></p>
 <h2 id="make-restore-fn">make-restore-fn<a class="headerlink" href="#make-restore-fn" title="Permanent link">&para;</a></h2>
-<p><code>(make-restore-fn)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">make-restore-fn</span><span class="p">)</span></code></p>
 <p>This is a utility function, typically used in testing.</p>
 <p>It checkpoints the current state of re-frame and returns a function which, when
 later called, will restore re-frame to the checkpointed state.</p>
 <p>The checkpoint includes <code>app-db</code>, all registered handlers and all subscriptions.</p>
 <h2 id="clear-fx">clear-fx<a class="headerlink" href="#clear-fx" title="Permanent link">&para;</a></h2>
-<p><code>(clear-fx)</code>
-<code>(clear-fx id)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-fx</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">clear-fx</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters effect handlers (presumably registered previously via the use of <code>reg-fx</code>). </p>
 <p>When called with no args, it will unregister all currently registered effect handlers. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
 effect handler, it will unregister the associated handler. Will produce a warning to 
 console if it finds no matching registration.</p>
 <h2 id="get-effect">get-effect<a class="headerlink" href="#get-effect" title="Permanent link">&para;</a></h2>
-<p><code>(get-effect context)</code>
-<code>(get-effect context key)</code>
-<code>(get-effect context key not-found)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span> <span class="nv">key</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">not-found</span><span class="p">)</span></code></p>
 <p>A utility function, used when writing interceptors, typically within an <code>:after</code> function.</p>
 <p>When called with one argument, returns the <code>:effects</code> map from the <code>context</code>.</p>
 <p>When called with two or three arguments, behaves like <code>clojure.core/get</code> and
  returns the value mapped to <code>key</code> in the effects map, <code>not-found</code> or
  <code>nil</code> if <code>key</code> is not present.</p>
 <h2 id="reg-event-db">reg-event-db<a class="headerlink" href="#reg-event-db" title="Permanent link">&para;</a></h2>
-<p><code>(reg-event-db id handler)</code>
-<code>(reg-event-db id interceptors handler)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-db</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">reg-event-db</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide
 an <code>interceptors</code> chain:</p>
 <ul>
@@ -2324,7 +2324,7 @@ an <code>interceptors</code> chain:</p>
 
 
 <h2 id="dispatch-sync">dispatch-sync<a class="headerlink" href="#dispatch-sync" title="Permanent link">&para;</a></h2>
-<p><code>(dispatch-sync event)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">dispatch-sync</span> <span class="nv">event</span><span class="p">)</span></code></p>
 <p>Synchronously (immediately) process <code>event</code>. It does <strong>not</strong> queue
 the event for handling later as <code>dispatch</code> does. </p>
 <p><code>event</code> is a vector and the first element is typically a keyword 
@@ -2346,15 +2346,15 @@ processing is a problem:</p>
 
 
 <h2 id="clear-event">clear-event<a class="headerlink" href="#clear-event" title="Permanent link">&para;</a></h2>
-<p><code>(clear-event)</code>
-<code>(clear-event id)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-event</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">clear-event</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters event handlers (presumably registered previously via the use of <code>reg-event-db</code> or <code>reg-event-fx</code>). </p>
 <p>When called with no args, it will unregister all currently registered event handlers. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
 event handler, it will unregister the associated handler. Will produce a warning to 
 console if it finds no matching registration.</p>
 <h2 id="-interceptor">-&gt;interceptor<a class="headerlink" href="#-interceptor" title="Permanent link">&para;</a></h2>
-<p><code>(-&gt;interceptor &amp; {:as m, :keys [id before after]})</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">-&gt;interceptor</span> <span class="o">&amp;</span> <span class="p">{</span><span class="ss">:as</span> <span class="nv">m</span>, <span class="ss">:keys</span> <span class="p">[</span><span class="nv">id</span> <span class="nv">before</span> <span class="nv">after</span><span class="p">]})</span></code></p>
 <p>A utility function for creating interceptors.</p>
 <p>Accepts three optional, named arguments:</p>
 <ul>
@@ -2389,7 +2389,7 @@ console if it finds no matching registration.</p>
     and <code>assoc-effect</code></li>
 </ul>
 <h2 id="set-loggers">set-loggers!<a class="headerlink" href="#set-loggers" title="Permanent link">&para;</a></h2>
-<p><code>(set-loggers! new-loggers)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">set-loggers!</span> <span class="nv">new-loggers</span><span class="p">)</span></code></p>
 <p>re-frame outputs warnings and errors via the API function <code>console</code> 
  which, by default, delegates to <code>js/console</code>'s default implementation for 
 <code>log</code>, <code>error</code>, <code>warn</code>, <code>debug</code>, <code>group</code> and <code>groupEnd</code>. But, using this function,
@@ -2408,8 +2408,8 @@ or <code>:groupEnd</code>.</p>
 
 
 <h2 id="inject-cofx">inject-cofx<a class="headerlink" href="#inject-cofx" title="Permanent link">&para;</a></h2>
-<p><code>(inject-cofx id)</code>
-<code>(inject-cofx id value)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">inject-cofx</span> <span class="nv">id</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">inject-cofx</span> <span class="nv">id</span> <span class="nv">value</span><span class="p">)</span></code></p>
 <p>Given an <code>id</code>, and an optional, arbitrary <code>value</code>, returns an interceptor
 whose <code>:before</code> adds to the <code>:coeffects</code> (map) by calling a pre-registered
 'coeffect handler' identified by the <code>id</code>.</p>
@@ -2457,17 +2457,17 @@ want that.</p>
 to the event handler at call time.</p>
 <p>See also <code>reg-cofx</code></p>
 <h2 id="clear-global-interceptor">clear-global-interceptor<a class="headerlink" href="#clear-global-interceptor" title="Permanent link">&para;</a></h2>
-<p><code>(clear-global-interceptor)</code>
-<code>(clear-global-interceptor id)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-global-interceptor</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">clear-global-interceptor</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters global interceptors (presumably registered previously via the use of <code>reg-global-interceptor</code>). </p>
 <p>When called with no args, it will unregister all currently registered global interceptors. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
 global interceptors, it will unregister the associated interceptor. Will produce a warning to 
 console if it finds no matching registration.</p>
 <h2 id="get-coeffect">get-coeffect<a class="headerlink" href="#get-coeffect" title="Permanent link">&para;</a></h2>
-<p><code>(get-coeffect context)</code>
-<code>(get-coeffect context key)</code>
-<code>(get-coeffect context key not-found)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span> <span class="nv">key</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">not-found</span><span class="p">)</span></code></p>
 <p>A utility function, typically used when writing an interceptor's <code>:before</code> function.</p>
 <p>When called with one argument, it returns the <code>:coeffects</code> map from with that <code>context</code>.</p>
 <p>When called with two or three arguments, behaves like <code>clojure.core/get</code> and
@@ -2500,27 +2500,27 @@ code. So, you should condition it out like this:</p>
 <p>To make this code fragment work, you'll also have to set <code>goog.DEBUG</code> to
 <code>false</code> in your production builds. For an example, look in <code>project.clj</code> of /examples/todomvc.</p>
 <h2 id="assoc-effect">assoc-effect<a class="headerlink" href="#assoc-effect" title="Permanent link">&para;</a></h2>
-<p><code>(assoc-effect context key value)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">assoc-effect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">value</span><span class="p">)</span></code></p>
 <p>A utility function, typically used when writing an interceptor's <code>:after</code> function.</p>
 <p>Adds or updates a key/value pair in the <code>:effects</code> map within <code>context</code>. </p>
 <h2 id="enqueue">enqueue<a class="headerlink" href="#enqueue" title="Permanent link">&para;</a></h2>
-<p><code>(enqueue context interceptors)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">enqueue</span> <span class="nv">context</span> <span class="nv">interceptors</span><span class="p">)</span></code></p>
 <p>A utility function, used when writing an interceptor's <code>:before</code> function.</p>
 <p>Adds the given collection of <code>interceptors</code> to those already in <code>context's</code> 
 execution <code>:queue</code>. It returns the updated <code>context</code>.</p>
 <p>So, it provides a way for one Interceptor to add more interceptors to the 
 currently executing interceptor chain.</p>
 <h2 id="clear-cofx">clear-cofx<a class="headerlink" href="#clear-cofx" title="Permanent link">&para;</a></h2>
-<p><code>(clear-cofx)</code>
-<code>(clear-cofx id)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-cofx</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">clear-cofx</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters coeffect handlers (presumably registered previously via the use of <code>reg-cofx</code>). </p>
 <p>When called with no args, it will unregister all currently registered coeffect handlers. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
 coeffect handler, it will unregister the associated handler. Will produce a warning to 
 console if it finds no matching registration.</p>
 <h2 id="reg-event-ctx">reg-event-ctx<a class="headerlink" href="#reg-event-ctx" title="Permanent link">&para;</a></h2>
-<p><code>(reg-event-ctx id handler)</code>
-<code>(reg-event-ctx id interceptors handler)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-ctx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">reg-event-ctx</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide
 an <code>interceptors</code> chain:</p>
 <ul>
@@ -2529,7 +2529,7 @@ an <code>interceptors</code> chain:</p>
 </ul>
 <p>This form of registration is seldomAt dinner wenever used.</p>
 <h2 id="reg-fx">reg-fx<a class="headerlink" href="#reg-fx" title="Permanent link">&para;</a></h2>
-<p><code>(reg-fx id handler)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-fx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given effect <code>handler</code> for the given <code>id</code>:</p>
 <ul>
 <li><code>id</code> is keyword, often namespaced.</li>
@@ -2565,8 +2565,8 @@ before it is supplied to the event handler, allowing you to write more
 
 
 <h2 id="clear-sub">clear-sub<a class="headerlink" href="#clear-sub" title="Permanent link">&para;</a></h2>
-<p><code>(clear-sub)</code>
-<code>(clear-sub query-id)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-sub</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">clear-sub</span> <span class="nv">query-id</span><span class="p">)</span></code></p>
 <p>Unregisters subscription handlers (presumably registered previously via the use of <code>reg-sub</code>). </p>
 <p>When called with no args, it will unregister all currently registered subscription handlers. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
@@ -2574,7 +2574,7 @@ subscription handler, it will unregister the associated handler. Will produce a 
 console if it finds no matching registration.</p>
 <p>NOTE: Depending on the usecase, it may be necessary to call <code>clear-subscription-cache!</code> afterwards</p>
 <h2 id="dispatch">dispatch<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h2>
-<p><code>(dispatch event)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">dispatch</span> <span class="nv">event</span><span class="p">)</span></code></p>
 <p>Queue <code>event</code> for processing (handling). </p>
 <p><code>event</code> is a vector and the first element is typically a keyword
 which identifies the kind of event.</p>
@@ -2588,7 +2588,7 @@ will be processed first.</p>
 
 
 <h2 id="after">after<a class="headerlink" href="#after" title="Permanent link">&para;</a></h2>
-<p><code>(after f)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">after</span> <span class="nv">f</span><span class="p">)</span></code></p>
 <p>Returns an interceptor which runs the given function <code>f</code> in the <code>:after</code>
 position, presumably for side effects.</p>
 <p><code>f</code> is called with two arguments: the <code>:effects</code> value for <code>:db</code>
@@ -2600,8 +2600,8 @@ Its return value is ignored, so <code>f</code> can only side-effect.</p>
 <li><code>f</code> writes to localstorage.</li>
 </ul>
 <h2 id="add-post-event-callback">add-post-event-callback<a class="headerlink" href="#add-post-event-callback" title="Permanent link">&para;</a></h2>
-<p><code>(add-post-event-callback f)</code>
-<code>(add-post-event-callback id f)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">add-post-event-callback</span> <span class="nv">f</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">add-post-event-callback</span> <span class="nv">id</span> <span class="nv">f</span><span class="p">)</span></code></p>
 <p>Registers the given function <code>f</code> to be called after each event is processed. </p>
 <p><code>f</code> will be called with two arguments:</p>
 <ul>
@@ -2618,7 +2618,7 @@ Its return value is ignored, so <code>f</code> can only side-effect.</p>
 <p><code>id</code> is typically a keyword. If it supplied when an <code>f</code> is added, it can be 
 subsequently be used to identify it for removal. See <code>remove-post-event-callback</code>.</p>
 <h2 id="reg-cofx">reg-cofx<a class="headerlink" href="#reg-cofx" title="Permanent link">&para;</a></h2>
-<p><code>(reg-cofx id handler)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-cofx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given coeffect <code>handler</code> for the given <code>id</code>, for later use
 within <code>inject-cofx</code>:</p>
 <ul>
@@ -2628,8 +2628,8 @@ within <code>inject-cofx</code>:</p>
 </ul>
 <p>See also: <code>inject-cofx</code> </p>
 <h2 id="reg-event-fx">reg-event-fx<a class="headerlink" href="#reg-event-fx" title="Permanent link">&para;</a></h2>
-<p><code>(reg-event-fx id handler)</code>
-<code>(reg-event-fx id interceptors handler)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code>
+<code class="highlight"><span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide
 an <code>interceptors</code> chain:</p>
 <ul>
@@ -2656,10 +2656,10 @@ an <code>interceptors</code> chain:</p>
 
 
 <h2 id="register-handler">register-handler<a class="headerlink" href="#register-handler" title="Permanent link">&para;</a></h2>
-<p><code>(register-handler &amp; args)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">register-handler</span> <span class="o">&amp;</span> <span class="nv">args</span><span class="p">)</span></code></p>
 <p>Deprecated. Use <code>reg-event-db</code> instead.</p>
 <h2 id="clear-subscription-cache">clear-subscription-cache!<a class="headerlink" href="#clear-subscription-cache" title="Permanent link">&para;</a></h2>
-<p><code>(clear-subscription-cache!)</code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-subscription-cache!</span><span class="p">)</span></code></p>
 <p>Removes all subscriptions from the cache.</p>
 <p>This function can be used at development time or test time. Useful when hot realoding
 namespaces containing subscription handlers. Also call it after a React/render exception,
