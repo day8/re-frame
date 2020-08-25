@@ -37,6 +37,14 @@
                                   :devtools {:http-root "resources/public"
                                              :http-port 8280}}}}
 
-  :aliases {"watch" ["do"
-                     ["clean"]
-                     ["shadow" "watch" "client"]]})
+  :aliases {"watch"          ["do"
+                              ["clean"]
+                              ["shadow" "watch" "client"]]
+
+            "shadow-release" ["do"
+                              ["clean"]
+                              ["shadow" "release" "client"]]
+
+            "build-report"   ["do"
+                              ["clean"]
+                              ["shadow" "run" "shadow.cljs.build-report" "client" "target/build-report.html"]]})

@@ -45,25 +45,41 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-shadow-cljs-
       - if: steps.maven-cache.outputs.cache-hit != 'true'
-        run: lein karma-once
+        run: lein ci
       - if: steps.maven-cache.outputs.cache-hit != 'true'
-        name: Run cd examples/simple && lein shadow compile client
+        name: Run cd examples/simple && lein shadow-release && lein build-report
         working-directory: examples/simple
-        run: lein shadow compile client
+        run: |
+          lein shadow-release
+          lein build-report
       - if: steps.maven-cache.outputs.cache-hit != 'true'
-        name: Run cd examples/todomvc && lein shadow compile client
+        name: Run cd examples/todomvc && lein shadow-release && lein build-report
         working-directory: examples/todomvc
-        run: lein shadow compile client
+        run: |
+          lein shadow-release
+          lein build-report
       - if: steps.maven-cache.outputs.cache-hit == 'true'
-        run: lein -o karma-once
+        run: lein -o ci
       - if: steps.maven-cache.outputs.cache-hit == 'true'
-        name: Run cd examples/simple && lein -o shadow compile client
+        name: Run cd examples/simple && lein -o shadow-release && lein -o build-report
         working-directory: examples/simple
-        run: lein -o shadow compile client
+        run: |
+          lein -o shadow-release
+          lein -o build-report
       - if: steps.maven-cache.outputs.cache-hit == 'true'
-        name: Run cd examples/todomvc && lein -o shadow compile client
+        name: Run cd examples/todomvc && lein -o shadow-release && lein -o build-report
         working-directory: examples/todomvc
-        run: lein -o shadow compile client
+        run: |
+          lein -o shadow-release
+          lein -o build-report
+      - uses: actions/upload-artifact@v2
+        with:
+          name: simple-example-build-report
+          path: examples/simple/target/build-report.html
+      - uses: actions/upload-artifact@v2
+        with:
+          name: todomvc-example-build-report
+          path: examples/todomvc/target/build-report.html
       - name: Verify cljdoc Configuration
         run: curl -fsSL https://raw.githubusercontent.com/cljdoc/cljdoc/master/script/verify-cljdoc-edn | bash -s doc/cljdoc.edn
       - name: Slack notification

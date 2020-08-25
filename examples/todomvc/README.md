@@ -70,7 +70,7 @@ The [official reagent example](https://github.com/reagent-project/reagent/tree/m
 
 1. Compile
    ```sh
-   lein do clean, shadow release client
+   lein release
    ```
 
 2. Open the following in your browser

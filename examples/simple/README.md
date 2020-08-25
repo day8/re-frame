@@ -32,5 +32,5 @@ change show up in the browser in near-realtime.
 
 ### Production Version
 
-Run "`lein do clean, shadow release client`" to compile an optimised 
+Run "`lein release`" to compile an optimised 
 version, and then open `resources/public/example.html` in a browser.

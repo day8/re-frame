@@ -68,17 +68,11 @@
                           :compiler-options {:pretty-print                       true
                                              :closure-defines                    {re-frame.trace.trace-enabled? true}}}}}
 
-  :aliases {"test-once"   ["do"
-                           ["clean"]
-                           ["shadow" "compile" "browser-test"]
-                           ["shell" "open" "run/compiled/browser/test/index.html"]]
-            "test-auto"   ["do"
-                           ["clean"]
-                           ["shadow" "watch" "browser-test"]]
-            "karma-once"  ["do"
-                           ["clean"]
-                           ["shadow" "compile" "karma-test"]
-                           ["shell" "karma" "start" "--single-run" "--reporters" "junit,dots"]]
-            "karma-auto"  ["do"
-                           ["clean"]
-                           ["shadow" "watch" "karma-test"]]})
+  :aliases {"watch" ["do"
+                     ["clean"]
+                     ["shadow" "watch" "browser-test" "karma-test"]]
+
+            "ci"    ["do"
+                     ["clean"]
+                     ["shadow" "compile" "karma-test"]
+                     ["shell" "karma" "start" "--single-run" "--reporters" "junit,dots"]]})
