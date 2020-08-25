@@ -25,7 +25,7 @@ really required to get the job done. So lean and minimal is no longer a goal.
 
 4. Kick off a clean build (compile the app and start up shadow-cljs hot-reloading)
    ```sh
-   lein do clean, shadow watch client
+   lein watch
    ```
 
 5. Wait for the compile in step 4 to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`

@@ -34,4 +34,6 @@
                                   :devtools   {:http-root "resources/public"
                                                :http-port 8280}}}}
 
-  :aliases {"dev-auto" ["shadow" "watch" "client"]})
+  :aliases {"watch" ["do"
+                     ["clean"]
+                     ["shadow" "watch" "client"]]})
