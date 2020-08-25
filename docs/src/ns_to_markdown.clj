@@ -79,7 +79,7 @@
   [name-without-ns arglists]
   (reduce
     (fn [markdown arglist]
-      (str markdown "\n" (format "`(%s%s)`" name-without-ns (arglist->markdown arglist))))
+      (str markdown "\n" (format "`#!clj (%s%s)`" name-without-ns (arglist->markdown arglist))))
     ""
     arglists))
 
