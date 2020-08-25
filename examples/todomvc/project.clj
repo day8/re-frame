@@ -12,7 +12,7 @@
                  [reagent                    "0.10.0"]
                  [net.cgrand/macrovich       "0.2.1"]
                  [org.clojure/tools.logging  "0.4.1"]
-                 [binaryage/devtools         "1.0.0"]
+                 [binaryage/devtools         "1.0.2"]
                  [clj-commons/secretary      "1.2.4"]
                  [day8.re-frame/tracing      "0.5.5"]]
 
