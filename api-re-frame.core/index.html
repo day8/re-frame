@@ -2042,8 +2042,8 @@ using <code>reg-sub</code> instead.</p>
 <p>Some explanation is available in the docs at
 <a href="http://day8.github.io/re-frame/flow-mechanics/" target="_blank">http://day8.github.io/re-frame/flow-mechanics/</a></p>
 <h2 id="subscribe">subscribe<a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">subscribe</span> <span class="nv">query</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">subscribe</span> <span class="nv">query</span> <span class="nv">dynv</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">subscribe</span> <span class="nv">query</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">subscribe</span> <span class="nv">query</span> <span class="nv">dynv</span><span class="p">)</span></code></p>
 <p>Given a <code>query</code> vector, returns a Reagent <code>reaction</code> which will, over
 time, reactively deliver a stream of values. So, in FRP-ish terms,
 it returns a <code>Signal</code>.</p>
@@ -2278,25 +2278,25 @@ as if you had supplied a <code>signal-fn</code> returning only a single value:</
 later called, will restore re-frame to the checkpointed state.</p>
 <p>The checkpoint includes <code>app-db</code>, all registered handlers and all subscriptions.</p>
 <h2 id="clear-fx">clear-fx<a class="headerlink" href="#clear-fx" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">clear-fx</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">clear-fx</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-fx</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-fx</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters effect handlers (presumably registered previously via the use of <code>reg-fx</code>). </p>
 <p>When called with no args, it will unregister all currently registered effect handlers. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
 effect handler, it will unregister the associated handler. Will produce a warning to 
 console if it finds no matching registration.</p>
 <h2 id="get-effect">get-effect<a class="headerlink" href="#get-effect" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span> <span class="nv">key</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">not-found</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span> <span class="nv">key</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-effect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">not-found</span><span class="p">)</span></code></p>
 <p>A utility function, used when writing interceptors, typically within an <code>:after</code> function.</p>
 <p>When called with one argument, returns the <code>:effects</code> map from the <code>context</code>.</p>
 <p>When called with two or three arguments, behaves like <code>clojure.core/get</code> and
  returns the value mapped to <code>key</code> in the effects map, <code>not-found</code> or
  <code>nil</code> if <code>key</code> is not present.</p>
 <h2 id="reg-event-db">reg-event-db<a class="headerlink" href="#reg-event-db" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-db</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">reg-event-db</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-db</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-db</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide
 an <code>interceptors</code> chain:</p>
 <ul>
@@ -2346,8 +2346,8 @@ processing is a problem:</p>
 
 
 <h2 id="clear-event">clear-event<a class="headerlink" href="#clear-event" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">clear-event</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">clear-event</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-event</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-event</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters event handlers (presumably registered previously via the use of <code>reg-event-db</code> or <code>reg-event-fx</code>). </p>
 <p>When called with no args, it will unregister all currently registered event handlers. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
@@ -2408,8 +2408,8 @@ or <code>:groupEnd</code>.</p>
 
 
 <h2 id="inject-cofx">inject-cofx<a class="headerlink" href="#inject-cofx" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">inject-cofx</span> <span class="nv">id</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">inject-cofx</span> <span class="nv">id</span> <span class="nv">value</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">inject-cofx</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">inject-cofx</span> <span class="nv">id</span> <span class="nv">value</span><span class="p">)</span></code></p>
 <p>Given an <code>id</code>, and an optional, arbitrary <code>value</code>, returns an interceptor
 whose <code>:before</code> adds to the <code>:coeffects</code> (map) by calling a pre-registered
 'coeffect handler' identified by the <code>id</code>.</p>
@@ -2457,17 +2457,17 @@ want that.</p>
 to the event handler at call time.</p>
 <p>See also <code>reg-cofx</code></p>
 <h2 id="clear-global-interceptor">clear-global-interceptor<a class="headerlink" href="#clear-global-interceptor" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">clear-global-interceptor</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">clear-global-interceptor</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-global-interceptor</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-global-interceptor</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters global interceptors (presumably registered previously via the use of <code>reg-global-interceptor</code>). </p>
 <p>When called with no args, it will unregister all currently registered global interceptors. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
 global interceptors, it will unregister the associated interceptor. Will produce a warning to 
 console if it finds no matching registration.</p>
 <h2 id="get-coeffect">get-coeffect<a class="headerlink" href="#get-coeffect" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span> <span class="nv">key</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">not-found</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span> <span class="nv">key</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">not-found</span><span class="p">)</span></code></p>
 <p>A utility function, typically used when writing an interceptor's <code>:before</code> function.</p>
 <p>When called with one argument, it returns the <code>:coeffects</code> map from with that <code>context</code>.</p>
 <p>When called with two or three arguments, behaves like <code>clojure.core/get</code> and
@@ -2511,16 +2511,16 @@ execution <code>:queue</code>. It returns the updated <code>context</code>.</p>
 <p>So, it provides a way for one Interceptor to add more interceptors to the 
 currently executing interceptor chain.</p>
 <h2 id="clear-cofx">clear-cofx<a class="headerlink" href="#clear-cofx" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">clear-cofx</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">clear-cofx</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-cofx</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-cofx</span> <span class="nv">id</span><span class="p">)</span></code></p>
 <p>Unregisters coeffect handlers (presumably registered previously via the use of <code>reg-cofx</code>). </p>
 <p>When called with no args, it will unregister all currently registered coeffect handlers. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
 coeffect handler, it will unregister the associated handler. Will produce a warning to 
 console if it finds no matching registration.</p>
 <h2 id="reg-event-ctx">reg-event-ctx<a class="headerlink" href="#reg-event-ctx" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-ctx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">reg-event-ctx</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-ctx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-ctx</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide
 an <code>interceptors</code> chain:</p>
 <ul>
@@ -2565,8 +2565,8 @@ before it is supplied to the event handler, allowing you to write more
 
 
 <h2 id="clear-sub">clear-sub<a class="headerlink" href="#clear-sub" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">clear-sub</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">clear-sub</span> <span class="nv">query-id</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-sub</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-sub</span> <span class="nv">query-id</span><span class="p">)</span></code></p>
 <p>Unregisters subscription handlers (presumably registered previously via the use of <code>reg-sub</code>). </p>
 <p>When called with no args, it will unregister all currently registered subscription handlers. </p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
@@ -2600,8 +2600,8 @@ Its return value is ignored, so <code>f</code> can only side-effect.</p>
 <li><code>f</code> writes to localstorage.</li>
 </ul>
 <h2 id="add-post-event-callback">add-post-event-callback<a class="headerlink" href="#add-post-event-callback" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">add-post-event-callback</span> <span class="nv">f</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">add-post-event-callback</span> <span class="nv">id</span> <span class="nv">f</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">add-post-event-callback</span> <span class="nv">f</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">add-post-event-callback</span> <span class="nv">id</span> <span class="nv">f</span><span class="p">)</span></code></p>
 <p>Registers the given function <code>f</code> to be called after each event is processed. </p>
 <p><code>f</code> will be called with two arguments:</p>
 <ul>
@@ -2628,8 +2628,8 @@ within <code>inject-cofx</code>:</p>
 </ul>
 <p>See also: <code>inject-cofx</code> </p>
 <h2 id="reg-event-fx">reg-event-fx<a class="headerlink" href="#reg-event-fx" title="Permanent link">&para;</a></h2>
-<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code>
-<code class="highlight"><span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given event <code>handler</code> (function) for the given <code>id</code>. Optionally, provide
 an <code>interceptors</code> chain:</p>
 <ul>
