@@ -21,6 +21,7 @@ Will the `:dispatch` effect be actioned before `:http`, and what about `:db`?
 
 !!! tip "From v1.1.0 onwards"
     two things changed:
+    
     - re-frame guarantees that the `:db` effect will be actioned first, if present. But there remains no guarantee for other effects.
     - a new effect, called `:fx`, is added. It allows you to specify an ordered sequence of effects.
 
