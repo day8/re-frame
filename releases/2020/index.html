@@ -1601,6 +1601,12 @@
 <p>Note: full dependency coordinates (Maven/deps/Lein) are provided on the <a href="https://clojars.org/re-frame/">Clojars page</a></p>
 </blockquote>
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h4>Changed</h4>
+<ul>
+<li>Change <code>:dispatch-later</code> effect to take a map in addition to a collection of maps. <strong>Old code will
+  continue to work without changes.</strong> However, passing in a collection of maps is deprecated in 
+  favour of the <code>:fx</code> effect. See <a href="http://day8.github.io/re-frame/api-builtin-effects/#dispatch-later">the api documentation</a>. </li>
+</ul>
 <h2 id="110-2020-08-24">1.1.0 (2020-08-24)<a class="headerlink" href="#110-2020-08-24" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
 <ul>
