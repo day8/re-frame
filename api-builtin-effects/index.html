@@ -1535,12 +1535,17 @@ built-in effects which also contribute to the API.</p>
 
 
 <p>Will the <code>:dispatch</code> effect be actioned before <code>:http</code>, and what about <code>:db</code>?</p>
-<p><strong><em>Prior to v1.1.0</em></strong>: re-frame provided no guarantees regarding ordering. It was an implementation detail on which you couldn't rely.</p>
-<p><strong><em>From v1.1.0 onwards</em></strong>, two things changed:</p>
-<ul>
-<li>re-frame guarantees that the <code>:db</code> effect will be actioned first, if present. But there remains no guarantee for other effects.</li>
-<li>a new effect, called <code>:fx</code>, is added. It allows you to specify an ordered sequence of effects.</li>
-</ul>
+<div class="admonition tip">
+<p class="admonition-title">Prior to v1.1.0</p>
+<p>re-frame provided no guarantees regarding ordering. It was an implementation
+detail on which you couldn't rely.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">From v1.1.0 onwards</p>
+<p>two things changed:
+- re-frame guarantees that the <code>:db</code> effect will be actioned first, if present. But there remains no guarantee for other effects.
+- a new effect, called <code>:fx</code>, is added. It allows you to specify an ordered sequence of effects.</p>
+</div>
 <p>With v1.1.0 <strong><em>best practice</em></strong> probably changed: an event handler should return only two effects <code>:db</code> and <code>:fx</code>. The <code>:db</code> effect will be actioned first, and then <code>:fx</code>, but within <code>:fx</code> effects will be actioned in the sequence provided. The true reason for this change is that it makes it easier to compose event handlers from a number of smaller functions, but it incidently also allowed more specificity around ordering. So that was a bonus. </p>
 <p>So, the new approach encourages effects to be something like:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span> 
@@ -1597,13 +1602,18 @@ Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect 
 map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-db</span> 
- <span class="ss">:fx</span>  <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]]}</span>  <span class="c1">;; dispatch in 200ms</span>
+ <span class="ss">:fx</span>  <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]}</span>  <span class="c1">;; dispatch in 200ms</span>
 </code></pre></div>
 
 
-<p>Multiple with <code>:fx</code> introduced in re-frame v1.1.0:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]</span>
-      <span class="p">[</span><span class="ss">:dispatch-later</span> <span class="p">[{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]]}</span>
+<div class="admonition warning">
+<p class="admonition-title">Deprecation</p>
+<p>Prior to re-frame v1.1.1 <code>:dispatch-later</code> required a collection of maps, 
+since v1.1.1 it has required a single map. </p>
+</div>
+<p>Multiple with <code>:fx</code> introduced in re-frame v1.1.1:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]</span>
+      <span class="p">[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]}</span>
 </code></pre></div>
 
 
