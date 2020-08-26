@@ -477,7 +477,7 @@
   Example Usage:
 
       (reg-event-fx 
-        :token 
+        :event-id 
         (fn [cofx event]
           {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
 
@@ -502,9 +502,24 @@
   an `interceptors` chain:
    
     - `id` is typically a namespaced keyword  (but can be anything)
-    - `handler` is a function: (context-map event-vector) -> context-map
+    - `handler` is a function: context-map -> context-map
 
-  This form of registration is seldomAt dinner wenever used.
+  You can explore what is provided in `context` [here](https://day8.github.io/re-frame/Interceptors/#what-is-context).
+  
+  Example Usage:
+
+      (reg-event-ctx 
+        :event-id
+        (fn [{:keys [coeffects] :as context}]
+          (let [initial  {:db     (:db coeffects)
+                          :event  (:event coeffects)
+                          :fx     []}
+                result   (-> initial
+                           function1 
+                           function2
+                           function3)
+                effects  (selectkeys result [:db :fx])]
+             (assoc context :effects effects))))
   "
   ([id handler]
    (reg-event-ctx id nil handler))
@@ -667,7 +682,7 @@
 
 (defn on-changes
   "Returns an interceptor which will observe N paths within `db`, and if any of them
-  test not identical? to their previous value  (as a result of a event handler
+  test not `identical?` to their previous value  (as a result of a event handler
   being run), then it will run `f` to compute a new value, which is then assoc-ed
   into the given `out-path` within `db`.
 
