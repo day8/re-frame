@@ -45,9 +45,9 @@
        (string/join "\n")))
 
 (defn read-var
-  [[_ var]]
+  [var]
   (-> var
-      (select-keys [:name :line :arglists :doc :dynamic :added :deprecated])
+      (select-keys [:name :line :arglists :doc :dynamic :added :deprecated :api-docs/heading])
       (update :arglists remove-quote)
       (update :doc unindent)
       (assoc :type (var-type var))))
@@ -56,9 +56,12 @@
   [state ns-name]
   (let [vars (cljs.analyzer.api/ns-publics state ns-name)]
     (->> vars
+         (map second)
          (remove :protocol)
          (remove :anonymous)
-         (map read-var))))
+         (sort-by :line)
+         (map read-var)
+         (group-by :api-docs/heading))))
 
 (defn analyze-file
   [file]
@@ -101,13 +104,18 @@
 (defn var->markdown
   [var]
   (let [name-without-ns (name (:name var))]
-    (format "## %s\n%s\n\n%s\n\n"
+    (format "### %s\n%s\n\n%s\n\n"
             name-without-ns
             (arglists->markdown name-without-ns (:arglists var))
             (:doc var))))
+
+(defn group->markdown
+  [[heading vars]]
+  (reduce str (format "## %s\n\n" heading) (map var->markdown vars)))
+
 
 (defn -main
   [& args]
   (let [ns-data (read-file (first args))]
     (println (str (ns->markdown ns-data)
-                  (reduce str "" (map var->markdown  (:publics ns-data)))))))
+                  (reduce str "" (map group->markdown  (:publics ns-data)))))))
