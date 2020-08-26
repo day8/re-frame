@@ -1252,13 +1252,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#null" class="md-nav__link">
-    null
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#interceptors" class="md-nav__link">
     Interceptors
   </a>
@@ -1489,13 +1482,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#null" class="md-nav__link">
-    null
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#interceptors" class="md-nav__link">
     Interceptors
   </a>
@@ -1686,6 +1672,10 @@ console if it finds no matching registration.</p>
 </ul>
 <p><code>id</code> is typically a keyword. If it supplied when an <code>f</code> is added, it can be 
 subsequently be used to identify it for removal. See <code>remove-post-event-callback</code>.</p>
+<h3>remove-post-event-callback</h3>
+<p><code class="highlight"><span class="p">(</span><span class="nf">remove-post-event-callback</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p>Unregisters a post event callback function, identified by <code>id</code>. </p>
+<p>Such a function must have been previously registered via <code>add-post-event-callback</code></p>
 <h3>register-handler</h3>
 <p><code class="highlight"><span class="p">(</span><span class="nf">register-handler</span> <span class="o">&amp;</span> <span class="nv">args</span><span class="p">)</span></code></p>
 <p>Deprecated. Use <code>reg-event-db</code> instead.</p>
@@ -1987,7 +1977,6 @@ want that.</p>
 'necessary resources' into the <code>:coeffects</code> (map) subsequently given
 to the event handler at call time.</p>
 <p>See also <code>reg-cofx</code></p>
-<h2 id="null">null<a class="headerlink" href="#null" title="Permanent link">&para;</a></h2>
 <h3>clear-cofx</h3>
 <p><code class="highlight"><span class="p">(</span><span class="nf">clear-cofx</span><span class="p">)</span></code></p>
 <p><code class="highlight"><span class="p">(</span><span class="nf">clear-cofx</span> <span class="nv">id</span><span class="p">)</span></code></p>
@@ -1996,10 +1985,6 @@ to the event handler at call time.</p>
 <p>When given one arg, assumed to be the <code>id</code> of a previously registered 
 coeffect handler, it will unregister the associated handler. Will produce a warning to 
 console if it finds no matching registration.</p>
-<h3>remove-post-event-callback</h3>
-<p><code class="highlight"><span class="p">(</span><span class="nf">remove-post-event-callback</span> <span class="nv">id</span><span class="p">)</span></code></p>
-<p>Unregisters a post event callback function, identified by <code>id</code>. </p>
-<p>Such a function must have been previously registered via <code>add-post-event-callback</code></p>
 <h2 id="interceptors">Interceptors<a class="headerlink" href="#interceptors" title="Permanent link">&para;</a></h2>
 <h3>debug</h3>
 <p>An interceptor which logs/instruments an event handler's actions to
