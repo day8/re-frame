@@ -25,6 +25,7 @@ jobs:
           fetch-depth: 0
       - name: Build re-frame.core Documentation
         working-directory: docs
+        # Source: https://github.com/day8/re-frame/blob/master/docs/src/ns_to_markdown.clj
         run: clojure -m ns-to-markdown ../src/re_frame/core.cljc > api-re-frame.core.md
       - name: Upload re-frame.core Documentation Artifact
         uses: actions/upload-artifact@v2

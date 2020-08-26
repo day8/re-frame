@@ -1,4 +1,22 @@
-(ns ns-to-markdown 
+(ns ns-to-markdown
+  "The purpose of this is to generate markdown documentation from the re-frame.core ns as input
+   to the mkdocs-based documentation site build. We use markdown because that delegates site
+   navigation, syntax highlighting and other useful features to the mkdocs build, making the
+   output of this script very simple. It also means there is seamless integration between the
+   generated api documentation, and the rest of the documentation site. All the styling is the same
+   and links work as expected etc.
+
+   It is run as part of the GitHub Actions docs workflow at
+   https://github.com/day8/re-frame/blob/78ca09785e2adf9eea11f1e4bff2477d193f4b46/.github/workflows/docs-workflow.yml#L15
+
+   The page that results from this is http://day8.github.io/re-frame/api-re-frame.core/
+
+   Usage: clojure -m ns-to-markdown ../src/re_frame/core.cljc > api-re-frame.core.md
+
+   Run as a script with the Clojure CLI. Expects the first arg to be a path to a ClojureScript
+   namespace. Reads the single namespace found in that file using the ClojureScript analyzer,
+   extracting public var metadata such as function names, arglists and docstrings. Subsequently
+   writes it out as markdown to stdout suitable for piping to a markdown file as per usage example."
   (:require
     [clojure.java.io :as io]
     [cljs.analyzer]
