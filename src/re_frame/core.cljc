@@ -438,6 +438,7 @@
   When given one arg, assumed to be the `id` of a previously registered 
   coeffect handler, it will unregister the associated handler. Will produce a warning to 
   console if it finds no matching registration."
+  {:api-docs/heading "Coeffects"}
   ([]
    (registrar/clear-handlers cofx/kind))
   ([id]
@@ -972,8 +973,8 @@
   "Unregisters a post event callback function, identified by `id`. 
    
   Such a function must have been previously registered via `add-post-event-callback`"
-  [id]
   {:api-docs/heading "Events"}
+  [id]
   (router/remove-post-event-callback re-frame.router/event-queue id))
 
 
