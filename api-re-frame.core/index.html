@@ -1974,7 +1974,7 @@ However, an application using re-frame can redirect <code>console</code> output 
 <h2 id="on-changes">on-changes<a class="headerlink" href="#on-changes" title="Permanent link">&para;</a></h2>
 <p><code class="highlight"><span class="p">(</span><span class="nf">on-changes</span> <span class="nv">f</span> <span class="nv">out-path</span> <span class="o">&amp;</span> <span class="nv">in-paths</span><span class="p">)</span></code></p>
 <p>Returns an interceptor which will observe N paths within <code>db</code>, and if any of them
-test not identical? to their previous value  (as a result of a event handler
+test not <code>identical?</code> to their previous value  (as a result of a event handler
 being run), then it will run <code>f</code> to compute a new value, which is then assoc-ed
 into the given <code>out-path</code> within <code>db</code>.</p>
 <p>Example Usage:</p>
@@ -2525,9 +2525,25 @@ console if it finds no matching registration.</p>
 an <code>interceptors</code> chain:</p>
 <ul>
 <li><code>id</code> is typically a namespaced keyword  (but can be anything)</li>
-<li><code>handler</code> is a function: (context-map event-vector) -&gt; context-map</li>
+<li><code>handler</code> is a function: context-map -&gt; context-map</li>
 </ul>
-<p>This form of registration is seldomAt dinner wenever used.</p>
+<p>You can explore what is provided in <code>context</code> <a href="https://day8.github.io/re-frame/Interceptors/#what-is-context">here</a>.</p>
+<p>Example Usage:</p>
+<div class="codehilite"><pre><span></span><code>(reg-event-ctx 
+  :event-id
+  (fn [{:keys [coeffects] :as context}]
+    (let [initial  {:db     (:db coeffects)
+                    :event  (:event coeffects)
+                    :fx     []}
+          result   (-&gt; initial
+                     function1 
+                     function2
+                     function3)
+          effects  (selectkeys result [:db :fx])]
+       (assoc context :effects effects))))
+</code></pre></div>
+
+
 <h2 id="reg-fx">reg-fx<a class="headerlink" href="#reg-fx" title="Permanent link">&para;</a></h2>
 <p><code class="highlight"><span class="p">(</span><span class="nf">reg-fx</span> <span class="nv">id</span> <span class="nv">handler</span><span class="p">)</span></code></p>
 <p>Register the given effect <code>handler</code> for the given <code>id</code>:</p>
@@ -2639,7 +2655,7 @@ an <code>interceptors</code> chain:</p>
 </ul>
 <p>Example Usage:</p>
 <div class="codehilite"><pre><span></span><code>(reg-event-fx 
-  :token 
+  :event-id 
   (fn [cofx event]
     {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
 </code></pre></div>
