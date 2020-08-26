@@ -1523,10 +1523,9 @@
                 
                 
                 <h1 id="builtin-effects">Builtin Effects<a class="headerlink" href="#builtin-effects" title="Permanent link">&para;</a></h1>
-<p>In addition to the API provided in <code>re-frame.core</code>, re-frame supplies a small number of 
-built-in effects which also contribute to the API.</p>
+<p>re-frame supplies a small number of built-in effects which contribute to the API.</p>
 <h2 id="ordering">Ordering<a class="headerlink" href="#ordering" title="Permanent link">&para;</a></h2>
-<p>An event handler (registered via <code>reg-event-fx</code>) can return a map containing many effects, but maps are unordered. So, in what order will re-frame action effects?</p>
+<p>An event handler (registered via <code>reg-event-fx</code>) can return a map containing many effects, but maps are unordered. So, in what order will re-frame action the effects?</p>
 <p>For example, if an event handler returned:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:some-id</span><span class="p">]</span>
  <span class="ss">:http</span>     <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span>  <span class="ss">:url</span> <span class="s">&quot;http://somewhere.com/&quot;</span><span class="p">}</span>
@@ -1544,12 +1543,12 @@ detail on which you couldn't rely.</p>
 <p class="admonition-title">From v1.1.0 onwards</p>
 <p>two things changed:</p>
 <ul>
-<li>re-frame guarantees that the <code>:db</code> effect will be actioned first, if present. But there remains no guarantee for other effects.</li>
-<li>a new effect, called <code>:fx</code>, is added. It allows you to specify an ordered sequence of effects.</li>
+<li>re-frame guarantees that the <code>:db</code> effect will be actioned first, if present. But there's no guarantee for other effects.</li>
+<li>a new <code>:fx</code> effect was added. It allows you to specify an ordered sequence of effects.</li>
 </ul>
 </div>
-<p>With v1.1.0 <strong><em>best practice</em></strong> probably changed: an event handler should return only two effects <code>:db</code> and <code>:fx</code>. The <code>:db</code> effect will be actioned first, and then <code>:fx</code>, but within <code>:fx</code> effects will be actioned in the sequence provided. The true reason for this change is that it makes it easier to compose event handlers from a number of smaller functions, but it incidently also allowed more specificity around ordering. So that was a bonus. </p>
-<p>So, the new approach encourages effects to be something like:</p>
+<p>With v1.1.0 <strong>best practice changed</strong>. An event handler should return only two effects <code>:db</code> and <code>:fx</code>. The <code>:db</code> effect will be actioned first, and then <code>:fx</code>, but within <code>:fx</code> effects will be actioned in the sequence provided. The true reason for this change is that it makes it easier to compose event handlers from a number of smaller functions, but it incidently also allowed more specificity around ordering. So that was a bonus. </p>
+<p>So, the new approach encourages event handlers to returns effects like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-db</span> 
  <span class="ss">:fx</span> <span class="p">[</span><span class="nv">...</span><span class="p">]}</span>   <span class="c1">;; &lt;-- optional, contains one effect after another</span>
 </code></pre></div>
