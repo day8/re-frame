@@ -35,6 +35,7 @@
       
       (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
   "
+  {:api-docs/heading "Events"}
   [event]
   (router/dispatch event))
 
@@ -61,6 +62,7 @@
 
       (dispatch-sync [:sing :falsetto \"piano accordion\"])
   "
+  {:api-docs/heading "Events"}
   [event]
   (router/dispatch-sync event))
 
@@ -205,6 +207,7 @@
         
   See also: `subscribe`
   "
+  {:api-docs/heading "Subscriptions"}
   [query-id & args]
   (apply subs/reg-sub (into [query-id] args)))
 
@@ -261,6 +264,7 @@
       
   See also: `reg-sub`
   "
+  {:api-docs/heading "Subscriptions"}
   ([query]
    (subs/subscribe query))
   ([query dynv]
@@ -276,6 +280,7 @@
   console if it finds no matching registration.
 
   NOTE: Depending on the usecase, it may be necessary to call `clear-subscription-cache!` afterwards"
+  {:api-docs/heading "Subscriptions"}
   ([]
    (registrar/clear-handlers subs/kind))
   ([query-id]
@@ -291,6 +296,7 @@
   the subscriptions within those components won't have been cleaned up correctly. So this 
   forces the issue.
   "
+  {:api-docs/heading "Subscriptions"}
   []
   (subs/clear-subscription-cache!))
 
@@ -300,6 +306,7 @@
 
   Some explanation is available in the docs at
   <a href=\"http://day8.github.io/re-frame/flow-mechanics/\" target=\"_blank\">http://day8.github.io/re-frame/flow-mechanics/</a>"
+  {:api-docs/heading "Subscriptions"}
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
 
@@ -326,6 +333,7 @@
   then the `handler` `fn` we registered previously, using `reg-fx`, will be
   called with an argument of `[1 2]`.
   "
+  {:api-docs/heading "Effects"}
   [id handler]
   (fx/reg-fx id handler))
 
@@ -339,6 +347,7 @@
   effect handler, it will unregister the associated handler. Will produce a warning to 
   console if it finds no matching registration.
   "
+  {:api-docs/heading "Effects"}
   ([]
    (registrar/clear-handlers fx/kind))
   ([id]
@@ -355,6 +364,7 @@
 
   See also: `inject-cofx` 
   "
+  {:api-docs/heading "Coeffects"}
   [id handler]
   (cofx/reg-cofx id handler))
 
@@ -414,6 +424,7 @@
           
   See also `reg-cofx`
   "
+  {:api-docs/heading "Coeffects"}
   ([id]
    (cofx/inject-cofx id))
   ([id value]
@@ -459,6 +470,7 @@
             (dissoc arg1)
             (update :key + arg2))))   ;; return updated db
   "
+  {:api-docs/heading "Events"}
   ([id handler]
    (reg-event-db id nil handler))
   ([id interceptors handler]
@@ -491,6 +503,7 @@
           {:db       (assoc db :some-key arg1)          ;; return a map of effects
            :dispatch [:some-event arg2]}))
   "
+  {:api-docs/heading "Events"}
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
@@ -521,6 +534,7 @@
                 effects  (selectkeys result [:db :fx])]
              (assoc context :effects effects))))
   "
+  {:api-docs/heading "Events"}
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
@@ -534,6 +548,7 @@
   When given one arg, assumed to be the `id` of a previously registered 
   event handler, it will unregister the associated handler. Will produce a warning to 
   console if it finds no matching registration."
+  {:api-docs/heading "Events"}
   ([]
    (registrar/clear-handlers events/kind))
   ([id]
@@ -541,7 +556,7 @@
 
 ;; -- interceptors ------------------------------------------------------------
 
-(def debug
+(def ^{:api-docs/heading "Interceptors"} debug
   "An interceptor which logs/instruments an event handler's actions to
   `js/console.debug`. See examples/todomvc/src/events.cljs for use.
 
@@ -599,6 +614,7 @@
     1. `path` may appear more than once in an interceptor chain. Progressive narrowing.
     2. if `:effects` contains no `:db` effect, can't graft a value back in.
   "
+  {:api-docs/heading "Interceptors"}
   [& args]
   (apply std-interceptors/path args))
 
@@ -647,10 +663,11 @@
 
   This brings huge simplicity at the expense of some re-computation
   each time. This may be a very satisfactory trade-off in many cases."
+  {:api-docs/heading "Interceptors"}
   [f]
   (std-interceptors/enrich f))
 
-(def trim-v
+(def ^{:api-docs/heading "Interceptors"} trim-v
   "An interceptor which removes the first element of the event vector,
   before it is supplied to the event handler, allowing you to write more
    aesthetically pleasing event handlers. No leading underscore on the event-v!
@@ -677,6 +694,7 @@
 
      - `f` runs schema validation (reporting any errors found).
      - `f` writes to localstorage."
+  {:api-docs/heading "Interceptors"}
   [f]
   (std-interceptors/after f))
 
@@ -709,6 +727,7 @@
     - call `f` with the values extracted from `[:a]` `[:b]`
     - assoc the return value from `f` into the path  `[:c]`
   "
+  {:api-docs/heading "Interceptors"}
   [f out-path & in-paths]
   (apply std-interceptors/on-changes (into [f out-path] in-paths)))
 
@@ -722,6 +741,7 @@
    prepending to this chain.
 
    Global interceptors are run in the order that they are registered."
+  {:api-docs/heading "Interceptors"}
   [interceptor]
   (settings/reg-global-interceptor interceptor))
 
@@ -733,6 +753,7 @@
   When given one arg, assumed to be the `id` of a previously registered 
   global interceptors, it will unregister the associated interceptor. Will produce a warning to 
   console if it finds no matching registration."
+  {:api-docs/heading "Interceptors"}
   ([]
    (settings/clear-global-interceptors))
   ([id]
@@ -772,6 +793,7 @@
     - `:after` functions often modify the `:effects` map within `context` and, 
       if they do, then they should use the utility functions `get-effect`
       and `assoc-effect`"
+  {:api-docs/heading "Interceptors"}
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
 
@@ -783,6 +805,7 @@
    When called with two or three arguments, behaves like `clojure.core/get` and
    returns the value mapped to `key` in the `:coeffects` map within `context`, `not-found` or
    `nil` if `key` is not present."
+  {:api-docs/heading "Interceptors"}
   ([context]
    (interceptor/get-coeffect context))
   ([context key]
@@ -794,6 +817,7 @@
   "A utility function, typically used when writing an interceptor's `:before` function.
 
    Adds or updates a key/value pair in the `:coeffects` map within `context`. "
+  {:api-docs/heading "Interceptors"}
   [context key value]
   (interceptor/assoc-coeffect context key value))
 
@@ -805,6 +829,7 @@
    When called with two or three arguments, behaves like `clojure.core/get` and
    returns the value mapped to `key` in the effects map, `not-found` or
    `nil` if `key` is not present."
+  {:api-docs/heading "Interceptors"}
   ([context]
    (interceptor/get-effect context))
   ([context key]
@@ -816,6 +841,7 @@
    "A utility function, typically used when writing an interceptor's `:after` function.
 
    Adds or updates a key/value pair in the `:effects` map within `context`. "
+  {:api-docs/heading "Interceptors"}
   [context key value]
   (interceptor/assoc-effect context key value))
 
@@ -828,6 +854,7 @@
   So, it provides a way for one Interceptor to add more interceptors to the 
   currently executing interceptor chain.
   "
+  {:api-docs/heading "Interceptors"}
   [context interceptors]
   (interceptor/enqueue context interceptors))
 
@@ -853,6 +880,7 @@
       ;; now install my alternative loggers
       (re-frame.core/set-loggers!  {:warn my-logger :log my-logger})
    "
+  {:api-docs/heading "Logging"}
   [new-loggers]
   (loggers/set-loggers! new-loggers))
 
@@ -872,6 +900,7 @@
       (console :error \"Sure enough it happened:\" a-var \"and\" another)
       (console :warn \"Possible breach of containment wall at:\" dt)
   "
+  {:api-docs/heading "Logging"}
   [level & args]
   (apply loggers/console (into [level] args)))
 
@@ -885,6 +914,7 @@
 
   The checkpoint includes `app-db`, all registered handlers and all subscriptions.
   "
+  {:api-docs/heading "Utilities"}
   []
   (let [handlers @registrar/kind->id->handler
         app-db   @db/app-db
@@ -906,6 +936,7 @@
 
 (defn purge-event-queue
   "Removes all events currently queued for processing"
+  {:api-docs/heading "Events"}
   []
   (router/purge re-frame.router/event-queue))
 
@@ -930,6 +961,7 @@
   `id` is typically a keyword. If it supplied when an `f` is added, it can be 
   subsequently be used to identify it for removal. See `remove-post-event-callback`.
   "
+  {:api-docs/heading "Events"}
   ([f]
    (add-post-event-callback f f))   ;; use f as its own identifier
   ([id f]
@@ -941,6 +973,7 @@
    
   Such a function must have been previously registered via `add-post-event-callback`"
   [id]
+  {:api-docs/heading "Events"}
   (router/remove-post-event-callback re-frame.router/event-queue id))
 
 
@@ -948,14 +981,16 @@
 ;; Assisting the v0.7.x ->  v0.8.x transition.
 (defn register-handler
   "Deprecated. Use `reg-event-db` instead."
-  {:deprecated "0.8.0"}
+  {:deprecated "0.8.0"
+   :api-docs/heading "Events"}
   [& args]
   (console :warn  "re-frame: \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
   (apply reg-event-db args))
 
 (defn register-sub
   "Deprecated. Use `reg-sub-raw` instead."
-  {:deprecated "0.8.0"}
+  {:deprecated "0.8.0"
+   :api-docs/heading "Events"}
   [& args]
   (console :warn  "re-frame: \"register-sub\" is used to register the event " (str (first args)) " but it is a deprecated part of the API. Please use \"reg-sub-raw\" instead.")
   (apply reg-sub-raw args))
