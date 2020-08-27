@@ -2,12 +2,13 @@
 
 re-frame supplies a small number of built-in effects which contribute to the API.
 
-## What Effects Look Like
+## What Are Effects? 
 
 Event handlers, such as those registered using `reg-event-fx`, compute and return a map of effects which might look like this: 
 ```clj 
 {:db  new-db
  :fx  [ [:dispatch [:some-id]]
+        [:full-screen true]
         [:http     {:method :GET  :url "http://somewhere.com/"}]]}
 ```
 You'll notice that all effects, other then `:db`, are listed under `:fx`. 
@@ -44,12 +45,12 @@ Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect 
 For example:
 ```clj
 {:db  new-db 
- :fx  [ [:dispatch   [:some-id]]
+ :fx  [ [:dispatch   [:some-id "extra"]]
         [:http-xhrio {:method :GET  :url "http://somewhere.com/"}]
-        (when (> 2 3) [:some-effect-id  some-payload])]}
+        (when (> 2 3) [:full-screen true])]}
 ```
 
-In this example, notice the use of `when` to conditionally include or exclude an effect. Any `nil` found in a `:fx` sequence will be ignored. 
+Notice the use of `when` to conditionally include or exclude an effect. Any `nil` found in a `:fx` sequence will be ignored. 
 
 ## <a name="dispatch"></a> :dispatch
 
