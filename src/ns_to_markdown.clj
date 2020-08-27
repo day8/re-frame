@@ -61,7 +61,12 @@
          (remove :anonymous)
          (sort-by :line)
          (map read-var)
-         (group-by :api-docs/heading))))
+         (group-by :api-docs/heading)
+         (mapv (fn [[heading vars]]
+                   {:heading heading
+                    :publics vars
+                    :line   (:line (first vars))}))
+         (sort-by :line))))
 
 (defn analyze-file
   [file]
@@ -110,8 +115,8 @@
             (:doc var))))
 
 (defn group->markdown
-  [[heading vars]]
-  (reduce str (format "## %s\n\n" heading) (map var->markdown vars)))
+  [{:keys [heading publics]}]
+  (reduce str (format "## %s\n\n" heading) (map var->markdown publics)))
 
 
 (defn -main
