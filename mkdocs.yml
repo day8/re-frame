@@ -114,7 +114,7 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - toc:
       permalink: true
-      toc_depth: 3
+      toc_depth: 2
   - codehilite:
       guess_lang: false
 
