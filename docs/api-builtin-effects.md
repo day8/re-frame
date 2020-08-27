@@ -11,15 +11,22 @@ Event handlers, such as those registered using `reg-event-fx`, compute and retur
         [:full-screen true]
         [:http     {:method :GET  :url "http://somewhere.com/"}]]}
 ```
-You'll notice that all effects, other then `:db`, are listed under `:fx`. 
+That's a map with two keys:  `:db` and `:fx`.  Which, in turn, means there are two effects. There could be others.
 
-Certain of these effects are "builtin", such as `:db`, `:fx` or `:dispatch`. Others, like `:http` might come from a third party library. This page lists the builtin ones.
+An effect consists of an `id` and a `payload`. The `id` identifies the effect (so we know how to action it) and the `payload` 
+carries additional information which will parameterise the action taken. 
+
+So, if an effect map was `#clj {:db m}`, it would contain only one effect with an `id` of `:db` and a payload of `m` (the value of `m`).
+
+In the example above, you'll notice the other effect with an `id` of `:fx` has a vector payload. That vector is a sequenceof other effects, each with an `id` and a `payload`. So `:fx` is an effect which sequences the actioning of other effects. 
+
+Certain of these effects are "builtin", such as `:db`, `:fx` or `:dispatch`. Others, like `:http` might come from a third-party library. This page lists the built-in ones.
 
 ## <a name="db"></a> :db
 
 `reset!` `app-db` to be a new value. The associated `value` is expected to be a map. 
 
-The `:db` effect has special status. It will always be actioned before others. (Prior to v1.1.0 this guarentee did not exist. There were no ordering guarentees).
+The `:db` effect has a special status. It will always be actioned before others. (Prior to v1.1.0 this guarantee did not exist. There were no ordering guarantees).
 
 usage:
 ```clojure
