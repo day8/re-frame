@@ -539,63 +539,10 @@
       Interceptors
     </a>
     
-      <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-
-
-<!-- Table of contents -->
+      
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
-
-  <!--
-    Hack: check whether the content contains a h1 headline. If it does, the
-    top-level anchor must be skipped, since it would be redundant to the link
-    to the current page that is located just above the anchor. Therefore we
-    directly continue with the children of the anchor.
-  -->
   
-
-  <!-- Render item list -->
-
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page. 
-
-    Globally in mkdocs.yml we set the table of contents extension depth to the
-    maximum that we want to use site-wide, then filter it down depending on
-    the markdown meta extension on a page-per-page basis.
-
-    First, we need to initialize some variables that are used in toc-item.html
-
-    re_frame_navigation_depth is set depending on the markdown meta extension.
-    It is the maximum depth for the rhs table of contents.
-
-    re_frame_navigation_level is the current recursive rendering depth of
-    toc-item.html It must be both incremented and decremented on each recur.
-  -->
-  
-    
-  
-  
-
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -605,723 +552,115 @@
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#why-interceptors" class="md-nav__link">
-	  Why Interceptors?
+    Why Interceptors?
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#what-do-interceptors-do" class="md-nav__link">
-	  What Do Interceptors Do?
+    What Do Interceptors Do?
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#wait-i-know-that-pattern" class="md-nav__link">
-	  Wait, I know That Pattern!
+    Wait, I know That Pattern!
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#whats-in-the-pipeline" class="md-nav__link">
-	  What's In The Pipeline?
+    What's In The Pipeline?
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#show-me" class="md-nav__link">
-	  Show Me
+    Show Me
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#handlers-are-interceptors-too" class="md-nav__link">
-	  Handlers Are Interceptors Too
+    Handlers Are Interceptors Too
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#the-links-of-the-chain" class="md-nav__link">
-	  The Links Of The Chain
+    The Links Of The Chain
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#what-is-context" class="md-nav__link">
-	  What Is Context?
+    What Is Context?
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#threading-the-context" class="md-nav__link">
-	  Threading the Context
+    Threading the Context
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#infographics" class="md-nav__link">
-	  Infographics
+    Infographics
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#self-modifying" class="md-nav__link">
-	  Self Modifying
+    Self Modifying
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#credit" class="md-nav__link">
-	  Credit
+    Credit
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#lets-write-an-interceptor" class="md-nav__link">
-	  Let's Write An Interceptor
+    Let's Write An Interceptor
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#wrapping-handlers" class="md-nav__link">
-	  Wrapping Handlers
+    Wrapping Handlers
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
-	  Summary
+    Summary
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#appendix-built-in-interceptors" class="md-nav__link">
-	  Appendix - Built-in Interceptors
+    Appendix - Built-in Interceptors
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
@@ -2162,63 +1501,10 @@
               <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-
-
-<!-- Table of contents -->
+                    
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
-
-  <!--
-    Hack: check whether the content contains a h1 headline. If it does, the
-    top-level anchor must be skipped, since it would be redundant to the link
-    to the current page that is located just above the anchor. Therefore we
-    directly continue with the children of the anchor.
-  -->
   
-
-  <!-- Render item list -->
-
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page. 
-
-    Globally in mkdocs.yml we set the table of contents extension depth to the
-    maximum that we want to use site-wide, then filter it down depending on
-    the markdown meta extension on a page-per-page basis.
-
-    First, we need to initialize some variables that are used in toc-item.html
-
-    re_frame_navigation_depth is set depending on the markdown meta extension.
-    It is the maximum depth for the rhs table of contents.
-
-    re_frame_navigation_level is the current recursive rendering depth of
-    toc-item.html It must be both incremented and decremented on each recur.
-  -->
-  
-    
-  
-  
-
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -2228,723 +1514,115 @@
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#why-interceptors" class="md-nav__link">
-	  Why Interceptors?
+    Why Interceptors?
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#what-do-interceptors-do" class="md-nav__link">
-	  What Do Interceptors Do?
+    What Do Interceptors Do?
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#wait-i-know-that-pattern" class="md-nav__link">
-	  Wait, I know That Pattern!
+    Wait, I know That Pattern!
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#whats-in-the-pipeline" class="md-nav__link">
-	  What's In The Pipeline?
+    What's In The Pipeline?
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#show-me" class="md-nav__link">
-	  Show Me
+    Show Me
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#handlers-are-interceptors-too" class="md-nav__link">
-	  Handlers Are Interceptors Too
+    Handlers Are Interceptors Too
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#the-links-of-the-chain" class="md-nav__link">
-	  The Links Of The Chain
+    The Links Of The Chain
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#what-is-context" class="md-nav__link">
-	  What Is Context?
+    What Is Context?
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#threading-the-context" class="md-nav__link">
-	  Threading the Context
+    Threading the Context
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#infographics" class="md-nav__link">
-	  Infographics
+    Infographics
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#self-modifying" class="md-nav__link">
-	  Self Modifying
+    Self Modifying
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#credit" class="md-nav__link">
-	  Credit
+    Credit
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#lets-write-an-interceptor" class="md-nav__link">
-	  Let's Write An Interceptor
+    Let's Write An Interceptor
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#wrapping-handlers" class="md-nav__link">
-	  Wrapping Handlers
+    Wrapping Handlers
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
-	  Summary
+    Summary
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       
-        <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
+        <li class="md-nav__item">
   <a href="#appendix-built-in-interceptors" class="md-nav__link">
-	  Appendix - Built-in Interceptors
+    Appendix - Built-in Interceptors
   </a>
-
-  <!-- Render nested item list -->
-
-  <!--
-    CUSTOM: re-frame customization so that we can have one extra level in the
-    rhs table of contents *only* on the apidocs page.
-
-    See toc.html comment for introduction.
-
-    This code works by:
-    - incrementing the current level
-    - checking if the current level is equal or less than the maximum depth
-    - if true, resursively rendering this template
-    - if false, doing nothing
-    - decrementing the current level
-  -->
-  
-  			       
   
 </li>
       

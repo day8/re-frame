@@ -85,10 +85,7 @@
 
 (defn ns->markdown
   [m]
-  ;; The 3 dashes and apidocs:true is a markdown meta extension header used by
-  ;; the themes/partials/toc.html and themes/partials/toc-item.html templates
-  ;; to render an extra navigation level in the rhs table of contents.
-  (format "---\napidocs: true\n---\n\n# %s\n\n" (:name m)))
+  (format "# %s\n\n" (:name m)))
 
 (defn arglist->markdown
   [arglist]
