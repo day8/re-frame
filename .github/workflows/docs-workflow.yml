@@ -75,7 +75,7 @@ jobs:
       - klipse-cljs-cache
     runs-on: ubuntu-18.04
     container:
-      image: "squidfunk/mkdocs-material:5.1.1"
+      image: "squidfunk/mkdocs-material:5.5.9"
     steps:
       - name: Checkout Current Branch
         uses: actions/checkout@v2
