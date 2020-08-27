@@ -1202,15 +1202,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#commonly-used" class="md-nav__link">
-    Commonly Used
+  <a href="#dependency-information" class="md-nav__link">
+    Dependency Information
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#more-rarely-used" class="md-nav__link">
-    More Rarely Used
+  <a href="#using-re-frame" class="md-nav__link">
+    Using re-frame
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-most-commonly-used-part-of-the-api" class="md-nav__link">
+    The Most Commonly Used Part Of The API
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#more-rarely-used-part" class="md-nav__link">
+    More Rarely Used Part
   </a>
   
 </li>
@@ -1421,15 +1435,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#commonly-used" class="md-nav__link">
-    Commonly Used
+  <a href="#dependency-information" class="md-nav__link">
+    Dependency Information
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#more-rarely-used" class="md-nav__link">
-    More Rarely Used
+  <a href="#using-re-frame" class="md-nav__link">
+    Using re-frame
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-most-commonly-used-part-of-the-api" class="md-nav__link">
+    The Most Commonly Used Part Of The API
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#more-rarely-used-part" class="md-nav__link">
+    More Rarely Used Part
   </a>
   
 </li>
@@ -1455,23 +1483,26 @@
                 
                 
                 <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h1>
-<p>The re-frame API is composed of: </p>
+<p>The re-frame API consists of: </p>
 <ul>
 <li>the namespace <code>re-frame.core</code></li>
 <li>a set of built-in effects</li>
 </ul>
-<p>If you look to the left, in the navigation panel, you'll see a link to both. </p>
-<p>To use re-frame, you'll 
+<p>In the navigation to the left, you'll see a link to both. </p>
+<h2 id="dependency-information">Dependency Information<a class="headerlink" href="#dependency-information" title="Permanent link">&para;</a></h2>
+<p>Please review both the <a href="http://day8.github.io/re-frame/releases/2020">releases page</a> and the <a href="https://clojars.org/re-frame/">Clojars page</a> to discover the version you should be using. </p>
+<h2 id="using-re-frame">Using re-frame<a class="headerlink" href="#using-re-frame" title="Permanent link">&para;</a></h2>
+<p>To use the re-frame API within your namespace, you'll 
 need to <code>require</code> it, perhaps like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">my-app.namespace</span>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">my-app.some-namespace</span>
   <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">re-frame.core</span> <span class="ss">:as</span> <span class="nv">rf</span><span class="p">]))</span>
 
-<span class="c1">;;  use API like rf/reg-event-fx or rf/subscribe</span>
+<span class="c1">;; your code here</span>
 </code></pre></div>
 
 
-<p>The <code>re-frame.core</code> page provides, alphabetically all functions in that namespace, together with their docstrings. An alternative view is provided below - one which presents the API in terms of purpose and importance.</p>
-<h2 id="commonly-used">Commonly Used<a class="headerlink" href="#commonly-used" title="Permanent link">&para;</a></h2>
+<p>You'll then be able to use the functions in the API, perhaps like this: <code>#clj rf/dispatch</code>.</p>
+<h2 id="the-most-commonly-used-part-of-the-api">The Most Commonly Used Part Of The API<a class="headerlink" href="#the-most-commonly-used-part-of-the-api" title="Permanent link">&para;</a></h2>
 <p>When you are writing <code>View Functions</code>: </p>
 <ul>
 <li><code>dispatch</code> (or occasionally, <code>dispatch-sync</code>)</li>
@@ -1498,7 +1529,7 @@ need to <code>require</code> it, perhaps like this:</p>
 <li>register them via <code>reg-global-interceptors</code> </li>
 <li>rarely, remove them via <code>clear-global-interceptor</code></li>
 </ul>
-<h2 id="more-rarely-used">More Rarely Used<a class="headerlink" href="#more-rarely-used" title="Permanent link">&para;</a></h2>
+<h2 id="more-rarely-used-part">More Rarely Used Part<a class="headerlink" href="#more-rarely-used-part" title="Permanent link">&para;</a></h2>
 <p>Testing or dev-time related utilities:</p>
 <ul>
 <li><code>clear-subscription-cache!</code></li>
