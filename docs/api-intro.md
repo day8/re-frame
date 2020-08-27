@@ -23,7 +23,7 @@ need to `require` it, perhaps like this:
 ;; your code here
 ```
 
-You'll then be able to use the functions in the API, perhaps like this: `#clj rf/dispatch`.
+You'll then be able to use the functions in the API, perhaps like this: `#!clj rf/dispatch`.
 
 
 ## The Most Commonly Used Part Of The API
