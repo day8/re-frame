@@ -1,24 +1,32 @@
 # Overview
 
-The re-frame API is composed of: 
+The re-frame API consists of: 
 
   - the namespace `re-frame.core`
   - a set of built-in effects
 
-If you look to the left, in the navigation panel, you'll see a link to both. 
+In the navigation to the left, you'll see a link to both. 
 
-To use re-frame, you'll 
+## Dependency Information 
+
+Please review both the [releases page](http://day8.github.io/re-frame/releases/2020) and the [Clojars page](https://clojars.org/re-frame/) to discover the version you should be using. 
+
+
+## Using re-frame
+
+To use the re-frame API within your namespace, you'll 
 need to `require` it, perhaps like this:
 ```clj
-(ns my-app.namespace
+(ns my-app.some-namespace
   (:require [re-frame.core :as rf]))
 
-;;  use API like rf/reg-event-fx or rf/subscribe
+;; your code here
 ```
 
-The `re-frame.core` page provides, alphabetically all functions in that namespace, together with their docstrings. An alternative view is provided below - one which presents the API in terms of purpose and importance.
+You'll then be able to use the functions in the API, perhaps like this: `#clj rf/dispatch`.
 
-## Commonly Used
+
+## The Most Commonly Used Part Of The API
 
 When you are writing `View Functions`: 
 
@@ -46,7 +54,7 @@ Global interceptors can be very useful:
   - register them via `reg-global-interceptors` 
   - rarely, remove them via `clear-global-interceptor`
 
-## More Rarely Used
+## More Rarely Used Part
 
 Testing or dev-time related utilities:
 
