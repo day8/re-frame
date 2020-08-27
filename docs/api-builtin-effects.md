@@ -16,21 +16,19 @@ Certain of these effects are "builtin", such as `:db`, `:fx` or `:dispatch`. Oth
 
 ## Ordering
 
-The `:db` effect has special status. It will always be actioned before others. (Prior to v1.1.0 this guarentee did not exist. There was no ordering). 
 
 ## <a name="db"></a> :db
 
-`reset!` `app-db` to be a new value. 
+`reset!` `app-db` to be a new value. The associated `value` is expected to be a map. 
 
-The associated `value` is expected to be a map. This is always
-actioned first, before any other effect.
+The `:db` effect has special status. It will always be actioned before others. (Prior to v1.1.0 this guarentee did not exist. There were no ordering guarentees).
 
 usage:
 ```clojure
-{:db  {:key1 value1 key2 value2}}   
+{:db  some-map}   
 ```
 
-Real usage might look like this: 
+In the wild, real usage might look like this: 
 ```clojure
 (reg-event-fx
   :token 
@@ -40,21 +38,21 @@ Real usage might look like this:
 
 ## <a name="fx"></a> :fx
 
-An effect which actions other effects, sequentially. 
+An effect which actions other effects, sequentially.
 
-Expects a value which is a sequence, typically a vector. 
+Expects a value which is a sequence, typically a vector.
 Each element in the sequence represents one effect. 
 Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect (the value ultimately given to the registered effect handler as an argument). 
 
 For example:
 ```clj
 {:db  new-db 
- :fx  [[:dispatch   [:some-id]]
-       [:http-xhrio {:method :GET  :url "http://somewhere.com/"}]
-       (when (> 2 3) [:some-effect-id  some-payload])]}
+ :fx  [ [:dispatch   [:some-id]]
+        [:http-xhrio {:method :GET  :url "http://somewhere.com/"}]
+        (when (> 2 3) [:some-effect-id  some-payload])]}
 ```
 
-You'll notice the use of `when` to conditionally include or exclude an effect. Any `nil` found in the `:fx` sequence will be ignored. 
+In this example, notice the use of `when` to conditionally include or exclude an effect. Any `nil` found in a `:fx` sequence will be ignored. 
 
 ## <a name="dispatch"></a> :dispatch
 
@@ -65,11 +63,12 @@ usage:
 {:fx [[:dispatch [:event-id "param1" :param2]]] }
 ```
 
-Dispatch multiple events:
+To dispatch multiple events:
 ```clojure
 {:fx [[:dispatch [:event1 "param1" :param2]]
       [:dispatch [:second]]}
 ```
+Effects in `:fx` are actioned in order, so the dispatched events will be queued and, later handled, in order supplied. FIFO.
 
 ## <a name="dispatch-later"></a> :dispatch-later
 
@@ -77,31 +76,17 @@ Dispatch multiple events:
 map with two keys `:ms` (milliseconds) and `:dispatch` (the event).
 
 usage:
-```clj
-{:db  new-db 
- :fx  [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]]}  ;; dispatch in 200ms
-```
-
-!!! warning "Deprecation"
-    Prior to re-frame v1.1.1 `:dispatch-later` required a collection of maps, 
-    since v1.1.1 it has required a single map. 
-
-Multiple with `:fx` introduced in re-frame v1.1.1:
 ```clojure
-{:fx [[:dispatch-later {:ms 200 :dispatch [:event-id "param"]}]
-      [:dispatch-later {:ms 100 :dispatch [:event-id "param"]}]]}
+{:fx [ [:dispatch-later {:ms 200 :dispatch [:event-id1 "param"]}]
+       [:dispatch-later {:ms 100 :dispatch [:event-id2 "param"]}]]}
 ```
 
-Or deprecated variation prior to re-frame v1.1.0
-```clojure
-{:dispatch-later [{:ms 200 :dispatch [:event-id "param"]}
-                  {:ms 100 :dispatch [:event-id "param"]}]}
-```
-
+Prior to re-frame v1.1.1 `:dispatch-later` required a seq of maps, since v1.1.1 it 
+can also accept a single map. 
    
 ## <a name="deregister-event-handler"></a> :deregister-event-handler
 
-Removes a previously registered event handler. Expects the id of the event handler. 
+Removes a previously registered event handler. Expects the event id for a previously registered event handler. 
 
 usage:
 ```clojure
@@ -110,18 +95,17 @@ usage:
 ```
 
 
-## <a name="dispatch-n"></a> :dispatch-n (Deprecated)
+## <a name="dispatch-n"></a> :dispatch-n
 
-This effect is deprecated in favour of using `:fx` with multiple `:dispatch` tuples.
+> From v1.1.0 onwards, this effect is **deprecated** in favour of using `:fx` with multiple `:dispatch` tuples.
 
-`dispatch` more than one events. Expects a seq of event vectors (typically a list of them). 
+`dispatch` more than one event. Expects a seq of event vectors (typically a list of them). 
 
 usage:
 ```clojure
 {:db new-db
  :fx [[:dispatch-n (list [:do :all] [:three :of] [:these])]]}
 ```
-
 Notes:
 
   1. The events will be dispatched in the order provided. And, because events are handled FIFO, the events will subsequently be processed in the order provided.
