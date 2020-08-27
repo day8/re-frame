@@ -35,7 +35,7 @@
       
       (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
   "
-  {:api-docs/heading "Events"}
+  {:api-docs/heading "Dispatching Events"}
   [event]
   (router/dispatch event))
 
@@ -62,12 +62,125 @@
 
       (dispatch-sync [:sing :falsetto \"piano accordion\"])
   "
-  {:api-docs/heading "Events"}
+  {:api-docs/heading "Dispatching Events"}
   [event]
   (router/dispatch-sync event))
 
 
+;; -- Events ------------------------------------------------------------------
+
+(defn reg-event-db
+  "Register the given event `handler` (function) for the given `id`. Optionally, provide
+  an `interceptors` chain:
+
+    - `id` is typically a namespaced keyword  (but can be anything)
+    - `handler` is a function: (db event) -> db
+    - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
+
+  Example Usage:
+
+      (reg-event-db 
+        :token 
+        (fn [db event]
+          (assoc db :some-key (get event 2)))  ;; return updated db
+
+  Or perhaps:
+
+      (reg-event-db
+        :namespaced/id           ;; <-- namespaced keywords are often used
+        [one two three]          ;; <-- a seq of interceptors
+        (fn [db [_ arg1 arg2]]   ;; <-- event vector is destructured
+          (-> db 
+            (dissoc arg1)
+            (update :key + arg2))))   ;; return updated db
+  "
+  {:api-docs/heading "Event Handlers"}
+  ([id handler]
+   (reg-event-db id nil handler))
+  ([id interceptors handler]
+   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (db-handler->interceptor handler)])))
+
+
+(defn reg-event-fx
+  "Register the given event `handler` (function) for the given `id`. Optionally, provide
+  an `interceptors` chain:
+
+    - `id` is typically a namespaced keyword  (but can be anything)
+    - `handler` is a function: (coeffects-map event-vector) -> effects-map
+    - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
+
+
+  Example Usage:
+
+      (reg-event-fx 
+        :event-id 
+        (fn [cofx event]
+          {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
+
+
+  Or perhaps:
+
+      (reg-event-fx
+        :namespaced/id           ;; <-- namespaced keywords are often used
+        [one two three]          ;; <-- a seq of interceptors
+        (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
+          {:db       (assoc db :some-key arg1)          ;; return a map of effects
+           :dispatch [:some-event arg2]}))
+  "
+  {:api-docs/heading "Event Handlers"}
+  ([id handler]
+   (reg-event-fx id nil handler))
+  ([id interceptors handler]
+   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (fx-handler->interceptor handler)])))
+
+
+(defn reg-event-ctx
+  "Register the given event `handler` (function) for the given `id`. Optionally, provide
+  an `interceptors` chain:
+   
+    - `id` is typically a namespaced keyword  (but can be anything)
+    - `handler` is a function: context-map -> context-map
+
+  You can explore what is provided in `context` [here](https://day8.github.io/re-frame/Interceptors/#what-is-context).
+  
+  Example Usage:
+
+      (reg-event-ctx 
+        :event-id
+        (fn [{:keys [coeffects] :as context}]
+          (let [initial  {:db     (:db coeffects)
+                          :event  (:event coeffects)
+                          :fx     []}
+                result   (-> initial
+                           function1 
+                           function2
+                           function3)
+                effects  (selectkeys result [:db :fx])]
+             (assoc context :effects effects))))
+  "
+  {:api-docs/heading "Event Handlers"}
+  ([id handler]
+   (reg-event-ctx id nil handler))
+  ([id interceptors handler]
+   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (ctx-handler->interceptor handler)])))
+
+(defn clear-event
+  "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`). 
+   
+  When called with no args, it will unregister all currently registered event handlers. 
+   
+  When given one arg, assumed to be the `id` of a previously registered 
+  event handler, it will unregister the associated handler. Will produce a warning to 
+  console if it finds no matching registration."
+  {:api-docs/heading "Event Handlers"}
+  ([]
+   (registrar/clear-handlers events/kind))
+  ([id]
+   (registrar/clear-handlers events/kind id)))
+
+
 ;; -- subscriptions -----------------------------------------------------------
+
 (defn reg-sub
   "A call to `reg-sub` associates a `query-id` WITH two functions.
    
@@ -287,6 +400,18 @@
    (registrar/clear-handlers subs/kind query-id)))
 
 
+(defn reg-sub-raw
+  "This is a low level, advanced function.  You should probably be
+  using `reg-sub` instead.
+
+  Some explanation is available in the docs at
+  <a href=\"http://day8.github.io/re-frame/flow-mechanics/\" target=\"_blank\">http://day8.github.io/re-frame/flow-mechanics/</a>"
+  {:api-docs/heading "Subscriptions"}
+  [query-id handler-fn]
+  (registrar/register-handler subs/kind query-id handler-fn))
+
+
+;; XXX
 (defn clear-subscription-cache!
   "Removes all subscriptions from the cache.
 
@@ -300,18 +425,8 @@
   []
   (subs/clear-subscription-cache!))
 
-(defn reg-sub-raw
-  "This is a low level, advanced function.  You should probably be
-  using `reg-sub` instead.
-
-  Some explanation is available in the docs at
-  <a href=\"http://day8.github.io/re-frame/flow-mechanics/\" target=\"_blank\">http://day8.github.io/re-frame/flow-mechanics/</a>"
-  {:api-docs/heading "Subscriptions"}
-  [query-id handler-fn]
-  (registrar/register-handler subs/kind query-id handler-fn))
-
-
 ;; -- effects -----------------------------------------------------------------
+
 (defn reg-fx
   "Register the given effect `handler` for the given `id`:
 
@@ -333,7 +448,7 @@
   then the `handler` `fn` we registered previously, using `reg-fx`, will be
   called with an argument of `[1 2]`.
   "
-  {:api-docs/heading "Effects"}
+  {:api-docs/heading "Effect Handlers"}
   [id handler]
   (fx/reg-fx id handler))
 
@@ -347,13 +462,14 @@
   effect handler, it will unregister the associated handler. Will produce a warning to 
   console if it finds no matching registration.
   "
-  {:api-docs/heading "Effects"}
+  {:api-docs/heading "Effect Handlers"}
   ([]
    (registrar/clear-handlers fx/kind))
   ([id]
    (registrar/clear-handlers fx/kind id)))
 
 ;; -- coeffects ---------------------------------------------------------------
+
 (defn reg-cofx
   "Register the given coeffect `handler` for the given `id`, for later use
   within `inject-cofx`:
@@ -444,116 +560,6 @@
   ([id]
    (registrar/clear-handlers cofx/kind id)))
 
-;; -- Events ------------------------------------------------------------------
-
-(defn reg-event-db
-  "Register the given event `handler` (function) for the given `id`. Optionally, provide
-  an `interceptors` chain:
-
-    - `id` is typically a namespaced keyword  (but can be anything)
-    - `handler` is a function: (db event) -> db
-    - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
-
-  Example Usage:
-
-      (reg-event-db 
-        :token 
-        (fn [db event]
-          (assoc db :some-key (get event 2)))  ;; return updated db
-
-  Or perhaps:
-
-      (reg-event-db
-        :namespaced/id           ;; <-- namespaced keywords are often used
-        [one two three]          ;; <-- a seq of interceptors
-        (fn [db [_ arg1 arg2]]   ;; <-- event vector is destructured
-          (-> db 
-            (dissoc arg1)
-            (update :key + arg2))))   ;; return updated db
-  "
-  {:api-docs/heading "Events"}
-  ([id handler]
-   (reg-event-db id nil handler))
-  ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (db-handler->interceptor handler)])))
-
-
-(defn reg-event-fx
-  "Register the given event `handler` (function) for the given `id`. Optionally, provide
-  an `interceptors` chain:
-
-    - `id` is typically a namespaced keyword  (but can be anything)
-    - `handler` is a function: (coeffects-map event-vector) -> effects-map
-    - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
-
-
-  Example Usage:
-
-      (reg-event-fx 
-        :event-id 
-        (fn [cofx event]
-          {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
-
-
-  Or perhaps:
-
-      (reg-event-fx
-        :namespaced/id           ;; <-- namespaced keywords are often used
-        [one two three]          ;; <-- a seq of interceptors
-        (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
-          {:db       (assoc db :some-key arg1)          ;; return a map of effects
-           :dispatch [:some-event arg2]}))
-  "
-  {:api-docs/heading "Events"}
-  ([id handler]
-   (reg-event-fx id nil handler))
-  ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (fx-handler->interceptor handler)])))
-
-
-(defn reg-event-ctx
-  "Register the given event `handler` (function) for the given `id`. Optionally, provide
-  an `interceptors` chain:
-   
-    - `id` is typically a namespaced keyword  (but can be anything)
-    - `handler` is a function: context-map -> context-map
-
-  You can explore what is provided in `context` [here](https://day8.github.io/re-frame/Interceptors/#what-is-context).
-  
-  Example Usage:
-
-      (reg-event-ctx 
-        :event-id
-        (fn [{:keys [coeffects] :as context}]
-          (let [initial  {:db     (:db coeffects)
-                          :event  (:event coeffects)
-                          :fx     []}
-                result   (-> initial
-                           function1 
-                           function2
-                           function3)
-                effects  (selectkeys result [:db :fx])]
-             (assoc context :effects effects))))
-  "
-  {:api-docs/heading "Events"}
-  ([id handler]
-   (reg-event-ctx id nil handler))
-  ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (ctx-handler->interceptor handler)])))
-
-(defn clear-event
-  "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`). 
-   
-  When called with no args, it will unregister all currently registered event handlers. 
-   
-  When given one arg, assumed to be the `id` of a previously registered 
-  event handler, it will unregister the associated handler. Will produce a warning to 
-  console if it finds no matching registration."
-  {:api-docs/heading "Events"}
-  ([]
-   (registrar/clear-handlers events/kind))
-  ([id]
-   (registrar/clear-handlers events/kind id)))
 
 ;; -- interceptors ------------------------------------------------------------
 
@@ -742,7 +748,7 @@
    prepending to this chain.
 
    Global interceptors are run in the order that they are registered."
-  {:api-docs/heading "Interceptors"}
+  {:api-docs/heading "Global Interceptors"}
   [interceptor]
   (settings/reg-global-interceptor interceptor))
 
@@ -754,7 +760,7 @@
   When given one arg, assumed to be the `id` of a previously registered 
   global interceptors, it will unregister the associated interceptor. Will produce a warning to 
   console if it finds no matching registration."
-  {:api-docs/heading "Interceptors"}
+  {:api-docs/heading "Global Interceptors"}
   ([]
    (settings/clear-global-interceptors))
   ([id]
@@ -794,7 +800,7 @@
     - `:after` functions often modify the `:effects` map within `context` and, 
       if they do, then they should use the utility functions `get-effect`
       and `assoc-effect`"
-  {:api-docs/heading "Interceptors"}
+  {:api-docs/heading "Writing Interceptors"}
   [& {:as m :keys [id before after]}]
   (utils/apply-kw interceptor/->interceptor m))
 
@@ -806,7 +812,7 @@
    When called with two or three arguments, behaves like `clojure.core/get` and
    returns the value mapped to `key` in the `:coeffects` map within `context`, `not-found` or
    `nil` if `key` is not present."
-  {:api-docs/heading "Interceptors"}
+  {:api-docs/heading "Writing Interceptors"}
   ([context]
    (interceptor/get-coeffect context))
   ([context key]
@@ -818,7 +824,7 @@
   "A utility function, typically used when writing an interceptor's `:before` function.
 
    Adds or updates a key/value pair in the `:coeffects` map within `context`. "
-  {:api-docs/heading "Interceptors"}
+  {:api-docs/heading "Writing Interceptors"}
   [context key value]
   (interceptor/assoc-coeffect context key value))
 
@@ -830,7 +836,7 @@
    When called with two or three arguments, behaves like `clojure.core/get` and
    returns the value mapped to `key` in the effects map, `not-found` or
    `nil` if `key` is not present."
-  {:api-docs/heading "Interceptors"}
+  {:api-docs/heading "Writing Interceptors"}
   ([context]
    (interceptor/get-effect context))
   ([context key]
@@ -842,7 +848,7 @@
    "A utility function, typically used when writing an interceptor's `:after` function.
 
    Adds or updates a key/value pair in the `:effects` map within `context`. "
-  {:api-docs/heading "Interceptors"}
+  {:api-docs/heading "Writing Interceptors"}
   [context key value]
   (interceptor/assoc-effect context key value))
 
@@ -855,7 +861,7 @@
   So, it provides a way for one Interceptor to add more interceptors to the 
   currently executing interceptor chain.
   "
-  {:api-docs/heading "Interceptors"}
+  {:api-docs/heading "Writing Interceptors"}
   [context interceptors]
   (interceptor/enqueue context interceptors))
 
@@ -881,7 +887,7 @@
       ;; now install my alternative loggers
       (re-frame.core/set-loggers!  {:warn my-logger :log my-logger})
    "
-  {:api-docs/heading "Miscellaneous"}
+  {:api-docs/heading "Logging"}
   [new-loggers]
   (loggers/set-loggers! new-loggers))
 
@@ -901,7 +907,7 @@
       (console :error \"Sure enough it happened:\" a-var \"and\" another)
       (console :warn \"Possible breach of containment wall at:\" dt)
   "
-  {:api-docs/heading "Miscellaneous"}
+  {:api-docs/heading "Logging"}
   [level & args]
   (apply loggers/console (into [level] args)))
 
