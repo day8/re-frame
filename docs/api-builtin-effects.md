@@ -14,9 +14,6 @@ You'll notice that all effects, other then `:db`, are listed under `:fx`.
 
 Certain of these effects are "builtin", such as `:db`, `:fx` or `:dispatch`. Others, like `:http` might come from a third party library. This page lists the builtin ones.
 
-## Ordering
-
-
 ## <a name="db"></a> :db
 
 `reset!` `app-db` to be a new value. The associated `value` is expected to be a map. 
