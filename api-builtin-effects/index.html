@@ -1214,8 +1214,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-effects-look-like" class="md-nav__link">
-    What Effects Look Like
+  <a href="#what-are-effects" class="md-nav__link">
+    What Are Effects?
   </a>
   
 </li>
@@ -1456,8 +1456,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-effects-look-like" class="md-nav__link">
-    What Effects Look Like
+  <a href="#what-are-effects" class="md-nav__link">
+    What Are Effects?
   </a>
   
 </li>
@@ -1526,10 +1526,11 @@
                 
                 <h1 id="builtin-effects">Builtin Effects<a class="headerlink" href="#builtin-effects" title="Permanent link">&para;</a></h1>
 <p>re-frame supplies a small number of built-in effects which contribute to the API.</p>
-<h2 id="what-effects-look-like">What Effects Look Like<a class="headerlink" href="#what-effects-look-like" title="Permanent link">&para;</a></h2>
+<h2 id="what-are-effects">What Are Effects?<a class="headerlink" href="#what-are-effects" title="Permanent link">&para;</a></h2>
 <p>Event handlers, such as those registered using <code>reg-event-fx</code>, compute and return a map of effects which might look like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-db</span>
  <span class="ss">:fx</span>  <span class="p">[</span> <span class="p">[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:some-id</span><span class="p">]]</span>
+        <span class="p">[</span><span class="ss">:full-screen</span> <span class="nv">true</span><span class="p">]</span>
         <span class="p">[</span><span class="ss">:http</span>     <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span>  <span class="ss">:url</span> <span class="s">&quot;http://somewhere.com/&quot;</span><span class="p">}]]}</span>
 </code></pre></div>
 
@@ -1559,13 +1560,13 @@ Each element in the sequence represents one effect.
 Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect (the value ultimately given to the registered effect handler as an argument). </p>
 <p>For example:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:db</span>  <span class="nv">new-db</span> 
- <span class="ss">:fx</span>  <span class="p">[</span> <span class="p">[</span><span class="ss">:dispatch</span>   <span class="p">[</span><span class="ss">:some-id</span><span class="p">]]</span>
+ <span class="ss">:fx</span>  <span class="p">[</span> <span class="p">[</span><span class="ss">:dispatch</span>   <span class="p">[</span><span class="ss">:some-id</span> <span class="s">&quot;extra&quot;</span><span class="p">]]</span>
         <span class="p">[</span><span class="ss">:http-xhrio</span> <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span>  <span class="ss">:url</span> <span class="s">&quot;http://somewhere.com/&quot;</span><span class="p">}]</span>
-        <span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nb">&gt; </span><span class="mi">2</span> <span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="ss">:some-effect-id</span>  <span class="nv">some-payload</span><span class="p">])]}</span>
+        <span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nb">&gt; </span><span class="mi">2</span> <span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="ss">:full-screen</span> <span class="nv">true</span><span class="p">])]}</span>
 </code></pre></div>
 
 
-<p>In this example, notice the use of <code>when</code> to conditionally include or exclude an effect. Any <code>nil</code> found in a <code>:fx</code> sequence will be ignored. </p>
+<p>Notice the use of <code>when</code> to conditionally include or exclude an effect. Any <code>nil</code> found in a <code>:fx</code> sequence will be ignored. </p>
 <h2 id="dispatch"><a name="dispatch"></a> :dispatch<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h2>
 <p><code>dispatch</code> one event. Expects a single vector.</p>
 <p>usage:</p>
