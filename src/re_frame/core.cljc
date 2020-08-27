@@ -881,7 +881,7 @@
       ;; now install my alternative loggers
       (re-frame.core/set-loggers!  {:warn my-logger :log my-logger})
    "
-  {:api-docs/heading "Logging"}
+  {:api-docs/heading "Miscellaneous"}
   [new-loggers]
   (loggers/set-loggers! new-loggers))
 
@@ -901,7 +901,7 @@
       (console :error \"Sure enough it happened:\" a-var \"and\" another)
       (console :warn \"Possible breach of containment wall at:\" dt)
   "
-  {:api-docs/heading "Logging"}
+  {:api-docs/heading "Miscellaneous"}
   [level & args]
   (apply loggers/console (into [level] args)))
 
@@ -915,7 +915,7 @@
 
   The checkpoint includes `app-db`, all registered handlers and all subscriptions.
   "
-  {:api-docs/heading "Utilities"}
+  {:api-docs/heading "Miscellaneous"}
   []
   (let [handlers @registrar/kind->id->handler
         app-db   @db/app-db
@@ -937,7 +937,7 @@
 
 (defn purge-event-queue
   "Removes all events currently queued for processing"
-  {:api-docs/heading "Events"}
+  {:api-docs/heading "Miscellaneous"}
   []
   (router/purge re-frame.router/event-queue))
 
@@ -962,7 +962,7 @@
   `id` is typically a keyword. If it supplied when an `f` is added, it can be 
   subsequently be used to identify it for removal. See `remove-post-event-callback`.
   "
-  {:api-docs/heading "Events"}
+  {:api-docs/heading "Miscellaneous"}
   ([f]
    (add-post-event-callback f f))   ;; use f as its own identifier
   ([id f]
@@ -973,7 +973,7 @@
   "Unregisters a post event callback function, identified by `id`. 
    
   Such a function must have been previously registered via `add-post-event-callback`"
-  {:api-docs/heading "Events"}
+  {:api-docs/heading "Miscellaneous"}
   [id]
   (router/remove-post-event-callback re-frame.router/event-queue id))
 
@@ -983,7 +983,7 @@
 (defn register-handler
   "Deprecated. Use `reg-event-db` instead."
   {:deprecated "0.8.0"
-   :api-docs/heading "Events"}
+   :api-docs/heading "Deprecated"}
   [& args]
   (console :warn  "re-frame: \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
   (apply reg-event-db args))
@@ -991,7 +991,7 @@
 (defn register-sub
   "Deprecated. Use `reg-sub-raw` instead."
   {:deprecated "0.8.0"
-   :api-docs/heading "Events"}
+   :api-docs/heading "Deprecated"}
   [& args]
   (console :warn  "re-frame: \"register-sub\" is used to register the event " (str (first args)) " but it is a deprecated part of the API. Please use \"reg-sub-raw\" instead.")
   (apply reg-sub-raw args))
