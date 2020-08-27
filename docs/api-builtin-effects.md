@@ -16,7 +16,7 @@ That's a map with two keys:  `:db` and `:fx`.  Which, in turn, means there are t
 An effect consists of an `id` and a `payload`. The `id` identifies the effect (so we know how to action it) and the `payload` 
 carries additional information which will parameterise the action taken. 
 
-So, if an effect map was `#clj {:db m}`, it would contain only one effect with an `id` of `:db` and a payload of `m` (the value of `m`).
+So, if an effect map was `#!clj {:db m}`, it would contain only one effect with an `id` of `:db` and a payload of `m` (the value of `m`).
 
 In the example above, you'll notice the other effect with an `id` of `:fx` has a vector payload. That vector is a sequenceof other effects, each with an `id` and a `payload`. So `:fx` is an effect which sequences the actioning of other effects. 
 
