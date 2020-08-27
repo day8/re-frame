@@ -1535,12 +1535,18 @@
 </code></pre></div>
 
 
-<p>That's a map with two keys:  <code>:db</code> and <code>:fx</code>.  Which, in turn, means there are two effects. There could be others.</p>
-<p>An effect consists of an <code>id</code> and a <code>payload</code>. The <code>id</code> identifies the effect (so we know how to action it) and the <code>payload</code> 
-carries additional information which will parameterise the action taken. </p>
-<p>So, if an effect map was <code class="highlight"><span class="p">{</span><span class="ss">:db</span> <span class="nv">val</span><span class="p">}</span></code>, it would contain only one effect with an <code>id</code> of <code>:db</code> and a payload of <code>val</code>. </p>
-<p>In the example above, you'll notice the other effect with an <code>id</code> of <code>:fx</code> has a vector payload. That vector is a sequenceof other effects, each with an <code>id</code> and a <code>payload</code>. So <code>:fx</code> is an effect which sequences the actioning of other effects. </p>
-<p>Certain of these effects are "builtin", such as <code>:db</code>, <code>:fx</code> or <code>:dispatch</code>. Others, like <code>:http</code> might come from a third-party library. This page lists the built-in ones.</p>
+<p>That's a map with two keys:  <code>:db</code> and <code>:fx</code>.  Which means there are two effects in this example. In another case, there could be 
+more or less.</p>
+<p>Each effect consists of an <code>id</code> and a <code>payload</code> pair. The <code>id</code> identifies the effect required and the <code>payload</code> 
+carries additional information which will parameterise the action taken.</p>
+<p>So, if an effect map was <code class="highlight"><span class="p">{</span><span class="ss">:db</span> <span class="nv">new-value</span><span class="p">}</span></code>, it would contain only one effect with an <code>id</code> of <code>:db</code> and a payload of <code>new-value</code>. </p>
+<p>In the example above, the effect <code>:fx</code> has a vector payload.
+That vector is a sequence of other effects, each captured as a 2-vector: <code>[id payload]</code> - for example <code>[:full-screen true]</code>.
+<code>:fx</code> is an effect which actions other effects in sequence - the ones in its payload.</p>
+<p>The two effects <code>:db</code> and <code>:fx</code> are a powerful combination, and both of these effects are built-in. That means re-frame itself 
+uses <code>reg-fx</code> to register effect handlers for these two <code>ids</code>. Other effects, like <code>:http</code>, might come from a third-party library 
+or from within your own application code.</p>
+<p>This page lists the built-in effects.</p>
 <h2 id="db"><a name="db"></a> :db<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <p><code>reset!</code> <code>app-db</code> to be a new value. The associated <code>value</code> is expected to be a map. </p>
 <p>The <code>:db</code> effect has a special status. It will always be actioned before others. (Prior to v1.1.0 this guarantee did not exist. There were no ordering guarantees).</p>
