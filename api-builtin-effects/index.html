@@ -1538,7 +1538,7 @@
 <p>That's a map with two keys:  <code>:db</code> and <code>:fx</code>.  Which, in turn, means there are two effects. There could be others.</p>
 <p>An effect consists of an <code>id</code> and a <code>payload</code>. The <code>id</code> identifies the effect (so we know how to action it) and the <code>payload</code> 
 carries additional information which will parameterise the action taken. </p>
-<p>So, if an effect map was <code class="highlight"><span class="p">{</span><span class="ss">:db</span> <span class="nv">m</span><span class="p">}</span></code>, it would contain only one effect with an <code>id</code> of <code>:db</code> and a payload of <code>m</code> (the value of <code>m</code>).</p>
+<p>So, if an effect map was <code class="highlight"><span class="p">{</span><span class="ss">:db</span> <span class="nv">val</span><span class="p">}</span></code>, it would contain only one effect with an <code>id</code> of <code>:db</code> and a payload of <code>val</code>. </p>
 <p>In the example above, you'll notice the other effect with an <code>id</code> of <code>:fx</code> has a vector payload. That vector is a sequenceof other effects, each with an <code>id</code> and a <code>payload</code>. So <code>:fx</code> is an effect which sequences the actioning of other effects. </p>
 <p>Certain of these effects are "builtin", such as <code>:db</code>, <code>:fx</code> or <code>:dispatch</code>. Others, like <code>:http</code> might come from a third-party library. This page lists the built-in ones.</p>
 <h2 id="db"><a name="db"></a> :db<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
