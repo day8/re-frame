@@ -831,10 +831,63 @@
       Subscribing to External Data
     </a>
     
-      
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+
+
+<!-- Table of contents -->
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
+
+  <!--
+    Hack: check whether the content contains a h1 headline. If it does, the
+    top-level anchor must be skipped, since it would be redundant to the link
+    to the current page that is located just above the anchor. Therefore we
+    directly continue with the children of the anchor.
+  -->
   
+
+  <!-- Render item list -->
+
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page. 
+
+    Globally in mkdocs.yml we set the table of contents extension depth to the
+    maximum that we want to use site-wide, then filter it down depending on
+    the markdown meta extension on a page-per-page basis.
+
+    First, we need to initialize some variables that are used in toc-item.html
+
+    re_frame_navigation_depth is set depending on the markdown meta extension.
+    It is the maximum depth for the rhs table of contents.
+
+    re_frame_navigation_level is the current recursive rendering depth of
+    toc-item.html It must be both incremented and decremented on each recur.
+  -->
+  
+    
+  
+  
+
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -844,24 +897,138 @@
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#subscribing-to-external-data" class="md-nav__link">
-    Subscribing to External Data
+	  Subscribing to External Data
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#the-alternative-approach" class="md-nav__link">
-    The Alternative Approach
+	  The Alternative Approach
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#absolutely-never-do-this" class="md-nav__link">
-    Absolutely Never Do This
+	  Absolutely Never Do This
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
@@ -1408,10 +1575,63 @@
               <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+                    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+
+
+<!-- Table of contents -->
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
+
+  <!--
+    Hack: check whether the content contains a h1 headline. If it does, the
+    top-level anchor must be skipped, since it would be redundant to the link
+    to the current page that is located just above the anchor. Therefore we
+    directly continue with the children of the anchor.
+  -->
   
+
+  <!-- Render item list -->
+
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page. 
+
+    Globally in mkdocs.yml we set the table of contents extension depth to the
+    maximum that we want to use site-wide, then filter it down depending on
+    the markdown meta extension on a page-per-page basis.
+
+    First, we need to initialize some variables that are used in toc-item.html
+
+    re_frame_navigation_depth is set depending on the markdown meta extension.
+    It is the maximum depth for the rhs table of contents.
+
+    re_frame_navigation_level is the current recursive rendering depth of
+    toc-item.html It must be both incremented and decremented on each recur.
+  -->
+  
+    
+  
+  
+
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -1421,24 +1641,138 @@
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#subscribing-to-external-data" class="md-nav__link">
-    Subscribing to External Data
+	  Subscribing to External Data
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#the-alternative-approach" class="md-nav__link">
-    The Alternative Approach
+	  The Alternative Approach
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#absolutely-never-do-this" class="md-nav__link">
-    Absolutely Never Do This
+	  Absolutely Never Do This
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
@@ -1479,16 +1813,16 @@ communicate with servers using both pure and effectful handlers.
 This is great, but what if you want to 
 query external data using subscriptions the 
 same way you query data stored in <code>app-db</code>? This tutorial will show you how.</p>
-<h3>There Can Be Only One!!</h3>
+<h3 id="there-can-be-only-one">There Can Be Only One!!<a class="headerlink" href="#there-can-be-only-one" title="Permanent link">&para;</a></h3>
 <p><code>re-frame</code> apps have a single source of data called <code>app-db</code>.</p>
 <p>The <code>re-frame</code> README asks you to imagine <code>app-db</code> as something of an in-memory database. You 
 query it (via subscriptions) and transactionally update it (via event handlers). </p>
-<h3>Components Don't Know, Don't Care</h3>
+<h3 id="components-dont-know-dont-care">Components Don't Know, Don't Care<a class="headerlink" href="#components-dont-know-dont-care" title="Permanent link">&para;</a></h3>
 <p>Components never know the structure of your <code>app-db</code>, much less its existence. </p>
 <p>Instead, they <code>subscribe</code>, declaratively, to 
 data, like this <code>(subscribe [:something "blah"])</code>, and that allows Components to 
 obtain a stream of updates to "something", while knowing nothing about the source of the data. </p>
-<h3>A 2nd Source</h3>
+<h3 id="a-2nd-source">A 2nd Source<a class="headerlink" href="#a-2nd-source" title="Permanent link">&para;</a></h3>
 <p>All good but ... SPAs are seldom completely self contained data-wise. </p>
 <p>There's a continuum between apps which are 100% standalone data-wise, 
 and those where remote data is utterly central to the app's function. 
@@ -1505,7 +1839,7 @@ Component which displays a collection of <code>items</code>,
 when those items come from a remote database? </p>
 <p>In your mind's eye, imagine this kind of query against that remote database:
  <code>select id, price, description from items where type="see through"</code>.</p>
-<h3>Via A Subscription</h3>
+<h3 id="via-a-subscription">Via A Subscription<a class="headerlink" href="#via-a-subscription" title="Permanent link">&para;</a></h3>
 <p>In <code>re-frame</code>, Components always obtain data via a subscription. Always.  </p>
 <p>So, our Component which shows items is going to </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">items</span> <span class="p">(</span><span class="nf">re-frame/subscribe</span> <span class="p">[</span><span class="ss">:items</span> <span class="s">&quot;see through&quot;</span><span class="p">])</span> <span class="nv">...</span>
@@ -1528,7 +1862,7 @@ the problem away from the Component and into the subscription handler? </p>
 from our 
 subscription handlers ... to manage how the data is sourced ... to hide that from 
 the Component.</p>
-<h3>The Subscription Handler's Job</h3>
+<h3 id="the-subscription-handlers-job">The Subscription Handler's Job<a class="headerlink" href="#the-subscription-handlers-job" title="Permanent link">&para;</a></h3>
 <p>Right, so let's write the subscription handler. </p>
 <p>There'll be code in a minute but, first, let's describe how the subscription handler
 will work: </p>
@@ -1563,7 +1897,7 @@ will work: </p>
 The subscription handler is organising for the right remote data to "flow" into <code>app-db</code> at a known, 
 particular path, when it is needed by a Component. And, equally, for this data to be cleaned up when it 
 is no longer required.</p>
-<h3>Some Code</h3>
+<h3 id="some-code">Some Code<a class="headerlink" href="#some-code" title="Permanent link">&para;</a></h3>
 <p>Enough fluffing about with words, here's a code sketch for our subscription handler:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame/reg-sub-raw</span>
   <span class="ss">:items</span>
@@ -1607,7 +1941,7 @@ is no longer required.</p>
    when the subscription is no longer needed. Clean up <code>app-db</code>?  Clean up the database connection?</p>
 </li>
 </ol>
-<h3>Any Good?</h3>
+<h3 id="any-good">Any Good?<a class="headerlink" href="#any-good" title="Permanent link">&para;</a></h3>
 <p>It turns out that this is a surprisingly flexible and clean approach. And pretty damn obvious once 
 someone points it out to you (which is a good sign).  There's a lot to like about it.</p>
 <p>For example, if you are using rethinkdb, which supports queries which yield "change feeds" over time,
@@ -1628,18 +1962,18 @@ flow on effects. In particular, it means it is available to event handlers,
 should they need it when servicing events (event handlers get <code>db</code> as a parameter, right?).<br />
 If this item data was held in a separate place, other than <code>app-db</code>, 
 it wouldn't be available in this useful way.  </p>
-<h3>Warning: Undo/Redo</h3>
+<h3 id="warning-undoredo">Warning: Undo/Redo<a class="headerlink" href="#warning-undoredo" title="Permanent link">&para;</a></h3>
 <p>This technique caches remote data in <code>app-db</code>.  Be sure to exclude this 
 cache area from any undo/redo operations 
 using <a href="https://github.com/day8/re-frame-undo#harvesting-and-re-instating">the available configuration options</a></p>
-<h3>Query De-duplication</h3>
+<h3 id="query-de-duplication">Query De-duplication<a class="headerlink" href="#query-de-duplication" title="Permanent link">&para;</a></h3>
 <p>In v0.8.0 of re-frame onwards, subscriptions are automatically de-duplicated. </p>
 <p>In prior versions, in cases where the same query is simultaneously issued 
 from multiple places, you'd want to 
 de-duplicate the queries. One possibility is to do this duplication 
 in <code>issue-items-query!</code> itself. You can
 <code>count</code> the duplicate queries and only clear the data when that count goes to 0. </p>
-<h3>Thanks To</h3>
+<h3 id="thanks-to">Thanks To<a class="headerlink" href="#thanks-to" title="Permanent link">&para;</a></h3>
 <p>@nidu for his valuable review comments and insights</p>
 <h2 id="the-alternative-approach">The Alternative Approach<a class="headerlink" href="#the-alternative-approach" title="Permanent link">&para;</a></h2>
 <p>Event handlers do most of the heavy lifting within re-frame apps.</p>

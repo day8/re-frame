@@ -1350,10 +1350,63 @@
               <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+                    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+
+
+<!-- Table of contents -->
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
+
+  <!--
+    Hack: check whether the content contains a h1 headline. If it does, the
+    top-level anchor must be skipped, since it would be redundant to the link
+    to the current page that is located just above the anchor. Therefore we
+    directly continue with the children of the anchor.
+  -->
   
+
+  <!-- Render item list -->
+
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page. 
+
+    Globally in mkdocs.yml we set the table of contents extension depth to the
+    maximum that we want to use site-wide, then filter it down depending on
+    the markdown meta extension on a page-per-page basis.
+
+    First, we need to initialize some variables that are used in toc-item.html
+
+    re_frame_navigation_depth is set depending on the markdown meta extension.
+    It is the maximum depth for the rhs table of contents.
+
+    re_frame_navigation_level is the current recursive rendering depth of
+    toc-item.html It must be both incremented and decremented on each recur.
+  -->
+  
+    
+  
+  
+
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -1363,17 +1416,93 @@
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#ep-002-multiple-re-frame-instances" class="md-nav__link">
-    EP 002 - Multiple re-frame Instances
+	  EP 002 - Multiple re-frame Instances
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#introduction" class="md-nav__link">
-    Introduction
+	  Introduction
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
@@ -1403,7 +1532,7 @@
 <blockquote>
 <p>Status: Drafting. May be incoherent and/or wrong. Probably don't read.</p>
 </blockquote>
-<h3>Abstract</h3>
+<h3 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link">&para;</a></h3>
 <p>This EP proposes changes to allow multiple
 re-frame apps to coexist on the same (HTML) page.</p>
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
@@ -1420,7 +1549,7 @@ experience in 98.3% of usecases (yes, I just pulled that number out of my keyboa
 <p>The challenge is to facilitate these more complicated usecases 
 while not, in the process, losing the current simplicity which is
 enjoyed most of the time. </p>
-<h3>Global State As A Frame</h3>
+<h3 id="global-state-as-a-frame">Global State As A Frame<a class="headerlink" href="#global-state-as-a-frame" title="Permanent link">&para;</a></h3>
 <p>Currently, re-frame has some global state in the form of various atoms scattered about internal namespaces. The best known is <code>app-db</code>. </p>
 <p>It would be completely straightforward to scoop up this state and 
 put it into some sort of <code>defrecord</code> whole - let's call it <code>Frame</code> - and 
@@ -1431,14 +1560,14 @@ called <code>create-frame</code>, which creates a new instance of this
 <code>defrecord</code> <code>Frame</code> and that you can call it as often as you want 
 to create as many re-frame apps as needed.</p>
 <p>So, that was the easy bit.</p>
-<h3>The Two Problems</h3>
+<h3 id="the-two-problems">The Two Problems<a class="headerlink" href="#the-two-problems" title="Permanent link">&para;</a></h3>
 <p>Now the design work has to start in earnest and there's
 two problems to solve:
   1. how to associate/register handlers with a <code>Frame</code><br />
   2. within a view function, how to <code>subscribe</code>
      or <code>dispatch</code> from/to the right <code>Frame</code></p>
 <p>We'll start with problem #1.</p>
-<h3>On Mutating registrars</h3>
+<h3 id="on-mutating-registrars">On Mutating registrars<a class="headerlink" href="#on-mutating-registrars" title="Permanent link">&para;</a></h3>
 <p>A re-frame app is defined collectively by its handlers. As an app boots, 
 calls to registration functions like <code>reg-event-db</code> and <code>reg-sub</code> 
 collectively "build up" an app, infusing it with behaviour and capability.</p>
@@ -1447,7 +1576,7 @@ progressive mutation of a global <code>registrar</code> (map) held internally wi
 Each registration adds a new entry to this <code>registrar</code>. </p>
 <p>If you are troubled by the thought of side effects on globals, there's 
 an <a href="https://github.com/day8/re-frame/blob/master/docs/FAQs/ViewsOnGlobalRegistration.md">FAQ entry you may find interesting</a>.</p>
-<h3>Problem 1:  Frames And Registrars</h3>
+<h3 id="problem-1-frames-and-registrars">Problem 1:  Frames And Registrars<a class="headerlink" href="#problem-1-frames-and-registrars" title="Permanent link">&para;</a></h3>
 <p>The first design challenge to explore is: what's the new relationship between 
 <code>Frames</code> and <code>registrars</code>.</p>
 <p><code>re-frame</code> currently holds a global <code>registrar</code> of handlers, but in our new world,
@@ -1493,7 +1622,7 @@ to indicate which of these "packages" (collections of handlers) should be
 <p>But keep in mind the need for updates to handlers being reloaded by figwheel (or the like). 
 A <code>Frame</code> will need to "get" these updated handlers. </p>
 <p>And also k</p>
-<h3>Problem 1 - Solutions</h3>
+<h3 id="problem-1-solutions">Problem 1 - Solutions<a class="headerlink" href="#problem-1-solutions" title="Permanent link">&para;</a></h3>
 <p>Registration calls (to <code>reg-event-db</code>, etc) could be adjusted to 
 take an additional <code>Frame</code> argument. So, Handlers get registered "into" a <code>Frame</code>.</p>
 <p><strong>Solution sketch #2</strong>: all handlers are registered as they are now 
@@ -1505,14 +1634,14 @@ all handlers in the nominated <code>packages</code> are injected into the
 <code>Frame</code>. If not set is provided, then all handlers are injected. </p>
 <p>At this point, I favour sketch #2 from a backwards compatibility 
 point of view. It is the least disruptive. </p>
-<h3>Problem 2: Views, dispatch and subscription</h3>
+<h3 id="problem-2-views-dispatch-and-subscription">Problem 2: Views, dispatch and subscription<a class="headerlink" href="#problem-2-views-dispatch-and-subscription" title="Permanent link">&para;</a></h3>
 <p>In an HTML page containing multiple <code>devcard</code> instances,
 all for exactly the same app, there will be one <code>Frame</code><br />
 for each <code>devcard</code>.</p>
 <p>In this scenario, how can a view know to which 
 <code>Frame</code> it should <code>subscribe</code>? And to which <code>Frame</code> it should 
 <code>dispatch</code>?</p>
-<h3>Problem 2: Minimal Design Solution</h3>
+<h3 id="problem-2-minimal-design-solution">Problem 2: Minimal Design Solution<a class="headerlink" href="#problem-2-minimal-design-solution" title="Permanent link">&para;</a></h3>
 <p>The "minimal design" approach is to say that 
 <code>Frames</code> are passed as an argument into 
 each view function, and then further passed down into 
@@ -1523,7 +1652,7 @@ use the arg given to it called, say, <code>frame</code> like this:
 <p>This approach is certainly simple. But it does get laborious
 and tedious pretty quickly. Every view needs to accept a <code>frame</code>
 and then pass it down to all children. Even intermediate</p>
-<h3>Problem 2: Better Design Solution</h3>
+<h3 id="problem-2-better-design-solution">Problem 2: Better Design Solution<a class="headerlink" href="#problem-2-better-design-solution" title="Permanent link">&para;</a></h3>
 <p><strong>Solution sketch #2</strong>: Hack Reagent so that a given node in 
 the hierarchy can "register" a Frame, and then provide a 
 a way so that any given view can "query upwards" through its 
@@ -1533,7 +1662,7 @@ looking for the <code>frame</code> to which it should subscribe and dispatch. </
 piggyback on React's <code>context</code> facility. <code>context</code> only works for simple values, so 
 this path would passing down the <code>id</code> of the frame, and then 
 looking it up.</p>
-<h3>Problem</h3>
+<h3 id="problem">Problem<a class="headerlink" href="#problem" title="Permanent link">&para;</a></h3>
 <p>if we <code>subscribe</code> in a view, and that subscription needs to causes other subscriptions to be created, how to get at the associated frame at the point when we want to create the further subscriptions?</p>
                 
               

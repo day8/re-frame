@@ -819,10 +819,63 @@
       Talking To Servers
     </a>
     
-      
+      <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+
+
+<!-- Table of contents -->
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
+
+  <!--
+    Hack: check whether the content contains a h1 headline. If it does, the
+    top-level anchor must be skipped, since it would be redundant to the link
+    to the current page that is located just above the anchor. Therefore we
+    directly continue with the children of the anchor.
+  -->
   
+
+  <!-- Render item list -->
+
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page. 
+
+    Globally in mkdocs.yml we set the table of contents extension depth to the
+    maximum that we want to use site-wide, then filter it down depending on
+    the markdown meta extension on a page-per-page basis.
+
+    First, we need to initialize some variables that are used in toc-item.html
+
+    re_frame_navigation_depth is set depending on the markdown meta extension.
+    It is the maximum depth for the rhs table of contents.
+
+    re_frame_navigation_level is the current recursive rendering depth of
+    toc-item.html It must be both incremented and decremented on each recur.
+  -->
+  
+    
+  
+  
+
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -832,24 +885,138 @@
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#talking-to-servers" class="md-nav__link">
-    Talking To Servers
+	  Talking To Servers
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#triggering-the-request" class="md-nav__link">
-    Triggering The Request
+	  Triggering The Request
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#the-event-handler" class="md-nav__link">
-    The Event Handler
+	  The Event Handler
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
@@ -1408,10 +1575,63 @@
               <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+                    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+
+
+<!-- Table of contents -->
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
+
+  <!--
+    Hack: check whether the content contains a h1 headline. If it does, the
+    top-level anchor must be skipped, since it would be redundant to the link
+    to the current page that is located just above the anchor. Therefore we
+    directly continue with the children of the anchor.
+  -->
   
+
+  <!-- Render item list -->
+
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page. 
+
+    Globally in mkdocs.yml we set the table of contents extension depth to the
+    maximum that we want to use site-wide, then filter it down depending on
+    the markdown meta extension on a page-per-page basis.
+
+    First, we need to initialize some variables that are used in toc-item.html
+
+    re_frame_navigation_depth is set depending on the markdown meta extension.
+    It is the maximum depth for the rhs table of contents.
+
+    re_frame_navigation_level is the current recursive rendering depth of
+    toc-item.html It must be both incremented and decremented on each recur.
+  -->
+  
+    
+  
+  
+
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -1421,24 +1641,138 @@
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#talking-to-servers" class="md-nav__link">
-    Talking To Servers
+	  Talking To Servers
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#triggering-the-request" class="md-nav__link">
-    Triggering The Request
+	  Triggering The Request
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#the-event-handler" class="md-nav__link">
-    The Event Handler
+	  The Event Handler
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
@@ -1490,7 +1824,7 @@ endpoint and put a processed version of the returned json into <code>app-db</cod
 problematic version of the event handler and then, realising our sins, we'll write
 a second version which is a soaring paragon of virtue. Both versions 
 will teach us something.</p>
-<h3>Version 1</h3>
+<h3 id="version-1">Version 1<a class="headerlink" href="#version-1" title="Permanent link">&para;</a></h3>
 <p>We're going to use the <a href="https://github.com/JulianBirch/cljs-ajax">cljs-ajax library</a> as the HTTP workhorse.</p>
 <p>Here's the event handler: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">my.app.events</span>                   <span class="c1">;; &lt;1&gt;</span>
@@ -1523,7 +1857,7 @@ will teach us something.</p>
   3. event handlers registered using <code>reg-event-db</code> must return a new value for 
    <code>app-db</code>.  In our case, we set a flag which will presumably cause a "Loading ..."
    UI to show.</p>
-<h3>Successful GET</h3>
+<h3 id="successful-get">Successful GET<a class="headerlink" href="#successful-get" title="Permanent link">&para;</a></h3>
 <p>As we noted above, the on-success handler itself is just
 <code>#(dispatch [:process-response RESPONSE])</code>.  So we'll need to register a handler
 for this event too.</p>
@@ -1541,12 +1875,12 @@ for this event too.</p>
 <p>A normal handler would have more complex processing of the response. But we're 
 just sketching here, so we've left it easy.</p>
 <p>There'd also need to be a handler for the <code>:bad-response</code> event too.  Left as an exercise.</p>
-<h3>Problems In Paradise?</h3>
+<h3 id="problems-in-paradise">Problems In Paradise?<a class="headerlink" href="#problems-in-paradise" title="Permanent link">&para;</a></h3>
 <p>This approach will work, and it is useful to take time to understand why it 
 would work, but it has a problem:  the event handler isn't pure.  </p>
 <p>That <code>GET</code> is a side effect, and side effecting functions are like a 
 well salted paper cut. We try hard to avoid them.</p>
-<h3>Version 2</h3>
+<h3 id="version-2">Version 2<a class="headerlink" href="#version-2" title="Permanent link">&para;</a></h3>
 <p>The better solution is, of course, to use an effectful handler. This 
 is explained in detail in the previous tutorials: <a href="../EffectfulHandlers/">Effectful Handlers</a> 
 and <a href="../Effects/">Effects</a>.  </p>

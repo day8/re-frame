@@ -1350,10 +1350,63 @@
               <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+                    <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+
+
+<!-- Table of contents -->
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
+
+  <!--
+    Hack: check whether the content contains a h1 headline. If it does, the
+    top-level anchor must be skipped, since it would be redundant to the link
+    to the current page that is located just above the anchor. Therefore we
+    directly continue with the children of the anchor.
+  -->
   
+
+  <!-- Render item list -->
+
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page. 
+
+    Globally in mkdocs.yml we set the table of contents extension depth to the
+    maximum that we want to use site-wide, then filter it down depending on
+    the markdown meta extension on a page-per-page basis.
+
+    First, we need to initialize some variables that are used in toc-item.html
+
+    re_frame_navigation_depth is set depending on the markdown meta extension.
+    It is the maximum depth for the rhs table of contents.
+
+    re_frame_navigation_level is the current recursive rendering depth of
+    toc-item.html It must be both incremented and decremented on each recur.
+  -->
+  
+    
+  
+  
+
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -1363,10 +1416,48 @@
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
-        <li class="md-nav__item">
+        <!--
+  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#ep-003-finite-state-machines" class="md-nav__link">
-    EP 003 - Finite State Machines
+	  EP 003 - Finite State Machines
   </a>
+
+  <!-- Render nested item list -->
+
+  <!--
+    CUSTOM: re-frame customization so that we can have one extra level in the
+    rhs table of contents *only* on the apidocs page.
+
+    See toc.html comment for introduction.
+
+    This code works by:
+    - incrementing the current level
+    - checking if the current level is equal or less than the maximum depth
+    - if true, resursively rendering this template
+    - if false, doing nothing
+    - decrementing the current level
+  -->
+  
+  			       
   
 </li>
       
@@ -1396,11 +1487,11 @@
 <blockquote>
 <p>Status: Placeholder. Don't bother reading yet. </p>
 </blockquote>
-<h3>Abstract</h3>
+<h3 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link">&para;</a></h3>
 <p>Colloquial: I'd like re-frame to have a better story for programming in FSMs. I want to 
 represent "Higher Order Behaviour" which currently gets "smeared" across 
 multiple event handlers.</p>
-<h3>Introduction</h3>
+<h3 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h3>
 <p>Many <strong>high level</strong> aspects of SPAs are best modelled explicitly as an FSM. 
 First, an app must gather X from the user, but if they press cancel, then return to
 showing Y, but otherwise move on to do activity Z. It is quite natural to model such overall
@@ -1414,7 +1505,7 @@ Back in 1987, Harel identified the set of features required - anything less
 and your tool will not be expressive enough to do the job.<br />
 Harel also insisted that statecharts was a visual 
 formalism, so tooling is also important.</p>
-<h3>Why?</h3>
+<h3 id="why">Why?<a class="headerlink" href="#why" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>Beware of the Turing tar-pit in which everything is possible but nothing of interest is easy. <br>
  -- Alan Perlis </p>
@@ -1430,7 +1521,7 @@ https://www.skorks.com/2011/09/why-developers-never-use-state-machines/</p>
 <p>"The strength of JavaScript is that you can do anything. The weakness is that you will." <br>
    - Reg Braithwaite</p>
 </blockquote>
-<h3>How?</h3>
+<h3 id="how">How?<a class="headerlink" href="#how" title="Permanent link">&para;</a></h3>
 <p>Technical elements:
   - a way to register:
     - a state machine specification against a <code>machine-id</code> 
@@ -1447,16 +1538,16 @@ https://www.skorks.com/2011/09/why-developers-never-use-state-machines/</p>
       - an action fn to be called which produces <code>:effects</code> 
   - UI changes. See EP on <code>reg-view</code> which will make it much easier to describe UI in machine data structure<br />
   - a way to destroy an instance</p>
-<h3>Misc Notes</h3>
+<h3 id="misc-notes">Misc Notes<a class="headerlink" href="#misc-notes" title="Permanent link">&para;</a></h3>
 <p>Events model user intent, not implementation details. </p>
 <p>So, we DO NOT want events that talk about FSM or triggers etc because that's an implementation detail. </p>
 <p>Instead, we want </p>
 <p>But event handlers should know about XXX</p>
-<h3>Triggers</h3>
+<h3 id="triggers">Triggers<a class="headerlink" href="#triggers" title="Permanent link">&para;</a></h3>
 <p>Types of triggers:<br />
   1. External (from the user, websocket)
   2. Data - something about <code>app-db</code> has changed</p>
-<h3>Implementation</h3>
+<h3 id="implementation">Implementation<a class="headerlink" href="#implementation" title="Permanent link">&para;</a></h3>
 <p>What if we didn't even use FSM and used Behaviour Trees instead?<br />
 Behaviour trees are more composable. A better match for a data-oriented design.  </p>
 <p>Links And Notes:</p>
