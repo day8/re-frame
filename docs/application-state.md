@@ -46,7 +46,7 @@ Further Notes:
 4. `app-db` doesn't actually have to be a `ratom` containing a map.  It could, for example,
    be a [datascript database](https://github.com/tonsky/datascript).  In fact, any database which
    can signal you when it changes would do. We'd love! to be using [datascript database](https://github.com/tonsky/datascript) - so damn cool -
-   but we had too much data in our apps. If you were to use it, you'd have to tweak re-frame a bit and use [Posh](https://github.com/mpdairy/posh).
+   but we had too much data in our apps. If you were to use it, you'd have to tweak re-frame a bit and use [re-posh](https://github.com/denistakeda/re-posh).
 
 
 ## The Benefits
