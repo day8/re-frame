@@ -88,12 +88,9 @@
     (catch Exception e
       (println e))))
 
-(def markdown-styles
-  "<style>\n.md-typeset h3 {\nbackground: #777;\ncolor: white;\npadding-left: 5px;\nline-height: 1.15em;\nheight: 2em;\n}\n</style>\n\n")
-
 (defn ns->markdown
   [m]
-  (format "%s# %s\n\n" markdown-styles (:name m)))
+  (format "# %s\n\n" (:name m)))
 
 (defn arglist->markdown
   [arglist]
