@@ -50,6 +50,8 @@ In the wild, real usage might look like this:
 
 ## <a name="fx"></a> :fx
 
+> Added in v1.1.0
+
 An effect which actions other effects, sequentially.
 
 Expects a value which is a sequence, typically a vector.
