@@ -1687,11 +1687,13 @@
 <p>this is a stepping stone towards making it easier to create an event handler which is a composition of 
     other functions. We imagine circumstances in the future in which event handlers might be written more 
     like this:</p>
-<p><code>clj
-  (reg-event-xxxx       ;; &lt;-- a new kind of registration function
-    :event-id  
-    interceptors 
-    [function1 function2 function3])</code></p>
+<div class="codehilite"><pre><span></span><code>(reg-event-xxxx       ;; &lt;-- a new kind of registration function
+  :event-id  
+  interceptors 
+  [function1 function2 function3])
+</code></pre></div>
+
+
 <p>See exploratory discussion <a href="https://github.com/day8/re-frame/issues/639#issuecomment-680500053">here</a> and <a href="https://github.com/day8/re-frame/issues/639#issuecomment-682250517">here</a></p>
 </li>
 </ul>
