@@ -1617,11 +1617,19 @@
 <p>Note: the re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for each release (Maven/deps/Lein). </p>
 </blockquote>
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h4>Added</h4>
+<ul>
+<li></li>
+</ul>
+<h4>Changed</h4>
+<ul>
+<li></li>
+</ul>
 <h2 id="111-2020-08-26">1.1.1 (2020-08-26)<a class="headerlink" href="#111-2020-08-26" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
 <ul>
 <li>The built-in effect <code>:dispatch-later</code> can now take a single map value. 
-  Supplying a seqence of maps is now deprecated in favour of using multiple <code>:dispatch-later</code> effects within the new 
+  Supplying a sequence of maps is now deprecated in favour of using multiple <code>:dispatch-later</code> effects within the new 
   <code>:fx</code> effect. See the <a href="http://day8.github.io/re-frame/api-builtin-effects/#dispatch-later">API documentation</a>. </li>
 </ul>
 <h2 id="110-2020-08-24">1.1.0 (2020-08-24)<a class="headerlink" href="#110-2020-08-24" title="Permanent link">&para;</a></h2>
@@ -1636,8 +1644,7 @@
 </li>
 </ul>
 <p>Previously, you might have returned effects like this:</p>
-<div class="codehilite"><pre><span></span><code>```clj
-(reg-event-fx 
+<div class="codehilite"><pre><span></span><code>(reg-event-fx 
  :token 
 (fn [{:keys [db]} [_ id]]
   {:db (assoc db :twirly true) 
@@ -1646,13 +1653,11 @@
    :http  (list 
               {:method :GET :url &quot;http://abc.com/endpoint&quot; ...}
               {:method :POST :url &quot;http://blah.com/endpoint&quot; ...})}))
-```
 </code></pre></div>
 
 
 <p>but now, using <code>:fx</code>:</p>
-<div class="codehilite"><pre><span></span><code>```clj
-(reg-event-fx 
+<div class="codehilite"><pre><span></span><code>(reg-event-fx 
  :token 
 (fn [{:keys [db]} [_ id]]
    {:db (assoc db :twirly true) 
@@ -1662,7 +1667,6 @@
           [:http         {:method :POST :url &quot;http://blah.com/endpoint&quot; ...}]
 
           (when seventies? [:hair &quot;side burns&quot;])]     ;; nils are ignored
-```
 </code></pre></div>
 
 
