@@ -1640,33 +1640,33 @@
   re-frame continues to provide no guarantees about the order in which other effects will be actioned. </p>
 </li>
 <li>
-<p>Added an new <code>:fx</code> built-in effect handler. </p>
-</li>
-</ul>
-<p>Previously, you might have returned effects like this:</p>
+<p>Added an new <code>:fx</code> built-in effect handler.
+  Previously, you might have returned effects like this:</p>
 <div class="codehilite"><pre><span></span><code>(reg-event-fx 
- :token 
-(fn [{:keys [db]} [_ id]]
-  {:db (assoc db :twirly true) 
-   :dispatch [:blah]
-   :full-screen true
-   :http  (list 
+  :token 
+  (fn [{:keys [db]} [_ id]]
+    {:db (assoc db :twirly true) 
+     :dispatch [:blah]
+     :full-screen true
+     :http  (list 
               {:method :GET :url &quot;http://abc.com/endpoint&quot; ...}
               {:method :POST :url &quot;http://blah.com/endpoint&quot; ...})}))
 </code></pre></div>
 
 
+</li>
+</ul>
 <p>but now, using <code>:fx</code>:</p>
-<div class="codehilite"><pre><span></span><code>(reg-event-fx 
- :token 
-(fn [{:keys [db]} [_ id]]
-   {:db (assoc db :twirly true) 
-    :fx [ [:dispatch     [:blah]] 
-          [:full-screen  true]
-          [:http         {:method :GET :url &quot;http://abc.com/endpoint&quot; ...}]
-          [:http         {:method :POST :url &quot;http://blah.com/endpoint&quot; ...}]
+<div class="codehilite"><pre><span></span><code>    (reg-event-fx 
+      :token 
+      (fn [{:keys [db]} [_ id]]
+        {:db (assoc db :twirly true) 
+         :fx [ [:dispatch     [:blah]] 
+               [:full-screen  true]
+               [:http         {:method :GET :url &quot;http://abc.com/endpoint&quot; ...}]
+               [:http         {:method :POST :url &quot;http://blah.com/endpoint&quot; ...}]
 
-          (when seventies? [:hair &quot;side burns&quot;])]     ;; nils are ignored
+               (when seventies? [:hair &quot;side burns&quot;])]     ;; nils are ignored
 </code></pre></div>
 
 
