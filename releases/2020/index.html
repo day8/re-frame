@@ -1614,7 +1614,7 @@
 
 <h1 id="_1"><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>Note: the re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for each release (Maven/deps/Lein). </p>
+<p>the re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for Maven/deps/Lein.</p>
 </blockquote>
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
@@ -1637,11 +1637,11 @@
 <ul>
 <li>
 <p>re-frame now guarantees that a <code>:db</code> effect, if present, will be actioned before any other sibling effects. 
-  re-frame continues to provide no guarantees about the order in which other effects will be actioned. </p>
+    re-frame continues to provide no guarantees about the order in which other effects will be actioned. </p>
 </li>
 <li>
 <p>Added an new <code>:fx</code> built-in effect handler.
-  Previously, you might have returned effects like this:</p>
+    Previously, you might have returned effects like this:</p>
 <div class="codehilite"><pre><span></span><code>(reg-event-fx 
   :token 
   (fn [{:keys [db]} [_ id]]
@@ -1654,19 +1654,17 @@
 </code></pre></div>
 
 
-</li>
-</ul>
 <p>but now, using <code>:fx</code>:</p>
-<div class="codehilite"><pre><span></span><code>    (reg-event-fx 
-      :token 
-      (fn [{:keys [db]} [_ id]]
-        {:db (assoc db :twirly true) 
-         :fx [ [:dispatch     [:blah]] 
-               [:full-screen  true]
-               [:http         {:method :GET :url &quot;http://abc.com/endpoint&quot; ...}]
-               [:http         {:method :POST :url &quot;http://blah.com/endpoint&quot; ...}]
+<div class="codehilite"><pre><span></span><code>(reg-event-fx 
+  :token 
+  (fn [{:keys [db]} [_ id]]
+    {:db (assoc db :twirly true) 
+     :fx [ [:dispatch     [:blah]] 
+           [:full-screen  true]
+           [:http         {:method :GET :url &quot;http://abc.com/endpoint&quot; ...}]
+           [:http         {:method :POST :url &quot;http://blah.com/endpoint&quot; ...}]
 
-               (when seventies? [:hair &quot;side burns&quot;])]     ;; nils are ignored
+           (when seventies? [:hair &quot;side burns&quot;])]     ;; nils are ignored
 </code></pre></div>
 
 
@@ -1682,23 +1680,22 @@
 <ul>
 <li><code>:fx</code> allows for effects to be ordered</li>
 <li>you can include the same kind of effect multiple times (eg <code>:dispatch</code>) which means there is no longer 
-    any need for special effects like <code>:dispatch-n</code>. Indeed, all <code>*-n</code> style effects are now redundant.</li>
+  any need for special effects like <code>:dispatch-n</code>. Indeed, all <code>*-n</code> style effects are now redundant.</li>
 <li>
 <p>this is a stepping stone towards making it easier to create an event handler which is a composition of 
-    other functions. We imagine circumstances in the future in which event handlers might be written more 
-    like this:</p>
-<div class="codehilite"><pre><span></span><code>(reg-event-xxxx       ;; &lt;-- a new kind of registration function
-  :event-id  
+  other functions. We imagine circumstances in the future in which event handlers might be written more 
+  like this:</p>
+<p>(reg-event-xxxx       ;; &lt;-- a new kind of registration function
+  :event-id<br />
   interceptors 
-  [function1 function2 function3])
-</code></pre></div>
-
-
-<p>See exploratory discussion <a href="https://github.com/day8/re-frame/issues/639#issuecomment-680500053">here</a> and <a href="https://github.com/day8/re-frame/issues/639#issuecomment-682250517">here</a></p>
+  [function1 function2 function3])</p>
 </li>
 </ul>
+<p>See exploratory discussion <a href="https://github.com/day8/re-frame/issues/639#issuecomment-680500053">here</a> and <a href="https://github.com/day8/re-frame/issues/639#issuecomment-682250517">here</a></p>
 <p>This new effect is described in the <a href="https://day8.github.io/re-frame/api-builtin-effects/#fx">API docs</a>.
-  Further discussion on its introduction can be found in issue <a href="https://github.com/day8/re-frame/issues/639">#639</a>.</p>
+Further discussion on its introduction can be found in issue <a href="https://github.com/day8/re-frame/issues/639">#639</a>.</p>
+</li>
+</ul>
 <h4>Changed</h4>
 <ul>
 <li>if your <code>reg-event-fx</code> handler returns an effect map containing an unknown effect key, re-frame will now produce a warning, not a hard error.
