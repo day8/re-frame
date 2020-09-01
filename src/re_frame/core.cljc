@@ -12,8 +12,8 @@
     [re-frame.registrar        :as registrar]
     [re-frame.interceptor      :as interceptor]
     [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
-                                                             fx-handler->interceptor
-                                                             ctx-handler->interceptor]]
+                                                            fx-handler->interceptor
+                                                            ctx-handler->interceptor]]
     [re-frame.utils            :as utils]
     [clojure.set               :as set]))
 
@@ -21,7 +21,7 @@
 ;; -- dispatch ----------------------------------------------------------------
 
 (defn dispatch
-  "Queue `event` for processing (handling). 
+  "Queue `event` for processing (handling).
 
   `event` is a vector and the first element is typically a keyword
   which identifies the kind of event.
@@ -32,7 +32,7 @@
   will be processed first.
 
   Usage:
-      
+
       (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
   "
   {:api-docs/heading "Dispatching Events"}
@@ -41,17 +41,17 @@
 
 (defn dispatch-sync
   "Synchronously (immediately) process `event`. It does **not** queue
-  the event for handling later as `dispatch` does. 
-  
-  `event` is a vector and the first element is typically a keyword 
+  the event for handling later as `dispatch` does.
+
+  `event` is a vector and the first element is typically a keyword
   which identifies the kind of event.
 
-  It is an error to use `dispatch-sync` within an event handler because 
+  It is an error to use `dispatch-sync` within an event handler because
   you can't immediately process an new event when one is already
   part way through being processed.
 
-  Generally, avoid using this function, and instead, use `dispatch`. 
-  Only use it in the narrow set of cases where any delay in 
+  Generally, avoid using this function, and instead, use `dispatch`.
+  Only use it in the narrow set of cases where any delay in
   processing is a problem:
 
     1. the `:on-change` handler of a text field where we are expecting fast typing
@@ -79,8 +79,8 @@
 
   Example Usage:
 
-      (reg-event-db 
-        :token 
+      (reg-event-db
+        :token
         (fn [db event]
           (assoc db :some-key (get event 2)))  ;; return updated db
 
@@ -90,7 +90,7 @@
         :namespaced/id           ;; <-- namespaced keywords are often used
         [one two three]          ;; <-- a seq of interceptors
         (fn [db [_ arg1 arg2]]   ;; <-- event vector is destructured
-          (-> db 
+          (-> db
             (dissoc arg1)
             (update :key + arg2))))   ;; return updated db
   "
@@ -106,14 +106,14 @@
   an `interceptors` chain:
 
     - `id` is typically a namespaced keyword  (but can be anything)
-    - `handler` is a function: (coeffects-map event-vector) -> effects-map
+    - `handler` is a function: (coeffects-map event-map-or-vector) -> effects-map
     - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
 
   Example Usage:
 
-      (reg-event-fx 
-        :event-id 
+      (reg-event-fx
+        :event-id
         (fn [cofx event]
           {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
 
@@ -137,22 +137,22 @@
 (defn reg-event-ctx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain:
-   
+
     - `id` is typically a namespaced keyword  (but can be anything)
     - `handler` is a function: context-map -> context-map
 
   You can explore what is provided in `context` [here](https://day8.github.io/re-frame/Interceptors/#what-is-context).
-  
+
   Example Usage:
 
-      (reg-event-ctx 
+      (reg-event-ctx
         :event-id
         (fn [{:keys [coeffects] :as context}]
           (let [initial  {:db     (:db coeffects)
                           :event  (:event coeffects)
                           :fx     []}
                 result   (-> initial
-                           function1 
+                           function1
                            function2
                            function3)
                 effects  (selectkeys result [:db :fx])]
@@ -165,12 +165,12 @@
    (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (ctx-handler->interceptor handler)])))
 
 (defn clear-event
-  "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`). 
-   
-  When called with no args, it will unregister all currently registered event handlers. 
-   
-  When given one arg, assumed to be the `id` of a previously registered 
-  event handler, it will unregister the associated handler. Will produce a warning to 
+  "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`).
+
+  When called with no args, it will unregister all currently registered event handlers.
+
+  When given one arg, assumed to be the `id` of a previously registered
+  event handler, it will unregister the associated handler. Will produce a warning to
   console if it finds no matching registration."
   {:api-docs/heading "Event Handlers"}
   ([]
@@ -183,55 +183,57 @@
 
 (defn reg-sub
   "A call to `reg-sub` associates a `query-id` WITH two functions.
-   
-  The two functions provide 'a mechanism' for creating a node 
-  in the Signal Graph. When a node of type `query-id` is needed, 
+
+  The two functions provide 'a mechanism' for creating a node
+  in the Signal Graph. When a node of type `query-id` is needed,
   the two functions can be used to create it.
-  
-  The three arguments are: 
-   
+
+  The three arguments are:
+
   - `query-id` - typically a namespaced keyword (later used in subscribe)
   - optionally, an `input signals` function which returns the input data
-    flows required by this kind of node. 
-  - a `computation function` which computes the value (output) of the 
+    flows required by this kind of node.
+  - a `computation function` which computes the value (output) of the
     node (from the input data flows)
-     
+
   Later, during app execution, a call to `(subscribe [:sub-id 3 :blue])`,
-  will trigger the need for a new `:sub-id` Signal Graph node (matching the 
-  query `[:sub-id 3 :blue]`). And, to create that node the two functions 
+  or `(subscribe {:re-frame.core/qid :sub-id :answer 3 :color :blue})`
+  will trigger the need for a new `:sub-id` Signal Graph node (matching the
+  query `[:sub-id 3 :blue]` or {:re-frame.core/qid :sub-id :answer 3 :color :blue}
+  respectively). And, to create that node the two functions
   associated with `:sub-id` will be looked up and used.
 
-  Just to be clear: calling `reg-sub` does not immediately create a node. 
-  It only registers 'a mechanism' (the two functions) by which nodes 
-  can be created later, when a node is bought into existence by the 
+  Just to be clear: calling `reg-sub` does not immediately create a node.
+  It only registers 'a mechanism' (the two functions) by which nodes
+  can be created later, when a node is bought into existence by the
   use of `subscribe` in a `View Function`.
 
   The `computation function` is expected to take two arguments:
-  
+
     - `input-values` - the values which flow into this node (how is it wierd into the graph?)
-    - `query-vector` - the vector given to `subscribe`
-  
+    - `query` - the map or vector given to `subscribe`
+
   and it returns a computed value (which then becomes the output of the node)
 
-  When `computation function` is called, the 2nd `query-vector` argument will be that 
-  vector supplied to the `subscribe`. So, if the call was `(subscribe [:sub-id 3 :blue])`,
-  then the `query-vector` supplied to the computaton function will be `[:sub-id 3 :blue]`.
+  When `computation function` is called, the 2nd `query` argument will be that
+  map or vector supplied to the `subscribe`. So, if the call was `(subscribe [:sub-id 3 :blue])`,
+  then the `query` supplied to the computaton function will be `[:sub-id 3 :blue]`.
 
-  The argument(s) supplied to `reg-sub` between `query-id` and the `computation-function` 
-  can vary in 3 ways, but whatever is there defines the `input signals` part 
-  of `the mechanism`, specifying what input values \"flow into\" the 
+  The argument(s) supplied to `reg-sub` between `query-id` and the `computation-function`
+  can vary in 3 ways, but whatever is there defines the `input signals` part
+  of `the mechanism`, specifying what input values \"flow into\" the
   `computation function` (as the 1st argument) when it is called.
 
-  So, `reg-sub` can be called in one of three ways, because there are three ways 
-  to define the input signals part. But note, the 2nd method, in which a 
-  `signals function` is explicitly supplied, is the most canonical and 
+  So, `reg-sub` can be called in one of three ways, because there are three ways
+  to define the input signals part. But note, the 2nd method, in which a
+  `signals function` is explicitly supplied, is the most canonical and
   instructive. The other two are really just sugary variations.
 
   **First variation** - no input signal function given:
 
       (reg-sub
         :query-id
-        a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
+        a-computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)
 
      In the absence of an explicit `signals function`, the node's input signal defaults to `app-db`
      and, as a result, the value within `app-db` (a map) is
@@ -258,32 +260,32 @@
 
   This example `signal function` returns a 2-vector of input signals.
 
-      (fn [query-vec dynamic-vec]
+      (fn [query dynamic-vec]
          [(subscribe [:a-sub])
           (subscribe [:b-sub])])
 
   The associated computation function must be written
   to expect a 2-vector of values for its first argument:
 
-      (fn [[a b] query-vec]     ;; 1st argument is a seq of two values
+      (fn [[a b] query]     ;; 1st argument is a seq of two values
         ....)
 
   If, on the other hand, the signal function was simpler and returned a singleton, like this:
 
-     (fn [query-vec dynamic-vec]
+     (fn [query dynamic-vec]
        (subscribe [:a-sub]))      ;; <-- returning a singleton
 
   then the associated computation function must be written to expect a single value
   as the 1st argument:
 
-      (fn [a query-vec]       ;; 1st argument is a single value
+      (fn [a query]       ;; 1st argument is a single value
          ...)
 
   Further Note: variation #1 above, in which an `input-fn` was not supplied, like this:
 
       (reg-sub
         :query-id
-        a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
+        a-computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)
 
   is the equivalent of using this
   2nd variation and explicitly suppling a `signal-fn` which returns `app-db`:
@@ -291,19 +293,19 @@
       (reg-sub
         :query-id
         (fn [_ _]  re-frame/app-db)   ;; <--- explicit signal-fn
-        a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
+        a-computation-fn)             ;; has signature:  (fn [db query]  ... ret-value)
 
   **Third variation** - syntax Sugar
 
       (reg-sub
         :a-b-sub
         :<- [:a-sub]
-        :<- [:b-sub]
-        (fn [[a b] query-vec]    ;; 1st argument is a seq of two values
+        :<- {:re-frame/qid :b-sub}
+        (fn [[a b] query]    ;; 1st argument is a seq of two values
           {:a a :b b}))
 
   This 3rd variation is just syntactic sugar for the 2nd.  Instead of providing an
-  `signals-fn` you provide one or more pairs of `:<-` and a subscription vector.
+  `signals-fn` you provide one or more pairs of `:<-` and a subscription query.
 
   If you supply only one pair a singleton will be supplied to the computation function,
   as if you had supplied a `signal-fn` returning only a single value:
@@ -312,12 +314,12 @@
       (reg-sub
         :a-sub
         :<- [:a-sub]
-        (fn [a query-vec]      ;; only one pair, so 1st argument is a single value
+        (fn [a query]      ;; only one pair, so 1st argument is a single value
           ...))
 
   For further understanding, read the tutorials, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs.
-        
+
   See also: `subscribe`
   "
   {:api-docs/heading "Subscriptions"}
@@ -325,26 +327,33 @@
   (apply subs/reg-sub (into [query-id] args)))
 
 (defn subscribe
-  "Given a `query` vector, returns a Reagent `reaction` which will, over
+  "Given a `query` map or vector, returns a Reagent `reaction` which will, over
   time, reactively deliver a stream of values. So, in FRP-ish terms,
   it returns a `Signal`.
 
-  To obtain the current value from the Signal, it must be dereferenced: 
-  
+  To obtain the current value from the Signal, it must be dereferenced:
+
       (let [signal (subscribe [:items])
             value  (deref signal)]     ;; could be written as @signal
         ...)
-   
-   which is typically written tersely as simple:
-   
-      (let [items  @(subscribe [:items])] 
-        ...)
-      
 
-  `query` is a vector of at least one element. The first element is the
+   which is typically written tersely as simple:
+
+      (let [items  @(subscribe [:items])]
+        ...)
+
+
+  `query` is a map or vector.
+
+   If vector, it is of at least one element. The first element is the
   `query-id`, typically a namespaced keyword. The rest of the vector's
   elements are optional, additional values which parameterise the query
   performed.
+
+  If map, it is of at least one pair being the namespaced keyword `:re-frame.core/qid`
+  mapped to the `query-id`, typically another namespaced keyword. The rest of
+  the map key/value pairs are optional, additional values which parameterise the
+  query performed.
 
   `dynv` is an optional 3rd argument, which is a vector of further input
   signals (atoms, reactions, etc), NOT values. This argument exists for
@@ -355,26 +364,26 @@
       (subscribe [:items])
       (subscribe [:items \"blue\" :small])
       (subscribe [:items {:colour \"blue\"  :size :small}])
- 
+
   Note: for any given call to `subscribe` there must have been a previous call
-  to `reg-sub`, registering the query handler (functions) associated with 
+  to `reg-sub`, registering the query handler (functions) associated with
   `query-id`.
 
   **Hint**
 
   When used in a view function BE SURE to `deref` the returned value.
   In fact, to avoid any mistakes, some prefer to define:
-  
+
       (def <sub  (comp deref re-frame.core/subscribe))
- 
+
   And then, within their views, they call  `(<sub [:items :small])` rather
   than using `subscribe` directly.
 
   **De-duplication**
 
-  Two, or more, concurrent subscriptions for the same query will 
+  Two, or more, concurrent subscriptions for the same query will
   source reactive updates from the one executing handler.
-      
+
   See also: `reg-sub`
   "
   {:api-docs/heading "Subscriptions"}
@@ -384,12 +393,12 @@
    (subs/subscribe query dynv)))
 
 (defn clear-sub ;; think unreg-sub
-  "Unregisters subscription handlers (presumably registered previously via the use of `reg-sub`). 
-   
-  When called with no args, it will unregister all currently registered subscription handlers. 
-   
-  When given one arg, assumed to be the `id` of a previously registered 
-  subscription handler, it will unregister the associated handler. Will produce a warning to 
+  "Unregisters subscription handlers (presumably registered previously via the use of `reg-sub`).
+
+  When called with no args, it will unregister all currently registered subscription handlers.
+
+  When given one arg, assumed to be the `id` of a previously registered
+  subscription handler, it will unregister the associated handler. Will produce a warning to
   console if it finds no matching registration.
 
   NOTE: Depending on the usecase, it may be necessary to call `clear-subscription-cache!` afterwards"
@@ -417,8 +426,8 @@
 
   This function can be used at development time or test time. Useful when hot realoding
   namespaces containing subscription handlers. Also call it after a React/render exception,
-  because React components won't have been cleaned up properly. And this, in turn, means 
-  the subscriptions within those components won't have been cleaned up correctly. So this 
+  because React components won't have been cleaned up properly. And this, in turn, means
+  the subscriptions within those components won't have been cleaned up correctly. So this
   forces the issue.
   "
   {:api-docs/heading "Subscriptions"}
@@ -454,12 +463,12 @@
 
 
 (defn clear-fx ;; think unreg-fx
-  "Unregisters effect handlers (presumably registered previously via the use of `reg-fx`). 
-   
-  When called with no args, it will unregister all currently registered effect handlers. 
-   
-  When given one arg, assumed to be the `id` of a previously registered 
-  effect handler, it will unregister the associated handler. Will produce a warning to 
+  "Unregisters effect handlers (presumably registered previously via the use of `reg-fx`).
+
+  When called with no args, it will unregister all currently registered effect handlers.
+
+  When given one arg, assumed to be the `id` of a previously registered
+  effect handler, it will unregister the associated handler. Will produce a warning to
   console if it finds no matching registration.
   "
   {:api-docs/heading "Effect Handlers"}
@@ -478,7 +487,7 @@
     - `handler` is a function which takes either one or two arguements, the first of which is
        always `coeffects` and which returns an updated `coeffects`.
 
-  See also: `inject-cofx` 
+  See also: `inject-cofx`
   "
   {:api-docs/heading "Coeffects"}
   [id handler]
@@ -518,7 +527,7 @@
         [ ... (inject-cofx :datetime) ... ]  ;; <-- create an injecting interceptor
         (fn event-handler
           [coeffect event]
-            ;;... in here can access (:now coeffect) to obtain current datetime ... 
+            ;;... in here can access (:now coeffect) to obtain current datetime ...
           )))
 
   **Background**
@@ -537,7 +546,7 @@
   Instead, the interceptor created by this function is a way to 'inject'
   'necessary resources' into the `:coeffects` (map) subsequently given
   to the event handler at call time.
-          
+
   See also `reg-cofx`
   "
   {:api-docs/heading "Coeffects"}
@@ -547,12 +556,12 @@
    (cofx/inject-cofx id value)))
 
 (defn clear-cofx ;; think unreg-cofx
-  "Unregisters coeffect handlers (presumably registered previously via the use of `reg-cofx`). 
-   
-  When called with no args, it will unregister all currently registered coeffect handlers. 
-   
-  When given one arg, assumed to be the `id` of a previously registered 
-  coeffect handler, it will unregister the associated handler. Will produce a warning to 
+  "Unregisters coeffect handlers (presumably registered previously via the use of `reg-cofx`).
+
+  When called with no args, it will unregister all currently registered coeffect handlers.
+
+  When given one arg, assumed to be the `id` of a previously registered
+  coeffect handler, it will unregister the associated handler. Will produce a warning to
   console if it finds no matching registration."
   {:api-docs/heading "Coeffects"}
   ([]
@@ -569,7 +578,7 @@
 
   Output includes:
 
-    1. the event vector
+    1. the event map or vector
     2. a `clojure.data/diff` of db, before vs after, which shows
        the changes caused by the event handler. To understand the output,
        you should understand:
@@ -594,11 +603,11 @@
   std-interceptors/debug)
 
 (defn path
-  "Returns an interceptor which acts somewhat like `clojure.core/update-in`, in the sense that 
-  the event handler is given a specific part of `app-db` to change, not all of `app-db`. 
-   
-  The interceptor has both a `:before` and `:after` functions. The `:before` replaces  
-  the `:db` key within coeffects with a sub-path within `app-db`. The `:after` reverses the process, 
+  "Returns an interceptor which acts somewhat like `clojure.core/update-in`, in the sense that
+  the event handler is given a specific part of `app-db` to change, not all of `app-db`.
+
+  The interceptor has both a `:before` and `:after` functions. The `:before` replaces
+  the `:db` key within coeffects with a sub-path within `app-db`. The `:after` reverses the process,
   and it grafts the handler's return value back into db, at the right path.
 
   Examples:
@@ -617,7 +626,7 @@
           ... new-b))   ;; returns a new value for that path (not the entire db)
 
   Notes:
-  
+
     1. `path` may appear more than once in an interceptor chain. Progressive narrowing.
     2. if `:effects` contains no `:db` effect, can't graft a value back in.
   "
@@ -627,8 +636,8 @@
 
 (defn enrich
   "Returns an Interceptor which will run the given function `f` in the `:after`
-  position.  
-   
+  position.
+
   `f` is called with two arguments: `db` and `v`, and is expected to
   return a modified `db`.
 
@@ -677,7 +686,8 @@
 (def ^{:api-docs/heading "Interceptors"} trim-v
   "An interceptor which removes the first element of the event vector,
   before it is supplied to the event handler, allowing you to write more
-   aesthetically pleasing event handlers. No leading underscore on the event-v!
+   aesthetically pleasing event handlers. No leading underscore on the event
+   when using vectors! For event maps, does nothing.
 
   Your event handlers will look like this:
 
@@ -753,12 +763,12 @@
   (settings/reg-global-interceptor interceptor))
 
 (defn clear-global-interceptor
-  "Unregisters global interceptors (presumably registered previously via the use of `reg-global-interceptor`). 
-   
-  When called with no args, it will unregister all currently registered global interceptors. 
-   
-  When given one arg, assumed to be the `id` of a previously registered 
-  global interceptors, it will unregister the associated interceptor. Will produce a warning to 
+  "Unregisters global interceptors (presumably registered previously via the use of `reg-global-interceptor`).
+
+  When called with no args, it will unregister all currently registered global interceptors.
+
+  When given one arg, assumed to be the `id` of a previously registered
+  global interceptors, it will unregister the associated interceptor. Will produce a warning to
   console if it finds no matching registration."
   {:api-docs/heading "Global Interceptors"}
   ([]
@@ -783,21 +793,21 @@
          :id     :my-interceptor
          :before (fn [context]
                    ... modifies and returns `context`)
-         :after  (fn [context] 
+         :after  (fn [context]
                    ... modifies and returns `context`)))
-   
+
   Notes:
-  
-    - `:before` functions modify and return their `context` argument. Sometimes they 
+
+    - `:before` functions modify and return their `context` argument. Sometimes they
       only side effect, in which case, they'll perform the side effect and return
       `context` unchanged.
-    - `:before` functions often modify the `:coeffects` map within `context` and, 
-      if they do, then they should use the utility functions `get-coeffect` and 
+    - `:before` functions often modify the `:coeffects` map within `context` and,
+      if they do, then they should use the utility functions `get-coeffect` and
       `assoc-coeffect`.
-    - `:after` functions modify and return their `context` argument. Sometimes they 
-      only side effect, in which case, they'll perform the side effect and return 
+    - `:after` functions modify and return their `context` argument. Sometimes they
+      only side effect, in which case, they'll perform the side effect and return
       `context` unchanged.
-    - `:after` functions often modify the `:effects` map within `context` and, 
+    - `:after` functions often modify the `:effects` map within `context` and,
       if they do, then they should use the utility functions `get-effect`
       and `assoc-effect`"
   {:api-docs/heading "Writing Interceptors"}
@@ -855,10 +865,10 @@
 (defn enqueue
   "A utility function, used when writing an interceptor's `:before` function.
 
-  Adds the given collection of `interceptors` to those already in `context's` 
+  Adds the given collection of `interceptors` to those already in `context's`
   execution `:queue`. It returns the updated `context`.
-   
-  So, it provides a way for one Interceptor to add more interceptors to the 
+
+  So, it provides a way for one Interceptor to add more interceptors to the
   currently executing interceptor chain.
   "
   {:api-docs/heading "Writing Interceptors"}
@@ -869,13 +879,13 @@
 ;; --  logging ----------------------------------------------------------------
 
 (defn set-loggers!
-  "re-frame outputs warnings and errors via the API function `console` 
-   which, by default, delegates to `js/console`'s default implementation for 
+  "re-frame outputs warnings and errors via the API function `console`
+   which, by default, delegates to `js/console`'s default implementation for
   `log`, `error`, `warn`, `debug`, `group` and `groupEnd`. But, using this function,
-   you can override that behaviour with your own functions. 
+   you can override that behaviour with your own functions.
 
-  The argument `new-loggers` should be a map containing a subset of they keys 
-  for the standard `loggers`, namely  `:log` `:error` `:warn` `:debug` `:group` 
+  The argument `new-loggers` should be a map containing a subset of they keys
+  for the standard `loggers`, namely  `:log` `:error` `:warn` `:debug` `:group`
   or `:groupEnd`.
 
   Example Usage:
@@ -893,12 +903,12 @@
 
 
 (defn console
-  "A utility logging function which is used internally within re-frame to produce 
-  warnings and other output. It can also be used by libraries which 
+  "A utility logging function which is used internally within re-frame to produce
+  warnings and other output. It can also be used by libraries which
   extend re-frame, such as effect handlers.
 
   By default, it will output the given `args` to `js/console` at the given log `level`.
-  However, an application using re-frame can redirect `console` output via `set-loggers!`. 
+  However, an application using re-frame can redirect `console` output via `set-loggers!`.
 
   `level` can be one of `:log`, `:error`, `:warn`, `:debug`, `:group` or `:groupEnd`.
 
@@ -951,8 +961,8 @@
 ;; -- Event Processing Callbacks  ---------------------------------------------
 
 (defn add-post-event-callback
-  "Registers the given function `f` to be called after each event is processed. 
-   
+  "Registers the given function `f` to be called after each event is processed.
+
    `f` will be called with two arguments:
 
     - `event`: a vector. The event just processed.
@@ -965,7 +975,7 @@
        handlers for the one event, etc.  Hook in here.
      - libraries providing 'isomorphic javascript' rendering on  Nodejs or Nashorn.
 
-  `id` is typically a keyword. If it supplied when an `f` is added, it can be 
+  `id` is typically a keyword. If it supplied when an `f` is added, it can be
   subsequently be used to identify it for removal. See `remove-post-event-callback`.
   "
   {:api-docs/heading "Miscellaneous"}
@@ -976,8 +986,8 @@
 
 
 (defn remove-post-event-callback
-  "Unregisters a post event callback function, identified by `id`. 
-   
+  "Unregisters a post event callback function, identified by `id`.
+
   Such a function must have been previously registered via `add-post-event-callback`"
   {:api-docs/heading "Miscellaneous"}
   [id]

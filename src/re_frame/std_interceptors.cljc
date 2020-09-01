@@ -43,7 +43,7 @@
     :before  (fn trimv-before
                [context]
                (-> context
-                   (update-coeffect :event subvec 1)
+                   (update-coeffect :event #(if (vector? %) (subvec % 1) %))
                    (assoc-coeffect ::untrimmed-event (get-coeffect context :event))))
     :after   (fn trimv-after
                [context]

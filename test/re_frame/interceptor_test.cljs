@@ -5,7 +5,7 @@
             [re-frame.std-interceptors :refer [debug trim-v path enrich after on-changes
                                                db-handler->interceptor fx-handler->interceptor inject-global-interceptors]]
             [re-frame.interceptor :as interceptor]
-            [re-frame.core :refer [reg-global-interceptor clear-global-interceptor]]))
+            [re-frame.core :as rf :refer [reg-global-interceptor clear-global-interceptor]]))
 
 (enable-console-print!)
 
@@ -31,6 +31,18 @@
            [:event-id :b :c]))
     (is (= ctx-untrimmed ctx))))
 
+(deftest test-trim-v-with-event-map
+  (let [event-map     {::rf/eid :event-id
+                       :param1 :a
+                       :param2 :b}
+        ctx           (context event-map [])
+        ctx-trimmed   ((:before trim-v) ctx)
+        ctx-untrimmed ((:after trim-v) ctx-trimmed)]
+    (is (= (get-coeffect ctx-trimmed :event)
+           event-map))
+    (is (= (get-coeffect ctx-untrimmed :event)
+           event-map))
+    (is (= ctx-untrimmed ctx))))
 
 (deftest test-one-level-path
     (let [db   {:showing true :another 1}

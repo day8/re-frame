@@ -147,7 +147,7 @@
        {:before  (fn [context] ...)     ;; returns possibly modified context
         :after   (fn [context] ...)}    ;; `identity` would be a noop
 
-   Walks the queue of iterceptors from beginning to end, calling the
+   Walks the queue of interceptors from beginning to end, calling the
    `:before` fn on each, then reverse direction and walk backwards,
    calling the `:after` fn on each.
 
@@ -157,7 +157,9 @@
 
    Thread a `context` through all calls. `context` has this form:
 
-     {:coeffects {:event [:a-query-id :some-param]
+     {:coeffects {:event [:a-query-id :some-param] ;; or
+                  :event {:re-frame.core/eid :a-query-id
+                          :some-param-key :some-param}
                   :db    <original contents of app-db>}
       :effects   {:db    <new value for app-db>
                   :dispatch  [:an-event-id :param1]}
@@ -189,10 +191,10 @@
    of interceptors yet to be processed, and a `:stack` of interceptors
    already done.  In advanced cases, these values can be modified by the
    functions through which the context is threaded."
-  [event-v interceptors]
+  [event interceptors]
   (trace/merge-trace!
     {:tags {:interceptors interceptors}})
-  (-> (context event-v interceptors)
+  (-> (context event interceptors)
       (invoke-interceptors :before)
       change-direction
       (invoke-interceptors :after)))
