@@ -1484,7 +1484,7 @@
 
 
 <p>But this might not work in Safari these days (Safari is the new IE 7 of browsers). </p>
-<p>Instead, the more portable (but more complicated) version of this approach is to use React <code>refs</code> and a form-3 component:</p>
+<p>Instead, you could use a more portable (but more complicated) version of this approach, which uses React <code>refs</code> with a Form-3 component:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-input</span> <span class="p">[]</span>
   <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">ref </span><span class="p">(</span><span class="nf">atom</span> <span class="nv">nil</span><span class="p">)]</span>
     <span class="p">(</span><span class="nf">r/create-class</span>
@@ -1497,16 +1497,16 @@
 </code></pre></div>
 
 
-<p>But, it turns out this can be rewritten more tersely as:</p>
+<p>A terse way of achiving the same outcome is: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:ref</span> <span class="o">#</span><span class="p">(</span><span class="nb">when </span><span class="nv">%</span> <span class="p">(</span><span class="nf">.focus</span> <span class="nv">%</span><span class="p">)}]</span>
 </code></pre></div>
 
 
-<p>All these approaches only cause focus once, when the widget is first rendered, but you may need to have more control than that. </p>
+<p>But all these approaches only cause focus once, when the widget is first rendered. You may need to have more control than that. </p>
 <h2 id="reagent-after-render">Reagent after-render<a class="headerlink" href="#reagent-after-render" title="Permanent link">&para;</a></h2>
 <p>If you want to switch focus between elements after they have first rendered,
-you can create an effect handler which makes use of Reagent's <code>after-render</code> API to 
-register a function which will imperatively set focus:</p>
+you can create an <code>effect handler</code> which uses Reagent's <code>after-render</code> API to 
+register a function that will imperatively set focus:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span> 
   <span class="ss">:focus-to-element</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">element-id</span><span class="p">]</span> 
@@ -1514,7 +1514,8 @@ register a function which will imperatively set focus:</p>
 </code></pre></div>
 
 
-<p>As written, this code will fail silently if <code>element-id</code> is not found. Instead, you may want to detect and log that problem.</p>
+<p><em>WARNING</em>: as written, this code will fail silently if <code>element-id</code> is not found. If you use this 
+code fragment, you may want to detect and report that problem.</p>
 <p>You can then use this effect within your event handler: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
   <span class="ss">:something</span>
@@ -1524,11 +1525,12 @@ register a function which will imperatively set focus:</p>
 </code></pre></div>
 
 
-<p>This does assume you can compute the <code>some-element-id</code> of the HTML element 
-on which you want focus.</p>
-<p>BTW, notice a trick here. We use <code>Reagent/after-render</code> to ensure that the 
-HTML element is rendered <strong>before</strong> we try to focus on it because 
-sometimes the element doesn't even exist in the DOM until the UI is rerendered.</p>
+<p>This assumes you can compute or obtain the <code>some-element-id</code> value 
+for the HTML element on which you want focus.</p>
+<p>One small trick: we perform the imperative focus using 
+<code>Reagent/after-render</code> because sometimes the target
+HTML element won't exist in the DOM until after the rendering 
+which occurs in the next annimation frame.</p>
                 
               
               
