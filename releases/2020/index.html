@@ -1614,7 +1614,7 @@
 
 <h1 id="_1"><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>the re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for Maven/deps/Lein.</p>
+<p>The re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for Maven/deps/Lein.</p>
 </blockquote>
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
@@ -1642,20 +1642,29 @@
 <li>
 <p>Added an new <code>:fx</code> built-in effect handler.
     Previously, you might have returned effects like this:</p>
-<div class="codehilite"><pre><span></span><code>(reg-event-fx 
-  :token 
-  (fn [{:keys [db]} [_ id]]
-    {:db (assoc db :twirly true) 
-     :dispatch [:blah]
-     :full-screen true
-     :http  (list 
-              {:method :GET :url &quot;http://abc.com/endpoint&quot; ...}
-              {:method :POST :url &quot;http://blah.com/endpoint&quot; ...})}))
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span> 
+  <span class="ss">:token</span> 
+  <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">id</span><span class="p">]]</span>
+    <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:twirly</span> <span class="nv">true</span><span class="p">)</span> 
+     <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:blah</span><span class="p">]</span>
+     <span class="ss">:full-screen</span> <span class="nv">true</span>
+     <span class="ss">:http</span>  <span class="p">(</span><span class="nb">list </span>
+              <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span> <span class="ss">:url</span> <span class="s">&quot;http://abc.com/endpoint&quot;</span> <span class="nv">...</span><span class="p">}</span>
+              <span class="p">{</span><span class="ss">:method</span> <span class="ss">:POST</span> <span class="ss">:url</span> <span class="s">&quot;http://blah.com/endpoint&quot;</span> <span class="nv">...</span><span class="p">})}))</span>
 </code></pre></div>
-
+</td></tr></table>
 
 <p>but now, using <code>:fx</code>:</p>
-<div class="codehilite"><pre><span></span><code>(reg-event-fx 
+<div class="codehilite"><pre><span></span><code> #!clj
+(reg-event-fx 
   :token 
   (fn [{:keys [db]} [_ id]]
     {:db (assoc db :twirly true) 
