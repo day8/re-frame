@@ -19,11 +19,7 @@ theme:
     primary: light-blue
     accent: blue
   font:
-    # WARNING: 
-    # The next line is effectively an injection attack on the mkdocs template 
-    # Notice that the leading and trailing double quotes are omitted. 
-    # That allows me to trick mkdocs into accepting more than one font here.
-    text: Segoe UI", "Open Sans
+    text: Open Sans
     code: Source Code Pro
   features:
     - tabs
