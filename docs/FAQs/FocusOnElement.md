@@ -17,7 +17,7 @@ Perhaps you can use the `autofocus` HTML element attribute like this:
   [:input {:type "text" :id "my-id" :auto-focus true])
 ```
 
-But this might not work in Safari these days (Safari is the new IE 7 of browsers). 
+But this might not work in Safari these days (Safari is the new IE 6 of browsers). 
 
 Instead, you could use a more portable (but more complicated) version of this approach, which uses React `refs` with a Form-3 component:
 ```clj
