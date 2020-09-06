@@ -8,7 +8,7 @@ A performance-critical component would need to be:
   
   1. repeatedly used on a page, perhaps within the rows of a list or cells of a grid
   2. and then be re-rendered ***a lot***
-  3. involve the use of callbacks which are anonymous functions, created by renderers. 
+  3. and involve creating anonymous callback functions in re-renders 
 
 
 ## Equality Tests
@@ -46,8 +46,8 @@ Reagent assumes that `child` is rendered by a pure function and it deduces that 
 function the same props/args as last time, results in the same result (the same hiccup). 
 And so Reagent avoids doing this unnecessary work. It is an efficiency thing.
 
-Question: But how does Reagent check for this "sameness" between the props supplied "this render" vs the "last render"? <br/>
-Answer: by testing the props using `=` 
+***Question***:  But how does Reagent check for this "sameness" between the props supplied "this render" vs the "last render"? <br/>
+***Answer***: by testing the props using `#!clj =` 
 
 So:
 
@@ -68,9 +68,9 @@ Consider this test:
 ```
 ***Question***:  will it evaluate to `true` or `false`? <br/>
 ***Answer***: `false`. You might be able to see that the two anonymous functions are equal, 
-but `=` says "no". Annonomus functions are not like `#!clj 1`  or `#!clj :2` 
+but `=` says "no". Anonymous functions are not like `#!clj 1`  or `#!clj :2` 
 
-Armed with this knowledge, what happens if we add a new prop for `child` and make it an annonomous callback fucntion?  Like this: 
+Armed with this knowledge, what happens if we add a new prop for `child` and make it an anonymous callback fucntion?  Like this: 
 ```clj 
 (defn parent
   [x]
