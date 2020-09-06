@@ -1605,7 +1605,7 @@ And so Reagent avoids doing this unnecessary work. It is an efficiency thing.</p
 <p><strong><em>Question</em></strong>:  will it evaluate to <code>true</code> or <code>false</code>? <br/>
 <strong><em>Answer</em></strong>: <code>false</code>. You might be able to see that the two anonymous functions are equal, 
 but <code>=</code> says "no". Anonymous functions are not like <code class="highlight"><span class="mi">1</span></code>  or <code class="highlight"><span class="ss">:2</span></code> </p>
-<p>Armed with this knowledge, what happens if we add a new prop for <code>child</code> and make it an anonymous callback fucntion?  Like this: </p>
+<p>Armed with this knowledge, what happens if we add a new prop for <code>child</code> and make it an anonymous callback function?  Like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
   <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
   <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">]))])</span>
@@ -1616,7 +1616,7 @@ but <code>=</code> says "no". Anonymous functions are not like <code class="high
 an anonymous function. </p>
 <p>What a difference that new one makes!! Now, every time <code>parent</code> is re-rendered, <code>child</code>
 will also be re-rendered. Every time. Reagent's efficiency checks which try to avoid unnecessary work 
-are broken when one prop is an anonymous function because the value "this time' does not test 
+are broken when one prop is an anonymous function because the value "this time" does not test 
 <code>=</code> to last time, even though we can see they are the same function.</p>
 <h2 id="fixing-it">Fixing It<a class="headerlink" href="#fixing-it" title="Permanent link">&para;</a></h2>
 <p>Surely the way to fix this is simple: don't use an anonymous function.</p>
@@ -1652,7 +1652,7 @@ are broken when one prop is an anonymous function because the value "this time' 
 
 
 <p>The outside function creates the anonymous function, which means it doesn't get
-recreated and change on each render, and so <code>callback</code> it will test <code>=</code> to "last time" in all renders.</p>
+recreated and change on each render, and so <code>callback</code> will test <code>=</code> to "last time" in all renders.</p>
 <p>Problem fixed?  Yes, but unfortunately, only for the simple case. Which really means "no, not fixed enough".</p>
 <h2 id="where-it-breaks-down">Where It Breaks Down<a class="headerlink" href="#where-it-breaks-down" title="Permanent link">&para;</a></h2>
 <p>Say, <code>parent</code> has an argument <code>id</code>. And, say, we need to use that in the callback. </p>
