@@ -1620,25 +1620,24 @@ are broken when one prop is an anonymous function because the value "this time' 
 <code>=</code> to last time, even though we can see they are the same function.</p>
 <h2 id="fixing-it">Fixing It<a class="headerlink" href="#fixing-it" title="Permanent link">&para;</a></h2>
 <p>Surely the way to fix this is simple: don't use an anonymous function.</p>
-<p>Consider this test:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">f</span> <span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">])</span>
-<span class="p">(</span><span class="nb">= </span><span class="nv">f</span> <span class="nv">f</span><span class="p">)</span>
-</code></pre></div>
-
-
-<p><strong><em>Question</em></strong>: what will <code>(= f f)</code> evaluate to? <code>true</code> or <code>false</code>? <br/>
-<strong><em>Answer</em></strong>: <code>true</code>.  <code>f</code> is a symbol which is bound to a function. So we are comparing the value bound to <code>f</code> (a function), and that will test <code>=</code> because it is the same function on both sides of <code>=</code>.</p>
-<p>Using that information, we create a function using <code>defn</code>. </p>
+<p>First we create:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">callback</span>
   <span class="p">[]</span>
   <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">]))</span>
 </code></pre></div>
 
 
-<p>And we use it:</p>
+<p>Then we perform a test: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">= </span><span class="nv">callback</span> <span class="nv">callback</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p><strong><em>Question</em></strong>: what will it evaluate to? <code>true</code> or <code>false</code>? <br/>
+<strong><em>Answer</em></strong>: <code>true</code>.  <code>callback</code> is a symbol which is bound to a function. So we are comparing the value bound to <code>callback</code> (a function), and that will test <code>=</code> because it is the same function on both sides of <code>=</code>.</p>
+<p>Let's use that; </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
   <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
-  <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="nv">callback</span><span class="p">])</span>
+  <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="nv">callback</span><span class="p">])</span>   <span class="c1">;; &lt;--- used here</span>
 </code></pre></div>
 
 
@@ -1646,7 +1645,7 @@ are broken when one prop is an anonymous function because the value "this time' 
 <p>In fact, we can make this simpler  by using a Form-2 function:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
   <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>   <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">])]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>   <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">])]</span>   <span class="c1">;; &lt;-- create here</span>
     <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span>
       <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="nv">callback</span><span class="p">])))</span>
 </code></pre></div>
@@ -1656,8 +1655,7 @@ are broken when one prop is an anonymous function because the value "this time' 
 recreated and change on each render, and so <code>callback</code> it will test <code>=</code> to "last time" in all renders.</p>
 <p>Problem fixed?  Yes, but unfortunately, only for the simple case. Which really means "no, not fixed enough".</p>
 <h2 id="where-it-breaks-down">Where It Breaks Down<a class="headerlink" href="#where-it-breaks-down" title="Permanent link">&para;</a></h2>
-<p>Say, <code>parent</code> has an argument <code>id</code>. And, say, we need to use that in the callback. Can we use the technique we
-just developed, like this:</p>
+<p>Say, <code>parent</code> has an argument <code>id</code>. And, say, we need to use that in the callback. </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
   <span class="p">[</span><span class="nv">id</span><span class="p">]</span>
   <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span> <span class="nv">id</span><span class="p">]))]</span>
@@ -1666,7 +1664,7 @@ just developed, like this:</p>
 </code></pre></div>
 
 
-<p>Solved it?  Sadly, no. Can you spot the bug? </p>
+<p>Does this work?  Sadly, no. Can you spot the bug? </p>
 <p><code>callback</code> has closed over the original value for <code>id</code> - the one given to the outer function.  <code>callback</code> will never dispatch the "latest" value of <code>id</code> 
 provided to the re-render function (notice that <code>id</code> is an argument to both the outer and inner functions in the Form-2 Component).</p>
 <h2 id="the-technique">The Technique<a class="headerlink" href="#the-technique" title="Permanent link">&para;</a></h2>
@@ -1680,12 +1678,14 @@ provided to the re-render function (notice that <code>id</code> is an argument t
 </code></pre></div>
 
 
-<p>Notes:
-1. <code>callback</code> no longer tries to "close over' <code>id</code>. Instead, it takes <code>id</code> as an argument.
-2. <code>callback-factory-factory</code> has a long name, and it performs the trick. It returns a function which, when called, will always return the same function, which wraps <code>callback</code>. (code supplied below)
-3. Each time we call <code>callback-factory</code>, it will return the same function. But it does it in a way which allows for <code>id</code> to vary on each render.</p>
+<p>Notes:</p>
+<ol>
+<li><code>callback</code> no longer tries to "close over' <code>id</code>. Instead, it takes <code>id</code> as an argument.</li>
+<li><code>callback-factory-factory</code> has a long name, and it performs the trick. It returns a function which, when called, will always return the same function, which wraps <code>callback</code>. (code supplied below)</li>
+<li>Each time we call <code>callback-factory</code>, it will return the same function. But it does it in a way which allows for <code>id</code> to vary on each render.</li>
+</ol>
 <p>Which only leaves me to show you the hero in our story, which I offer<br />
-without further explanation for you to investigate:</p>
+without further explanation for you to read and understand: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">callback-factory-factory</span>
   <span class="s">&quot;returns a function which will always return the `same-function` every time </span>
 <span class="s">   it is called. </span>
@@ -1704,7 +1704,7 @@ without further explanation for you to investigate:</p>
 
 
 <h2 id="more-advanced-again">More Advanced Again<a class="headerlink" href="#more-advanced-again" title="Permanent link">&para;</a></h2>
-<p>Sometimes the callback will need to accept a DOM event argument.</p>
+<p>Sometimes the callback will need to accept a DOM event argument. In the following code, notice <code>on-change</code>:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">some-input-view</span> 
   <span class="p">[</span><span class="nv">_</span><span class="p">]</span>
   <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">on-change</span>         <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">event</span><span class="p">]</span>    <span class="c1">;; &lt;-- Note 1</span>
@@ -1718,9 +1718,11 @@ without further explanation for you to investigate:</p>
 </code></pre></div>
 
 
-<p>Note: 
-1. this time the callback, <code>on-change</code>, takes two arguments. The <code>id</code> and the DOM <code>event</code>
-2. But when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling <code>event</code> later when it calls the callback. </p>
+<p>Note:</p>
+<ol>
+<li>this time the callback, <code>on-change</code>, takes two arguments. The <code>id</code> and the DOM <code>event</code></li>
+<li>But when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling <code>event</code> later when it calls the callback. </li>
+</ol>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>This page introduces an advanced technique. </p>
 <p>Reagent's method for avoiding unnecessary re-renders is subverted by "anonymous functions" and, 
