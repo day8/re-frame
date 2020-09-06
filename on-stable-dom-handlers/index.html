@@ -1556,7 +1556,7 @@ understanding it will deepen your knowledge about Reagent.</p>
 <ol>
 <li>repeatedly used on a page, perhaps within the rows of a list or cells of a grid</li>
 <li>and then be re-rendered <strong><em>a lot</em></strong></li>
-<li>involve the use of callbacks which are anonymous functions, created by renderers. </li>
+<li>and involve creating anonymous callback functions in re-renders </li>
 </ol>
 <h2 id="equality-tests">Equality Tests<a class="headerlink" href="#equality-tests" title="Permanent link">&para;</a></h2>
 <p>Equality tests are at the heart of the issue, so let's start by considering this one: </p>
@@ -1585,8 +1585,8 @@ Reagent calculates that it doesn't need to perform the re-render of <code>child<
 <p>Reagent assumes that <code>child</code> is rendered by a pure function and it deduces that giving a pure
 function the same props/args as last time, results in the same result (the same hiccup). 
 And so Reagent avoids doing this unnecessary work. It is an efficiency thing.</p>
-<p>Question: But how does Reagent check for this "sameness" between the props supplied "this render" vs the "last render"? <br/>
-Answer: by testing the props using <code>=</code> </p>
+<p><strong><em>Question</em></strong>:  But how does Reagent check for this "sameness" between the props supplied "this render" vs the "last render"? <br/>
+<strong><em>Answer</em></strong>: by testing the props using <code class="highlight"><span class="nv">=</span></code> </p>
 <p>So:</p>
 <ul>
 <li><code class="highlight"><span class="mi">1</span></code> (last time) is <code class="highlight"><span class="nv">=</span></code> to <code class="highlight"><span class="mi">1</span></code> (this time)</li>
@@ -1604,8 +1604,8 @@ Answer: by testing the props using <code>=</code> </p>
 
 <p><strong><em>Question</em></strong>:  will it evaluate to <code>true</code> or <code>false</code>? <br/>
 <strong><em>Answer</em></strong>: <code>false</code>. You might be able to see that the two anonymous functions are equal, 
-but <code>=</code> says "no". Annonomus functions are not like <code class="highlight"><span class="mi">1</span></code>  or <code class="highlight"><span class="ss">:2</span></code> </p>
-<p>Armed with this knowledge, what happens if we add a new prop for <code>child</code> and make it an annonomous callback fucntion?  Like this: </p>
+but <code>=</code> says "no". Anonymous functions are not like <code class="highlight"><span class="mi">1</span></code>  or <code class="highlight"><span class="ss">:2</span></code> </p>
+<p>Armed with this knowledge, what happens if we add a new prop for <code>child</code> and make it an anonymous callback fucntion?  Like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
   <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
   <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">]))])</span>
