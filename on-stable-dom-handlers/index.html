@@ -11,7 +11,7 @@
         <meta name="description" content="Derived data, flowing">
       
       
-        <link rel="canonical" href="https://day8.github.io/re-frame/EffectfulHandlers/">
+        <link rel="canonical" href="https://day8.github.io/re-frame/on-stable-dom-handlers/">
       
       
         <meta name="author" content="Mike Thompson">
@@ -21,7 +21,7 @@
     
     
     
-    <title>Effectful Handlers</title>
+    <title>Stable Dom Handlers</title>
     
 
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#events-happen" class="md-skip">
+        <a href="#equality-tests" class="md-skip">
           Skip to content
         </a>
       
@@ -137,7 +137,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              Effectful Handlers
+              Stable Dom Handlers
             
           </span>
         </div>
@@ -481,12 +481,10 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" checked>
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
     
     <label class="md-nav__link" for="nav-2-3">
       INTERMEDIATE 2 & 3
@@ -508,161 +506,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        Effectful Handlers
-        <span class="md-nav__icon md-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
-        </span>
-      </label>
-    
-    <a href="./" title="Effectful Handlers" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../EffectfulHandlers/" title="Effectful Handlers" class="md-nav__link">
       Effectful Handlers
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-      </span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#events-happen" class="md-nav__link">
-    Events Happen
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#handling-the-happening" class="md-nav__link">
-    Handling The Happening
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#your-handling" class="md-nav__link">
-    Your Handling
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#90-solution" class="md-nav__link">
-    90% Solution
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bad-why" class="md-nav__link">
-    Bad, Why?
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-2nd-kind-of-problem" class="md-nav__link">
-    The 2nd Kind Of Problem
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#effects-and-coeffects" class="md-nav__link">
-    Effects And Coeffects
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-does-this-happen" class="md-nav__link">
-    Why Does This Happen?
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#doing-vs-causing" class="md-nav__link">
-    Doing vs Causing
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#et-tu-react" class="md-nav__link">
-    Et tu, React?
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pattern-structure" class="md-nav__link">
-    Pattern Structure
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#effects-the-two-step-plan" class="md-nav__link">
-    Effects: The Two Step Plan
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-1-of-plan" class="md-nav__link">
-    Step 1 Of Plan
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#another-example" class="md-nav__link">
-    Another Example
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-coeffects" class="md-nav__link">
-    The Coeffects
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#variations-on-a-theme" class="md-nav__link">
-    Variations On A Theme
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    Summary
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
         
@@ -879,10 +727,12 @@
           
           
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7" checked>
     
     <label class="md-nav__link" for="nav-2-7">
       MORE ADVANCED
@@ -904,11 +754,98 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../on-stable-dom-handlers/" title="Stable Dom Handlers" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Stable Dom Handlers
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Stable Dom Handlers" class="md-nav__link md-nav__link--active">
       Stable Dom Handlers
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#equality-tests" class="md-nav__link">
+    Equality Tests
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implications-for-reagent" class="md-nav__link">
+    Implications For Reagent
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#but-wait-functions" class="md-nav__link">
+    But Wait, Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixing-it" class="md-nav__link">
+    Fixing It
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-it-breaks-down" class="md-nav__link">
+    Where It Breaks Down
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-technique" class="md-nav__link">
+    The Technique
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#more-advanced-again" class="md-nav__link">
+    More Advanced Again
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -1534,113 +1471,50 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#events-happen" class="md-nav__link">
-    Events Happen
+  <a href="#equality-tests" class="md-nav__link">
+    Equality Tests
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#handling-the-happening" class="md-nav__link">
-    Handling The Happening
+  <a href="#implications-for-reagent" class="md-nav__link">
+    Implications For Reagent
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#your-handling" class="md-nav__link">
-    Your Handling
+  <a href="#but-wait-functions" class="md-nav__link">
+    But Wait, Functions
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#90-solution" class="md-nav__link">
-    90% Solution
+  <a href="#fixing-it" class="md-nav__link">
+    Fixing It
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#bad-why" class="md-nav__link">
-    Bad, Why?
+  <a href="#where-it-breaks-down" class="md-nav__link">
+    Where It Breaks Down
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-2nd-kind-of-problem" class="md-nav__link">
-    The 2nd Kind Of Problem
+  <a href="#the-technique" class="md-nav__link">
+    The Technique
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#effects-and-coeffects" class="md-nav__link">
-    Effects And Coeffects
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-does-this-happen" class="md-nav__link">
-    Why Does This Happen?
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#doing-vs-causing" class="md-nav__link">
-    Doing vs Causing
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#et-tu-react" class="md-nav__link">
-    Et tu, React?
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pattern-structure" class="md-nav__link">
-    Pattern Structure
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#effects-the-two-step-plan" class="md-nav__link">
-    Effects: The Two Step Plan
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-1-of-plan" class="md-nav__link">
-    Step 1 Of Plan
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#another-example" class="md-nav__link">
-    Another Example
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-coeffects" class="md-nav__link">
-    The Coeffects
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#variations-on-a-theme" class="md-nav__link">
-    Variations On A Theme
+  <a href="#more-advanced-again" class="md-nav__link">
+    More Advanced Again
   </a>
   
 </li>
@@ -1664,7 +1538,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/day8/re-frame/edit/master/docs/EffectfulHandlers.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/day8/re-frame/edit/master/docs/on-stable-dom-handlers.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -1672,307 +1546,193 @@
                   
                 
                 
-                  <h1>Effectful Handlers</h1>
+                  <h1>Stable Dom Handlers</h1>
                 
-                <p>This tutorial shows you how to implement pure event handlers that side-effect.
-Yes, a surprising claim.</p>
-<h2 id="events-happen">Events Happen<a class="headerlink" href="#events-happen" title="Permanent link">&para;</a></h2>
-<p>Events "happen" when they are dispatched.</p>
-<p>So, this makes an event happen:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:repair-ming-vase</span> <span class="nv">true</span><span class="p">])</span>
-</code></pre></div>
-
-
-<p>Events are normally triggered by an external agent: the user clicks a button, or a server-pushed
-message arrives on a websocket.</p>
-<h2 id="handling-the-happening">Handling The Happening<a class="headerlink" href="#handling-the-happening" title="Permanent link">&para;</a></h2>
-<p>Once dispatched, an event must be "handled" - which means it must be processed or actioned.</p>
-<p>Events are mutative by nature. If your application is in one state before an
-event is processed, it will be in a different state afterwards.</p>
-<p>And that state change is very desirable. Without the state change our
-application can't incorporate that button click, or the newly arrived
-websocket message. Without mutation, an app would just sit there, stuck.</p>
-<p>State change is how an application "moves forward" - how it does its job.  Useful!</p>
-<p>On the other hand, control logic and state mutation tend to be the most
-complex and error prone part of an app.</p>
-<h2 id="your-handling">Your Handling<a class="headerlink" href="#your-handling" title="Permanent link">&para;</a></h2>
-<p>To help wrangle this potential complexity, re-frame's introduction
-provided you with a simple programming model.</p>
-<p>It said you should call <code>reg-event-db</code> to associate an event id,
-with a function to do the handling:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>        <span class="c1">;; &lt;-- call this to register a handler</span>
-    <span class="ss">:set-flag</span>                      <span class="c1">;; this is an event id</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">new-value</span><span class="p">]]</span>          <span class="c1">;; this function does the handling</span>
-      <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">new-value</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p>The function you register, handles events with a given <code>id</code>.</p>
-<p>And that handler <code>fn</code> is expected to be pure. Given the
-value in <code>app-db</code> as the first argument, and the event (vector)
-as the second argument, it is expected to provide a new value for <code>app-db</code>.</p>
-<p>Data in, a computation and data out. Pure.</p>
-<h2 id="90-solution">90% Solution<a class="headerlink" href="#90-solution" title="Permanent link">&para;</a></h2>
-<p>This paradigm provides a lovely solution 90% of the time, but there are times
-when it isn't enough.</p>
-<p>Here's an example from the messy 10%. To get its job done, this handler has to side effect:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">bool</span><span class="p">]]</span>
-       <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">])</span>    <span class="c1">;; oops, side-effect</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:send-spam</span> <span class="nv">new-val</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p>That <code>dispatch</code> queues up another event to be processed. It changes the world.</p>
-<p>Just to be clear, this code works.  The handler returns a new version of <code>db</code>, so tick,
-and that <code>dispatch</code> will itself be "handled" asynchronously
-very shortly after this handler finishes, double tick.</p>
-<p>So, you can "get away with it".  But it ain't pure.</p>
-<p>And here's more carnage:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>
-       <span class="p">(</span><span class="nf">GET</span> <span class="s">&quot;http://json.my-endpoint.com/blah&quot;</span>   <span class="c1">;; dirty great big side-effect</span>
-            <span class="p">{</span><span class="ss">:handler</span>       <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:process-response</span> <span class="nv">%1</span><span class="p">])</span>
-             <span class="ss">:error-handler</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:bad-response</span> <span class="nv">%1</span><span class="p">])})</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p>Again, this approach will work. But that dirty great big side-effect doesn't come
-for free. It's like a muddy monster truck has shown up in our field of white tulips.</p>
-<h2 id="bad-why">Bad, Why?<a class="headerlink" href="#bad-why" title="Permanent link">&para;</a></h2>
-<p>The moment we stop writing pure functions there are well documented
-consequences:</p>
+                <p>This page describes an advanced technique to avoid Reagent's "anonymous callback" inefficiency. </p>
+<p>This technique is only useful when you are writing 
+performance-critical components. Indeed, you may never need it, but 
+understanding it will deepen your knowledge about Reagent.</p>
+<p>A performance-critical component would need to be: </p>
 <ol>
-<li>Cognitive load for the function's later readers goes up because they can no longer reason locally.</li>
-<li>Testing becomes more difficult and involves "mocking".  How do we test that the http GET above is
-     using the right URL?  "mocking" should be mocked. It is a bad omen.</li>
-<li>And event replay-ability is lost.</li>
+<li>repeatedly used on a page, perhaps within the rows of a list or cells of a grid</li>
+<li>and then be re-rendered <strong><em>a lot</em></strong></li>
+<li>involve the use of callbacks which are anonymous functions, created by renderers. </li>
 </ol>
-<p>Regarding the 3rd point above, a re-frame application proceeds step by step, like a reduce. From the README:</p>
-<blockquote>
-<p>at any one time, the value in app-db is the result of performing a reduce over the entire
-collection of events dispatched in the app up until that time. The combining
-function for this reduce is the set of registered event handlers.</p>
-</blockquote>
-<p>Such a collection of events is replay-able which is a dream for debugging and testing. But only
-when all the handlers are pure. Handlers with side-effects (like that HTTP GET, or the <code>dispatch</code>) pollute the
-replay, inserting extra events into it, etc., which ruins the process.</p>
-<h2 id="the-2nd-kind-of-problem">The 2nd Kind Of Problem<a class="headerlink" href="#the-2nd-kind-of-problem" title="Permanent link">&para;</a></h2>
-<p>And there's the other kind of purity problem:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:load-localstore</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-     <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">val </span><span class="p">(</span><span class="nf">js-&gt;clj</span> <span class="p">(</span><span class="nf">.getItem</span> <span class="nv">js/localStorage</span> <span class="s">&quot;defaults-key&quot;</span><span class="p">))]</span>  <span class="c1">;; &lt;-- Problem</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:defaults</span> <span class="nv">val</span><span class="p">))))</span>
+<h2 id="equality-tests">Equality Tests<a class="headerlink" href="#equality-tests" title="Permanent link">&para;</a></h2>
+<p>Equality tests are at the heart of the issue, so let's start by considering this one: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">= </span><span class="p">[</span><span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span><span class="p">]</span>
+   <span class="p">[</span><span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span><span class="p">])</span>
 </code></pre></div>
 
 
-<p>You'll notice the event handler obtains data from LocalStore.</p>
-<p>Although this handler has no side effect - it doesn't need to change the world - that action of
-obtaining data from somewhere other than its arguments, means it isn't pure.</p>
-<h2 id="effects-and-coeffects">Effects And Coeffects<a class="headerlink" href="#effects-and-coeffects" title="Permanent link">&para;</a></h2>
-<p>When striving for pure event handlers <a href="http://tomasp.net/blog/2014/why-coeffects-matter/">there are two considerations</a>:</p>
+<p><strong><em>Question</em></strong>: will it evaluate to <code>true</code> or <code>false</code>? <br/>
+<strong><em>Answer</em></strong>: <code>true</code>. Because the elements <code class="highlight"><span class="mi">1</span></code>, <code class="highlight"><span class="ss">:2</span></code> and <code class="highlight"><span class="s">&quot;3&quot;</span></code> are identities, so different instances test equal, and because vector equality is determined by element equality.</p>
+<h2 id="implications-for-reagent">Implications For Reagent<a class="headerlink" href="#implications-for-reagent" title="Permanent link">&para;</a></h2>
+<p>Reagent uses equality checks on props to avoid doing unnecessary work. </p>
+<p>Consider this view: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
+  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+  <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span><span class="p">])</span>
+</code></pre></div>
+
+
+<p>Imagine that <code>parent</code> has already rendered once. And then something causes
+it to re-render (perhaps its parent re-renders and supplies a different <code>x</code>).</p>
+<p>When <code>parent</code> re-renders, it will re-render <code>child</code> and supply three 
+props: <code class="highlight"><span class="mi">1</span></code>, <code class="highlight"><span class="ss">:2</span></code> and <code class="highlight"><span class="s">&quot;3&quot;</span></code>. But these props
+will be the same as the ones supplied with the "last render" and, as a result,
+Reagent calculates that it doesn't need to perform the re-render of <code>child</code>.</p>
+<p>Reagent assumes that <code>child</code> is rendered by a pure function and it deduces that giving a pure
+function the same props/args as last time, results in the same result (the same hiccup). 
+And so Reagent avoids doing this unnecessary work. It is an efficiency thing.</p>
+<p>Question: But how does Reagent check for this "sameness" between the props supplied "this render" vs the "last render"? <br/>
+Answer: by testing the props using <code>=</code> </p>
+<p>So:</p>
 <ul>
-<li><strong>Effects</strong> - what your event handler does to the world  (aka side-effects)</li>
-<li><strong>Coeffects</strong> - the data your event handler requires from the world in order
-    to do its computation (aka <a href="http://blog.jenkster.com/2015/12/what-is-functional-programming.html">side-causes</a>)</li>
+<li><code class="highlight"><span class="mi">1</span></code> (last time) is <code class="highlight"><span class="nv">=</span></code> to <code class="highlight"><span class="mi">1</span></code> (this time)</li>
+<li><code class="highlight"><span class="ss">:2</span></code> is <code class="highlight"><span class="nv">=</span></code> to <code class="highlight"><span class="ss">:2</span></code></li>
+<li>and <code class="highlight"><span class="s">&quot;3&quot;</span></code> too is equal to last time</li>
 </ul>
-<p>We'll need a solution for both.</p>
-<h2 id="why-does-this-happen">Why Does This Happen?<a class="headerlink" href="#why-does-this-happen" title="Permanent link">&para;</a></h2>
-<p>It is inevitable that, say, 10% of your event handlers have effects and coeffects.</p>
-<p>They have to implement the control logic of your re-frame app, which
-means dealing with the outside, mutative world of servers, databases,
-window.location, LocalStore, cookies, etc.</p>
-<p>There's just no getting away from living in a mutative world, which sounds pretty ominous. Is that it? Are we doomed to impurity?</p>
-<p>Well, luckily a small twist in the tale makes a profound difference. We
-will look at side-effects first. Instead of creating event handlers
-which <em>do side-effects</em>, we'll instead get them to <em>cause side-effects</em>.</p>
-<h2 id="doing-vs-causing">Doing vs Causing<a class="headerlink" href="#doing-vs-causing" title="Permanent link">&para;</a></h2>
-<p>I proudly claim that this event handler is pure:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-      <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)))</span>
+<p>All three props are <code>=</code> to last time, which allows Reagent to skip the re-render of <code>child</code>. </p>
+<h2 id="but-wait-functions">But Wait, Functions<a class="headerlink" href="#but-wait-functions" title="Permanent link">&para;</a></h2>
+<p>Next step: we introduce anonymous callback functions.</p>
+<p>Consider this test: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">n</span><span class="p">]</span> <span class="p">(</span><span class="nb">+ </span><span class="nv">n</span> <span class="mi">1</span><span class="p">))</span>
+   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">n</span><span class="p">]</span> <span class="p">(</span><span class="nb">+ </span><span class="nv">n</span> <span class="mi">1</span><span class="p">)))</span>
 </code></pre></div>
 
 
-<p>Takes a <code>db</code> value, computes and returns a <code>db</code> value. No coeffects or effects. Yep, that's Pure!</p>
-<p>Yes, all true, but ... this purity is only possible because re-frame is doing
-the necessary side-effecting.</p>
-<p>Wait on.  What "necessary side-effecting"?</p>
-<p>Well, application state is stored in <code>app-db</code>, right?  And it is a ratom. And after
-each event handler runs, it must be <code>reset!</code> to the newly returned
-value. Notice <code>reset!</code>.   That, right there, is the "necessary side effecting".</p>
-<p>We get to live in our ascetic functional world because re-frame is
-looking after the "necessary side-effects" on <code>app-db</code>.</p>
-<h2 id="et-tu-react">Et tu, React?<a class="headerlink" href="#et-tu-react" title="Permanent link">&para;</a></h2>
-<p>Turns out it's the same pattern with Reagent/React.</p>
-<p>We get to write a nice pure component, like:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">say-hi</span>
-  <span class="p">[</span><span class="nv">name</span><span class="p">]</span>
-  <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Hello &quot;</span> <span class="nv">name</span><span class="p">])</span>
+<p><strong><em>Question</em></strong>:  will it evaluate to <code>true</code> or <code>false</code>? <br/>
+<strong><em>Answer</em></strong>: <code>false</code>. You might be able to see that the two anonymous functions are equal, 
+but <code>=</code> says "no". Annonomus functions are not like <code class="highlight"><span class="mi">1</span></code>  or <code class="highlight"><span class="ss">:2</span></code> </p>
+<p>Armed with this knowledge, what happens if we add a new prop for <code>child</code> and make it an annonomous callback fucntion?  Like this: </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
+  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+  <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">]))])</span>
 </code></pre></div>
 
 
-<p>and Reagent/React mutates the DOM for us. The framework is looking
-after the "necessary side-effects".</p>
-<h2 id="pattern-structure">Pattern Structure<a class="headerlink" href="#pattern-structure" title="Permanent link">&para;</a></h2>
-<p>Pause and look back at <code>say-hi</code>. I'd like you to view it through the
-following lens:  it is a pure function which <strong>returns a description
-of the side-effects required</strong>. It says: add a div element to the DOM.</p>
-<p>Notice that the description is declarative. We don't tell React how to do it.</p>
-<p>Notice also that it is data. Hiccup is just vectors and maps.</p>
-<p>This is a big, important concept.  While we can't get away from certain side-effects, we can
-program using pure functions which <strong>describe side-effects, declaratively, in data</strong> and
-let the backing framework look after the "doing" of them. Efficiently. Discreetly.</p>
-<p>Let's use this pattern to solve the side-effecting event-handler problem.</p>
-<h2 id="effects-the-two-step-plan">Effects: The Two Step Plan<a class="headerlink" href="#effects-the-two-step-plan" title="Permanent link">&para;</a></h2>
-<p>From here, two steps:</p>
-<ol>
-<li>Work out how event handlers can declaratively describe side-effects, in data.</li>
-<li>Work out how re-frame can do the "necessary side-effecting". Efficiently and discreetly.</li>
-</ol>
-<h2 id="step-1-of-plan">Step 1 Of Plan<a class="headerlink" href="#step-1-of-plan" title="Permanent link">&para;</a></h2>
-<p>So, how would it look if event handlers returned side-effects, declaratively, in data?</p>
-<p>Here is an impure, side effecting handler:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>
-       <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">])</span>    <span class="c1">;; &lt;-- Eeek, side-effect</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)))</span>
+<p>So, that's now four props given to <code>child</code>. The first three of them are as before. But the new last one is 
+an anonymous function. </p>
+<p>What a difference that new one makes!! Now, every time <code>parent</code> is re-rendered, <code>child</code>
+will also be re-rendered. Every time. Reagent's efficiency checks which try to avoid unnecessary work 
+are broken when one prop is an anonymous function because the value "this time' does not test 
+<code>=</code> to last time, even though we can see they are the same function.</p>
+<h2 id="fixing-it">Fixing It<a class="headerlink" href="#fixing-it" title="Permanent link">&para;</a></h2>
+<p>Surely the way to fix this is simple: don't use an anonymous function.</p>
+<p>Consider this test:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">f</span> <span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">])</span>
+<span class="p">(</span><span class="nb">= </span><span class="nv">f</span> <span class="nv">f</span><span class="p">)</span>
 </code></pre></div>
 
 
-<p>Here it is re-written so as to be pure:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>                              <span class="c1">;; &lt;1&gt;</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>                <span class="c1">;; &lt;2&gt;</span>
-      <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)</span>          <span class="c1">;; &lt;3&gt;</span>
-       <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">]}))</span>
+<p><strong><em>Question</em></strong>: what will <code>(= f f)</code> evaluate to? <code>true</code> or <code>false</code>? <br/>
+<strong><em>Answer</em></strong>: <code>true</code>.  <code>f</code> is a symbol which is bound to a function. So we are comparing the value bound to <code>f</code> (a function), and that will test <code>=</code> because it is the same function on both sides of <code>=</code>.</p>
+<p>Using that information, we create a function using <code>defn</code>. </p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">callback</span>
+  <span class="p">[]</span>
+  <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">]))</span>
 </code></pre></div>
 
 
-<p>Notes: <br>
-<em>&lt;1&gt;</em> we're using <code>reg-event-fx</code> instead of <code>reg-event-db</code> to register  (that's <code>-db</code> vs <code>-fx</code>) <br>
-<em>&lt;2&gt;</em> the first parameter is no longer just <code>db</code>.  It is a map from which
-<a href="http://clojure.org/guides/destructuring">we are destructuring db</a>, i.e.
-it is a map which contains a <code>:db</code> key. <br>
-<em>&lt;3&gt;</em> The handler is returning a data structure (map) which describes two side-effects:</p>
-<ul>
-<li>a change to application state, via the <code>:db</code> key</li>
-<li>a further event, via the <code>:dispatch</code> key</li>
-</ul>
-<p>Above, the impure handler <strong>did</strong> a <code>dispatch</code> side-effect, while the pure handler <strong>described</strong>
-a <code>dispatch</code> side-effect.</p>
-<h2 id="another-example">Another Example<a class="headerlink" href="#another-example" title="Permanent link">&para;</a></h2>
-<p>The impure way:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>
-       <span class="p">(</span><span class="nf">GET</span> <span class="s">&quot;http://json.my-endpoint.com/blah&quot;</span>   <span class="c1">;; dirty great big side-effect</span>
-            <span class="p">{</span><span class="ss">:handler</span>       <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:process-response</span> <span class="nv">%1</span><span class="p">])</span>
-             <span class="ss">:error-handler</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:bad-response</span> <span class="nv">%1</span><span class="p">])})</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)))</span>
+<p>And we use it:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
+  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+  <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="nv">callback</span><span class="p">])</span>
 </code></pre></div>
 
 
-<p>the pure, descriptive alternative:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>
-       <span class="p">{</span><span class="ss">:http</span> <span class="p">{</span><span class="ss">:method</span> <span class="ss">:get</span>
-               <span class="ss">:url</span>    <span class="s">&quot;http://json.my-endpoint.com/blah&quot;</span>
-               <span class="ss">:on-success</span>  <span class="p">[</span><span class="ss">:process-blah-response</span><span class="p">]</span>
-               <span class="ss">:on-fail</span>     <span class="p">[</span><span class="ss">:failed-blah</span><span class="p">]}</span>
-        <span class="ss">:db</span>   <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)}))</span>
+<p>Now all four props for <code>child</code> will test <code>=</code> to last time. And <code>child</code> won't be re-rendered. </p>
+<p>In fact, we can make this simpler  by using a Form-2 function:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
+  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>   <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">])]</span>
+    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+      <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="nv">callback</span><span class="p">])))</span>
 </code></pre></div>
 
 
-<p>Again, the old way <strong>did</strong> a side-effect (Booo!) and the new way <strong>describes</strong>, declaratively,
-in data, the side-effects required (Yaaa!).</p>
-<p>More on side effects in a minute, but let's double back to coeffects.</p>
-<h2 id="the-coeffects">The Coeffects<a class="headerlink" href="#the-coeffects" title="Permanent link">&para;</a></h2>
-<p>So far we've written our new style <code>-fx</code> handlers like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">event</span><span class="p">]</span>   <span class="c1">;; &lt;--  destructuring to get db</span>
-       <span class="p">{</span> <span class="nv">...</span> <span class="p">}))</span>
+<p>The outside function creates the anonymous function, which means it doesn't get
+recreated and change on each render, and so <code>callback</code> it will test <code>=</code> to "last time" in all renders.</p>
+<p>Problem fixed?  Yes, but unfortunately, only for the simple case. Which really means "no, not fixed enough".</p>
+<h2 id="where-it-breaks-down">Where It Breaks Down<a class="headerlink" href="#where-it-breaks-down" title="Permanent link">&para;</a></h2>
+<p>Say, <code>parent</code> has an argument <code>id</code>. And, say, we need to use that in the callback. Can we use the technique we
+just developed, like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
+  <span class="p">[</span><span class="nv">id</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span> <span class="nv">id</span><span class="p">]))]</span>
+    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span><span class="p">]</span>
+      <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span> <span class="nv">callback</span><span class="p">])))</span>
 </code></pre></div>
 
 
-<p>It is now time to name that first argument:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="nv">event</span><span class="p">]</span>       <span class="c1">;;  &lt;--- thy name be cofx</span>
-       <span class="p">{</span> <span class="nv">...</span> <span class="p">}))</span>
+<p>Solved it?  Sadly, no. Can you spot the bug? </p>
+<p><code>callback</code> has closed over the original value for <code>id</code> - the one given to the outer function.  <code>callback</code> will never dispatch the "latest" value of <code>id</code> 
+provided to the re-render function (notice that <code>id</code> is an argument to both the outer and inner functions in the Form-2 Component).</p>
+<h2 id="the-technique">The Technique<a class="headerlink" href="#the-technique" title="Permanent link">&para;</a></h2>
+<p>So, enough preamble and explanation, here's the real solution - and it has three parts:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
+  <span class="p">[</span><span class="nv">id</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>          <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">the-id</span><span class="p">]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span> <span class="nv">the-id</span><span class="p">]))</span>   <span class="c1">;; &lt;-- Note 1</span>
+        <span class="nv">callback-factory</span>  <span class="p">(</span><span class="nf">callback-factory-factory</span> <span class="nv">callback</span><span class="p">)]</span>           <span class="c1">;; &lt;-- Note 2</span>
+    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span><span class="p">]</span>
+      <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="p">(</span><span class="nf">callback-factory</span> <span class="nv">id</span><span class="p">)])</span>    <span class="c1">;; &lt;-- Note 3</span>
 </code></pre></div>
 
 
-<p>When you use the <code>-fx</code> form of registration, the first argument
-of your handler will be a map of coeffects which we name <code>cofx</code>.</p>
-<p>In that map will be the complete set of "inputs" required by your function.  The complete
-set of computational resources (data) needed to perform its computation. But how?
-This will be explained in an upcoming tutorial, I promise, but for the moment,
-take it as a magical given.</p>
-<p>One of the keys in <code>cofx</code> will likely be <code>:db</code> and that will be the value of <code>app-db</code>.</p>
-<p>Remember this impure handler from before:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>            <span class="c1">;;  a -db registration</span>
- <span class="ss">:load-localstore</span>
- <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>              <span class="c1">;; db first argument</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">defaults</span> <span class="p">(</span><span class="nf">js-&gt;clj</span> <span class="p">(</span><span class="nf">.getItem</span> <span class="nv">js/localStorage</span> <span class="s">&quot;defaults-key&quot;</span><span class="p">))]</span>  <span class="c1">;; &lt;--  Eeek!!</span>
-    <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:defaults</span> <span class="nv">defaults</span><span class="p">))))</span>
+<p>Notes:
+1. <code>callback</code> no longer tries to "close over' <code>id</code>. Instead, it takes <code>id</code> as an argument.
+2. <code>callback-factory-factory</code> has a long name, and it performs the trick. It returns a function which, when called, will always return the same function, which wraps <code>callback</code>. (code supplied below)
+3. Each time we call <code>callback-factory</code>, it will return the same function. But it does it in a way which allows for <code>id</code> to vary on each render.</p>
+<p>Which only leaves me to show you the hero in our story, which I offer<br />
+without further explanation for you to investigate:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">callback-factory-factory</span>
+  <span class="s">&quot;returns a function which will always return the `same-function` every time </span>
+<span class="s">   it is called. </span>
+<span class="s">   `same-function` is what actually calls your `callback` and, when it does,</span>
+<span class="s">   it supplies any necessary args, including those supplied at wrapper creation</span>
+<span class="s">   time and any supplied by the browser (a DOM event object?) at call time.&quot;</span> 
+  <span class="p">[</span><span class="nv">the-real-callback</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">*args1</span>        <span class="p">(</span><span class="nf">atom</span> <span class="nv">nil</span><span class="p">)</span>
+        <span class="nv">same-callback</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="o">&amp;</span> <span class="nv">args2</span><span class="p">]</span>
+                        <span class="p">(</span><span class="nb">apply </span><span class="nv">the-real-callback</span> <span class="p">(</span><span class="nb">concat </span><span class="o">@</span><span class="nv">*args1</span> <span class="nv">args2</span><span class="p">)))]</span>
+    <span class="p">(</span><span class="k">fn </span><span class="nv">callback-factory</span>
+      <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args1</span><span class="p">]</span>                   
+      <span class="p">(</span><span class="nf">reset!</span> <span class="nv">*args1</span> <span class="nv">args1</span><span class="p">))</span>
+      <span class="nv">same-callback</span><span class="p">)))</span>               <span class="c1">;; &lt;-- always return the same function</span>
 </code></pre></div>
 
 
-<p>It was impure because it obtained an input from other than its arguments.
-We'd now rewrite it as a pure handler, like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>             <span class="c1">;; notice the -fx</span>
-   <span class="ss">:load-localstore</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span>  <span class="nv">_</span><span class="p">]</span>          <span class="c1">;; cofx is a map containing inputs</span>
-     <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">defaults</span> <span class="p">(</span><span class="ss">:local-store</span> <span class="nv">cofx</span><span class="p">)]</span>  <span class="c1">;; &lt;--  use it here</span>
-       <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="ss">:db</span> <span class="nv">cofx</span><span class="p">)</span> <span class="ss">:defaults</span> <span class="nv">defaults</span><span class="p">)})))</span>  <span class="c1">;; returns effects map</span>
+<h2 id="more-advanced-again">More Advanced Again<a class="headerlink" href="#more-advanced-again" title="Permanent link">&para;</a></h2>
+<p>Sometimes the callback will need to accept a DOM event argument.</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">some-input-view</span> 
+  <span class="p">[</span><span class="nv">_</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">on-change</span>         <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">event</span><span class="p">]</span>    <span class="c1">;; &lt;-- Note 1</span>
+                            <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:changed</span> <span class="nv">id</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">event</span> <span class="nv">.-target</span> <span class="nv">.-value</span><span class="p">)]))</span>
+        <span class="nv">on-change-factory</span> <span class="p">(</span><span class="nf">callback-factory-factory</span> <span class="nv">on-change</span><span class="p">)]</span>
+
+    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">text</span><span class="p">]</span>
+       <span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:type</span>      <span class="s">&quot;text&quot;</span> 
+                <span class="ss">:value</span>     <span class="nv">text</span>
+                <span class="ss">:on-change</span> <span class="p">(</span><span class="nf">on-change-factory</span> <span class="nv">id</span><span class="p">)}]</span> <span class="p">])))</span>   <span class="c1">;; &lt;-- Note 2</span>
 </code></pre></div>
 
 
-<p>So, by some magic, not yet revealed, LocalStore will be queried before
-this handler runs and the required value from it will be placed into
-<code>cofx</code> under the key <code>:local-store</code> for the handler to use.</p>
-<p>That process leaves the handler itself pure because it only sources
-data from arguments.</p>
-<h2 id="variations-on-a-theme">Variations On A Theme<a class="headerlink" href="#variations-on-a-theme" title="Permanent link">&para;</a></h2>
-<p><code>-db</code> handlers and <code>-fx</code> handlers are conceptually the same. They only differ numerically.</p>
-<p><code>-db</code> handlers take <strong>one</strong> coeffect called <code>db</code>, and they return only <strong>one</strong>  effect (db again).</p>
-<p>Whereas <code>-fx</code> handlers take potentially <strong>many</strong> coeffects (a map of them) and they return
-potentially <strong>many</strong> effects (a map of them). So, One vs Many.</p>
-<p>Just to be clear, the following two handlers achieve the same thing:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:set-flag</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">new-value</span><span class="p">]]</span>
-      <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">new-value</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p>vs</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-   <span class="ss">:set-flag</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">new-value</span><span class="p">]]</span>
-      <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="ss">:db</span> <span class="nv">cofx</span><span class="p">)</span> <span class="ss">:flag</span> <span class="nv">new-value</span><span class="p">)}))</span>
-</code></pre></div>
-
-
-<p>Obviously the <code>-db</code> variation is simpler and you'd use it whenever you
-can. The <code>-fx</code> version is more flexible, so it will sometimes have its place.</p>
+<p>Note: 
+1. this time the callback, <code>on-change</code>, takes two arguments. The <code>id</code> and the DOM <code>event</code>
+2. But when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling <code>event</code> later when it calls the callback. </p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<p>90% of the time, simple <code>-db</code> handlers are the right tool to use.</p>
-<p>But about 10% of the time, our handlers need additional inputs (coeffects) or they need to
-cause additional side-effects (effects).  That's when you reach for <code>-fx</code> handlers.</p>
-<p><code>-fx</code> handlers allow us to return effects, declaratively in data.</p>
-<p>In the next tutorial, we'll shine a light on <code>interceptors</code> which are
-the mechanism by which  event handlers are executed. That knowledge will give us a springboard
-to then, as a next step, better understand coeffects and effects. We'll soon be writing our own.</p>
+<p>This page introduces an advanced technique. </p>
+<p>Reagent's method for avoiding unnecessary re-renders is subverted by "anonymous functions" and, 
+specifically, callbacks which are generated by successive renders. These functions do not 
+test equal to each other, even though we programmers can see they are the same each time.  </p>
+<p>Most of the time, we ignore this issue. We happily accept the small inefficiency 
+this potentially causes because we get to write clear, terse code, and we value that highly. </p>
+<p>But, in some rare situations, this small inefficiency can accumulate into a problem when 
+there are large numbers of the same components simultaneously on a page, and when they are
+unnecessarily redrawn a lot. </p>
+<p>When it does become a problem, this page showed you a technique for fixing the issue, but it 
+comes at the cost of you having to write more code, and introduce an abstraction based on <code>callback-factory-factory</code>.</p>
                 
               
               
@@ -2023,8 +1783,8 @@ to then, as a next step, better understand coeffects and effects. We'll soon be 
         <!-- Link to previous page -->
         
           <a
-            href="../dominoes-live/"
-            title="Live"
+            href="../historical/"
+            title="Historical"
             class="md-footer-nav__link md-footer-nav__link--prev"
             rel="prev"
           >
@@ -2036,7 +1796,7 @@ to then, as a next step, better understand coeffects and effects. We'll soon be 
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Live
+                Historical
               </div>
             </div>
           </a>
@@ -2045,8 +1805,8 @@ to then, as a next step, better understand coeffects and effects. We'll soon be 
         <!-- Link to next page -->
         
           <a
-            href="../Interceptors/"
-            title="Interceptors"
+            href="../browser-dynamics/"
+            title="Browser Dynamics"
             class="md-footer-nav__link md-footer-nav__link--next"
             rel="next"
           >
@@ -2055,7 +1815,7 @@ to then, as a next step, better understand coeffects and effects. We'll soon be 
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Interceptors
+                Browser Dynamics
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
