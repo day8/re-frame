@@ -90,26 +90,25 @@ are broken when one prop is an anonymous function because the value "this time' 
 
 Surely the way to fix this is simple: don't use an anonymous function.
 
-Consider this test:
+First we create:
 ```clj
-(defn f [] (dispatch [:something])
-(= f f)
-```
-***Question***: what will `(= f f)` evaluate to? `true` or `false`? <br/>
-***Answer***: `true`.  `f` is a symbol which is bound to a function. So we are comparing the value bound to `f` (a function), and that will test `=` because it is the same function on both sides of `=`.
-
-Using that information, we create a function using `defn`. 
-```clj 
 (defn callback
   []
   (dispatch [:something]))
 ```
 
-And we use it:
+Then we perform a test: 
+```clj
+(= callback callback)
+```
+***Question***: what will it evaluate to? `true` or `false`? <br/>
+***Answer***: `true`.  `callback` is a symbol which is bound to a function. So we are comparing the value bound to `callback` (a function), and that will test `=` because it is the same function on both sides of `=`.
+
+Let's use that; 
 ```clj 
 (defn parent
   [x]
-  [child 1 :2 "3"  callback])
+  [child 1 :2 "3"  callback])   ;; <--- used here
 ```
 
 Now all four props for `child` will test `=` to last time. And `child` won't be re-rendered. 
@@ -118,7 +117,7 @@ In fact, we can make this simpler  by using a Form-2 function:
 ```clj 
 (defn parent
   [x]
-  (let [callback   #(dispatch [:something])]
+  (let [callback   #(dispatch [:something])]   ;; <-- create here
     (fn [x]
       [child 1 :2 "3"  callback])))
 ```
@@ -130,8 +129,7 @@ Problem fixed?  Yes, but unfortunately, only for the simple case. Which really m
 
 ## Where It Breaks Down 
 
-Say, `parent` has an argument `id`. And, say, we need to use that in the callback. Can we use the technique we
-just developed, like this:
+Say, `parent` has an argument `id`. And, say, we need to use that in the callback. 
 ```clj 
 (defn parent
   [id]
@@ -140,7 +138,7 @@ just developed, like this:
       [child 1 :2 "3" callback])))
 ```
 
-Solved it?  Sadly, no. Can you spot the bug? 
+Does this work?  Sadly, no. Can you spot the bug? 
 
 `callback` has closed over the original value for `id` - the one given to the outer function.  `callback` will never dispatch the "latest" value of `id` 
 provided to the re-render function (notice that `id` is an argument to both the outer and inner functions in the Form-2 Component).
@@ -159,13 +157,14 @@ So, enough preamble and explanation, here's the real solution - and it has three
 ```
 
 Notes:
+
 1. `callback` no longer tries to "close over' `id`. Instead, it takes `id` as an argument.
 2. `callback-factory-factory` has a long name, and it performs the trick. It returns a function which, when called, will always return the same function, which wraps `callback`. (code supplied below)
 3. Each time we call `callback-factory`, it will return the same function. But it does it in a way which allows for `id` to vary on each render.
 
 
 Which only leaves me to show you the hero in our story, which I offer  
-without further explanation for you to investigate:
+without further explanation for you to read and understand: 
 ```clj
 (defn callback-factory-factory
   "returns a function which will always return the `same-function` every time 
@@ -185,7 +184,7 @@ without further explanation for you to investigate:
 
 ## More Advanced Again
 
-Sometimes the callback will need to accept a DOM event argument.
+Sometimes the callback will need to accept a DOM event argument. In the following code, notice `on-change`:
 ```clj
 (defn some-input-view 
   [_]
@@ -198,7 +197,8 @@ Sometimes the callback will need to accept a DOM event argument.
                 :value     text
                 :on-change (on-change-factory id)}] ])))   ;; <-- Note 2
 ```
-Note: 
+Note:
+
 1. this time the callback, `on-change`, takes two arguments. The `id` and the DOM `event`
 2. But when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling `event` later when it calls the callback. 
 
