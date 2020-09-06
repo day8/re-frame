@@ -59,6 +59,7 @@ nav:
       - "Interconnections": interconnections.md
       - "Historical": historical.md
     - MORE ADVANCED:
+      - Stable Dom Handlers: on-stable-dom-handlers.md
       - Browser Dynamics: browser-dynamics.md
       - Reusable Components: reusable-components.md
       - App Structure: App-Structure.md
