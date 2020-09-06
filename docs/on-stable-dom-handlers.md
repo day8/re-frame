@@ -70,7 +70,7 @@ Consider this test:
 ***Answer***: `false`. You might be able to see that the two anonymous functions are equal, 
 but `=` says "no". Anonymous functions are not like `#!clj 1`  or `#!clj :2` 
 
-Armed with this knowledge, what happens if we add a new prop for `child` and make it an anonymous callback fucntion?  Like this: 
+Armed with this knowledge, what happens if we add a new prop for `child` and make it an anonymous callback function?  Like this: 
 ```clj 
 (defn parent
   [x]
@@ -82,7 +82,7 @@ an anonymous function.
 
 What a difference that new one makes!! Now, every time `parent` is re-rendered, `child`
 will also be re-rendered. Every time. Reagent's efficiency checks which try to avoid unnecessary work 
-are broken when one prop is an anonymous function because the value "this time' does not test 
+are broken when one prop is an anonymous function because the value "this time" does not test 
 `=` to last time, even though we can see they are the same function.
 
 
@@ -123,7 +123,7 @@ In fact, we can make this simpler  by using a Form-2 function:
 ```
 
 The outside function creates the anonymous function, which means it doesn't get
-recreated and change on each render, and so `callback` it will test `=` to "last time" in all renders.
+recreated and change on each render, and so `callback` will test `=` to "last time" in all renders.
 
 Problem fixed?  Yes, but unfortunately, only for the simple case. Which really means "no, not fixed enough".
 
