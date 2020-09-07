@@ -1444,6 +1444,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#unpack" class="md-nav__link">
+    unpack
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#trim-v" class="md-nav__link">
     trim-v
   </a>
@@ -2029,6 +2036,13 @@
           <li class="md-nav__item">
   <a href="#enrich" class="md-nav__link">
     enrich
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unpack" class="md-nav__link">
+    unpack
   </a>
   
 </li>
@@ -2780,6 +2794,19 @@ we keep the handlers simple and yet we ensure this important step
 any CRUD operation.</p>
 <p>This brings huge simplicity at the expense of some re-computation
 each time. This may be a very satisfactory trade-off in many cases.</p>
+<h3 id="unpack">unpack<a class="headerlink" href="#unpack" title="Permanent link">&para;</a></h3>
+<p>An interceptor which provides the second element of the event vector to the
+ event handler as the event, intended to be used with the second element as a
+ map.</p>
+<p>Your event handlers will look like this:</p>
+<div class="codehilite"><pre><span></span><code> (reg-event-fx
+   :event-id
+   [... unpack ...]                    ;; &lt;-- added to the interceptors
+   (fn [{:keys [db]} {:keys [x y z]}]  ;; &lt;-- instead of [_ {:keys [x y z]}]
+     ...)
+</code></pre></div>
+
+
 <h3 id="trim-v">trim-v<a class="headerlink" href="#trim-v" title="Permanent link">&para;</a></h3>
 <p>An interceptor which removes the first element of the event vector,
 before it is supplied to the event handler, allowing you to write more
