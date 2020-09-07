@@ -174,11 +174,11 @@
 
   (-process-1st-event-in-queue
     [this]
-    (let [event (peek queue)]
+    (let [event-v (peek queue)]
       (try
-        (handle event)
+        (handle event-v)
         (set! queue (pop queue))
-        (-call-post-event-callbacks this event)
+        (-call-post-event-callbacks this event-v)
         (catch #?(:cljs :default :clj Exception) ex
           (-fsm-trigger this :exception ex)))))
 
@@ -208,9 +208,9 @@
     (later-fn #(-fsm-trigger this :resume nil)))
 
   (-call-post-event-callbacks
-    [_ event]
+    [_ event-v]
     (doseq [callback (vals post-event-callback-fns)]
-      (callback event queue)))
+      (callback event-v queue)))
 
   (-resume
     [this]
@@ -233,12 +233,12 @@
 (defn dispatch
   [event]
   (if (nil? event)
-    (throw (ex-info "re-frame: you called \"dispatch\" without an event map or vector." {}))
-    (push event-queue event))
-  nil)                                                          ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
+      (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
+      (push event-queue event))
+  nil)                                           ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
 
 (defn dispatch-sync
-  [event]
-  (handle event)
-  (-call-post-event-callbacks event-queue event)  ;; slightly ugly hack. Run the registered post event callbacks.
-  nil)                                                          ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
+  [event-v]
+  (handle event-v)
+  (-call-post-event-callbacks event-queue event-v)  ;; slightly ugly hack. Run the registered post event callbacks.
+  nil)                                              ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False

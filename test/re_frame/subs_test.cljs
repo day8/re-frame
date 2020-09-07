@@ -190,22 +190,12 @@
     (swap! db/app-db assoc :b 3)
     (is (= {:a 1 :b 3} @test-sub))))
 
-(deftest test-sub-macro-parameters-with-vectors
+(deftest test-sub-macro-parameters
   (subs/reg-sub
     :test-sub
     (fn [db [_ b]] [(:a db) b]))
 
   (let [test-sub (subs/subscribe [:test-sub :c])]
-    (reset! db/app-db {:a 1 :b 2})
-    (is (= [1 :c] @test-sub))))
-
-(deftest test-sub-macro-parameters-with-maps
-  (subs/reg-sub
-    :test-sub
-    (fn [db {:keys [b]}] [(:a db) b]))
-
-  (let [test-sub (subs/subscribe {::re-frame/qid :test-sub
-                                  :b :c})]
     (reset! db/app-db {:a 1 :b 2})
     (is (= [1 :c] @test-sub))))
 
@@ -244,8 +234,8 @@
     (reset! db/app-db {:a 1 :b 2})
     (is (= {:a 1} @test-sub))))
 
-(deftest test-sub-macros-chained-parameters-<--with-vectors
-  "test the syntactial sugar with vectors"
+(deftest test-sub-macros-chained-parameters-<-
+  "test the syntactial sugar"
   (subs/reg-sub
     :a-sub
     (fn [db [_]] (:a db)))
@@ -262,27 +252,7 @@
 
   (let [test-sub (subs/subscribe [:a-b-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
-    (is (= {:a 1 :b 2} @test-sub))))
-
-(deftest test-sub-macros-chained-parameters-<--with-maps
-  "test the syntactial sugar with maps"
-  (subs/reg-sub
-    :a-sub
-    (fn [db _] (:a db)))
-
-  (subs/reg-sub
-    :b-sub
-    (fn [db _] (:b db)))
-
-  (subs/reg-sub
-    :a-b-sub
-    :<- {::re-frame/qid :a-sub}
-    :<- {::re-frame/qid :b-sub}
-    (fn [[a b] [_ c]] {:a a :b b}))
-
-  (let [test-sub (subs/subscribe [:a-b-sub :c])]
-    (reset! db/app-db {:a 1 :b 2})
-    (is (= {:a 1 :b 2} @test-sub))))
+    (is (= {:a 1 :b 2} @test-sub) )))
 
 (deftest test-registering-subs-doesnt-create-subscription
   (let [sub-called? (atom false)]

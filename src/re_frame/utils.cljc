@@ -17,20 +17,11 @@
       m)
     (dissoc m k)))
 
-(defn op-id
-  "Extract the id from an event or subscription query. `x` is either map or
-   vector. `k` is the key of the id to look for if `x` is a map."
-  {:added "1.2.0"}
-  [x k]
-  (cond
-    (map? x)
-    (get x k)
-
-    (vector? x)
-    (first x)
-
-    :default
-    (console :error "re-frame: expected a map or vector, but got: " x)))
+(defn first-in-vector
+  [v]
+  (if (vector? v)
+    (first v)
+    (console :error "re-frame: expected a vector, but got:" v)))
 
 (defn apply-kw
   "Like apply, but f takes keyword arguments and the last argument is

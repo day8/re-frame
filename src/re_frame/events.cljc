@@ -1,6 +1,6 @@
 (ns re-frame.events
   (:require [re-frame.db          :refer [app-db]]
-            [re-frame.utils       :refer [op-id]]
+            [re-frame.utils       :refer [first-in-vector]]
             [re-frame.interop     :refer [empty-queue debug-enabled?]]
             [re-frame.registrar   :refer [get-handler register-handler]]
             [re-frame.loggers     :refer [console]]
@@ -51,18 +51,18 @@
 (def ^:dynamic *handling* nil)    ;; remember what event we are currently handling
 
 (defn handle
-  "Given an event map or vector `event`, look up the associated interceptor chain, and execute it."
-  [event]
-  (let [event-id (op-id event :re-frame.core/eid)]
+  "Given an event vector `event-v`, look up the associated interceptor chain, and execute it."
+  [event-v]
+  (let [event-id  (first-in-vector event-v)]
     (if-let [interceptors  (get-handler kind event-id true)]
       (if *handling*
-        (console :error "re-frame: while handling" *handling* ", dispatch-sync was called for" event ". You can't call dispatch-sync within an event handler.")
-        (binding [*handling* event]
+        (console :error "re-frame: while handling" *handling* ", dispatch-sync was called for" event-v ". You can't call dispatch-sync within an event handler.")
+        (binding [*handling*  event-v]
           (trace/with-trace {:operation event-id
                              :op-type   kind
-                             :tags      {:event event}}
+                             :tags      {:event event-v}}
             (trace/merge-trace! {:tags {:app-db-before @app-db}})
-            (interceptor/execute event interceptors)
+            (interceptor/execute event-v interceptors)
             (trace/merge-trace! {:tags {:app-db-after @app-db}})))))))
 
 
