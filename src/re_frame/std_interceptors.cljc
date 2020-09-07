@@ -36,16 +36,31 @@
                       (console :log "No app-db changes resulted from:" event))))
                 context))))
 
+(def unpack
+  (->interceptor
+    :id      :unpack
+    :before  (fn unpack-before
+               [context]
+               (let [[event-id payload :as event] (get-coeffect context :event)]
+                 (-> context
+                     (assoc-coeffect :event (with-meta payload {:event-id event-id}))
+                     (assoc-coeffect ::packed-event event))))
+    :after   (fn unpack-after
+               [context]
+               (-> context
+                   (utils/dissoc-in [:coeffects ::packed-event])
+                   (assoc-coeffect :event (get-coeffect context ::packed-event))))))
+
 
 (def trim-v
   (->interceptor
     :id      :trim-v
-    :before  (fn trimv-before
+    :before  (fn trim-v-before
                [context]
                (-> context
                    (update-coeffect :event subvec 1)
                    (assoc-coeffect ::untrimmed-event (get-coeffect context :event))))
-    :after   (fn trimv-after
+    :after   (fn trim-v-after
                [context]
                (-> context
                    (utils/dissoc-in [:coeffects ::untrimmed-event])

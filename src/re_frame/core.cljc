@@ -12,8 +12,8 @@
     [re-frame.registrar        :as registrar]
     [re-frame.interceptor      :as interceptor]
     [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
-                                                             fx-handler->interceptor
-                                                             ctx-handler->interceptor]]
+                                                            fx-handler->interceptor
+                                                            ctx-handler->interceptor]]
     [re-frame.utils            :as utils]
     [clojure.set               :as set]))
 
@@ -673,6 +673,21 @@
   {:api-docs/heading "Interceptors"}
   [f]
   (std-interceptors/enrich f))
+
+(def ^{:api-docs/heading "Interceptors"} unpack
+  "An interceptor which provides the second element of the event vector to the
+   event handler as the event, intended to be used with the second element as a
+   map.
+
+   Your event handlers will look like this:
+
+       (reg-event-fx
+         :event-id
+         [... unpack ...]                    ;; <-- added to the interceptors
+         (fn [{:keys [db]} {:keys [x y z]}]  ;; <-- instead of [_ {:keys [x y z]}]
+           ...)
+   "
+   std-interceptors/unpack)
 
 (def ^{:api-docs/heading "Interceptors"} trim-v
   "An interceptor which removes the first element of the event vector,
