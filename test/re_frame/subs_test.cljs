@@ -220,7 +220,7 @@
     (is (= {:a [1 :c] :b [2 :c]} @test-sub))))
 
 (deftest test-sub-macros-<-
-  "test the syntactial sugar"
+  "test the syntactical sugar"
   (subs/reg-sub
     :a-sub
     (fn [db [_]] (:a db)))
@@ -235,7 +235,7 @@
     (is (= {:a 1} @test-sub))))
 
 (deftest test-sub-macros-chained-parameters-<-
-  "test the syntactial sugar"
+  "test the syntactical sugar"
   (subs/reg-sub
     :a-sub
     (fn [db [_]] (:a db)))
@@ -252,7 +252,7 @@
 
   (let [test-sub (subs/subscribe [:a-b-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
-    (is (= {:a 1 :b 2} @test-sub) )))
+    (is (= {:a 1 :b 2} @test-sub))))
 
 (deftest test-registering-subs-doesnt-create-subscription
   (let [sub-called? (atom false)]
