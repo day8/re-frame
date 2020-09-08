@@ -63,7 +63,7 @@
 ;; Events can have metadata which says to pause event processing.
 ;; event metadata -> "run later" functions
 (def later-fns
-  {:flush-dom (fn [f] (after-render #(next-tick f)))   ;; one tick after the end of the next annimation frame
+  {:flush-dom (fn [f] (after-render #(next-tick f)))   ;; one tick after the end of the next animation frame
    :yield     next-tick})               ;; almost immediately
 
 
