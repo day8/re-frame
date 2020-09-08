@@ -37,19 +37,19 @@
                 context))))
 
 
-(def unpack
+(def unwrap
   (->interceptor
-    :id      :unpack
-    :before  (fn unpack-before
+    :id      :unwrap
+    :before  (fn unwrap-before
                [context]
                (let [[_ payload :as event] (get-coeffect context :event)]
                  (if-not (and (= 2 (count event))
                               (map? payload))
                    (do
-                     (console :warn "re-frame: \"unpack\" interceptor requires event to be a tuple of [event-id map]. Got " event)
+                     (console :warn "re-frame: \"unwrap\" interceptor requires event to be a 2-vector of [event-id payload-map]. Got " event)
                      context)
                    (assoc-coeffect context :event payload))))
-    :after   (fn unpack-after
+    :after   (fn unwrap-after
                [context]
                (assoc-coeffect context :event (get-coeffect context :original-event)))))
 

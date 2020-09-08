@@ -674,7 +674,7 @@
   [f]
   (std-interceptors/enrich f))
 
-(def ^{:api-docs/heading "Interceptors"} unpack
+(def ^{:api-docs/heading "Interceptors"} unwrap
   "An interceptor which decreases the amount of destructuring necessary in an
    event handler where the event is structured as a 2-vector of
    [event-id payload-map].
@@ -691,11 +691,11 @@
 
        (reg-event-fx
          :event-id
-         [... unpack ...]                    ;; <-- added to the interceptors
+         [... unwrap ...]                    ;; <-- added to the interceptors
          (fn [{:keys [db]} {:keys [x y z]}]  ;; <-- instead of [_ {:keys [x y z]}]
            ...)
    "
-   std-interceptors/unpack)
+   std-interceptors/unwrap)
 
 (def ^{:api-docs/heading "Interceptors"} trim-v
   "An interceptor which removes the first element of the event vector,
