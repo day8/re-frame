@@ -1631,23 +1631,25 @@
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
 <ul>
-<li>Add <code>unpack</code> interceptor which decreases the amount of destructuring necessary
-  in an event handler where the event is structured as a 2-vector of 
+<li>Add a new interceptor called <code>unpack</code>. It decreases the amount of destructuring necessary
+  in an event handler where the <code>event</code> is structured as a 2-vector of 
   <code>[event-id payload-map]</code>. Implemented as the outcome of <a href="https://github.com/day8/re-frame/issues/644">#644</a>.</li>
 </ul>
 <h4>Changed</h4>
 <ul>
-<li>Change the <code>coeffects</code> map to always contain the event prior to any possible
-  modifications by interceptors under the key <code>:original-event</code>. </li>
-<li>Change the <code>trim-v</code> interceptor to warn, and do nothing to the <code>event</code>, if 
-  <code>event</code> is not a vector. </li>
+<li>The <code>:coeffects</code> map (within <code>context</code>) will now contain a new key called <code>:original-event</code> whivh has 
+  as its value the original event dispatched, prior to any modification by interceptros such as 
+  <code>trim-v</code> and <code>unpack</code>.  To this another way, the <code>coeffects</code> map will have BOTH an <code>:event</code> and an <code>:original-event</code>
+  key, which will reference the originalled event dispatched UNLESS inteerceptors have modified <code>:event</code></li>
+<li>The <code>trim-v</code> interceptor now produces a warning if <code>event</code> is not a vector. Just in case someone has mixed the use of <code>trim-v</code> and <code>unpacked</code> together.
+  The <code>trim-v</code> interceptor will not modify an <code>event</code> if it is not a vector.</li>
 </ul>
-<h4>Removed</h4>
+<h4>Breaking</h4>
 <ul>
-<li>Remove <code>:re-frame.std-interceptors/untrimmed-event</code> key from events modified
-  by the <code>trim-v</code> interceptor. <strong>In the unlikely case you depend on access to the 
-  original event via this key, it is a breaking change.</strong> It is superseded by
-  <code>:original-event</code> described above. </li>
+<li>Previously, the <code>trim-v</code> interceptor stored the original event (prior to any modification) 
+  within <code>coeffects</code> using the key <code>:re-frame.std-interceptors/untrimmed-event</code>. But, now, <code>trim-v</code> 
+  no longer does this. Any code relying on this implementation detail will now break. Instead,
+  you should access the event stored in the <code>:original-event</code> key, as described above. </li>
 </ul>
 <h4>Fixed</h4>
 <ul>
