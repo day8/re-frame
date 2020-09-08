@@ -1637,10 +1637,10 @@
 </ul>
 <h4>Changed</h4>
 <ul>
-<li>The <code>:coeffects</code> map (within <code>context</code>) will now contain a new key called <code>:original-event</code> whivh has 
-  as its value the original event dispatched, prior to any modification by interceptros such as 
+<li>The <code>:coeffects</code> map (within <code>context</code>) will now contain a new key called <code>:original-event</code> which has 
+  as its value the original event dispatched, prior to any modification by interceptors such as 
   <code>trim-v</code> and <code>unwrap</code>.  To this another way, the <code>coeffects</code> map will have BOTH an <code>:event</code> and an <code>:original-event</code>
-  key, which will reference the originalled event dispatched UNLESS inteerceptors have modified <code>:event</code></li>
+  key, which will reference the original event dispatched UNLESS interceptors have modified <code>:event</code></li>
 <li>The <code>trim-v</code> interceptor now produces a warning if <code>event</code> is not a vector. 
   Just in case someone has mixed the use of <code>trim-v</code> and <code>unwrap</code> together.
   The <code>trim-v</code> interceptor will not modify an <code>event</code> if it is not a vector.</li>
