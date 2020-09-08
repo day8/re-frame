@@ -1631,7 +1631,7 @@
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
 <ul>
-<li>Add a new interceptor called <code>unpack</code>. It decreases the amount of destructuring necessary
+<li>Add a new interceptor called <code>unwrap</code>. It decreases the amount of destructuring necessary
   in an event handler where the <code>event</code> is structured as a 2-vector of 
   <code>[event-id payload-map]</code>. Implemented as the outcome of <a href="https://github.com/day8/re-frame/issues/644">#644</a>.</li>
 </ul>
@@ -1639,9 +1639,10 @@
 <ul>
 <li>The <code>:coeffects</code> map (within <code>context</code>) will now contain a new key called <code>:original-event</code> whivh has 
   as its value the original event dispatched, prior to any modification by interceptros such as 
-  <code>trim-v</code> and <code>unpack</code>.  To this another way, the <code>coeffects</code> map will have BOTH an <code>:event</code> and an <code>:original-event</code>
+  <code>trim-v</code> and <code>unwrap</code>.  To this another way, the <code>coeffects</code> map will have BOTH an <code>:event</code> and an <code>:original-event</code>
   key, which will reference the originalled event dispatched UNLESS inteerceptors have modified <code>:event</code></li>
-<li>The <code>trim-v</code> interceptor now produces a warning if <code>event</code> is not a vector. Just in case someone has mixed the use of <code>trim-v</code> and <code>unpacked</code> together.
+<li>The <code>trim-v</code> interceptor now produces a warning if <code>event</code> is not a vector. 
+  Just in case someone has mixed the use of <code>trim-v</code> and <code>unwrap</code> together.
   The <code>trim-v</code> interceptor will not modify an <code>event</code> if it is not a vector.</li>
 </ul>
 <h4>Breaking</h4>

@@ -1444,8 +1444,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#unpack" class="md-nav__link">
-    unpack
+  <a href="#unwrap" class="md-nav__link">
+    unwrap
   </a>
   
 </li>
@@ -2041,8 +2041,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#unpack" class="md-nav__link">
-    unpack
+  <a href="#unwrap" class="md-nav__link">
+    unwrap
   </a>
   
 </li>
@@ -2800,7 +2800,7 @@ we keep the handlers simple and yet we ensure this important step
 any CRUD operation.</p>
 <p>This brings huge simplicity at the expense of some re-computation
 each time. This may be a very satisfactory trade-off in many cases.</p>
-<h3 id="unpack">unpack<a class="headerlink" href="#unpack" title="Permanent link">&para;</a></h3>
+<h3 id="unwrap">unwrap<a class="headerlink" href="#unwrap" title="Permanent link">&para;</a></h3>
 <p>An interceptor which decreases the amount of destructuring necessary in an
  event handler where the event is structured as a 2-vector of
  [event-id payload-map].</p>
@@ -2815,7 +2815,7 @@ each time. This may be a very satisfactory trade-off in many cases.</p>
 <p>Your event handlers can look like this:</p>
 <div class="codehilite"><pre><span></span><code> (reg-event-fx
    :event-id
-   [... unpack ...]                    ;; &lt;-- added to the interceptors
+   [... unwrap ...]                    ;; &lt;-- added to the interceptors
    (fn [{:keys [db]} {:keys [x y z]}]  ;; &lt;-- instead of [_ {:keys [x y z]}]
      ...)
 </code></pre></div>
