@@ -1,9 +1,9 @@
 (ns ns-to-markdown
-  "This script is used to generate the API documentation for the namespace `re-frame.core`. It reads the 
+  "This script is used to generate the API documentation for the namespace `re-frame.core`. It reads the
    source code in that namespace, extracts the docstrings (markdown) and produces a markdown-formatted
-   file suitable for providing to `mkdocs` which builds the re-frame website. 
+   file suitable for providing to `mkdocs` which builds the re-frame website.
 
-   It is used within the GitHub Actions docs workflow at: 
+   It is used within the GitHub Actions docs workflow at:
    https://github.com/day8/re-frame/blob/78ca09785e2adf9eea11f1e4bff2477d193f4b46/.github/workflows/docs-workflow.yml#L15
 
    The page it outputs can be seen here: http://day8.github.io/re-frame/api-re-frame.core/
@@ -88,9 +88,12 @@
     (catch Exception e
       (println e))))
 
+(def markdown-styles
+  "<style>\n.md-typeset h3 {\nborder-bottom: 2px solid #888;\n}\n</style>\n\n")
+
 (defn ns->markdown
   [m]
-  (format "# %s\n\n" (:name m)))
+  (format "%s# %s\n\n" markdown-styles (:name m)))
 
 (defn arglist->markdown
   [arglist]
