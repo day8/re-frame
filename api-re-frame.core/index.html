@@ -2795,10 +2795,18 @@ any CRUD operation.</p>
 <p>This brings huge simplicity at the expense of some re-computation
 each time. This may be a very satisfactory trade-off in many cases.</p>
 <h3 id="unpack">unpack<a class="headerlink" href="#unpack" title="Permanent link">&para;</a></h3>
-<p>An interceptor which provides the second element of the event vector to the
- event handler as the event, intended to be used with the second element as a
- map.</p>
-<p>Your event handlers will look like this:</p>
+<p>An interceptor which decreases the amount of destructuring necessary in an
+ event handler where the event is structured as a 2-vector of
+ [event-id payload-map].</p>
+<p>It promotes the <code>payload-map</code> part to be the event ultimately given to the
+ event handler. Should you want the full original event, it can be found in
+ <code>coeffects</code> under the key <code>:original-event</code>.</p>
+<p>If a dispatch looked like this:</p>
+<div class="codehilite"><pre><span></span><code> (dispatch [:event-id {:x 1 :y 2 :z 3}])
+</code></pre></div>
+
+
+<p>Your event handlers can look like this:</p>
 <div class="codehilite"><pre><span></span><code> (reg-event-fx
    :event-id
    [... unpack ...]                    ;; &lt;-- added to the interceptors
@@ -2811,6 +2819,8 @@ each time. This may be a very satisfactory trade-off in many cases.</p>
 <p>An interceptor which removes the first element of the event vector,
 before it is supplied to the event handler, allowing you to write more
  aesthetically pleasing event handlers. No leading underscore on the event-v!</p>
+<p>Should you want the full original event, it can be found in <code>coeffects</code> under
+the key <code>:original-event</code>.</p>
 <p>Your event handlers will look like this:</p>
 <div class="codehilite"><pre><span></span><code>(reg-event-db
   :event-id
