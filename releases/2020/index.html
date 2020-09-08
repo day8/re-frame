@@ -1631,11 +1631,28 @@
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
 <ul>
-<li></li>
+<li>Add <code>unpack</code> interceptor which decreases the amount of destructuring necessary
+  in an event handler where the event is structured as a 2-vector of 
+  <code>[event-id payload-map]</code>. Implemented as the outcome of <a href="https://github.com/day8/re-frame/issues/644">#644</a>.</li>
 </ul>
 <h4>Changed</h4>
 <ul>
-<li></li>
+<li>Change the <code>coeffects</code> map to always contain the event prior to any possible
+  modifications by interceptors under the key <code>:original-event</code>. </li>
+<li>Change the <code>trim-v</code> interceptor to warn, and do nothing to the <code>event</code>, if 
+  <code>event</code> is not a vector. </li>
+</ul>
+<h4>Removed</h4>
+<ul>
+<li>Remove <code>:re-frame.std-interceptors/untrimmed-event</code> key from events modified
+  by the <code>trim-v</code> interceptor. <strong>In the unlikely case you depend on access to the 
+  original event via this key, it is a breaking change.</strong> It is superseded by
+  <code>:original-event</code> described above. </li>
+</ul>
+<h4>Fixed</h4>
+<ul>
+<li>Fix event handlers passing events modified by interceptors to tracing, instead
+  all event handlers now use <code>:original-event</code> for tracing.</li>
 </ul>
 <h2 id="111-2020-08-26">1.1.1 (2020-08-26)<a class="headerlink" href="#111-2020-08-26" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
