@@ -36,20 +36,22 @@
                       (console :log "No app-db changes resulted from:" event))))
                 context))))
 
+
 (def unpack
   (->interceptor
     :id      :unpack
     :before  (fn unpack-before
                [context]
-               (let [[event-id payload :as event] (get-coeffect context :event)]
-                 (-> context
-                     (assoc-coeffect :event (with-meta payload {:event-id event-id}))
-                     (assoc-coeffect ::packed-event event))))
+               (let [[_ payload :as event] (get-coeffect context :event)]
+                 (if-not (and (= 2 (count event))
+                              (map? payload))
+                   (do
+                     (console :warn "re-frame: \"unpack\" interceptor requires event to be a tuple of [event-id map]. Got " event)
+                     context)
+                   (assoc-coeffect context :event payload))))
     :after   (fn unpack-after
                [context]
-               (-> context
-                   (utils/dissoc-in [:coeffects ::packed-event])
-                   (assoc-coeffect :event (get-coeffect context ::packed-event))))))
+               (assoc-coeffect context :event (get-coeffect context :original-event)))))
 
 
 (def trim-v
@@ -57,14 +59,14 @@
     :id      :trim-v
     :before  (fn trim-v-before
                [context]
-               (-> context
-                   (update-coeffect :event subvec 1)
-                   (assoc-coeffect ::untrimmed-event (get-coeffect context :event))))
+               (if-not (vector? (get-coeffect context :event))
+                 (do
+                   (console :warn "re-frame: \"trim-v\" interceptor expected event to be a vector. Got a " (type (get-coeffect context :event)))
+                   context)
+                 (update-coeffect context :event subvec 1)))
     :after   (fn trim-v-after
                [context]
-               (-> context
-                   (utils/dissoc-in [:coeffects ::untrimmed-event])
-                   (assoc-coeffect :event (get-coeffect context ::untrimmed-event))))))
+               (assoc-coeffect context :event (get-coeffect context :original-event)))))
 
 
 ;; -- Interceptor Factories - PART 1 ---------------------------------------------------------------
@@ -92,7 +94,7 @@
               (let [new-context
                     (trace/with-trace
                       {:op-type   :event/handler
-                       :operation (get-coeffect context :event)}
+                       :operation (get-coeffect context :original-event)}
                       (let [{:keys [db event]} (get-coeffect context)]
                         (->> (handler-fn db event)
                              (assoc-effect context :db))))]
@@ -125,7 +127,7 @@
             (let [new-context
                   (trace/with-trace
                     {:op-type   :event/handler
-                     :operation (get-coeffect context :event)}
+                     :operation (get-coeffect context :original-event)}
                     (let [{:keys [event] :as coeffects} (get-coeffect context)]
                       (->> (handler-fn coeffects event)
                            (assoc context :effects))))]
@@ -150,7 +152,7 @@
               (let [new-context
                     (trace/with-trace
                       {:op-type   :event/handler
-                       :operation (get-coeffect context :event)}
+                       :operation (get-coeffect context :original-event)}
                       (handler-fn context))]
                 (trace/merge-trace!
                   {:tags {:effects   (get-effect new-context)

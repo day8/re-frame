@@ -120,6 +120,9 @@
   ([event interceptors]
    (-> {}
       (assoc-coeffect :event event)
+      ;; Some interceptors, like `trim-v` and `unpack`, alter event so capture
+      ;; the original for use cases such as tracing.
+      (assoc-coeffect :original-event event)
       (enqueue interceptors)))
   ([event interceptors db]      ;; only used in tests, probably a hack, remove ?  XXX
    (-> (context event interceptors)

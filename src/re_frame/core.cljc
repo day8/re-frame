@@ -675,11 +675,19 @@
   (std-interceptors/enrich f))
 
 (def ^{:api-docs/heading "Interceptors"} unpack
-  "An interceptor which provides the second element of the event vector to the
-   event handler as the event, intended to be used with the second element as a
-   map.
+  "An interceptor which decreases the amount of destructuring necessary in an
+   event handler where the event is structured as a 2-vector of
+   [event-id payload-map].
 
-   Your event handlers will look like this:
+   It promotes the `payload-map` part to be the event ultimately given to the
+   event handler. Should you want the full original event, it can be found in
+   `coeffects` under the key `:original-event`.
+
+   If a dispatch looked like this:
+
+       (dispatch [:event-id {:x 1 :y 2 :z 3}])
+
+   Your event handlers can look like this:
 
        (reg-event-fx
          :event-id
@@ -693,6 +701,9 @@
   "An interceptor which removes the first element of the event vector,
   before it is supplied to the event handler, allowing you to write more
    aesthetically pleasing event handlers. No leading underscore on the event-v!
+
+  Should you want the full original event, it can be found in `coeffects` under
+  the key `:original-event`.
 
   Your event handlers will look like this:
 
