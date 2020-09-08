@@ -11,7 +11,7 @@ klipse: true
 >
 > It is not yet completely polished, but it is getting close. It does not yet have an integrated inline/on-page REPL yet. But it will soon. <br>
 > 
-> Open an issue with your thoughts [at the re-freame repo](https://github.com/day8/re-frame/) or via twitter [here](https://twitter.com/wazound)
+> Please open an issue with your thoughts [at the re-freame repo](https://github.com/day8/re-frame/) or via twitter [here](https://twitter.com/wazound)
 >
 > Many Thanks!
 
@@ -103,7 +103,7 @@ Hashmaps are often just called maps.
 
 ## Symbols 
 
-A symbol is a name that is bound to a value. Here, we mean "bound" in the sense of "is tied to" or "is associated with" or "refers to".
+A symbol is a `name` that is bound to a `value`. Here, we mean "bound" in the sense of "is tied to" or "is associated with" or "refers to".
 
 
 |  Type    |   Example               |   Comment            |  
