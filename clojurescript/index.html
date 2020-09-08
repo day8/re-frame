@@ -1410,16 +1410,16 @@ Learning to <em>write ClojureScript</em> is a larger skill, which will require m
 but this page does contain some interactive, live coding to get you started.</p>
 <h2 id="in-a-nutshell-why">In A Nutshell, Why?<a class="headerlink" href="#in-a-nutshell-why" title="Permanent link">&para;</a></h2>
 <p>Clojure is a modern LISP.</p>
-<p>Alan Kay once descibed LISP as "Maxwell's equations of software".
+<p>Alan Kay once described LISP as "Maxwell's equations of software".
 Paul Graham says LISP was a competitive advantage for his startup.
 Dijkstra has written glowingly of it.
 For 50 years, some of the finest minds in software have admired it, used it and refined it.</p>
-<p>In the years leading up to 2010, Rich Hickey created Clojure, introducing key inovations
+<p>In the years leading up to 2010, Rich Hickey created Clojure, introducing key innovations
 (subsequently adopted by other functional languages), 
 and he did it well away from 
-acedemia (LISP's traditional home), because he wanted to create a pragmatic language for commercial developers.</p>
+academia (LISP's traditional home), because he wanted to create a pragmatic language for commercial developers.</p>
 <p>Overall, Clojure is a foliated masterpiece. Lisp went through its washing machine phase of churn in the 70s and 80s and these days 
-it is like a beautiful, deep clear water lake, rayifing 50 years of evolutuon. </p>
+it is like a beautiful, deep clear water lake, rayifing 50 years of evolution. </p>
 <p>As the owner of a company which develops software products, I'm quite sure ClojureScript gives us a
 competitive edge. As a programmer, I feel like it has provided me with excellent,
 nourishing brain food. It is a stable, productive place.</p>
@@ -1472,7 +1472,7 @@ Haskel, Erlang, C, J, Prolog and Smalltalk).</p>
 </table>
 <h2 id="collection-data-literals">Collection Data Literals<a class="headerlink" href="#collection-data-literals" title="Permanent link">&para;</a></h2>
 <p>Lists use  <code class="highlight"><span class="p">()</span></code>, vectors use  <code class="highlight"><span class="p">[]</span></code>, hashmaps use  <code class="highlight"><span class="p">{}</span></code> and sets use <code class="highlight"><span class="o">#</span><span class="p">{}</span></code>, </p>
-<p>Exanples: </p>
+<p>Examples: </p>
 <table>
 <thead>
 <tr>
@@ -1592,12 +1592,12 @@ Haskel, Erlang, C, J, Prolog and Smalltalk).</p>
 </table>
 <h2 id="thats-it-for-syntax">That's It For Syntax<a class="headerlink" href="#thats-it-for-syntax" title="Permanent link">&para;</a></h2>
 <p>We've now covered most of Clojure's syntax.</p>
-<p>But, how can that be?  Haven't we only looked at data litterals? Well, yes, but 
+<p>But, how can that be?  Haven't we only looked at data literals? Well, yes, but 
 Clojure is <code>Homoiconic</code> which means "code is data" - you write Clojure code 
-using Clojure's data litterals and we've covered data litterals. </p>
+using Clojure's data literals and we've covered data literals. </p>
 <hr />
 <h2 id="evaluation">Evaluation<a class="headerlink" href="#evaluation" title="Permanent link">&para;</a></h2>
-<p>You are going to be surprised and delighted with the simplicty of "evaluation".</p>
+<p>You are going to be surprised and delighted with the simplicity of "evaluation".</p>
 <p><strong>1st Evaluation Rule:</strong> all data litterals other than <code>lists</code> and <code>symbols</code> <strong>evaluate</strong> to themselves.</p>
 <table>
 <thead>
@@ -1633,7 +1633,7 @@ using Clojure's data litterals and we've covered data litterals. </p>
 <p>Below, you can start evaluating live on this page. Enter an expression into the following editor 
 and it will be evaluated. The result of the evaluation will be shown in the box below the editor.</p>
 <p>XXX inline REPL will go here. In the meantime, use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
-<p>Try these experiements:</p>
+<p>Try these experiments:</p>
 <ul>
 <li>{:a 1 :a 4} -- oops </li>
 <li>forget to close a parens ??</li>
@@ -1684,7 +1684,7 @@ Wait. Isn't <code class="highlight"><span class="nv">+</span></code> an operator
 Instead, <code class="highlight"><span class="nv">+</span></code> is a symbol, and it is bound to a function - one which adds. Anyway, more soon.</p>
 </div>
 <p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
-<p>Try these experiements:</p>
+<p>Try these experiments:</p>
 <ul>
 <li><code class="highlight"><span class="nv">inc</span></code></li>
 <li><code class="highlight"><span class="p">[</span><span class="nb">inc dec </span><span class="nv">+</span><span class="p">]</span></code>       &lt;--- and array of symbols</li>
@@ -1695,7 +1695,7 @@ Instead, <code class="highlight"><span class="nv">+</span></code> is a symbol, a
 <p>Okay, now we're cooking with gas!  Clojure is a functional language so, 
 as you can imagine, function calls are a big deal,
 so this section is important. </p>
-<p>Here's an example list  <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span> <span class="nv">arg3</span><span class="p">)</span></code>. Because it is surounded by parens, <code class="highlight"><span class="p">(</span> <span class="p">)</span></code>, it is a list, and we can see it has four elements. </p>
+<p>Here's an example list  <code class="highlight"><span class="p">(</span><span class="nf">f</span> <span class="nv">arg1</span> <span class="nv">arg2</span> <span class="nv">arg3</span><span class="p">)</span></code>. Because it is surrounded by parens, <code class="highlight"><span class="p">(</span> <span class="p">)</span></code>, it is a list, and we can see it has four elements. </p>
 <p>Such a list is <strong>evaluated in two steps</strong>:</p>
 <ol>
 <li>first, each element in the list is evaluated (all four of them in this example)</li>
@@ -1812,7 +1812,7 @@ Well, in your mind's eye, see this nested example as <code class="highlight"><sp
 </tr>
 </tbody>
 </table>
-<p>Evaluate these experiements youself (any surprises?):</p>
+<p>Evaluate these experiments yourself (any surprises?):</p>
 <ul>
 <li><code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nb">dec </span><span class="mi">1</span><span class="p">))</span></code></li>
 <li><code class="highlight"><span class="p">(</span><span class="nf">odd?</span> <span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nb">dec </span><span class="mi">1</span><span class="p">)))</span></code></li>
@@ -1821,8 +1821,8 @@ Well, in your mind's eye, see this nested example as <code class="highlight"><sp
 <p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <hr />
 <h2 id="keywords">Keywords<a class="headerlink" href="#keywords" title="Permanent link">&para;</a></h2>
-<p>Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This means they evaluate like most other data litterals.</p>
-<p>Keywords are <strong><em>invaluable</em></strong> as <code>identities</code> and they are used widely, partiuclarly as keys in hashmaps.</p>
+<p>Keywords are like symbols, except they evaluate to themselves and not to a bound value. This means they evaluate like most other data literals.</p>
+<p>Keywords are <strong><em>invaluable</em></strong> as <code>identities</code> and they are used widely, particularly as keys in hashmaps.</p>
 <p>A keyword is a name that starts with a colon. Let's evaluate some:</p>
 <table>
 <thead>
@@ -1921,7 +1921,7 @@ Well, in your mind's eye, see this nested example as <code class="highlight"><sp
 </code></pre></div>
 
 
-<p>Evaluate these experiements youself (any surprises?):</p>
+<p>Evaluate these experiments yourself (any surprises?):</p>
 <ul>
 <li><code class="highlight"><span class="p">(</span><span class="nb">namespace </span><span class="ss">:a</span><span class="p">)</span></code> </li>
 <li><code class="highlight"><span class="p">(</span><span class="nb">keyword </span><span class="p">(</span><span class="nb">name </span><span class="ss">:a</span><span class="p">))</span></code></li>
@@ -1980,7 +1980,7 @@ an operator, as it is in other lanugages. </p>
 <h2 id="what-have-you-learned">What Have You Learned ?<a class="headerlink" href="#what-have-you-learned" title="Permanent link">&para;</a></h2>
 <p>So Far:</p>
 <ul>
-<li>To write Clojure code, you write Clojure data litteral. You code in data. </li>
+<li>To write Clojure code, you write Clojure data literal. You code in data. </li>
 <li>data can be evaluated, to create new data</li>
 <li>1st Evaluation Rule: most data evaluates to itself</li>
 <li>2nd Evaluation Rule: <code>symbols</code> evaluate to what they are bound to </li>
@@ -2052,7 +2052,7 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 <p class="admonition-title">No Statements</p>
 <p>Notice how <code class="highlight"><span class="nv">if</span></code> is a form in Clojure, which evaluates to a value, and not a statement. (Clojure doesn't have any statements, or operators, it just has data and evaluation rules) </p>
 </div>
-<p>Possible experiements: </p>
+<p>Possible experiments: </p>
 <ul>
 <li>check if <code>(if true)</code> is valid. </li>
 <li>explore what is "truthy", via  <code>(if "hello" true false)</code> or <code>(if [] true false)</code> or <code>(if nil true false)</code></li>
@@ -2125,7 +2125,7 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 
 
 <p>The body of the function, <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="nv">num</span> <span class="mi">1</span><span class="p">)</span></code>, will be evaluated with the <code class="highlight"><span class="nv">num</span></code> symbol bound to the actual parameter <code class="highlight"><span class="mi">4</span></code>.  The return value is <code class="highlight"><span class="mi">5</span></code>.</p>
-<p>Try these experiements:</p>
+<p>Try these experiments:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="p">[</span><span class="nv">x</span> <span class="nv">x</span><span class="p">])</span> <span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
 
@@ -2146,7 +2146,7 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 
 
 <p>what if, instead, we called this function with <code class="highlight"><span class="nv">false</span></code>.</p>
-<p>You won't see this written in normal ClojureScript code, because it is wierd, but here's a puzzle:</p>
+<p>You won't see this written in normal ClojureScript code, because it is weird, but here's a puzzle:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(((</span><span class="k">fn </span> <span class="p">[]</span> <span class="nv">inc</span><span class="p">))</span> <span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
 
@@ -2280,7 +2280,7 @@ which combines the two, called <code class="highlight"><span class="nv">defn</sp
 </code></pre></div>
 
 
-<p>evaluates to <code class="highlight"><span class="nv">false</span></code>. Wait, no. That isn't convential wisdom. Damn you lexographic comparisons!!</p>
+<p>evaluates to <code class="highlight"><span class="nv">false</span></code>. Wait, no. That isn't conventional wisdom. Damn you lexicographic comparisons!!</p>
 <p>We need to make some changes:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">a</span>  <span class="s">&quot;the pen&quot;</span>
       <span class="nv">b</span>  <span class="s">&quot;a sword&quot;</span><span class="p">]</span>   
@@ -2304,7 +2304,7 @@ which combines the two, called <code class="highlight"><span class="nv">defn</sp
 </code></pre></div>
 
 
-<p>XXX experiement with greet </p>
+<p>XXX experiment with greet </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">greet</span> <span class="s">&quot;Mum&quot;</span> <span class="nv">true</span><span class="p">)</span>
 </code></pre></div>
 
@@ -2349,7 +2349,7 @@ which combines the two, called <code class="highlight"><span class="nv">defn</sp
 <h2 id="what-have-you-learned_1">What have You Learned ?<a class="headerlink" href="#what-have-you-learned_1" title="Permanent link">&para;</a></h2>
 <p>So Far:</p>
 <ul>
-<li>the syntax is just data litterals</li>
+<li>the syntax is just data literals</li>
 <li>data can be evaluated</li>
 <li>lists (forms) evaluate to function calls </li>
 <li>there are special forms (exceptions to the normal evaluation rules for forms)</li>
@@ -2647,10 +2647,10 @@ is to <strong>rewrite your code</strong> in useful ways. This is probably not a 
 you'll have experienced before in other languages. </p>
 <p>Wait, rewrite my code? How is that even possible?</p>
 <p>Well, in ClojureScript your <strong>code is data</strong>. 
-It is just arrangements of data litterals put into text file, involving mostly  lists, symbols and vectors.
+It is just arrangements of data literals put into text file, involving mostly  lists, symbols and vectors.
 This property means a function can take your code (which is just data, remember),  and compute new data, which is new code.
 And <strong>that</strong> is how a macro rewrites your code - it is a function that runs at compile time.</p>
-<p>The key takeway is that macros rewrite your code in useful ways.</p>
+<p>The key takeaway is that macros rewrite your code in useful ways.</p>
 <h2 id="thread-first-macro-">Thread First Macro <code>-&gt;</code><a class="headerlink" href="#thread-first-macro-" title="Permanent link">&para;</a></h2>
 <p>Let's talk examples ... here's a deeply nested arrangement of forms we talked about earlier: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">+ </span><span class="mi">0</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">2</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span>
@@ -2677,7 +2677,7 @@ And this <code>thread first</code> function (marco) will rewrite/reorganise the 
 <li>The result is  <code class="highlight"><span class="mi">7</span></code> </li>
 </ol>
 <p>Notice how the value for the previous form's evaluation is always "threaded" into the form below as the 1st argument. Hence the name "thread first macro".</p>
-<p>Deeply nested forms can be a bit hard to read, so the <code>thread first</code> macro arrangement allows you to visulaise the computation as a cascading data flow.
+<p>Deeply nested forms can be a bit hard to read, so the <code>thread first</code> macro arrangement allows you to visualise the computation as a cascading data flow.
 It is as if the evaluation of the higher form is "flowing down" and into the form underneath. That's a useful mental model for many. </p>
 <p>How about this use of <code class="highlight"><span class="nv">-&gt;</span></code>:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">-&gt; </span><span class="p">{}</span>
@@ -2716,7 +2716,7 @@ It is as if the evaluation of the higher form is "flowing down" and into the for
 </code></pre></div>
 
 
-<p>With <code>thread last</code> the evaluation of the previous previous form is threaded into the next form as the <strong>last</strong> argument (not the first). </p>
+<p>With <code>thread last</code> the evaluation of the previous form is threaded into the next form as the <strong>last</strong> argument (not the first). </p>
 <p>Work out the evaluation of:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">-&gt;&gt;</span> <span class="p">(</span><span class="nb">range </span><span class="mi">10</span><span class="p">)</span>      <span class="c1">; (range 10)</span>
      <span class="p">(</span><span class="nb">map </span><span class="nv">inc</span><span class="p">)</span>       <span class="c1">; (map inc (range 10))</span>
@@ -2728,11 +2728,11 @@ It is as if the evaluation of the higher form is "flowing down" and into the for
 <p>The learning curve so far as been gentle. Clojure has simple syntax and simple evaluation semantics. </p>
 <p>The steeper part of the Clojure learning curve, and the part that takes most of the time to master,
 is figuring out how to <strong><em>write code using pure functions and immutable data</em></strong>.
-If you have previously only used imperative, place-oriented languages (eg. OO laguages),
+If you have previously only used imperative, place-oriented languages (eg. OO languages),
 this paradigm change takes time to click.</p>
 <p>But, of course, the purpose of this tutorial is to teach you to <strong><em>read</em></strong> Clojure, which is an easier skill. So, onward ...</p>
 <h2 id="immutable-data">Immutable Data<a class="headerlink" href="#immutable-data" title="Permanent link">&para;</a></h2>
-<p>ClojureScript uses immtutable data structures by default.</p>
+<p>ClojureScript uses immutable data structures by default.</p>
 <p><strong>The rule</strong>: once you create data, you can't mutate it (change it). Ever. </p>
 <p>But you can create a revision (a copy) of that data, which is modified in some way. 
 The original data is untouched. But, then, you 
@@ -2748,7 +2748,7 @@ can't change this revision either. But, you can create a further revision (copy)
 <p>you'll see a vector of three values <code class="highlight"><span class="p">[{</span><span class="ss">:doors</span> <span class="mi">2</span><span class="p">}</span> <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span>, <span class="ss">:seats</span> <span class="mi">4</span><span class="p">}</span>  <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span>, <span class="ss">:seats</span> <span class="mi">4</span>, <span class="ss">:engine</span> <span class="ss">:big</span><span class="p">}</span> <span class="p">]</span></code>. </p>
 <p>Notice how <code class="highlight"><span class="nv">car1</span></code> is unchanged, even though we did an <code class="highlight"><span class="nv">assoc</span></code> into <code class="highlight"><span class="nv">car1</span></code> . Same with XXXXXXXXX</p>
 <p>When you are used to imperative, in-place modification of data, it can initially be mysterfying as to how you can achieve anything. Rest assured, you can. </p>
-<p>More experiements. If we evaluate this:</p>
+<p>More experiments. If we evaluate this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="nb">assoc </span><span class="nv">score</span> <span class="ss">:c</span> <span class="mi">3</span><span class="p">)</span> <span class="ss">:d</span> <span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
 
@@ -2759,7 +2759,7 @@ can't change this revision either. But, you can create a further revision (copy)
 <li>Surely this is inefficient?  Don't worry, via clever algorithms, efficiency is seldom an issue.</li>
 <li>How do you get anything done? (Don't worry, there are answers here too). </li>
 </ol>
-<p>Using Immutable data dovetails with pure functions, to reduce cognative load and bring a great simplicity to your programming. </p>
+<p>Using Immutable data dovetails with pure functions, to reduce cognitive load and bring a great simplicity to your programming. </p>
 <p>All grand claims. We'll need to see how this plays out in bigger programs. </p>
 <p>Evaluate the following: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">car1</span>   <span class="p">{</span><span class="ss">:doors</span> <span class="mi">2</span><span class="p">}</span>                 <span class="c1">;; original hashmap</span>
@@ -2790,7 +2790,7 @@ can't change this revision either. But, you can create a further revision (copy)
 <p>We have learned:</p>
 <ul>
 <li>in ClojureScript we evaulate data, to create new data</li>
-<li>virtually all data litterals evaluate to themselves</li>
+<li>virtually all data literals evaluate to themselves</li>
 <li></li>
 </ul>
 <p>We've looked at ClojureScript through a lens which makes it easier to understand Reagent and re-frame. </p>
