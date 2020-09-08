@@ -27,18 +27,18 @@ but this page does contain some interactive, live coding to get you started.
 
 Clojure is a modern LISP.
 
-Alan Kay once descibed LISP as "Maxwell's equations of software".
+Alan Kay once described LISP as "Maxwell's equations of software".
 Paul Graham says LISP was a competitive advantage for his startup.
 Dijkstra has written glowingly of it.
 For 50 years, some of the finest minds in software have admired it, used it and refined it.
 
-In the years leading up to 2010, Rich Hickey created Clojure, introducing key inovations
+In the years leading up to 2010, Rich Hickey created Clojure, introducing key innovations
 (subsequently adopted by other functional languages), 
 and he did it well away from 
-acedemia (LISP's traditional home), because he wanted to create a pragmatic language for commercial developers.
+academia (LISP's traditional home), because he wanted to create a pragmatic language for commercial developers.
 
 Overall, Clojure is a foliated masterpiece. Lisp went through its washing machine phase of churn in the 70s and 80s and these days 
-it is like a beautiful, deep clear water lake, rayifing 50 years of evolutuon. 
+it is like a beautiful, deep clear water lake, rayifing 50 years of evolution. 
 
 As the owner of a company which develops software products, I'm quite sure ClojureScript gives us a
 competitive edge. As a programmer, I feel like it has provided me with excellent,
@@ -74,7 +74,7 @@ I have good news: you are going to be surprised and delighted at the simplicity 
 
 Lists use  `#!clj ()`, vectors use  `#!clj []`, hashmaps use  `#!clj {}` and sets use `#!clj #{}`, 
 
-Exanples: 
+Examples: 
 
 | Collection   |   Example                           |   Comment            |   
 |--------------|-------------------------------------|----------------------|
@@ -117,14 +117,14 @@ A symbol is a name that is bound to a value. Here, we mean "bound" in the sense 
 
 We've now covered most of Clojure's syntax.
 
-But, how can that be?  Haven't we only looked at data litterals? Well, yes, but 
+But, how can that be?  Haven't we only looked at data literals? Well, yes, but 
 Clojure is `Homoiconic` which means "code is data" - you write Clojure code 
-using Clojure's data litterals and we've covered data litterals. 
+using Clojure's data literals and we've covered data literals. 
 
 ---
 ## Evaluation
 
-You are going to be surprised and delighted with the simplicty of "evaluation".
+You are going to be surprised and delighted with the simplicity of "evaluation".
 
 **1st Evaluation Rule:** all data litterals other than `lists` and `symbols` **evaluate** to themselves.
 
@@ -142,7 +142,7 @@ and it will be evaluated. The result of the evaluation will be shown in the box 
 XXX inline REPL will go here. In the meantime, use [this external one](https://jaredforsyth.com/reepl/)
 
 
-Try these experiements:
+Try these experiments:
 
    - {:a 1 :a 4} -- oops 
    - forget to close a parens ??
@@ -179,7 +179,7 @@ Example symbol evaluations:
 
 XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
 
-Try these experiements:
+Try these experiments:
 
    - `#!clj inc`
    - `#!clj [inc dec +]`       <--- and array of symbols
@@ -194,7 +194,7 @@ Okay, now we're cooking with gas!  Clojure is a functional language so,
 as you can imagine, function calls are a big deal,
 so this section is important. 
 
-Here's an example list  `#!clj (f arg1 arg2 arg3)`. Because it is surounded by parens, `#!clj ( )`, it is a list, and we can see it has four elements. 
+Here's an example list  `#!clj (f arg1 arg2 arg3)`. Because it is surrounded by parens, `#!clj ( )`, it is a list, and we can see it has four elements. 
 
 Such a list is **evaluated in two steps**:
 
@@ -275,7 +275,7 @@ More:
 | `#!clj (= (inc 1) (dec 3))`  | `#!clj true`     |  `#!clj dec` is bound to a bultin, and it decrements its arg by one |          
 
 
-Evaluate these experiements youself (any surprises?):
+Evaluate these experiments yourself (any surprises?):
 
   - `#!clj (inc (dec 1))`
   - `#!clj (odd? (inc (dec 1)))`
@@ -287,9 +287,9 @@ XXX inline REPL will go here. In the meantime use [this external one](https://ja
 ---
 ## Keywords
 
-Keywords are like symbols, excecpt they evaluate to themselves and not to a bound value. This means they evaluate like most other data litterals.
+Keywords are like symbols, except they evaluate to themselves and not to a bound value. This means they evaluate like most other data literals.
 
-Keywords are ***invaluable*** as `identities` and they are used widely, partiuclarly as keys in hashmaps.
+Keywords are ***invaluable*** as `identities` and they are used widely, particularly as keys in hashmaps.
 
 A keyword is a name that starts with a colon. Let's evaluate some:
 
@@ -326,7 +326,7 @@ To give you a taste of where this can go, here they are used as the keys in a ha
  :role/name    "Rocket Sharpener"}
 ```
 
-Evaluate these experiements youself (any surprises?):
+Evaluate these experiments yourself (any surprises?):
  
   - `#!clj (namespace :a)` 
   - `#!clj (keyword (name :a))`
@@ -371,7 +371,7 @@ an operator, as it is in other lanugages.
 
 So Far:
  
-  - To write Clojure code, you write Clojure data litteral. You code in data. 
+  - To write Clojure code, you write Clojure data literal. You code in data. 
   - data can be evaluated, to create new data
   - 1st Evaluation Rule: most data evaluates to itself
   - 2nd Evaluation Rule: `symbols` evaluate to what they are bound to 
@@ -413,7 +413,7 @@ is evaluated depending on the result of that `test`. One element remains unevalu
 !!! Note "No Statements"
     Notice how `#!clj if` is a form in Clojure, which evaluates to a value, and not a statement. (Clojure doesn't have any statements, or operators, it just has data and evaluation rules) 
 
-Possible experiements: 
+Possible experiments: 
 
   - check if `(if true)` is valid. 
   - explore what is "truthy", via  `(if "hello" true false)` or `(if [] true false)` or `(if nil true false)`
@@ -487,7 +487,7 @@ Let's create a different function and evaluate it:
 The body of the function, `#!clj (+ num 1)`, will be evaluated with the `#!clj num` symbol bound to the actual parameter `#!clj 4`.  The return value is `#!clj 5`.
 
 
-Try these experiements:
+Try these experiments:
 
 ```cljs
 ((fn [x] [x x]) 4)
@@ -507,7 +507,7 @@ or
 ```
 what if, instead, we called this function with `#!clj false`.
 
-You won't see this written in normal ClojureScript code, because it is wierd, but here's a puzzle:
+You won't see this written in normal ClojureScript code, because it is weird, but here's a puzzle:
 ```clj
 (((fn  [] inc)) 4)
 ```
@@ -650,7 +650,7 @@ Notice the way this `#!clj let` form  is formatted:
       b  "sword"]      ; this pair means `b` is bound to "sword"
   (> a b))             ; is "pen" greater than "sword" ??
 ```
-evaluates to `#!clj false`. Wait, no. That isn't convential wisdom. Damn you lexographic comparisons!!
+evaluates to `#!clj false`. Wait, no. That isn't conventional wisdom. Damn you lexicographic comparisons!!
 
 We need to make some changes:
 ```clj
@@ -675,7 +675,7 @@ evaluates to `#!clj {:winner-is "the pen"}`
     [:div greeting name])
 ```
 
-XXX experiement with greet 
+XXX experiment with greet 
 
 ```clj
 (greet "Mum" true)
@@ -723,7 +723,7 @@ Exercise:
 
 So Far:
 
-  - the syntax is just data litterals
+  - the syntax is just data literals
   - data can be evaluated
   - lists (forms) evaluate to function calls 
   - there are special forms (exceptions to the normal evaluation rules for forms)
@@ -952,11 +952,11 @@ you'll have experienced before in other languages.
 Wait, rewrite my code? How is that even possible?
 
 Well, in ClojureScript your **code is data**. 
-It is just arrangements of data litterals put into text file, involving mostly  lists, symbols and vectors.
+It is just arrangements of data literals put into text file, involving mostly  lists, symbols and vectors.
 This property means a function can take your code (which is just data, remember),  and compute new data, which is new code.
 And **that** is how a macro rewrites your code - it is a function that runs at compile time.
 
-The key takeway is that macros rewrite your code in useful ways.
+The key takeaway is that macros rewrite your code in useful ways.
 
 ## Thread First Macro `->`
 
@@ -985,7 +985,7 @@ Read the `thread first` version (above) like this:
 
 Notice how the value for the previous form's evaluation is always "threaded" into the form below as the 1st argument. Hence the name "thread first macro".
 
-Deeply nested forms can be a bit hard to read, so the `thread first` macro arrangement allows you to visulaise the computation as a cascading data flow.
+Deeply nested forms can be a bit hard to read, so the `thread first` macro arrangement allows you to visualise the computation as a cascading data flow.
 It is as if the evaluation of the higher form is "flowing down" and into the form underneath. That's a useful mental model for many. 
 
 How about this use of `#!clj ->`:
@@ -1027,7 +1027,7 @@ This can be rewritten using the "thread last" macro `#!clj ->>`:
     (map str)      ; (map str (map inc [9 99 999]))
     (map count))   ; (map count (map str (map inc [9 99 999])))
 ```
-With `thread last` the evaluation of the previous previous form is threaded into the next form as the **last** argument (not the first). 
+With `thread last` the evaluation of the previous form is threaded into the next form as the **last** argument (not the first). 
 
 Work out the evaluation of:
 ```clj
@@ -1043,14 +1043,14 @@ The learning curve so far as been gentle. Clojure has simple syntax and simple e
 
 The steeper part of the Clojure learning curve, and the part that takes most of the time to master,
 is figuring out how to **_write code using pure functions and immutable data_**.
-If you have previously only used imperative, place-oriented languages (eg. OO laguages),
+If you have previously only used imperative, place-oriented languages (eg. OO languages),
 this paradigm change takes time to click.
 
 But, of course, the purpose of this tutorial is to teach you to **_read_** Clojure, which is an easier skill. So, onward ...
 
 ## Immutable Data
 
-ClojureScript uses immtutable data structures by default.
+ClojureScript uses immutable data structures by default.
 
 **The rule**: once you create data, you can't mutate it (change it). Ever. 
 
@@ -1071,7 +1071,7 @@ Notice how `#!clj car1` is unchanged, even though we did an `#!clj assoc` into `
 
 When you are used to imperative, in-place modification of data, it can initially be mysterfying as to how you can achieve anything. Rest assured, you can. 
 
-More experiements. If we evaluate this:
+More experiments. If we evaluate this:
 ```cljs
 (assoc (assoc score :c 3) :d 4)
 ```
@@ -1082,7 +1082,7 @@ If you are new to Immutable Data, you probably have two concerns:
   1. Surely this is inefficient?  Don't worry, via clever algorithms, efficiency is seldom an issue.
   2. How do you get anything done? (Don't worry, there are answers here too). 
 
-Using Immutable data dovetails with pure functions, to reduce cognative load and bring a great simplicity to your programming. 
+Using Immutable data dovetails with pure functions, to reduce cognitive load and bring a great simplicity to your programming. 
 
 All grand claims. We'll need to see how this plays out in bigger programs. 
 
@@ -1126,7 +1126,7 @@ XXX tracking is reified dynamics. residential
 We have learned:
 
   - in ClojureScript we evaulate data, to create new data
-  - virtually all data litterals evaluate to themselves
+  - virtually all data literals evaluate to themselves
   - 
 
 We've looked at ClojureScript through a lens which makes it easier to understand Reagent and re-frame. 
