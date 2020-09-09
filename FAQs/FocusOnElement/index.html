@@ -1522,7 +1522,7 @@ register a function that will imperatively set focus:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-fx</span> 
   <span class="ss">:focus-to-element</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">element-id</span><span class="p">]</span> 
-    <span class="p">(</span><span class="nf">reagent/after-render</span>  <span class="o">#</span><span class="p">(</span><span class="nf">some-&gt;</span> <span class="nv">js/document</span> <span class="p">(</span><span class="nf">.getElementById</span> <span class="nv">element-id</span><span class="p">)</span> <span class="nv">.focus</span><span class="p">)))</span>
+    <span class="p">(</span><span class="nf">reagent/after-render</span>  <span class="o">#</span><span class="p">(</span><span class="nf">some-&gt;</span> <span class="nv">js/document</span> <span class="p">(</span><span class="nf">.getElementById</span> <span class="nv">element-id</span><span class="p">)</span> <span class="nv">.focus</span><span class="p">))))</span>
 </code></pre></div>
 
 
