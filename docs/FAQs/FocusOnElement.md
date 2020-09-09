@@ -48,7 +48,7 @@ register a function that will imperatively set focus:
 (re-frame.core/reg-fx 
   :focus-to-element
   (fn [element-id] 
-    (reagent/after-render  #(some-> js/document (.getElementById element-id) .focus)))
+    (reagent/after-render  #(some-> js/document (.getElementById element-id) .focus))))
 ```
 _WARNING_: as written, this code will fail silently if `element-id` is not found. If you use this 
 code fragment, you may want to detect and report that problem.
