@@ -33,6 +33,7 @@
 
   Usage:
 
+      #!clj
       (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
   "
   {:api-docs/heading "Dispatching Events"}
@@ -60,6 +61,7 @@
 
   Usage:
 
+      #!clj
       (dispatch-sync [:sing :falsetto \"piano accordion\"])
   "
   {:api-docs/heading "Dispatching Events"}
