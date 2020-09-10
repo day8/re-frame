@@ -81,6 +81,7 @@
 
   Example Usage:
 
+      #!clj
       (reg-event-db
         :token
         (fn [db event]
@@ -88,6 +89,7 @@
 
   Or perhaps:
 
+      #!clj
       (reg-event-db
         :namespaced/id           ;; <-- namespaced keywords are often used
         [one two three]          ;; <-- a seq of interceptors
@@ -114,6 +116,7 @@
 
   Example Usage:
 
+      #!clj
       (reg-event-fx
         :event-id
         (fn [cofx event]
@@ -122,6 +125,7 @@
 
   Or perhaps:
 
+      #!clj
       (reg-event-fx
         :namespaced/id           ;; <-- namespaced keywords are often used
         [one two three]          ;; <-- a seq of interceptors
@@ -147,6 +151,7 @@
 
   Example Usage:
 
+      #!clj
       (reg-event-ctx
         :event-id
         (fn [{:keys [coeffects] :as context}]
@@ -231,6 +236,7 @@
 
   **First variation** - no input signal function given:
 
+      #!clj
       (reg-sub
         :query-id
         a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
@@ -242,6 +248,7 @@
 
   **Second variation** - a signal function is explicitly supplied:
 
+      #!clj
       (reg-sub
         :query-id
         signal-fn     ;; <-- here
@@ -260,6 +267,7 @@
 
   This example `signal function` returns a 2-vector of input signals.
 
+      #!clj
       (fn [query-vec dynamic-vec]
          [(subscribe [:a-sub])
           (subscribe [:b-sub])])
@@ -267,22 +275,26 @@
   The associated computation function must be written
   to expect a 2-vector of values for its first argument:
 
+      #!clj
       (fn [[a b] query-vec]     ;; 1st argument is a seq of two values
         ....)
 
   If, on the other hand, the signal function was simpler and returned a singleton, like this:
 
+      #!clj
      (fn [query-vec dynamic-vec]
        (subscribe [:a-sub]))      ;; <-- returning a singleton
 
   then the associated computation function must be written to expect a single value
   as the 1st argument:
 
+      #!clj
       (fn [a query-vec]       ;; 1st argument is a single value
          ...)
 
   Further Note: variation #1 above, in which an `input-fn` was not supplied, like this:
 
+      #!clj
       (reg-sub
         :query-id
         a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
@@ -290,6 +302,7 @@
   is the equivalent of using this
   2nd variation and explicitly suppling a `signal-fn` which returns `app-db`:
 
+      #!clj
       (reg-sub
         :query-id
         (fn [_ _]  re-frame/app-db)   ;; <--- explicit signal-fn
@@ -297,6 +310,7 @@
 
   **Third variation** - syntax Sugar
 
+      #!clj
       (reg-sub
         :a-b-sub
         :<- [:a-sub]
@@ -310,7 +324,7 @@
   If you supply only one pair a singleton will be supplied to the computation function,
   as if you had supplied a `signal-fn` returning only a single value:
 
-
+      #!clj
       (reg-sub
         :a-sub
         :<- [:a-sub]
@@ -333,12 +347,14 @@
 
   To obtain the current value from the Signal, it must be dereferenced:
 
+      #!clj
       (let [signal (subscribe [:items])
             value  (deref signal)]     ;; could be written as @signal
         ...)
 
    which is typically written tersely as simple:
 
+      #!clj
       (let [items  @(subscribe [:items])]
         ...)
 
@@ -354,6 +370,7 @@
 
   **Example Usage**:
 
+      #!clj
       (subscribe [:items])
       (subscribe [:items \"blue\" :small])
       (subscribe [:items {:colour \"blue\"  :size :small}])
@@ -367,6 +384,7 @@
   When used in a view function BE SURE to `deref` the returned value.
   In fact, to avoid any mistakes, some prefer to define:
 
+      #!clj
       (def <sub  (comp deref re-frame.core/subscribe))
 
   And then, within their views, they call  `(<sub [:items :small])` rather
@@ -438,6 +456,7 @@
 
   To use, first, associate `:effect2` with a handler:
 
+      #!clj
       (reg-fx
          :effect2
          (fn [value]
@@ -445,6 +464,7 @@
 
   Then, later, if an event handler were to return this effects map:
 
+      #!clj
       {:effect2  [1 2]}
 
   then the `handler` `fn` we registered previously, using `reg-fx`, will be
@@ -507,6 +527,7 @@
 
   First - Early in app startup, you register a `coeffect handler` for `:datetime`:
 
+      #!clj
       (re-frame.core/reg-cofx
         :datetime                        ;; usage  (inject-cofx :datetime)
         (fn coeffect-handler
@@ -515,6 +536,7 @@
 
   Second - Later, add an interceptor to an -fx event handler, using `inject-cofx`:
 
+      #!clj
       (re-frame.core/reg-event-fx            ;; when registering an event handler
         :event-id
         [ ... (inject-cofx :datetime) ... ]  ;; <-- create an injecting interceptor
@@ -584,6 +606,7 @@
   can be slow. So, you won't want this interceptor present in production
   code. So, you should condition it out like this:
 
+      #!clj
       (re-frame.core/reg-event-db
         :evt-id
         [(when ^boolean goog.DEBUG re-frame.core/debug)]  ;; <-- conditional
@@ -605,6 +628,7 @@
 
   Examples:
 
+      #!clj
       (path :some :path)
       (path [:some :path])
       (path [:some :path] :to :here)
@@ -612,6 +636,7 @@
 
   Example Use:
 
+      #!clj
       (reg-event-db
         :event-id
         (path [:a :b])  ;; <-- used here, in interceptor chain
@@ -687,10 +712,12 @@
 
    If a dispatch looked like this:
 
+      #!clj
        (dispatch [:event-id {:x 1 :y 2 :z 3}])
 
    Your event handlers can look like this:
 
+      #!clj
        (reg-event-fx
          :event-id
          [... unwrap ...]                    ;; <-- added to the interceptors
@@ -709,6 +736,7 @@
 
   Your event handlers will look like this:
 
+      #!clj
       (reg-event-db
         :event-id
         [... trim-v ...]    ;; <-- added to the interceptors
@@ -741,6 +769,7 @@
 
   Example Usage:
 
+      #!clj
       (defn my-f
         [a-val b-val]
         ... some computation on a and b in here)
@@ -806,6 +835,7 @@
 
   Example use:
 
+      #!clj
       (def my-interceptor
         (->interceptor
          :id     :my-interceptor
@@ -908,6 +938,7 @@
 
   Example Usage:
 
+      #!clj
       (defn my-logger      ;; my alternative logging function
         [& args]
         (post-it-somewhere (apply str args)))
@@ -932,6 +963,7 @@
 
   Example usage:
 
+      #!clj
       (console :error \"Sure enough it happened:\" a-var \"and\" another)
       (console :warn \"Possible breach of containment wall at:\" dt)
   "
