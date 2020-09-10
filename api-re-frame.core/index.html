@@ -2288,9 +2288,9 @@ handling does not happen immediately. It will happen 'very soon'
 bit not now. And if the queue already contains events, they
 will be processed first.</p>
 <p>Usage:</p>
-<div class="codehilite"><pre><span></span><code>(dispatch [:order &quot;pizza&quot; {:supreme 2 :meatlovers 1 :veg 1}])
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:order</span> <span class="s">&quot;pizza&quot;</span> <span class="p">{</span><span class="ss">:supreme</span> <span class="mi">2</span> <span class="ss">:meatlovers</span> <span class="mi">1</span> <span class="ss">:veg</span> <span class="mi">1</span><span class="p">}])</span>
 </code></pre></div>
-
+</td></tr></table>
 
 <h3 id="dispatch-sync">dispatch-sync<a class="headerlink" href="#dispatch-sync" title="Permanent link">&para;</a></h3>
 <p><code class="highlight"><span class="p">(</span><span class="nf">dispatch-sync</span> <span class="nv">event</span><span class="p">)</span></code></p>
@@ -2310,9 +2310,9 @@ processing is a problem:</p>
 <li>in a unit test where immediate, synchronous processing is useful</li>
 </ol>
 <p>Usage:</p>
-<div class="codehilite"><pre><span></span><code>(dispatch-sync [:sing :falsetto &quot;piano accordion&quot;])
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">dispatch-sync</span> <span class="p">[</span><span class="ss">:sing</span> <span class="ss">:falsetto</span> <span class="s">&quot;piano accordion&quot;</span><span class="p">])</span>
 </code></pre></div>
-
+</td></tr></table>
 
 <h2 id="event-handlers">Event Handlers<a class="headerlink" href="#event-handlers" title="Permanent link">&para;</a></h2>
 <h3 id="reg-event-db">reg-event-db<a class="headerlink" href="#reg-event-db" title="Permanent link">&para;</a></h3>
