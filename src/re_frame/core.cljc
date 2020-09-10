@@ -702,7 +702,9 @@
   (std-interceptors/enrich f))
 
 (def ^{:api-docs/heading "Interceptors"} unwrap
-  "An interceptor which decreases the amount of destructuring necessary in an
+  "> New in v1.2.0
+
+   An interceptor which decreases the amount of destructuring necessary in an
    event handler where the event is structured as a 2-vector of
    [event-id payload-map].
 
