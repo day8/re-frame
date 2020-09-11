@@ -52,6 +52,7 @@ h1[id=_1] {
 .md-typeset p {
   margin-top: 0.75em;
   margin-bottom: 0.75em;
+  text-align: justify;
 }
 
 body {
