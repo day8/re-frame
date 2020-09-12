@@ -28,17 +28,17 @@ but this page does contain some interactive, live coding to get you started.
 Clojure is a modern LISP.
 
 Alan Kay once described LISP as "Maxwell's equations of software".
-Paul Graham says LISP was a competitive advantage for his startup.
-Dijkstra has written glowingly of it.
-For 50 years, some of the finest minds in software have admired it, used it and refined it.
+Paul Graham believes LISP was a competitive advantage for his startup.
+Eric Raymmond said that learning LISP was profoundly enligthening, and would make you a better programmer for the rest of your days. 
+Dijkstra has written glowingly of it. 
 
-In the years leading up to 2010, Rich Hickey created Clojure, introducing key innovations
-(subsequently adopted by other functional languages), 
+For 50 years, some of the finest minds in software have admired it, used it and refined it. 
+In the years leading up to 2010, Rich Hickey created Clojure, introducing key innovations,
 and he did it well away from 
 academia (LISP's traditional home), because he wanted to create a pragmatic language for commercial developers.
 
-Overall, Clojure is a foliated masterpiece. Lisp went through its washing machine phase of churn in the 70s and 80s and these days 
-it is like a beautiful, deep clear water lake, rayifing 50 years of evolution. 
+In aggregate, Clojure is a foliated masterpiece. Lisp went through its washing machine phase of churn in the 70s and 80s and these days 
+it is more like a beautiful, deep clear lake, reifying 50 years of evolution.
 
 As the owner of a company which develops software products, I'm quite sure ClojureScript gives us a
 competitive edge. As a programmer, I feel like it has provided me with excellent,
