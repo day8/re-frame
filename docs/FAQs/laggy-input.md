@@ -22,16 +22,16 @@ That `on-change` handler is being called after the user types every character.  
 
   1. The user types a new character taking the field from `state A` to `state B`  (`B` has one new, extra character in it, compared to `state A`) 
   2. The change event for `state B` is dispatched by `on-change`. And that event is queued for processing. 
-  3. But before that event can be processed, the browser schedules an annimation frame. 
-  4. In that annimation frame the component is rerendered
-  5. But during that reender the `subscribe` will deliver `state A`
+  3. But before that event can be processed, the browser schedules an animation frame. 
+  4. In that animation frame the component is re-rendered
+  5. But during that re-render the `subscribe` will deliver `state A`
   6. That means the text in the box will revert from `state B` to `state A` (the character just typed won't be in the input)
-  7. Now if nothing happened till the next annimation frame the situation would resolve itself. Because `state B` would be rendered next time because the event which included the 
+  7. Now if nothing happened till the next animation frame the situation would resolve itself. Because `state B` would be rendered next time because the event which included the 
   new character would have been processed well before then. 
-  6. BUT if the user immediaetly types another character, the state dispatched will be `State A + new character`. The prevous character typed, 
+  6. BUT if the user immediately types another character, the state dispatched will be `State A + new character`. The prevous character typed, 
      which caused A -> B, is now lost. 
 
-Bottom line: with very fast typing, characters can get dropped just before annimation-frames.
+Bottom line: with very fast typing, characters can get dropped just before animation-frames.
 
 There are three solutions:
 
