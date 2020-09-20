@@ -344,7 +344,7 @@ Here's the code for defining our 2 subscription handlers:
     (:time-color db)))
 </code>
 
-Both of these queries are trivial. They are known as "accessor", or level 2, subscriptions. More on that soon.
+Both of these queries are trivial. They are known as "accessor", or layer 2, subscriptions. More on that soon.
 
 ## View Functions
 
