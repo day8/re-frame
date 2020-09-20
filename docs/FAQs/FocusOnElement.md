@@ -68,4 +68,4 @@ for the HTML element on which you want focus.
 One small trick: we perform the imperative focus using 
 `Reagent/after-render` because sometimes the target
 HTML element won't exist in the DOM until after the rendering 
-which occurs in the next annimation frame.
+which occurs in the next animation frame.
