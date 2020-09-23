@@ -1,0 +1,15 @@
+{
+  "name": "todomvc-re-frame",
+  "devDependencies": {
+    "karma": "5.2.2",
+    "karma-chrome-launcher": "3.1.0",
+    "karma-cljs-test": "0.1.0",
+    "karma-junit-reporter": "2.0.1",
+    "karma-phantomjs-launcher": "1.0.4",
+    "shadow-cljs": "2.11.4"
+  },
+  "dependencies": {
+    "react": "16.13.0",
+    "react-dom": "16.13.0"
+  }
+}

@@ -5,7 +5,7 @@
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
-                 [thheller/shadow-cljs      "2.11.0"]
+                 [thheller/shadow-cljs      "2.11.4"]
                  ;; We repeat re-frame's own dependencies here as instead of
                  ;; depending on a re-frame artifact we add the re-frame source
                  ;; from this repository directly to the :source-paths.
@@ -14,7 +14,7 @@
                  [org.clojure/tools.logging "0.4.1"]]
 
   :plugins      [[day8/lein-git-inject "0.0.14"]
-                 [lein-shadow          "0.2.2"]]
+                 [lein-shadow          "0.3.0"]]
 
   :middleware   [leiningen.git-inject/middleware]
 
@@ -23,7 +23,7 @@
 
   :clean-targets ^{:protect false} [:target-path
                                     "shadow-cljs.edn"
-                                    "package.json"
+                                    "node_modules"
                                     "resources/public/js"]
 
   :shadow-cljs {:nrepl  {:port 8777}

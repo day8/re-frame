@@ -1,4 +1,2 @@
 .shadow-cljs/
 shadow-cljs.edn
-package.json
-package-lock.json
