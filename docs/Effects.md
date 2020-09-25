@@ -243,7 +243,7 @@ registered handlers) to which you can return.
 
 ## Existing Effect Handlers
 
-`re-frame's` built-in effect handlers, like `dispatch-n` and `dispatch-later`, are detailed in [the API](https://day8.github.io/re-frame/api) document.
+`re-frame's` built-in effect handlers, like `dispatch-n` and `dispatch-later`, are detailed in [the API](https://day8.github.io/re-frame/api-builtin-effects/) document.
 
 And please review the [External-Resources document](https://day8.github.io/re-frame/External-Resources/) for a list of 3rd party Effect Handlers.
 
