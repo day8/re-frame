@@ -280,10 +280,10 @@ created to be independent of absolute paths?
 That means parameterising the handlers with that path information. 
 
 There's a variety of ways: 
-   - insist that customers are always at the same path  
-   - the handlers themselves lookup the absolute parts of `app-db` paths in some central registry (probably stored in `app-db` itself)
-   - path information is passed into the Components, and they then supply to the handlers via query-vectors and event-vectors ... much as they provide `id`
-   - when the handlers are registered, they "close over" some path information (different information, for each application)
+- insist that customers are always at the same path  
+- the handlers themselves lookup the absolute parts of `app-db` paths in some central registry (probably stored in `app-db` itself)
+- path information is passed into the Components, and they then supply to the handlers via query-vectors and event-vectors ... much as they provide `id`
+- when the handlers are registered, they "close over" some path information (different information, for each application)
 
 
 
