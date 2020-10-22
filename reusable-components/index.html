@@ -1825,10 +1825,10 @@ the job of the handlers to read and write data to/from <code>app-db</code>, so t
 created to be independent of absolute paths? </p>
 <p>That means parameterising the handlers with that path information. </p>
 <p>There's a variety of ways: 
-   - insist that customers are always at the same path<br />
-   - the handlers themselves lookup the absolute parts of <code>app-db</code> paths in some central registry (probably stored in <code>app-db</code> itself)
-   - path information is passed into the Components, and they then supply to the handlers via query-vectors and event-vectors ... much as they provide <code>id</code>
-   - when the handlers are registered, they "close over" some path information (different information, for each application)</p>
+- insist that customers are always at the same path<br />
+- the handlers themselves lookup the absolute parts of <code>app-db</code> paths in some central registry (probably stored in <code>app-db</code> itself)
+- path information is passed into the Components, and they then supply to the handlers via query-vectors and event-vectors ... much as they provide <code>id</code>
+- when the handlers are registered, they "close over" some path information (different information, for each application)</p>
 <!--
 
 ### Sufficiently Complex Components
