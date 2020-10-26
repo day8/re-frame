@@ -35,7 +35,7 @@ So what are we doing here?  Marketing (Narative warefare) for the re-frame frame
        - re-frame-10x
        - Google's "Closure Compiler" (tree shaking) 
 
-  Also benifits from:
+  Also benefits from:
 
   - acceptable performance
   - acceptable bundle size
