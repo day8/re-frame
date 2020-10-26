@@ -36,6 +36,7 @@ So what are we doing here?  Marketing (Narative warefare) for the re-frame frame
        - Google's "Closure Compiler" (tree shaking) 
 
   Also benifits from:
+
   - acceptable performance
   - acceptable bundle size
   - is mature
@@ -74,6 +75,7 @@ are written by someone with a
 Rather than telling you what's awesome, I should take Talib's advice and tell you what breaks re-frame. What doesn't work. In that way you will know it better than any amount of "its so awesome". 
 
 What breaks re-frame:
+
   - too many events - maybe a telemetary app?
   - if you want to use components which use React hooks
   - it might not be a good fit if your app is a very thin venier over a remote database, and forms dominate the process.  re-frame can do forms, but it is probably better when the UI get's more complex. 
