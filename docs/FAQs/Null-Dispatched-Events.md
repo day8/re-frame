@@ -29,6 +29,7 @@ and `dispatch` them, rather than the entire js event object. When you
 and debugging will be easier. 
 
 To put this point even more strongly again, think about it like this:
+
  - a DOM `on-click` `callback` might tell us "a button was clicked"
  - our application must then interpret that click. The click means 
    the user wanted to achieve something. They had "intent".

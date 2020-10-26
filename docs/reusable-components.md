@@ -9,8 +9,9 @@ Roughly speaking, `Reagent Components` are useful for the simple, individual wid
 ## The Essence Of A Component
 
 All Components have:
-  - two responsibilities
-  - and two associated needs
+
+- two responsibilities
+- and two associated needs
 
 The two responsibilities are:
 
@@ -120,6 +121,7 @@ The Answer:
 - the subscription handler will know how to use this `identity` to obtain the entity's value
 
 And the, later, `O` bit: 
+
 - the events `dispatched` will (typically) also include this `identity`  
 - the event handler will know how to use this identity to modify the right part of `app-db`
 
@@ -280,6 +282,7 @@ created to be independent of absolute paths?
 That means parameterising the handlers with that path information. 
 
 There's a variety of ways: 
+
 - insist that customers are always at the same path  
 - the handlers themselves lookup the absolute parts of `app-db` paths in some central registry (probably stored in `app-db` itself)
 - path information is passed into the Components, and they then supply to the handlers via query-vectors and event-vectors ... much as they provide `id`
