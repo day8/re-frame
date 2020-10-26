@@ -15,7 +15,7 @@ The re-frame website is largly built using a static site generator:
 a [Material UI](https://material.io/) theme for the `mkdocs` static site generator.
 
 The website is built [via Github actions](https://github.com/day8/re-frame/blob/feature/mkdocs/.github/workflows/docs-workflow.yml)
-whcih stich together the docs, the API and the klipse artifacts.
+which stitch together the docs, the API and the klipse artifacts.
 
 ## To Build Locally
 
