@@ -18,11 +18,13 @@
 (def query->reaction (atom {}))
 
 (defn clear-subscription-cache!
+  "calls `on-dispose` for each cached item, 
+   which will cause the value to be removed from the cache" 
   []
   (doseq [[k rxn] @query->reaction]
     (dispose! rxn))
   (if (not-empty @query->reaction)
-    (console :warn "Subscription cache should be empty after clearing it.")))
+    (console :warn "re-frame: The subscription cache isn't empty after being cleared")))
 
 (defn clear-all-handlers!
   "Unregisters all existing subscription handlers"

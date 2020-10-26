@@ -2,7 +2,7 @@
   (:require
     [re-frame.db           :refer [app-db]]
     [re-frame.interceptor  :refer [->interceptor]]
-    [re-frame.registrar    :refer [get-handler clear-handlers register-handler]]
+    [re-frame.registrar    :refer [get-handler register-handler]]
     [re-frame.loggers      :refer [console]]))
 
 

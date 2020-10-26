@@ -17,7 +17,7 @@ graph - at the leaves - are the `View Functions`, which calculate hiccup.
 
 Typically, the Signal Graph is not deep, with only a few interior layers of nodes
 between root and leaves. These interior nodes are the subscription nodes
-that you create via `regsub`. Or, more accurately, you use `regsub` to register
+that you create via `reg-sub`. Or, more accurately, you use `reg-sub` to register
 how such nodes should be created, if and when they are needed.
 
 Data flows through this graph, being transformed by the journey and, as a result, the data which
@@ -134,7 +134,7 @@ This registers a `computation function` - a pretty simple one which just does an
 is the `query vector` supplied in the subscription. In our simple case here, we're not using it. But if the subscription was for
 `(subscribe [:id "blue" :yeah])` then the `query-v` given to the handler would be `[:id "blue" :yeah]`.
 
-`Layer 3` (aterialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:
+`Layer 3` (materialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:
 ```clj
 (reg-sub 
   :id

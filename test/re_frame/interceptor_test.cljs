@@ -112,11 +112,11 @@
 
 (deftest test-fx-handler-interceptor
   (let [event   [:a :b]
-        coeffect {:db 4 :event event}
+        coeffect {:db 4 :event event :original-event event}
         effect   {:db 5 :dispatch [:a]}
 
         handler (fn [world v]
-                  ;; make sure it was given the right arguements
+                  ;; make sure it was given the right arguments
                   (is (= world coeffect))
                   (is (= v event))
 

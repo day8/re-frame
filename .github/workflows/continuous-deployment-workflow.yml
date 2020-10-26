@@ -9,52 +9,68 @@ jobs:
     name: Test
     runs-on: ubuntu-18.04
     container:
-      # Ref: https://github.community/t5/GitHub-Actions/docker-pull-from-public-GitHub-Package-Registry-fail-with-quot/m-p/32782
-      image: superstructor/clojure:openjdk-11-lein-2.9.1-node-browsers
+      # Source: https://github.com/day8/dockerfile-for-dev-ci-image
+      image: day8au/dev-ci:0.0.8
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Maven cache
         id: maven-cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: /root/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: npm cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('project.clj') }}-${{ hashFiles('**/deps.cljs') }}
           restore-keys: |
             ${{ runner.os }}-npm-
       - name: shadow-cljs compiler cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: .shadow-cljs
           key: ${{ runner.os }}-shadow-cljs-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-shadow-cljs-
       - if: steps.maven-cache.outputs.cache-hit != 'true'
-        run: lein karma-once
+        run: lein ci
       - if: steps.maven-cache.outputs.cache-hit != 'true'
-        name: Run cd examples/simple && lein shadow compile client
+        name: Run cd examples/simple && lein shadow-release && lein build-report
         working-directory: examples/simple
-        run: lein shadow compile client
+        run: |
+          lein shadow-release
+          lein build-report
       - if: steps.maven-cache.outputs.cache-hit != 'true'
-        name: Run cd examples/todomvc && lein shadow compile client
+        name: Run cd examples/todomvc && lein shadow-release && lein build-report
         working-directory: examples/todomvc
-        run: lein shadow compile client
+        run: |
+          lein shadow-release
+          lein build-report
       - if: steps.maven-cache.outputs.cache-hit == 'true'
-        run: lein -o karma-once
+        run: lein -o ci
       - if: steps.maven-cache.outputs.cache-hit == 'true'
-        name: Run cd examples/simple && lein -o shadow compile client
+        name: Run cd examples/simple && lein -o shadow-release && lein -o build-report
         working-directory: examples/simple
-        run: lein -o shadow compile client
+        run: |
+          lein -o shadow-release
+          lein -o build-report
       - if: steps.maven-cache.outputs.cache-hit == 'true'
-        name: Run cd examples/todomvc && lein -o shadow compile client
+        name: Run cd examples/todomvc && lein -o shadow-release && lein -o build-report
         working-directory: examples/todomvc
-        run: lein -o shadow compile client
+        run: |
+          lein -o shadow-release
+          lein -o build-report
+      - uses: actions/upload-artifact@v2
+        with:
+          name: simple-example-build-report
+          path: examples/simple/target/build-report.html
+      - uses: actions/upload-artifact@v2
+        with:
+          name: todomvc-example-build-report
+          path: examples/todomvc/target/build-report.html
       - name: Slack notification
         uses: homoluctus/slatify@v2.0.1
         if: failure() || cancelled()
@@ -70,13 +86,15 @@ jobs:
     needs: test
     runs-on: ubuntu-18.04
     container:
-      # Ref: https://github.community/t5/GitHub-Actions/docker-pull-from-public-GitHub-Package-Registry-fail-with-quot/m-p/32782
-      image: superstructor/clojure:openjdk-11-lein-2.9.1-node-browsers
+      # Source: https://github.com/day8/dockerfile-for-dev-ci-image
+      image: day8au/dev-ci:0.0.8
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Maven cache
         id: maven-cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: /root/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
@@ -84,12 +102,22 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Run lein release
         if: steps.maven-cache.outputs.cache-hit != 'true'
+        env:
+          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
+          CLOJARS_TOKEN: ${{ secrets.CLOJARS_TOKEN }}
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }} CLOJARS_TOKEN=${{ secrets.CLOJARS_TOKEN }} GITHUB_USERNAME=${{ github.actor }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} lein release
+          lein release
       - name: Run lein -o release
         if: steps.maven-cache.outputs.cache-hit == 'true'
+        env:
+          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
+          CLOJARS_TOKEN: ${{ secrets.CLOJARS_TOKEN }}
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          CLOJARS_USERNAME=${{ secrets.CLOJARS_USERNAME }} CLOJARS_TOKEN=${{ secrets.CLOJARS_TOKEN }} GITHUB_USERNAME=${{ github.actor }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} lein -o release
+          lein -o release
       # This creates a 'GitHub Release' from the tag and includes link to the releases page
       # on the re-frame website. We do not use draft or prerelease features as we always want
       # the latest release to show in the right hand column of the project page regardless

@@ -73,12 +73,12 @@ by the event, and it returns a map of `effects` which describe the necessary cha
 
 Here's a sketch (we are at 30,000 feet):
 ```clj
-(defn h                           ;; maybe choose a better name like `delete-item`
- [coeffects event]                ;; `coeffects` holds the current state of the world
- (let [item-id   (second event)   ;; extract id from event vector
-       state     (:db coeffects)  ;; extract the current application state
-       new-state (dissoc-in db [:items item-id])]   ;; new app state
-   {:db new-state}))              ;; a map of the necessary effects 
+(defn h                          ;; maybe choose a better name like `delete-item`
+ [coeffects event]               ;; `coeffects` holds the current state of the world
+ (let [item-id  (second event)   ;; extract id from event vector
+       db       (:db coeffects)  ;; extract the current application state
+       new-db   (dissoc-in db [:items item-id])]   ;; new app state
+   {:db new-db}))                ;; a map of the necessary effects 
 ```
 
 There are ways (described in later tutorials) for you to inject necessary aspects
@@ -90,18 +90,19 @@ the current value in `app-db` is available via the expression `(:db coeffects)`.
 
 The value returned by `h` is a map with only one key, like this:
 ```clj
-{:db updated-value-to-put-into-app-db}
+{:db new-db}     ;; `new-db` is the newly computed application state
 ```
-So, `h` computes one effect - which is a change to application state.
+So, `h` computes one effect, and returns it. And that effect says to make a change to 
+application state.
 
 Please pay particular attention to this overall flow, within `h`:
 
   1. `h` obtains the current application state (a map) via `(:db coeffects)` 
   2. it computes a modified application state via `(dissoc-in db [:items item-id])`
-  3. it returns this modified application state in an effect map `{:db new-state}`
+  3. it returns this modified application state in an effects map `{:db new-db}`
 
 
-BTW, here is a more idiomatic (and terser) rewrite of `h` which uses `destructuring` of the args: 
+BTW, here is a more idiomatic (and terser) rewrite of `h` using [destructuring](https://clojure.org/guides/destructuring) of the args: 
 ```clj
 (defn h 
   [{:keys [db]} [_ item-id]]    ;; <--- new: obtain db and item-id directly
@@ -115,7 +116,7 @@ BTW, here is a more idiomatic (and terser) rewrite of `h` which uses `destructur
 
 In Domino 2, `h` returned: 
 ```clj
-{:db  updated-value-to-put-in-app-db}
+{:db  new-db}   ;; `new-db` is the new, computed application state
 ```
 
 Each key of this returned map identifies one kind 
@@ -132,11 +133,11 @@ the effect handler function for the `:db` effect could be registered like this:
 ```
 
 Just to be clear, this `reset!` of `app-db` is a mutative, effectful action. That's
-what effect handlers do. They change the world. They are not pure functions. 
+what effect handlers do. They change the world. They are not pure functions.
 
-Now, you don't actually need to ever register an effects handler for `:db`
+Now, you don't need to ever register an effects handler for `:db`
 because re-frame supplies one built in. re-frame manages `app-db` and so it 
-will look after changes to it.
+will look for any changes (effects) to it.
 
 But if, instead, `h` had returned: 
 ```clj

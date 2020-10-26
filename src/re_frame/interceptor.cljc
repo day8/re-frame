@@ -120,6 +120,9 @@
   ([event interceptors]
    (-> {}
       (assoc-coeffect :event event)
+      ;; Some interceptors, like `trim-v` and `unwrap`, alter event so capture
+      ;; the original for use cases such as tracing.
+      (assoc-coeffect :original-event event)
       (enqueue interceptors)))
   ([event interceptors db]      ;; only used in tests, probably a hack, remove ?  XXX
    (-> (context event interceptors)
@@ -147,7 +150,7 @@
        {:before  (fn [context] ...)     ;; returns possibly modified context
         :after   (fn [context] ...)}    ;; `identity` would be a noop
 
-   Walks the queue of iterceptors from beginning to end, calling the
+   Walks the queue of interceptors from beginning to end, calling the
    `:before` fn on each, then reverse direction and walk backwards,
    calling the `:after` fn on each.
 
@@ -165,7 +168,7 @@
       :stack     <a collection of interceptors already walked>}
 
    `context` has `:coeffects` and `:effects` which, if this was a web
-   server, would be somewhat anologous to `request` and `response`
+   server, would be somewhat analogous to `request` and `response`
    respectively.
 
    `coeffects` will contain data like `event` and the initial

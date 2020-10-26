@@ -3,8 +3,8 @@
 >  It documents an approach we experiemented with early, before realising it was probably wrong, but we haven't yet transfered the knowledge it contains to some other, less central place. So here is still sits. <br>
 >  <br>
 >  The RIGHT WAY in think can be found in FAQs like: <br>
->  1. https://github.com/day8/re-frame/blob/master/docs/FAQs/LoadOnMount.md  <br>
->  2. https://github.com/day8/re-frame/blob/master/docs/FAQs/PollADatabaseEvery60.md  <br>
+>  1. https://day8.github.io/re-frame/FAQs/LoadOnMount/  <br>
+>  2. https://day8.github.io/re-frame/FAQs/PollADatabaseEvery60/  <br>
 >  3. https://github.com/day8/re-frame-http-fx
 
 ## Subscribing to External Data
@@ -134,7 +134,7 @@ A few things to notice:
 
 1. We are using the low level `reg-sub-raw` to register our handler (and not the more normal `reg-sub`)
    so we can get an `:on-dispose` callback when the subscription is no longer needed.
-   [See the `reg-sub-raw` docs at the end of this tutorial](SubscriptionFlow.md)
+   [See the `reg-sub-raw` docs at the end of this tutorial](flow-mechanics.md)
    
 2. You have to write  `issue-items-query!`.  Are you making a Restful GET? 
    Are you writing JSON packets down a websocket?  The query has to be made.

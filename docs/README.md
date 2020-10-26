@@ -25,9 +25,10 @@ git clone https://github.com/day8/re-frame.git
 cd re-frame
 ```
 
-Then (optionally) build the API documentation (if you want the API tab of the website work in your development session):
+Then build the API documentation:
 ```sh
-lein codox
+cd docs/
+clojure -m ns-to-markdown ..\src\re_frame\core.cljc > api-re-frame.core.md 
 ```
 
 Then, if using PowerShell on Windows:

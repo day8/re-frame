@@ -22,7 +22,7 @@ What might need to be injected (as args) into a view:
   - `subscribe` and `dispatch` 
   - a `frame` supplied via `context`  (subscribe and dispatch obtained from frame)
   - other context: data from higher in the DOM tree
-  - annimation?  CSS  ?
+  - animation?  CSS  ?
 
 XXX searches up the DOM heirarchy looking for a `frame` context then extracts dispatch and subscribe.  Sounds inefficient. 
 
