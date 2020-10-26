@@ -28,16 +28,19 @@ cd re-frame
 Then build the API documentation:
 ```sh
 cd docs/
-clojure -m ns-to-markdown ..\src\re_frame\core.cljc > api-re-frame.core.md 
+clojure -m ns-to-markdown ../src/re_frame/core.cljc > api-re-frame.core.md
 ```
 
-Then, if using PowerShell on Windows:
+
+Then, from the re-frame home directory, generate the docs.
+
+using PowerShell on Windows:
 ```sh
-docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
+docker run --rm -it -p 8000:8000 -v "%cd%":/docs squidfunk/mkdocs-material:5.1.1
 ```
 or, using linux:
 ```sh
-docker run --rm -it -p 8000:8000 -v "%cd%":/docs squidfunk/mkdocs-material:5.1.1
+docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
 ```
 
 Then, in a browser tab, load `http://localhost:8000/`. You should see the website Home page. 
