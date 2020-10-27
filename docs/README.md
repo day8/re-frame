@@ -1,8 +1,8 @@
 ## Introduction 
 
-This directory contains the content and configuration for the re-frame website. 
+This directory contains both the content and configuration for the re-frame website. 
 
-A production copy of the re-frame website can be viewed here: 
+The live, production copy of the re-frame website can be viewed here: 
 https://day8.github.io/re-frame/
 
 This document describes how the website is built and how to do work on it. 
@@ -14,7 +14,7 @@ The re-frame website is largly built using a static site generator:
 <https://squidfunk.github.io/mkdocs-material> which provides 
 a [Material UI](https://material.io/) theme for the `mkdocs` static site generator.
 
-The website is built [via Github actions](https://github.com/day8/re-frame/blob/feature/mkdocs/.github/workflows/docs-workflow.yml)
+The live re-frame website is built [via Github actions](https://github.com/day8/re-frame/blob/feature/mkdocs/.github/workflows/docs-workflow.yml)
 which stitch together the docs, the API and the klipse artifacts.
 
 ## To Build Locally
@@ -25,24 +25,29 @@ git clone https://github.com/day8/re-frame.git
 cd re-frame
 ```
 
-Then build the API documentation:
+Then build the API documentation (generally, just once):
 ```sh
 cd docs/
 clojure -m ns-to-markdown ..\src\re_frame\core.cljc > api-re-frame.core.md 
 ```
 
-Then, if using PowerShell on Windows:
+Then switch back to the re-frame home directory to generate the rest of the docs. 
 ```sh
-docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
+cd ..
+```
+
+If using PowerShell on Windows:
+```sh
+docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material:5.1.1
 ```
 or, using linux:
 ```sh
 docker run --rm -it -p 8000:8000 -v "%cd%":/docs squidfunk/mkdocs-material:5.1.1
 ```
 
-Then, in a browser tab, load `http://localhost:8000/`. You should see the website Home page. 
+Then, in your browser tab, load `http://localhost:8000/`. You should see the website Home page. 
 
-You can now edit the website's markdown in `/docs` and your changes will be hot reloaded into the brower tab for inspection.
+You can now edit the markdown in `/docs` and your changes will be hot reloaded into the brower tab for inspection.
 
 
 ## Configuration
