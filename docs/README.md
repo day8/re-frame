@@ -28,7 +28,7 @@ cd re-frame
 Then build the API documentation (generally, just once):
 ```sh
 cd docs/
-clojure -m ns-to-markdown ..\src\re_frame\core.cljc > api-re-frame.core.md 
+clojure -m ns-to-markdown ../src/re_frame/core.cljc > api-re-frame.core.md 
 ```
 
 Then switch back to the re-frame home directory to generate the rest of the docs. 
@@ -36,11 +36,11 @@ Then switch back to the re-frame home directory to generate the rest of the docs
 cd ..
 ```
 
-If using PowerShell on Windows:
+If using PowerShell on Windows (and I'm told this is also the right commandline for Mac):
 ```sh
 docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material:5.1.1
 ```
-or, using linux:
+or, if you are using linux:
 ```sh
 docker run --rm -it -p 8000:8000 -v "%cd%":/docs squidfunk/mkdocs-material:5.1.1
 ```
