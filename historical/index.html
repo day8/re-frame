@@ -1668,9 +1668,11 @@ in one place - unlike OO systems where the state is distributed (and synchronise
 across many objects. So implementing your control logic as a FSM is
 fairly natural in re-frame, whereas it is often difficult and
 contrived in other kinds of architecture (in my experience).</p>
-<p>So, members of the jury, I put it to you that:
-  - the first 3 dominoes implement an <a href="https://en.wikipedia.org/wiki/Event-driven_finite-state_machine">Event-driven finite-state machine</a>
-  - the last 3 dominoes render the FSM's current state for the user to observe</p>
+<p>So, members of the jury, I put it to you that:</p>
+<ul>
+<li>the first 3 dominoes implement an <a href="https://en.wikipedia.org/wiki/Event-driven_finite-state_machine">Event-driven finite-state machine</a></li>
+<li>the last 3 dominoes render the FSM's current state for the user to observe</li>
+</ul>
 <p>Depending on your app, this may or may not be a useful mental model,
 but one thing is for sure ...</p>
 <p>Events - that's the way we roll.</p>

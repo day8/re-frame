@@ -1502,13 +1502,15 @@ run async.  <a href="https://facebook.github.io/react/docs/events.html">Find out
 and <code>dispatch</code> them, rather than the entire js event object. When you 
 <code>dispatch</code> pure, simple ClojureScript data (ie. rather than js objects) testing 
 and debugging will be easier. </p>
-<p>To put this point even more strongly again, think about it like this:
- - a DOM <code>on-click</code> <code>callback</code> might tell us "a button was clicked"
- - our application must then interpret that click. The click means 
-   the user wanted to achieve something. They had "intent".
- - it is this "intent" which should be captured in the re-frame <code>event</code> 
+<p>To put this point even more strongly again, think about it like this:</p>
+<ul>
+<li>a DOM <code>on-click</code> <code>callback</code> might tell us "a button was clicked"</li>
+<li>our application must then interpret that click. The click means 
+   the user wanted to achieve something. They had "intent".</li>
+<li>it is this "intent" which should be captured in the re-frame <code>event</code> 
    which is dispatched.  It is this intent which the event handler must 
-   later facilitate.</p>
+   later facilitate.</li>
+</ul>
 <p>So, in summary, re-frame view functions should transform DOM events 
 into re-frame <code>events</code> which capture user intent: "a button was clicked"
 becomes <code>user wants to delete item with id 42</code></p>

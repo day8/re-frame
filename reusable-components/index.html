@@ -1597,9 +1597,11 @@
 </ul>
 <p>Roughly speaking, <code>Reagent Components</code> are useful for the simple, individual widgets and  <code>re-frame Components</code> for larger widget complexes. </p>
 <h2 id="the-essence-of-a-component">The Essence Of A Component<a class="headerlink" href="#the-essence-of-a-component" title="Permanent link">&para;</a></h2>
-<p>All Components have:
-  - two responsibilities
-  - and two associated needs</p>
+<p>All Components have:</p>
+<ul>
+<li>two responsibilities</li>
+<li>and two associated needs</li>
+</ul>
 <p>The two responsibilities are:</p>
 <ol>
 <li>
@@ -1697,9 +1699,11 @@ representing <code>B</code>.</p>
 <li>a component will use this <code>identity</code> within the query vector given to <code>subscribe</code> - so the query is parameterised by the <code>identity</code></li>
 <li>the subscription handler will know how to use this <code>identity</code> to obtain the entity's value</li>
 </ul>
-<p>And the, later, <code>O</code> bit: 
-- the events <code>dispatched</code> will (typically) also include this <code>identity</code><br />
-- the event handler will know how to use this identity to modify the right part of <code>app-db</code></p>
+<p>And the, later, <code>O</code> bit: </p>
+<ul>
+<li>the events <code>dispatched</code> will (typically) also include this <code>identity</code>  </li>
+<li>the event handler will know how to use this identity to modify the right part of <code>app-db</code></li>
+</ul>
 <h2 id="what-is-identity">What Is Identity?<a class="headerlink" href="#what-is-identity" title="Permanent link">&para;</a></h2>
 <p>An <code>identity</code> is anything which can be used to distinguish one entity from another - something which distinguishes <code>A</code> from <code>B</code>.</p>
 <p>In a different technology stack, it might be called "a pointer" or "a reference" or "a unique key". </p>
@@ -1824,11 +1828,13 @@ whereas in the next application, they might be at another path in <code>app-db</
 the job of the handlers to read and write data to/from <code>app-db</code>, so they must be
 created to be independent of absolute paths? </p>
 <p>That means parameterising the handlers with that path information. </p>
-<p>There's a variety of ways: 
-- insist that customers are always at the same path<br />
-- the handlers themselves lookup the absolute parts of <code>app-db</code> paths in some central registry (probably stored in <code>app-db</code> itself)
-- path information is passed into the Components, and they then supply to the handlers via query-vectors and event-vectors ... much as they provide <code>id</code>
-- when the handlers are registered, they "close over" some path information (different information, for each application)</p>
+<p>There's a variety of ways: </p>
+<ul>
+<li>insist that customers are always at the same path  </li>
+<li>the handlers themselves lookup the absolute parts of <code>app-db</code> paths in some central registry (probably stored in <code>app-db</code> itself)</li>
+<li>path information is passed into the Components, and they then supply to the handlers via query-vectors and event-vectors ... much as they provide <code>id</code></li>
+<li>when the handlers are registered, they "close over" some path information (different information, for each application)</li>
+</ul>
 <!--
 
 ### Sufficiently Complex Components
