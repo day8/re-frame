@@ -1287,6 +1287,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#112-2020-11-11" class="md-nav__link">
+    1.1.2 (2020-11-11)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#111-2020-08-26" class="md-nav__link">
     1.1.1 (2020-08-26)
   </a>
@@ -1517,6 +1524,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#112-2020-11-11" class="md-nav__link">
+    1.1.2 (2020-11-11)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#111-2020-08-26" class="md-nav__link">
     1.1.1 (2020-08-26)
   </a>
@@ -1629,6 +1643,7 @@
 <p>The re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for Maven/deps/Lein.</p>
 </blockquote>
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h2 id="112-2020-11-11">1.1.2 (2020-11-11)<a class="headerlink" href="#112-2020-11-11" title="Permanent link">&para;</a></h2>
 <h4>Added</h4>
 <ul>
 <li>Add a new interceptor called <code>unwrap</code>. It decreases the amount of destructuring necessary
@@ -1654,6 +1669,9 @@
 </ul>
 <h4>Fixed</h4>
 <ul>
+<li>Fix reg-global-interceptor code reloading by replacing interceptors with duplicate ids in place to
+  maintain the ordering of global interceptors. Previously would result in the interceptor actually
+  being duplicated. See <a href="https://github.com/day8/re-frame/issues/655">#655</a></li>
 <li>Fix event handlers passing events modified by interceptors to tracing, instead
   all event handlers now use <code>:original-event</code> for tracing.</li>
 </ul>
