@@ -43,7 +43,7 @@ In re-frame, events are causal, and views are purely reactive.
 
 ## Documentation 
 
-The re-frame documentation is [available here](http://day8.github.io/re-frame/).
+The re-frame documentation is [available here](https://day8.github.io/re-frame/).
 
 
 ## The Current Version 
