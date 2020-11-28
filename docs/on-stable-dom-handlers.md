@@ -4,9 +4,9 @@ This technique is only useful when you are writing
 performance-critical components. Indeed, you may never need it, but 
 understanding it will deepen your knowledge about Reagent.
 
-A performance-critical component would need to be: 
+A performance-critical component would need to satisfy all of the following: 
   
-  1. repeatedly used on a page, perhaps within the rows of a list or cells of a grid
+  1. be repeatedly used on a page, perhaps within the rows of a list, or the cells of a grid, or the branches of a tree
   2. and then be re-rendered ***a lot***
   3. and involve creating anonymous callback functions in re-renders 
 
