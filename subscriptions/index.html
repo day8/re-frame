@@ -1567,10 +1567,11 @@
                 
                 
                 <h1 id="on-derived-data">On Derived Data<a class="headerlink" href="#on-derived-data" title="Permanent link">&para;</a></h1>
-<p>A UI is derived data (all the way down).</p>
-<p>At any given moment, the user views certain DOM, and this DOM is tree-shaped data which is itself just a "materialised view" of other data - the data stored in <code>app-db</code>.</p>
+<p>A UI is derived data.</p>
+<p>The user sees what the browser renders, and the browser renders DOM.  And this DOM is just tree-shaped data. And this tree is itself a "materialised view" of other
+data - the data in <code>app-db</code>. </p>
 <p>When Domino 3 (an effect handler) modifies <code>app-db</code>, boom, boom, boom go dominoes 4, 5 &amp; 6, 
-automatically producing this "materialised view" (DOM) via a data flow, or pipeline. </p>
+automatically computing the "materialised view" seen by the user. These dominoes collectively implement a reactive dataflow. </p>
 <h2 id="how-exactly">How Exactly?<a class="headerlink" href="#how-exactly" title="Permanent link">&para;</a></h2>
 <p>Data flows through <strong>The Signal Graph</strong>.</p>
 <p><code>app-db</code> is the ground truth of a re-frame app, and it is at the root of a 
