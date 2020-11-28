@@ -167,9 +167,9 @@ Which only leaves me to show you the hero in our story, which I offer
 without further explanation for you to read and understand: 
 ```clj
 (defn callback-factory-factory
-  "returns a function which will always return the `same-function` every time 
+  "returns a function which will always return the `same-callback` every time 
    it is called. 
-   `same-function` is what actually calls your `callback` and, when it does,
+   `same-callback` is what actually calls your `callback` and, when it does,
    it supplies any necessary args, including those supplied at wrapper creation
    time and any supplied by the browser (a DOM event object?) at call time." 
   [the-real-callback]
@@ -179,7 +179,7 @@ without further explanation for you to read and understand:
     (fn callback-factory
       [& args1]                   
       (reset! *args1 args1))
-      same-callback)))               ;; <-- always return the same function
+      same-callback)))               ;; <-- always returns the same function
 ```
 
 ## More Advanced Again
@@ -188,8 +188,8 @@ Sometimes the callback will need to accept a DOM event argument. In the followin
 ```clj
 (defn some-input-view 
   [_]
-  (let [on-change         (fn [id event]    ;; <-- Note 1
-                            (dispatch [:changed id (-> event .-target .-value)]))
+  (let [on-change         (fn [id dom-event]    ;; <-- Note 1
+                            (dispatch [:changed id (-> dom-event .-target .-value)]))
         on-change-factory (callback-factory-factory on-change)]
 
     (fn [id text]
@@ -199,8 +199,8 @@ Sometimes the callback will need to accept a DOM event argument. In the followin
 ```
 Note:
 
-1. this time the callback, `on-change`, takes two arguments. The `id` and the DOM `event`
-2. But when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling `event` later when it calls the callback. 
+1. this time the callback, `on-change`, takes two arguments. The `id` and the DOM event `dom-event`
+2. But, when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling `dom-event` later when it calls the callback. 
 
 
 ## Summary 
