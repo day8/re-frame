@@ -1,12 +1,13 @@
 # On Derived Data
 
-A UI is derived data (all the way down).
+A UI is derived data.
 
-At any given moment, the user views certain DOM, and this DOM is tree-shaped data which is itself just a "materialised view" of other data - the data stored in `app-db`.
+The user sees what the browser renders, and the browser renders DOM.  And this DOM is just tree-shaped data. And this tree is itself a "materialised view" of other
+data - the data in `app-db`. 
 
 When Domino 3 (an effect handler) modifies `app-db`, boom, boom, boom go dominoes 4, 5 & 6, 
-automatically producing this "materialised view" (DOM) via a data flow, or pipeline. 
- 
+automatically computing the "materialised view" seen by the user. These dominoes collectively implement a reactive dataflow. 
+
 
 ## How Exactly?
 
