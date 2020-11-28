@@ -1687,9 +1687,9 @@ provided to the re-render function (notice that <code>id</code> is an argument t
 <p>Which only leaves me to show you the hero in our story, which I offer<br />
 without further explanation for you to read and understand: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">callback-factory-factory</span>
-  <span class="s">&quot;returns a function which will always return the `same-function` every time </span>
+  <span class="s">&quot;returns a function which will always return the `same-callback` every time </span>
 <span class="s">   it is called. </span>
-<span class="s">   `same-function` is what actually calls your `callback` and, when it does,</span>
+<span class="s">   `same-callback` is what actually calls your `callback` and, when it does,</span>
 <span class="s">   it supplies any necessary args, including those supplied at wrapper creation</span>
 <span class="s">   time and any supplied by the browser (a DOM event object?) at call time.&quot;</span> 
   <span class="p">[</span><span class="nv">the-real-callback</span><span class="p">]</span>
@@ -1699,7 +1699,7 @@ without further explanation for you to read and understand: </p>
     <span class="p">(</span><span class="k">fn </span><span class="nv">callback-factory</span>
       <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args1</span><span class="p">]</span>                   
       <span class="p">(</span><span class="nf">reset!</span> <span class="nv">*args1</span> <span class="nv">args1</span><span class="p">))</span>
-      <span class="nv">same-callback</span><span class="p">)))</span>               <span class="c1">;; &lt;-- always return the same function</span>
+      <span class="nv">same-callback</span><span class="p">)))</span>               <span class="c1">;; &lt;-- always returns the same function</span>
 </code></pre></div>
 
 
@@ -1707,8 +1707,8 @@ without further explanation for you to read and understand: </p>
 <p>Sometimes the callback will need to accept a DOM event argument. In the following code, notice <code>on-change</code>:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">some-input-view</span> 
   <span class="p">[</span><span class="nv">_</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">on-change</span>         <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">event</span><span class="p">]</span>    <span class="c1">;; &lt;-- Note 1</span>
-                            <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:changed</span> <span class="nv">id</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">event</span> <span class="nv">.-target</span> <span class="nv">.-value</span><span class="p">)]))</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">on-change</span>         <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">dom-event</span><span class="p">]</span>    <span class="c1">;; &lt;-- Note 1</span>
+                            <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:changed</span> <span class="nv">id</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">dom-event</span> <span class="nv">.-target</span> <span class="nv">.-value</span><span class="p">)]))</span>
         <span class="nv">on-change-factory</span> <span class="p">(</span><span class="nf">callback-factory-factory</span> <span class="nv">on-change</span><span class="p">)]</span>
 
     <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">text</span><span class="p">]</span>
@@ -1720,8 +1720,8 @@ without further explanation for you to read and understand: </p>
 
 <p>Note:</p>
 <ol>
-<li>this time the callback, <code>on-change</code>, takes two arguments. The <code>id</code> and the DOM <code>event</code></li>
-<li>But when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling <code>event</code> later when it calls the callback. </li>
+<li>this time the callback, <code>on-change</code>, takes two arguments. The <code>id</code> and the DOM event <code>dom-event</code></li>
+<li>But, when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling <code>dom-event</code> later when it calls the callback. </li>
 </ol>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>This page introduces an advanced technique. </p>
