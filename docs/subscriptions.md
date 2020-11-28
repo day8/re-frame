@@ -1,11 +1,12 @@
 # On Derived Data
 
-The UI is just derived data. 
+A UI is derived data (all the way down).
 
-At each moment, the DOM displayed is a "materialised view" of what is in `app-db`. 
+At any given moment, the user views certain DOM, and this DOM is tree-shaped data which is itself just a "materialised view" of other data - the data stored in `app-db`.
 
-Domino 3 (effect handler) modifies `app-db` and then boom, boom, boom go dominoes 4, 5 & 6, 
-automatically producing this "materialised view", via a data flow. 
+When Domino 3 (an effect handler) modifies `app-db`, boom, boom, boom go dominoes 4, 5 & 6, 
+automatically producing this "materialised view" (DOM) via a data flow, or pipeline. 
+ 
 
 ## How Exactly?
 
@@ -18,19 +19,19 @@ graph - at the leaves - are the `View Functions`, which calculate hiccup.
 Typically, the Signal Graph is not deep, with only a few interior layers of nodes
 between root and leaves. These interior nodes are the subscription nodes
 that you create via `reg-sub`. Or, more accurately, you use `reg-sub` to register
-how such nodes should be created, if and when they are needed.
+how such interior nodes should be created, if and when they are needed.
 
-Data flows through this graph, being transformed by the journey and, as a result, the data which
+Data flows through this graph, being transformed by the interior nodes of its journey and, as a result, the data which
 arrives at the leaf `View Functions` will be **a materialised view** of what was originally in `app-db`. 
 
 The nodes of the graph are pure functions. When data flows along an arc and into a node, 
-it becomes "an argument" to that node's pure function. That function will be "called" with 
+it becomes "an argument" (an input) to that node's pure function. That function will be "called" with 
 the input arguments from input arcs, and it will produce a return value, which then flows along 
 that node's output arcs to child nodes, where the process repeats.
 
 It is derived data all the way through the graph. Even the hiccup produced by leaf nodes is 
 just more derived data. A re-frame app is 75% derived data. I just made that number up, 
-but you get the idea: there's a bit of it. 
+but you get the idea: there's quite a bit of it. 
 
 Indeed, the process doesn't stop with leaf `View Functions`. Hiccup is turned into DOM, which is more derived data. 
 And the browser turns DOM into pixels on your monitor - yep, more data.
@@ -38,18 +39,18 @@ And a monitor turns pixels into photons (data, don't fight me here, I'm on a rol
 which your eye cells detect and turn into chemicals reactions (data) which cause nerve cell signals (totally data),
 which reaches the priors in your brain (data). Derived data all the way, baby!  Your brain is domino 12. 
 
-Too much? Okay, fine, back to the more limited picture.
+Too much? Okay, fine. Let's go back to the previous, more limited picture.
 
 ## The Four Layers
 
-Conceptually, all nodes in the `Signal Graph` are a part of the same dataflow, but it will
-be instructive to label them as follows:
+Conceptually, all nodes in the `Signal Graph` are a part of the same dataflow, but it is
+instructive to label them as follows:
 
    - `Layer 1` - **Ground truth** - is the root node, `app-db`
    - `Layer 2` - **Extractors** - subscriptions which extract data directly from `app-db`, but do no further computation.
    - `Layer 3` - **Materialised View** - subscriptions which obtain data from other subscriptions (never `app-db` directly), 
       and compute derived data from their inputs
-   - `Layer 4` - **View Functions** - the leaf nodes which compute hiccup.
+   - `Layer 4` - **View Functions** - the leaf nodes which compute hiccup (DOM). They `subscribe` to values calculated by Layer 2 or Layer 3 nodes.
 
 
 The simplest version of the Signal Graph has no `Layer 3` (Materialised View) nodes.
@@ -75,7 +76,7 @@ Although data flows through the `Signal Graph` from `app-db` towards the
 When a `View Function` uses a subscription, like this `(subscribe [:something :needed])`, 
 the sub-graph of nodes needed to service
 that subscription is created. The necessary sub-graph will "grow backwards" from the `View Function` 
-all the way to `app-db`. So it is "the data thirsty demands" of currently rendered
+all the way to `app-db`. So it is "the data-thirsty demands" of currently rendered
 `View Functions` which dictate what nodes exist in the `Signal Graph`. 
 
 And, when a `View Function` is no longer rendered, the sub-graph needed to service 
@@ -110,8 +111,8 @@ partial way. But any change whatsoever will cause all `Layer2` (extractor) subsc
 All of them. Every time. This is because `app-db` is their input value, and subscriptions re-run when 
 one of their inputs change. 
 
-Extractors select a fragment from `app-db` and then immediately prune
-further propagation through their sub-graph graph if the fragment hasn't changed from "last time". As a consequence, 
+Extractors obtain a data fragment from `app-db` and then immediately prune
+further propagation of that  value if the fragment is the same "last time". As a consequence, 
 the CPU intensive work in the `Layer 3` (materialised view) and `Layer 4` (View Functions) is only performed when necessary.
 
 `Layer 2` (extractors) act as the Signal Graph's circuit breakers. We want them to be as computationally simple as possible.
