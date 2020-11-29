@@ -1,12 +1,16 @@
-# On Derived Data
+# Subscriptions
+
+This tutorial covers dominoes 4, 5 and 6. It is ulimtately about two API fucntions - `subscribe` and `reg-sub` - but first let's get an overview.
+
+## On Derived Data
 
 A UI is derived data.
 
-The user sees what the browser renders, and the browser renders DOM.  And this DOM is just tree-shaped data. And this tree is itself a "materialised view" of other
-data - the data in `app-db`. 
+A browser renders DOM. And this DOM is essentailly tree-shaped data. And this data is itself a "materialised view" of other
+data - namely, the data in `app-db`. 
 
 When Domino 3 (an effect handler) modifies `app-db`, boom, boom, boom go dominoes 4, 5 & 6, 
-automatically computing the "materialised view" seen by the user. These dominoes collectively implement a reactive dataflow. 
+computing the "materialised view" that is ultimiately DOM.  These three dominoes collectively implement a reactive dataflow.
 
 
 ## How Exactly?
@@ -25,22 +29,23 @@ how such interior nodes should be created, if and when they are needed.
 Data flows through this graph, being transformed by the interior nodes of its journey and, as a result, the data which
 arrives at the leaf `View Functions` will be **a materialised view** of what was originally in `app-db`. 
 
-The nodes of the graph are pure functions. When data flows along an arc and into a node, 
+The nodes of the graph are pure functions. When data flows along an input arc and into a node, 
 it becomes "an argument" (an input) to that node's pure function. That function will be "called" with 
-the input arguments from input arcs, and it will produce a return value, which then flows along 
-that node's output arcs to child nodes, where the process repeats.
+the input arguments from input arcs, and it will calculate a return value, more data, which then flows along 
+that node's output arcs to child nodes, where the process repeats. Ultimiately, data is delivered into `View Functions`
+via a call to `subscribe`.
 
 It is derived data all the way through the graph. Even the hiccup produced by leaf nodes is 
 just more derived data. A re-frame app is 75% derived data. I just made that number up, 
-but you get the idea: there's quite a bit of it. 
+but you get the idea: there's quite a bit of it.
 
-Indeed, the process doesn't stop with leaf `View Functions`. Hiccup is turned into DOM, which is more derived data. 
+Hell, the process doesn't even stop with leaf `View Functions`. Hiccup is turned into DOM, which is more derived data. 
 And the browser turns DOM into pixels on your monitor - yep, more data.
 And a monitor turns pixels into photons (data, don't fight me here, I'm on a roll), 
 which your eye cells detect and turn into chemicals reactions (data) which cause nerve cell signals (totally data),
 which reaches the priors in your brain (data). Derived data all the way, baby!  Your brain is domino 12. 
 
-Too much? Okay, fine. Let's go back to the previous, more limited picture.
+Too much? Okay, fine. Just the Signal Graph, then.
 
 ## The Four Layers
 
@@ -60,7 +65,7 @@ then flow unchanged into `Layer 4` (View Functions).
 
 In more complex cases, a `View Function` needs a materialised view 
 of the data in `app-db`. 
-A `Layer 2` (extractor) subscription will obtain a fragment of `app-db` 
+A `Layer 2` (extractor) subscription will obtain a data fragment of `app-db` 
 which will then flow into a `Layer 3` (materialized view) node which will compute 
 derived data from it and, only then, does data flow into the  `Layer 4` (View Function) 
 
