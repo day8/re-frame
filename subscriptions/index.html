@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#on-derived-data" class="md-skip">
+        <a href="#subscriptions" class="md-skip">
           Skip to content
         </a>
       
@@ -489,6 +489,13 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#on-derived-data" class="md-nav__link">
+    On Derived Data
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#how-exactly" class="md-nav__link">
@@ -1484,6 +1491,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#on-derived-data" class="md-nav__link">
+    On Derived Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-exactly" class="md-nav__link">
     How Exactly?
   </a>
@@ -1566,12 +1580,14 @@
                   
                 
                 
-                <h1 id="on-derived-data">On Derived Data<a class="headerlink" href="#on-derived-data" title="Permanent link">&para;</a></h1>
+                <h1 id="subscriptions">Subscriptions<a class="headerlink" href="#subscriptions" title="Permanent link">&para;</a></h1>
+<p>This tutorial covers dominoes 4, 5 and 6. It is ulimtately about two API fucntions - <code>subscribe</code> and <code>reg-sub</code> - but first let's get an overview.</p>
+<h2 id="on-derived-data">On Derived Data<a class="headerlink" href="#on-derived-data" title="Permanent link">&para;</a></h2>
 <p>A UI is derived data.</p>
-<p>The user sees what the browser renders, and the browser renders DOM.  And this DOM is just tree-shaped data. And this tree is itself a "materialised view" of other
-data - the data in <code>app-db</code>. </p>
+<p>A browser renders DOM. And this DOM is essentailly tree-shaped data. And this data is itself a "materialised view" of other
+data - namely, the data in <code>app-db</code>. </p>
 <p>When Domino 3 (an effect handler) modifies <code>app-db</code>, boom, boom, boom go dominoes 4, 5 &amp; 6, 
-automatically computing the "materialised view" seen by the user. These dominoes collectively implement a reactive dataflow. </p>
+computing the "materialised view" that is ultimiately DOM.  These three dominoes collectively implement a reactive dataflow.</p>
 <h2 id="how-exactly">How Exactly?<a class="headerlink" href="#how-exactly" title="Permanent link">&para;</a></h2>
 <p>Data flows through <strong>The Signal Graph</strong>.</p>
 <p><code>app-db</code> is the ground truth of a re-frame app, and it is at the root of a 
@@ -1583,19 +1599,20 @@ that you create via <code>reg-sub</code>. Or, more accurately, you use <code>reg
 how such interior nodes should be created, if and when they are needed.</p>
 <p>Data flows through this graph, being transformed by the interior nodes of its journey and, as a result, the data which
 arrives at the leaf <code>View Functions</code> will be <strong>a materialised view</strong> of what was originally in <code>app-db</code>. </p>
-<p>The nodes of the graph are pure functions. When data flows along an arc and into a node, 
+<p>The nodes of the graph are pure functions. When data flows along an input arc and into a node, 
 it becomes "an argument" (an input) to that node's pure function. That function will be "called" with 
-the input arguments from input arcs, and it will produce a return value, which then flows along 
-that node's output arcs to child nodes, where the process repeats.</p>
+the input arguments from input arcs, and it will calculate a return value, more data, which then flows along 
+that node's output arcs to child nodes, where the process repeats. Ultimiately, data is delivered into <code>View Functions</code>
+via a call to <code>subscribe</code>.</p>
 <p>It is derived data all the way through the graph. Even the hiccup produced by leaf nodes is 
 just more derived data. A re-frame app is 75% derived data. I just made that number up, 
-but you get the idea: there's quite a bit of it. </p>
-<p>Indeed, the process doesn't stop with leaf <code>View Functions</code>. Hiccup is turned into DOM, which is more derived data. 
+but you get the idea: there's quite a bit of it.</p>
+<p>Hell, the process doesn't even stop with leaf <code>View Functions</code>. Hiccup is turned into DOM, which is more derived data. 
 And the browser turns DOM into pixels on your monitor - yep, more data.
 And a monitor turns pixels into photons (data, don't fight me here, I'm on a roll), 
 which your eye cells detect and turn into chemicals reactions (data) which cause nerve cell signals (totally data),
 which reaches the priors in your brain (data). Derived data all the way, baby!  Your brain is domino 12. </p>
-<p>Too much? Okay, fine. Let's go back to the previous, more limited picture.</p>
+<p>Too much? Okay, fine. Just the Signal Graph, then.</p>
 <h2 id="the-four-layers">The Four Layers<a class="headerlink" href="#the-four-layers" title="Permanent link">&para;</a></h2>
 <p>Conceptually, all nodes in the <code>Signal Graph</code> are a part of the same dataflow, but it is
 instructive to label them as follows:</p>
@@ -1611,7 +1628,7 @@ It only has <code>Layer 2</code> (Extractor) subscriptions which take data from 
 then flow unchanged into <code>Layer 4</code> (View Functions). </p>
 <p>In more complex cases, a <code>View Function</code> needs a materialised view 
 of the data in <code>app-db</code>. 
-A <code>Layer 2</code> (extractor) subscription will obtain a fragment of <code>app-db</code> 
+A <code>Layer 2</code> (extractor) subscription will obtain a data fragment of <code>app-db</code> 
 which will then flow into a <code>Layer 3</code> (materialized view) node which will compute 
 derived data from it and, only then, does data flow into the  <code>Layer 4</code> (View Function) </p>
 <h2 id="as-infographic">As Infographic<a class="headerlink" href="#as-infographic" title="Permanent link">&para;</a></h2>
