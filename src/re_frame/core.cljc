@@ -282,8 +282,8 @@
   If, on the other hand, the signal function was simpler and returned a singleton, like this:
 
       #!clj
-     (fn [query-vec dynamic-vec]
-       (subscribe [:a-sub]))      ;; <-- returning a singleton
+      (fn [query-vec dynamic-vec]
+        (subscribe [:a-sub]))      ;; <-- returning a singleton
 
   then the associated computation function must be written to expect a single value
   as the 1st argument:
