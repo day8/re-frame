@@ -2523,12 +2523,12 @@ to expect a 2-vector of values for its first argument:</p>
 </td></tr></table>
 
 <p>If, on the other hand, the signal function was simpler and returned a singleton, like this:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">query-vec</span> <span class="nv">dynamic-vec</span><span class="p">]</span>
+  <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:a-sub</span><span class="p">]))</span>      <span class="c1">;; &lt;-- returning a singleton</span>
 </code></pre></div>
 </td></tr></table>
 
-<p>(fn [query-vec dynamic-vec]
-     (subscribe [:a-sub]))      ;; &lt;-- returning a singleton</p>
 <p>then the associated computation function must be written to expect a single value
 as the 1st argument:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
