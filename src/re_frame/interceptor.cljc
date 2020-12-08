@@ -88,7 +88,7 @@
   through all interceptor functions.
 
   Generally speaking, an interceptor's `:before` function will (if present)
-  add to a `context's` `:coeffects`, while it's `:after` function
+  add to a `context's` `:coeffects`, while its `:after` function
   will modify the `context`'s `:effects`.  Very approximately.
 
   But because all interceptor functions are given `context`, and can
