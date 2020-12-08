@@ -73,7 +73,7 @@ another you'll be using "Reagent + a broader architecture".
 
 Hmm. I feel like I'm missing a few, but that's certainly an indicative list.
 
-re-frame is only about 750 lines of code.  So it's value is much more in the honed
+re-frame is only about 750 lines of code.  So its value is much more in the honed
 choices it embodies (and documents), than the code it provides.
 
 ## What Reagent Does Provide
