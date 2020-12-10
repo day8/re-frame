@@ -2418,10 +2418,10 @@ an <code>interceptors</code> chain:</p>
                     <span class="ss">:event</span>  <span class="p">(</span><span class="ss">:event</span> <span class="nv">coeffects</span><span class="p">)</span>
                     <span class="ss">:fx</span>     <span class="p">[]}</span>
           <span class="nv">result</span>   <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">initial</span>
-                     <span class="nv">function1</span>
-                     <span class="nv">function2</span>
-                     <span class="nv">function3</span><span class="p">)</span>
-          <span class="nv">effects</span>  <span class="p">(</span><span class="nf">selectkeys</span> <span class="nv">result</span> <span class="p">[</span><span class="ss">:db</span> <span class="ss">:fx</span><span class="p">])]</span>
+                       <span class="nv">function1</span>
+                       <span class="nv">function2</span>
+                       <span class="nv">function3</span><span class="p">)</span>
+          <span class="nv">effects</span>  <span class="p">(</span><span class="nb">select-keys </span><span class="nv">result</span> <span class="p">[</span><span class="ss">:db</span> <span class="ss">:fx</span><span class="p">])]</span>
        <span class="p">(</span><span class="nb">assoc </span><span class="nv">context</span> <span class="ss">:effects</span> <span class="nv">effects</span><span class="p">))))</span>
 </code></pre></div>
 </td></tr></table>
