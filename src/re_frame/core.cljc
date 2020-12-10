@@ -159,10 +159,10 @@
                           :event  (:event coeffects)
                           :fx     []}
                 result   (-> initial
-                           function1
-                           function2
-                           function3)
-                effects  (selectkeys result [:db :fx])]
+                             function1
+                             function2
+                             function3)
+                effects  (select-keys result [:db :fx])]
              (assoc context :effects effects))))
   "
   {:api-docs/heading "Event Handlers"}
