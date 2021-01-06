@@ -83,7 +83,7 @@ Instead of undo/redo being hard, disruptive and error-prone, it becomes trivial.
 **But,** many web applications are not self-contained
 data-wise and, instead, are dominated by data sourced from an authoritative, remote database.
 For these applications, re-frame's `app-db` is mostly a local caching
-point, and being able to do undo/redo its state is meaningless because the authoritative
+point, and being able to undo/redo its state is meaningless because the authoritative
 source of data is elsewhere.
 
 5. The ability to genuinely model control via FSMs (discussed later).
