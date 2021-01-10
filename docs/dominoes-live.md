@@ -206,7 +206,6 @@ the application, which means they return a modified version of `db`.
   :timer
   (fn [db [_ new-time]]          ;; notice how we destructure the event vector
     (assoc db :time new-time)))  ;; compute and return the new application state
-(rf/dispatch-sync [:timer (js/Date.)])
 </code>
 
 Notes:
