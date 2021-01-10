@@ -1921,7 +1921,6 @@ the application, which means they return a modified version of <code>db</code>.<
   :timer
   (fn [db [_ new-time]]          ;; notice how we destructure the event vector
     (assoc db :time new-time)))  ;; compute and return the new application state
-(rf/dispatch-sync [:timer (js/Date.)])
 </code></p>
 <p>Notes:</p>
 <ol>
