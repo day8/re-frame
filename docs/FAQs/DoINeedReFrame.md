@@ -61,7 +61,7 @@ another you'll be using "Reagent + a broader architecture".
 ## Example Choices Made By re-frame
 
 1. Events are cardinal. Nothing happens without an event.
-2. Events are data  (so they they are loggable, and can be queued, etc).
+2. Events are data  (so they are loggable, and can be queued, etc).
 3. Dispatched events are handled async - they are put in a queue and handled very soon, but not now (for a variety of subtle reasons).
 4. For efficiency, subscriptions (reactions) should be layered and de-duplicated.
 5. Views are never imperative or side effecting (best effort).
