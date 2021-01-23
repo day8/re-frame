@@ -1542,7 +1542,7 @@ another you'll be using "Reagent + a broader architecture".</p>
 <h2 id="example-choices-made-by-re-frame">Example Choices Made By re-frame<a class="headerlink" href="#example-choices-made-by-re-frame" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Events are cardinal. Nothing happens without an event.</li>
-<li>Events are data  (so they they are loggable, and can be queued, etc).</li>
+<li>Events are data  (so they are loggable, and can be queued, etc).</li>
 <li>Dispatched events are handled async - they are put in a queue and handled very soon, but not now (for a variety of subtle reasons).</li>
 <li>For efficiency, subscriptions (reactions) should be layered and de-duplicated.</li>
 <li>Views are never imperative or side effecting (best effort).</li>
