@@ -1,6 +1,6 @@
 # Subscriptions
 
-This tutorial covers dominoes 4, 5 and 6. It is ulimtately about two API fucntions - `subscribe` and `reg-sub` - but first let's get an overview.
+This tutorial covers dominoes 4, 5 and 6. It is ulimtately about two API functions - `subscribe` and `reg-sub` - but first let's get an overview.
 
 ## On Derived Data
 
