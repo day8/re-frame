@@ -9,7 +9,7 @@
                  ;; We repeat re-frame's own dependencies here as instead of
                  ;; depending on a re-frame artifact we add the re-frame source
                  ;; from this repository directly to the :source-paths.
-                 [reagent                   "0.10.0"]
+                 [reagent                   "1.0.0"]
                  [net.cgrand/macrovich      "0.2.1"]
                  [org.clojure/tools.logging "0.4.1"]]
 

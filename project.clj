@@ -10,7 +10,7 @@
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
                  [thheller/shadow-cljs      "2.11.4"   :scope "provided"]
-                 [reagent                   "0.10.0"]
+                 [reagent                   "1.0.0"]
                  [net.cgrand/macrovich      "0.2.1"]
                  [org.clojure/tools.logging "0.4.1"]]
 
