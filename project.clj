@@ -12,7 +12,7 @@
                  [thheller/shadow-cljs      "2.11.18"   :scope "provided"]
                  [reagent                   "1.0.0"]
                  [net.cgrand/macrovich      "0.2.1"]
-                 [org.clojure/tools.logging "0.4.1"]]
+                 [org.clojure/tools.logging "1.1.0"]]
 
   :plugins      [[day8/lein-git-inject "0.0.14"]
                  [lein-shadow          "0.3.1"]]
