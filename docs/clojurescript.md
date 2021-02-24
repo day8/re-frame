@@ -18,9 +18,8 @@ klipse: true
 
 Are you new to ClojureScript?  This page will teach you to ***read Clojure*** in 40 minutes.
 
-The goal is to teach you enough ClojureScript to read `Reagent` and `re-frame` code (for building Web UIs).
-Learning to *write ClojureScript* is a larger skill, which will require more than 40 mins, 
-but this page does contain some interactive, live coding so you will be writing simple code. 
+The goal is to teach you just enough ClojureScript to read `Reagent` and `re-frame` code. The next step is 
+learning to *write ClojureScript* but that's a larger skill, which will require more than 40 mins.
 
 ## Why?
 
@@ -28,25 +27,24 @@ Clojure is a modern LISP.
 
 Alan Kay once described LISP as "Maxwell's equations of software".
 Paul Graham believes LISP was a competitive advantage for his startup.
-Eric Raymmond said that learning LISP was profoundly enligthening, and that knowing it would make you a better programmer for the rest of your days. 
+Eric Raymmond said that learning LISP was profoundly enligthening and that knowing it would make you a better programmer for the rest of your days.
 
-For 50 years, some of the best minds in software have admired it, used it and refined it. 
-LISP went through a washing machine phase of churn in the 70s, 80s and 90s as experiements were performed, 
-and inspiration was tested. Later, in about 2010, Rich Hickey created Clojure, introducing key innovations,
-and he did it well away from 
-academia (LISP's traditional home), because he wanted to create a pragmatic language for commercial developers.
+In the 70s, 80s and 90s, the LISP community went through a washing machine phase of evolutionary churn. 
+Innovation flourished, experiments happened, prototype ideas were tested and knowledge foliated.
+Later, in about 2010, Rich Hickey took that knowledge and created Clojure, introducing key innovations. 
+He did this well away from academia (LISP's traditional home) because he wanted to create a pragmatic language for commercial developers.
 
-So, Clojure has had a long gestation period and it comes with a hard practical edge.
+So, Clojure has had a long gestation period, and it comes with a hard practical edge.
 
-As the owner of a company which develops software products, I'm believe ClojureScript gives us a
+As the owner of a company that develops software products, I believe ClojureScript gives us a
 competitive edge. As an experienced programmer, I feel like it has provided me with excellent,
 nourishing brain food. It is a stable, productive place.
 
-If you'll allow me some momentary negativity: in contrast, I'm a scared of the javascript landscape which still appears to be a churning 
-washing machine full of steep learning curves, premature obsolescence and sharp edges which teach me little of substance
+If you'll allow me some momentary negativity: in contrast, I'm scared of the javascript landscape, which still appears to be a churning 
+washing machine full of steep learning curves, premature obsolescence and sharp edges, which teach me little of substance
 and certainly won't make me productive.
 
-> Note:  
+> A note on names:  
 > `Clojure` runs on the JVM.  
 > `ClojureScript` runs in the browser.  
 > They are essentially the same language but our focus here is on `ClojureScript`.
