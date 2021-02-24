@@ -44,13 +44,14 @@ If you'll allow me some momentary negativity: in contrast, I'm scared of the jav
 washing machine full of steep learning curves, premature obsolescence and sharp edges, which teach me little of substance
 and certainly won't make me productive.
 
+Enough of a sermon? Yes. Okay, 40 mins ...
+
+---
+
 > A note on names:  
 > `Clojure` runs on the JVM.  
 > `ClojureScript` runs in the browser.  
 > They are essentially the same language but our focus here is on `ClojureScript`.
-
-So, 40 mins ...
-
 
 ---
 I have good news: you are going to be surprised and delighted at the simplicity of the syntax. 
