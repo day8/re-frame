@@ -1145,6 +1145,9 @@ https://www.youtube.com/watch?v=SljDPNwAFOc&list=PLaGDS2KB3-ArG0WqAytE9GsZgrM-US
 The cheatsheet: 
 https://clojure.org/api/cheatsheet
 
+A visual overview of the similarities and differences between ClojureScript and JavaScript
+https://www.freecodecamp.org/news/here-is-a-quick-overview-of-the-similarities-and-differences-between-clojurescript-and-javascript-c5bd51c5c007/
+
 We haven't covered:
 
   - macros - write functions which take your code/data and manipulate it at compile time.
