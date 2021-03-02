@@ -4,11 +4,11 @@
 >    -- Dijkstra
 
 
-When programmers work, they need to reason about the **runtime dynamics** of their code - about
-what happens when it runs. They'll be staring, without seeing, at a spot in space, 
+As a programmer works, they'll often need to reason about the **runtime dynamics** of their code - about
+what happens at runtime. They'll be staring, without seeing, at a spot in space, 
 and in their heads, they'll be performing a runtime simulation of their code.
 
-But, as Dijkstra notes, this is hard.
+But this is hard - as Dijkstra notes above.
 
 ## The Claim 
 
@@ -19,54 +19,45 @@ It is the purpose of this page to explain and justify this claim.
 
 > **There's almost no more important point to make about re-frame than this one**
 
-re-frame's primary design goal is to deliver an excellent developer experience. 
-And there were no sacred cows in this pursuit. Even functional purity 
-was sacrificed in places (gasp!) to deliver a simpler/easier developer experience.
+re-frame was designed to deliver a good developer experience. This is 
+the top design goal, and in this pursuit, there were no sacred cows. 
+Even functional purity was sacrificed in places (gasp!). 
 
-But, it was worth it, because nothing contributes to the goal more than 
-re-frame having "a simple dynamic model". Almost nothing makes a programmer's 
-job easier than a simple dynamic model. Almost nothing reduces bugs more than
+Almost nothing contributes to this goal more than re-frame presenting "a simple dynamic model". Almost nothing makes a programmer's job easier than a simple dynamic model. Almost nothing reduces bugs more than
 a simple dynamic model.
 
 ## On Dynamics
 
-When scientists or engineers study "Dynamics" they observe how a system develops or
-changes over time/space, and at the causes of those changes. Think of Hydrodynamics,
+Scientists and engineers study many fields which include the word "Dynamics", and when they do, they observe how a system develops or
+changes over time/space and at the causes of those changes. Think of Hydrodynamics,
 Thermodynamics and Social Dynamics.
 
-A Web App is a "sequential process", and over time a sequential process will shift 
-from one `State` to another, and consequently, often from one behaviour to another. 
-The "Dynamics" of such a system involve `Computation` and `State` interacting,
-across time.
+A Web App is a "sequential process". Over time, a sequential process will shift 
+from one `State` to another, and consequently, often from one behaviour to another.
+The "Dynamics" of such a system involve the interaction of `Computation` and `State`, across time.
 
 `State` is effectively congealed time -  history materialised - and it is accreted 
-by rounds of `Computation`. Although Computation creates the State, it is itself 
-controlled by that State because, for example, predicates on State determine
-which branches of Computation are executed. So, there's a feedback loop between these two. 
+by rounds of `Computation`. However, it isn't all one way. Although `Computation` creates the `State`, it is itself controlled by that `State` because, for example, predicates on `State` determine
+which branches of `Computation` are executed. So, there's a feedback loop between the two. 
 
-Oh no, did someone just say feedback loop?
+Egads, did someone just say feedback loop?
 
-For a programmer, even just a few steps into any mental simulation, there
-can be a lot to juggle, and we could be near the limits of our cognitive budget. 
-Which, of course, leads to Dijkstra's lament. 
+For a programmer attempting a mental simulation of such a process, 
+there can be a lot to juggle, putting them near the limits of their cognitive budget. 
+Which, of course, reminds us again of Dijkstra's lament above.
 
 Certain kinds of interactions between time, `State` & `Computation` reduce dynamic complexity, 
-making mental simulations easier, while others do the opposite and make it virtually impossible. 
-Systems on the "impossible" end of that continuum, will breed nasty bugs and be scary to maintain.
+making mental simulations easier, while others do the opposite and make it virtually impossible. And, any
+systems on the "impossible" end of that continuum will breed nasty bugs and be scary to maintain.
 
 ## Dynamic vs Static Concerns
 
-We programmers are surprisingly focused on the static aspect of our systems. For example,
-we talk about concerns like DRY, line count, and "cohesion vs coupling". And, yes, that's useful, 
-but perhaps we should pay more attention to the qualities which make runtimes easier or harder
-to simulate in our heads. **This doesn't get talked about nearly enough.**
+Programmers are surprisingly focused on the static aspect of their systems. For example,
+they talk about DRY, line count, and "cohesion vs coupling". And, yes, that's useful, but perhaps we should pay more attention to the qualities which make runtimes easier or harder to simulate in our heads. **This doesn't get talked about nearly enough.**
 
-The goal with re-frame was to have a dynamic model which is as simple as possible, 
-because that, above all else, drives developer productivity. (Well, that, and the 
-immediate feedback provided by fast hot code reloading)
+The goal with re-frame was to have the simplest dynamic model possible because that, above all else, drives developer productivity. (Well, that, and the immediate feedback provided by fast hot code reloading)
 
-So, let's talk about how re-frame delivers a simple dynamic model. We'll start 
-off at a high level and work our way down.
+So, let's talk about how re-frame delivers a simple dynamic model. And, we'll start off at a high level and then work our way down.
 
 ## re-frame Time
 
@@ -84,7 +75,7 @@ transactionally (instantly), in one fell swoop, not incrementally.
 So, at a high level, re-frame delivers dynamics in discrete units, with a clear start and end, 
 which can then be understood and analysed independently.
 
-But, how about one level down, **_in_** the processing of a single event? What about those dynamics? 
+But, how about one level down, **_within_** the processing of a single event? What about those dynamics? 
 
 ## Processing An Event
 
@@ -201,10 +192,6 @@ adopting a Cortex structure, we still recommend a precautionary reboot.
 
 ## Summary 
 
-> To understand a program you must become both the machine and the program. <br>
-> 
->    -- Alan Perlis
-
 re-frame apps are simple to simulate in your head, and there are consequences - all of them good.
 
 This simplicity arises from a combination of factors. On this page, we have reviewed re-frame layer by layer, starting at a high level with how
@@ -222,31 +209,26 @@ I believe his intuitions are telling him it is safe to do so. He is reacting to 
 
 N of 1, sure. But there's almost no better recommendation than this. I was delighted.
 
-<!-- 
-“ To understand a program you must become both the machine and the program.” — Alan Perlis
--->
+
 
 <!-- 
-
-I said above:
-> They'll be staring, without seeing, at a spot in space, 
-> and in their heads, they'll be performing a runtime simulation of their code.
-
-But there's something else they try too. They'll stick in a breakpoint. They try to avoid 
-doing the simulation entirely and just inspect the state of the system at some point in the execution. 
-
-And to do that they'll look at data. XXX console log or use xxxx.  It is data which 
-
 ### Reified Dynamics
 
-What if we could turn Dynamics into data?
-And then inspect that data?
-So we could examine the dynamics. 
+Our goal is to turn Dynamics into data. 
+By tracing all forms. 
+End up with a data structure for each event which completely captures all the execution trace. 
 
-We'd do this by tracing all forms. 
-End up with a data structure for each event which completely captures the entire execution trace for processing that event.
 
-Imagine a world in which all the dynamics for handling an event was turned  into inspectable, browsable data. 
+
+XXX 
+
+Imgaine a world in which all the dynamics for handling an event was turned  into inspectable, browsable data. 
 We have a tool called re-frame-10x. 
+
+Our goal with that tool is that we turn all computation into data. 
+
+Clojure is a LISP and the computation of LISPs are uniquely traceable languages. 
+
+Our goal is that every bit of computation 
 
 -->
