@@ -192,6 +192,11 @@ adopting a Cortex structure, we still recommend a precautionary reboot.
 
 ## Summary 
 
+> To understand a program you must become both the machine and the program. <br>	
+> 	
+>    -- Alan Perlis
+>    
+
 re-frame apps are simple to simulate in your head, and there are consequences - all of them good.
 
 This simplicity arises from a combination of factors. On this page, we have reviewed re-frame layer by layer, starting at a high level with how
