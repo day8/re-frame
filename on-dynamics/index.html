@@ -778,6 +778,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#appendix-a-on-reified-dynamics" class="md-nav__link">
+    Appendix A - On Reified Dynamics
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1566,6 +1573,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#appendix-a-on-reified-dynamics" class="md-nav__link">
+    Appendix A - On Reified Dynamics
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1593,10 +1607,15 @@
 visualise processes evolving in time are relatively poorly developed. <br></p>
 <p>-- Dijkstra</p>
 </blockquote>
-<p>As a programmer works, they'll often need to reason about the <strong>runtime dynamics</strong> of their code - about
-what happens at runtime. They'll be staring, without seeing, at a spot in space, 
+<p>As a programmer works, they often need to reason about the <strong>runtime dynamics</strong> of their code. 
+They'll be staring, without seeing, at a spot in space, 
 and in their heads, they'll be performing a runtime simulation of their code.</p>
 <p>But this is hard - as Dijkstra notes above.</p>
+<blockquote>
+<p>To understand a program, you must become both the machine and the program. <br>   </p>
+<p>-- Alan Perlis
+</p>
+</blockquote>
 <h2 id="the-claim">The Claim<a class="headerlink" href="#the-claim" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p><strong>re-frame has a simple dynamic process</strong></p>
@@ -1608,8 +1627,9 @@ and in their heads, they'll be performing a runtime simulation of their code.</p
 <p>re-frame was designed to deliver a good developer experience. This is 
 the top design goal, and in this pursuit, there were no sacred cows. 
 Even functional purity was sacrificed in places (gasp!). </p>
-<p>Almost nothing contributes to this goal more than re-frame presenting "a simple dynamic model". Almost nothing makes a programmer's job easier than a simple dynamic model. Almost nothing reduces bugs more than
-a simple dynamic model.</p>
+<p>Almost nothing contributes to this goal more than re-frame presenting "a simple dynamic model". 
+Almost nothing makes a programmer's job easier than a simple dynamic model.
+Almost nothing reduces bugs more than a simple dynamic model.</p>
 <h2 id="on-dynamics">On Dynamics<a class="headerlink" href="#on-dynamics" title="Permanent link">&para;</a></h2>
 <p>Scientists and engineers study many fields which include the word "Dynamics", and when they do, they observe how a system develops or
 changes over time/space and at the causes of those changes. Think of Hydrodynamics,
@@ -1731,11 +1751,6 @@ over the wire from the server.</p>
 and the bug was found and fixed. So, all good. But if ever you notice a Signal Graph
 adopting a Cortex structure, we still recommend a precautionary reboot.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>To understand a program you must become both the machine and the program. <br>    </p>
-<p>-- Alan Perlis
-</p>
-</blockquote>
 <p>re-frame apps are simple to simulate in your head, and there are consequences - all of them good.</p>
 <p>This simplicity arises from a combination of factors. On this page, we have reviewed re-frame layer by layer, starting at a high level with how
 events are handled one after the other in a discrete way. Then, how a single event is handled step by step in a FSM-like way. Then, how 
@@ -1749,27 +1764,19 @@ in multiple places. And, finally, at how there is only one store of State and ho
 is instinctively writing fewer tests, surprising even himself a bit with the decision. 
 I believe his intuitions are telling him it is safe to do so. He is reacting to the simplicity he is experiencing.</p>
 <p>N of 1, sure. But there's almost no better recommendation than this. I was delighted.</p>
-<!-- 
-### Reified Dynamics
-
-Our goal is to turn Dynamics into data. 
-By tracing all forms. 
-End up with a data structure for each event which completely captures all the execution trace. 
-
-
-
-XXX 
-
-Imgaine a world in which all the dynamics for handling an event was turned  into inspectable, browsable data. 
-We have a tool called re-frame-10x. 
-
-Our goal with that tool is that we turn all computation into data. 
-
-Clojure is a LISP and the computation of LISPs are uniquely traceable languages. 
-
-Our goal is that every bit of computation 
-
--->
+<h2 id="appendix-a-on-reified-dynamics">Appendix A - On Reified Dynamics<a class="headerlink" href="#appendix-a-on-reified-dynamics" title="Permanent link">&para;</a></h2>
+<p>In his famous 2012 <a href="http://worrydream.com/#!/LearnableProgramming">Learnable Programming</a> treatise, Brett Victor starts with:</p>
+<blockquote>
+<p>Thus, the goals of a programming system should be: <br />
+   - to support and encourage powerful ways of thinking <br />
+   - to enable programmers to see and understand the execution of their programs  </p>
+</blockquote>
+<p>He was not concerned with the static aspects of code.
+Instead, both of his goals are about system dynamics.</p>
+<p>To demonstrate his first goal, he showed how a programmer might directly manipulating code (values actually in the demo) and observe the implications of their changes instantly. The demo was highly visual.  At a pragmatic (non-visual) level, for regular code, which deals with data and not pictures, a programmer can recieve excellent, near instance feedback via hot code reloading, REPLs, and time travel instant replays. But they don't deliver fully on Brett Victor's dream. We have no further solution regarding this goal.</p>
+<p>But his second goal aligns with the theme of this tutorial, and on this we have plans. It is about giving the programmer the best insight into program execution. Make it so the programmer does not have to make a full simulation in their head. Reify the execution in a tangible, observable way.  Again, the inspiration Brett Victor supplied was very visual and small, which makes for a compelling presentation, but it is a long way removed from much of our regular programming involving larger programs grinding on pieces of data after buttons get clicked. </p>
+<p>Our library <code>re-frame-10x</code> has the aspirational goal of pragmatically delivering on Brett Victor's second goal. </p>
+<p>Our method is to reify, as data, the dynamics of your application when it handles an event.  That means a programmer should be able to observe every single "form" of code executed in the process.  That's our vision.  But we're only part the way there. Check out <code>re-frame-10x</code></p>
                 
               
               
