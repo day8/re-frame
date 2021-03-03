@@ -1,56 +1,45 @@
 
-There are two kinds of Components:
+In re-frame, there are two kinds of Component:
 
-- **Plain Reagent Components**
-- **re-frame Components**
-
-Roughly speaking, `Reagent Components` are useful for the simple, individual widgets and  `re-frame Components` for larger widget complexes. 
+- **Reagent Components** - widgets representing a single value, like a number or choice or string
+- **re-frame Components** - larger widget complexes, often representing an entity
 
 ## The Essence Of A Component
 
 All Components have:
 
-- two responsibilities
-- and two associated needs
+  - two responsibilities
+  - and two associated requirements
 
-The two responsibilities are:
+The two responsibilities:
 
-1. **rendering**:
+1. **to render a value**<br>
+   That value could be as simple as a string or as complicated as an entire Pivot Table. 
+   It may, optionally, also render affordances allowing the user to modify the value. E.g. a spinner supplies up/down buttons. 
+   Or, for a pivot table, the user can drag "dimension fields" from one place to another to configure the data rollups it displays.
 
-    - provide a way for the user to observe a value. That value could be as simple as a string, or as complicated as an entire Pivot Table. 
-    - optionally, show editing affordances to facilitate user modification of the value.
-      A spinner supplies up/down buttons. A text input draws a box and has subtle colour
-      changes on mouse-over to imply editability, 
-      and, of course, a "click" will initiate editing. Or the value could be a complete 
-      Pivot Table component which allows the user to drag "dimention fields" to certain destinations 
-      to indicate how rollups should happen. 
+2. **to capture and communicate user intent**<br>
+   if the user interacts with the Component to modify the value, then it must communicate the user's intent 
+   to the surrounding application logic, so it can be interpreted and acted upon.
 
-2. **communicate  user intent**: if the user modifies the value, communicate the user's intent
-   to the surrounding app. Sometimes it is as simple as the user clicking the spinners "up" value,
-   other times the modification might be the user dragging and dropping a "dimension" in a pivot table.
+To fulfil these two responsibilities, Components have **two associated requirements**:
 
-To fulfil these two responsibilities, Components have **two requirements**:
+1. a way to **obtain the value** they represent
+2. a way to **communicate user intent**
 
-1. a way to get `the value`  (input)
-2. a way to communicate events which represent `user intent` (output)
-
-So, a Component takes `a value` as input (possibly a complicated value) and it produces a stream of events as output. 
-One requirement is `I` in nature, and the other is `O` in nature, so not surprisingly, we 
-describe them collectively as the Component's **I/O requirements**.  
-
+One of these requirements relates to `Input` (obtaining), and the other to `Output` (communicating intent), so we'll 
+collectively refer to them as the Component's **I/O requirements**. 
 
 ## Reagent Components 
 
-The simplest Components are **Widgets** which represent a single value like an integer, string or selection.
+The simplest Components are **Widgets**, which represent a single value like an integer, string or selection.
 
-They are easily created from base HTML elements, like `<input>` or `<select>`, 
-or there are libraries like `re-com` which has dropdowns, Text Input fields 
-and radio buttons.
+You can create them from base HTML elements such as `<input>` or `<select>`
+using only **Reagent** (no re-frame) and,
+for that reason, they are referred to as `Reagent Components`. 
 
-You can create these Components using only **Reagent** (no re-frame) and,
-for that reason they are called `Reagent Components`. Here's an example:
-
-```clojure
+Here's an example:
+```clj
 (defn simple-text-input
   [value callback-fn]
   [:input 
@@ -59,159 +48,197 @@ for that reason they are called `Reagent Components`. Here's an example:
     :on-change #(callback-fn (-> % .-target .-value))}]) ;; callback with value
 ```
 
-You'll notice that the **I/O requirements** of this Component, are satisfied by the two arguments:
+You'll notice that both of this Component's **I/O requirements** are provided via two positional arguments:
 
-1. a value  (input)
-2. a callback function (a means of communicating the user's intent to change the value). 
+1. a value (input)
+2. a callback function - a means of communicating the user's intent for change (output)
 
-Because both needs are satisfied via arguments, this Component is quite reusable. It works for any string value.
+Because both of these requirements are satisfied via arguments, this Component
+is quite reusable. We could use it for any string value.
 
-## re-frame components 
+But, of course, the responsibility for providing I/O requirements doesn't disappear. It has just been shifted to the parent Component. This parent will have to act as the glue which "wires" this 
+reusable Component into an application context, providing the value and actioning user intent.
 
-What defines a `re-frame component` is that it uses `dispatch` and `subscribe` to satisfy its **I/O requirements**:
+<!-- 
+When something is reusable, something has to "bind" or ground it into the application. Wire it in. 
+-->
 
-- `subscribe` is used to obtain values
-- and `dispatch` is used to communicate events carrying user intent
+
+## re-frame Components 
+
+A `re-frame Component` is different from a `Reagent Component`.
+because of how it satisfies its **I/O requirements**:
+
+-  it will use `subscribe` to obtain values  (input)
+- it will use `dispatch` to communicate events modelling user intent  (output)
 
 re-frame Components tend to be larger. They often represent  **an entire entity**
-(not just a single, simple value) and they will probably involve a "complex of widgets"
-with a cohesive purpose. 
+(not just a single, simple value) and they might involve a "complex of widgets"
+with a cohesive purpose.
 
 Here's an example:
 
 ```clj
 (defn customer-names
-  [id]                                                   ;; customer id
-  (let [customer @(subscribe [:customer id])]            ;; obtain the value
+  []                                                   
+  (let [customer @(subscribe [:customer])]              ;; obtain the customer entity
     [:div "Name:"
 
       ; first name
       [simple-text-input 
-        (:first-name customer)                             ;; obtain first-name from the entity
-        #(dispatch [:change-customer id :first-name %])]   ;; first name changed
+        (:first-name customer)                          ;; first-name from entity
+        #(dispatch [:change-customer :first-name %])]   ;; first name changed
 
        ;; last name
        [simple-text-input 
-        (:last-name customer)                              ;; obtain last-name from the entity
-        #(dispatch [:change-customer id :last-name %])]])) ;; last name changed
+        (:last-name customer)                           ;; last-name from entity
+        #(dispatch [:change-customer :last-name %])]])) ;; last name changed
 ```
 
 Notes:
 
-- This is a `re-frame Component` because it uses `subscribe` and `dispatch` for I/O
-- It composes two Reagent sub-components - the reusable `simple-text-input` component we created above
-- It parameterises the I/O for the sub-components by passing in a value and a callback to each
+- This is a `re-frame Component` because it uses `subscribe` and `dispatch` to provide its I/O requirements
+- It composes two other components - Reagent components - the reusable `simple-text-input` we created above
+- It parameterises the I/O requirements for the two sub-components by suppling a `value` and a `callback` to each
 
 ## Many Instances
 
-But this raises a question ... if an application displays multiple 
-instances of a `re-frame Component`, how do these instances `subscribe` to their specific value?
+But this re-frame Component only works when there is one `Customer` - you'll notice it contained the code:
 
-One component instance might represent entity `A`, and another might represent entity `B`. 
+```clj
+(subscribe [:customer])
+```
 
-To do its job, the instance representing `A` must subscribe to the `value` representing `A`. So how how does it do that? 
-How is `subscribe` used?  And the same for the component instance 
-representing `B`.
+What if our application has many `Customers`? We'd want a Component that can represent 
+any one of them, or we might need to render many Customers in the UI at once
+(not just one at a time).
 
-The Answer: 
+How then should we rewrite this Component so it can represent Customer entity `A` one time, and 
+Customer entity `B` another time?  A Component instance representing entity `A` would have to `subscribe` 
+to the `value` representing `A`. And any events it dispatches must cause changes to 
+`A`, not `B`.
 
-- instances of a reusable re-frame Component must be supplied with  the **identity** of the entity they should represent.
-- this `identity` will be directly supplied as an argument  (typically). If you look back at example above, you'll see that argument is called `id`.
-- a component will use this `identity` within the query vector given to `subscribe` - so the query is parameterised by the `identity`
-- the subscription handler will know how to use this `identity` to obtain the entity's value
+Method: 
 
-And the, later, `O` bit: 
+- supply each `Component` instance with the **identity** of the Customer entity it should represent
+- this `identity` is supplied as an argument  (typically)
+- each Component instance will use this `identity` within the query vector given to `subscribe` - so the query is parameterised by the `identity`
+- the subscription handler will use this `identity` to obtain the entity's value
+- likewise, when events are `dispatched`, they too will include `identity`, so the `event handler` knows which entity to modify
 
-- the events `dispatched` will (typically) also include this `identity`  
-- the event handler will know how to use this identity to modify the right part of `app-db`
+Here's the rewrite which implements this method:
+```clj
+(defn customer-names
+  [id]                                                  ;; customer `id` as argument
+  (let [customer @(subscribe [:customer id])]           ;; obtain the value using `id`
+    [:div "Name:"
+
+      ; first name
+      [simple-text-input 
+        (:first-name customer)                             
+        #(dispatch [:change-customer id :first-name %])]   ;;  include `id`
+
+       ;; last name
+       [simple-text-input 
+        (:last-name customer)                              
+        #(dispatch [:change-customer id :last-name %])]])) ;; include `id`
+```
 
 ## What Is Identity?
 
-An `identity` is anything which can be used to distinguish one entity from another - something which distinguishes `A` from `B`.
+An `identity` distinguishes one entity from
+another - it is something that distinguishes the entity `A` from entity `B`. 
+In a different technology context, it might be called "a pointer" 
+(a memory address), "a reference" or "a unique key".
 
-In a different technology stack, it might be called "a pointer" or "a reference" or "a unique key". 
+Every entity is stored in `app-db` 
+and, consequently, one reliable `identity` is the  **path** to that
+entity's location within  `app-db`.  Such paths are vectors - paths are data. They are like a pointer to a place within `app-db`.
 
-Within re-frame, an `identity` must differentiate one entity from another within `app-db`. Examples: 
+So, the `identity` for entity `A` could be the path vector 
+to `A`'s location, for example `[:entities :customers 123]`.  In effect, if you did:
+```clj
+   (get-in db [:entities :customers 123])
+```
+you would get the entity. And the `identity` for `B` might be 
+the same other than for the last element, `[:entities :customers 456]`. In this fictional 
+scenario, the entities `A` and `B` are both stored in a map the location `[:entities :customers]` within `app-db`,
+but you would access them via different keys in that map (`123` vs `456`).
 
-- a  map `key` like "1278" or `:warnings` (for a map at some path within `app-db`)
-- an integer index into a vector (again, at some path within `app-db`)
-- a multi-part `path` from the root of `app-db` right down to some leaf element, like `[:lavish "cloth" 187]`
-- a `sub-path` of `app-db`
+Sometimes, the `identity` need only be the last part of the `path` - the `123` or `456` part
+in the example above. The location of the map, `[:entities :customers]`, within `app-db` could be "known" by the 
+subscription handlers and event handlers, so it doesn't have to be provided, and only the final part of 
+the path (a key in the map at that location) is needed to distinguish two identities.
 
-Ultimately, all these example `identities` are sub-paths within `app-db`. 
-An `identity` is always a piece of data. If it is a vector, it is likely a path or subpath.
-And, if it is just a simple value, it is probably the key of a map or the index of a vector, held at some known location with `app-db`.
+So, in summary, an `identity` is usually a path or a path segment.
 
-## Providing Identity 
+## Using Identity
 
-When we create an instance of a re-frame Component, we supply it with the  `identity` of an entity,
-via an argument which, for discussion purposes, we'll call `id`. 
-
-The `customer-names` Component provided above takes an `id` argument. The query vector it provides
-to `subscribe` includes this `id`, so too does the event given to `dispatch`.
-
-As a result, this Component is reusable - our application can have many instances of it,
-and each can represent a different customer - just supply the customer `id`.
-
-Here's how we could use it multiple times on the one page to show many customers:
-
+Here's how we could use our reusable Component multiple times on one page to show many customers:
 ```clj
 (defn customer-list
   []
   [:div
    (for [id @(subscribe [:all-customer-ids])]
-     ^{:key id} [customer-names id])])
+     ^{:key id} [customer-names id])]) 
 ```
+
+Notice that `id` is provided for each instance (see the code `[customer-names id]`). That's the entity identity.
 
 ## Multiple Identities
 
-Some Components must be provided with more than one `identity`.
+Sometimes we need to provide more than one `identity` to a Component.
 
-For example, a Component might need:
+For example, a dropdown Component might need:
 
-- one `identity` for the list of alternative "things" a user can choose (think items in a dropdown)
+- one `identity` for the list of alternative "choices" available to the user to select 
 - one `identity` for the current choice (value) held elsewhere within `app-db`
 
-This Component will need two arguments (props) for these two `identities`. 
+Such a Component would need two arguments (props) for these two `identities`, and it would need 
+a way to use the identities in subscriptions.
 
-## Derived Identities
+## Computed Identities
 
-Imagine a Component (parent) which has a sub-component (child). 
+`identities` are data, and you can compute data. 
 
-The parent might need to provide its child with a `sub-identity` derived/computed from the `id `
-supplied to the parent.  Perhaps the `sub-identity` is built by `conj` -ing a further 
-value onto the original `id`.  There are many possibilities.
+When a parent Component has a child sub-component, the parent 
+might provide its child with an `identity` which is derivative of the `id`
+supplied to it.  Perhaps this `identity` is built by `conj`-ing a further 
+value onto the original `id`.  
 
-Or, in another situation, an `id` provided to a component might reference an entity which 
-"contains", within its value, the `identity` of a further entity - a reference to a reference.
+There are many possibilities.
+
+In another situation, the `id` provided to a component might reference an entity that itself
+"contains" the `identity` of a different entity - a reference to a reference.
 So, the Component might have to subscribe to the primary entity and then, in a second step, 
 subscribe to the derived entity.
 
-If we take these ideas far enough, we leave behind discussions about re-frame and start, instead, to
-discuss the pros and cons of the "data model" you have created in `app-db`.
+If we explore these ideas far enough, we leave behind discussions about re-frame and start, instead, to
+discuss the pros and cons of the "data model" you have created within `app-db`.
 
-## The Unit Of Reuse
+## Components In A Library
 
 Have you noticed the need for close coordination between a re-frame Component 
-and the subscriptions and dispatches which service it?
+and the subscriptions and dispatches which service it's I/O Requirements?
 
-A re-frame Component doesn't stand by itself - it isn't actually the unit of reuse. 
+A re-frame Component doesn't stand by itself - it isn't the unit of reuse.
 
-The unit of reuse is:
+Because a Component has two `I/O` requirements, the unit of reuse is the re-frame Component 
+plus the mechanism needed to service those `I/O` requirements. That's what should be 
+packaged up and put in your library if you want to reuse a Component across multiple applications.
+
+So, just to be clear: the unit of reuse is the combination of:
 
 - the Component
 - the subscription handlers which service its need to obtain values 
-- the events handler which handles the user intent it captures
-
-I noted at the beginning that a Component had two `I/O` needs. So the unit of reuse is the re-frame Component 
-plus the mechanism for servicing those needs. That's what should be packaged up and put in your library.
+- the event handlers which service the user intent it captures
 
 
 ## Implications
 
-Once you internalise that there are three parts to a reusable Component, you might realise that there is another level of abstraction possible.  
+Because a reusable `re-frame Component` has three parts, there is another level of abstraction possible.  
 
-Up until now, I've said that a re-frame Component is defined by its use of `subscribe` and `dispatch`. But, maybe it doesn't have to be. 
+Until now, I've said that a `re-frame Component` is defined by its use of `subscribe` and `dispatch`, but maybe it doesn't have to be that way. 
 
 Here is a rewrite of that earlier Component:
 
@@ -234,14 +261,17 @@ Here is a rewrite of that earlier Component:
 
 Notes:
 
-- there's no sign of `dispatch` or `subscribe` anymore
-- instead, the Component is parameterised by two extra functions arguments
-- these functions handle the I/O 
+- there's now no sign of `dispatch` or `subscribe`
+- instead, the Component is parameterised by two extra function arguments
+- these functions handle the I/O requirements
 
-> it is almost as if we have gone full circle now, and we're back to building a Reagent Component.  Remember that one at the top?  The I/O needs were handled via arguments.
+> it is almost as if we have gone full circle now, and we're back to something 
+> which looks like a Reagent Component.  Remember that one at the very top?  
+> The I/O requirements were handled via arguments, which shifts "knowledge" about the 
+> application context to the parent. 
 
 
-Let's rewrite the `customer-list` in terms of this new component:
+Let's rewrite `customer-list` in terms of this new Component:
 ```Clojure
 (defn customer-list
   []
@@ -256,50 +286,63 @@ Notes:
 - we create `I/O functions` which wrap `subscribe` and `dispatch`
 - these two functions are passed into the sub-component as arguments
 
-Does this approach mean the `customer-names` Component is now more reusable? Yes, it does. 
-The exact subscription query vector to use is now no longer embedded in 
+But does this approach mean the `customer-names` Component is now more reusable? Well, yes, probably. 
+The exact subscription query to use is now no longer embedded in 
 the Component itself. The surrounding application supplies that. The Component 
 has become even more independent of its context. It is even more reusable and flexible. 
+On the downside, the parent context has more "knowledge" and responsibility. It has to "wire" the Component into the application.
 
-Obviously there's always a cost to abstraction. So, you'll have to crunch
-the cost benefit analysis for your situation. 
+Obviously, there's always a cost to abstraction. So, you'll have to crunch
+the cost-benefit analysis for your situation. 
 
-BTW, in a more complicated case, you can imagine a Component being provided
-with more than just a couple of `I/O` functions. Instead, it could be supplied
-with a `map` which nominates many, many `I/O` functions which provide to it
-the necessary "access" it requires. 
+## Reusability 
 
-## Independent From "Place"
+There are two levels of reusability:
 
-To obtain truely reusable Components, the subscription and event handlers 
-must be written to be independent of "place" - independent of absolute paths in `app-db`. 
+  - reusability within a particular application. 
+    You want to use a Component across multiple entities and perhaps in different widget ensembles within the one application.
+  - reusability across applications. Put the Component in a library. 
 
-In one application, customer entities might be at one path in app-db, 
-whereas in the next application, they might be at another path in `app-db`. It is  
-the job of the handlers to read and write data to/from `app-db`, so they must be
-created to be independent of absolute paths? 
+`Reagent components` are reusable in both ways - just look at a library like `re-com`. 
 
-That means parameterising the handlers with that path information. 
+With `re-frame Components`, reuse is fairly easy 
+within the one 
+application, but when you try to put them in a library for use across multiple 
+applications you run into a challenge to solve: ***placefulness***.
 
-There's a variety of ways: 
+We noted earlier that re-frame Components extend to include the handlers which look after the I/O requirements. And those I/O handlers 
+have to know **where**, within `app-db` to obtain and update data.
 
-- insist that customers are always at the same path  
-- the handlers themselves lookup the absolute parts of `app-db` paths in some central registry (probably stored in `app-db` itself)
-- path information is passed into the Components, and they then supply to the handlers via query-vectors and event-vectors ... much as they provide `id`
-- when the handlers are registered, they "close over" some path information (different information, for each application)
+But, from one application to another, the path (the place) where entities are 
+stored can change. A library Component should not be dictating this "place" to the applications which use it. 
+
+## Solving Placefulness
+
+**First**, you could ignore the issue because either:
+  1. you have a single app to maintain, and you are optimising for simplicity  (over generality and reusability)
+  2. you will avoid using re-frame components, and instead, you just use Reagent Components
+     (e.g. we have a rather complicated Table Component which is just a Reagent Component)
+
+**Second**, to solve placefulness, you could standardise where entities are placed within `app-db`. You could 
+mandate that entities are always stored at a known place (eg. `[:entities :Customers]` or `[:entities :Products]`). 
+You could then write your reusable components with this assumption, and all your applications adhere to this stipulation. 
+You could perhaps use [Subgraph](https://github.com/den1k/subgraph).
+
+**Third**, you can parameterise the Component with base-path information via:
+  - React context (probably not)
+  - via args to the Component - ie. quite literally pass in the base path as an argument 
+    to the Component and then pass that along to the handlers by including that path in 
+    the dispatched event and subscription query vectors.
+
+**Fourth**, more radically, you could choose not to use the `map` in `ratom` approach that is `app-db`. 
+We could use a data structure that is less placeful. Perhaps use a `DataScript` database via [re-posh](https://github.com/denistakeda/re-posh). 
 
 
+**Not doing** - one thing we won't be doing is storing state in the Component itself, away from the 
+central "data store". The moment we did that, we would have created multiple "stores of state", and then we'd have responsibility for coordinating the sync-ing of those data stores, 
+a process which starts off looking simple enough but which soon envelops your architecture like an octopus. Managing distributed state is a much more difficult problem than placefulness.
 
-<!-- 
 
-### Sufficiently Complex Components
+## Summary 
 
-For any sufficiently complex component, passing `ids` down through layers of components can become clumsy. In a bad case, we might end up with the old "prop drilling" problem in which `id` is passed deeply into nested layers of a complicated set of sub-components. 
-
-In such cases, we could use BranchScope.  XXXX
-
-That would allow us to place `id` into the "environment" of the entire branch representing the re-frame Component. 
-
-This process can nest. High-level identities can be combined with next-level sub-identities. 
-
--->
+Reagent components are readily reusable, and re-frame Components can be made reusable, subject to solving the placefulness issue. 
