@@ -1,24 +1,26 @@
-> Our intellectual powers are rather geared to master static relations and our powers to 
-> visualise processes evolving in time are relatively poorly developed. <br>
-> 
->    -- Dijkstra
+
 
 
 As a programmer works, they often need to reason about the **_runtime dynamics_** of their code. 
 They'll be staring, without seeing, at a spot in space, 
 and in their heads, they'll be performing a runtime simulation of their code.
 
-But this is hard - as Dijkstra notes above.
+But this is hard, even for Dijkstra. 
+
+> Our intellectual powers are rather geared to master static relations and our powers to 
+> visualise processes evolving in time are relatively poorly developed.   
+>   
+>    -- Dijkstra
 
 
 ## The Claim 
 
-> **re-frame has a simple dynamic process**
+> **_re-frame has a simple dynamic process_**
 
 It is the purpose of this page to explain and justify this claim. 
 
 
-> **There's no more important point to make about re-frame than this one**
+> **_There's no more important point to make about re-frame than this one_**
 
 re-frame was designed to deliver a good developer experience. This is 
 the top design goal and, in this pursuit, tradeoffs are made. 
