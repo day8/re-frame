@@ -7,8 +7,9 @@ and in their heads, they'll be performing a runtime simulation of their code.
 
 But this is hard, even for Dijkstra. 
 
-> Our intellectual powers are rather geared to master static relations and our powers to 
-> visualise processes evolving in time are relatively poorly developed.   
+> Our intellectual powers are rather geared to master static relations <br>
+> and our powers to visualise processes evolving in time are relatively <br>
+> poorly developed.   
 >   
 >    -- Dijkstra
 
