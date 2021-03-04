@@ -35,27 +35,27 @@ Almost nothing reduces bugs more than a simple dynamic model.
 
 ## On Dynamics
 
-When a field includes word "Dynamics" in its name, you know the scientist and engineers are observing how systems develop or
-change over time/space, and modelling the causes of those changes. Think of Hydrodynamics,
-Thermodynamics and Social Dynamics.
+Some scientific fields includes the word "Dynamics" in their name: Hydrodynamics,
+Thermodynamics and Social Dynamics. It means the participants observe how certain systems 
+change over time/space and then model the causes. 
 
-A Web App is a "sequential process". Over time, they will shift 
+How about our systems?  A Web App is a "sequential process". Over time, it will shift 
 from one `State` to another, and consequently, often from one behaviour to another.
-The "Dynamics" of such a system involve the interaction of `Computation` and `State`, across time.
+The "dynamics" involve `Computation` and `State` interacting across time.
 
-`State` is effectively congealed time -  history materialised - and it is accreted 
+`State` is effectively congealed time -  history materialised - and it is moulded 
 by rounds of `Computation`. However, it isn't all one way. Although `Computation` creates `State`, 
-it is itself controlled by that `State` - predicates on `State` determine
-which branches of `Computation` are executed. So, there's a feedback loop between the two. 
+it is itself controlled by that `State`. For example, predicates on `State` determine
+which branches of `Computation` execute. So, there's a feedback loop between the two. 
 
-Oh, have mercy on us, did someone just say feedback loop?
+Oh, please have mercy on us. Did someone say feedback loop?
 
-For a programmer attempting a mental simulation of such a process, 
-there can be a lot to juggle, putting them near the limits of their cognitive budget. 
-Which, of course, reminds us again of Dijkstra's lament above.
+For a programmer trying a mental simulation of this process, 
+there can be a lot to juggle, quickly putting them near the limits of their cognitive budget. 
+And, this brings us back to Dijkstra's lament (above).
 
 Certain kinds of interactions between time, `State` & `Computation` reduce dynamic complexity, 
-making mental simulations easier, while others do the opposite and make it virtually impossible. And, any
+making mental simulations easier, while others do the opposite and make it virtually impossible. Any
 systems on the "impossible" end of that continuum will breed nasty bugs and be scary to maintain.
 
 
