@@ -48,11 +48,11 @@ by rounds of `Computation`. However, it isn't all one way. Although `Computation
 it is itself controlled by that `State`. For example, predicates on `State` determine
 which branches of `Computation` execute. So, there's a feedback loop between the two. 
 
-Oh, please have mercy on us. Did someone say feedback loop?
+Oh, no. Did someone say feedback loop?  That's bad, right?
 
-For a programmer trying a mental simulation of this process, 
+For a programmer trying a mental simulation of a `State`/`Computation` feedback process, 
 there can be a lot to juggle, quickly putting them near the limits of their cognitive budget. 
-And, this brings us back to Dijkstra's lament (above).
+Even for Dijkstra. 
 
 Certain kinds of interactions between time, `State` & `Computation` reduce dynamic complexity, 
 making mental simulations easier, while others do the opposite and make it virtually impossible. Any
