@@ -10,10 +10,6 @@ and in their heads, they'll be performing a runtime simulation of their code.
 
 But this is hard - as Dijkstra notes above.
 
-> To understand a program, you must become both the machine and the program. <br>	
-> 	
->    -- Alan Perlis
->    
 
 ## The Claim 
 
@@ -31,6 +27,11 @@ Even functional purity was sacrificed in places (gasp!).
 Almost nothing contributes to this goal more than re-frame presenting "a simple dynamic model". 
 Almost nothing makes a programmer's job easier than a simple dynamic model.
 Almost nothing reduces bugs more than a simple dynamic model.
+
+> To understand a program, you must become both the machine and the program. <br>	
+> 	
+>    -- Alan Perlis
+>    
 
 ## On Dynamics
 
