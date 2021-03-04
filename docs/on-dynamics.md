@@ -21,7 +21,7 @@ It is the purpose of this page to explain and justify this claim.
 > **There's almost no more important point to make about re-frame than this one**
 
 re-frame was designed to deliver a good developer experience. This is 
-the top design goal, and in this pursuit, there were no sacred cows. 
+the top design goal, and in this pursuit, tradeoffs were made. 
 Even functional purity was sacrificed in places (gasp!). 
 
 Almost nothing contributes to this goal more than re-frame presenting "a simple dynamic model". 
@@ -35,19 +35,20 @@ Almost nothing reduces bugs more than a simple dynamic model.
 
 ## On Dynamics
 
-Scientists and engineers study many fields which include the word "Dynamics", and when they do, they observe how a system develops or
-changes over time/space and at the causes of those changes. Think of Hydrodynamics,
+When a field includes word "Dynamics" in its name, you know the scientist and engineers are observing how systems develop or
+change over time/space, and modelling the causes of those changes. Think of Hydrodynamics,
 Thermodynamics and Social Dynamics.
 
-A Web App is a "sequential process". Over time, a sequential process will shift 
+A Web App is a "sequential process". Over time, they will shift 
 from one `State` to another, and consequently, often from one behaviour to another.
 The "Dynamics" of such a system involve the interaction of `Computation` and `State`, across time.
 
 `State` is effectively congealed time -  history materialised - and it is accreted 
-by rounds of `Computation`. However, it isn't all one way. Although `Computation` creates the `State`, it is itself controlled by that `State` because, for example, predicates on `State` determine
+by rounds of `Computation`. However, it isn't all one way. Although `Computation` creates `State`, 
+it is itself controlled by that `State` - predicates on `State` determine
 which branches of `Computation` are executed. So, there's a feedback loop between the two. 
 
-Egads, did someone just say feedback loop?
+Oh, have mercy on us, did someone just say feedback loop?
 
 For a programmer attempting a mental simulation of such a process, 
 there can be a lot to juggle, putting them near the limits of their cognitive budget. 
@@ -61,9 +62,12 @@ systems on the "impossible" end of that continuum will breed nasty bugs and be s
 ## Dynamic vs Static Concerns
 
 Programmers are surprisingly focused on the static aspect of their systems. For example,
-they talk about DRY, line count, and "cohesion vs coupling". And, yes, that's useful, but perhaps we should pay more attention to the qualities which make runtimes easier or harder to simulate in our heads. **This doesn't get talked about nearly enough.**
+they talk about DRY, line count, and "cohesion vs coupling". And, yes, that's useful, 
+but perhaps we should pay more attention to the qualities which make runtimes easier or 
+harder to simulate in our heads. **_This doesn't get talked about nearly enough._**
 
-The goal with re-frame was to have the simplest dynamic model possible because that, above all else, drives developer productivity. (Well, that, and the immediate feedback provided by fast hot code reloading)
+The goal with re-frame was to have the simplest dynamic model possible because that, 
+above all else, drives developer productivity. (Well, that, and the immediate feedback provided by fast hot code reloading)
 
 So, let's talk about how re-frame delivers a simple dynamic model. And, we'll start off at a high level and then work our way down.
 
@@ -218,21 +222,31 @@ I believe his intuitions are telling him it is safe to do so. He is reacting to 
 N of 1, sure. But there's almost no better recommendation than this. I was delighted.
 
 
-## Appendix A - On Reified Dynamics 
+## Appendix A - On Reified Dynamics
 
-In his famous 2012 [Learnable Programming](http://worrydream.com/#!/LearnableProgramming) treatise, Brett Victor starts with:
+I said above that program dynamics don't get enough attention, but there are some notable exceptions. 
+
+In his 2012 [Learnable Programming](http://worrydream.com/#!/LearnableProgramming) treatise, Brett Victor begins:
 
 >  Thus, the goals of a programming system should be:   
 >    - to support and encourage powerful ways of thinking   
 >    - to enable programmers to see and understand the execution of their programs  
 
-He was not concerned with the static aspects of code.
-Instead, both of his goals are about system dynamics.
+So, he is not concerned with the static aspects of code.
+Instead, both goals focus on the dynamics of systems and, one level up, on the dynamics of systems development.
 
-To demonstrate his first goal, he showed how a programmer might directly manipulating code (values actually in the demo) and observe the implications of their changes instantly. The demo was highly visual.  At a pragmatic (non-visual) level, for regular code, which deals with data and not pictures, a programmer can recieve excellent, near instance feedback via hot code reloading, REPLs, and time travel instant replays. But they don't deliver fully on Brett Victor's dream. We have no further solution regarding this goal.
+To demonstrate his first goal, Brett Victor showed how a programmer might directly manipulate code (well, values in code) 
+and observe the implications of their changes instantly. The demo was highly visual and motivating, but the 
+program concerned was small. I don't know about you, but my applications tend to be larger and more prosaic. They have buttons, and they grind on data. I was difficult to see how the concept would "scale up".  Having said that, a ClojureScript programmer can receive excellent, near-instant feedback via hot code reloading, REPLs, and instant event replays. 
+These don't fully deliver the direct manipulation of Brett Victor's demo, but they aren't too bad compared to, say, long 
+compilation cycles.
 
-But his second goal aligns with the theme of this tutorial, and on this we have plans. It is about giving the programmer the best insight into program execution. Make it so the programmer does not have to make a full simulation in their head. Reify the execution in a tangible, observable way.  Again, the inspiration Brett Victor supplied was very visual and small, which makes for a compelling presentation, but it is a long way removed from much of our regular programming involving larger programs grinding on pieces of data after buttons get clicked. 
+Brett Victor's second goal aligns with the theme of this tutorial, and, on this point, we have plans. We want to give 
+the re-frame programmer deep insight into program execution. Wouldn't it be good if a programmer did not have to 
+perform a simulation in their head? Instead, imagine if they could observe and interact with a reification of program 
+execution after the event. Our tool, `re-frame-10x`, has the aspirational goal of pragmatically delivering on Brett Victor's
+second goal for regular, commercial programming tasks. 
 
-Our library `re-frame-10x` has the aspirational goal of pragmatically delivering on Brett Victor's second goal. 
-
-Our method is to reify, as data, the dynamics of your application when it handles an event.  That means a programmer should be able to observe every single "form" of code executed in the process.  That's our vision.  But we're only part the way there. Check out `re-frame-10x`
+Our method is to reify, as data, the dynamics of an application when it handles an event. You should be 
+able to observe every single "form" of ClojureScript code executed in the process. No need to imagine how the code executed because you can see it in concrete terms. That's our vision. Our goal is completely achievable, but we're only 
+part the way there with the implementation. Check out `re-frame-10x`.
