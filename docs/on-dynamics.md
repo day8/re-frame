@@ -235,14 +235,14 @@ In his 2012 [Learnable Programming](http://worrydream.com/#!/LearnableProgrammin
 So, he is not concerned with the static aspects of code.
 Instead, both goals focus on the dynamics of systems and, one level up, on the dynamics of systems development.
 
-To demonstrate his first goal, Brett Victor showed how a programmer might directly manipulate code (well, values in code) 
+To demonstrate his **_first goal_**, Brett Victor showed how a programmer might **_directly manipulate_** code (er, values in code) 
 and observe the implications of their changes instantly. The demo was highly visual and motivating, but the 
 program concerned was small. I don't know about you, but my applications tend to be larger and more prosaic. They have buttons, and they grind on data. I was difficult to see how the concept would "scale up".  Having said that, a ClojureScript programmer can receive excellent, near-instant feedback via hot code reloading, REPLs, and instant event replays. 
 These don't fully deliver the direct manipulation of Brett Victor's demo, but they aren't too bad compared to, say, long 
 compilation cycles.
 
-Brett Victor's second goal aligns with the theme of this tutorial, and, on this point, we have plans. We want to give 
-the re-frame programmer deep insight into program execution. Wouldn't it be good if a programmer did not have to 
+Brett Victor's **_second goal_** aligns with the theme of this tutorial, and, on this point, we have plans. We want to give 
+the re-frame programmer **_deep insight into program execution_**. Wouldn't it be good if a programmer did not have to 
 perform a simulation in their head? Instead, imagine if they could observe and interact with a reification of program 
 execution after the event. Our tool, `re-frame-10x`, has the aspirational goal of pragmatically delivering on Brett Victor's
 second goal for regular, commercial programming tasks. 
