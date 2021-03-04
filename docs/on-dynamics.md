@@ -229,29 +229,30 @@ N of 1, sure. But there's almost no better recommendation than this. I was delig
 
 ## Appendix A - On Reified Dynamics
 
-I said above that program dynamics don't get enough attention, but there are some notable exceptions. 
+I said above that program dynamics don't get enough attention, but there are some notable exceptions.
 
 In his 2012 [Learnable Programming](http://worrydream.com/#!/LearnableProgramming) treatise, Brett Victor begins:
 
 >  Thus, the goals of a programming system should be:   
->    - to support and encourage powerful ways of thinking   
->    - to enable programmers to see and understand the execution of their programs  
+>    1. to support and encourage powerful ways of thinking   
+>    2. to enable programmers to see and understand the execution of their programs  
 
-So, he is not concerned with the static aspects of code.
-Instead, both goals focus on the dynamics of systems and, one level up, on the dynamics of systems development.
+He is not concerned with the static aspects of code.
+Instead, both of his goals focus on the dynamics of systems and, one level up, on the dynamics of systems development.
 
-To demonstrate his **_first goal_**, Brett Victor showed how a programmer might **_directly manipulate_** code (er, values in code) 
+To demonstrate his **_first goal_**, Brett Victor showed a demonstration of how a programmer might **_directly manipulate_** code (er, values in code) 
 and observe the implications of their changes instantly. The demo was highly visual and motivating, but the 
-program concerned was small. I don't know about you, but my applications tend to be larger and more prosaic. They have buttons, and they grind on data. I was difficult to see how the concept would "scale up".  Having said that, a ClojureScript programmer can receive excellent, near-instant feedback via hot code reloading, REPLs, and instant event replays. 
-These don't fully deliver the direct manipulation of Brett Victor's demo, but they aren't too bad compared to, say, long 
+program concerned was small. I don't know about you, but my applications tend to be larger and more prosaic. They have buttons, and they grind on data. It was difficult to see how the concept would "scale up" to my world.  Having said that, a ClojureScript programmer can receive excellent, near-instant feedback via hot code reloading, REPLs, and instant event replays. 
+These don't fully deliver the direct manipulation in Brett Victor's demo, but they aren't too bad compared to, say, long 
 compilation cycles.
 
 Brett Victor's **_second goal_** aligns with the theme of this tutorial, and, on this point, we have plans. We want to give 
 the re-frame programmer **_deep insight into program execution_**. Wouldn't it be good if a programmer did not have to 
-perform a simulation in their head? Instead, imagine if they could observe and interact with a reification of program 
+struggle with mental simulations?  Instead, imagine if they could observe and interact with a reification of program 
 execution after the event. Our tool, `re-frame-10x`, has the aspirational goal of pragmatically delivering on Brett Victor's
-second goal for regular, commercial programming tasks. 
+second goal for larger, industry-grade programming tasks. 
 
 Our method is to reify, as data, the dynamics of an application when it handles an event. You should be 
-able to observe every single "form" of ClojureScript code executed in the process. No need to imagine how the code executed because you can see it in concrete terms. That's our vision. Our goal is completely achievable, but we're only 
-part the way there with the implementation. Check out `re-frame-10x`.
+able to observe every single "form" of ClojureScript code executed in the process. No need to imagine 
+how the code executed because you can see it in concrete terms. That's our vision. Our goal is completely achievable, but we're only 
+part the way there with the implementation. Check out [re-frame-10x](https://github.com/day8/re-frame-10x).
