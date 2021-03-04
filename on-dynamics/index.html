@@ -1631,22 +1631,22 @@ Almost nothing reduces bugs more than a simple dynamic model.</p>
 </p>
 </blockquote>
 <h2 id="on-dynamics">On Dynamics<a class="headerlink" href="#on-dynamics" title="Permanent link">&para;</a></h2>
-<p>When a field includes word "Dynamics" in its name, you know the scientist and engineers are observing how systems develop or
-change over time/space, and modelling the causes of those changes. Think of Hydrodynamics,
-Thermodynamics and Social Dynamics.</p>
-<p>A Web App is a "sequential process". Over time, they will shift 
+<p>Some scientific fields includes the word "Dynamics" in their name: Hydrodynamics,
+Thermodynamics and Social Dynamics. It means the participants observe how certain systems 
+change over time/space and then model the causes. </p>
+<p>How about our systems?  A Web App is a "sequential process". Over time, it will shift 
 from one <code>State</code> to another, and consequently, often from one behaviour to another.
-The "Dynamics" of such a system involve the interaction of <code>Computation</code> and <code>State</code>, across time.</p>
-<p><code>State</code> is effectively congealed time -  history materialised - and it is accreted 
+The "dynamics" involve <code>Computation</code> and <code>State</code> interacting across time.</p>
+<p><code>State</code> is effectively congealed time -  history materialised - and it is moulded 
 by rounds of <code>Computation</code>. However, it isn't all one way. Although <code>Computation</code> creates <code>State</code>, 
-it is itself controlled by that <code>State</code> - predicates on <code>State</code> determine
-which branches of <code>Computation</code> are executed. So, there's a feedback loop between the two. </p>
-<p>Oh, have mercy on us, did someone just say feedback loop?</p>
-<p>For a programmer attempting a mental simulation of such a process, 
-there can be a lot to juggle, putting them near the limits of their cognitive budget. 
-Which, of course, reminds us again of Dijkstra's lament above.</p>
+it is itself controlled by that <code>State</code>. For example, predicates on <code>State</code> determine
+which branches of <code>Computation</code> execute. So, there's a feedback loop between the two. </p>
+<p>Oh, please have mercy on us. Did someone say feedback loop?</p>
+<p>For a programmer trying a mental simulation of this process, 
+there can be a lot to juggle, quickly putting them near the limits of their cognitive budget. 
+And, this brings us back to Dijkstra's lament (above).</p>
 <p>Certain kinds of interactions between time, <code>State</code> &amp; <code>Computation</code> reduce dynamic complexity, 
-making mental simulations easier, while others do the opposite and make it virtually impossible. And, any
+making mental simulations easier, while others do the opposite and make it virtually impossible. Any
 systems on the "impossible" end of that continuum will breed nasty bugs and be scary to maintain.</p>
 <h2 id="dynamic-vs-static-concerns">Dynamic vs Static Concerns<a class="headerlink" href="#dynamic-vs-static-concerns" title="Permanent link">&para;</a></h2>
 <p>Programmers are surprisingly focused on the static aspect of their systems. For example,
