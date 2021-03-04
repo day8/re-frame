@@ -4,7 +4,7 @@
 >    -- Dijkstra
 
 
-As a programmer works, they often need to reason about the **runtime dynamics** of their code. 
+As a programmer works, they often need to reason about the **_runtime dynamics_** of their code. 
 They'll be staring, without seeing, at a spot in space, 
 and in their heads, they'll be performing a runtime simulation of their code.
 
@@ -18,39 +18,35 @@ But this is hard - as Dijkstra notes above.
 It is the purpose of this page to explain and justify this claim. 
 
 
-> **There's almost no more important point to make about re-frame than this one**
+> **There's no more important point to make about re-frame than this one**
 
 re-frame was designed to deliver a good developer experience. This is 
-the top design goal, and in this pursuit, tradeoffs were made. 
+the top design goal and, in this pursuit, tradeoffs are made. 
 Even functional purity was sacrificed in places (gasp!). 
 
 Almost nothing contributes to this goal more than re-frame presenting "a simple dynamic model". 
 Almost nothing makes a programmer's job easier than a simple dynamic model.
 Almost nothing reduces bugs more than a simple dynamic model.
 
-> To understand a program, you must become both the machine and the program. <br>	
-> 	
->    -- Alan Perlis
->    
 
 ## On Dynamics
 
-Some scientific fields includes the word "Dynamics" in their name: Hydrodynamics,
+Some scientific fields includes the word "dynamics" in their name: Hydrodynamics,
 Thermodynamics and Social Dynamics. It means the participants observe how certain systems 
 change over time/space and then model the causes. 
 
-How about our systems?  A Web App is a "sequential process". Over time, it will shift 
+So, how about our systems?  A Web App is a "sequential process". Over time, it will shift 
 from one `State` to another, and consequently, often from one behaviour to another.
-The "dynamics" involve `Computation` and `State` interacting across time.
+The "dynamics" arise from `Computation` and `State` interacting across time.
 
 `State` is effectively congealed time -  history materialised - and it is moulded 
 by rounds of `Computation`. However, it isn't all one way. Although `Computation` creates `State`, 
 it is itself controlled by that `State`. For example, predicates on `State` determine
 which branches of `Computation` execute. So, there's a feedback loop between the two. 
 
-Oh, no. Did someone say feedback loop?  That's bad, right?
+Oh, no! Did someone just say feedback loop?  That's bad, right?
 
-For a programmer trying a mental simulation of a `State`/`Computation` feedback process, 
+For a programmer trying a mental simulate a `State`/`Computation` feedback process, 
 there can be a lot to juggle, quickly putting them near the limits of their cognitive budget. 
 Even for Dijkstra. 
 
@@ -59,17 +55,22 @@ making mental simulations easier, while others do the opposite and make it virtu
 systems on the "impossible" end of that continuum will breed nasty bugs and be scary to maintain.
 
 
+> To understand a program, you must become both the machine and the program. <br>	
+> 	
+>    -- Alan Perlis
+>    
+
 ## Dynamic vs Static Concerns
 
 Programmers are surprisingly focused on the static aspect of their systems. For example,
-they talk about DRY, line count, and "cohesion vs coupling". And, yes, that's useful, 
+they talk about DRY, line count, and "cohesion vs coupling". Sure, yes, that's useful, 
 but perhaps we should pay more attention to the qualities which make runtimes easier or 
 harder to simulate in our heads. **_This doesn't get talked about nearly enough._**
 
 The goal with re-frame was to have the simplest dynamic model possible because that, 
-above all else, drives developer productivity. (Well, that, and the immediate feedback provided by fast hot code reloading)
+above all else, drives developer productivity.
 
-So, let's talk about how re-frame delivers a simple dynamic model. And, we'll start off at a high level and then work our way down.
+So, let's talk about how re-frame delivers a simple dynamic model. We'll start off at a high level and then work our way down.
 
 ## re-frame Time
 
@@ -134,26 +135,29 @@ Thankfully, to harness and control that frightening power, you write pure functi
 Pure functions stand outside of "time". To understand them, you don't need to know "when" they were run and
 the state of the system at that point. Instead, you need only know the value of the actual arguments.
 
-The tyranny of time is still present on the inside of the pure function, because there is an internal flow of execution.
+The tyranny of time is still present on the inside of a pure function, because there is an internal flow of execution.
 So, you might still need to simulate that in your head.  But a pure function delivers a smaller
 dynamic process to understand - one that is more cognitively tractable.
 
-What is provided as arguments to a function is data, and what they return is data. Using immutable data for both 
-acts to insulate pure functions from "place" - where data is put.
+But wait, there's more.
 
-Once functions are decoupled from both "time" and "place" they can be composed in a maximally mathematical way.
-I asked earlier what simplifying "abstractions" might exist to help us dampen the complexity
-of runtime dynamics, and these two are a potent duo.
+We provide data to a pure function as arguments, and they return data, and this data is immutable. This acts to 
+decoupled a pure functions from "place" - it is insulated from where data is put.
+
+Because pure functions are decoupled from both "time" and "place", 
+they can be composed in a maximally mathematical way. This greatly 
+dampens the complexity of runtime dynamics.
 
 
 !!! Note "Banana Issues"
-    Non-pure functions "reach out" and grab a banana (a value) from the global space beyond their arguments.
+    Non-pure functions "reach out" and grab a value from the global space beyond their arguments.
 
-    Initially, it can seem innocent enough. But now, to understand the function's internal dynamics, you must understand
-    the dynamics for everything that might change that banana over time. Unfortunately, as you 
-    pull the banana back towards you, you might discover a Gorilla is holding it. 
-    And that Gorilla is sitting in a jungle, so you get that too. Plus some Monsoonal weather.
-    There's often a lot of new runtime dynamics coming your way, attached to that initial banana. 
+    > You wanted a banana but what you got was a gorilla holding the banana and the entire jungle.  
+    >   
+    > -- Joe Armstrong, creator of the Erlang programming language
+
+    To understand a function that grabs a banana, you must **also** understand all the runtime dynamics 
+    associated with changes in banana. You must reason globally, not locally. Which is often difficult.
 
 ## Declarative 
 
