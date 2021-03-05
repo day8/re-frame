@@ -1,19 +1,27 @@
 (ns ns-to-markdown
-  "This script is used to generate the API documentation for the namespace `re-frame.core`. It reads the
-   source code in that namespace, extracts the docstrings (markdown) and produces a markdown-formatted
-   file suitable for providing to `mkdocs` which builds the re-frame website.
-
-   It is used within the GitHub Actions docs workflow at:
-   https://github.com/day8/re-frame/blob/78ca09785e2adf9eea11f1e4bff2477d193f4b46/.github/workflows/docs-workflow.yml#L15
-
-   The page it outputs can be seen here: http://day8.github.io/re-frame/api-re-frame.core/
+  "A script that reads a single ClojureScript namespace, like `re-frame.core`, 
+   and outputs a single page of markdown-based API documentation.
 
    Usage: clojure -m ns-to-markdown ../src/re_frame/core.cljc > api-re-frame.core.md
-
-   Run as a script with the Clojure CLI. Expects the first arg to be a path to a ClojureScript
-   namespace. Reads the single namespace found in that file using the ClojureScript analyzer,
-   extracting public var metadata such as function names, arglists and docstrings. Subsequently
-   writes it out as markdown to stdout suitable for piping to a markdown file."
+ 
+   Notes:
+     - run as a script using the Clojure CLI
+     - the first argument is a path to a file containing a ClojureScript namespace. 
+     - it reads the namespace within the file using the ClojureScript analyzer,
+       extracting public var metadata such as function names, arglists and docstrings.
+     - it writes a single markdown-based API doc to stdout
+     - you can see the page it outputs here: http://day8.github.io/re-frame/api-re-frame.core/
+  
+   Workflow: 
+     - the output is designed to be incorporated into a Static Site generator, like `mkdocs`.
+     - For re-frame, we use it as a step within the GitHub Actions workflow which builds docs. See: 
+       https://github.com/day8/re-frame/blob/78ca09785e2adf9eea11f1e4bff2477d193f4b46/.github/workflows/docs-workflow.yml#L15
+  
+   About The Namespace:
+     - example: https://github.com/day8/re-frame/blob/master/src/re_frame/core.cljc
+     - the docs strings are expected to be markdown-compatible. 
+     - notice the subtle `metadata-ish` `{:api-docs/heading "Subscriptions"}` to group vars under headings.
+   "
   (:require
     [clojure.java.io :as io]
     [cljs.analyzer]
