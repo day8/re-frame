@@ -18,9 +18,11 @@
        https://github.com/day8/re-frame/blob/78ca09785e2adf9eea11f1e4bff2477d193f4b46/.github/workflows/docs-workflow.yml#L15
   
    About The Namespace:
-     - example: https://github.com/day8/re-frame/blob/master/src/re_frame/core.cljc
-     - the docs strings are expected to be markdown-compatible. 
-     - notice the subtle `metadata-ish` `{:api-docs/heading "Subscriptions"}` to group vars under headings.
+     - examine this example: https://github.com/day8/re-frame/blob/master/src/re_frame/core.cljc
+     - notice the var docs strings are expected to be markdown-compatible.
+     - notice the `:api-docs` hack (search for it) used to group vars under headings in the final output.
+     - the target for re-frame is `mkdocs`, so notice the use of `#!clj` ahead of code blocks. 
+       Which exploits the `mkdocs` feature `pymdownx.inlinehilite`. But that's a choice.
    "
   (:require
     [clojure.java.io :as io]
