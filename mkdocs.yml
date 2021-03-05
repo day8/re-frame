@@ -16,8 +16,8 @@ theme:
     repo: fontawesome/brands/git-alt
   language: en
   palette:
-    primary: light-blue
-    accent: blue
+    primary: #0075e1
+    accent: #0075e1
   font:
     text: Open Sans
     code: Source Code Pro
@@ -117,7 +117,6 @@ markdown_extensions:
       guess_lang: false
 
 extra_css:
-  - "https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&display=swap"
   - "https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap"
   - "stylesheets/dominoes-live.css"
   - "stylesheets/codehilite-monokai.css"
