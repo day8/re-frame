@@ -21,13 +21,20 @@ h1[id=_1] {
 /* Make the heading shades of blue.
 */
 .md-typeset h1 {
-  color: #00aeff;
+  color: #0075e1;
+  font-family: Raleway, 'Open Sans', Helvetica, Arial, sans-serif;
+  font-size: 36px;
+  text-transform: uppercase;
 }
 
 /* Make headings blue.
    Trim whitespace above and below. In particular, less gap following paragraph. */
 .md-typeset h2 {
-  color: #02a6f2;
+  color: #0075e1;
+  font-family: Raleway, 'Open Sans', Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  text-transform: uppercase;
+  
   margin: 1.6rem 0 -0.2rem;   
 }
 
@@ -42,6 +49,7 @@ h1[id=_1] {
   display: flex;
   flow-direction: row;
 }
+
 .not-found-text {
   margin-left: 31px;
 }
@@ -78,9 +86,4 @@ Paragraphs have a lower margin of about 0.75em (see above), so we are closing mo
 .md-nav {
   font-size: 0.65rem
 }
-/* 
-.md-header {
-  background-color: rgb(44, 44, 50)
-}
 
-*/
