@@ -19,7 +19,7 @@ theme:
     primary: blue
     accent: blue
   font:
-    text: Open Sans
+    text: IBM Plex Sans
     code: Source Code Pro
   features:
     - tabs
