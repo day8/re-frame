@@ -110,6 +110,7 @@ markdown_extensions:
   - admonition
   - footnotes
   - pymdownx.inlinehilite
+  - pymdownx.tilde
   - toc:
       permalink: true
       toc_depth: 3
