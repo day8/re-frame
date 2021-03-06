@@ -17,13 +17,18 @@ h1[id=_1] {
     display: none;
 }
 
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3, 
+.md-typeset a {
+  color: #0075e1;
+}
 
 /* Headings will be blue and Raleway
 */
 .md-typeset h1,
 .md-typeset h2,
 .md-typeset h3 {
-  color: #0075e1;
   font-family: Raleway, 'Open Sans', Helvetica, Arial, sans-serif;
 }
 
