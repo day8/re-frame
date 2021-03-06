@@ -12,7 +12,10 @@ So, it is about `data`, and the `functions`
 which transform that data.  And, because it is a **reactive framework**, `data` coordinates 
 `functions`, not the other way around.
 
-Indicatively, re-frame's tag line is: **derived values, flowing**. 
+re-frame's original tag line was ~~derived values, flowing~~ but that's not nearly 
+pretentious enough for a modern framework, so instead, it is now
+**_putting state into state of the art_**. 
+Ahhh, yes, I can feel those GitHub stars building already.
 
 
 
