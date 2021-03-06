@@ -40,7 +40,7 @@ Architecturally, re-frame implements "a perpetual loop".
 To build an app, you hang pure functions on certain parts of this loop, 
 and re-frame looks after the **conveyance of data** 
 around the loop, into and out of the transforming functions you 
-provide. The tag line for re-frame is "derived values, flowing".
+provide. The tag line for re-frame ~~is~~ used to be "derived values, flowing".
 
 Remember this diagram from school? The water cycle, right?
 
