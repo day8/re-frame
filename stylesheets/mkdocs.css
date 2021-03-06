@@ -38,6 +38,12 @@ h1[id=_1] {
   margin: 1.6rem 0 -0.2rem;   
 }
 
+
+.md-typeset h3 {
+  color: #0075e1;
+  font-family: Raleway, 'Open Sans', Helvetica, Arial, sans-serif;
+}
+
 /* slightly smaller font in code blocks */
 .md-typeset code {
   font-size: .79em
