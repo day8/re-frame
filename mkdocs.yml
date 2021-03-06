@@ -16,8 +16,8 @@ theme:
     repo: fontawesome/brands/git-alt
   language: en
   palette:
-    primary: #0075e1
-    accent: #0075e1
+    primary: blue
+    accent: blue
   font:
     text: Open Sans
     code: Source Code Pro
