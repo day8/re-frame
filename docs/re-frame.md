@@ -13,9 +13,9 @@ which transform that data.  And, because it is a **reactive framework**, `data` 
 `functions`, not the other way around.
 
 re-frame's original tag line was ~~derived values, flowing~~ but that's not nearly 
-pretentious enough for a modern framework, so instead, it is now
+pretentious enough for a modern framework. So, instead, it is now
 **_putting state into state of the art_**. 
-Ahhh, yes, I can feel those GitHub stars building already.
+Ahhh, yes, I can almost feel those GitHub stars building.
 
 
 
