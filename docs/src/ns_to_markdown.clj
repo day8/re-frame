@@ -99,7 +99,8 @@
       (println e))))
 
 (def markdown-styles
-  "<style>\n.md-typeset h3 {\nborder-bottom: 2px solid #888;\n}\n</style>\n\n")
+  #_"<style>\n.md-typeset h3 {\nborder-bottom: 2px solid #888;\n}\n</style>\n\n"
+  )
 
 (defn ns->markdown
   [m]
