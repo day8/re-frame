@@ -18,31 +18,29 @@ h1[id=_1] {
 }
 
 
-/* Make the heading shades of blue.
+/* Headings will be blue and Raleway
 */
-.md-typeset h1 {
-  color: #0075e1;
-  font-family: Raleway, 'Open Sans', Helvetica, Arial, sans-serif;
-  font-size: 36px;
-  text-transform: uppercase;
-}
-
-/* Make headings blue.
-   Trim whitespace above and below. In particular, less gap following paragraph. */
-.md-typeset h2 {
-  color: #0075e1;
-  font-family: Raleway, 'Open Sans', Helvetica, Arial, sans-serif;
-  font-size: 24px;
-  text-transform: uppercase;
-  
-  margin: 1.6rem 0 -0.2rem;   
-}
-
-
+.md-typeset h1,
+.md-typeset h2,
 .md-typeset h3 {
   color: #0075e1;
   font-family: Raleway, 'Open Sans', Helvetica, Arial, sans-serif;
 }
+
+.md-typeset h1 {
+  font-size: 40px;
+  text-transform: uppercase;
+}
+
+/* Trim whitespace above and below. In particular, less gap following paragraph. 
+*/
+.md-typeset h2 {
+  font-size: 26px;
+  text-transform: uppercase;
+
+  margin: 1.6rem 0 -0.2rem;   
+}
+
 
 /* slightly smaller font in code blocks */
 .md-typeset code {
