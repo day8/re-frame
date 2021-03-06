@@ -117,6 +117,8 @@ markdown_extensions:
       guess_lang: false
 
 extra_css:
+
+  - "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,500;1,400&display=swap"
   - "https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap"
   - "stylesheets/dominoes-live.css"
   - "stylesheets/codehilite-monokai.css"
