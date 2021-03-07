@@ -17,16 +17,6 @@ h1[id=_1] {
     display: none;
 }
 
-.md-typeset h1,
-.md-typeset h2,
-.md-typeset h3 {
-  color: #0075e1;
-}
-
-.md-typeset a {
-  color: #0075e180;
-}
-
 /* 
 */
 .md-typeset h1,
@@ -39,6 +29,7 @@ h1[id=_1] {
   font-weight: 200;
   letter-spacing: 0;
   font-size: 55px;
+  margin: 0;
 }
 
 /* Trim whitespace above and below. In particular, less gap following paragraph. 
@@ -48,6 +39,7 @@ h1[id=_1] {
   font-weight: 300;
   letter-spacing: 0;
   margin: 1.6rem 0 -0.2rem;   
+  border-bottom: solid 1px #EEF;
 }
 
 
@@ -94,7 +86,7 @@ Paragraphs have a lower margin of about 0.75em (see above), so we are closing mo
 }
 
 /* make the Nav font just fractionally smaller 
-   It was 0.7rem - not even sure what a rem is. 
+   It was 0.7rem 
 */
 .md-nav {
   font-size: 0.65rem
