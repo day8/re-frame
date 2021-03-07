@@ -22,6 +22,7 @@ h1[id=_1] {
 .md-typeset h1,
 .md-typeset h2,
 .md-typeset h3 {
+  color: #0075e1;
   font-family: 'Source Sans Pro', 'Open Sans', Helvetica, Arial, sans-serif;
 }
 
