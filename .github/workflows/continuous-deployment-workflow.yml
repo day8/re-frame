@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-18.04
     container:
       # Source: https://github.com/day8/dockerfile-for-dev-ci-image
-      image: day8au/dev-ci:0.0.8
+      image: docker.pkg.github.com/day8/dockerfile-for-dev-ci-image/dev-ci:0.1
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - name: Maven cache
@@ -87,7 +90,10 @@ jobs:
     runs-on: ubuntu-18.04
     container:
       # Source: https://github.com/day8/dockerfile-for-dev-ci-image
-      image: day8au/dev-ci:0.0.8
+      image: docker.pkg.github.com/day8/dockerfile-for-dev-ci-image/dev-ci:0.1
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
         with:
