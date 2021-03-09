@@ -21,7 +21,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /root/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj', '.github/workflows/**') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: npm cache
@@ -103,7 +103,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /root/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj', '.github/workflows/**') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Run lein release
