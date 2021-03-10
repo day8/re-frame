@@ -1604,14 +1604,16 @@
                 
                 <h2 id="homoiconic">Homoiconic<a class="headerlink" href="#homoiconic" title="Permanent link">&para;</a></h2>
 <p>ClojureScript is a modern LISP, and LISPs are <strong>homoiconic</strong>.  </p>
-<p>You program in a LISP by creating and
-assembling LISP data structures. The syntax is data literals. Dwell on that for a moment. You are <strong><em>programming in data</em></strong>. 
-The functions which later transform data, themselves start as data. </p>
+<p>You program in a LISP by creating and assembling LISP data structures. The syntax is data literals.
+Dwell on that for a moment. You are <strong><em>programming in data</em></strong>. 
+The functions which later transform data, themselves start as data.
+Computation involves evaluating data. Macros, running at compile time, take code (which is just data)
+and rewrite it to other code (other data). The duality of code and data runs deep. </p>
 <p><img align="right" width="220" src="../images/yinyang.png"></p>
 <p>So, Clojurists place particular emphasis on the primacy of data. </p>
 <p>They meditate on aphorisms like <strong><em>data is the ultimate in late binding</em></strong>. They 
-exalt inequalities like <code>data &gt; functions &gt; macros</code>. (Disappointingly,
-they also re-watch Rich Hickey videos a bit too much, and wish that
+exalt inequalities like <code>data &gt; functions &gt; macros</code>. (They also 
+re-watch Rich Hickey videos a bit too much, and wish that
 their hair was darker and more curly.)</p>
 <p>I cannot stress enough what a big deal this is. It will seem 
 like a syntax curiosity at first but, when the penny drops for 
