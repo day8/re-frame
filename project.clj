@@ -3,7 +3,7 @@
   :url          "https://github.com/day8/re-frame.git"
   :license      {:name "MIT"}
 
-  :dependencies [[org.clojure/clojure       "1.10.2"   :scope "provided"]
+  :dependencies [[org.clojure/clojure       "1.10.3"   :scope "provided"]
                  [org.clojure/clojurescript  ~(or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.773")
                   :scope "provided"
                   :exclusions [com.google.javascript/closure-compiler-unshaded

@@ -1,7 +1,7 @@
 
 ;; Allows users of deps.edn to more conveniently fork / make PRs to re-frame
 
-{:deps {org.clojure/clojure       {:mvn/version "1.10.1"
+{:deps {org.clojure/clojure       {:mvn/version "1.10.3"
                                    :scope "provided"}
         org.clojure/clojurescript {:mvn/version "1.10.597"
                                    :scope "provided"}
