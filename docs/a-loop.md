@@ -3,17 +3,19 @@
 
 ClojureScript is a modern LISP, and LISPs are **homoiconic**.  
 
-You program in a LISP by creating and
-assembling LISP data structures. The syntax is data literals. Dwell on that for a moment. You are **_programming in data_**. 
-The functions which later transform data, themselves start as data. 
+You program in a LISP by creating and assembling LISP data structures. The syntax is data literals.
+Dwell on that for a moment. You are **_programming in data_**. 
+The functions which later transform data, themselves start as data.
+Computation involves evaluating data. Macros, running at compile time, take code (which is just data)
+and rewrite it to other code (other data). The duality of code and data runs deep. 
 
 <img align="right" width="220" src="../images/yinyang.png">
 
 So, Clojurists place particular emphasis on the primacy of data. 
 
 They meditate on aphorisms like **_data is the ultimate in late binding_**. They 
-exalt inequalities like `data > functions > macros`. (Disappointingly,
-they also re-watch Rich Hickey videos a bit too much, and wish that
+exalt inequalities like `data > functions > macros`. (They also 
+re-watch Rich Hickey videos a bit too much, and wish that
 their hair was darker and more curly.)
 
 
