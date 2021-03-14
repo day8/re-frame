@@ -1,16 +1,16 @@
 # Subscriptions
 
-This tutorial covers dominoes 4, 5 and 6. It is ulimtately about two API functions - `subscribe` and `reg-sub` - but first let's get an overview.
+This tutorial covers dominoes 4, 5 and 6. It is ultimately about two API functions - `subscribe` and `reg-sub` - but first let's get an overview.
 
 ## On Derived Data
 
 A UI is derived data.
 
-A browser renders DOM. And this DOM is essentailly tree-shaped data. And this data is itself a "materialised view" of other
+A browser renders DOM. And this DOM is essentially tree-shaped data. And this data is itself a "materialised view" of other
 data - namely, the data in `app-db`. 
 
 When Domino 3 (an effect handler) modifies `app-db`, boom, boom, boom go dominoes 4, 5 & 6, 
-computing the "materialised view" that is ultimiately DOM.  These three dominoes collectively implement a reactive dataflow.
+computing the "materialised view" that is ultimately DOM.  These three dominoes collectively implement a reactive dataflow.
 
 
 ## How Exactly?
@@ -32,7 +32,7 @@ arrives at the leaf `View Functions` will be **a materialised view** of what was
 The nodes of the graph are pure functions. When data flows along an input arc and into a node, 
 it becomes "an argument" (an input) to that node's pure function. That function will be "called" with 
 the input arguments from input arcs, and it will calculate a return value, more data, which then flows along 
-that node's output arcs to child nodes, where the process repeats. Ultimiately, data is delivered into `View Functions`
+that node's output arcs to child nodes, where the process repeats. Ultimately, data is delivered into `View Functions`
 via a call to `subscribe`.
 
 It is derived data all the way through the graph. Even the hiccup produced by leaf nodes is 
@@ -134,7 +134,7 @@ Extractor subscriptions are registered like this:
 (re-frame.core/reg-sub  ;; a part of the re-frame API
   :id                   ;; usage: (subscribe [:id])
   (fn [db query-v]      ;; `db` is the map out of `app-db`
-    (:something db)))   ;; trival extraction - no computation
+    (:something db)))   ;; trivial extraction - no computation
 ```
 
 This registers a `computation function` - a pretty simple one which just does an extraction. The argument `query-v` 
