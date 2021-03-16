@@ -13,13 +13,10 @@ y'know. Pretty good.
 > -- Terry Pratchett, The Fifth Elephant <br>
 > &nbsp;&nbsp;&nbsp; reflecting on identity, flow and derived values  (aka [The Ship of Theseus](https://en.wikipedia.org/wiki/Ship_of_Theseus))
 
+[![Clojars Project](https://img.shields.io/clojars/v/re-frame?color=2a2e39&style=for-the-badge)](https://clojars.org/re-frame)
 
 [![CI](https://github.com/day8/re-frame/workflows/ci/badge.svg)](https://github.com/day8/re-frame/actions?workflow=ci)
 [![CD](https://github.com/day8/re-frame/workflows/cd/badge.svg)](https://github.com/day8/re-frame/actions?workflow=cd)
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/day8/re-frame?style=flat)](https://github.com/day8/re-frame/tags)
-[![Clojars Project](https://img.shields.io/clojars/v/re-frame.svg)](https://clojars.org/re-frame)
-[![GitHub issues](https://img.shields.io/github/issues-raw/day8/re-frame?style=flat)](https://github.com/day8/re-frame/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/day8/re-frame)](https://github.com/day8/re-frame/pulls)
 [![License](https://img.shields.io/github/license/day8/re-frame.svg)](license.txt)
 
 ## Overview
