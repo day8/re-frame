@@ -215,7 +215,7 @@
 
   The `computation function` is expected to take two arguments:
 
-    - `input-values` - the values which flow into this node (how is it wierd into the graph?)
+    - `input-values` - the values which flow into this node (how is it wired into the graph?)
     - `query-vector` - the vector given to `subscribe`
 
   and it returns a computed value (which then becomes the output of the node)
