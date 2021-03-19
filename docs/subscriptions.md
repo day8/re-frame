@@ -4,10 +4,9 @@ This tutorial covers dominoes 4, 5 and 6. It is ultimately about two API functio
 
 ## On Derived Data
 
-A UI is derived data.
+A UI is derived data. It is a materialied view of `app-db`.
 
-A browser renders DOM. And this DOM is essentially tree-shaped data. And this data is itself a "materialised view" of other
-data - namely, the data in `app-db`. 
+A browser renders DOM and that's essentially tree-shaped data. And you use Reagent to render each node of this tree. And each Reagent renderer returns a hiccup-flavoured, materialised view of the data to which they subscribe. And the data delivered by subscriptions is a materialised view of data in `app-db`. So, the DOM sits at one end of a chain of materialised views over `app-db` data.
 
 When Domino 3 (an effect handler) modifies `app-db`, boom, boom, boom go dominoes 4, 5 & 6, 
 computing the "materialised view" that is ultimately DOM.  These three dominoes collectively implement a reactive dataflow.
