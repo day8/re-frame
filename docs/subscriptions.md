@@ -1,15 +1,15 @@
 # Subscriptions
 
-This tutorial covers dominoes 4, 5 and 6. It is ultimately about two API functions - `subscribe` and `reg-sub` - but first let's get an overview.
+This tutorial covers dominoes 4, 5 and 6. There are just two API functions to understand - `subscribe` and `reg-sub` - but first let's get an overview.
 
 ## On Derived Data
 
-A UI is derived data. It is a materialied view of `app-db`.
+A UI is just derived data.
 
-A browser renders DOM and that's essentially tree-shaped data. And you use Reagent to render each node of this tree. And each Reagent renderer returns a hiccup-flavoured, materialised view of the data to which they subscribe. And the data delivered by subscriptions is a materialised view of data in `app-db`. So, the DOM sits at one end of a chain of materialised views over `app-db` data.
+A browser renders tree-shaped data called the DOM. Reagent renderers create DOM by computing hiccup-shapped data. subscriptioons deliver data to Reagent renderers. And, `app-db` is the root of this entire flow. 
 
 When Domino 3 (an effect handler) modifies `app-db`, boom, boom, boom go dominoes 4, 5 & 6, 
-computing the "materialised view" that is ultimately DOM.  These three dominoes collectively implement a reactive dataflow.
+computing stages of the "materialised view" that is ultimately DOM.  Together these three dominoes implement a reactive dataflow.
 
 
 ## How Exactly?
