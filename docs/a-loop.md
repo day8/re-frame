@@ -42,7 +42,7 @@ Architecturally, re-frame implements "a perpetual loop".
 To build an app, you hang pure functions on certain parts of this loop, 
 and re-frame looks after the **conveyance of data** 
 around the loop, into and out of the transforming functions you 
-provide. The tag line for re-frame ~~is~~ used to be "derived values, flowing".
+provide. The tag line for re-frame is "derived values, flowing".
 
 Remember this diagram from school? The water cycle, right?
 
@@ -66,21 +66,21 @@ you've seen the videos - and if he says to do something, you do it
 So, this diagram, apart from being a plausible analogy which might help
 you to understand re-frame, is **practically proof** it does physics.
 
+<!--  too many jokes for one page 
 
-<!-- 
+## On Bourgeois Claims
 
-## Bourgeois Claims
+It isn't easy being a framework creator. We're constantly buffeted by the impressive marketing claims of 
+new entrants. These shiny new things are at once "blazingly fast" and "elegantly" reducing something bad,
+while also being utterly awesome at ... good things. It is easy to feel insecure about your baby.
 
-After "elegance", the next most likely claim made for a Framework might be
-"it reduces coupling and increases cohesion". That old chestnut. 
+Of course, a few months later, you read frustrated tweets calling out the design tradeoffs of these new wonders. 
 
-Now, normally I would never make such a technically bourgeois claim. As a haute couture
-framework designer, it would be beneath me, oui? But if someone forced me to do it - say, 
-at gunpoint - I'd reluctantly point out:
+For a brief period there, I engaged. I insisted that "re-frame puts state into state of the art"
+and I felt pretty smug about that.  Don't judge me - I said it was difficult. 
 
-  - With re-frame, you write independent, pure functions.  That's the "reduces coupling" part.
-  - And then re-frame itself looks after the conveyance of data between these functions, in and out of them. Data flow supplies the "cohesion".
-
+But I'm older and wiser now. These days I only claim only that re-frame involves 
+"derived data flowing" and that it provides state management via six dominoes.
 -->
 
 ## Six Dominoes
