@@ -60,22 +60,25 @@ jobs:
         name: Run cd examples/todomvc && lein shadow-release && lein build-report
         working-directory: examples/todomvc
         run: |
-          lein shadow-release
-          lein build-report
+          npm install
+          npm run release
+          npm run build-report
       - if: steps.maven-cache.outputs.cache-hit == 'true'
         run: lein -o ci
       - if: steps.maven-cache.outputs.cache-hit == 'true'
         name: Run cd examples/simple && lein -o shadow-release && lein -o build-report
         working-directory: examples/simple
         run: |
-          lein -o shadow-release
-          lein -o build-report
+          npm install
+          npm run release
+          npm run build-report
       - if: steps.maven-cache.outputs.cache-hit == 'true'
         name: Run cd examples/todomvc && lein -o shadow-release && lein -o build-report
         working-directory: examples/todomvc
         run: |
-          lein -o shadow-release
-          lein -o build-report
+          npm install
+          npm run release
+          npm run build-report
       - uses: actions/upload-artifact@v2
         with:
           name: simple-example-build-report

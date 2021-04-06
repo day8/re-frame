@@ -20,7 +20,7 @@
 
  :builds
  {:client
-  {:target :browser
+  {:target     :browser
    :output-dir "resources/public/js"
    :modules
    {:client

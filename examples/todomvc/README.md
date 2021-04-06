@@ -11,7 +11,7 @@ really required to get the job done. So lean and minimal is no longer a goal.
 
 ## Setup And Run A Development Environment
 
-1. [install Clojure](https://purelyfunctional.tv/guide/how-to-install-clojure/) (Java and Lein)
+1. Install [Node.js](https://nodejs.org/en/)
 
 2. Get the re-frame repo from GitHub:
    ```sh
@@ -25,7 +25,8 @@ really required to get the job done. So lean and minimal is no longer a goal.
 
 4. Kick off a clean build (compile the app and start up shadow-cljs hot-reloading)
    ```sh
-   lein watch
+   npm install
+   npm run watch
    ```
 
 5. Wait for the compile in step 4 to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
@@ -70,7 +71,8 @@ The [official reagent example](https://github.com/reagent-project/reagent/tree/m
 
 1. Compile
    ```sh
-   lein release
+   npm install
+   npm run release
    ```
 
 2. Open the following in your browser

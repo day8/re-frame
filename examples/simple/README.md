@@ -13,11 +13,11 @@ All the code is in one namespace: `/src/simple/core.cljs`.
 Steps:
 
 1. Install [Node.js](https://nodejs.org/en/)
-1. `git clone https://github.com/day8/re-frame.git`
-2. `cd re-frame/examples/simple`
-3. Run "`npm install`" then "`npm run watch`" to compile the app and start up shadow-cljs hot-reloading
-4. Wait for the compile to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
-5. Open `http://localhost:8280/` to see the app
+2. `git clone https://github.com/day8/re-frame.git`
+3. `cd re-frame/examples/simple`
+4. Run "`npm install`" then "`npm run watch`" to compile the app and start up shadow-cljs hot-reloading
+5. Wait for the compile to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
+6. Open `http://localhost:8280/` to see the app
 
 
 So, what just happened?

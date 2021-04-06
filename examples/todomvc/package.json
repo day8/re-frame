@@ -1,14 +1,20 @@
 {
   "name": "todomvc-re-frame",
+  "scripts": {
+    "watch": "npx shadow-cljs watch client",
+    "release": "npx shadow-cljs release client",
+    "build-report": "npx shadow-cljs run shadow.cljs.build-report client target/build-report.html"
+  },
   "devDependencies": {
-    "karma": "5.2.2",
+    "karma": "6.3.0",
     "karma-chrome-launcher": "3.1.0",
     "karma-cljs-test": "0.1.0",
     "karma-junit-reporter": "2.0.1",
     "karma-phantomjs-launcher": "1.0.4",
-    "shadow-cljs": "2.11.18"
+    "shadow-cljs": "2.12.1"
   },
   "dependencies": {
+    "highlight.js": "10.7.1",
     "react": "17.0.1",
     "react-dom": "17.0.1"
   }
