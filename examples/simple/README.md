@@ -12,12 +12,12 @@ All the code is in one namespace: `/src/simple/core.cljs`.
 
 Steps:
 
-1. [install Clojure](https://purelyfunctional.tv/guide/how-to-install-clojure/)
+1. Install [Node.js](https://nodejs.org/en/)
 1. `git clone https://github.com/day8/re-frame.git`
 2. `cd re-frame/examples/simple`
-3. Run "`lein watch`"  to compile the app and start up shadow-cljs hot-reloading
+3. Run "`npm install`" then "`npm run watch`" to compile the app and start up shadow-cljs hot-reloading
 4. Wait for the compile to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
-5. Open `http://localhost:8280/example.html` to see the app
+5. Open `http://localhost:8280/` to see the app
 
 
 So, what just happened?
@@ -32,5 +32,5 @@ change show up in the browser in near-realtime.
 
 ### Production Version
 
-Run "`lein release`" to compile an optimised 
-version, and then open `resources/public/example.html` in a browser.
+Run "`npm run release`" to compile an optimised 
+version, and then open `resources/public/index.html` in a browser.
