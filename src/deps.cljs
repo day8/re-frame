@@ -1,5 +1,5 @@
 {:npm-dev-deps {"shadow-cljs"              "2.11.18"
-                "karma"                    "5.2.2"
+                "karma"                    "6.3.0"
                 "karma-phantomjs-launcher" "1.0.4"
                 "karma-chrome-launcher"    "3.1.0"
                 "karma-cljs-test"          "0.1.0"
