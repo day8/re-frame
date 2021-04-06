@@ -44,8 +44,9 @@ jobs:
         name: Run cd examples/simple && lein shadow-release && lein build-report
         working-directory: examples/simple
         run: |
-          lein shadow-release
-          lein build-report
+          npm install
+          npm run release
+          npm run build-report
       - if: steps.maven-cache.outputs.cache-hit != 'true'
         name: Run cd examples/todomvc && lein shadow-release && lein build-report
         working-directory: examples/todomvc
