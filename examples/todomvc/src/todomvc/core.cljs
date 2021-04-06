@@ -6,14 +6,12 @@
             [secretary.core :as secretary]
             [todomvc.events] ;; These two are only required to make the compiler
             [todomvc.subs]   ;; load them (see docs/App-Structure.md)
-            [todomvc.views]
-            [devtools.core :as devtools])
+            [todomvc.views])
   (:import [goog History]
            [goog.history EventType]))
 
 
 ;; -- Debugging aids ----------------------------------------------------------
-(devtools/install!)       ;; we love https://github.com/binaryage/cljs-devtools
 (enable-console-print!)   ;; so that println writes to `console.log`
 
 

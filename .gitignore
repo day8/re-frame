@@ -12,7 +12,7 @@ pom.xml.asc
 .lein-failures
 core/
 out/
-target/
+/target/
 compiled/
 misc/
 /examples/todomvc/resources/public/js/

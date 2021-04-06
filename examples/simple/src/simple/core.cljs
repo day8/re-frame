@@ -97,5 +97,5 @@
 (defn run
   []
   (rf/dispatch-sync [:initialize]) ;; put a value into application state
-  (render)                         ;; mount the application's ui into '<div id="app" />'
-  )
+  (render))                         ;; mount the application's ui into '<div id="app" />'
+
