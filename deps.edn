@@ -3,7 +3,7 @@
 
 {:deps {org.clojure/clojure       {:mvn/version "1.10.3"
                                    :scope "provided"}
-        org.clojure/clojurescript {:mvn/version "1.10.773"
+        org.clojure/clojurescript {:mvn/version "1.10.844"
                                    :scope "provided"}
         reagent                   {:mvn/version "1.0.0"}
         net.cgrand/macrovich      {:mvn/version "0.2.1"}
