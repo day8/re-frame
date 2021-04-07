@@ -15,9 +15,6 @@ y'know. Pretty good.
 <br/> 
 <br/>
 
-[![Clojars Project](https://img.shields.io/clojars/v/re-frame?labelColor=283C67&color=729AD1&style=for-the-badge&logo=clojure&logoColor=fff)](https://clojars.org/re-frame)
-[![Get help on Slack](http://img.shields.io/badge/slack-clojurians%20%23re--frame-97C93C?labelColor=283C67&logo=slack&style=for-the-badge)](https://clojurians.slack.com/channels/re-frame)
-
 <!--
 [![CI](https://github.com/day8/re-frame/workflows/ci/badge.svg)](https://github.com/day8/re-frame/actions?workflow=ci)
 [![CD](https://github.com/day8/re-frame/workflows/cd/badge.svg)](https://github.com/day8/re-frame/actions?workflow=cd)
@@ -50,7 +47,13 @@ The re-frame documentation is [available here](https://day8.github.io/re-frame/)
 
 ## The Current Version 
 
-Can be seen in the clojars badge above. And for full dependency information see the [Clojars page](https://clojars.org/re-frame/)
+[![Clojars Project](https://img.shields.io/clojars/v/re-frame?labelColor=283C67&color=729AD1&style=for-the-badge&logo=clojure&logoColor=fff)](https://clojars.org/re-frame)
+
+For full dependency information, see the [Clojars page](https://clojars.org/re-frame/)
+
+## Getting Help 
+
+[![Get help on Slack](http://img.shields.io/badge/slack-clojurians%20%23re--frame-97C93C?labelColor=283C67&logo=slack&style=for-the-badge)](https://clojurians.slack.com/channels/re-frame)
 
 ## Licence
 
