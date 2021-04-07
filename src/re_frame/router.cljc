@@ -72,7 +72,7 @@
 
   ;; -- API
   (push [this event])
-  (add-post-event-callback [this id callack])
+  (add-post-event-callback [this id callback-fn])
   (remove-post-event-callback [this id])
   (purge [this])
 
