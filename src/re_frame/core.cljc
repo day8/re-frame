@@ -131,7 +131,7 @@
         [one two three]          ;; <-- a seq of interceptors
         (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
           {:db       (assoc db :some-key arg1)          ;; return a map of effects
-           :dispatch [:some-event arg2]}))
+           :fx [[:dispatch [:some-event arg2]]]}))
   "
   {:api-docs/heading "Event Handlers"}
   ([id handler]
