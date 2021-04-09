@@ -243,7 +243,7 @@
 
      In the absence of an explicit `signals function`, the node's input signal defaults to `app-db`
      and, as a result, the value within `app-db` (a map) is
-     is given as the 1st argument when `a-computation-fn` is called.
+     given as the 1st argument when `a-computation-fn` is called.
 
 
   **Second variation** - a signal function is explicitly supplied:
