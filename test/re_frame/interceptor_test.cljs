@@ -96,7 +96,7 @@
   (let [event   [:a :b]
 
         handler (fn [db v]
-                  ;; make sure it was given the right arguements
+                  ;; make sure it was given the right arguments
                   (is (= db :original-db-val))
                   (is (= v event))
                   ;; return a specific value for later checking

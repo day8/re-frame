@@ -497,7 +497,7 @@
   within `inject-cofx`:
 
     - `id` is keyword, often namespaced.
-    - `handler` is a function which takes either one or two arguements, the first of which is
+    - `handler` is a function which takes either one or two arguments, the first of which is
        always `coeffects` and which returns an updated `coeffects`.
 
   See also: `inject-cofx`
