@@ -184,7 +184,7 @@ is how a handler could be registered for `:now`:
 ```clj
 (reg-cofx               ;; registration function
    :now                 ;; what cofx-id are we registering
-   (fn [coeffects]      ;; second parameter not used in this case
+   (fn [coeffects _]    ;; second parameter not used in this case
       (assoc coeffects :now (js.Date.))))   ;; add :now key, with value
 ```
 
