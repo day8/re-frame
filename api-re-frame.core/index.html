@@ -2391,7 +2391,7 @@ an <code>interceptors</code> chain:</p>
   <span class="p">[</span><span class="nv">one</span> <span class="nv">two</span> <span class="nv">three</span><span class="p">]</span>          <span class="c1">;; &lt;-- a seq of interceptors</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]</span> <span class="ss">:as</span> <span class="nv">cofx</span><span class="p">}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">arg1</span> <span class="nv">arg2</span><span class="p">]]</span> <span class="c1">;; destructure both arguments</span>
     <span class="p">{</span><span class="ss">:db</span>       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:some-key</span> <span class="nv">arg1</span><span class="p">)</span>          <span class="c1">;; return a map of effects</span>
-     <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:some-event</span> <span class="nv">arg2</span><span class="p">]}))</span>
+     <span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:some-event</span> <span class="nv">arg2</span><span class="p">]]]}))</span>
 </code></pre></div>
 </td></tr></table>
 
