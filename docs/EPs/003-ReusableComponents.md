@@ -14,7 +14,7 @@ through the hierarchy in the form of `props`.  All very functional.
 
 Except there are some problems:
   - it can be a PITA to pass every little bit of data through many, many layers. 
-    Manual and time consuming.
+    Manual and time-consuming.
   - often we don't want to burden intermediate layers with knowledge about 
     what leaf nodes needed. That kind of "unnecessary knowing" leads to
     various kinds of fragility.
@@ -38,7 +38,7 @@ like a datepicker, are the simplest kind of components.
 `re-com` components are reusability because they take `an input stream` of data
 and they 
 
-achieves reusablity by passing in values and suppling callbacks. This works at
+achieves reusablity by passing in values and supplying callbacks. This works at
 the level of simple widgets. 
  
 But re-frame components need to subscribe and dispatch.  

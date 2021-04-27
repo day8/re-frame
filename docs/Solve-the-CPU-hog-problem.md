@@ -13,15 +13,15 @@ user interactions are not being processed.
 
 How are we to show progress updates like "Hey, X% completed"?  Or 
 how can we handle the user clicking on that "Cancel" button trying 
-to stop this long running process?
+to stop this long-running process?
 
-We need a means by which long running handlers can hand control
+We need a means by which long-running handlers can hand control
 back for "other" processing every so often, while still continuing 
 on with their computation.
 
 ## The re-frame Solution
 
-__First__, all long running, CPU-hogging processes are put in event handlers.
+__First__, all long-running, CPU-hogging processes are put in event handlers.
 Not in subscriptions.  Not in components. Not hard to do,
 but worth establishing as a rule, right up front. 
 
@@ -117,7 +117,7 @@ That's just one approach. You can adapt the pattern as necessary.
 
 ### Further Notes
 
-Going to this trouble is completely unnecessary if the long running 
+Going to this trouble is completely unnecessary if the long-running 
 task involves I/O (GET, POST, HTML5 database action?) because the 
 browser will handle I/O in another thread and give UI activities plenty of look in. 
 
@@ -193,10 +193,10 @@ seconds. That nice little Dialog telling you the button was clicked and
 action is being taken won't show.
 
 In these kinds of cases, where you are only going to give the UI 
-**one chance to update** (not a repeated chance every few milli seconds), 
+**one chance to update** (not a repeated chance every few milliseconds), 
 then you had better be sure the DOM is fully synced. 
 
-To do this, you put meta data on the event being dispatched:
+To do this, you put metadata on the event being dispatched:
 ```clj
 (re-frame.core/reg-event-fx
   :process-x
