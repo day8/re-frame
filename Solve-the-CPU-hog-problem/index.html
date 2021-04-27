@@ -1569,12 +1569,12 @@ of POSTs), etc, etc. Nothing.</p>
 user interactions are not being processed.</p>
 <p>How are we to show progress updates like "Hey, X% completed"?  Or 
 how can we handle the user clicking on that "Cancel" button trying 
-to stop this long running process?</p>
-<p>We need a means by which long running handlers can hand control
+to stop this long-running process?</p>
+<p>We need a means by which long-running handlers can hand control
 back for "other" processing every so often, while still continuing 
 on with their computation.</p>
 <h2 id="the-re-frame-solution">The re-frame Solution<a class="headerlink" href="#the-re-frame-solution" title="Permanent link">&para;</a></h2>
-<p><strong>First</strong>, all long running, CPU-hogging processes are put in event handlers.
+<p><strong>First</strong>, all long-running, CPU-hogging processes are put in event handlers.
 Not in subscriptions.  Not in components. Not hard to do,
 but worth establishing as a rule, right up front. </p>
 <p><strong>Second</strong>, you must be able to break up that CPU 
@@ -1652,7 +1652,7 @@ are set, the UI could show "Abandoning process ..." and thus appear responsive
 to the user's click on “Cancel”.</p>
 <p>That's just one approach. You can adapt the pattern as necessary. </p>
 <h3 id="further-notes">Further Notes<a class="headerlink" href="#further-notes" title="Permanent link">&para;</a></h3>
-<p>Going to this trouble is completely unnecessary if the long running 
+<p>Going to this trouble is completely unnecessary if the long-running 
 task involves I/O (GET, POST, HTML5 database action?) because the 
 browser will handle I/O in another thread and give UI activities plenty of look in. </p>
 <p>You only need to go to this trouble if it is your code which is 
@@ -1716,9 +1716,9 @@ code will have got control back, and will keep control for the next 5
 seconds. That nice little Dialog telling you the button was clicked and 
 action is being taken won't show.</p>
 <p>In these kinds of cases, where you are only going to give the UI 
-<strong>one chance to update</strong> (not a repeated chance every few milli seconds), 
+<strong>one chance to update</strong> (not a repeated chance every few milliseconds), 
 then you had better be sure the DOM is fully synced. </p>
-<p>To do this, you put meta data on the event being dispatched:</p>
+<p>To do this, you put metadata on the event being dispatched:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
   <span class="ss">:process-x</span>
   <span class="p">(</span><span class="k">fn </span>

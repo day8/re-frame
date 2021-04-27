@@ -1677,8 +1677,9 @@ recreated and change on each render, and so <code>callback</code> will test <cod
 
 
 <p>Does this work?  Sadly, no. Can you spot the bug? </p>
-<p><code>callback</code> has closed over the original value for <code>id</code> - the one given to the outer function.  <code>callback</code> will never dispatch the "latest" value of <code>id</code> 
-provided to the re-render function (notice that <code>id</code> is an argument to both the outer and inner functions in the Form-2 Component).</p>
+<p><code>callback</code> has closed over the original value for <code>id</code> - the one given to the outer function.
+<code>callback</code> will never dispatch the "latest" value of <code>id</code> provided to the re-render function
+(notice that <code>id</code> is an argument to both the outer and inner functions in the Form-2 Component).</p>
 <h2 id="the-technique">The Technique<a class="headerlink" href="#the-technique" title="Permanent link">&para;</a></h2>
 <p>So, enough preamble and explanation, here's the real solution - and it has three parts:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
@@ -1693,8 +1694,10 @@ provided to the re-render function (notice that <code>id</code> is an argument t
 <p>Notes:</p>
 <ol>
 <li><code>callback</code> no longer tries to "close over' <code>id</code>. Instead, it takes <code>id</code> as an argument.</li>
-<li><code>callback-factory-factory</code> has a long name, and it performs the trick. It returns a function which, when called, will always return the same function, which wraps <code>callback</code>. (code supplied below)</li>
-<li>Each time we call <code>callback-factory</code>, it will return the same function. But it does it in a way which allows for <code>id</code> to vary on each render.</li>
+<li><code>callback-factory-factory</code> has a long name, and it performs the trick. It returns a function which, when called,
+   will always return the same function, which wraps <code>callback</code>. (code supplied below)</li>
+<li>Each time we call <code>callback-factory</code>, it will return the same function. But it does it in a way which allows for
+   <code>id</code> to vary on each render.</li>
 </ol>
 <p>Which only leaves me to show you the hero in our story, which I offer<br />
 without further explanation for you to read and understand: </p>
@@ -1733,7 +1736,8 @@ without further explanation for you to read and understand: </p>
 <p>Note:</p>
 <ol>
 <li>this time the callback, <code>on-change</code>, takes two arguments. The <code>id</code> and the DOM event <code>dom-event</code></li>
-<li>But, when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling <code>dom-event</code> later when it calls the callback. </li>
+<li>But, when we call the factory we only supply one of these two arguments, almost like this is a "partial".
+   The browser will be supplying <code>dom-event</code> later when it calls the callback. </li>
 </ol>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>This page introduces an advanced technique. </p>

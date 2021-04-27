@@ -1560,10 +1560,10 @@ could end up chewing a lot of CPU cycles.</p>
 <h3 id="an-example-of-this-problem">An Example Of This Problem<a class="headerlink" href="#an-example-of-this-problem" title="Permanent link">&para;</a></h3>
 <p>Imagine you were rendering a 19 by 19 "Go" board. </p>
 <p>And imagine that you have a high level board renderer component 
-which creates hiccup for the 361 sub components (19 x 19 grid), 
+which creates hiccup for the 361 subcomponents (19 x 19 grid), 
 and that it provides 3 props  to each child:</p>
 <ol>
-<li>grid x cord</li>
+<li>grid x coord</li>
 <li>grid y coord</li>
 <li>a chunk of data representing the current game state, from which each 
    of the 361 individual grid components is expected to extract the data 
@@ -1587,7 +1587,7 @@ hiccup as last time - only one position in the grid has changed. </p>
 that triggers a large amount of unnecessary calculation, just to figure 
 out that there's only a rendering change at one point in the 19x19 grid. </p>
 <p>So, that's how you can get a performance problem:  lots of hiccup, 
-mixed with time consuming <code>=</code> tests on big props. </p>
+mixed with time-consuming <code>=</code> tests on big props. </p>
 <h3 id="solutions-to-this-problem">Solutions To This Problem<a class="headerlink" href="#solutions-to-this-problem" title="Permanent link">&para;</a></h3>
 <p>The solution is to not do the unnecessary work.  Duh!  </p>
 <p>Produce only the hiccup that is needed.  Don't unnecessarily 
@@ -1598,11 +1598,11 @@ yet our code asked Reagent to chew a lot of CPU to figure that out.</p>
 <p>These kinds of tweaks would improve performance: </p>
 <ul>
 <li>
-<p>don't give the entire game state to each of the 361 sub components 
+<p>don't give the entire game state to each of the 361 subcomponents 
 and then ask them to extract what they need.  Instead, give each 
 just the state it needs, and nothing more. That will make the <code>=</code> 
 process faster. It will also allow for Reagent to figure out that 
-360 of the sub components have the same props as last time, and 
+360 of the subcomponents have the same props as last time, and 
 don't need rerendering. And, so, only one sub-component will be 
 rerendered when the parent "board level" component rerenders.</p>
 </li>
