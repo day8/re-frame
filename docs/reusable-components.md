@@ -99,7 +99,7 @@ Notes:
 
 - This is a `re-frame Component` because it uses `subscribe` and `dispatch` to provide its I/O requirements
 - It composes two other components - Reagent components - the reusable `simple-text-input` we created above
-- It parameterises the I/O requirements for the two sub-components by suppling a `value` and a `callback` to each
+- It parameterises the I/O requirements for the two sub-components by supplying a `value` and a `callback` to each
 
 ## Many Instances
 

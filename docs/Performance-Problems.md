@@ -22,10 +22,10 @@ could end up chewing a lot of CPU cycles.
 Imagine you were rendering a 19 by 19 "Go" board. 
 
 And imagine that you have a high level board renderer component 
-which creates hiccup for the 361 sub components (19 x 19 grid), 
+which creates hiccup for the 361 subcomponents (19 x 19 grid), 
 and that it provides 3 props  to each child:
 
-1. grid x cord
+1. grid x coord
 2. grid y coord
 3. a chunk of data representing the current game state, from which each 
    of the 361 individual grid components is expected to extract the data 
@@ -54,7 +54,7 @@ that triggers a large amount of unnecessary calculation, just to figure
 out that there's only a rendering change at one point in the 19x19 grid. 
 
 So, that's how you can get a performance problem:  lots of hiccup, 
-mixed with time consuming `=` tests on big props. 
+mixed with time-consuming `=` tests on big props. 
 
 ### Solutions To This Problem
 
@@ -69,11 +69,11 @@ yet our code asked Reagent to chew a lot of CPU to figure that out.
 
 These kinds of tweaks would improve performance: 
 
-- don't give the entire game state to each of the 361 sub components 
+- don't give the entire game state to each of the 361 subcomponents 
 and then ask them to extract what they need.  Instead, give each 
 just the state it needs, and nothing more. That will make the `=` 
 process faster. It will also allow for Reagent to figure out that 
-360 of the sub components have the same props as last time, and 
+360 of the subcomponents have the same props as last time, and 
 don't need rerendering. And, so, only one sub-component will be 
 rerendered when the parent "board level" component rerenders.
 

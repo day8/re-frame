@@ -300,7 +300,7 @@
         a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
 
   is the equivalent of using this
-  2nd variation and explicitly suppling a `signal-fn` which returns `app-db`:
+  2nd variation and explicitly supplying a `signal-fn` which returns `app-db`:
 
       #!clj
       (reg-sub

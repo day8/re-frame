@@ -88,7 +88,7 @@ This certainly works in theory, but in practice,
 unless we are careful, constructing the `db`
 value in **setup** could:
 
-  * be manual and time consuming
+  * be manual and time-consuming
   * tie tests to the internal structure of `app-db`
 
 The **setup** of every test could end up relying on the internal structure

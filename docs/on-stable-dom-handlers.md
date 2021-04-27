@@ -140,8 +140,9 @@ Say, `parent` has an argument `id`. And, say, we need to use that in the callbac
 
 Does this work?  Sadly, no. Can you spot the bug? 
 
-`callback` has closed over the original value for `id` - the one given to the outer function.  `callback` will never dispatch the "latest" value of `id` 
-provided to the re-render function (notice that `id` is an argument to both the outer and inner functions in the Form-2 Component).
+`callback` has closed over the original value for `id` - the one given to the outer function.
+`callback` will never dispatch the "latest" value of `id` provided to the re-render function
+(notice that `id` is an argument to both the outer and inner functions in the Form-2 Component).
 
 
 ## The Technique
@@ -159,8 +160,10 @@ So, enough preamble and explanation, here's the real solution - and it has three
 Notes:
 
 1. `callback` no longer tries to "close over' `id`. Instead, it takes `id` as an argument.
-2. `callback-factory-factory` has a long name, and it performs the trick. It returns a function which, when called, will always return the same function, which wraps `callback`. (code supplied below)
-3. Each time we call `callback-factory`, it will return the same function. But it does it in a way which allows for `id` to vary on each render.
+2. `callback-factory-factory` has a long name, and it performs the trick. It returns a function which, when called,
+   will always return the same function, which wraps `callback`. (code supplied below)
+3. Each time we call `callback-factory`, it will return the same function. But it does it in a way which allows for
+   `id` to vary on each render.
 
 
 Which only leaves me to show you the hero in our story, which I offer  
@@ -200,7 +203,8 @@ Sometimes the callback will need to accept a DOM event argument. In the followin
 Note:
 
 1. this time the callback, `on-change`, takes two arguments. The `id` and the DOM event `dom-event`
-2. But, when we call the factory we only supply one of these two arguments, almost like this is a "partial". The browser will be suppling `dom-event` later when it calls the callback. 
+2. But, when we call the factory we only supply one of these two arguments, almost like this is a "partial".
+   The browser will be supplying `dom-event` later when it calls the callback. 
 
 
 ## Summary 
