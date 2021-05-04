@@ -867,7 +867,7 @@
 (defn get-coeffect
   "A utility function, typically used when writing an interceptor's `:before` function.
 
-   When called with one argument, it returns the `:coeffects` map from with that `context`.
+   When called with one argument, it returns the `:coeffects` map from within that `context`.
 
    When called with two or three arguments, behaves like `clojure.core/get` and
    returns the value mapped to `key` in the `:coeffects` map within `context`, `not-found` or
