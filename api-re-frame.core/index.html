@@ -3053,7 +3053,7 @@ console if it finds no matching registration.</p>
 <p><code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span> <span class="nv">key</span><span class="p">)</span></code></p>
 <p><code class="highlight"><span class="p">(</span><span class="nf">get-coeffect</span> <span class="nv">context</span> <span class="nb">key </span><span class="nv">not-found</span><span class="p">)</span></code></p>
 <p>A utility function, typically used when writing an interceptor's <code>:before</code> function.</p>
-<p>When called with one argument, it returns the <code>:coeffects</code> map from with that <code>context</code>.</p>
+<p>When called with one argument, it returns the <code>:coeffects</code> map from within that <code>context</code>.</p>
 <p>When called with two or three arguments, behaves like <code>clojure.core/get</code> and
  returns the value mapped to <code>key</code> in the <code>:coeffects</code> map within <code>context</code>, <code>not-found</code> or
  <code>nil</code> if <code>key</code> is not present.</p>
