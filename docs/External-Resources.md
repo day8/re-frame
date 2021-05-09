@@ -60,10 +60,12 @@ Commercial grade video training for re-frame and Reagent:
 ### Effect and CoEffect Handlers
 
 * [async-flow-fx](https://github.com/day8/re-frame-async-flow-fx) - manage a boot process dominated by async
-* [http-fx](https://github.com/day8/re-frame-http-fx) - performing Ajax tasks (via cljs-ajax)
+* [http-fx](https://github.com/day8/re-frame-http-fx) - performing HTTP request tasks (via cljs-ajax)
+* [fetch-fx](https://github.com/superstructor/re-frame-fetch-fx) - performing HTTP request tasks (via `js/fetch`)
 * [re-frame-forward-events-fx](https://github.com/day8/re-frame-forward-events-fx) - slightly exotic
 * [cookie-fx](https://github.com/SMX-LTD/re-frame-cookie-fx) - set and get cookies
 * [document-fx](https://github.com/SMX-LTD/re-frame-document-fx) - set and get on `js/document` attributes
+* [clipboard-fx](https://github.com/superstructor/re-frame-clipboard-fx) - write to the system clipboard
 * [re-frame-youtube-fx](https://github.com/micmarsh/re-frame-youtube-fx) - YouTube iframe API wrapper
 * [re-frame-web3-fx](https://github.com/madvas/re-frame-web3-fx) - Ethereum Web3 API
 * [re-frame-google-analytics-fx](https://github.com/madvas/re-frame-google-analytics-fx) - Google Analytics API
