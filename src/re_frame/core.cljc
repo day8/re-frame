@@ -653,7 +653,7 @@
   (apply std-interceptors/path args))
 
 (defn enrich
-  "Returns an Interceptor which will run the given function `f` in the `:after`
+  "Returns an interceptor which will run the given function `f` in the `:after`
   position.
 
   `f` is called with two arguments: `db` and `v`, and is expected to
@@ -786,7 +786,7 @@
            ...))
 
 
-  If you put this Interceptor on handlers which might change paths `:a` or `:b`,
+  If you put this interceptor on handlers which might change paths `:a` or `:b`,
   it will:
 
     - call `f` each time the value at path `[:a]` or `[:b]` changes
@@ -918,7 +918,7 @@
   Adds the given collection of `interceptors` to those already in `context's`
   execution `:queue`. It returns the updated `context`.
 
-  So, it provides a way for one Interceptor to add more interceptors to the
+  So, it provides a way for one interceptor to add more interceptors to the
   currently executing interceptor chain.
   "
   {:api-docs/heading "Writing Interceptors"}
