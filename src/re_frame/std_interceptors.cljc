@@ -113,7 +113,7 @@
 
       (fn [coeffects event]
          {:db ...
-          :dispatch ...})
+          :fx ...})
 
    Wrap handler in an interceptor so it can be added to (the RHS) of a chain:
      1. extracts `:coeffects`
