@@ -2857,7 +2857,7 @@ and it grafts the handler's return value back into db, at the right path.</p>
 </ol>
 <h3 id="enrich">enrich<a class="headerlink" href="#enrich" title="Permanent link">&para;</a></h3>
 <p><code class="highlight"><span class="p">(</span><span class="nf">enrich</span> <span class="nv">f</span><span class="p">)</span></code></p>
-<p>Returns an Interceptor which will run the given function <code>f</code> in the <code>:after</code>
+<p>Returns an interceptor which will run the given function <code>f</code> in the <code>:after</code>
 position.</p>
 <p><code>f</code> is called with two arguments: <code>db</code> and <code>v</code>, and is expected to
 return a modified <code>db</code>.</p>
@@ -2982,7 +2982,7 @@ into the given <code>out-path</code> within <code>db</code>.</p>
 </code></pre></div>
 </td></tr></table>
 
-<p>If you put this Interceptor on handlers which might change paths <code>:a</code> or <code>:b</code>,
+<p>If you put this interceptor on handlers which might change paths <code>:a</code> or <code>:b</code>,
 it will:</p>
 <ul>
 <li>call <code>f</code> each time the value at path <code>[:a]</code> or <code>[:b]</code> changes</li>
@@ -3079,7 +3079,7 @@ console if it finds no matching registration.</p>
 <p>A utility function, used when writing an interceptor's <code>:before</code> function.</p>
 <p>Adds the given collection of <code>interceptors</code> to those already in <code>context's</code>
 execution <code>:queue</code>. It returns the updated <code>context</code>.</p>
-<p>So, it provides a way for one Interceptor to add more interceptors to the
+<p>So, it provides a way for one interceptor to add more interceptors to the
 currently executing interceptor chain.</p>
 <h2 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">&para;</a></h2>
 <h3 id="set-loggers">set-loggers!<a class="headerlink" href="#set-loggers" title="Permanent link">&para;</a></h3>
