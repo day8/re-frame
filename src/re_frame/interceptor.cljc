@@ -163,7 +163,7 @@
      {:coeffects {:event [:a-query-id :some-param]
                   :db    <original contents of app-db>}
       :effects   {:db    <new value for app-db>
-                  :dispatch  [:an-event-id :param1]}
+                  :fx  [:dispatch [:an-event-id :param1]]}
       :queue     <a collection of further interceptors>
       :stack     <a collection of interceptors already walked>}
 
