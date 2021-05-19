@@ -87,7 +87,7 @@ Effects in `:fx` are actioned in order, so the dispatched events will be queued 
 ## <a name="dispatch-later"></a> :dispatch-later
 
 `dispatch` one or more events after a given delay. Expects a payload which is a 
-map with two keys `:ms` (milliseconds) and `:dispatch` (the event).
+map with two keys: `:ms` (milliseconds delay), and `:dispatch` (the event).
 
 usage:
 ```clojure
