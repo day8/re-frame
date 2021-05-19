@@ -1620,7 +1620,7 @@ Each element is a 2-tuple of (1) an effect id and (2) the payload of the effect 
 <p>Effects in <code>:fx</code> are actioned in order, so the dispatched events will be queued and, later handled, in order supplied. FIFO.</p>
 <h2 id="dispatch-later"><a name="dispatch-later"></a> :dispatch-later<a class="headerlink" href="#dispatch-later" title="Permanent link">&para;</a></h2>
 <p><code>dispatch</code> one or more events after a given delay. Expects a payload which is a 
-map with two keys <code>:ms</code> (milliseconds) and <code>:dispatch</code> (the event).</p>
+map with two keys: <code>:ms</code> (milliseconds delay), and <code>:dispatch</code> (the event).</p>
 <p>usage:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:fx</span> <span class="p">[</span> <span class="p">[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">200</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id1</span> <span class="s">&quot;param&quot;</span><span class="p">]}]</span>
        <span class="p">[</span><span class="ss">:dispatch-later</span> <span class="p">{</span><span class="ss">:ms</span> <span class="mi">100</span> <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:event-id2</span> <span class="s">&quot;param&quot;</span><span class="p">]}]]}</span>
