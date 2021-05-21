@@ -176,7 +176,7 @@
                          ;; multiple sugar pairs
                          (let [pairs   (partition 2 input-args)
                                markers (map first pairs)
-                               vecs    (map last pairs)]
+                               vecs    (map second pairs)]
                            (when-not (and (every? #{:<-} markers) (every? vector? vecs))
                              (console :error err-header "expected pairs of :<- and vectors, got:" pairs))
                            (fn inp-fn
