@@ -338,7 +338,7 @@
   "
   {:api-docs/heading "Subscriptions"}
   [query-id & args]
-  (apply subs/reg-sub (into [query-id] args)))
+  (apply subs/reg-sub query-id args))
 
 (defn subscribe
   "Given a `query` vector, returns a Reagent `reaction` which will, over
@@ -795,7 +795,7 @@
   "
   {:api-docs/heading "Interceptors"}
   [f out-path & in-paths]
-  (apply std-interceptors/on-changes (into [f out-path] in-paths)))
+  (apply std-interceptors/on-changes f out-path in-paths))
 
 
 (defn reg-global-interceptor
@@ -971,7 +971,7 @@
   "
   {:api-docs/heading "Logging"}
   [level & args]
-  (apply loggers/console (into [level] args)))
+  (apply loggers/console level args))
 
 ;; -- unit testing ------------------------------------------------------------
 
