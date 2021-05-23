@@ -4,12 +4,12 @@
   :license      {:name "MIT"}
 
   :dependencies [[org.clojure/clojure       "1.10.3"   :scope "provided"]
-                 [org.clojure/clojurescript  ~(or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.844")
+                 [org.clojure/clojurescript  ~(or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.866")
                   :scope "provided"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
-                 [thheller/shadow-cljs      "2.12.1"   :scope "provided"]
+                 [thheller/shadow-cljs      "2.14.0"   :scope "provided"]
                  [reagent                   "1.0.0"]
                  [net.cgrand/macrovich      "0.2.1"]
                  [org.clojure/tools.logging "1.1.0"]]
