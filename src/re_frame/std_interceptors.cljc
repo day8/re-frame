@@ -120,21 +120,21 @@
      2. call handler-fn giving coeffects
      3. stores the result back into the `:effects`"
   [handler-fn]
-(->interceptor
-  :id     :fx-handler
-  :before (fn fx-handler-before
-            [context]
-            (let [new-context
-                  (trace/with-trace
-                    {:op-type   :event/handler
-                     :operation (get-coeffect context :original-event)}
-                    (let [{:keys [event] :as coeffects} (get-coeffect context)]
-                      (->> (handler-fn coeffects event)
-                           (assoc context :effects))))]
-              (trace/merge-trace!
-                {:tags {:effects   (get-effect new-context)
-                        :coeffects (get-coeffect context)}})
-              new-context))))
+  (->interceptor
+    :id     :fx-handler
+    :before (fn fx-handler-before
+              [context]
+              (let [new-context
+                    (trace/with-trace
+                      {:op-type   :event/handler
+                       :operation (get-coeffect context :original-event)}
+                      (let [{:keys [event] :as coeffects} (get-coeffect context)]
+                        (->> (handler-fn coeffects event)
+                             (assoc context :effects))))]
+                (trace/merge-trace!
+                  {:tags {:effects   (get-effect new-context)
+                          :coeffects (get-coeffect context)}})
+                new-context))))
 
 
 (defn ctx-handler->interceptor
