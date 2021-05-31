@@ -11,7 +11,7 @@ For any re-frame app, there's three things to test:
      be here because this is where most of the logic lives
 
   - **Subscription Handlers** - often not a lot to test here. Only
-    [Layer 3](Subscriptions.md) subscriptions need testing.
+    [Layer 3](subscriptions.md) subscriptions need testing.
 
   - **View functions** - I don't tend to write tests for views. There, I said it.
     Hey!  It is mean to look at someone with that level of disapproval,
