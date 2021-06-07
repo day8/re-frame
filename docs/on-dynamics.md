@@ -34,7 +34,7 @@ Almost nothing reduces bugs more than a simple dynamic model.
 
 ## On Dynamics
 
-Some scientific fields includes the word "dynamics" in their name: Hydrodynamics,
+Some scientific fields include the word "dynamics" in their name: Hydrodynamics,
 Thermodynamics and Social Dynamics. It means the participants observe how certain systems 
 change over time/space and then model the causes. 
 
