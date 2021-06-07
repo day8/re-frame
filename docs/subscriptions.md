@@ -6,7 +6,7 @@ This tutorial covers dominoes 4, 5 and 6. There are just two API functions to un
 
 A UI is just derived data.
 
-A browser renders tree-shaped data called the DOM. Reagent renderers create DOM by computing hiccup-shapped data. subscriptions deliver data to Reagent renderers. And, `app-db` is the root of this entire flow. 
+A browser renders tree-shaped data called the DOM. Reagent renderers create DOM by computing hiccup-shaped data. subscriptions deliver data to Reagent renderers. And, `app-db` is the root of this entire flow. 
 
 When Domino 3 (an effect handler) modifies `app-db`, boom, boom, boom go dominoes 4, 5 & 6, 
 computing stages of the "materialised view" that is ultimately DOM.  Together these three dominoes implement a reactive dataflow.
