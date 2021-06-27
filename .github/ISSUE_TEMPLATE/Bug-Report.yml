@@ -21,6 +21,7 @@ body:
     attributes:
       label: Version
       description: What version of re-frame are you using?
+    validations:
       required: true
   - type: dropdown
     id: browsers
