@@ -1,0 +1,74 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of re-frame are you using?
+      options:
+        - 1.2.0 (Default)
+        - 1.1.2
+        - 1.1.1
+        - 1.1.0
+        - 0.9.4
+        - 0.9.3
+        - 0.9.2
+        - 0.9.1
+        - 0.9.0
+        - 0.8.0
+        - 0.7.0
+        - 0.5.0
+        - 0.4.1
+        - 0.4.0
+        - 0.3.2
+        - 0.3.1
+        - 0.3.0
+        - 0.2.0
+        - 0.12.0
+        - 0.11.0
+        - 0.10.9
+        - 0.10.8
+        - 0.10.7
+        - 0.10.6
+        - 0.10.5
+        - 0.10.4
+        - 0.10.3
+        - 0.10.2
+        - 0.10.1
+        - 0.10.0
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers or runtimes are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Microsoft Edge
+        - Node.js
+        - JVM (CLJC)
+        - Other (please specify)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant console output
+      description: Please copy and paste any relevant console output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
