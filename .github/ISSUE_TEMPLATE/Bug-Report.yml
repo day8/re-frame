@@ -16,43 +16,11 @@ body:
       value: "A bug happened!"
     validations:
       required: true
-  - type: dropdown
+  - type: input
     id: version
     attributes:
       label: Version
       description: What version of re-frame are you using?
-      options:
-        - 1.2.0 (Default)
-        - 1.1.2
-        - 1.1.1
-        - 1.1.0
-        - 0.9.4
-        - 0.9.3
-        - 0.9.2
-        - 0.9.1
-        - 0.9.0
-        - 0.8.0
-        - 0.7.0
-        - 0.5.0
-        - 0.4.1
-        - 0.4.0
-        - 0.3.2
-        - 0.3.1
-        - 0.3.0
-        - 0.2.0
-        - 0.12.0
-        - 0.11.0
-        - 0.10.9
-        - 0.10.8
-        - 0.10.7
-        - 0.10.6
-        - 0.10.5
-        - 0.10.4
-        - 0.10.3
-        - 0.10.2
-        - 0.10.1
-        - 0.10.0
-    validations:
       required: true
   - type: dropdown
     id: browsers
