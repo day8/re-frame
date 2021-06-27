@@ -12,7 +12,7 @@ body:
     attributes:
       label: What do you suggest?
       description: Also tell us, what is your use case for re-frame and how will it improve that use case?
-      placeholder: Tell us what your vision!
+      placeholder: Tell us your vision!
       value: "Make it better!"
     validations:
       required: true
