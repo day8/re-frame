@@ -26,15 +26,18 @@ body:
   - type: dropdown
     id: browsers
     attributes:
-      label: What browsers or runtimes are you seeing the problem on?
+      label: What runtimes are you seeing the problem on?
       multiple: true
       options:
-        - Firefox
-        - Chrome
+        - Mozilla Firefox
+        - Google Chrome
         - Microsoft Edge
+        - Apple Safari
+        - Opera
+        - Brave
+        - React Native
         - Node.js
         - JVM (CLJC)
-        - Other (please specify)
   - type: textarea
     id: logs
     attributes:
