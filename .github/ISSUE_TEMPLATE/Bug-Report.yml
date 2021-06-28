@@ -38,6 +38,8 @@ body:
         - React Native
         - Node.js
         - JVM (CLJC)
+    validations:
+      required: true        
   - type: textarea
     id: logs
     attributes:
