@@ -1387,11 +1387,11 @@
 <p>This is not a real document yet.  It is just a scratch pad for producing a later document. Don't read it. </p>
 </blockquote>
 <ol>
-<li>Use Namespaced Keywords</li>
-</ol>
+<li>
+<p>Use Namespaced Keywords</p>
 <p>Can be synthetic or real namespaces. </p>
 <p>If you use clojure-lsp it will help you to navigate from keywords to their definition. </p>
-<ol>
+</li>
 <li>
 <p>Structure all your events as two tuples</p>
 <p>[:event-name  a-map]</p>
@@ -1404,7 +1404,7 @@
 <p>As a general rule, an event should embody user intent. </p>
 <p>So, if the user clicks the "delete item" button, that's an event, and there should be an associated event handler which knows how </p>
 <p>The event handler (and interceptor chain) for that even should completely handle the event. 
-Events shouldn't be used to "farm out" work to other event handlers. </p>
+   Events shouldn't be used to "farm out" work to other event handlers. </p>
 <p>To say it another way, Event handlers should not be used to "factor out" common code, as you might do with </p>
 <p>Instead, you should factor out common code </p>
 <ol>
@@ -1414,7 +1414,13 @@ Events shouldn't be used to "farm out" work to other event handlers. </p>
 <li>
 <p>Views should not be imperative </p>
 </li>
+<li>
+<p>Namespace Structure</p>
+</li>
 </ol>
+<p>Either:
+     - one namespace for the entire "panel" - including views, event handlers etc. 
+     - when that gets unwieldy, then one directory per panel, with namespaces for views, event handlers, subscriptions, etc.   </p>
                 
               
               
