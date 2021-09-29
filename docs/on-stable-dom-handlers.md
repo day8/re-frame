@@ -181,7 +181,7 @@ without further explanation for you to read and understand:
                         (apply the-real-callback (concat @*args1 args2)))]
     (fn callback-factory
       [& args1]                   
-      (reset! *args1 args1))
+      (reset! *args1 args1)
       same-callback)))               ;; <-- always returns the same function
 ```
 
