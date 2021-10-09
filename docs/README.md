@@ -38,11 +38,11 @@ cd ..
 
 If using PowerShell on Windows (and I'm told this is also the right commandline for Mac):
 ```sh
-docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material:5.1.1
+docker run --rm -it -p 8000:8000 -v "%cd%":/docs squidfunk/mkdocs-material:5.1.1
 ```
 or, if you are using linux:
 ```sh
-docker run --rm -it -p 8000:8000 -v "%cd%":/docs squidfunk/mkdocs-material:5.1.1
+docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material:5.1.1
 ```
 
 Then, in your browser tab, load `http://localhost:8000/`. You should see the website Home page. 
