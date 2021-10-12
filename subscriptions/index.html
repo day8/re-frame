@@ -1596,7 +1596,7 @@
 <p>This tutorial covers dominoes 4, 5 and 6. There are just two API functions to understand - <code>subscribe</code> and <code>reg-sub</code> - but first let's get an overview.</p>
 <h2 id="on-derived-data">On Derived Data<a class="headerlink" href="#on-derived-data" title="Permanent link">&para;</a></h2>
 <p>A UI is just derived data.</p>
-<p>A browser renders tree-shaped data called the DOM. Reagent renderers create DOM by computing hiccup-shaped data. subscriptions deliver data to Reagent renderers. And, <code>app-db</code> is the root of this entire flow. </p>
+<p>A browser renders tree-shaped data called the DOM. Reagent renderers create DOM by computing hiccup-shaped data. Subscriptions deliver data to Reagent renderers. And, <code>app-db</code> is the root of this entire flow. </p>
 <p>When Domino 3 (an effect handler) modifies <code>app-db</code>, boom, boom, boom go dominoes 4, 5 &amp; 6, 
 computing stages of the "materialised view" that is ultimately DOM.  Together these three dominoes implement a reactive dataflow.</p>
 <h2 id="how-exactly">How Exactly?<a class="headerlink" href="#how-exactly" title="Permanent link">&para;</a></h2>
