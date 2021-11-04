@@ -14,10 +14,10 @@ jobs:
   # The ns-to-markdown job generates API documentation from the source code and uploads that as an artifact.
   ns-to-markdown:
     name: re-frame.core Markdown
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     container:
       # Source: https://github.com/day8/dockerfile-for-dev-ci-image
-      image: day8au/dev-ci:0.0.8
+      image: ghcr.io/day8/dockerfile-for-dev-ci-image/core:2
     steps:
       - name: Checkout Current Branch
         uses: actions/checkout@v2
