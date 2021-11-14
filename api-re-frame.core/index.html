@@ -2291,7 +2291,7 @@
 which identifies the kind of event.</p>
 <p>The event will be added to a FIFO processing queue, so event
 handling does not happen immediately. It will happen 'very soon'
-bit not now. And if the queue already contains events, they
+but not now. And if the queue already contains events, they
 will be processed first.</p>
 <p>Usage:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:order</span> <span class="s">&quot;pizza&quot;</span> <span class="p">{</span><span class="ss">:supreme</span> <span class="mi">2</span> <span class="ss">:meatlovers</span> <span class="mi">1</span> <span class="ss">:veg</span> <span class="mi">1</span><span class="p">}])</span>
