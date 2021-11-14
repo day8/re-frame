@@ -28,7 +28,7 @@
 
   The event will be added to a FIFO processing queue, so event
   handling does not happen immediately. It will happen 'very soon'
-  bit not now. And if the queue already contains events, they
+  but not now. And if the queue already contains events, they
   will be processed first.
 
   Usage:
