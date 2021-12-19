@@ -108,7 +108,7 @@
   :fx
   (fn [seq-of-effects]
     (if-not (sequential? seq-of-effects)
-      (console :error "re-frame: \":fx\" effect expects a seq, but was given " (type seq-of-effects))
+      (console :warn "re-frame: \":fx\" effect expects a seq, but was given " (type seq-of-effects))
       (doseq [[effect-key effect-value] (remove nil? seq-of-effects)]
         (when (= :db effect-key)
           (console :warn "re-frame: \":fx\" effect should not contain a :db effect"))
