@@ -2463,6 +2463,81 @@ associated with <code>:sub-id</code> will be looked up and used.</p>
 It only registers 'a mechanism' (the two functions) by which nodes
 can be created later, when a node is bought into existence by the
 use of <code>subscribe</code> in a <code>View Function</code>.</p>
+<p><code>reg-sub</code> arguments are:
+  - a <code>query-id</code> (typically a namespaced keyword)
+  - a function which returns the inputs required by this kind of node (can be supplied  in one of three ways)
+  - a function which computes the value of this kind of node (can be supplied in one of three ways)</p>
+<p>The <code>computation function</code> is always the last argument supplied and has three ways to be called.
+Two of these methods are syntactic sugar to provide easier access to functional abstractions around your data.</p>
+<ol>
+<li>
+<p>A function that will accept two parameters, the <code>input-values</code> and <code>query-vector</code>. This is the 
+   standard way to provide a <code>computation-function</code>
+    #!clj
+    (reg-sub
+      :query-id
+      (fn [input-values query-vector]
+        (:foo input-values)))</p>
+</li>
+<li>
+<p>A single sugary tuple of <code>:-&gt;</code> and a 1-arity <code>computation-function</code>:
+    #!clj
+    (reg-sub
+      :query-id
+      :-&gt; computation-fn)</p>
+</li>
+</ol>
+<p>This sugary variation allows you to pass a function that will expect only one parameter, 
+   namely the <code>input-values</code> and entirely omit the <code>query-vector</code>. A typical <code>computation-function</code>
+   expects two pramenters which can cause unfortunate results when attempting to use
+   clojure standard library functions, or other functions, in a functional manner.</p>
+<p>For example, a significant number of subscriptions exist only to get a value 
+   from the <code>input-values</code>. As shown below, this subscription will simply retrieve
+   the value associated with the <code>:foo</code> key in our db:
+    #!clj
+    (reg-sub
+      :query-id
+      (fn [db _]    ;; :&lt;---- trivial boilerplate we might want to skip over
+        (:foo db)))</p>
+<p>This is slightly more boilerplate than we might like to do, 
+   as we can use a keyword directly as a function, and we might like to do this:
+    #!clj
+    (reg-sub
+      :query-id
+      :foo)  ;; :&lt;---- This could be dangerous. If <code>:foo</code> is not in db, we get the <code>query-vector</code> instead of <code>nil</code>.</p>
+<p>By using <code>:-&gt;</code> our function would not contain the <code>query-vector</code>, and any
+   missing keys would be represented as such:
+    #!clj
+    (reg-sub
+      :query-id
+      :-&gt; :foo)</p>
+<p>This form allows us to ignore the <code>query-vector</code> if our <code>computation-function</code> 
+   has no need for it, and be safe from any accidents. Any 1-arity function can be provided, 
+   and for more complicated use cases, <code>partial</code>, <code>comp</code>, and anonymous functions can still be used.</p>
+<ol>
+<li>A single sugary tuple of <code>:=&gt;</code> and a multi-arity <code>computation-function</code>
+    #!clj
+    (reg-sub
+      :query-id
+      :=&gt; computation-fn)</li>
+</ol>
+<p>The <code>query-vector</code> can be broken into two components <code>[query-id &amp; optional-values]</code>, and
+   some subscriptions require the <code>optional-values</code> for extra work within the subscription.
+   To use them in variation #1, we need to destructure our <code>computation-function</code> parameters
+   in order to use them.
+    #!clj
+    (reg-sub
+      :query-id
+      (fn [db [_ foo]] 
+        [db foo]))</p>
+<p>Again we are writing boilerplate just to reach our values, and we might prefer to
+   have direction access through a parameter vector like <code>[input-values optional-values]</code> 
+   instead, so we might be able to use a multi-arity function directly as our <code>computation-function</code>.
+   A rewrite of the above sub using this sugary syntax would look like this:
+    #!clj
+    (reg-sub
+      :query-id
+      :=&gt; vector)  ;; :&lt;---- Could also be <code>(fn [db foo] [db foo])</code></p>
 <p>The <code>computation function</code> is expected to take two arguments:</p>
 <ul>
 <li><code>input-values</code> - the values which flow into this node (how is it wired into the graph?)</li>
@@ -2595,6 +2670,15 @@ as if you had supplied a <code>signal-fn</code> returning only a single value:</
 </code></pre></div>
 </td></tr></table>
 
+<p>Syntactic sugar for both the <code>signal-fn</code> and <code>computation-fn</code> can be used together
+and the direction of arrows shows the flow of data and functions. The example from
+directly above is reproduced here:
+    #!clj
+    (reg-sub
+      :a-b-sub
+      :&lt;- [:a-sub]
+      :&lt;- [:b-sub]
+      :-&gt; (partial zipmap [:a :b]))</p>
 <p>For further understanding, read the tutorials, and look at the detailed comments in
 /examples/todomvc/src/subs.cljs.</p>
 <p>See also: <code>subscribe</code></p>
