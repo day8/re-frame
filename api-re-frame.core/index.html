@@ -2390,7 +2390,7 @@ an <code>interceptors</code> chain:</p>
   <span class="ss">:namespaced/id</span>           <span class="c1">;; &lt;-- namespaced keywords are often used</span>
   <span class="p">[</span><span class="nv">one</span> <span class="nv">two</span> <span class="nv">three</span><span class="p">]</span>          <span class="c1">;; &lt;-- a seq of interceptors</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]</span> <span class="ss">:as</span> <span class="nv">cofx</span><span class="p">}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">arg1</span> <span class="nv">arg2</span><span class="p">]]</span> <span class="c1">;; destructure both arguments</span>
-    <span class="p">{</span><span class="ss">:db</span>       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:some-key</span> <span class="nv">arg1</span><span class="p">)</span>          <span class="c1">;; return a map of effects</span>
+    <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:some-key</span> <span class="nv">arg1</span><span class="p">)</span>          <span class="c1">;; return a map of effects</span>
      <span class="ss">:fx</span> <span class="p">[[</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:some-event</span> <span class="nv">arg2</span><span class="p">]]]}))</span>
 </code></pre></div>
 </td></tr></table>
@@ -2451,9 +2451,9 @@ the two functions can be used to create it.</p>
 <ul>
 <li><code>query-id</code> - typically a namespaced keyword (later used in subscribe)</li>
 <li>optionally, an <code>input signals</code> function which returns the input data
-  flows required by this kind of node.</li>
+    flows required by this kind of node.</li>
 <li>a <code>computation function</code> which computes the value (output) of the
-  node (from the input data flows)</li>
+    node (from the input data flows)</li>
 </ul>
 <p>Later, during app execution, a call to <code>(subscribe [:sub-id 3 :blue])</code>,
 will trigger the need for a new <code>:sub-id</code> Signal Graph node (matching the
@@ -2463,81 +2463,118 @@ associated with <code>:sub-id</code> will be looked up and used.</p>
 It only registers 'a mechanism' (the two functions) by which nodes
 can be created later, when a node is bought into existence by the
 use of <code>subscribe</code> in a <code>View Function</code>.</p>
-<p><code>reg-sub</code> arguments are:
-  - a <code>query-id</code> (typically a namespaced keyword)
-  - a function which returns the inputs required by this kind of node (can be supplied  in one of three ways)
-  - a function which computes the value of this kind of node (can be supplied in one of three ways)</p>
+<p><code>reg-sub</code> arguments are:</p>
+<ul>
+<li>a <code>query-id</code> (typically a namespaced keyword)</li>
+<li>a function which returns the inputs required by this kind of node (can be supplied  in one of three ways)</li>
+<li>a function which computes the value of this kind of node (can be supplied in one of three ways)</li>
+</ul>
 <p>The <code>computation function</code> is always the last argument supplied and has three ways to be called.
 Two of these methods are syntactic sugar to provide easier access to functional abstractions around your data.</p>
 <ol>
 <li>
-<p>A function that will accept two parameters, the <code>input-values</code> and <code>query-vector</code>. This is the 
-   standard way to provide a <code>computation-function</code>
-    #!clj
-    (reg-sub
-      :query-id
-      (fn [input-values query-vector]
-        (:foo input-values)))</p>
+<p>A function that will accept two parameters, the <code>input-values</code> and <code>query-vector</code>. This is the
+   standard way to provide a <code>computation-function</code></p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:query-id</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">input-values</span> <span class="nv">query-vector</span><span class="p">]</span>
+    <span class="p">(</span><span class="ss">:foo</span> <span class="nv">input-values</span><span class="p">)))</span>
+</code></pre></div>
+</td></tr></table>
+
 </li>
 <li>
-<p>A single sugary tuple of <code>:-&gt;</code> and a 1-arity <code>computation-function</code>:
-    #!clj
-    (reg-sub
-      :query-id
-      :-&gt; computation-fn)</p>
+<p>A single sugary tuple of <code>:-&gt;</code> and a 1-arity <code>computation-function</code>:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:query-id</span>
+  <span class="ss">:-&gt;</span> <span class="nv">computation-fn</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+
+<p>This sugary variation allows you to pass a function that will expect only one parameter,
+namely the <code>input-values</code> and entirely omit the <code>query-vector</code>. A typical <code>computation-function</code>
+expects two parameters which can cause unfortunate results when attempting to use
+clojure standard library functions, or other functions, in a functional manner.</p>
+<p>For example, a significant number of subscriptions exist only to get a value
+from the <code>input-values</code>. As shown below, this subscription will simply retrieve
+the value associated with the <code>:foo</code> key in our db:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:query-id</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>    <span class="c1">;; :&lt;---- trivial boilerplate we might want to skip over</span>
+    <span class="p">(</span><span class="ss">:foo</span> <span class="nv">db</span><span class="p">)))</span>
+</code></pre></div>
+</td></tr></table>
+
+<p>This is slightly more boilerplate than we might like to do,
+as we can use a keyword directly as a function, and we might like to do this:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:query-id</span>
+  <span class="ss">:foo</span><span class="p">)</span>  <span class="c1">;; :&lt;---- This could be dangerous. If `:foo` is not in db, we get the `query-vector` instead of `nil`.</span>
+</code></pre></div>
+</td></tr></table>
+
+<p>By using <code>:-&gt;</code> our function would not contain the <code>query-vector</code>, and any
+missing keys would be represented as such:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:query-id</span>
+  <span class="ss">:-&gt;</span> <span class="ss">:foo</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+
+<p>This form allows us to ignore the <code>query-vector</code> if our <code>computation-function</code>
+has no need for it, and be safe from any accidents. Any 1-arity function can be provided,
+and for more complicated use cases, <code>partial</code>, <code>comp</code>, and anonymous functions can still be used.</p>
+</li>
+<li>
+<p>A single sugary tuple of <code>:=&gt;</code> and a multi-arity <code>computation-function</code></p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:query-id</span>
+  <span class="ss">:=&gt;</span> <span class="nv">computation-fn</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+
+<p>The <code>query-vector</code> can be broken into two components <code>[query-id &amp; optional-values]</code>, and
+some subscriptions require the <code>optional-values</code> for extra work within the subscription.
+To use them in variation #1, we need to destructure our <code>computation-function</code> parameters
+in order to use them.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:query-id</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">foo</span><span class="p">]]</span>
+    <span class="p">[</span><span class="nv">db</span> <span class="nv">foo</span><span class="p">]))</span>
+</code></pre></div>
+</td></tr></table>
+
+<p>Again we are writing boilerplate just to reach our values, and we might prefer to
+have direction access through a parameter vector like <code>[input-values optional-values]</code>
+instead, so we might be able to use a multi-arity function directly as our <code>computation-function</code>.
+A rewrite of the above sub using this sugary syntax would look like this:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:query-id</span>
+  <span class="ss">:=&gt;</span> <span class="nv">vector</span><span class="p">)</span>  <span class="c1">;; :&lt;---- Could also be `(fn [db foo] [db foo])`</span>
+</code></pre></div>
+</td></tr></table>
+
 </li>
 </ol>
-<p>This sugary variation allows you to pass a function that will expect only one parameter, 
-   namely the <code>input-values</code> and entirely omit the <code>query-vector</code>. A typical <code>computation-function</code>
-   expects two pramenters which can cause unfortunate results when attempting to use
-   clojure standard library functions, or other functions, in a functional manner.</p>
-<p>For example, a significant number of subscriptions exist only to get a value 
-   from the <code>input-values</code>. As shown below, this subscription will simply retrieve
-   the value associated with the <code>:foo</code> key in our db:
-    #!clj
-    (reg-sub
-      :query-id
-      (fn [db _]    ;; :&lt;---- trivial boilerplate we might want to skip over
-        (:foo db)))</p>
-<p>This is slightly more boilerplate than we might like to do, 
-   as we can use a keyword directly as a function, and we might like to do this:
-    #!clj
-    (reg-sub
-      :query-id
-      :foo)  ;; :&lt;---- This could be dangerous. If <code>:foo</code> is not in db, we get the <code>query-vector</code> instead of <code>nil</code>.</p>
-<p>By using <code>:-&gt;</code> our function would not contain the <code>query-vector</code>, and any
-   missing keys would be represented as such:
-    #!clj
-    (reg-sub
-      :query-id
-      :-&gt; :foo)</p>
-<p>This form allows us to ignore the <code>query-vector</code> if our <code>computation-function</code> 
-   has no need for it, and be safe from any accidents. Any 1-arity function can be provided, 
-   and for more complicated use cases, <code>partial</code>, <code>comp</code>, and anonymous functions can still be used.</p>
-<ol>
-<li>A single sugary tuple of <code>:=&gt;</code> and a multi-arity <code>computation-function</code>
-    #!clj
-    (reg-sub
-      :query-id
-      :=&gt; computation-fn)</li>
-</ol>
-<p>The <code>query-vector</code> can be broken into two components <code>[query-id &amp; optional-values]</code>, and
-   some subscriptions require the <code>optional-values</code> for extra work within the subscription.
-   To use them in variation #1, we need to destructure our <code>computation-function</code> parameters
-   in order to use them.
-    #!clj
-    (reg-sub
-      :query-id
-      (fn [db [_ foo]] 
-        [db foo]))</p>
-<p>Again we are writing boilerplate just to reach our values, and we might prefer to
-   have direction access through a parameter vector like <code>[input-values optional-values]</code> 
-   instead, so we might be able to use a multi-arity function directly as our <code>computation-function</code>.
-   A rewrite of the above sub using this sugary syntax would look like this:
-    #!clj
-    (reg-sub
-      :query-id
-      :=&gt; vector)  ;; :&lt;---- Could also be <code>(fn [db foo] [db foo])</code></p>
 <p>The <code>computation function</code> is expected to take two arguments:</p>
 <ul>
 <li><code>input-values</code> - the values which flow into this node (how is it wired into the graph?)</li>
@@ -2546,7 +2583,7 @@ Two of these methods are syntactic sugar to provide easier access to functional 
 <p>and it returns a computed value (which then becomes the output of the node)</p>
 <p>When <code>computation function</code> is called, the 2nd <code>query-vector</code> argument will be that
 vector supplied to the <code>subscribe</code>. So, if the call was <code>(subscribe [:sub-id 3 :blue])</code>,
-then the <code>query-vector</code> supplied to the computaton function will be <code>[:sub-id 3 :blue]</code>.</p>
+then the <code>query-vector</code> supplied to the computation function will be <code>[:sub-id 3 :blue]</code>.</p>
 <p>The argument(s) supplied to <code>reg-sub</code> between <code>query-id</code> and the <code>computation-function</code>
 can vary in 3 ways, but whatever is there defines the <code>input signals</code> part
 of <code>the mechanism</code>, specifying what input values "flow into" the
@@ -2672,13 +2709,19 @@ as if you had supplied a <code>signal-fn</code> returning only a single value:</
 
 <p>Syntactic sugar for both the <code>signal-fn</code> and <code>computation-fn</code> can be used together
 and the direction of arrows shows the flow of data and functions. The example from
-directly above is reproduced here:
-    #!clj
-    (reg-sub
-      :a-b-sub
-      :&lt;- [:a-sub]
-      :&lt;- [:b-sub]
-      :-&gt; (partial zipmap [:a :b]))</p>
+directly above is reproduced here:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
+  <span class="ss">:a-b-sub</span>
+  <span class="ss">:&lt;-</span> <span class="p">[</span><span class="ss">:a-sub</span><span class="p">]</span>
+  <span class="ss">:&lt;-</span> <span class="p">[</span><span class="ss">:b-sub</span><span class="p">]</span>
+  <span class="ss">:-&gt;</span> <span class="p">(</span><span class="nb">partial zipmap </span><span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">]))</span>
+</code></pre></div>
+</td></tr></table>
+
 <p>For further understanding, read the tutorials, and look at the detailed comments in
 /examples/todomvc/src/subs.cljs.</p>
 <p>See also: <code>subscribe</code></p>
@@ -2754,7 +2797,7 @@ using <code>reg-sub</code> instead.</p>
 <h3 id="clear-subscription-cache">clear-subscription-cache!<a class="headerlink" href="#clear-subscription-cache" title="Permanent link">&para;</a></h3>
 <p><code class="highlight"><span class="p">(</span><span class="nf">clear-subscription-cache!</span><span class="p">)</span></code></p>
 <p>Removes all subscriptions from the cache.</p>
-<p>This function can be used at development time or test time. Useful when hot realoding
+<p>This function can be used at development time or test time. Useful when hot reloading
 namespaces containing subscription handlers. Also call it after a React/render exception,
 because React components won't have been cleaned up properly. And this, in turn, means
 the subscriptions within those components won't have been cleaned up correctly. So this
@@ -2953,7 +2996,7 @@ contributing to the derived data, flowing vibe.</p>
 the same text, then highlight their background, and report them via a warning
 at the bottom of the panel.</p>
 <p>Almost any user action (edit text, add new todo, remove a todo) requires a
-complete reassessment of duplication errors and warnings. Eg: that edit
+complete reassessment of duplication errors and warnings. E.g. that edit
 just made might have introduced a new duplicate, or removed one. Same with
 any todo removal. So we need to re-calculate warnings after any CRUD events
 associated with the todos list.</p>
