@@ -130,7 +130,7 @@
         :namespaced/id           ;; <-- namespaced keywords are often used
         [one two three]          ;; <-- a seq of interceptors
         (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
-          {:db       (assoc db :some-key arg1)          ;; return a map of effects
+          {:db (assoc db :some-key arg1)          ;; return a map of effects
            :fx [[:dispatch [:some-event arg2]]]}))
   "
   {:api-docs/heading "Event Handlers"}
@@ -197,11 +197,11 @@
 
   The three arguments are:
 
-  - `query-id` - typically a namespaced keyword (later used in subscribe)
-  - optionally, an `input signals` function which returns the input data
-    flows required by this kind of node.
-  - a `computation function` which computes the value (output) of the
-    node (from the input data flows)
+    - `query-id` - typically a namespaced keyword (later used in subscribe)
+    - optionally, an `input signals` function which returns the input data
+      flows required by this kind of node.
+    - a `computation function` which computes the value (output) of the
+      node (from the input data flows)
 
   Later, during app execution, a call to `(subscribe [:sub-id 3 :blue])`,
   will trigger the need for a new `:sub-id` Signal Graph node (matching the
@@ -214,6 +214,7 @@
   use of `subscribe` in a `View Function`.
 
   `reg-sub` arguments are:
+
     - a `query-id` (typically a namespaced keyword)
     - a function which returns the inputs required by this kind of node (can be supplied  in one of three ways)
     - a function which computes the value of this kind of node (can be supplied in one of three ways)
@@ -221,76 +222,84 @@
   The `computation function` is always the last argument supplied and has three ways to be called.
   Two of these methods are syntactic sugar to provide easier access to functional abstractions around your data.
 
-  1. A function that will accept two parameters, the `input-values` and `query-vector`. This is the 
+  1. A function that will accept two parameters, the `input-values` and `query-vector`. This is the
      standard way to provide a `computation-function`
-      #!clj
-      (reg-sub
-        :query-id
-        (fn [input-values query-vector]
-          (:foo input-values)))
+
+          #!clj
+          (reg-sub
+            :query-id
+            (fn [input-values query-vector]
+              (:foo input-values)))
 
   2. A single sugary tuple of `:->` and a 1-arity `computation-function`:
-      #!clj
-      (reg-sub
-        :query-id
-        :-> computation-fn)
 
-     This sugary variation allows you to pass a function that will expect only one parameter, 
-     namely the `input-values` and entirely omit the `query-vector`. A typical `computation-function`
-     expects two pramenters which can cause unfortunate results when attempting to use
-     clojure standard library functions, or other functions, in a functional manner.
+          #!clj
+          (reg-sub
+            :query-id
+            :-> computation-fn)
 
-     For example, a significant number of subscriptions exist only to get a value 
-     from the `input-values`. As shown below, this subscription will simply retrieve
-     the value associated with the `:foo` key in our db:
-      #!clj
-      (reg-sub
-        :query-id
-        (fn [db _]    ;; :<---- trivial boilerplate we might want to skip over
-          (:foo db)))
+      This sugary variation allows you to pass a function that will expect only one parameter,
+      namely the `input-values` and entirely omit the `query-vector`. A typical `computation-function`
+      expects two parameters which can cause unfortunate results when attempting to use
+      clojure standard library functions, or other functions, in a functional manner.
 
-     This is slightly more boilerplate than we might like to do, 
-     as we can use a keyword directly as a function, and we might like to do this:
-      #!clj
-      (reg-sub
-        :query-id
-        :foo)  ;; :<---- This could be dangerous. If `:foo` is not in db, we get the `query-vector` instead of `nil`.
+      For example, a significant number of subscriptions exist only to get a value
+      from the `input-values`. As shown below, this subscription will simply retrieve
+      the value associated with the `:foo` key in our db:
 
-     By using `:->` our function would not contain the `query-vector`, and any
-     missing keys would be represented as such:
-      #!clj
-      (reg-sub
-        :query-id
-        :-> :foo)
+          #!clj
+          (reg-sub
+            :query-id
+            (fn [db _]    ;; :<---- trivial boilerplate we might want to skip over
+              (:foo db)))
 
-     This form allows us to ignore the `query-vector` if our `computation-function` 
-     has no need for it, and be safe from any accidents. Any 1-arity function can be provided, 
-     and for more complicated use cases, `partial`, `comp`, and anonymous functions can still be used.
+      This is slightly more boilerplate than we might like to do,
+      as we can use a keyword directly as a function, and we might like to do this:
+
+          #!clj
+          (reg-sub
+            :query-id
+            :foo)  ;; :<---- This could be dangerous. If `:foo` is not in db, we get the `query-vector` instead of `nil`.
+
+      By using `:->` our function would not contain the `query-vector`, and any
+      missing keys would be represented as such:
+
+          #!clj
+          (reg-sub
+            :query-id
+            :-> :foo)
+
+      This form allows us to ignore the `query-vector` if our `computation-function`
+      has no need for it, and be safe from any accidents. Any 1-arity function can be provided,
+      and for more complicated use cases, `partial`, `comp`, and anonymous functions can still be used.
 
   3. A single sugary tuple of `:=>` and a multi-arity `computation-function`
-      #!clj
-      (reg-sub
-        :query-id
-        :=> computation-fn)
 
-     The `query-vector` can be broken into two components `[query-id & optional-values]`, and
-     some subscriptions require the `optional-values` for extra work within the subscription.
-     To use them in variation #1, we need to destructure our `computation-function` parameters
-     in order to use them.
-      #!clj
-      (reg-sub
-        :query-id
-        (fn [db [_ foo]] 
-          [db foo]))
+          #!clj
+          (reg-sub
+            :query-id
+            :=> computation-fn)
 
-     Again we are writing boilerplate just to reach our values, and we might prefer to
-     have direction access through a parameter vector like `[input-values optional-values]` 
-     instead, so we might be able to use a multi-arity function directly as our `computation-function`.
-     A rewrite of the above sub using this sugary syntax would look like this:
-      #!clj
-      (reg-sub
-        :query-id
-        :=> vector)  ;; :<---- Could also be `(fn [db foo] [db foo])`
+      The `query-vector` can be broken into two components `[query-id & optional-values]`, and
+      some subscriptions require the `optional-values` for extra work within the subscription.
+      To use them in variation #1, we need to destructure our `computation-function` parameters
+      in order to use them.
+
+          #!clj
+          (reg-sub
+            :query-id
+            (fn [db [_ foo]]
+              [db foo]))
+
+      Again we are writing boilerplate just to reach our values, and we might prefer to
+      have direction access through a parameter vector like `[input-values optional-values]`
+      instead, so we might be able to use a multi-arity function directly as our `computation-function`.
+      A rewrite of the above sub using this sugary syntax would look like this:
+
+          #!clj
+          (reg-sub
+            :query-id
+            :=> vector)  ;; :<---- Could also be `(fn [db foo] [db foo])`
 
   The `computation function` is expected to take two arguments:
 
@@ -301,7 +310,7 @@
 
   When `computation function` is called, the 2nd `query-vector` argument will be that
   vector supplied to the `subscribe`. So, if the call was `(subscribe [:sub-id 3 :blue])`,
-  then the `query-vector` supplied to the computaton function will be `[:sub-id 3 :blue]`.
+  then the `query-vector` supplied to the computation function will be `[:sub-id 3 :blue]`.
 
   The argument(s) supplied to `reg-sub` between `query-id` and the `computation-function`
   can vary in 3 ways, but whatever is there defines the `input signals` part
@@ -413,6 +422,7 @@
   Syntactic sugar for both the `signal-fn` and `computation-fn` can be used together
   and the direction of arrows shows the flow of data and functions. The example from
   directly above is reproduced here:
+
       #!clj
       (reg-sub
         :a-b-sub
@@ -524,7 +534,7 @@
 (defn clear-subscription-cache!
   "Removes all subscriptions from the cache.
 
-  This function can be used at development time or test time. Useful when hot realoding
+  This function can be used at development time or test time. Useful when hot reloading
   namespaces containing subscription handlers. Also call it after a React/render exception,
   because React components won't have been cleaned up properly. And this, in turn, means
   the subscriptions within those components won't have been cleaned up correctly. So this
@@ -759,7 +769,7 @@
   at the bottom of the panel.
 
   Almost any user action (edit text, add new todo, remove a todo) requires a
-  complete reassessment of duplication errors and warnings. Eg: that edit
+  complete reassessment of duplication errors and warnings. E.g. that edit
   just made might have introduced a new duplicate, or removed one. Same with
   any todo removal. So we need to re-calculate warnings after any CRUD events
   associated with the todos list.
