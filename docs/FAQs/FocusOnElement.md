@@ -59,7 +59,7 @@ You can then use this effect within your event handler:
   :something
   (fn [cofx event]
     {:db ....
-     :focus-to-element some-element-id}))
+     :fx [[:focus-to-element some-element-id]]}))
 ```
 
 This assumes you can compute or obtain the `some-element-id` value 

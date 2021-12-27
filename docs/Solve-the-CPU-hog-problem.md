@@ -56,7 +56,7 @@ Here's an `-fx` handler which counts up to some number in chunks:
       ;; We are at the beginning, so:
       ;;     - modify db, causing popup of Modal saying "Working ..."
       ;;     - begin iterative dispatch. Give initial version of "so-far"
-      {:dispatch [:count-to false {:counter 0} finish-at]  ;; dispatch to self
+      {:fx [[:dispatch [:count-to false {:counter 0} finish-at]]]  ;; dispatch to self
        :db (assoc db :we-are-working true)}
       (if (> (:counter so-far) finish-at)
         ;; We are finished:
@@ -69,7 +69,7 @@ Here's an `-fx` handler which counts up to some number in chunks:
         ;;   - run the calculation
         ;;   - redispatch, passing in new running state
         (let [new-so-far   (update so-far :counter inc)]
-          {:dispatch [:count-to false new-so-far finish-at]}))))                         
+          {:fx [[:dispatch [:count-to false new-so-far finish-at]]]}))))
 ```
 
 ### Why Does A Redispatch Work?
@@ -171,8 +171,8 @@ about in the Wiki, and `re-dispatch` within an`-fx` handler:
   :process-x
   (fn 
     [{db :db} event-v]
-    {:dispatch  [:do-work-process-x]   ;; do processing later, give CPU back to browser.     
-     :db (assoc  db  :processing-X true)})) ;; so the modal gets rendered
+    {:fx [[:dispatch  [:do-work-process-x]]] ;; do processing later, give CPU back to browser.
+     :db (assoc  db  :processing-X true)}))  ;; so the modal gets rendered
 
 (re-frame.core/reg-event-db
   :do-work-process-x
@@ -202,7 +202,7 @@ To do this, you put metadata on the event being dispatched:
   :process-x
   (fn 
     [{db :db} event-v]
-    {:dispatch  ^:flush-dom [:do-work-process-x]   ;; <--- NOW WITH METADATA         
+    {:fx [[:dispatch  ^:flush-dom [:do-work-process-x]]]   ;; <--- NOW WITH METADATA
      :db (assoc  db  :processing-X true)}))  ;; so the modal gets rendered
 ```
 

@@ -228,7 +228,7 @@ Here it is re-written so as to be pure:
    :my-event
    (fn [{:keys [db]} [_ a]]                ;; <2>
       {:db  (assoc db :flag true)          ;; <3>
-       :dispatch [:do-something-else 3]}))
+       :fx [[:dispatch [:do-something-else 3]]]}))
 ```
 
 Notes: <br>
@@ -239,7 +239,7 @@ it is a map which contains a `:db` key. <br>
 *<3>* The handler is returning a data structure (map) which describes two side-effects:
 
   - a change to application state, via the `:db` key
-  - a further event, via the `:dispatch` key
+  - a further event, via the `:fx` key calling the `:dispatch` effect handler
 
 Above, the impure handler **did** a `dispatch` side-effect, while the pure handler **described**
 a `dispatch` side-effect.
@@ -263,10 +263,10 @@ the pure, descriptive alternative:
 (reg-event-fx
    :my-event
    (fn [{:keys [db]} [_ a]]
-       {:http {:method :get
-               :url    "http://json.my-endpoint.com/blah"
-               :on-success  [:process-blah-response]
-               :on-fail     [:failed-blah]}
+       {:fx [[:http {:method :get
+                     :url    "http://json.my-endpoint.com/blah"
+                     :on-success  [:process-blah-response]
+                     :on-fail     [:failed-blah]}]]
         :db   (assoc db :flag true)}))
 ```
 
@@ -337,7 +337,7 @@ data from arguments.
 `-db` handlers take __one__ coeffect called `db`, and they return only __one__  effect (db again).
 
 Whereas `-fx` handlers take potentially __many__ coeffects (a map of them) and they return
-potentially __many__ effects (a map of them). So, One vs Many.
+potentially __many__ effects (a map of a vector of them). So, One vs Many.
 
 Just to be clear, the following two handlers achieve the same thing:
 ```clj

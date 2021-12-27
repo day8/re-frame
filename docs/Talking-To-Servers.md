@@ -120,7 +120,7 @@ Here's our rewrite:
    (:require
       [ajax.core :as ajax]        
       [day8.re-frame.http-fx]  
-      [re-frame.core :refer [reg-event-fx]))
+      [re-frame.core :refer [reg-event-fx]]))
 
 (reg-event-fx        ;; <-- note the `-fx` extension
   :request-it        ;; <-- the event id
@@ -128,12 +128,13 @@ Here's our rewrite:
     [{db :db} _]     ;; <-- 1st argument is coeffect, from which we extract db 
    
     ;; we return a map of (side) effects
-    {:http-xhrio {:method          :get
-                  :uri             "http://json.my-endpoint.com/blah"
-                  :format          (ajax/json-request-format)
-                  :response-format (ajax/json-response-format {:keywords? true}) 
-                  :on-success      [:process-response]
-                  :on-failure      [:bad-response]}
+    {:fx [[:http-xhrio
+           {:method          :get
+            :uri             "http://json.my-endpoint.com/blah"
+            :format          (ajax/json-request-format)
+            :response-format (ajax/json-response-format {:keywords? true})
+            :on-success      [:process-response]
+            :on-failure      [:bad-response]}]]
      :db  (assoc db :loading? true)}))
 ```
 

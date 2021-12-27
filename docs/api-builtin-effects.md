@@ -11,7 +11,7 @@ Event handlers, such as those registered using `reg-event-fx`, compute and retur
         [:full-screen true]
         [:http     {:method :GET  :url "http://somewhere.com/"}]]}
 ```
-That's a map with two keys:  `:db` and `:fx`.  Which means there are two effects in this example. In another case, there could be 
+That's a map with two keys:  `:db` and `:fx`.  Which means there are two effects in this example. In older code, there could be
 more or less.
 
 Each effect consists of an `id` and a `payload` pair. The `id` identifies the effect required and the `payload` 
@@ -80,7 +80,7 @@ usage:
 To dispatch multiple events:
 ```clojure
 {:fx [[:dispatch [:event1 "param1" :param2]]
-      [:dispatch [:second]]}
+      [:dispatch [:second]]]}
 ```
 Effects in `:fx` are actioned in order, so the dispatched events will be queued and, later handled, in order supplied. FIFO.
 
@@ -105,7 +105,7 @@ Removes a previously registered event handler. Expects the event id for a previo
 usage:
 ```clojure
 {:db new-db
- :fx [[:deregister-event-handler :my-id]])}
+ :fx [[:deregister-event-handler :my-id]]}
 ```
 
 

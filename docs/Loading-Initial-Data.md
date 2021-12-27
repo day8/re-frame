@@ -90,10 +90,10 @@ values must be put in `app-db` via an event handler.
 Here's an event handler for that purpose:
 ```Clojure
 (re-frame.core/reg-event-db
-  :initialise-db				 ;; usage: (dispatch [:initialise-db])
-  (fn [_ _]						 ;; Ignore both params (db and event)
-	 {:display-name "DDATWD"	 ;; return a new value for app-db
-	  :items [1 2 3 4]}))
+  :initialise-db           ;; usage: (dispatch [:initialise-db])
+  (fn [_ _]                ;; Ignore both params (db and event)
+    {:display-name "DDATWD" ;; return a new value for app-db
+     :items [1 2 3 4]}))
 ```
 
 You'll notice that this handler does nothing other than to return a ` map`. That map 
@@ -130,13 +130,13 @@ quick sketch of the entire pattern. It is very straight-forward.
 (re-frame.core/reg-sub   ;; supplied main-panel with data
   :name                  ;; usage (subscribe [:name])
   (fn  [db _]
-	(:display-name db)))
-	   
+    (:display-name db)))
+
 (re-frame.core/reg-sub   ;; we can check if there is data
   :initialised?          ;; usage (subscribe [:initialised?])
   (fn  [db _]
-	(not (empty? db))))  ;; do we have data
-	
+    (not (empty? db))))  ;; do we have data
+
 (re-frame.core/reg-event-db
    :initialise-db
    (fn [db _]
@@ -145,7 +145,7 @@ quick sketch of the entire pattern. It is very straight-forward.
 (defn main-panel    ;; the top level of our app 
   []
   (let [name  (re-frame.core/subscribe [:name])]   ;; we need there to be good data
-    [:div "Hello " @name])))
+    [:div "Hello " @name]))
 
 (defn top-panel    ;; this is new
   []

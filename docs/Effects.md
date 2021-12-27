@@ -78,8 +78,8 @@ with one argument - the value associated with the key in the effects map.
 
 So, if an event handler returned these two effects:
 ```clj
-{:dispatch   [:save-maiden 42]
- :butterfly  "Flapping"}         ;; butterfly effect, but no chaos !!
+{:fx [[:dispatch   [:save-maiden 42]]
+      [:butterfly  "Flapping"]]}         ;; butterfly effect, but no chaos !!
 ```
 
 Then the function we registered for `:butterfly` would be called to handle
@@ -183,14 +183,15 @@ of the interceptor chain.  It is only a few lines of code.
 
 ## Order Of Effects?
 
-***Prior to v1.1.0***, the answer is: no guarantees were provided about ordering. Actual order is an implementation detail upon which you should not rely.
+- If present, the `:db` effect will be actioned first.
+- If present, the `:fx` effect will be actioned second, and each element contained
+    within will be actioned in the order they are written.
+- Due to backwards compatability, if there are any other top-level effects, they will be
+    actioned according to the implementation order, which means their order cannot be
+    relied upon.
 
-***From v1.1.0 onwards***, two things changed:
-
-  - re-frame guaranteed that the `:db` effect will always be actioned first, if present. But other than that, no guarantee is given for the other effects.
-  - a new effect called `:fx` was added, and it provides a way for effects to be ordered.
-
-In fact, with v1.1.0 ***best practice changed*** to event handlers should only return two effects `:db` and `:fx`, in which case `:db` was always done first and then `:fx`, and within `:fx` the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. 
+!!! note "Prior to v1.1.0"
+    There were no guarantees provided about ordering.
 
 ## Effects With No Data
 
@@ -199,10 +200,10 @@ Some effects have no associated data:
 (reg-event-fx
   :some-id
   (fn [coeffect _]
-     {:exit-fullscreen nil}))    ;;   <--- no data, use a nil
+     {:fx [[:exit-fullscreen]]}))    ;;   <--- no data
 ```
 
-In these cases, although it looks odd, just supply `nil` as the value for this key.
+In these cases, the value will be `nil` due to Clojure's destructuring rules.
 
 The associated effect handler would look like:
 ```clj
@@ -252,6 +253,7 @@ And please review the [External-Resources document](https://day8.github.io/re-fr
 The 4 Point Summary in note form:
 
 1. Event handlers should only return a description of required effects 
-2. They return a map like `{:effect1 value1 :effect2 value2}`
-3. Keys of this map can refer to builtin effect handlers (see below) or custom ones
+2. They return a map of `{:db new-db-value :fx [[:effect1 value2] [:effect2 value2]]}`
+3. `:db` and `:fx` refer to builtin effect handlers (see below) and keys in `:fx` can
+   refer to custom ones
 4. We use `reg-fx` to register our own effect handlers, built-in ones are already registered

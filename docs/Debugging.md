@@ -212,7 +212,7 @@ was being changed).
 (def debug? ^boolean goog.DEBUG)
 (def standard-interceptors-fx
   [(when debug?  debug)    ;; as before
-   (when debug? (after #(if % (db/valid-schema? %)))]) ;; <-- different after
+   (when debug? (after #(if % (db/valid-schema? %))))]) ;; <-- different after
 ```
 and then:
 ```clj

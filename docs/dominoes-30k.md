@@ -123,6 +123,11 @@ Each key of this returned map identifies one kind
 of `effect`, and the value for that key supplies further details. 
 The map returned by `h` only has one key, `:db`, so it is specifying only one effect.
 
+!!! note "Keys in the returned map"
+    The effect map can take any set of key-value pairs due to backwards compatibility,
+    but the currect best practice is to only return `:db` and/or `:fx`. The text of this
+    walkthrough has been updated but the infographics still rely on the old behavior.
+
 On startup, a re-frame app can register `effects handlers` using `reg-fx`. For example, 
 the effect handler function for the `:db` effect could be registered like this: 
 ```clj 
@@ -133,27 +138,31 @@ the effect handler function for the `:db` effect could be registered like this:
 ```
 
 Just to be clear, this `reset!` of `app-db` is a mutative, effectful action. That's
-what effect handlers do. They change the world. They are not pure functions.
+what effect handlers do. They change the world. They are not pure functions, and to
+enforce this, their return value is discarded.
 
 Now, you don't need to ever register an effects handler for `:db`
 because re-frame supplies one built in. re-frame manages `app-db` and so it 
 will look for any changes (effects) to it.
 
-But if, instead, `h` had returned: 
+But if, instead, `h` had returned:
 ```clj
-{:wear  {:pants "velour flares"  :belt false}
- :tweet "Okay, yes, I am Satoshi. #coverblown"}
+{:fx [[:wear {:pants "velour flares" :belt false}]
+      [:tweet "Okay, yes, I am Satoshi. #coverblown"]]}
 ```
-Then, the two effects handlers registered for `:wear` and `:tweet` would 
-be called to action those two effects. And, no, re-frame 
-does not supply standard effect handlers for either, so you would need to have
-written them yourself, and then registered them. 
+Then the built-in `:fx` effect handler would be called. This effect handler treats each
+element in the provided vector as if it was a key-value pair in the returned map, which
+allows for ordering the effect handlers (instead of providing no guarantees about the
+order in which they would occur). Thus, the two effects handlers registered for `:wear`
+and `:tweet` would be called to execute those two effects in that order. And, no,
+re-frame does not supply standard effect handlers for either, so you would need to have
+written them yourself, and then registered them.
 
 For example:
 ```clj
 (re-frame.core/reg-fx    ;; re-frame API
   :wear        ;; the effects key which this handler can action
-  (fn [val]    ;; val would be, eg, {:pants "velour flares"  :belt false}
+  (fn [val]    ;; val would be, eg, {:pants "velour flares" :belt false}
     ...))      ;; do what's necessary to action the side effect
 ```
 
