@@ -755,12 +755,14 @@
   "Returns an interceptor which will run the given function `f` in the `:after`
   position.
 
-  `f` is called with two arguments: `db` and `v`, and is expected to
+  `f` is called with two arguments: `db` and `event`, and is expected to
   return a modified `db`.
 
   Unlike the `after` interceptor which is only about side effects, `enrich`
   expects `f` to process and alter the given `db` coeffect in some useful way,
   contributing to the derived data, flowing vibe.
+
+  If `f` returns `nil`, the `db` value passed to `f` will be returned instead.
 
   #### Example Use:
 
@@ -795,7 +797,22 @@
   any CRUD operation.
 
   This brings huge simplicity at the expense of some re-computation
-  each time. This may be a very satisfactory trade-off in many cases."
+  each time. This may be a very satisfactory trade-off in many cases.
+
+  #### Returning nil
+
+  In some cases, it's useful to apply a change to specific situations that can
+  be determined at runtime instead of when defining the handler with an
+  `:enrich` interceptor. Instead of forcing you to return the `db` from every
+  non-applicable branch, you can return `nil` to use the given `db` value:
+
+      #!clj
+      (def set-last-update
+        (core/enrich
+          (fn [{db :db} [_ {user :user}]]
+            (when (active-user? user)  ;; <- Only perform an update if user is active
+              ...))))
+  "
   {:api-docs/heading "Interceptors"}
   [f]
   (std-interceptors/enrich f))

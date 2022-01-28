@@ -198,12 +198,12 @@
     :id :enrich
     :after (fn enrich-after
              [context]
-             (let [event (get-coeffect context :event)
-                   db    (if (contains? (get-effect context) :db)
-                           (get-effect context :db) ;; If no db effect is returned, we provide the original coeffect.
-                           (get-coeffect context :db))]
-               (->> (f db event)
-                    (assoc-effect context :db))))))
+             (let [event   (get-coeffect context :event)
+                   prev-db (if (contains? (get-effect context) :db)
+                             (get-effect context :db) ;; If no db effect is returned, we provide the original coeffect.
+                             (get-coeffect context :db))
+                   new-db  (f prev-db event)]
+               (assoc-effect context :db (or new-db prev-db)))))) ;; If the enriched db is nil, use the last known good db
 
 
 
