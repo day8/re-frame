@@ -1,7 +1,7 @@
 (ns re-frame.interceptor-test
   (:require [cljs.test :refer-macros [is deftest testing use-fixtures]]
             [reagent.ratom :refer [atom]]
-            [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect update-coeffect update-effect]]
+            [re-frame.interceptor :refer [context get-coeffect assoc-effect assoc-coeffect get-effect update-coeffect update-effect ->interceptor]]
             [re-frame.std-interceptors :refer [debug trim-v path enrich after on-changes
                                                db-handler->interceptor fx-handler->interceptor inject-global-interceptors]]
             [re-frame.interceptor :as interceptor]
@@ -192,9 +192,29 @@
 
 (deftest test-enrich
   (testing "when no db effect is returned"
-    (let [ctx (context [] [] {:a 1})]
+    (let [db {:a 1}
+          ctx (context [] [] db)
+          enrich-interceptor (enrich (fn [db _] db))]
       (is (= ::not-found (get-effect ctx :db ::not-found)))
-      (-> ctx (:after (enrich (fn [db] (is (= db {:a 1})))))))))
+      (is (get-effect ((:after enrich-interceptor) ctx) :db))
+      (is (= db (get-effect ((:after enrich-interceptor) ctx) :db)))))
+  (testing "uses db returned by f"
+    (let [update-fn (fn [db _] (update db :a inc))
+          updater (db-handler->interceptor update-fn)
+          ctx (context [] [updater] {:a 1})
+          enrich-interceptor (enrich update-fn)
+          result (-> ctx
+                     ((:before updater))
+                     ((:after enrich-interceptor)))]
+      (is (= {:a 3} (get-effect result :db)))))
+  (testing "uses given db if f returns nil"
+    (let [updater (db-handler->interceptor (fn [db _] (update db :a inc)))
+          ctx (context [] [updater] {:a 1})
+          enrich-interceptor (enrich (fn [_ _] nil))
+          result (-> ctx
+                     ((:before updater))
+                     ((:after enrich-interceptor)))]
+      (is (= {:a 2} (get-effect result :db))))))
 
 (deftest test-update-effect
   (let [context {:effects {:db {:a 1}}
