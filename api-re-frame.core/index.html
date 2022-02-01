@@ -2986,11 +2986,12 @@ and it grafts the handler's return value back into db, at the right path.</p>
 <p><code class="highlight"><span class="p">(</span><span class="nf">enrich</span> <span class="nv">f</span><span class="p">)</span></code></p>
 <p>Returns an interceptor which will run the given function <code>f</code> in the <code>:after</code>
 position.</p>
-<p><code>f</code> is called with two arguments: <code>db</code> and <code>v</code>, and is expected to
+<p><code>f</code> is called with two arguments: <code>db</code> and <code>event</code>, and is expected to
 return a modified <code>db</code>.</p>
 <p>Unlike the <code>after</code> interceptor which is only about side effects, <code>enrich</code>
 expects <code>f</code> to process and alter the given <code>db</code> coeffect in some useful way,
 contributing to the derived data, flowing vibe.</p>
+<p>If <code>f</code> returns <code>nil</code>, the <code>db</code> value passed to <code>f</code> will be returned instead.</p>
 <h4>Example Use:</h4>
 <p>Imagine that todomvc needed to do duplicate detection - if any two todos had
 the same text, then highlight their background, and report them via a warning
@@ -3017,6 +3018,23 @@ we keep the handlers simple and yet we ensure this important step
 any CRUD operation.</p>
 <p>This brings huge simplicity at the expense of some re-computation
 each time. This may be a very satisfactory trade-off in many cases.</p>
+<h4>Returning nil</h4>
+<p>In some cases, it's useful to apply a change to specific situations that can
+be determined at runtime instead of when defining the handler with an
+<code>:enrich</code> interceptor. Instead of forcing you to return the <code>db</code> from every
+non-applicable branch, you can return <code>nil</code> to use the given <code>db</code> value:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">set-last-update</span>
+  <span class="p">(</span><span class="nf">core/enrich</span>
+    <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="nv">db</span> <span class="ss">:db</span><span class="p">}</span> <span class="p">[</span><span class="nv">_</span> <span class="p">{</span><span class="nv">user</span> <span class="ss">:user</span><span class="p">}]]</span>
+      <span class="p">(</span><span class="nb">when </span><span class="p">(</span><span class="nf">active-user?</span> <span class="nv">user</span><span class="p">)</span>  <span class="c1">;; &lt;- Only perform an update if user is active</span>
+        <span class="nv">...</span><span class="p">))))</span>
+</code></pre></div>
+</td></tr></table>
+
 <h3 id="unwrap">unwrap<a class="headerlink" href="#unwrap" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>New in v1.2.0</p>
