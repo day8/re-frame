@@ -91,3 +91,7 @@
   "Doesn't make sense in a Clojure context currently."
   [reactive-val]
   "rx-clj")
+
+(defn reactive?
+  []
+  true)
