@@ -9,7 +9,7 @@ In the navigation to the left, you'll see a link to both.
 
 ## Dependency Information 
 
-Please review both the [releases page](http://day8.github.io/re-frame/releases/2021) and the [Clojars page](https://clojars.org/re-frame/) to discover the version you should be using. 
+Please review both the [releases page](http://day8.github.io/re-frame/releases/2022) and the [Clojars page](https://clojars.org/re-frame/) to discover the version you should be using. 
 
 
 ## Using re-frame
