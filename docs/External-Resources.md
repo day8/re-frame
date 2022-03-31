@@ -139,3 +139,5 @@ Commercial grade video training for re-frame and Reagent:
 * [Rendering Reagent on the Server Using Hiccup](http://yogthos.net/posts/2015-11-24-Serverside-Reagent.html)- Blog post on rendering Reagent with Clojure.
 
 * [Prerendering a re-frame app with Chrome Headless](https://medium.com/@joelsanchezclj/prerendering-a-re-frame-app-with-chrome-headless-bb875de31fd0) - Blog post on prerendering a re-frame app using [etaoin](https://github.com/igrishaev/etaoin) and Chrome Headless.
+
+* [Improving Web Page Performance at DoorDash Through Server-Side Rendering with Next.JS](https://doordash.engineering/2022/03/29/improving-web-page-performance-at-doordash-throughserver-side-rendering-with-next-js/) blog post on SSR with Next.js
