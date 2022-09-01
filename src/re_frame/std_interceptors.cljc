@@ -45,9 +45,9 @@
                (let [[_ payload :as event] (get-coeffect context :event)]
                  (if-not (and (= 2 (count event))
                               (map? payload))
-                   (throw (ex-info
-                            "re-frame: \"unwrap\" interceptor must be a vector of two elements \"[event-id payload-map]\""
-                            event))
+                   (do
+                     (console :warn "re-frame: \"unwrap\" interceptor requires event to be a 2-vector of [event-id payload-map]. Got " event)
+                     context)
                    (assoc-coeffect context :event payload))))
     :after   (fn unwrap-after
                [context]
