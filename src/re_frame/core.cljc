@@ -380,7 +380,7 @@
       (fn [a query-vec]       ;; 1st argument is a single value
          ...)
 
-  Further Note: variation #1 above, in which an `input-fn` was not supplied, like this:
+  Further Note: variation #1 above, in which an `signal-fn` was not supplied, like this:
 
       #!clj
       (reg-sub
