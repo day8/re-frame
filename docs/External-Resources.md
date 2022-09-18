@@ -56,7 +56,7 @@ Commercial grade video training for re-frame and Reagent:
 * [Catlantis](https://github.com/madvas/catlantis) - React Native App about cats
 * [Lymchat](https://github.com/tiensonqin/lymchat) - React Native App to learn different cultures
 * [ventas](https://github.com/JoelSanchez/ventas) - Ecommerce platform made with a full-clojure stack
-* [ONS Structual Search](https://github.com/Swirrl/ook) - Structural search engine for data cubes
+* [ONS Structural Search](https://github.com/Swirrl/ook) - Structural search engine for data cubes
 
 ### Effect and CoEffect Handlers
 
