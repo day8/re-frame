@@ -20,6 +20,7 @@ Commercial grade video training for re-frame and Reagent:
   - [Jacek Schae](https://www.jacekschae.com/)
   - [purelyfunctional.tv](https://purelyfunctional.tv/courses/understanding-re-frame/)
   - [Lambda Island Videos](https://lambdaisland.com/collections/react-reagent-re-frame)
+  - [Clojure Hacker](https://clojurehacker.com)
 
 ## IDE Support 
 
