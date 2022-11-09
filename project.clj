@@ -3,19 +3,19 @@
   :url          "https://github.com/day8/re-frame.git"
   :license      {:name "MIT"}
 
-  :dependencies [[org.clojure/clojure       "1.10.3"   :scope "provided"]
-                 [org.clojure/clojurescript  ~(or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.879")
+  :dependencies [[org.clojure/clojure       "1.11.1" :scope "provided"]
+                 [org.clojure/clojurescript  ~(or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.11.60")
                   :scope "provided"
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
-                 [thheller/shadow-cljs      "2.15.12"   :scope "provided"]
+                 [thheller/shadow-cljs      "2.20.7" :scope "provided"]
                  [reagent                   "1.0.0"]
                  [net.cgrand/macrovich      "0.2.1"]
-                 [org.clojure/tools.logging "1.1.0"]]
+                 [org.clojure/tools.logging "1.2.4"]]
 
-  :plugins      [[day8/lein-git-inject "0.0.14"]
-                 [lein-shadow          "0.3.1"]]
+  :plugins      [[day8/lein-git-inject "0.0.15"]
+                 [lein-shadow          "0.4.1"]]
 
   :middleware   [leiningen.git-inject/middleware]
 

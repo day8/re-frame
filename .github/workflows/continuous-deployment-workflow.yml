@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     container:
       # Source: https://github.com/day8/dockerfiles-for-dev-ci-images
-      image: ghcr.io/day8/chrome-56:2
+      image: ghcr.io/day8/chrome-56:5.0.0
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -94,7 +94,7 @@ jobs:
     runs-on: ubuntu-20.04
     container:
       # Source: https://github.com/day8/dockerfiles-for-dev-ci-images
-      image: ghcr.io/day8/chrome-56:2
+      image: ghcr.io/day8/chrome-56:5.0.0
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

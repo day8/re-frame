@@ -9,7 +9,7 @@
  :dependencies
  [[reagent                   "1.1.0"]
   [net.cgrand/macrovich      "0.2.1"]
-  [org.clojure/tools.logging "1.1.0"]
+  [org.clojure/tools.logging "1.2.4"]
   [day8/shadow-git-inject    "0.0.5"]]
 
  :build-defaults
