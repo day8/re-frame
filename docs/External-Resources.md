@@ -58,6 +58,7 @@ Commercial grade video training for re-frame and Reagent:
 * [Lymchat](https://github.com/tiensonqin/lymchat) - React Native App to learn different cultures
 * [ventas](https://github.com/JoelSanchez/ventas) - Ecommerce platform made with a full-clojure stack
 * [ONS Structural Search](https://github.com/Swirrl/ook) - Structural search engine for data cubes
+* [Life counter](https://github.com/nenadalm/life-counter) - Simple life counter PWA for 2 players
 
 ### Effect and CoEffect Handlers
 
