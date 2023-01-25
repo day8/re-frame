@@ -71,7 +71,7 @@ We can use pure data literals:
 
 Or we can add a small bit of computation: 
 ```clj
-[:div (when friendly? "Hello" "Go away") " world"]
+[:div (if friendly? "Hello" "Go away") " world"]
 ```
 
 Or, a lot more computation:
