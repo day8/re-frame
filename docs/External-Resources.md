@@ -65,7 +65,6 @@ Commercial grade video training for re-frame and Reagent:
 * [Name Bazaar](https://github.com/district0x/name-bazaar) - A peer-to-peer marketplace for exchanging names registered through the [Ethereum Name Service](https://ens.domains)
 * [LIPAS](https://github.com/lipas-liikuntapaikat/lipas) - A full-stack implementation of Finland's national sports facility geographic information system
 * [PuppetAPI](https://github.com/burkaydurdu/mock-ui) - An application to create mock APIs and real-time testing
-* [Penpot](https://github.com/penpot/penpot) - Design and prototyping platform
 
 ### Effect and CoEffect Handlers
 
