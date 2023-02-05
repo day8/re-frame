@@ -60,6 +60,12 @@ Commercial grade video training for re-frame and Reagent:
 * [ventas](https://github.com/JoelSanchez/ventas) - Ecommerce platform made with a full-clojure stack
 * [ONS Structural Search](https://github.com/Swirrl/ook) - Structural search engine for data cubes
 * [Life counter](https://github.com/nenadalm/life-counter) - Simple life counter PWA for 2 players
+* [Network Token](https://github.com/district0x/district0x-network-token) - A basic SPA for the district0x token contribution smart contract on the Ethereum blockchain
+* [MemeFactory](https://github.com/district0x/memefactory) - A decentralized platform for creating, issuing, and trading verifiably rare digital collectibles on the Ethereum blockchain
+* [Name Bazaar](https://github.com/district0x/name-bazaar) - A peer-to-peer marketplace for exchanging names registered through the [Ethereum Name Service](https://ens.domains)
+* [LIPAS](https://github.com/lipas-liikuntapaikat/lipas) - A full-stack implementation of Finland's national sports facility geographic information system
+* [PuppetAPI](https://github.com/burkaydurdu/mock-ui) - An application to create mock APIs and real-time testing
+* [Penpot](https://github.com/penpot/penpot) - Design and prototyping platform
 
 ### Effect and CoEffect Handlers
 
