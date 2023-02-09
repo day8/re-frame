@@ -112,6 +112,9 @@ Commercial grade video training for re-frame and Reagent:
 * [breaking-point](https://github.com/gadfly361/breaking-point) - Quickly define screen breakpoints for re-frame
 * [re-frame-flow](https://github.com/ertugrulcetin/re-frame-flow) - A graph based visualization tool for re-frame event chains
 
+### Suites
+
+* [reflet](https://github.com/zalky/reflet) - Fast multi-model db, mix graph/non-graph data, graph queries/mutations, hierarchical FSMs, JS/DOM interop utils, component APIs, novel visual debugging
 
 #### React Native
 
