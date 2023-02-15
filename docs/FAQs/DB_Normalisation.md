@@ -16,6 +16,7 @@ These libraries might be interesting to you:
   - [compound](https://github.com/riverford/compound)
   - [SubGraph](https://github.com/vimsical/subgraph)
   - [pull](https://github.com/juxt/pull)
+  - [reflet](https://github.com/zalky/reflet) - use normalised and non-normalised data in the same `app-db`
   
 See also [this comment](https://github.com/day8/re-frame/issues/304#issuecomment-269620609).
   
