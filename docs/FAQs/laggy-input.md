@@ -36,6 +36,6 @@ Bottom line: with very fast typing, characters can get dropped just before anima
 There are three solutions:
 
   1. don't use `on-change`, and instead use `on-blur` which is only called when the user has done all their fast typing and they leave the field. 
-  2. if you have to use `on-change` then switch to use `dispatch-sync` in `on-change`, instead of `dispatch`. The event will not be placed on the queue. It will be handled immediately. Sychonously. 
+  2. if you have to use `on-change` then switch to use `dispatch-sync` in `on-change`, instead of `dispatch`. The event will not be placed on the queue. It will be handled immediately. Synchronously. 
   3. use a component from something like re-com because it has been engineered to not have this problem. Or copy the (local state) technique it uses. 
 
