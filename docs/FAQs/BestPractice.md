@@ -3,41 +3,37 @@
      table of contents on the right hand side. -->
 #
 
-**_This FAQ item isn't finished yet. Don't read it._**
 
 ## Question
 
-What is current best practice?
+What are the current best practices?
 
 ## Answer
 
-No shortcuts here. You'll need to:
-  1. Read the re-frame docs.
-  2. Inspect example projects like this [RealWorld example](https://github.com/jacekschae/conduit) (but see also the [Resouces doc](http://day8.github.io/re-frame/External-Resources/#examples-and-applications-using-re-frame))
+To grasp best practices:
+  1. Read through the re-frame documentation.
+  2. Review example projects, like this [RealWorld example](https://github.com/jacekschae/conduit). The [Resources doc](http://day8.github.io/re-frame/External-Resources/#examples-and-applications-using-re-frame)) provides further examples.
 
-Having said that, best practice has evolved over time and a list of the more recent ideas is given below.
+Keep in mind, best practices evolve over time. Here are some of the more recent ideas.
 
-### Add Structure to `app-db` 
+### Structuring `app-db` 
 
-`app-db` is a map which works well in many cases, but if you want more structure, consider using a library like `doxa` or `XXX`.
+While using `app-db` as a simple map works well in many situations, if you want more structure, consider using a library like [doxa](https://github.com/ribelo/doxa) or [relic](https://github.com/wotbrew/relic).
 
 ### Use the `:fx` effect 
 
-Event handlers can return a map of arbitrary effects, but better practice is to return 
-a map containing only two standard keys `:db` and `:fx`.  See [here](https://day8.github.io/re-frame/api-builtin-effects/#fx) and [here](http://day8.github.io/re-frame/releases/2020/#110-2020-08-24)
+While event handlers can Event handlers can return a map of arbitrary effects, it is now recommended that they return 
+a map containing only two standard keys `:db` and `:fx`.  Learn more [here](https://day8.github.io/re-frame/api-builtin-effects/#fx) and [here](http://day8.github.io/re-frame/releases/2020/#110-2020-08-24). 
 
 ### Compose Event Handlers   
 
-Where appropriate, you can compose your event handlers from many smaller functions via the use of `:fx`, which is described [here](https://github.com/day8/re-frame/issues/639#issuecomment-682250517)
+Event handlers can be composed of other functions through the use of the `:db` / `:fx` effect pattern, which is described [here](https://github.com/day8/re-frame/issues/639#issuecomment-682250517)
 
 ### Avoid placeful Events
 
-Originally, events were structured as a vector, like this `[:some-event-id  arg1 arg2]`.  For simple cases,
-this works just fine, but it does introduce "placefulnes" which is fragile for more complex usecases, 
+Originally, it was recommended that events be a vector like this `[:some-event-id  arg1 arg2]`. This works reasonably for simple cases, but it does  introduce fragility for more complex use cases due to the "placefulness" of vectors. 
 
-It is probably better practice to capture the "args" into a single map.  
+A better practice is to encapsulate the "args" into a single map: `[:some-event-id  {...}]`
 
-`[:some-event-id  {...}]`
-
-And then to optionally use the `unwrap` middleware on the event handlers. 
+And then to optionally use the `unwrap` middleware on the event handlers. See [here](http://day8.github.io/re-frame/api-re-frame.core/#unwrap)
 
