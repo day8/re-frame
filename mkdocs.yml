@@ -74,6 +74,7 @@ nav:
       - The Logo Backstory: The-re-frame-logo.md
   - FAQs:
     - "How can I Inspect app-db?": FAQs/Inspecting-app-db.md
+    - "What Is Best Practice?": FAQs/BestPractice.md
     - "How Do I Load On Mount?": FAQs/LoadOnMount.md
     - "Reagent looks terrific. Why do I need re-frame?": FAQs/DoINeedReFrame.md
     - "How to focus on an HTML element": FAQs/FocusOnElement.md
