@@ -16,6 +16,15 @@ To grasp best practices:
 
 Keep in mind, best practices evolve over time. Here are some of the more recent ideas.
 
+### Use Namespaced Keywords 
+
+For simplicity, the docs don't use namespaced keywords for ids (event ids, subscription ids, etc), but in prectice you should. 
+
+In my opinion, you can use 
+synthetic or real namespaces but some experienced re-framers insist that you should only use real namespaces in your keywords. Shrug.
+
+Tip: clojure-lsp can help you to navigate to where an event id or subsription id is registered.
+
 ### Structuring `app-db` 
 
 While using `app-db` as a simple map works well in many situations, if you want more structure, consider using a library like [doxa](https://github.com/ribelo/doxa) or [relic](https://github.com/wotbrew/relic).
