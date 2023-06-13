@@ -40,7 +40,7 @@ jobs:
   # that are built by this job then uploaded as an artifact.
   klipse-cljs-cache:
     name: Klipse CLJS Cache
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     container:
       # Ref: https://github.community/t5/GitHub-Actions/docker-pull-from-public-GitHub-Package-Registry-fail-with-quot/m-p/32782
       image: superstructor/klipse:jdk-11-node-12-lumo-1.5-planck-2.25.0
@@ -76,7 +76,7 @@ jobs:
     needs:
       - ns-to-markdown
       - klipse-cljs-cache
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     container:
       image: "squidfunk/mkdocs-material:5.5.9"
     steps:
