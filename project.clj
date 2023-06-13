@@ -9,7 +9,7 @@
                   :exclusions [com.google.javascript/closure-compiler-unshaded
                                org.clojure/google-closure-library
                                org.clojure/google-closure-library-third-party]]
-                 [thheller/shadow-cljs      "2.20.7" :scope "provided"]
+                 [thheller/shadow-cljs      "2.23.3" :scope "provided"]
                  [reagent                   "1.0.0"]
                  [net.cgrand/macrovich      "0.2.1"]
                  [org.clojure/tools.logging "1.2.4"]]
