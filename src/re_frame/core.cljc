@@ -690,8 +690,6 @@
   "An interceptor which logs/instruments an event handler's actions to
   `re-frame/console` at the `:log` level.
 
-  See examples/todomvc/src/events.cljs for use.
-
   Output includes:
 
     1. the event vector
