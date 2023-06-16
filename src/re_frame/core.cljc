@@ -688,7 +688,9 @@
 
 (def ^{:api-docs/heading "Interceptors"} debug
   "An interceptor which logs/instruments an event handler's actions to
-  `js/console.debug`. See examples/todomvc/src/events.cljs for use.
+  `re-frame/console` at the `:log` level.
+
+  See examples/todomvc/src/events.cljs for use.
 
   Output includes:
 
