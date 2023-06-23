@@ -25,11 +25,5 @@
      not likely to change between upstream releases. -->
 {% block footer %}
     {% include "partials/footer.html" %}
-    {% if page and page.meta and page.meta.klipse %}
-    <script src="https://unpkg.com/react@16.13.0/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@16.13.0/umd/react-dom.development.js"></script>
-    <script src="/re-frame/javascripts/klipse_config.js"></script>
-    <script src="/re-frame/javascripts/klipse_plugin.js"></script>
-    <script src="/re-frame/javascripts/klipse_reagent_fix.js"></script>
-    {% endif %}
+    <script src="/re-frame/js/docs.js"></script>
 {% endblock %}

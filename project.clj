@@ -25,7 +25,9 @@
              :dev   {:dependencies [[binaryage/devtools "1.0.3"]]
                      :plugins      [[com.github.liquidz/antq "RELEASE"]
                                     [lein-shell              "0.5.0"]]
-                     :antq         {}}}
+                     :antq         {}}
+             :docs {:dependencies [[org.babashka/sci "0.7.39"]
+                                   [funcool/promesa "10.0.575"]]}}
 
   :clean-targets  [:target-path
                    "shadow-cljs.edn"
@@ -34,7 +36,7 @@
 
   :resource-paths ["resources"]
   :jvm-opts       ["-Xmx1g"]
-  :source-paths   ["src"]
+  :source-paths   ["src" "docs/src"] ;; FixMe: Only the docs build should use the docs path.
   :test-paths     ["test"]
 
   :shell          {:commands {"karma" {:windows         ["cmd" "/c" "karma"]
@@ -52,7 +54,12 @@
 
   :shadow-cljs {:nrepl  {:port 8777}
 
-                :builds {:browser-test
+                :builds {:docs
+                         {:target           :browser
+                          :devtools   {:repl-pprint true}
+                          :modules {:docs {:entries [re-frame.docs]}}
+                          :output-dir "docs/js"}
+                         :browser-test
                          {:target           :browser-test
                           :ns-regexp        "re-frame\\..*-test$"
                           :test-dir         "run/compiled/browser/test"

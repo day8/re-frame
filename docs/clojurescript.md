@@ -276,7 +276,7 @@ More:
 
 Evaluate these experiments yourself (any surprises?):
 
-  - `#!clj (inc (dec 1))`
+  - <div class="cljs-showcase">(inc (dec 1))</div>
   - `#!clj (odd? (inc (dec 1)))`
   - `#!clj (= (inc (dec 1)) 1)`
 
