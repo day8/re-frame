@@ -17,6 +17,7 @@ compiled/
 misc/
 /examples/todomvc/resources/public/js/
 /examples/simple/resources/public/js/
+/docs/js
 .floo
 .flooignore
 node_modules/
