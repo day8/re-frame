@@ -78,9 +78,13 @@
 
   :aliases {"watch" ["do"
                      ["clean"]
-                     ["shadow" "watch" "browser-test" "karma-test"]]
+                     ["with-profile" "+docs" "shadow" "watch" "browser-test" "karma-test" "docs"]]
 
             "ci"    ["do"
                      ["clean"]
                      ["shadow" "compile" "karma-test"]
-                     ["shell" "karma" "start" "--single-run" "--reporters" "junit,dots"]]})
+                     ["shell" "karma" "start" "--single-run" "--reporters" "junit,dots"]]
+
+            "docs" ["do"
+                    ["clean"]
+                    ["with-profile" "+docs" "shadow" "release" ":docs"]]})
