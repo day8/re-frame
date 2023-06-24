@@ -15,7 +15,7 @@ The re-frame website is largly built using a static site generator:
 a [Material UI](https://material.io/) theme for the `mkdocs` static site generator.
 
 The live re-frame website is built [via Github actions](https://github.com/day8/re-frame/blob/feature/mkdocs/.github/workflows/docs-workflow.yml)
-which stitch together the docs, the API and the klipse artifacts.
+which stitch together the docs, the API and the docs app.
 
 ## To Build Locally
 
@@ -63,7 +63,6 @@ We've made various modifications to the base template supplied by the theme ...
 
 Notably adds
 - Google Font stylesheets
-- klipse custom stylesheets and javascripts
 - our own stylesheets for overriding some styles
 
 `overrides/partials/footer.html`
@@ -82,17 +81,3 @@ Our own custom styles.
 
 `stylesheets/codehilite-monokai.css`
 Our own port of the monokai theme to codehilite.
-
-`stylesheets/codemirror.css`
-Copy of https://github.com/viebel/klipse/blob/57e5312e88425811183a838f63afd4a92077fada/dist/codemirror.css
-with FiraCode removed.
-
-Incls syntax highlighting 'theme' around lines ~100-130.
-
-`javascripts/klipse_plugin.js`
-Copy of https://github.com/viebel/klipse/blob/57e5312e88425811183a838f63afd4a92077fada/dist/klipse_plugin.js
-
-## Using Klipse
-
-On some pages we use klipse for live coding. 
-See [`docs/klipse/README.md`](klipse/README.md).
