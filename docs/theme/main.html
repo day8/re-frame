@@ -10,12 +10,6 @@
     {% endif %}
 {% endblock %}
 
-{% block libs %}
-    {% if page and page.meta and page.meta.klipse %}
-    <link rel="stylesheet" href="/re-frame/stylesheets/klipse.css">
-    <link rel="stylesheet" href="/re-frame/stylesheets/codemirror.css">
-    {% endif %}
-{% endblock %}
 
 <!-- There is a scripts block which at first might appear to be more appropriate
      but overriding it is too fragile as it has hard-coded paths to specific
