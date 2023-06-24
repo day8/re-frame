@@ -1,7 +1,3 @@
----
-klipse: true
----
-
 > This document is currently in alpha test.
 >
 > If you review it, could you please let me know:
@@ -135,16 +131,16 @@ You are going to be surprised and delighted with the simplicity of "evaluation".
 | `#!clj {1 1 2 2}`   | `#!clj {1 1 2 2}`           |  Yep, same  |
 
 
-Below, you can start evaluating live on this page. Enter an expression into the following editor 
-and it will be evaluated. The result of the evaluation will be shown in the box below the editor.
-
-XXX inline REPL will go here. In the meantime, use [this external one](https://jaredforsyth.com/reepl/)
-
+Below, you can start evaluating live on this page. 
+Click the **Eval** button, or change the expression, and it will be evaluated. 
+The result of the evaluation will be shown in the box below the editor.
 
 Try these experiments:
 
-   - {:a 1 :a 4} -- oops 
-   - forget to close a parens ??
+<div class="cljs-showcase" data-cljs-showcase-no-eval-on-init data-cljs-showcase-error-comment="Oops! a map can only have 1 of a given key. Try {:a 1 :b 4}."><pre><code>{:a 1 :a 4}</code></pre></div>
+
+<div class="cljs-showcase" data-cljs-showcase-no-eval-on-init data-cljs-showcase-error-comment="ERROR: Forgot to close the form? Try adding ] to the end."><pre><code>[:apple :orange :banana</code></pre></div>
+
    - XXX other basic examples?
 
 So, let's now talk about the two exceptions `lists` and `symbols` ...
@@ -175,14 +171,11 @@ Example symbol evaluations:
     Wait. Isn't `#!clj +` an operator?  No. Clojure doesn't have operators. 
     Instead, `#!clj +` is a symbol, and it is bound to a function - one which adds. Anyway, more soon.
 
-
-XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
-
 Try these experiments:
 
-   - `#!clj inc`
-   - `#!clj [inc dec +]`       <--- and array of symbols
-   - `#!clj {inc 5}`           <--- strange but possible
+- <div class="cljs-showcase" data-cljs-showcase-no-eval-on-init data-cljs-showcase-success-comment="Functions are technically objects, and cljs represents them by printing object[qualified$name]" data-cljs-showcase-error-comment="Oops! a map can only have 1 of a given key. Try {:a 1 :b 4}."><pre><code>inc</code></pre></div>
+- <div class="cljs-showcase" data-cljs-showcase-no-eval-on-init><pre><code>[inc dec +]</code></pre></div>
+- <div class="cljs-showcase" data-cljs-showcase-no-eval-on-init><pre><code>{inc 5}</code></pre></div>
 
 ## Evaluating Lists
 

@@ -15,7 +15,7 @@
    [sci.configs.re-frame.re-frame :as sci.re-frame]
    [sci.ctx-store :as ctx-store]))
 
-;; https://github.com/borkdude/cljs-showcase/tree/main
+;; https://github.com/borkdude/cljs-showcase
 
 (def rdns (sci/create-ns 'reagent.dom nil))
 
@@ -60,24 +60,29 @@
             eval? (not no-eval?)
             no-eval-on-init? (.. elt -dataset -cljsShowcaseNoEvalOnInit)
             eval-on-init? (not no-eval-on-init?)
+            error-comment (.. elt -dataset -cljsShowcaseErrorComment)
+            success-comment (.. elt -dataset -cljsShowcaseSuccessComment)
             doc (.-innerText elt)
             _ (set! (.-innerText elt) "")
             cm-ref (atom nil)
             res (js/document.createElement "pre")
+            comment (js/document.createElement "p")
             eval-me (fn []
                       (when eval?
                         (p/let [[op v] (eval-codemirror @cm-ref)]
                           (binding [*print-length* 20]
                             (case op
                               (:success :success-promise)
-                              (set! (.-innerText res)
+                              (do (set! (.-innerText res)
                                     (str (when (= :success-promise op)
                                            "Promise resolved to:\n")
                                          (with-out-str (pp/pprint v))))
+                                  (set! (.-innerText comment) (str success-comment)))
                               (:error :error-promise)
-                              (set! (.-innerText res)
+                              (do (set! (.-innerText res)
                                     (str/join "\n" (cons (.-message v)
-                                                         (sci/format-stacktrace (sci/stacktrace v))))))))))
+                                                         (sci/format-stacktrace (sci/stacktrace v)))))
+                                  (set! (.-innerText comment) (str error-comment))))))))
             ext (.of cv/keymap
                      (clj->js [{:key "Mod-Enter"
                                 :run eval-me}]))
@@ -92,6 +97,7 @@
                 _ (.addEventListener elt "click" eval-me)]
             (.appendChild elt btn)))
         (.appendChild elt res)
+        (.appendChild elt comment)
         (reset! cm-ref cm)
         (when (and eval? eval-on-init?) (eval-me))))))
 
