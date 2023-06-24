@@ -1,39 +1,27 @@
----
-klipse: true
----
 
 Clojurescript is ergonomic, stable, functional language
 
 Look at the front page of https://www.learnreframe.com/
 
 
-<code class="klipse-clojure">
-(ns simple.core
-  (:require [reagent.dom]
-            [re-frame.core :as rf]
-            [clojure.string :as str]))
-</code>
+<pre class="cljs-showcase"><code>(require '[reagent.dom :as rdom]
+         '[re-frame.core :as rf]
+         '[clojure.string :as str])</code></pre>
 
-<code class="klipse-clojure">
-(defn square 
+<pre class="cljs-showcase"><code>(defn square 
    []
    [:svg {:width "400" :height "110"}
-     [:rect {:width "300" :height "100"}]])
-</code>
+     [:rect {:width "300" :height "100"}]])</code></pre>
 
-<code class="klipse-reagent">
-[square]
-</code>
+<code class=""cljs-showcase">[square]</code></pre>
 
 
 
-<code class="klipse-clojure">
-(defn mount-ui
+<pre class="cljs-showcase"><code>(defn mount-ui
   []
-  (reagent/render [square]                 ;; mount the application's ui
-                  (js/document.getElementById "live-app")))
-(mount-ui)
-</code>
+  (rdom/render [square]                 ;; mount the application's ui
+               (js/document.getElementById "live-app")))
+(mount-ui)</code></pre>
 
 
 
