@@ -166,7 +166,7 @@
 (defn path
   [& args]
   (let [path (flatten args)
-        db-store-key :re-frame-path/db-store]    ;; this is where, within `context`, we store the original dbs
+        history-key :re-frame.db/path-history]    ;; this is where, within `context`, we store the original dbs
     (when (empty? path)
       (console :error "re-frame: \"path\" interceptor given no params"))
     (->interceptor
@@ -175,13 +175,13 @@
                  [context]
                  (let [original-db (get-coeffect context :db)]
                    (-> context
-                       (update db-store-key conj original-db)
+                       (update history-key conj original-db)
                        (assoc-coeffect :db (get-in original-db path)))))
       :after   (fn [context]
-                 (let [db-store     (db-store-key context)
+                 (let [db-store     (history-key context)
                        original-db  (peek db-store)
                        new-db-store (pop db-store)
-                       context'     (-> (assoc context db-store-key new-db-store)
+                       context'     (-> (assoc context history-key new-db-store)
                                         (assoc-coeffect :db original-db))     ;; put the original db back so that things like debug work later on
                        db           (get-effect context :db ::not-found)]
                    (if (= db ::not-found)
