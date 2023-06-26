@@ -171,6 +171,7 @@
       (console :error "re-frame: \"path\" interceptor given no params"))
     (->interceptor
       :id      :path
+      :comment {:re-frame.db/path path}
       :before  (fn
                  [context]
                  (let [original-db (get-coeffect context :db)]
