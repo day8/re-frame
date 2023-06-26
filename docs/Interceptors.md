@@ -112,6 +112,7 @@ interceptors will be "executed".  And that's how an event gets handled.
 Each interceptor has this form:
 ```clj
 {:id      :something             ;; decorative only - can be ignored
+ :comment {...}                  ;; also decorative, optional
  :before  (fn [context] ...)     ;; returns a possibly modified `context`
  :after   (fn [context] ...)}    ;; returns a possibly modified `context`
 ```
