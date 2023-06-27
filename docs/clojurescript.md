@@ -137,9 +137,26 @@ The result of the evaluation will be shown in the box below the editor.
 
 Try these experiments:
 
-<div class="cljs-showcase" data-cljs-showcase-no-eval-on-init data-cljs-showcase-error-comment="Oops! a map can only have 1 of a given key. Try {:a 1 :b 4}."><pre><code>{:a 1 :a 4}</code></pre></div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+{:a 1 :a 4}
+<div class="cm-doc-validator">
+(fn duplicate-keys [{:keys [return-str]}]
+  (when (re-find #"duplicate key" return-str)
+    [:span "Oops! A map can only have 1 of a given key. Try changing "
+     [:code ":a 4"]
+     " to "
+     [:code ":b 4"] "."]))
+</div>
+</div>
 
-<div class="cljs-showcase" data-cljs-showcase-no-eval-on-init data-cljs-showcase-error-comment="ERROR: Forgot to close the form? Try adding ] to the end."><pre><code>[:apple :orange :banana</code></pre></div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+[:apple :orange :banana
+ <div class="cm-doc-validator">
+ (fn eof-vector [{:keys [return-str]}]
+   (when (re-find #"EOF" return-str)
+     [:span "Forgot to close the form? Try adding " [:code "]"] " to the end."]))
+ </div>
+</div>
 
    - XXX other basic examples?
 
@@ -173,9 +190,31 @@ Example symbol evaluations:
 
 Try these experiments:
 
-- <div class="cljs-showcase" data-cljs-showcase-no-eval-on-init data-cljs-showcase-success-comment="Functions are technically objects, and cljs represents them by printing object[qualified$name]" data-cljs-showcase-error-comment="Oops! a map can only have 1 of a given key. Try {:a 1 :b 4}."><pre><code>inc</code></pre></div>
-- <div class="cljs-showcase" data-cljs-showcase-no-eval-on-init><pre><code>[inc dec +]</code></pre></div>
-- <div class="cljs-showcase" data-cljs-showcase-no-eval-on-init><pre><code>{inc 5}</code></pre></div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>>
+ inc
+ <div class="cm-doc-validator">
+ (fn function-object [{:keys [status]}]
+   (when (#{:success} status)
+     [:span "Functions are technically objects, and cljs represents them by printing "
+      [:code "object[qualified$name]"]]))
+ </div>
+</div>
+ <div class="cm-doc" data-cm-doc-no-eval-on-init>
+ [inc dec +]
+  <div class="cm-doc-validator">
+ (fn function-vec-item [{:keys [status]}]
+   (when (#{:success} status)
+     "This is simply three items in a vector. Just because they're functions does not mean you're calling them."))
+ </div>
+</div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+{inc 5}
+ <div class="cm-doc-validator">
+ (fn function-vec-item [{:keys [status]}]
+   (when (#{:success} status)
+     "Nearly anything can be a map key."))
+ </div>
+</div>
 
 ## Evaluating Lists
 
@@ -232,9 +271,14 @@ Let's start evaluating, live. Type into the following editor. Click Ctrl-click t
   - try `(odd? 5)` 
   - try `(count [1 2 3])`
 
-XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
-
-
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+ <div class="cm-doc-validator">
+ (fn arithmetic-arity [{:keys [status source-form]}]
+   (when (and (#{:success} status)
+              (#{'(+ 1) '(+) '(*)} source-form))
+     "Consider this either very intuitive, or very unintuitive."))
+ </div>
+</div>
 
 ---
 
@@ -269,12 +313,9 @@ More:
 
 Evaluate these experiments yourself (any surprises?):
 
-  - <div class="cljs-showcase">(inc (dec 1))</div>
-  - `#!clj (odd? (inc (dec 1)))`
-  - `#!clj (= (inc (dec 1)) 1)`
-
-XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
-
+  - <div class="cm-doc" data-cm-doc-no-eval-on-init>(inc (dec 1))</div>
+  - <div class="cm-doc" data-cm-doc-no-eval-on-init>(odd? (inc (dec 1)))</div>
+  - <div class="cm-doc" data-cm-doc-no-eval-on-init>(= (inc (dec 1)) 1)</div>
 
 ---
 ## Keywords
@@ -320,11 +361,9 @@ To give you a taste of where this can go, here they are used as the keys in a ha
 
 Evaluate these experiments yourself (any surprises?):
  
-  - `#!clj (namespace :a)` 
-  - `#!clj (keyword (name :a))`
-  - `#!clj (keyword (namespace :a/b) (name :a/b))`
-
-XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(namespace :a)</div> 
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(keyword (name :a))</div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(keyword (namespace :a/b) (name :a/b))</div>
 
 ---
 
@@ -407,11 +446,11 @@ is evaluated depending on the result of that `test`. One element remains unevalu
 
 Possible experiments: 
 
-  - check if `(if true)` is valid. 
-  - explore what is "truthy", via  `(if "hello" true false)` or `(if [] true false)` or `(if nil true false)`
+  - check if `#!clj (if true)` is valid. 
+  - explore what is "truthy", via  `#!clj (if "hello" true false)` or `#!clj (if [] true false)` or `#!clj (if nil true false)`
 
+<div class="cm-doc" data-cm-doc-no-eval-on-init></div>
 
-XXX inline REPL will go here. In the meantime use [this external one](https://jaredforsyth.com/reepl/)
 
 ---
 ## `#!clj fn`
@@ -481,28 +520,21 @@ The body of the function, `#!clj (+ num 1)`, will be evaluated with the `#!clj n
 
 Try these experiments:
 
-```cljs
-((fn [x] [x x]) 4)
-```
-or
-```cljs
-((fn [x y] {x y}) :a 4)
-```
-or
-```clj
-((fn []))
-```
-or
 
-```cljs
-((fn [yes?] {:a (if yes? "yes")}) true)
-```
+<div class="cm-doc" data-cm-doc-no-eval-on-init>((fn [x] [x x]) 4)</div>
+
+<div class="cm-doc" data-cm-doc-no-eval-on-init>((fn [x y] {x y}) :a 4)</div>
+
+<div class="cm-doc" data-cm-doc-no-eval-on-init>((fn []))</div>
+
+<div class="cm-doc" data-cm-doc-no-eval-on-init>((fn [yes?] {:a (if yes? "yes")}) true)</div>
+
 what if, instead, we called this function with `#!clj false`.
 
 You won't see this written in normal ClojureScript code, because it is weird, but here's a puzzle:
-```clj
-(((fn  [] inc)) 4)
-```
+
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(((fn  [] inc)) 4)</div>
+
 What is the evaluation? Note: there is an extra set of parens around the `#!clj fn` form.
 
 
@@ -660,25 +692,21 @@ evaluates to `#!clj "the pen"`. Phew!
 evaluates to `#!clj {:winner-is "the pen"}`
 
 `#!clj let` is often used within a `#!clj defn`: 
-```clj 
+<div class="cm-doc">
 (defn greet
   [name friendly?]
   (let [greeting (if friendly? "Hello " "Go away ")]
-    [:div greeting name])
-```
+    [:div greeting name]))
+</div>
 
 XXX experiment with greet 
 
-```clj
-(greet "Mum" true)
-```
+<div class="cm-doc" cm-doc-no-eval-on-init>(greet "Mum" true)</div>
 
-```clj
-(greet "Noisy Neighbours" false)
-```
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(greet "Noisy Neighbours" false)</div>
 
 In this particular, we could have got away with no using a `let`, like this: 
-```clj 
+``` clj
 (defn greet
   [name friendly?]
   [:div (if friendly? "Hello " "Go away ") name)

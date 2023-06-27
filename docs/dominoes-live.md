@@ -36,9 +36,11 @@ We'll look at all 70 lines.
 
 Within our single namespace (of 70 lines), we'll need access to both `reagent` and `re-frame`. 
 So, at the top we need this: 
-<pre class="cljs-showcase"><code>(require '[reagent.core :as reagent]
+<div class="cm-doc">
+(require '[reagent.core :as reagent]
          '[reagent.dom :as rdom]
-         '[re-frame.core :as rf])</code></pre>
+         '[re-frame.core :as rf])
+</div>
 
 !!! Note "Live Code Fragment"
     Above, you'll see two vertically stacked boxes. The top one contains the live code. You can edit that code, if you want. 
@@ -88,10 +90,11 @@ To send an event, call `dispatch` with the event vector as the argument.
 ```
 
 For our simple app, we do this ... 
-<pre class="cljs-showcase">(defn dispatch-timer-event        ;; <-- defining a function
+<div class="cm-doc">(defn dispatch-timer-event        ;; <-- defining a function
   []                              ;; <-- no args
   (let [now (js/Date.)]           ;; <-- obtain the current time
-    (rf/dispatch [:timer now])))  ;; <-- dispatch an event</code></pre>
+    (rf/dispatch [:timer now])))  ;; <-- dispatch an event
+</div>
 
 Notes: 
 
@@ -99,7 +102,9 @@ Notes:
   - current time is obtained with `(js/Date.)` which is like `new Date()` in javascript
   - uses `rf/dispatch` - the re-frame API is aliased as `rf` in the namespace declaration above
 
-<pre class="cljs-showcase"><code>(defonce do-timer (js/setInterval dispatch-timer-event 1000))</code></pre>
+<div class="cm-doc">
+(defonce do-timer (js/setInterval dispatch-timer-event 1000))
+</div>
 
 Notes:
 
@@ -188,10 +193,12 @@ the application, which means they return a modified version of `db`.
 
 ### :timer
 
-<pre class="cljs-showcase"><code>(rf/reg-event-db                 
+<div class="cm-doc">
+(rf/reg-event-db                 
   :timer
   (fn [db [_ new-time]]          ;; notice how we destructure the event vector
-    (assoc db :time new-time)))  ;; compute and return the new application state</code></pre>
+    (assoc db :time new-time)))  ;; compute and return the new application state
+</div>
 
 Notes:
 
@@ -215,12 +222,14 @@ This event handler is slightly unusual because it ignores both of its arguments.
 There's nothing in the `event` vector which it needs. Nor is the existing value in 
 `db`. It just wants to plonk a completely new value into `app-db`
 
-<pre class="cljs-showcase"><code>(rf/reg-event-db              ;; sets up initial application state
+<div class="cm-doc">
+(rf/reg-event-db              ;; sets up initial application state
   :initialize
   (fn [ _ _ ]                 ;; arguments not important, so use _
     {:time (js/Date.)         ;; returned value put into app-db 
      :time-color "orange"}))  ;; so the app state will be a map with two keys
-nil</code></pre>
+nil
+</div>
 
 
 For comparison, here's how we could have written this if we **did** care about the existing value in `db`: 
@@ -238,11 +247,13 @@ For comparison, here's how we could have written this if we **did** care about t
 
 When the user enters a new colour value (into the input field) the view will `(dispatch [:time-color-change new-colour])` (more on this below). 
 
-<pre class="cljs-showcase"><code>(rf/reg-event-db
+<div class="cm-doc">
+(rf/reg-event-db
   :time-color-change            
   (fn [db [_ new-color-value]]
     (assoc db :time-color new-color-value)))   ;; compute and return the new application state
-nil</code></pre>
+nil
+</div>
 
 Notes:
 
@@ -310,15 +321,19 @@ Along this reactive chain of dependencies, re-frame will ensure the
 necessary calls are made, at the right time.
 
 Here's the code for defining our 2 subscription handlers:
-<pre class="cljs-showcase"><code>(rf/reg-sub
+<div class="cm-doc">
+(rf/reg-sub
   :time
   (fn [db _]     ;; db is current app state. 2nd unused param is query vector
-    (:time db))) ;; return a query computation over the application state</code></pre>
+    (:time db))) ;; return a query computation over the application state
+</div>
 
-<pre class="cljs-showcase"><code>(rf/reg-sub
+<div class="cm-doc">
+(rf/reg-sub
   :time-color
   (fn [db _]
-    (:time-color db)))</code></pre>
+    (:time-color db)))
+</div>
 
 Both of these queries are trivial. They are known as "accessor", or layer 2, subscriptions. More on that soon.
 
@@ -359,14 +374,16 @@ which would return a `ratom` holding the customer state (a value which might cha
 ## The View Functions 
 
 This view function renders the clock:
-<pre class="cljs-showcase"><code>(defn clock
+<div class="cm-doc">
+(defn clock
   []
   (let [colour @(rf/subscribe [:time-color])
         time   (some-> @(rf/subscribe [:time])
                     .toTimeString
                     (clojure.string/split " ")
                     first)]
-  [:div.example-clock {:style {:color colour}} time]))</code></pre>
+  [:div.example-clock {:style {:color colour}} time]))
+</div>
 
 As you can see, it uses `subscribe` twice to obtain two pieces of data from `app-db`. 
 If either value changes, reagent will automatically re-run this view function, 
@@ -374,15 +391,20 @@ computing new hiccup, which means new DOM.
 
 Using the power of `sci`, we can render just the `clock` component: 
 
-<pre class="cljs-showcase"><code>(rdom/render [clock] (js/document.getElementById "clock"))</code></pre>
+<div class="cm-doc">
+(rdom/render [clock] (js/document.getElementById "clock"))
+</div>
 <div id="clock"></div>
 
 When an event handler changes a value in `app-db`, `clock` will rerender. Try it. 
 Uncomment the following `dispatch` to change the colour. 
-<pre class="cljs-showcase"><code>(comment (rf/dispatch  [:time-color-change "green"]))</code></pre>
+<div class="cm-doc">
+(comment (rf/dispatch  [:time-color-change "green"]))
+</div>
 
 And this view function renders the input field:
-<pre class="cljs-showcase"><code>(defn color-input
+<div class="cm-doc">
+(defn color-input
   []
   (let [gettext (fn [e] (-> e .-target .-value))
         emit    (fn [e] (rf/dispatch [:time-color-change (gettext e)]))]
@@ -391,7 +413,8 @@ And this view function renders the input field:
       [:input {:type "text"
                :style {:border "1px solid #CCC" }
                :value @(rf/subscribe [:time-color])        ;; subscribe
-               :on-change emit}]]))              ;; <---</code></pre>
+               :on-change emit}]]))              ;; <---
+</div>
 
 Notice how it does BOTH a `subscribe` to obtain the current value AND 
 a `dispatch` to say when it has changed (look for `emit`). 
@@ -402,17 +425,20 @@ The user's interaction with the UI is usually a large source of events.
 Notice also how we use `@` in front of `subscribe` to obtain the value out of the subscription. It is almost as if the subscription is an atom holding a value (which can change over time). 
 
 We can render the `color-input` as any other reagent component:
-<pre class="cljs-showcase">(rdom/render [color-input] (js/document.getElementById "color-input"))</code></pre>
+<div class="cm-doc">(rdom/render [color-input] (js/document.getElementById "color-input"))
+</div>
 <div id="color-input"></div>
 
 And then there's a parent `view` to arrange the others. It contains no 
 subscriptions or dispatching of its own:
-<pre class="cljs-showcase"><code>(defn ui
+<div class="cm-doc">
+(defn ui
   []
   [:div
    [:h1 "The time is now:"]
    [clock]
-   [color-input]])</code></pre>
+   [color-input]])
+</div>
 
 !!! Note ""
     `view` functions form a hierarchy, often with 
@@ -436,14 +462,16 @@ It has two tasks:
    `view` - in our case, `ui` -
    onto an existing DOM element (with id `app`). 
 
-<pre class="cljs-showcase"><code>(defn mount-ui
+<div class="cm-doc">
+(defn mount-ui
   []
   (rdom/render [ui]                 ;; mount the application's ui
                   (js/document.getElementById "dominoes-live-app")))
 (defn run
   []
   (rf/dispatch-sync [:initialize])     ;; puts a value into application state
-  (mount-ui))</code></pre>
+  (mount-ui))
+</div>
 
 When it comes to establishing initial application state, you'll
 notice the use of `dispatch-sync`, rather than `dispatch`. This is a simplifying cheat
@@ -453,7 +481,9 @@ structure exists in `app-db` before any subscriptions or event handlers run.
 After `run` is called, the app passively waits for `events`. 
 Nothing happens without an `event`.
 
-<pre class="cljs-showcase"><code>(run)</code></pre>
+<div class="cm-doc">
+(run)
+</div>
 
 The run function renders the app in the DOM element whose id is `dominoes-live-app`: this DOM element is located at the top of the page. 
 This is the element we used to show how the app looks at the top of this page
@@ -461,8 +491,10 @@ This is the element we used to show how the app looks at the top of this page
 To save you the trouble of scrolling up to the top of the page, I decided to render the whole app as a 
 reagent element, just here:
 
-<pre class="cljs-showcase"><code>(rdom/render [ui]
-             (js/document.getElementById "dominoes-live-app-2"))</code></pre>
+<div class="cm-doc">
+(rdom/render [ui]
+             (js/document.getElementById "dominoes-live-app-2"))
+</div>
 <div id="dominoes-live-app-2"></div>
 
 ## T-Shirt Unlocked

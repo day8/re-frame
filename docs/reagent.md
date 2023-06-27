@@ -4,24 +4,32 @@ Clojurescript is ergonomic, stable, functional language
 Look at the front page of https://www.learnreframe.com/
 
 
-<pre class="cljs-showcase"><code>(require '[reagent.dom :as rdom]
+<div class="cm-doc">
+(require '[reagent.dom :as rdom]
          '[re-frame.core :as rf]
-         '[clojure.string :as str])</code></pre>
+         '[clojure.string :as str])
+</div>
 
-<pre class="cljs-showcase"><code>(defn square 
+<div class="cm-doc">
+(defn square
    []
    [:svg {:width "400" :height "110"}
-     [:rect {:width "300" :height "100"}]])</code></pre>
+     [:rect {:width "300" :height "100"}]])
+</div>
 
-<code class=""cljs-showcase">[square]</code></pre>
+<div class="cm-doc">
+[square]
+</div>
 
 
 
-<pre class="cljs-showcase"><code>(defn mount-ui
+<div class="cm-doc">
+(defn mount-ui
   []
   (rdom/render [square]                 ;; mount the application's ui
                (js/document.getElementById "live-app")))
-(mount-ui)</code></pre>
+(mount-ui)
+</div>
 
 
 
