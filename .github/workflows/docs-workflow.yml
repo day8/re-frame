@@ -69,6 +69,56 @@ jobs:
           name: klipse-cljs-cache
           path: docs/klipse/klipse-cljs-cache.tar.xz
 
+  # This job builds the re-frame :docs app and uploads it as an artifact.
+  # The app renders code blocks for the reader reader to edit & evaluate.
+
+  re-frame-docs-app:
+    name: Re-frame Docs App
+    runs-on: ubuntu-20.04
+    container:
+      image: ghcr.io/day8/dockerfile-for-dev-ci-image/dev-ci:1
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout Current Branch
+        uses: actions/checkout@v2
+      - name: Maven cache
+        id: maven-cache
+        uses: actions/cache@v1
+        with:
+          path: /root/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('project.clj', '.github/workflows/**') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Run lein docs
+        if: steps.maven-cache.outputs.cache-hit != 'true'
+        env:
+          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
+          CLOJARS_TOKEN: ${{ secrets.CLOJARS_TOKEN }}
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          lein docs
+      - name: Run lein -o docs
+        if: steps.maven-cache.outputs.cache-hit == 'true'
+        env:
+          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
+          CLOJARS_TOKEN: ${{ secrets.CLOJARS_TOKEN }}
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          lein -o docs
+      - name: Create re-frame-docs App Artifact
+        working-directory: docs
+        run: |
+          tar Jcf re-frame-docs-app.tar.xz js
+      - name: Upload re-frame-docs App Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: re-frame-docs-app
+          path: docs/re-frame-docs-app.tar.xz
+
   # MkDocs is the actual static site generator. It downloads the api-re-frame.core.md and Klipse cache artifacts then generates
   # additional files based on configuration and markdown.
   mkdocs:
@@ -87,13 +137,14 @@ jobs:
         with:
           name: api-re-frame.core.md
           path: docs
-      - name: Download Klipse CLJS Cache Artifact
-        uses: actions/download-artifact@v1
+      - name: Download re-frame-docs App Artifact
+        uses: actions/download-artifact@v2
         with:
-          name: klipse-cljs-cache
-      - name: Extract Klipse CLJS Cache Artifact
-        working-directory: docs/klipse
-        run: tar Jxf ../../klipse-cljs-cache/klipse-cljs-cache.tar.xz
+          name: re-frame-docs-app
+          path: docs
+      - name: Extract re-frame-docs App Artifact
+        working-directory: docs
+        run: tar Jxf re-frame-docs-app.tar.xz
       - name: Build MkDocs Documentation
         run: mkdocs build
       - name: Create MkDocs Artifact
