@@ -72,24 +72,35 @@
   (str/join "\n" (cons (.-message v)
                        (sci/format-stacktrace (sci/stacktrace v)))))
 
-(defn editor-result [{:keys [return-str status] :as eval-result}]
-  [:div {:style {:white-space "pre-wrap"
-                 :margin-top "0.5rem"
-                 :font-size "0.75em"
-                 :padding "0 2px 0 2px"
-                 :background-color (if (success? eval-result) "#eeffee" "#ffeeee")
-                 :color "#444"
-                 :font-family "monospace"}}
-       return-str])
+(defn success? [eval-result] (#{:success :success-promise} (:status eval-result)))
+
+(def green-check [:span {:style {:color "green"}} "✓"])
+(def red-x [:span {:style {:color "red"}} "✗"])
+
+(defn pass-fail [pass?] (if pass? green-check red-x))
+
+(defn editor-result [{:keys [return-str] :as eval-result}
+                     & [{:keys [format]}]]
+  (let [pass? (success? eval-result)
+        format (or format :full)]
+    [:div {:style {:white-space "pre-wrap"
+                   :margin-top "0.5rem"
+                   :padding "0 0.5rem 0 0.5rem"
+                   :background-color (if pass? "#eeffee" "#ffeeee")
+                   :color "#444"
+                   :font-family "monospace"}}
+     [:span {:style {:pointer-events "none"
+                     :user-select "none"}}
+      [pass-fail pass?] " "]
+     (when (or (not pass?) (#{:full} format))
+       [:span {:style {:font-size "0.75em"}} return-str])]))
 
 (defn validation [validators {:keys [source-str status] :as eval-result}]
   (when (and status (seq validators))
     (into [:div {:style {:margin "1rem"}}] ((apply juxt validators) eval-result))))
 
-(defn success? [eval-result] (#{:success :success-promise} (:status eval-result)))
-
 (defn editor
-  [{:keys [source-str eval-result !view validators evaluable? editable? eval-on-init? on-change hover? focus?]}]
+  [{:keys [source-str eval-result !view validators evaluable? editable? eval-on-init? on-change hover? focus? result-format]}]
   (r/with-let
     [eval! (fn [] (p/let [[status return-val] (eval-str (cm-string @!view))]
                    (binding [*print-length* 20]
@@ -132,7 +143,7 @@
                           :padding 2
                           :opacity (if (or @hover? @focus?) 1 0.5)}}
          "eval"]])]
-     [editor-result @eval-result]
+     [editor-result @eval-result {:format result-format}]
      [validation validators @eval-result]
      (when @eval-result [:hr])]
     (finally (.destroy @!view))))
@@ -143,6 +154,7 @@
             :let [editable? (not (.. el -dataset -cmDocNoEdit))
                   evaluable? (not (.. el -dataset -cmDocNoEval))
                   eval-on-init? (not (.. el -dataset -cmDocNoEvalOnInit))
+                  result-format (keyword (or (.. el -dataset -cmDocResultFormat) "full"))
                   validator-els (.getElementsByClassName el "cm-doc-validator")
                   validators (into [] (comp
                                        (map #(.-innerText %))
@@ -154,6 +166,7 @@
                             :editable? editable?
                             :evaluable? evaluable?
                             :eval-on-init? eval-on-init?
+                            :result-format result-format
                             :hover? (r/atom false)
                             :focus? (r/atom false)
                             :source-str (atom (some->> (array-seq (.-childNodes el))

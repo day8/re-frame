@@ -43,8 +43,9 @@ So, at the top we need this:
 </div>
 
 !!! Note "Live Code Fragment"
-    Above, you'll see two vertically stacked boxes. The top one contains the live code. You can edit that code, if you want. 
-    The one below shows the result of evaluating that code. In this particular case, evaluating a `ns` gives nil which is not that interesting. 
+    Above, you'll see a live code editor. You can change the code, if you want.
+    The colored box at the bottom shows the result of evaluating that code.
+    In this particular case, evaluating a `ns` gives nil which is not that interesting.
 
 ## The Data Schema
 
@@ -90,7 +91,8 @@ To send an event, call `dispatch` with the event vector as the argument.
 ```
 
 For our simple app, we do this ... 
-<div class="cm-doc">(defn dispatch-timer-event        ;; <-- defining a function
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+(defn dispatch-timer-event        ;; <-- defining a function
   []                              ;; <-- no args
   (let [now (js/Date.)]           ;; <-- obtain the current time
     (rf/dispatch [:timer now])))  ;; <-- dispatch an event
@@ -193,7 +195,7 @@ the application, which means they return a modified version of `db`.
 
 ### :timer
 
-<div class="cm-doc">
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-event-db                 
   :timer
   (fn [db [_ new-time]]          ;; notice how we destructure the event vector
@@ -222,13 +224,12 @@ This event handler is slightly unusual because it ignores both of its arguments.
 There's nothing in the `event` vector which it needs. Nor is the existing value in 
 `db`. It just wants to plonk a completely new value into `app-db`
 
-<div class="cm-doc">
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-event-db              ;; sets up initial application state
   :initialize
   (fn [ _ _ ]                 ;; arguments not important, so use _
     {:time (js/Date.)         ;; returned value put into app-db 
      :time-color "orange"}))  ;; so the app state will be a map with two keys
-nil
 </div>
 
 
@@ -247,12 +248,11 @@ For comparison, here's how we could have written this if we **did** care about t
 
 When the user enters a new colour value (into the input field) the view will `(dispatch [:time-color-change new-colour])` (more on this below). 
 
-<div class="cm-doc">
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-event-db
   :time-color-change            
   (fn [db [_ new-color-value]]
     (assoc db :time-color new-color-value)))   ;; compute and return the new application state
-nil
 </div>
 
 Notes:
