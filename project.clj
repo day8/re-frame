@@ -26,7 +26,7 @@
                      :plugins      [[com.github.liquidz/antq "RELEASE"]
                                     [lein-shell              "0.5.0"]]
                      :antq         {}}
-             :docs {:dependencies [[org.babashka/sci "0.7.39"]
+             :docs {:dependencies [[org.babashka/sci "0.8.40"]
                                    [funcool/promesa "10.0.575"]]}}
 
   :clean-targets  [:target-path

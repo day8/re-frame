@@ -4,10 +4,11 @@ Clojurescript is ergonomic, stable, functional language
 Look at the front page of https://www.learnreframe.com/
 
 
-<div class="cm-doc">
-(require '[reagent.dom :as rdom]
-         '[re-frame.core :as rf]
-         '[clojure.string :as str])
+<div class="cljs-showcase">
+(ns simple.core
+  (:require [reagent.dom :as rdom]
+            [re-frame.core :as rf]
+            [clojure.string :as str])))
 </div>
 
 <div class="cm-doc">
