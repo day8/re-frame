@@ -35,9 +35,13 @@
                      :ns-aliases {'clojure.pprint 'cljs.pprint}})]
   (ctx-store/reset-ctx! ctx))
 
-(defn eval-str [source-str]
+(def last-ns (volatile! nil))
+
+(defn eval-str [source-str & [opts]]
   (try
-    (let [v (sci/eval-string* (ctx-store/get-ctx) source-str)]
+    (let [{:keys [val ns]} (sci/eval-string+ (ctx-store/get-ctx) source-str {:ns @last-ns})
+          v val]
+      (vreset! last-ns ns)
       (if (instance? js/Promise v)
         (-> v
             (.then

@@ -37,9 +37,10 @@ We'll look at all 70 lines.
 Within our single namespace (of 70 lines), we'll need access to both `reagent` and `re-frame`. 
 So, at the top we need this: 
 <div class="cm-doc">
-(require '[reagent.core :as reagent]
-         '[reagent.dom :as rdom]
-         '[re-frame.core :as rf])
+(ns re-frame.simple
+  (:require [reagent.core :as reagent]
+            [reagent.dom :as rdom]
+            [re-frame.core :as rf]))
 </div>
 
 !!! Note "Live Code Fragment"
