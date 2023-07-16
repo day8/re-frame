@@ -1514,7 +1514,13 @@
 </blockquote>
 <h4>Breaking</h4>
 <ul>
+<li><code>re-frame.std-interceptors/path</code> now keeps a <code>:re-frame.db/path-history</code> key in the context, not a <code>:re-frame-path/db-store</code> key. This shouldn't affect users, unless you're directly hacking the event loop.</li>
 <li><a href="https://github.com/day8/re-frame/pull/763">763</a> on detecting an incorrect event structure, the <code>unwrap</code> interceptor now exceptions instead of writing an error to <code>js/console</code> and continuing.</li>
+</ul>
+<h4>Added</h4>
+<ul>
+<li>Interceptors now have an optional <code>:comment</code> key. It's a no-op.</li>
+<li><code>re-frame.std-interceptors/path</code> now remembers the path it uses in a <code>:comment</code>. ((re-frame-10x#165)[https://github.com/day8/re-frame-10x/issues/165])</li>
 </ul>
                 
               

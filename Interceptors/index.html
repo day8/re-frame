@@ -1791,6 +1791,7 @@ interceptors will be "executed".  And that's how an event gets handled.</p>
 <h2 id="the-links-of-the-chain">The Links Of The Chain<a class="headerlink" href="#the-links-of-the-chain" title="Permanent link">&para;</a></h2>
 <p>Each interceptor has this form:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:id</span>      <span class="ss">:something</span>             <span class="c1">;; decorative only - can be ignored</span>
+ <span class="ss">:comment</span> <span class="p">{</span><span class="nv">...</span><span class="p">}</span>                  <span class="c1">;; also decorative, optional</span>
  <span class="ss">:before</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span> <span class="nv">...</span><span class="p">)</span>     <span class="c1">;; returns a possibly modified `context`</span>
  <span class="ss">:after</span>   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span> <span class="nv">...</span><span class="p">)}</span>    <span class="c1">;; returns a possibly modified `context`</span>
 </code></pre></div>
