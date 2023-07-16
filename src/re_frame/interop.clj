@@ -35,7 +35,7 @@
 
 (def after-render next-tick)
 
-(def debug-enabled? true)
+(def is-debug-enabled? true)
 
 (defn ratom [x]
   (atom x))

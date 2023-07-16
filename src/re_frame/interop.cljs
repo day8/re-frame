@@ -17,11 +17,13 @@
 
 (def after-render reagent.core/after-render)
 
+(goog-define ^boolean debug-enabled? goog/DEBUG)
+
 ;; Make sure the Google Closure compiler sees this as a boolean constant,
 ;; otherwise Dead Code Elimination won't happen in `:advanced` builds.
 ;; Type hints have been liberally sprinkled.
 ;; https://developers.google.com/closure/compiler/docs/js-for-compiler
-(def ^boolean debug-enabled? "@define {boolean}" ^boolean goog/DEBUG)
+(def ^boolean is-debug-enabled? "@define {boolean}" debug-enabled?)
 
 (defn ratom [x]
   (reagent.core/atom x))

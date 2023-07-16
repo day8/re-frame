@@ -1,7 +1,7 @@
 (ns re-frame.interceptor
   (:require
    [re-frame.loggers :refer [console]]
-   [re-frame.interop :refer [empty-queue debug-enabled?]]
+   [re-frame.interop :refer [empty-queue is-debug-enabled?]]
    [re-frame.trace :as trace :include-macros true]
    [clojure.set :as set]))
 
@@ -14,7 +14,7 @@
 
 (defn ->interceptor
   [& {:as m :keys [id before after]}]
-  (when debug-enabled?
+  (when is-debug-enabled?
     (if-let [unknown-keys (seq (set/difference
                                 (-> m keys set)
                                 mandatory-interceptor-keys))]
