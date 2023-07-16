@@ -6,7 +6,6 @@
              [re-frame.loggers :refer [console]]
              [re-frame.settings :as settings]))
 
-
 ;; kinds of handlers
 (def kinds #{:event :fx :cofx :sub})
 
@@ -14,7 +13,6 @@
 ;; Contains a two layer map, keyed first by `kind` (of handler), and then `id` of handler.
 ;; Leaf nodes are handlers.
 (def kind->id->handler  (atom {}))
-
 
 (defn get-handler
 
@@ -32,7 +30,6 @@
          (console :error "re-frame: no" (str kind) "handler registered for:" id)))
      handler)))
 
-
 (defn register-handler
   [kind id handler-fn]
   (when debug-enabled?                                       ;; This is in a separate when so Closure DCE can run
@@ -40,7 +37,6 @@
       (console :warn "re-frame: overwriting" (str kind) "handler for:" id)))   ;; allow it, but warn. Happens on figwheel reloads.
   (swap! kind->id->handler assoc-in [kind id] handler-fn)
   handler-fn)    ;; note: returns the just registered handler
-
 
 (defn clear-handlers
   ([]            ;; clear all kinds

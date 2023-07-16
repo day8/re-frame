@@ -1,7 +1,7 @@
 (ns re-frame.settings
   (:require
-    [re-frame.interop :as interop]
-    [re-frame.loggers :refer [console]]))
+   [re-frame.interop :as interop]
+   [re-frame.loggers :refer [console]]))
 
 (def defaults
   {:loaded?             false
@@ -11,7 +11,7 @@
   (atom defaults))
 
 (interop/on-load
-  #(swap! store (fn [m] (assoc m :loaded? true))))
+ #(swap! store (fn [m] (assoc m :loaded? true))))
 
 (defn loaded?
   []
@@ -20,17 +20,17 @@
 (defn -replace-global-interceptor
   [global-interceptors interceptor]
   (reduce
-    (fn [ret existing-interceptor]
-      (if (= (:id interceptor)
-             (:id existing-interceptor))
-        (do
-          (when interop/debug-enabled?
-            (when (not (loaded?))
-              (console :warn "re-frame: replacing duplicate global interceptor id: " (:id interceptor))))
-          (conj ret interceptor))
-        (conj ret existing-interceptor)))
-    interop/empty-queue
-    global-interceptors))
+   (fn [ret existing-interceptor]
+     (if (= (:id interceptor)
+            (:id existing-interceptor))
+       (do
+         (when interop/debug-enabled?
+           (when (not (loaded?))
+             (console :warn "re-frame: replacing duplicate global interceptor id: " (:id interceptor))))
+         (conj ret interceptor))
+       (conj ret existing-interceptor)))
+   interop/empty-queue
+   global-interceptors))
 
 (defn reg-global-interceptor
   [{:keys [id] :as interceptor}]

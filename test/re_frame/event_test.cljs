@@ -7,24 +7,23 @@
 
 ;; disabled as it doesn't really test anything
 #_(deftest test-event-def
-  "tests that an error thrown generates an informational warning"
-  (re-frame/clear-all-events!)
+    "tests that an error thrown generates an informational warning"
+    (re-frame/clear-all-events!)
 
-  (re-frame/reg-event-db
-    :test-event
-    (fn [db [event-kw stack]]
-      (throw (js/Error. "thrown in handler"))
-      db))
+    (re-frame/reg-event-db
+     :test-event
+     (fn [db [event-kw stack]]
+       (throw (js/Error. "thrown in handler"))
+       db))
 
-  (defn test-fn1
-    []
-    (re-frame/dispatch [:test-event]))
+    (defn test-fn1
+      []
+      (re-frame/dispatch [:test-event]))
 
-  (defn test-fn2
-    []
-    (test-fn1))
+    (defn test-fn2
+      []
+      (test-fn1))
 
-  (test-fn2)
-  )
+    (test-fn2))
 
 

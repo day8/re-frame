@@ -1,10 +1,9 @@
 (ns re-frame.interceptor
   (:require
-    [re-frame.loggers :refer [console]]
-    [re-frame.interop :refer [empty-queue debug-enabled?]]
-    [re-frame.trace :as trace :include-macros true]
-    [clojure.set :as set]))
-
+   [re-frame.loggers :refer [console]]
+   [re-frame.interop :refer [empty-queue debug-enabled?]]
+   [re-frame.trace :as trace :include-macros true]
+   [clojure.set :as set]))
 
 (def mandatory-interceptor-keys #{:id :after :before})
 
@@ -12,7 +11,6 @@
   [m]
   (and (map? m)
        (= mandatory-interceptor-keys (-> m keys set))))
-
 
 (defn ->interceptor
   [& {:as m :keys [id before after]}]
@@ -63,13 +61,11 @@
 
 ;; -- Execute Interceptor Chain  ------------------------------------------------------------------
 
-
 (defn- invoke-interceptor-fn
   [context interceptor direction]
   (if-let [f (get interceptor direction)]
     (f context)
     context))
-
 
 (defn- invoke-interceptors
   "Loop over all interceptors, calling `direction` function on each,
@@ -107,27 +103,24 @@
                              :stack (conj stack interceptor))
                       (invoke-interceptor-fn interceptor direction)))))))))
 
-
 (defn enqueue
   [context interceptors]
   (update context :queue
           (fnil into empty-queue)
           interceptors))
 
-
 (defn- context
   "Create a fresh context"
   ([event interceptors]
    (-> {}
-      (assoc-coeffect :event event)
+       (assoc-coeffect :event event)
       ;; Some interceptors, like `trim-v` and `unwrap`, alter event so capture
       ;; the original for use cases such as tracing.
-      (assoc-coeffect :original-event event)
-      (enqueue interceptors)))
+       (assoc-coeffect :original-event event)
+       (enqueue interceptors)))
   ([event interceptors db]      ;; only used in tests, probably a hack, remove ?  XXX
    (-> (context event interceptors)
        (assoc-coeffect :db db))))
-
 
 (defn- change-direction
   "Called on completion of `:before` processing, this function prepares/modifies
@@ -141,7 +134,6 @@
   (-> context
       (dissoc :queue)
       (enqueue (:stack context))))
-
 
 (defn execute
   "Executes the given chain (coll) of interceptors.
@@ -194,7 +186,7 @@
    functions through which the context is threaded."
   [event-v interceptors]
   (trace/merge-trace!
-    {:tags {:interceptors interceptors}})
+   {:tags {:interceptors interceptors}})
   (-> (context event-v interceptors)
       (invoke-interceptors :before)
       change-direction

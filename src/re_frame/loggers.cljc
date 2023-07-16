@@ -9,7 +9,6 @@
                            (first args)
                            (str/join " " args)))))
 
-
 ;; XXX should loggers be put in the registrar ??
 (def ^:private loggers
   "Holds the current set of logging functions.
@@ -38,7 +37,6 @@
   [level & args]
   (assert (contains? @loggers level) (str "re-frame: log called with unknown level: " level))
   (apply (level @loggers) args))
-
 
 (defn set-loggers!
   [new-loggers]

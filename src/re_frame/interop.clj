@@ -1,7 +1,6 @@
 (ns re-frame.interop
   (:import [java.util.concurrent Executor Executors]))
 
-
 ;; The purpose of this file is to provide JVM-runnable implementations of the
 ;; CLJS equivalents in interop.cljs.
 ;;

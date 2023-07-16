@@ -1,14 +1,13 @@
 (ns re-frame.fx
   (:require
-    [re-frame.router      :as router]
-    [re-frame.db          :refer [app-db]]
-    [re-frame.interceptor :refer [->interceptor]]
-    [re-frame.interop     :refer [set-timeout!]]
-    [re-frame.events      :as events]
-    [re-frame.registrar   :refer [get-handler clear-handlers register-handler]]
-    [re-frame.loggers     :refer [console]]
-    [re-frame.trace :as trace :include-macros true]))
-
+   [re-frame.router      :as router]
+   [re-frame.db          :refer [app-db]]
+   [re-frame.interceptor :refer [->interceptor]]
+   [re-frame.interop     :refer [set-timeout!]]
+   [re-frame.events      :as events]
+   [re-frame.registrar   :refer [get-handler clear-handlers register-handler]]
+   [re-frame.loggers     :refer [console]]
+   [re-frame.trace :as trace :include-macros true]))
 
 ;; -- Registration ------------------------------------------------------------
 
@@ -44,20 +43,20 @@
   You cannot rely on the ordering in which effects are executed, other than that
   `:db` is guaranteed to be executed first."
   (->interceptor
-    :id :do-fx
-    :after (fn do-fx-after
-             [context]
-             (trace/with-trace
-               {:op-type :event/do-fx}
-               (let [effects            (:effects context)
-                     effects-without-db (dissoc effects :db)]
+   :id :do-fx
+   :after (fn do-fx-after
+            [context]
+            (trace/with-trace
+              {:op-type :event/do-fx}
+              (let [effects            (:effects context)
+                    effects-without-db (dissoc effects :db)]
                  ;; :db effect is guaranteed to be handled before all other effects.
-                 (when-let [new-db (:db effects)]
-                   ((get-handler kind :db false) new-db))
-                 (doseq [[effect-key effect-value] effects-without-db]
-                   (if-let [effect-fn (get-handler kind effect-key false)]
-                     (effect-fn effect-value)
-                     (console :warn "re-frame: no handler registered for effect:" effect-key ". Ignoring."))))))))
+                (when-let [new-db (:db effects)]
+                  ((get-handler kind :db false) new-db))
+                (doseq [[effect-key effect-value] effects-without-db]
+                  (if-let [effect-fn (get-handler kind effect-key false)]
+                    (effect-fn effect-value)
+                    (console :warn "re-frame: no handler registered for effect:" effect-key ". Ignoring."))))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 
@@ -83,12 +82,12 @@
     (set-timeout! #(router/dispatch dispatch) ms)))
 
 (reg-fx
-  :dispatch-later
-  (fn [value]
-    (if (map? value)
-      (dispatch-later value)
-      (doseq [effect (remove nil? value)]
-        (dispatch-later effect)))))
+ :dispatch-later
+ (fn [value]
+   (if (map? value)
+     (dispatch-later value)
+     (doseq [effect (remove nil? value)]
+       (dispatch-later effect)))))
 
 ;; :fx
 ;;
@@ -105,16 +104,16 @@
 ;;
 
 (reg-fx
-  :fx
-  (fn [seq-of-effects]
-    (if-not (sequential? seq-of-effects)
-      (console :warn "re-frame: \":fx\" effect expects a seq, but was given " (type seq-of-effects))
-      (doseq [[effect-key effect-value] (remove nil? seq-of-effects)]
-        (when (= :db effect-key)
-          (console :warn "re-frame: \":fx\" effect should not contain a :db effect"))
-        (if-let [effect-fn (get-handler kind effect-key false)]
-          (effect-fn effect-value)
-          (console :warn "re-frame: in \":fx\" effect found " effect-key " which has no associated handler. Ignoring."))))))
+ :fx
+ (fn [seq-of-effects]
+   (if-not (sequential? seq-of-effects)
+     (console :warn "re-frame: \":fx\" effect expects a seq, but was given " (type seq-of-effects))
+     (doseq [[effect-key effect-value] (remove nil? seq-of-effects)]
+       (when (= :db effect-key)
+         (console :warn "re-frame: \":fx\" effect should not contain a :db effect"))
+       (if-let [effect-fn (get-handler kind effect-key false)]
+         (effect-fn effect-value)
+         (console :warn "re-frame: in \":fx\" effect found " effect-key " which has no associated handler. Ignoring."))))))
 
 ;; :dispatch
 ;;
@@ -124,12 +123,11 @@
 ;;   {:dispatch [:event-id "param"] }
 
 (reg-fx
-  :dispatch
-  (fn [value]
-    (if-not (vector? value)
-      (console :error "re-frame: ignoring bad :dispatch value. Expected a vector, but got:" value)
-      (router/dispatch value))))
-
+ :dispatch
+ (fn [value]
+   (if-not (vector? value)
+     (console :error "re-frame: ignoring bad :dispatch value. Expected a vector, but got:" value)
+     (router/dispatch value))))
 
 ;; :dispatch-n
 ;;
@@ -145,12 +143,11 @@
 ;;                       [:another-one])}
 ;;
 (reg-fx
-  :dispatch-n
-  (fn [value]
-    (if-not (sequential? value)
-      (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, but got:" value)
-      (doseq [event (remove nil? value)] (router/dispatch event)))))
-
+ :dispatch-n
+ (fn [value]
+   (if-not (sequential? value)
+     (console :error "re-frame: ignoring bad :dispatch-n value. Expected a collection, but got:" value)
+     (doseq [event (remove nil? value)] (router/dispatch event)))))
 
 ;; :deregister-event-handler
 ;;
@@ -163,13 +160,12 @@
 ;;   {:deregister-event-handler [:one-id :another-id]}
 ;;
 (reg-fx
-  :deregister-event-handler
-  (fn [value]
-    (let [clear-event (partial clear-handlers events/kind)]
-      (if (sequential? value)
-        (doseq [event value] (clear-event event))
-        (clear-event value)))))
-
+ :deregister-event-handler
+ (fn [value]
+   (let [clear-event (partial clear-handlers events/kind)]
+     (if (sequential? value)
+       (doseq [event value] (clear-event event))
+       (clear-event value)))))
 
 ;; :db
 ;;
@@ -179,8 +175,8 @@
 ;;   {:db  {:key1 value1 key2 value2}}
 ;;
 (reg-fx
-  :db
-  (fn [value]
-    (if-not (identical? @app-db value)
-      (reset! app-db value))))
+ :db
+ (fn [value]
+   (if-not (identical? @app-db value)
+     (reset! app-db value))))
 

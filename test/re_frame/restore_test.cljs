@@ -12,14 +12,14 @@
 
 (defn register-test-subs []
   (reg-sub
-    :test-sub
-    (fn [db ev]
-      (:test-sub db)))
+   :test-sub
+   (fn [db ev]
+     (:test-sub db)))
 
   (reg-sub
-    :test-sub2
-    (fn [db ev]
-      (:test-sub2 db))))
+   :test-sub2
+   (fn [db ev]
+     (:test-sub2 db))))
 
 (deftest make-restore-fn-test
   (testing "no existing subs, then making one subscription"
