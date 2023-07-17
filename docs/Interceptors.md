@@ -225,6 +225,14 @@ In advanced cases, these two values, within a `context`, can be modified by the
 So interceptors can be dynamically added
 and removed from `:queue` and `:stack` by Interceptors already in the chain.
 
+## Self Documenting
+
+An interceptor has a required `:id` key, and an optional `:comment` key.
+Re-frame itself does not take any special action in response to these keys.
+Instead, they can offer situational awareness to you or your tools.
+For instance, the [standard interceptor](#appendix-built-in-interceptors)
+__path__ adds a `:comment` describing _which_ path it goes to.
+
 ## Credit
 
 > All truths are easy to understand once they are discovered <br>
@@ -391,7 +399,7 @@ And some Interceptor factories (functions that return Interceptors):
 
   - __enrich__:  perform additional computations (validations?), after the handler has run. More derived data flowing.
   - __after__: perform side effects, after a handler has run.  Eg: use it to report if the data in `app-db` matches a schema.
-  - __path__:  a convenience. Simplifies our handlers. Acts almost like `update-in`.
+  - __path__:  a convenience. Simplifies our handlers. Acts almost like `update-in`, to get and set a subtree of the app-db. Stores the path of the subtree in its `:comment`.
 
 In addition, [a Library like re-frame-undo](https://github.com/day8/re-frame-undo) provides an Interceptor
 factory called `undoable` which checkpoints app state.
