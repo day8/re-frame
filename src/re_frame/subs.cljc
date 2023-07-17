@@ -1,7 +1,7 @@
 (ns re-frame.subs
   (:require
    [re-frame.db        :refer [app-db]]
-   [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref? dispose! reagent-id reactive?]]
+   [re-frame.interop   :refer [add-on-dispose! is-debug-enabled? make-reaction ratom? deref? dispose! reagent-id reactive?]]
    [re-frame.loggers   :refer [console]]
    [re-frame.utils     :refer [first-in-vector]]
    [re-frame.registrar :refer [get-handler clear-handlers register-handler]]
@@ -48,7 +48,7 @@
                                      query-cache)))))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction (fn [query-cache]
-                             (when debug-enabled?
+                             (when is-debug-enabled?
                                (when (contains? query-cache cache-key)
                                  (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" cache-key)))
                              (assoc query-cache cache-key r)))
@@ -65,7 +65,7 @@
 
 (defn warn-when-not-reactive
   []
-  (when (and debug-enabled? (not (reactive?)))
+  (when (and is-debug-enabled? (not (reactive?)))
     (console :warn
              "re-frame: Subscribe was called outside of a reactive context.\n"
              "See: https://day8.github.io/re-frame/FAQs/UseASubscriptionInAJsEvent/\n"
@@ -105,7 +105,7 @@
        (let [query-id   (first-in-vector query)
              handler-fn (get-handler kind query-id)]
          (trace/merge-trace! {:tags {:cached? false}})
-         (when debug-enabled?
+         (when is-debug-enabled?
            (when-let [not-reactive (not-empty (remove ratom? dynv))]
              (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom:" not-reactive)))
          (if (nil? handler-fn)

@@ -24,4 +24,8 @@
    :output-dir "resources/public/js"
    :modules
    {:client
-    {:init-fn simple.core/run}}}}}
+    {:init-fn simple.core/run}}
+   :dev
+   {:compiler-options
+    {:closure-defines
+     {re-frame.interop.debug-enabled? false}}}}}}

@@ -24,7 +24,7 @@
      (if (= (:id interceptor)
             (:id existing-interceptor))
        (do
-         (when interop/debug-enabled?
+         (when interop/is-debug-enabled?
            (when (not (loaded?))
              (console :warn "re-frame: replacing duplicate global interceptor id: " (:id interceptor))))
          (conj ret interceptor))

@@ -2,7 +2,7 @@
   "In many places, re-frame asks you to associate an `id` (keyword)
   with a `handler` (function).  This namespace contains the
   central registry of such associations."
-  (:require  [re-frame.interop :refer [debug-enabled?]]
+  (:require  [re-frame.interop :refer [is-debug-enabled?]]
              [re-frame.loggers :refer [console]]
              [re-frame.settings :as settings]))
 
@@ -25,14 +25,14 @@
 
   ([kind id required?]
    (let [handler (get-handler kind id)]
-     (when debug-enabled?                          ;; This is in a separate `when` so Closure DCE can run ...
+     (when is-debug-enabled?                          ;; This is in a separate `when` so Closure DCE can run ...
        (when (and required? (nil? handler))        ;; ...otherwise you'd need to type-hint the `and` with a ^boolean for DCE.
          (console :error "re-frame: no" (str kind) "handler registered for:" id)))
      handler)))
 
 (defn register-handler
   [kind id handler-fn]
-  (when debug-enabled?                                       ;; This is in a separate when so Closure DCE can run
+  (when is-debug-enabled?                                       ;; This is in a separate when so Closure DCE can run
     (when (and (not (settings/loaded?)) (get-handler kind id false))
       (console :warn "re-frame: overwriting" (str kind) "handler for:" id)))   ;; allow it, but warn. Happens on figwheel reloads.
   (swap! kind->id->handler assoc-in [kind id] handler-fn)
