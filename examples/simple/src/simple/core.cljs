@@ -25,7 +25,7 @@
  :initialize                 ;; usage:  (dispatch [:initialize])
  (fn [_ _]                   ;; the two parameters are not important here, so use _
    {:time (js/Date.)         ;; What it returns becomes the new application state
-    :time-color "#f88"}))    ;; so the application state will initially be a map with two keys
+    :time-color "orange"}))  ;; so the application state will initially be a map with two keys
 
 
 (rf/reg-event-db                ;; usage:  (dispatch [:time-color-change 34562])
@@ -57,25 +57,28 @@
 
 (defn clock
   []
-  [:div.example-clock
-   {:style {:color @(rf/subscribe [:time-color])}}
-   (-> @(rf/subscribe [:time])
-       .toTimeString
-       (str/split " ")
-       first)])
+  (let [colour @(rf/subscribe [:time-color])
+        time   (-> @(rf/subscribe [:time])
+                   .toTimeString
+                   (str/split " ")
+                   first)]
+    [:div.example-clock {:style {:color colour}} time]))
 
 (defn color-input
   []
-  [:div.color-input
-   "Time color: "
-   [:input {:type "text"
-            :value @(rf/subscribe [:time-color])
-            :on-change #(rf/dispatch [:time-color-change (-> % .-target .-value)])}]])  ;; <---
+  (let [gettext (fn [e] (-> e .-target .-value))
+        emit    (fn [e] (rf/dispatch [:time-color-change (gettext e)]))]
+    [:div.color-input
+     "Display color: "
+     [:input {:type "text"
+              :style {:border "1px solid #CCC" }
+              :value @(rf/subscribe [:time-color])        ;; subscribe
+              :on-change emit}]]))  ;; <---
 
 (defn ui
   []
   [:div
-   [:h1 "Hello world, it is now"]
+   [:h1 "The time is now:"]
    [clock]
    [color-input]])
 
@@ -98,4 +101,3 @@
   []
   (rf/dispatch-sync [:initialize]) ;; put a value into application state
   (render))                         ;; mount the application's ui into '<div id="app" />'
-
