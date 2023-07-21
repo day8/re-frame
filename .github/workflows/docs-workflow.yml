@@ -95,6 +95,7 @@ jobs:
     name: MkDocs
     needs:
       - ns-to-markdown
+      - re-frame-docs-app
     runs-on: ubuntu-22.04
     container:
       image: "squidfunk/mkdocs-material:5.5.9"
