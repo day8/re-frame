@@ -10,8 +10,8 @@ The "simple" one.
 Within the re-frame repository's `/examples` folder is an app 
 called [/simple](https://github.com/day8/re-frame/tree/master/examples/simple).
 
-It has 70 lines of code in a single [namespace](https://github.com/day8/re-frame/blob/master/examples/simple/src/simple/core.cljs).
-We'll look at all 70 lines.
+It has 70 lines of code in [a single namespace](https://github.com/day8/re-frame/blob/master/examples/simple/src/simple/core.cljs).
+Below, we'll look at all 70 lines.
 
 !!! Info ""
     Below, you should see the app running live. <br>
@@ -34,8 +34,8 @@ We'll look at all 70 lines.
 
 ## The Namespace
 
-Within our single namespace (of 70 lines), we'll need access to both `reagent` and `re-frame`. 
-So, at the top we need this: 
+Within our single namespace (of 70 lines), we'll need to use both `reagent` and `re-frame`. 
+So, at the top, within the `ns` we'll need to require them: 
 <div class="cm-doc">
 (ns re-frame.simple
   (:require [reagent.core :as reagent]
@@ -44,17 +44,17 @@ So, at the top we need this:
 </div>
 
 !!! Note "Live Code Fragment"
-    Above, you'll see a live code editor. You can change the code, if you want.
-    The colored box at the bottom shows the result of evaluating that code.
-    In this particular case, evaluating a `ns` gives nil which is not that interesting.
+    Above, the code is provided in an editor. You can change the code if you want. And then press the "eval" button. 
+    Below the editor, a green-backgrounded box shows if the code was evaluated successfully (a tick is shown) and, if so, the value of that evaluation. of the code. 
+    In this case, evaluating a `ns` gives `nil`, which is not very interesting.
 
 ## The Data Schema
 
-Now, normally, I'd strongly recommended that you write a quality schema
+Now, normally, I'd strongly recommend that you write a quality schema
 for your application state (the data stored in `app-db`). But,
-here, to minimise cognitive load, we'll cut that corner.
+here, we'll cut that corner to minimise cognitive load.
 
-But, we can't cut it completely. You'll still need an
+But we can't cut it completely. You'll still need an
 informal description, and here it is ... `app-db` will contain
 a two-key map like this:
 ```clj
@@ -71,8 +71,8 @@ re-frame uses a vector format for events. For example:
 [:time-color-change "red"]
 ```
 
-The first element in the vector is a keyword which identifies the `kind` of `event`.
-Further elements are optional, and can provide additional data
+The first element in the vector is a keyword that identifies the `kind` of `event`.
+Further elements are optional and can provide additional data
 associated with the event. The additional value above, `"red"`, is
 presumably the colour.
 
@@ -101,9 +101,9 @@ For our simple app, we do this ...
 
 Notes: 
 
-  - ignore the lower box. When defining a function, the return value is not interesting.
-  - current time is obtained with `(js/Date.)` which is like `new Date()` in javascript
-  - uses `rf/dispatch` - the re-frame API is aliased as `rf` in the namespace declaration above
+  - because `defn` doesn't return anything of interest, you can ignore that yellow box below the code.
+  - the current time is obtained with `(js/Date.)` which is the equivalent of `new Date()` in javascript.
+  - uses `rf/dispatch` - the re-frame API is aliased as `rf` in the namespace declaration in the first few lines of the namespace.
 
 <div class="cm-doc">
 (defonce do-timer (js/setInterval dispatch-timer-event 1000))
@@ -114,9 +114,9 @@ Notes:
   - `setInterval` is used to call `dispatch-timer-event` every second 
   - `defonce` is like `def` but it will ensure that only one timer is ever created. Even when doing hot reloading.
 
-A timer is an unusual source of events. Usually, it is an app's UI widgets which dispatch events 
-(in response to user actions), or an HTTP POST's on-success handler, or a websocket which gets a new packet. 
-So, "simple" is a little unusual. Moving on. 
+A timer is an unusual source of events. Usually, it is an app's UI widgets that dispatch events 
+(in response to user actions), or an HTTP POST's on-success handler or a websocket which gets a new packet. 
+So, this "simple" app is unusual. Moving on. 
 
 
 ### After dispatch 
@@ -314,9 +314,9 @@ to perform the query over the application state.
 
 Each time application state changes, `a-query-fn` will be
 called again to compute a new materialised view (a new computation over `app-db`)
-and that new value will be given to all `view` functions which are subscribed
+and that new value will be given to all `view` functions that are subscribed
 to `:some-query-id`. These `view` functions will then be called to compute the 
-new DOM state (because the views depend on query results which have changed).
+new DOM state (because the views depend on query results that have changed).
 
 Along this reactive chain of dependencies, re-frame will ensure the 
 necessary calls are made, at the right time.
@@ -325,7 +325,7 @@ Here's the code for defining our 2 subscription handlers:
 <div class="cm-doc">
 (rf/reg-sub
   :time
-  (fn [db _]     ;; db is current app state. 2nd unused param is query vector
+  (fn [db _]     ;; db is current app state. 2nd unused param is the query vector
     (:time db))) ;; return a query computation over the application state
 </div>
 
@@ -336,7 +336,7 @@ Here's the code for defining our 2 subscription handlers:
     (:time-color db)))
 </div>
 
-Both of these queries are trivial. They are known as "accessor", or layer 2, subscriptions. More on that soon.
+Both of these queries are trivial. They are known as "accessors", or layer 2, subscriptions. More on that soon.
 
 ## View Functions
 
@@ -359,14 +359,14 @@ So `subscribe` takes one argument, assumed to be a vector.
 
 The first element in the vector identifies the query, 
 and the other elements are optional
-query parameters. With a traditional database a query might be:
+query parameters. With a traditional database, a query might be:
 ```sql
 select * from customers where name="blah"
 ```
 
 In re-frame, that would look like:
    `(subscribe  [:customer-query "blah"])`,
-which would return a `ratom` holding the customer state (a value which might change over time!).
+which would return a `ratom` holding the customer state (a value that might change over time!).
 
 !!! Warning "Rookie Mistake"
     Because subscriptions return a `ratom` (a Reagent atom), they must always be dereferenced to 
@@ -387,7 +387,7 @@ This view function renders the clock:
 </div>
 
 As you can see, it uses `subscribe` twice to obtain two pieces of data from `app-db`. 
-If either value changes, reagent will automatically re-run this view function, 
+If either value changes, Reagent will automatically re-run this view function, 
 computing new hiccup, which means new DOM.
 
 Using the power of `sci`, we can render just the `clock` component: 
@@ -398,7 +398,7 @@ Using the power of `sci`, we can render just the `clock` component:
 <div id="clock"></div>
 
 When an event handler changes a value in `app-db`, `clock` will rerender. Try it. 
-Uncomment the following `dispatch` to change the colour. 
+Edit the following code to remove the comment, and then press the Eval button to execute it. Notice the change in the clock above. Experiment. 
 <div class="cm-doc">
 (comment (rf/dispatch  [:time-color-change "green"]))
 </div>
