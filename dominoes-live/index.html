@@ -1804,8 +1804,8 @@
 <p>The "simple" one. </p>
 <p>Within the re-frame repository's <code>/examples</code> folder is an app 
 called <a href="https://github.com/day8/re-frame/tree/master/examples/simple">/simple</a>.</p>
-<p>It has 70 lines of code in a single <a href="https://github.com/day8/re-frame/blob/master/examples/simple/src/simple/core.cljs">namespace</a>.
-We'll look at all 70 lines.</p>
+<p>It has 70 lines of code in <a href="https://github.com/day8/re-frame/blob/master/examples/simple/src/simple/core.cljs">a single namespace</a>.
+Below, we'll look at all 70 lines.</p>
 <div class="admonition info">
 <p>Below, you should see the app running live. <br>
 Try changing the display colour to <code>magenta</code>, <code>#f00</code> or <code>#02a6f2</code>.</p>
@@ -1824,8 +1824,8 @@ Try changing the display colour to <code>magenta</code>, <code>#f00</code> or <c
 This live coding is powered by <a href="https://github.com/borkdude/sci">SCI</a>.</p>
 </div>
 <h2 id="the-namespace">The Namespace<a class="headerlink" href="#the-namespace" title="Permanent link">&para;</a></h2>
-<p>Within our single namespace (of 70 lines), we'll need access to both <code>reagent</code> and <code>re-frame</code>. 
-So, at the top we need this: 
+<p>Within our single namespace (of 70 lines), we'll need to use both <code>reagent</code> and <code>re-frame</code>. 
+So, at the top, within the <code>ns</code> we'll need to require them: 
 <div class="cm-doc">
 (ns re-frame.simple
   (:require [reagent.core :as reagent]
@@ -1834,15 +1834,15 @@ So, at the top we need this:
 </div></p>
 <div class="admonition note">
 <p class="admonition-title">Live Code Fragment</p>
-<p>Above, you'll see a live code editor. You can change the code, if you want.
-The colored box at the bottom shows the result of evaluating that code.
-In this particular case, evaluating a <code>ns</code> gives nil which is not that interesting.</p>
+<p>Above, the code is provided in an editor. You can change the code if you want. And then press the "eval" button. 
+Below the editor, a green-backgrounded box shows if the code was evaluated successfully (a tick is shown) and, if so, the value of that evaluation. of the code. 
+In this case, evaluating a <code>ns</code> gives <code>nil</code>, which is not very interesting.</p>
 </div>
 <h2 id="the-data-schema">The Data Schema<a class="headerlink" href="#the-data-schema" title="Permanent link">&para;</a></h2>
-<p>Now, normally, I'd strongly recommended that you write a quality schema
+<p>Now, normally, I'd strongly recommend that you write a quality schema
 for your application state (the data stored in <code>app-db</code>). But,
-here, to minimise cognitive load, we'll cut that corner.</p>
-<p>But, we can't cut it completely. You'll still need an
+here, we'll cut that corner to minimise cognitive load.</p>
+<p>But we can't cut it completely. You'll still need an
 informal description, and here it is ... <code>app-db</code> will contain
 a two-key map like this:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:time</span>       <span class="p">(</span><span class="nf">js/Date.</span><span class="p">)</span>  <span class="c1">;; current time for display</span>
@@ -1857,8 +1857,8 @@ a two-key map like this:</p>
 </code></pre></div>
 
 
-<p>The first element in the vector is a keyword which identifies the <code>kind</code> of <code>event</code>.
-Further elements are optional, and can provide additional data
+<p>The first element in the vector is a keyword that identifies the <code>kind</code> of <code>event</code>.
+Further elements are optional and can provide additional data
 associated with the event. The additional value above, <code>"red"</code>, is
 presumably the colour.</p>
 <p>Here are some other example events:</p>
@@ -1883,9 +1883,9 @@ presumably the colour.</p>
 </div></p>
 <p>Notes: </p>
 <ul>
-<li>ignore the lower box. When defining a function, the return value is not interesting.</li>
-<li>current time is obtained with <code>(js/Date.)</code> which is like <code>new Date()</code> in javascript</li>
-<li>uses <code>rf/dispatch</code> - the re-frame API is aliased as <code>rf</code> in the namespace declaration above</li>
+<li>because <code>defn</code> doesn't return anything of interest, you can ignore that yellow box below the code.</li>
+<li>the current time is obtained with <code>(js/Date.)</code> which is the equivalent of <code>new Date()</code> in javascript.</li>
+<li>uses <code>rf/dispatch</code> - the re-frame API is aliased as <code>rf</code> in the namespace declaration in the first few lines of the namespace.</li>
 </ul>
 <div class="cm-doc">
 (defonce do-timer (js/setInterval dispatch-timer-event 1000))
@@ -1896,9 +1896,9 @@ presumably the colour.</p>
 <li><code>setInterval</code> is used to call <code>dispatch-timer-event</code> every second </li>
 <li><code>defonce</code> is like <code>def</code> but it will ensure that only one timer is ever created. Even when doing hot reloading.</li>
 </ul>
-<p>A timer is an unusual source of events. Usually, it is an app's UI widgets which dispatch events 
-(in response to user actions), or an HTTP POST's on-success handler, or a websocket which gets a new packet. 
-So, "simple" is a little unusual. Moving on. </p>
+<p>A timer is an unusual source of events. Usually, it is an app's UI widgets that dispatch events 
+(in response to user actions), or an HTTP POST's on-success handler or a websocket which gets a new packet. 
+So, this "simple" app is unusual. Moving on. </p>
 <h3 id="after-dispatch">After dispatch<a class="headerlink" href="#after-dispatch" title="Permanent link">&para;</a></h3>
 <p><code>dispatch</code> puts an event onto a queue for processing.</p>
 <p>So, an event is not processed synchronously, like a function call. The processing
@@ -2057,16 +2057,16 @@ of subscriptions, and more explanation, can be found in the todomvc example.</p>
 to perform the query over the application state.</p>
 <p>Each time application state changes, <code>a-query-fn</code> will be
 called again to compute a new materialised view (a new computation over <code>app-db</code>)
-and that new value will be given to all <code>view</code> functions which are subscribed
+and that new value will be given to all <code>view</code> functions that are subscribed
 to <code>:some-query-id</code>. These <code>view</code> functions will then be called to compute the 
-new DOM state (because the views depend on query results which have changed).</p>
+new DOM state (because the views depend on query results that have changed).</p>
 <p>Along this reactive chain of dependencies, re-frame will ensure the 
 necessary calls are made, at the right time.</p>
 <p>Here's the code for defining our 2 subscription handlers:
 <div class="cm-doc">
 (rf/reg-sub
   :time
-  (fn [db _]     ;; db is current app state. 2nd unused param is query vector
+  (fn [db _]     ;; db is current app state. 2nd unused param is the query vector
     (:time db))) ;; return a query computation over the application state
 </div></p>
 <div class="cm-doc">
@@ -2076,7 +2076,7 @@ necessary calls are made, at the right time.</p>
     (:time-color db)))
 </div>
 
-<p>Both of these queries are trivial. They are known as "accessor", or layer 2, subscriptions. More on that soon.</p>
+<p>Both of these queries are trivial. They are known as "accessors", or layer 2, subscriptions. More on that soon.</p>
 <h2 id="view-functions">View Functions<a class="headerlink" href="#view-functions" title="Permanent link">&para;</a></h2>
 <p><code>view</code> functions compute Hiccup.  They are "Data in, Hiccup out" and they are Reagent 
 components. </p>
@@ -2093,14 +2093,14 @@ for that part of <code>app-db</code>, by using <code>subscribe</code>.</p>
 <p>So <code>subscribe</code> takes one argument, assumed to be a vector.</p>
 <p>The first element in the vector identifies the query, 
 and the other elements are optional
-query parameters. With a traditional database a query might be:</p>
+query parameters. With a traditional database, a query might be:</p>
 <div class="codehilite"><pre><span></span><code><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">customers</span> <span class="k">where</span> <span class="n">name</span><span class="o">=</span><span class="ss">&quot;blah&quot;</span>
 </code></pre></div>
 
 
 <p>In re-frame, that would look like:
    <code>(subscribe  [:customer-query "blah"])</code>,
-which would return a <code>ratom</code> holding the customer state (a value which might change over time!).</p>
+which would return a <code>ratom</code> holding the customer state (a value that might change over time!).</p>
 <div class="admonition warning">
 <p class="admonition-title">Rookie Mistake</p>
 <p>Because subscriptions return a <code>ratom</code> (a Reagent atom), they must always be dereferenced to 
@@ -2119,7 +2119,7 @@ obtain the value (using <a href="https://clojuredocs.org/clojure.core/deref">der
   [:div.example-clock {:style {:color colour}} time]))
 </div></p>
 <p>As you can see, it uses <code>subscribe</code> twice to obtain two pieces of data from <code>app-db</code>. 
-If either value changes, reagent will automatically re-run this view function, 
+If either value changes, Reagent will automatically re-run this view function, 
 computing new hiccup, which means new DOM.</p>
 <p>Using the power of <code>sci</code>, we can render just the <code>clock</code> component: </p>
 <div class="cm-doc">
@@ -2129,7 +2129,7 @@ computing new hiccup, which means new DOM.</p>
 <div id="clock"></div>
 
 <p>When an event handler changes a value in <code>app-db</code>, <code>clock</code> will rerender. Try it. 
-Uncomment the following <code>dispatch</code> to change the colour. 
+Edit the following code to remove the comment, and then press the Eval button to execute it. Notice the change in the clock above. Experiment. 
 <div class="cm-doc">
 (comment (rf/dispatch  [:time-color-change "green"]))
 </div></p>
