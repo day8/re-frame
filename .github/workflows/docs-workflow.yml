@@ -36,39 +36,6 @@ jobs:
           name: api-re-frame.core.md
           path: docs/api-re-frame.core.md
 
-  # Klipse is used to enable live coding in the documentation and it requires precompiled CLJS analysis cache files
-  # that are built by this job then uploaded as an artifact.
-  klipse-cljs-cache:
-    name: Klipse CLJS Cache
-    runs-on: ubuntu-22.04
-    container:
-      # Ref: https://github.community/t5/GitHub-Actions/docker-pull-from-public-GitHub-Package-Registry-fail-with-quot/m-p/32782
-      image: superstructor/klipse:jdk-11-node-12-lumo-1.5-planck-2.25.0
-    steps:
-      - name: Checkout Current Branch
-        uses: actions/checkout@v2
-      - name: Maven cache
-        id: maven-cache
-        uses: actions/cache@v1
-        with:
-          path: /root/.m2/repository
-          key: ${{ runner.os  }}-maven-klipse-${{ hashFiles('docs/klipse/project.clj') }}
-      - name: Build Core CLJS Cache
-        working-directory: docs/klipse
-        run: ./build-cljs-cache-for-core-namespaces.sh
-      - name: Build Library CLJS Cache
-        working-directory: docs/klipse
-        run: ./build-cljs-cache-for-lib-namespaces.sh
-      - name: Create Klipse CLJS Cache Artifact
-        working-directory: docs/klipse
-        run: |
-          tar Jcf klipse-cljs-cache.tar.xz cljs-cache
-      - name: Upload Klipse CLJS Cache Artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: klipse-cljs-cache
-          path: docs/klipse/klipse-cljs-cache.tar.xz
-
   # This job builds the re-frame :docs app and uploads it as an artifact.
   # The app renders code blocks for the reader reader to edit & evaluate.
 
@@ -91,6 +58,9 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('project.clj', '.github/workflows/**') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name: Install node packages
+        run: |
+          npm install
       - name: Run lein docs
         if: steps.maven-cache.outputs.cache-hit != 'true'
         env:
@@ -119,13 +89,12 @@ jobs:
           name: re-frame-docs-app
           path: docs/re-frame-docs-app.tar.xz
 
-  # MkDocs is the actual static site generator. It downloads the api-re-frame.core.md and Klipse cache artifacts then generates
-  # additional files based on configuration and markdown.
+  # MkDocs is the actual static site generator. It downloads the api-re-frame.core.md and docs app artifacts,
+  #  then generates additional files based on configuration and markdown.
   mkdocs:
     name: MkDocs
     needs:
       - ns-to-markdown
-      - klipse-cljs-cache
     runs-on: ubuntu-22.04
     container:
       image: "squidfunk/mkdocs-material:5.5.9"
