@@ -37,11 +37,6 @@
     
     
     
-    <link rel="stylesheet" href="/re-frame/stylesheets/klipse.css">
-    <link rel="stylesheet" href="/re-frame/stylesheets/codemirror.css">
-    
-
-    
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,400,400i,700%7CSource+Code+Pro&display=fallback">
@@ -1677,13 +1672,32 @@ using Clojure's data literals and we've covered data literals. </p>
 </tr>
 </tbody>
 </table>
-<p>Below, you can start evaluating live on this page. Enter an expression into the following editor 
-and it will be evaluated. The result of the evaluation will be shown in the box below the editor.</p>
-<p>XXX inline REPL will go here. In the meantime, use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<p>Below, you can start evaluating live on this page. 
+Click the <strong>Eval</strong> button, or change the expression, and it will be evaluated. 
+The result of the evaluation will be shown in the box below the editor.</p>
 <p>Try these experiments:</p>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+{:a 1 :a 4}
+<div class="cm-doc-validator">
+(fn duplicate-keys [{:keys [return-str]}]
+  (when (re-find #"duplicate key" return-str)
+    [:span "Oops! A map can only have 1 of a given key. Try changing "
+     [:code ":a 4"]
+     " to "
+     [:code ":b 4"] "."]))
+</div>
+</div>
+
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+[:apple :orange :banana
+ <div class="cm-doc-validator">
+ (fn eof-vector [{:keys [return-str]}]
+   (when (re-find #"EOF" return-str)
+     [:span "Forgot to close the form? Try adding " [:code "]"] " to the end."]))
+ </div>
+</div>
+
 <ul>
-<li>{:a 1 :a 4} -- oops </li>
-<li>forget to close a parens ??</li>
 <li>XXX other basic examples?</li>
 </ul>
 <p>So, let's now talk about the two exceptions <code>lists</code> and <code>symbols</code> ...</p>
@@ -1730,13 +1744,33 @@ is bound to a function in Clojure's standard library. As a result, when you evau
 Wait. Isn't <code class="highlight"><span class="nv">+</span></code> an operator?  No. Clojure doesn't have operators. 
 Instead, <code class="highlight"><span class="nv">+</span></code> is a symbol, and it is bound to a function - one which adds. Anyway, more soon.</p>
 </div>
-<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <p>Try these experiments:</p>
-<ul>
-<li><code class="highlight"><span class="nv">inc</span></code></li>
-<li><code class="highlight"><span class="p">[</span><span class="nb">inc dec </span><span class="nv">+</span><span class="p">]</span></code>       &lt;--- and array of symbols</li>
-<li><code class="highlight"><span class="p">{</span><span class="nb">inc </span><span class="mi">5</span><span class="p">}</span></code>           &lt;--- strange but possible</li>
-</ul>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>>
+ inc
+ <div class="cm-doc-validator">
+ (fn function-object [{:keys [status]}]
+   (when (#{:success} status)
+     [:span "Functions are technically objects, and cljs represents them by printing "
+      [:code "object[qualified$name]"]]))
+ </div>
+</div>
+
+<p><div class="cm-doc" data-cm-doc-no-eval-on-init>
+ [inc dec +]
+  <div class="cm-doc-validator">
+ (fn function-vec-item [{:keys [status]}]
+   (when (#{:success} status)
+     "This is simply three items in a vector. Just because they're functions does not mean you're calling them."))
+ </div>
+</div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+{inc 5}
+ <div class="cm-doc-validator">
+ (fn function-vec-item [{:keys [status]}]
+   (when (#{:success} status)
+     "Nearly anything can be a map key."))
+ </div>
+</div></p>
 <h2 id="evaluating-lists">Evaluating Lists<a class="headerlink" href="#evaluating-lists" title="Permanent link">&para;</a></h2>
 <p><strong>3rd Evaluation Rule:</strong> a <code>list</code> evaluates to a function call.</p>
 <p>Okay, now we're cooking with gas!  Clojure is a functional language so, 
@@ -1812,7 +1846,15 @@ And because there are no operators, there's no operator precedence to discuss. S
 <li>try <code>(odd? 5)</code> </li>
 <li>try <code>(count [1 2 3])</code></li>
 </ul>
-<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+ <div class="cm-doc-validator">
+ (fn arithmetic-arity [{:keys [status source-form]}]
+   (when (and (#{:success} status)
+              (#{'(+ 1) '(+) '(*)} source-form))
+     "Consider this either very intuitive, or very unintuitive."))
+ </div>
+</div>
+
 <hr />
 <h2 id="forms">Forms<a class="headerlink" href="#forms" title="Permanent link">&para;</a></h2>
 <p>A list like this <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span></code> is known as <strong>a form</strong>.</p>
@@ -1861,11 +1903,10 @@ Well, in your mind's eye, see this nested example as <code class="highlight"><sp
 </table>
 <p>Evaluate these experiments yourself (any surprises?):</p>
 <ul>
-<li><code class="highlight"><span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nb">dec </span><span class="mi">1</span><span class="p">))</span></code></li>
-<li><code class="highlight"><span class="p">(</span><span class="nf">odd?</span> <span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nb">dec </span><span class="mi">1</span><span class="p">)))</span></code></li>
-<li><code class="highlight"><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nb">dec </span><span class="mi">1</span><span class="p">))</span> <span class="mi">1</span><span class="p">)</span></code></li>
+<li><div class="cm-doc" data-cm-doc-no-eval-on-init>(inc (dec 1))</div></li>
+<li><div class="cm-doc" data-cm-doc-no-eval-on-init>(odd? (inc (dec 1)))</div></li>
+<li><div class="cm-doc" data-cm-doc-no-eval-on-init>(= (inc (dec 1)) 1)</div></li>
 </ul>
-<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
 <hr />
 <h2 id="keywords">Keywords<a class="headerlink" href="#keywords" title="Permanent link">&para;</a></h2>
 <p>Keywords are like symbols, except they evaluate to themselves and not to a bound value. This means they evaluate like most other data literals.</p>
@@ -1969,12 +2010,10 @@ Well, in your mind's eye, see this nested example as <code class="highlight"><sp
 
 
 <p>Evaluate these experiments yourself (any surprises?):</p>
-<ul>
-<li><code class="highlight"><span class="p">(</span><span class="nb">namespace </span><span class="ss">:a</span><span class="p">)</span></code> </li>
-<li><code class="highlight"><span class="p">(</span><span class="nb">keyword </span><span class="p">(</span><span class="nb">name </span><span class="ss">:a</span><span class="p">))</span></code></li>
-<li><code class="highlight"><span class="p">(</span><span class="nb">keyword </span><span class="p">(</span><span class="nb">namespace </span><span class="ss">:a/b</span><span class="p">)</span> <span class="p">(</span><span class="nb">name </span><span class="ss">:a/b</span><span class="p">))</span></code></li>
-</ul>
-<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(namespace :a)</div>
+
+<p><div class="cm-doc" data-cm-doc-no-eval-on-init>(keyword (name :a))</div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(keyword (namespace :a/b) (name :a/b))</div></p>
 <hr />
 <h2 id="kebab-case-please">Kebab Case Please<a class="headerlink" href="#kebab-case-please" title="Permanent link">&para;</a></h2>
 <p>We don't use <code class="highlight"><span class="nv">_</span></code> in names. Instead we use <code class="highlight"><span class="nv">-</span></code>. This applies to both symbols and keywords.</p>
@@ -2101,10 +2140,11 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 </div>
 <p>Possible experiments: </p>
 <ul>
-<li>check if <code>(if true)</code> is valid. </li>
-<li>explore what is "truthy", via  <code>(if "hello" true false)</code> or <code>(if [] true false)</code> or <code>(if nil true false)</code></li>
+<li>check if <code class="highlight"><span class="p">(</span><span class="k">if </span><span class="nv">true</span><span class="p">)</span></code> is valid. </li>
+<li>explore what is "truthy", via  <code class="highlight"><span class="p">(</span><span class="k">if </span><span class="s">&quot;hello&quot;</span> <span class="nv">true</span> <span class="nv">false</span><span class="p">)</span></code> or <code class="highlight"><span class="p">(</span><span class="k">if </span><span class="p">[]</span> <span class="nv">true</span> <span class="nv">false</span><span class="p">)</span></code> or <code class="highlight"><span class="p">(</span><span class="k">if </span><span class="nv">nil</span> <span class="nv">true</span> <span class="nv">false</span><span class="p">)</span></code></li>
 </ul>
-<p>XXX inline REPL will go here. In the meantime use <a href="https://jaredforsyth.com/reepl/">this external one</a></p>
+<div class="cm-doc" data-cm-doc-no-eval-on-init></div>
+
 <hr />
 <h2 id="fn"><code class="highlight"><span class="nv">fn</span></code><a class="headerlink" href="#fn" title="Permanent link">&para;</a></h2>
 <p>An <code class="highlight"><span class="nv">fn</span></code> form creates a function. We're taking a big step up here.</p>
@@ -2173,30 +2213,17 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 
 <p>The body of the function, <code class="highlight"><span class="p">(</span><span class="nb">+ </span><span class="nv">num</span> <span class="mi">1</span><span class="p">)</span></code>, will be evaluated with the <code class="highlight"><span class="nv">num</span></code> symbol bound to the actual parameter <code class="highlight"><span class="mi">4</span></code>.  The return value is <code class="highlight"><span class="mi">5</span></code>.</p>
 <p>Try these experiments:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="p">[</span><span class="nv">x</span> <span class="nv">x</span><span class="p">])</span> <span class="mi">4</span><span class="p">)</span>
-</code></pre></div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>((fn [x] [x x]) 4)</div>
 
+<div class="cm-doc" data-cm-doc-no-eval-on-init>((fn [x y] {x y}) :a 4)</div>
 
-<p>or</p>
-<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span> <span class="nv">y</span><span class="p">]</span> <span class="p">{</span><span class="nv">x</span> <span class="nv">y</span><span class="p">})</span> <span class="ss">:a</span> <span class="mi">4</span><span class="p">)</span>
-</code></pre></div>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>((fn []))</div>
 
-
-<p>or</p>
-<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[]))</span>
-</code></pre></div>
-
-
-<p>or</p>
-<div class="codehilite"><pre><span></span><code><span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">yes?</span><span class="p">]</span> <span class="p">{</span><span class="ss">:a</span> <span class="p">(</span><span class="k">if </span><span class="nv">yes?</span> <span class="s">&quot;yes&quot;</span><span class="p">)})</span> <span class="nv">true</span><span class="p">)</span>
-</code></pre></div>
-
+<div class="cm-doc" data-cm-doc-no-eval-on-init>((fn [yes?] {:a (if yes? "yes")}) true)</div>
 
 <p>what if, instead, we called this function with <code class="highlight"><span class="nv">false</span></code>.</p>
 <p>You won't see this written in normal ClojureScript code, because it is weird, but here's a puzzle:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(((</span><span class="k">fn </span> <span class="p">[]</span> <span class="nv">inc</span><span class="p">))</span> <span class="mi">4</span><span class="p">)</span>
-</code></pre></div>
-
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(((fn  [] inc)) 4)</div>
 
 <p>What is the evaluation? Note: there is an extra set of parens around the <code class="highlight"><span class="nv">fn</span></code> form.</p>
 <hr />
@@ -2343,22 +2370,17 @@ which combines the two, called <code class="highlight"><span class="nv">defn</sp
 
 
 <p>evaluates to <code class="highlight"><span class="p">{</span><span class="ss">:winner-is</span> <span class="s">&quot;the pen&quot;</span><span class="p">}</span></code></p>
-<p><code class="highlight"><span class="nv">let</span></code> is often used within a <code class="highlight"><span class="nv">defn</span></code>: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">greet</span>
-  <span class="p">[</span><span class="nb">name </span><span class="nv">friendly?</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">greeting</span> <span class="p">(</span><span class="k">if </span><span class="nv">friendly?</span> <span class="s">&quot;Hello &quot;</span> <span class="s">&quot;Go away &quot;</span><span class="p">)]</span>
-    <span class="p">[</span><span class="ss">:div</span> <span class="nv">greeting</span> <span class="nv">name</span><span class="p">])</span>
-</code></pre></div>
-
-
+<p><code class="highlight"><span class="nv">let</span></code> is often used within a <code class="highlight"><span class="nv">defn</span></code>: 
+<div class="cm-doc">
+(defn greet
+  [name friendly?]
+  (let [greeting (if friendly? "Hello " "Go away ")]
+    [:div greeting name]))
+</div></p>
 <p>XXX experiment with greet </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">greet</span> <span class="s">&quot;Mum&quot;</span> <span class="nv">true</span><span class="p">)</span>
-</code></pre></div>
+<div class="cm-doc" cm-doc-no-eval-on-init>(greet "Mum" true)</div>
 
-
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">greet</span> <span class="s">&quot;Noisy Neighbours&quot;</span> <span class="nv">false</span><span class="p">)</span>
-</code></pre></div>
-
+<div class="cm-doc" data-cm-doc-no-eval-on-init>(greet "Noisy Neighbours" false)</div>
 
 <p>In this particular, we could have got away with no using a <code>let</code>, like this: </p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">greet</span>
@@ -2858,8 +2880,6 @@ https://www.freecodecamp.org/news/here-is-a-quick-overview-of-the-similarities-a
 <li></li>
 </ul>
                 
-                  
-                
               
               
                 
@@ -2941,13 +2961,7 @@ https://www.freecodecamp.org/news/here-is-a-quick-overview-of-the-similarities-a
     </div>
   </div>
 </footer>
-    
-    <script src="https://unpkg.com/react@16.13.0/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@16.13.0/umd/react-dom.development.js"></script>
-    <script src="/re-frame/javascripts/klipse_config.js"></script>
-    <script src="/re-frame/javascripts/klipse_plugin.js"></script>
-    <script src="/re-frame/javascripts/klipse_reagent_fix.js"></script>
-    
+    <script src="/re-frame/js/docs.js"></script>
 
     </div>
     

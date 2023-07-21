@@ -37,11 +37,6 @@
     
     
     
-    <link rel="stylesheet" href="/re-frame/stylesheets/klipse.css">
-    <link rel="stylesheet" href="/re-frame/stylesheets/codemirror.css">
-    
-
-    
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,400,400i,700%7CSource+Code+Pro&display=fallback">
@@ -1459,28 +1454,32 @@
                 
                 <p>Clojurescript is ergonomic, stable, functional language</p>
 <p>Look at the front page of https://www.learnreframe.com/</p>
-<p><code class="klipse-clojure">
+<div class="cljs-showcase">
 (ns simple.core
-  (:require [reagent.dom]
+  (:require [reagent.dom :as rdom]
             [re-frame.core :as rf]
-            [clojure.string :as str]))
-</code></p>
-<p><code class="klipse-clojure">
-(defn square 
+            [clojure.string :as str])))
+</div>
+
+<div class="cm-doc">
+(defn square
    []
    [:svg {:width "400" :height "110"}
      [:rect {:width "300" :height "100"}]])
-</code></p>
-<p><code class="klipse-reagent">
+</div>
+
+<div class="cm-doc">
 [square]
-</code></p>
-<p><code class="klipse-clojure">
+</div>
+
+<div class="cm-doc">
 (defn mount-ui
   []
-  (reagent/render [square]                 ;; mount the application's ui
-                  (js/document.getElementById "live-app")))
+  (rdom/render [square]                 ;; mount the application's ui
+               (js/document.getElementById "live-app")))
 (mount-ui)
-</code></p>
+</div>
+
 <div id="live-app">
   <div class="preload">  
     The live application should start here in 60 seconds ...
@@ -1510,8 +1509,6 @@ then <code>(deref a)</code> will extrct the value. The shorthand is <code>@a</co
 <p>You can set the value of an atom with <code>reset!</code>, like this <code>(reset! a :foo)</code>. </p>
 <p>Alternatively, you canuse <code>swap!</code> to update the value in an atom. <code>swap!</code> takes a pure function as an argument which is to perform this <code>update</code>. It is expected to takes the current value in the atom as an argument, and to return the updated value to be put back in the atom. </p>
 <p>For example <code>(swap! a + 5 6)</code> will call the function <code>+</code> with three values:  the value in <code>a</code> and <code>5</code> and <code>6</code>. So this will effectively add 11 to the value currently in <code>a</code> and store that value back into <code>a</code>. </p>
-                
-                  
                 
               
               
@@ -1594,13 +1591,7 @@ then <code>(deref a)</code> will extrct the value. The shorthand is <code>@a</co
     </div>
   </div>
 </footer>
-    
-    <script src="https://unpkg.com/react@16.13.0/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@16.13.0/umd/react-dom.development.js"></script>
-    <script src="/re-frame/javascripts/klipse_config.js"></script>
-    <script src="/re-frame/javascripts/klipse_plugin.js"></script>
-    <script src="/re-frame/javascripts/klipse_reagent_fix.js"></script>
-    
+    <script src="/re-frame/js/docs.js"></script>
 
     </div>
     
