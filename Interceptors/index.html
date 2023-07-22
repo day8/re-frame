@@ -1798,7 +1798,7 @@ interceptors will be "executed".  And that's how an event gets handled.</p>
 </code></pre></div>
 
 
-<p>That's essentially a map of two functions. Now imagine a vector of these maps - that's an interceptor chain.</p>
+<p>That's essentially a map of two functions (a before function and an after function). Now imagine a vector of these maps - that's an interceptor chain.</p>
 <p>Above we imagined an interceptor chain of <code>[std1 std2 in1 in2 ih]</code>. Now we know that this is really
 a vector of 5 maps: <code>[{...} {...} {...} {...} {...}]</code>  where each of the 5 maps have
 a <code>:before</code> and <code>:after</code> fn.</p>
