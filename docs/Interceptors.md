@@ -5,11 +5,10 @@ but, as we are about to find out, they are both important and useful.
 
 There's two reasons.
 
-1. We want __simple event handlers__.
-
+1. We want __simple event handlers__.   
    Interceptors allow us nicely to look after "cross-cutting" concerns like undo, tracing 
-   and validation.  They help us to factor out commonality, hide complexity and introduce further steps into the "Derived Data, Flowing" story promoted by re-frame.
-
+   and validation.  They help us to factor out commonality, hide complexity and introduce
+   further steps into the "Derived Data, Flowing" story promoted by re-frame.
    So, you'll want to use Interceptors because they solve problems, and help you to write nice code.
 
 2. Under the covers, Interceptors provide **the** mechanism underneath Domino 2 (event handling) 
