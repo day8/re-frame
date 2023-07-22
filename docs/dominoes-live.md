@@ -34,8 +34,8 @@ Below, we'll look at all 70 lines.
 
 ## The Namespace
 
-Within our single namespace (of 70 lines), we'll need to use both `reagent` and `re-frame`. 
-So, at the top, within the `ns` we'll need to require them: 
+Within our single namespace (called `re-frame.simple`), we'll need to use both `reagent` and `re-frame`. 
+So, at the top, within the `ns`, we'll give the name and require the other namespaces we'll need: 
 <div class="cm-doc">
 (ns re-frame.simple
   (:require [reagent.core :as reagent]
@@ -44,15 +44,14 @@ So, at the top, within the `ns` we'll need to require them:
 </div>
 
 !!! Note "Live Code Fragment"
-    Above, the code is provided in an editor. You can change the code if you want. And then press the "eval" button. 
-    Below the editor, a green-backgrounded box shows if the code was evaluated successfully (a tick is shown) and, if so, the value of that evaluation. of the code. 
-    In this case, evaluating a `ns` gives `nil`, which is not very interesting.
+    Above, the code is provided within an editor. You can change the code if you want, and then press the "eval" button. 
+    Below the editor, you'll see a green-backgrounded box. If the code was evaluated successfully a tick is shown along with the value of that evaluation.
+    In the case of our `ns` form, it evaluates to `nil`, which is not very interesting.
 
 ## The Data Schema
 
-Now, normally, I'd strongly recommend that you write a quality schema
-for your application state (the data stored in `app-db`). But,
-here, we'll cut that corner to minimise cognitive load.
+Let's talk `app-db`. Now, usually, I'd recommend that you write a schema
+for your application state, but here, we'll cut that corner to minimise cognitive load.
 
 But we can't cut it completely. You'll still need an
 informal description, and here it is ... `app-db` will contain
