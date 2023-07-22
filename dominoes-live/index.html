@@ -1824,8 +1824,8 @@ Try changing the display colour to <code>magenta</code>, <code>#f00</code> or <c
 This live coding is powered by <a href="https://github.com/borkdude/sci">SCI</a>.</p>
 </div>
 <h2 id="the-namespace">The Namespace<a class="headerlink" href="#the-namespace" title="Permanent link">&para;</a></h2>
-<p>Within our single namespace (of 70 lines), we'll need to use both <code>reagent</code> and <code>re-frame</code>. 
-So, at the top, within the <code>ns</code> we'll need to require them: 
+<p>Within our single namespace (called <code>re-frame.simple</code>), we'll need to use both <code>reagent</code> and <code>re-frame</code>. 
+So, at the top, within the <code>ns</code>, we'll give the name and require the other namespaces we'll need: 
 <div class="cm-doc">
 (ns re-frame.simple
   (:require [reagent.core :as reagent]
@@ -1834,14 +1834,13 @@ So, at the top, within the <code>ns</code> we'll need to require them:
 </div></p>
 <div class="admonition note">
 <p class="admonition-title">Live Code Fragment</p>
-<p>Above, the code is provided in an editor. You can change the code if you want. And then press the "eval" button. 
-Below the editor, a green-backgrounded box shows if the code was evaluated successfully (a tick is shown) and, if so, the value of that evaluation. of the code. 
-In this case, evaluating a <code>ns</code> gives <code>nil</code>, which is not very interesting.</p>
+<p>Above, the code is provided within an editor. You can change the code if you want, and then press the "eval" button. 
+Below the editor, you'll see a green-backgrounded box. If the code was evaluated successfully a tick is shown along with the value of that evaluation.
+In the case of our <code>ns</code> form, it evaluates to <code>nil</code>, which is not very interesting.</p>
 </div>
 <h2 id="the-data-schema">The Data Schema<a class="headerlink" href="#the-data-schema" title="Permanent link">&para;</a></h2>
-<p>Now, normally, I'd strongly recommend that you write a quality schema
-for your application state (the data stored in <code>app-db</code>). But,
-here, we'll cut that corner to minimise cognitive load.</p>
+<p>Let's talk <code>app-db</code>. Now, usually, I'd recommend that you write a schema
+for your application state, but here, we'll cut that corner to minimise cognitive load.</p>
 <p>But we can't cut it completely. You'll still need an
 informal description, and here it is ... <code>app-db</code> will contain
 a two-key map like this:</p>
