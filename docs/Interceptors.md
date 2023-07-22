@@ -116,7 +116,7 @@ Each interceptor has this form:
  :after   (fn [context] ...)}    ;; returns a possibly modified `context`
 ```
 
-That's essentially a map of two functions. Now imagine a vector of these maps - that's an interceptor chain.
+That's essentially a map of two functions (a before function and an after function). Now imagine a vector of these maps - that's an interceptor chain.
 
 Above we imagined an interceptor chain of `[std1 std2 in1 in2 ih]`. Now we know that this is really
 a vector of 5 maps: `[{...} {...} {...} {...} {...}]`  where each of the 5 maps have
