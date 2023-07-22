@@ -101,9 +101,9 @@ For our simple app, we do this ...
 
 Notes: 
 
-  - because `defn` doesn't return anything of interest, you can ignore that yellow box below the code.
+  - `defn` returns nothing of interest, you can ignore the green box below the code.
   - the current time is obtained with `(js/Date.)` which is the equivalent of `new Date()` in javascript.
-  - uses `rf/dispatch` - the re-frame API is aliased as `rf` in the namespace declaration in the first few lines of the namespace.
+  - Within the `ns` at the top of the namespace, `re-frame` is aliased as `rf` via `[re-frame.core :as rf]`. So, the symbol `rf/dispatch` is a reference to the function `dispatch` in the re-frame API. 
 
 <div class="cm-doc">
 (defonce do-timer (js/setInterval dispatch-timer-event 1000))
@@ -112,10 +112,10 @@ Notes:
 Notes:
 
   - `setInterval` is used to call `dispatch-timer-event` every second 
-  - `defonce` is like `def` but it will ensure that only one timer is ever created. Even when doing hot reloading.
+  - `defonce` is like `def`, it instantiates a symbol and binds a value to it. But the evaluation won't happen if the symbol (`do-timer` in this case) already exists. This stops a new timer from getting created every time we hot-reload the code in a namespace. This would be important in a dev environment where we were editing the namespace and our changes were causing it to be recompiled and hot-code reloaded.
 
 A timer is an unusual source of events. Usually, it is an app's UI widgets that dispatch events 
-(in response to user actions), or an HTTP POST's on-success handler or a websocket which gets a new packet. 
+(in response to user actions), or an HTTP POST's `on-success` handler or a websocket which gets a new packet. 
 So, this "simple" app is unusual. Moving on. 
 
 
@@ -143,9 +143,9 @@ Collectively, event handlers provide the control logic in a re-frame application
 
 In this application, three kinds of event are dispatched:
 
-  - `:initialize` - once when the program boots up
-  - `:time-color-change` - whenever the user changes the colour text field
-  - `:timer` - once a second 
+  - `:initialize` - dispatch once, when the program boots up
+  - `:time-color-change` - dispatched whenever the user changes the colour text field
+  - `:timer` - dispatched once a second via a timer
 
 Having 3 events means we'll be registering 3 event handlers.
 
