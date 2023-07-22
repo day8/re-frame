@@ -1883,9 +1883,9 @@ presumably the colour.</p>
 </div></p>
 <p>Notes: </p>
 <ul>
-<li>because <code>defn</code> doesn't return anything of interest, you can ignore that yellow box below the code.</li>
+<li><code>defn</code> returns nothing of interest, you can ignore the green box below the code.</li>
 <li>the current time is obtained with <code>(js/Date.)</code> which is the equivalent of <code>new Date()</code> in javascript.</li>
-<li>uses <code>rf/dispatch</code> - the re-frame API is aliased as <code>rf</code> in the namespace declaration in the first few lines of the namespace.</li>
+<li>Within the <code>ns</code> at the top of the namespace, <code>re-frame</code> is aliased as <code>rf</code> via <code>[re-frame.core :as rf]</code>. So, the symbol <code>rf/dispatch</code> is a reference to the function <code>dispatch</code> in the re-frame API. </li>
 </ul>
 <div class="cm-doc">
 (defonce do-timer (js/setInterval dispatch-timer-event 1000))
@@ -1894,10 +1894,10 @@ presumably the colour.</p>
 <p>Notes:</p>
 <ul>
 <li><code>setInterval</code> is used to call <code>dispatch-timer-event</code> every second </li>
-<li><code>defonce</code> is like <code>def</code> but it will ensure that only one timer is ever created. Even when doing hot reloading.</li>
+<li><code>defonce</code> is like <code>def</code>, it instantiates a symbol and binds a value to it. But the evaluation won't happen if the symbol (<code>do-timer</code> in this case) already exists. This stops a new timer from getting created every time we hot-reload the code in a namespace. This would be important in a dev environment where we were editing the namespace and our changes were causing it to be recompiled and hot-code reloaded.</li>
 </ul>
 <p>A timer is an unusual source of events. Usually, it is an app's UI widgets that dispatch events 
-(in response to user actions), or an HTTP POST's on-success handler or a websocket which gets a new packet. 
+(in response to user actions), or an HTTP POST's <code>on-success</code> handler or a websocket which gets a new packet. 
 So, this "simple" app is unusual. Moving on. </p>
 <h3 id="after-dispatch">After dispatch<a class="headerlink" href="#after-dispatch" title="Permanent link">&para;</a></h3>
 <p><code>dispatch</code> puts an event onto a queue for processing.</p>
@@ -1916,9 +1916,9 @@ each kind of event, including this <code>:timer</code> event. </p>
 <p>Collectively, event handlers provide the control logic in a re-frame application.</p>
 <p>In this application, three kinds of event are dispatched:</p>
 <ul>
-<li><code>:initialize</code> - once when the program boots up</li>
-<li><code>:time-color-change</code> - whenever the user changes the colour text field</li>
-<li><code>:timer</code> - once a second </li>
+<li><code>:initialize</code> - dispatch once, when the program boots up</li>
+<li><code>:time-color-change</code> - dispatched whenever the user changes the colour text field</li>
+<li><code>:timer</code> - dispatched once a second via a timer</li>
 </ul>
 <p>Having 3 events means we'll be registering 3 event handlers.</p>
 <h3 id="registering-event-handlers">Registering Event Handlers<a class="headerlink" href="#registering-event-handlers" title="Permanent link">&para;</a></h3>
