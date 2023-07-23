@@ -107,18 +107,17 @@
   [{:keys [source-str eval-result !view validators evaluable? editable? eval-on-init? on-change hover? focus? result-format]}]
   (r/with-let
     [eval! (fn [] (p/let [[status return-val] (eval-str (cm-string @!view))]
-                   (binding [*print-length* 20]
-                     (reset! eval-result {:status status
-                                          :return-val return-val
-                                          :return-str (binding [*print-length* 20]
-                                                        (case status
-                                                          (:success :success-promise)
-                                                          (with-out-str (pp/pprint return-val))
-                                                          (:error :error-promise)
-                                                          (format-exception return-val)))
-                                          :source-str @source-str
-                                          :source-form (try (reader/read-string @source-str)
-                                                            (catch :default err nil))}))
+                   (reset! eval-result {:status status
+                                        :return-val return-val
+                                        :return-str (binding [*print-length* 20]
+                                                      (case status
+                                                        (:success :success-promise)
+                                                        (with-out-str (pp/pprint return-val))
+                                                        (:error :error-promise)
+                                                        (format-exception return-val)))
+                                        :source-str @source-str
+                                        :source-form (try (reader/read-string @source-str)
+                                                          (catch :default err nil))})
                    (reset! focus? false)))
      init! (fn [el]
              (reset! !view (cm/EditorView.
