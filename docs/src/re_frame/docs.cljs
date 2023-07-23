@@ -145,6 +145,9 @@
            :style {:font-size ".79em"}}
      [:div {:ref init!
             :style {:flex 1
+                    :background-color "var(--md-code-bg-color)"
+                    :border "1px solid #e4e4e4"
+                    :padding ".2em .5em"
                     :max-width "100%"
                     :overflow-x "scroll"}}]
      [:div {:style {:display "flex"
