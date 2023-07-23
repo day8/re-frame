@@ -62,7 +62,26 @@
   (cs/EditorState.create
    #js{:doc source-str
        :extensions (cond-> #js [cm/minimalSetup
-                                (cv/highlightActiveLine)
+                                #_(cv/highlightActiveLine)
+                                (cm/EditorView.theme
+                                 (clj->js
+                                  {:.cm-content
+                                   {:padding ".77em 0 .77em 0"
+                                    :font-family (str "\"Source Code Pro\","
+                                                      "SFMono-Regular,"
+                                                      "Consolas,"
+                                                      "Menlo,monospace")}
+                                   :.cm-line
+                                   {:padding "0 1.2em 0 1.2em"
+                                    :color "var(--md-code-hl-punctuation-color)"}
+                                   :.ͼg
+                                   {:color "var(--md-code-hl-keyword-color)"}
+                                   :.ͼb
+                                   {:color "var(--md-code-hl-function-color)"}
+                                   :.ͼc
+                                   {:color "var(--md-code-hl-string-color)"}
+                                   :.ͼm
+                                   {:color "var(--md-code-hl-punctuation-color)"}}))
                                 (lc/clojure)
                                 (cm/EditorView.updateListener.of
                                  #(on-change (.toString (.. % -state -doc))))
@@ -88,8 +107,7 @@
   (let [pass? (success? eval-result)
         format (or format :full)]
     [:div {:style {:white-space "pre-wrap"
-                   :margin-top "0.5rem"
-                   :padding "0 0.5rem 0 0.5rem"
+                   :padding "1px 4px 0.5px 4px"
                    :background-color (if pass? "#eeffee" "#ffeeee")
                    :color "#444"
                    :font-family "monospace"}}
@@ -103,22 +121,31 @@
   (when (and status (seq validators))
     (into [:div {:style {:margin "1rem"}}] ((apply juxt validators) eval-result))))
 
+(defn eval-button [{:keys [on-eval hover? focus?]}]
+  [:div [:button {:on-click on-eval
+                  :style {:margin 0
+                          :border "1px solid gray"
+                          :box-sizing "border-box"
+                          :background-color "#ccc"
+                          :padding "2px 4px"
+                          :opacity (if (or hover? focus?) 1 0.5)}}
+               "eval"]])
+
 (defn editor
   [{:keys [source-str eval-result !view validators evaluable? editable? eval-on-init? on-change hover? focus? result-format]}]
   (r/with-let
     [eval! (fn [] (p/let [[status return-val] (eval-str (cm-string @!view))]
-                   (binding [*print-length* 20]
-                     (reset! eval-result {:status status
-                                          :return-val return-val
-                                          :return-str (binding [*print-length* 20]
-                                                        (case status
-                                                          (:success :success-promise)
-                                                          (with-out-str (pp/pprint return-val))
-                                                          (:error :error-promise)
-                                                          (format-exception return-val)))
-                                          :source-str @source-str
-                                          :source-form (try (reader/read-string @source-str)
-                                                            (catch :default err nil))}))
+                   (reset! eval-result {:status status
+                                        :return-val return-val
+                                        :return-str (binding [*print-length* 20]
+                                                      (case status
+                                                        (:success :success-promise)
+                                                        (with-out-str (pp/pprint return-val))
+                                                        (:error :error-promise)
+                                                        (format-exception return-val)))
+                                        :source-str @source-str
+                                        :source-form (try (reader/read-string @source-str)
+                                                          (catch :default err nil))})
                    (reset! focus? false)))
      init! (fn [el]
              (reset! !view (cm/EditorView.
@@ -133,21 +160,22 @@
     [:div {:on-mouse-enter #(reset! hover? true)
            :on-mouse-leave #(reset! hover? false)
            :on-focus #(reset! focus? true)
-           :on-blur #(reset! focus? false)}
-     [:div {:style {:display "flex"}}
-      [:div {:ref init!
-             :style {:flex 1
+           :on-blur #(reset! focus? false)
+           :style {:font-size ".79em"}}
+     [:div {:ref init!
+            :style {:flex 1
+                    :box-sizing "border-box"
+                    :background-color "var(--md-code-bg-color)"
+                    :border "1px solid #e4e4e4"
                     :max-width "100%"
                     :overflow-x "scroll"}}]
+     [:div {:style {:display "flex"
+                    :width "100%"
+                    :margin-top "0.5rem"}}
+      [:div {:style {:flex 1}}
+       [editor-result @eval-result {:format result-format}]]
       (when evaluable?
-        [:div [:button {:on-click eval!
-                  :style {:margin 0
-                          :border "1px solid gray"
-                          :background-color "#ccc"
-                          :padding 2
-                          :opacity (if (or @hover? @focus?) 1 0.5)}}
-         "eval"]])]
-     [editor-result @eval-result {:format result-format}]
+        [eval-button {:on-eval eval! :hover? @hover? :focus? @focus?}])]
      [validation validators @eval-result]
      (when @eval-result [:hr])]
     (finally (.destroy @!view))))
