@@ -88,8 +88,7 @@
   (let [pass? (success? eval-result)
         format (or format :full)]
     [:div {:style {:white-space "pre-wrap"
-                   :margin-top "0.5rem"
-                   :padding "0 0.5rem 0 0.5rem"
+                   :padding "1px 4px 0.5px 4px"
                    :background-color (if pass? "#eeffee" "#ffeeee")
                    :color "#444"
                    :font-family "monospace"}}
@@ -102,6 +101,16 @@
 (defn validation [validators {:keys [source-str status] :as eval-result}]
   (when (and status (seq validators))
     (into [:div {:style {:margin "1rem"}}] ((apply juxt validators) eval-result))))
+
+(defn eval-button [{:keys [on-eval hover? focus?]}]
+  [:div [:button {:on-click on-eval
+                  :style {:margin 0
+                          :border "1px solid gray"
+                          :box-sizing "border-box"
+                          :background-color "#ccc"
+                          :padding "2px 4px"
+                          :opacity (if (or hover? focus?) 1 0.5)}}
+               "eval"]])
 
 (defn editor
   [{:keys [source-str eval-result !view validators evaluable? editable? eval-on-init? on-change hover? focus? result-format]}]
@@ -132,21 +141,19 @@
     [:div {:on-mouse-enter #(reset! hover? true)
            :on-mouse-leave #(reset! hover? false)
            :on-focus #(reset! focus? true)
-           :on-blur #(reset! focus? false)}
-     [:div {:style {:display "flex"}}
-      [:div {:ref init!
-             :style {:flex 1
+           :on-blur #(reset! focus? false)
+           :style {:font-size ".79em"}}
+     [:div {:ref init!
+            :style {:flex 1
                     :max-width "100%"
                     :overflow-x "scroll"}}]
+     [:div {:style {:display "flex"
+                    :width "100%"
+                    :margin-top "0.5rem"}}
+      [:div {:style {:flex 1}}
+       [editor-result @eval-result {:format result-format}]]
       (when evaluable?
-        [:div [:button {:on-click eval!
-                  :style {:margin 0
-                          :border "1px solid gray"
-                          :background-color "#ccc"
-                          :padding 2
-                          :opacity (if (or @hover? @focus?) 1 0.5)}}
-         "eval"]])]
-     [editor-result @eval-result {:format result-format}]
+        [eval-button {:on-eval eval! :hover? @hover? :focus? @focus?}])]
      [validation validators @eval-result]
      (when @eval-result [:hr])]
     (finally (.destroy @!view))))
