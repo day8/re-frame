@@ -62,7 +62,26 @@
   (cs/EditorState.create
    #js{:doc source-str
        :extensions (cond-> #js [cm/minimalSetup
-                                (cv/highlightActiveLine)
+                                #_(cv/highlightActiveLine)
+                                (cm/EditorView.theme
+                                 (clj->js
+                                  {:.cm-content
+                                   {:padding ".77em 0 .77em 0"
+                                    :font-family (str "\"Source Code Pro\","
+                                                      "SFMono-Regular,"
+                                                      "Consolas,"
+                                                      "Menlo,monospace")}
+                                   :.cm-line
+                                   {:padding "0 1.2em 0 1.2em"
+                                    :color "var(--md-code-hl-punctuation-color)"}
+                                   :.ͼg
+                                   {:color "var(--md-code-hl-keyword-color)"}
+                                   :.ͼb
+                                   {:color "var(--md-code-hl-function-color)"}
+                                   :.ͼc
+                                   {:color "var(--md-code-hl-string-color)"}
+                                   :.ͼm
+                                   {:color "var(--md-code-hl-punctuation-color)"}}))
                                 (lc/clojure)
                                 (cm/EditorView.updateListener.of
                                  #(on-change (.toString (.. % -state -doc))))
@@ -145,9 +164,9 @@
            :style {:font-size ".79em"}}
      [:div {:ref init!
             :style {:flex 1
+                    :box-sizing "border-box"
                     :background-color "var(--md-code-bg-color)"
                     :border "1px solid #e4e4e4"
-                    :padding ".2em .5em"
                     :max-width "100%"
                     :overflow-x "scroll"}}]
      [:div {:style {:display "flex"
