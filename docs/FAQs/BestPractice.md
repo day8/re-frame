@@ -11,6 +11,7 @@ What are the current best practices?
 ## Answer
 
 To grasp best practices:
+
   1. Read through the re-frame documentation.
   2. Review example projects, like this [RealWorld example](https://github.com/jacekschae/conduit). The [Resources doc](http://day8.github.io/re-frame/External-Resources/#examples-and-applications-using-re-frame) provides further examples.
 
