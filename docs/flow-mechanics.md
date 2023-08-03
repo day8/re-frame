@@ -129,10 +129,10 @@ Here is a slightly more interesting (parameterised) component (function):
   [:div "Hello "  @name])      ;; dereference 'name' to extract the contained value
 
 ;; create a ratom, containing a string
-(def n (reagent/atom "re-frame"))
+(def fw (reagent/atom "re-frame"))
 
 ;; call our `component` function, passing in a ratom
-(greet n)
+(greet fw)
 ;; ==>  [:div "Hello " "re-frame"]    returns a vector
 ```
 
@@ -151,24 +151,24 @@ On the other hand, it is useful to understand exactly how the Reagent Signal gra
   [name]                   ;; name is a ratom
   [:div "Hello "  @name])  ;; dereference name here, to extract the value within
 
-(def n (reagent/atom "re-frame"))
+(def fw (reagent/atom "re-frame"))
 
-;; The computation '(greet n)' returns Hiccup which is stored into 'hiccup-ratom'
-(def hiccup-ratom  (reaction (greet n)))    ;; <-- use of reaction !!!
+;; The computation '(greet fw)' returns Hiccup which is stored into 'hiccup-ratom'
+(def hiccup-ratom  (reaction (greet fw)))    ;; <-- use of reaction !!!
 
 ;; what is the result of the initial computation ?
 (println @hiccup-ratom)
 ;; ==>  [:div "Hello " "re-frame"]    ;; returns hiccup  (a vector of stuff)
 
-;; now change 'n'
-;; 'n' is an input Signal for the reaction above.
-;; Warning: 'n' is not an input signal because it is a parameter. Rather, it is
-;; because 'n' is dereferenced within the execution of the reaction's computation.
+;; now change 'fw'
+;; 'fw' is an input Signal for the reaction above.
+;; Warning: 'fw' is not an input signal because it is a parameter. Rather, it is
+;; because 'fw' is dereferenced within the execution of the reaction's computation.
 ;; reaction notices what ratoms are dereferenced in its computation, and watches
 ;; them for changes.
-(reset! n "blah")            ;;    n changes
+(reset! fw "blah")            ;;    fw changes
 
-;; The reaction above will notice the change to 'n' ...
+;; The reaction above will notice the change to 'fw' ...
 ;; ... and will re-run its computation ...
 ;; ... which will have a new "return value"...
 ;; ... which will be "reset!" into "hiccup-ratom"
@@ -176,10 +176,10 @@ On the other hand, it is useful to understand exactly how the Reagent Signal gra
 ;; ==>   [:div "Hello " "blah"]    ;; yep, there's the new value
 ```
 
-So, as `n` changes value over time (via a `reset!`), the output of the computation `(greet n)`
-changes, which in turn means that the value in `hiccup-ratom` changes. Both `n` and
+So, as `fw` changes value over time (via a `reset!`), the output of the computation `(greet fw)`
+changes, which in turn means that the value in `hiccup-ratom` changes. Both `fw` and
 `hiccup-ratom` are FRP Signals. The Signal graph we created causes data to flow from
-`n` into `hiccup-ratom`.
+`fw` into `hiccup-ratom`.
 
 Derived Data, flowing.
 
