@@ -628,6 +628,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#self-documenting" class="md-nav__link">
+    Self Documenting
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#credit" class="md-nav__link">
     Credit
   </a>
@@ -1650,6 +1657,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#self-documenting" class="md-nav__link">
+    Self Documenting
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#credit" class="md-nav__link">
     Credit
   </a>
@@ -1885,6 +1899,12 @@ of the interceptors already done.</p>
 <code>:before</code> and <code>:after</code> functions through which the <code>context</code> is threaded.</p>
 <p>So interceptors can be dynamically added
 and removed from <code>:queue</code> and <code>:stack</code> by Interceptors already in the chain.</p>
+<h2 id="self-documenting">Self Documenting<a class="headerlink" href="#self-documenting" title="Permanent link">&para;</a></h2>
+<p>An interceptor has a required <code>:id</code> key, and an optional <code>:comment</code> key.
+Re-frame itself does not take any special action in response to these keys.
+Instead, they can offer situational awareness to you or your tools.
+For instance, the <a href="#appendix-built-in-interceptors">standard interceptor</a>
+<strong>path</strong> adds a <code>:comment</code> describing <em>which</em> path it goes to.</p>
 <h2 id="credit">Credit<a class="headerlink" href="#credit" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>All truths are easy to understand once they are discovered <br>
@@ -2032,7 +2052,7 @@ Interceptor which wraps that handler:</p>
 <ul>
 <li><strong>enrich</strong>:  perform additional computations (validations?), after the handler has run. More derived data flowing.</li>
 <li><strong>after</strong>: perform side effects, after a handler has run.  Eg: use it to report if the data in <code>app-db</code> matches a schema.</li>
-<li><strong>path</strong>:  a convenience. Simplifies our handlers. Acts almost like <code>update-in</code>.</li>
+<li><strong>path</strong>:  a convenience. Simplifies our handlers. Acts almost like <code>update-in</code>, to get and set a subtree of the app-db. Stores the path of the subtree in its <code>:comment</code>.</li>
 </ul>
 <p>In addition, <a href="https://github.com/day8/re-frame-undo">a Library like re-frame-undo</a> provides an Interceptor
 factory called <code>undoable</code> which checkpoints app state.</p>
