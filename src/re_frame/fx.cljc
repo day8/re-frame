@@ -182,5 +182,6 @@
   :db
   (fn [value]
     (if-not (identical? @app-db value)
-      (reset! app-db value))))
+      (reset! app-db value)
+      (trace/with-trace {:op-type :reagent/quiescent}))))
 
