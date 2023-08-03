@@ -17,7 +17,7 @@
           (-> m keys set (set/difference optional-interceptor-keys)))))
 
 (defn ->interceptor
-  [& {:as m :keys [id before after]}]
+  [& {:as m :keys [id comment before after]}]
   (when debug-enabled?
     (if-let [unknown-keys (seq (set/difference
                                 (-> m keys set)
