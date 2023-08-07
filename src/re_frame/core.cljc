@@ -463,9 +463,12 @@
   elements are optional, additional values which parameterise the query
   performed.
 
-  `dynv` is an optional 3rd argument, which is a vector of further input
-  signals (atoms, reactions, etc), NOT values. This argument exists for
-  historical reasons and is borderline deprecated these days.
+  `dynv` exists for historical reasons and is borderline deprecated these days.
+  It is a vector of signals. Re-frame will dereference each of them and pass a
+  vector of their values to your subscription handler as a third argument.
+  If there's logic determing __what__ query to subscribe __to__, consider
+  expressing it in a `signal function`, or use `reg-sub-raw`. Failing that, `dynv`
+  allows you to colocate this logic with the `subscribe` call.
 
   **Example Usage**:
 
