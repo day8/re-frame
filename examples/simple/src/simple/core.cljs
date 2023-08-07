@@ -1,7 +1,6 @@
 (ns simple.core
-  (:require [reagent.dom]
-            [re-frame.core :as rf]
-            [clojure.string :as str]))
+  (:require [reagent.dom :as rdom]
+            [re-frame.core :as rf]))
 
 ;; A detailed walk-through of this source code is provided in the docs:
 ;; https://day8.github.io/re-frame/dominoes-live/
@@ -60,7 +59,7 @@
   (let [colour @(rf/subscribe [:time-color])
         time   (-> @(rf/subscribe [:time])
                    .toTimeString
-                   (str/split " ")
+                   (clojure.string/split " ")
                    first)]
     [:div.example-clock {:style {:color colour}} time]))
 
@@ -84,10 +83,10 @@
 
 ;; -- Entry Point -------------------------------------------------------------
 
-(defn render
+(defn mount-ui
   []
-  (reagent.dom/render [ui]
-                      (js/document.getElementById "app")))
+  (rdom/render [ui]
+               (js/document.getElementById "app")))
 
 (defn ^:dev/after-load clear-cache-and-render!
   []
@@ -95,9 +94,9 @@
   ;; after shadow-cljs hot-reloads code. We force a UI update by clearing
   ;; the Reframe subscription cache.
   (rf/clear-subscription-cache!)
-  (render))
+  (mount-ui))
 
 (defn run
   []
   (rf/dispatch-sync [:initialize]) ;; put a value into application state
-  (render))                         ;; mount the application's ui into '<div id="app" />'
+  (mount-ui))                      ;; mount the application's ui into '<div id="app" />'

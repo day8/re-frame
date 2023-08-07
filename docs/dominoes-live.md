@@ -38,8 +38,7 @@ Within our single namespace (called `re-frame.simple`), we'll need to use both `
 So, at the top, within the `ns`, we'll give the name and require the other namespaces we'll need: 
 <div class="cm-doc">
 (ns re-frame.simple
-  (:require [reagent.core :as reagent]
-            [reagent.dom :as rdom]
+  (:require [reagent.dom :as rdom]
             [re-frame.core :as rf]))
 </div>
 
