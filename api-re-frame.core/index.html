@@ -2785,9 +2785,12 @@ it returns a <code>Signal</code>.</p>
 <code>query-id</code>, typically a namespaced keyword. The rest of the vector's
 elements are optional, additional values which parameterise the query
 performed.</p>
-<p><code>dynv</code> is an optional 3rd argument, which is a vector of further input
-signals (atoms, reactions, etc), NOT values. This argument exists for
-historical reasons and is borderline deprecated these days.</p>
+<p><code>dynv</code> exists for historical reasons and is borderline deprecated these days.
+It is a vector of signals. Re-frame will dereference each of them and pass a
+vector of their values to your subscription handler as a third argument.
+If there's logic determing <strong>what</strong> query to subscribe <strong>to</strong>, consider
+expressing it in a <code>signal function</code>, or use <code>reg-sub-raw</code>. Failing that, <code>dynv</code>
+allows you to colocate this logic with the <code>subscribe</code> call.</p>
 <p><strong>Example Usage</strong>:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
