@@ -96,7 +96,7 @@
   (rf/clear-subscription-cache!)
   (mount-ui))
 
-(defn run
+(defn run               ;; Your app calls this when it starts. See shadow-cljs.edn :init-fn.
   []
   (rf/dispatch-sync [:initialize]) ;; put a value into application state
   (mount-ui))                      ;; mount the application's ui into '<div id="app" />'
