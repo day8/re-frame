@@ -10,11 +10,11 @@
     "karma-chrome-launcher": "3.1.0",
     "karma-cljs-test": "0.1.0",
     "karma-junit-reporter": "2.0.1",
-    "karma-phantomjs-launcher": "1.0.4",
     "shadow-cljs": "2.15.12"
   },
   "dependencies": {
     "highlight.js": "11.1.0",
+    "karma-puppeteer-launcher": "^1.0.4",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   }
