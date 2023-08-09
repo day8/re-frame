@@ -1,22 +1,17 @@
 module.exports = function (config) {
   var root = 'run/compiled/karma/test' // same as :output-dir
   var junitOutputDir = process.env.CIRCLE_TEST_REPORTS || "run/compiled/karma/test/junit"
-  if (process.env.CANARY_CLOJURESCRIPT_VERSION !== undefined) {
-      var browsers = ['PhantomJS']
-  } else {
-      var browsers = ['ChromeHeadless']
-  }
 
   config.set({
     frameworks: ['cljs-test'],
-    browsers: browsers,
+    browsers: ['ChromeHeadless'],
     basePath: './',
     files: [
       root + '/test.js'
     ],
     plugins: [
         'karma-cljs-test',
-        'karma-phantomjs-launcher',
+        'karma-puppeteer-launcher',
         'karma-chrome-launcher',
         'karma-junit-reporter'
     ],
