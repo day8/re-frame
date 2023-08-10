@@ -35,25 +35,29 @@
 (defn cache-and-return
   "cache the reaction r"
   [query-v dynv r]
-  (let [cache-key [query-v dynv]]
-    ;; when this reaction is no longer being used, remove it from the cache
-    (add-on-dispose! r #(trace/with-trace {:operation (first-in-vector query-v)
-                                           :op-type   :sub/dispose
-                                           :tags      {:query-v  query-v
-                                                       :reaction (reagent-id r)}}
-                                          (swap! query->reaction
-                                                 (fn [query-cache]
-                                                   (if (and (contains? query-cache cache-key) (identical? r (get query-cache cache-key)))
-                                                     (dissoc query-cache cache-key)
-                                                     query-cache)))))
-    ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
-    (swap! query->reaction (fn [query-cache]
-                             (when debug-enabled?
-                               (when (contains? query-cache cache-key)
-                                 (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" cache-key)))
-                             (assoc query-cache cache-key r)))
-    (trace/merge-trace! {:tags {:reaction (reagent-id r)}})
-    r)) ;; return the actual reaction
+  ;; Only cache the reaction when subscribe is called from a reactive context
+  ;; where a reagent component will be able to purge the reaction from the subscription cache
+  ;; when the component is dismounted.
+  (when (reactive?)
+    (let [cache-key [query-v dynv]]
+      ;; when this reaction is no longer being used, remove it from the cache
+      (add-on-dispose! r #(trace/with-trace {:operation (first-in-vector query-v)
+                                             :op-type   :sub/dispose
+                                             :tags      {:query-v  query-v
+                                                         :reaction (reagent-id r)}}
+                                            (swap! query->reaction
+                                                   (fn [query-cache]
+                                                     (if (and (contains? query-cache cache-key) (identical? r (get query-cache cache-key)))
+                                                       (dissoc query-cache cache-key)
+                                                       query-cache)))))
+      ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
+      (swap! query->reaction (fn [query-cache]
+                               (when debug-enabled?
+                                 (when (contains? query-cache cache-key)
+                                   (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" cache-key)))
+                               (assoc query-cache cache-key r)))
+      (trace/merge-trace! {:tags {:reaction (reagent-id r)}})))
+  r) ;; Always return the actual reaction, even if it was not cached.
 
 (defn cache-lookup
   ([query-v]
@@ -63,17 +67,8 @@
 
 ;; -- subscribe ---------------------------------------------------------------
 
-(defn warn-when-not-reactive
-  []
-  (when (and debug-enabled? (not (reactive?)))
-    (console :warn
-             "re-frame: Subscribe was called outside of a reactive context.\n"
-             "See: https://day8.github.io/re-frame/FAQs/UseASubscriptionInAJsEvent/\n"
-             "https://day8.github.io/re-frame/FAQs/UseASubscriptionInAnEventHandler/")))
-
 (defn subscribe
   ([query]
-   (warn-when-not-reactive)
    (trace/with-trace {:operation (first-in-vector query)
                       :op-type   :sub/create
                       :tags      {:query-v query}}
@@ -92,7 +87,6 @@
            (cache-and-return query [] (handler-fn app-db query)))))))
 
   ([query dynv]
-   (warn-when-not-reactive)
    (trace/with-trace {:operation (first-in-vector query)
                       :op-type   :sub/create
                       :tags      {:query-v query

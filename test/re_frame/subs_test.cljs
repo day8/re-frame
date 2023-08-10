@@ -3,6 +3,7 @@
             [reagent.ratom     :as r :refer-macros [reaction]]
             [re-frame.subs     :as subs]
             [re-frame.db       :as db]
+            [re-frame.interop]
             [re-frame.core     :as re-frame]))
 
 (test/use-fixtures :each {:before (fn [] (subs/clear-all-handlers!))})
@@ -87,16 +88,37 @@
       (swap! side-effect-atom inc)
       (reaction @db)))
 
- (let [test-sub (subs/subscribe [:side-effecting-handler])]
-    (reset! db/app-db :test)
-    (is (= :test @test-sub))
-    (is (= @side-effect-atom 1))
-    (subs/subscribe [:side-effecting-handler])  ;; this should be handled by cache
-    (is (= @side-effect-atom 1))
-    (subs/subscribe [:side-effecting-handler :a]) ;; should fire again because of the param
-    (is (= @side-effect-atom 2))
-    (subs/subscribe [:side-effecting-handler :a]) ;; this should be handled by cache
-    (is (= @side-effect-atom 2))))
+  (testing "Inside of a reactive context"
+    (with-redefs [re-frame.interop/reactive? (constantly true)]
+      (let [test-sub (subs/subscribe [:side-effecting-handler])]
+         (reset! db/app-db :test)
+         (is (= :test @test-sub))
+         (is (= @side-effect-atom 1))
+         (subs/subscribe [:side-effecting-handler])  ;; this should be handled by cache
+         (is (= @side-effect-atom 1))
+         (subs/subscribe [:side-effecting-handler :a]) ;; should fire again because of the param
+         (is (= @side-effect-atom 2))
+         (subs/subscribe [:side-effecting-handler :a]) ;; this should be handled by cache
+         (is (= @side-effect-atom 2)))))
+
+  (subs/clear-subscription-cache!)
+  (reset! side-effect-atom 0)
+
+  (testing "Outside a reactive context"
+    (let [test-sub (subs/subscribe [:side-effecting-handler])]
+      (is (= :test @test-sub))
+      (is (= @side-effect-atom 1)
+          "Subscribed once")
+      (subs/subscribe [:side-effecting-handler])
+      (is (= @side-effect-atom 2)
+          "Subscribed twice and the cache was never populated.")
+      (with-redefs [re-frame.interop/reactive? (constantly true)]
+        (subs/subscribe [:side-effecting-handler :a])
+        (is (= @side-effect-atom 3)
+            "Fires again because of the param, but this time the cache is populated"))
+      (subs/subscribe [:side-effecting-handler :a])
+      (is (= @side-effect-atom 3)
+          "The cache was already populated, so the cached reaction is used."))))
 
 ;============== test clear-subscription-cache! ================
 
@@ -105,14 +127,15 @@
    :clear-subscription-cache!
    (fn clear-subs-cache [db _] 1))
 
-  (testing "cold cache"
-    (is (nil? (subs/cache-lookup [:clear-subscription-cache!]))))
-  (testing "cache miss"
-    (is (= 1 @(subs/subscribe [:clear-subscription-cache!])))
-    (is (some? (subs/cache-lookup [:clear-subscription-cache!]))))
-  (testing "clearing"
-    (subs/clear-subscription-cache!)
-    (is (nil? (subs/cache-lookup [:clear-subscription-cache!])))))
+  (with-redefs [re-frame.interop/reactive? (constantly true)]
+    (testing "cold cache"
+      (is (nil? (subs/cache-lookup [:clear-subscription-cache!]))))
+    (testing "cache miss"
+      (is (= 1 @(subs/subscribe [:clear-subscription-cache!])))
+      (is (some? (subs/cache-lookup [:clear-subscription-cache!]))))
+    (testing "clearing"
+      (subs/clear-subscription-cache!)
+      (is (nil? (subs/cache-lookup [:clear-subscription-cache!]))))))
 
 ;============== test register-pure macros ================
 
