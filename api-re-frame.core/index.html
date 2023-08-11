@@ -3180,6 +3180,13 @@ it will:</p>
  interceptor chain. Any global interceptors you register are effectively
  prepending to this chain.</p>
 <p>Global interceptors are run in the order that they are registered.</p>
+<p>Global interceptors are unique by :id. If a global interceptor with the same :id
+ key as <code>interceptor</code> is already registered, <code>interceptor</code> will take its place in the
+ global interceptor chain. This facilitates hot-reloading.</p>
+<p>Note: members of re-frame.std-interceptors do not have unique ids. To register
+ more than one, consider:</p>
+<p>(reg-global-interceptor (-&gt; (re-frame.std-interceptors/on-changes + [:a] [:b])
+                            (assoc :id :my-unique-id)))</p>
 <h3 id="clear-global-interceptor">clear-global-interceptor<a class="headerlink" href="#clear-global-interceptor" title="Permanent link">&para;</a></h3>
 <p><code class="highlight"><span class="p">(</span><span class="nf">clear-global-interceptor</span><span class="p">)</span></code></p>
 <p><code class="highlight"><span class="p">(</span><span class="nf">clear-global-interceptor</span> <span class="nv">id</span><span class="p">)</span></code></p>
