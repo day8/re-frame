@@ -18,7 +18,7 @@
 (def query->reaction (atom {}))
 
 (defn clear-subscription-cache!
-  "calls `on-dispose` for each cached item, 
+  "calls `on-dispose` for each cached item,
    which will cause the value to be removed from the cache"
   []
   (doseq [[k rxn] @query->reaction]
