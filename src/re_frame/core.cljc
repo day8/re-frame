@@ -915,7 +915,17 @@
    interceptor chain. Any global interceptors you register are effectively
    prepending to this chain.
 
-   Global interceptors are run in the order that they are registered."
+   Global interceptors are run in the order that they are registered.
+
+   Global interceptors are unique by :id. If a global interceptor with the same :id
+   key as `interceptor` is already registered, `interceptor` will take its place in the
+   global interceptor chain. This facilitates hot-reloading.
+
+   Note: members of re-frame.std-interceptors do not have unique ids. To register
+   more than one, consider:
+
+  (reg-global-interceptor (-> (re-frame.std-interceptors/on-changes + [:a] [:b])
+                              (assoc :id :my-unique-id)))"
   {:api-docs/heading "Global Interceptors"}
   [interceptor]
   (settings/reg-global-interceptor interceptor))
