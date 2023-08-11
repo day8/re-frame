@@ -1,22 +1,21 @@
 (ns re-frame.core
   (:require
-    [re-frame.events           :as events]
-    [re-frame.subs             :as subs]
-    [re-frame.interop          :as interop]
-    [re-frame.db               :as db]
-    [re-frame.fx               :as fx]
-    [re-frame.cofx             :as cofx]
-    [re-frame.router           :as router]
-    [re-frame.settings         :as settings]
-    [re-frame.loggers          :as loggers]
-    [re-frame.registrar        :as registrar]
-    [re-frame.interceptor      :as interceptor]
-    [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
-                                                            fx-handler->interceptor
-                                                            ctx-handler->interceptor]]
-    [re-frame.utils            :as utils]
-    [clojure.set               :as set]))
-
+   [re-frame.events           :as events]
+   [re-frame.subs             :as subs]
+   [re-frame.interop          :as interop]
+   [re-frame.db               :as db]
+   [re-frame.fx               :as fx]
+   [re-frame.cofx             :as cofx]
+   [re-frame.router           :as router]
+   [re-frame.settings         :as settings]
+   [re-frame.loggers          :as loggers]
+   [re-frame.registrar        :as registrar]
+   [re-frame.interceptor      :as interceptor]
+   [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
+                                                           fx-handler->interceptor
+                                                           ctx-handler->interceptor]]
+   [re-frame.utils            :as utils]
+   [clojure.set               :as set]))
 
 ;; -- dispatch ----------------------------------------------------------------
 
@@ -68,7 +67,6 @@
   [event]
   (router/dispatch-sync event))
 
-
 ;; -- Events ------------------------------------------------------------------
 
 (defn reg-event-db
@@ -104,7 +102,6 @@
   ([id interceptors handler]
    (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (db-handler->interceptor handler)])))
 
-
 (defn reg-event-fx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain:
@@ -138,7 +135,6 @@
    (reg-event-fx id nil handler))
   ([id interceptors handler]
    (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (fx-handler->interceptor handler)])))
-
 
 (defn reg-event-ctx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
@@ -184,7 +180,6 @@
    (registrar/clear-handlers events/kind))
   ([id]
    (registrar/clear-handlers events/kind id)))
-
 
 ;; -- subscriptions -----------------------------------------------------------
 
@@ -521,7 +516,6 @@
   ([query-id]
    (registrar/clear-handlers subs/kind query-id)))
 
-
 (defn reg-sub-raw
   "This is a low level, advanced function.  You should probably be
   using `reg-sub` instead.
@@ -531,7 +525,6 @@
   {:api-docs/heading "Subscriptions"}
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
-
 
 ;; XXX
 (defn clear-subscription-cache!
@@ -575,7 +568,6 @@
   {:api-docs/heading "Effect Handlers"}
   [id handler]
   (fx/reg-fx id handler))
-
 
 (defn clear-fx ;; think unreg-fx
   "Unregisters effect handlers (presumably registered previously via the use of `reg-fx`).
@@ -685,7 +677,6 @@
    (registrar/clear-handlers cofx/kind))
   ([id]
    (registrar/clear-handlers cofx/kind id)))
-
 
 ;; -- interceptors ------------------------------------------------------------
 
@@ -845,7 +836,7 @@
          (fn [{:keys [db]} {:keys [x y z]}]  ;; <-- instead of [_ {:keys [x y z]}]
            ...)
    "
-   std-interceptors/unwrap)
+  std-interceptors/unwrap)
 
 (def ^{:api-docs/heading "Interceptors"} trim-v
   "An interceptor which removes the first element of the event vector,
@@ -916,7 +907,6 @@
   [f out-path & in-paths]
   (apply std-interceptors/on-changes f out-path in-paths))
 
-
 (defn reg-global-interceptor
   "Registers the given `interceptor` as a global interceptor. Global interceptors are
    included in the processing chain of every event.
@@ -943,7 +933,6 @@
    (settings/clear-global-interceptors))
   ([id]
    (settings/clear-global-interceptors id)))
-
 
 (defn ->interceptor
   "A utility function for creating interceptors.
@@ -1024,7 +1013,7 @@
    (interceptor/get-effect context key not-found)))
 
 (defn assoc-effect
-   "A utility function, typically used when writing an interceptor's `:after` function.
+  "A utility function, typically used when writing an interceptor's `:after` function.
 
    Adds or updates a key/value pair in the `:effects` map within `context`. "
   {:api-docs/heading "Writing Interceptors"}
@@ -1043,7 +1032,6 @@
   {:api-docs/heading "Writing Interceptors"}
   [context interceptors]
   (interceptor/enqueue context interceptors))
-
 
 ;; --  logging ----------------------------------------------------------------
 
@@ -1070,7 +1058,6 @@
   {:api-docs/heading "Logging"}
   [new-loggers]
   (loggers/set-loggers! new-loggers))
-
 
 (defn console
   "A utility logging function which is used internally within re-frame to produce
@@ -1128,7 +1115,6 @@
   []
   (router/purge re-frame.router/event-queue))
 
-
 ;; -- Event Processing Callbacks  ---------------------------------------------
 
 (defn add-post-event-callback
@@ -1155,7 +1141,6 @@
   ([id f]
    (router/add-post-event-callback re-frame.router/event-queue id f)))
 
-
 (defn remove-post-event-callback
   "Unregisters a post event callback function, identified by `id`.
 
@@ -1163,7 +1148,6 @@
   {:api-docs/heading "Miscellaneous"}
   [id]
   (router/remove-post-event-callback re-frame.router/event-queue id))
-
 
 ;; --  Deprecation ------------------------------------------------------------
 ;; Assisting the v0.7.x ->  v0.8.x transition.

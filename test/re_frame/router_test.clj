@@ -12,9 +12,9 @@
 (use-fixtures :each fixture-re-frame)
 
 (rf/reg-event-db
-  ::test
-  (fn [db [_ i]]
-    (update db ::test (fnil conj []) i)))
+ ::test
+ (fn [db [_ i]]
+   (update db ::test (fnil conj []) i)))
 
 (rf/reg-fx
  ::promise

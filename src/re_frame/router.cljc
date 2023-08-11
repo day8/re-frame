@@ -4,7 +4,6 @@
             [re-frame.loggers :refer [console]]
             [re-frame.trace   :as trace :include-macros true]))
 
-
 ;; -- Router Loop ------------------------------------------------------------
 ;;
 ;; A call to "re-frame.core/dispatch" places an event on a queue for processing.
@@ -66,7 +65,6 @@
   {:flush-dom (fn [f] (after-render #(next-tick f)))   ;; one tick after the end of the next animation frame
    :yield     next-tick})               ;; almost immediately
 
-
 ;; Event Queue Abstraction
 (defprotocol IEventQueue
 
@@ -88,7 +86,6 @@
   (-pause [this later-fn])
   (-resume [this])
   (-call-post-event-callbacks [this event]))
-
 
 ;; Concrete implementation of IEventQueue
 (deftype EventQueue [#?(:cljs ^:mutable fsm-state               :clj ^:volatile-mutable fsm-state)
@@ -217,14 +214,12 @@
     (-process-1st-event-in-queue this)  ;; do the event which paused processing
     (-run-queue this)))                 ;; do the rest of the queued events
 
-
 ;; ---------------------------------------------------------------------------
 ;; Event Queue
 ;; When "dispatch" is called, the event is added into this event queue.  Later,
 ;;  the queue will "run" and the event will be "handled" by the registered function.
 ;;
 (def event-queue (->EventQueue :idle empty-queue {}))
-
 
 ;; ---------------------------------------------------------------------------
 ;; Dispatching
@@ -233,8 +228,8 @@
 (defn dispatch
   [event]
   (if (nil? event)
-      (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
-      (push event-queue event))
+    (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
+    (push event-queue event))
   nil)                                           ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
 
 (defn dispatch-sync

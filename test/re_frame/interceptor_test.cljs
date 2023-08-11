@@ -31,29 +31,27 @@
            [:event-id :b :c]))
     (is (= ctx-untrimmed ctx))))
 
-
 (deftest test-one-level-path
-    (let [db   {:showing true :another 1}
-          p1   (path [:showing])]   ;; a simple one level path
+  (let [db   {:showing true :another 1}
+        p1   (path [:showing])]   ;; a simple one level path
 
-      (let [b4 (-> (context [] [] db)
-                  ((:before p1)))         ;; before
-            a (-> b4
-                  (assoc-effect :db false)
-                  ((:after p1)))]         ;; after
+    (let [b4 (-> (context [] [] db)
+                 ((:before p1)))         ;; before
+          a (-> b4
+                (assoc-effect :db false)
+                ((:after p1)))]         ;; after
 
-        (is (= (get-coeffect b4 :db)      ;; test before
-               true))
-        (is (= (get-effect a :db)         ;; test after
-               {:showing false :another 1})))))
-
+      (is (= (get-coeffect b4 :db)      ;; test before
+             true))
+      (is (= (get-effect a :db)         ;; test after
+             {:showing false :another 1})))))
 
 (deftest test-two-level-path
   (let [db  {:1 {:2 :target}}
         p  (path [:1 :2])]    ;; a two level path
 
     (let [b4 (-> (context [] [] db)
-                ((:before p)))]          ;; before
+                 ((:before p)))]          ;; before
 
       (is (= (get-coeffect b4 :db))      ;; test before
           :target)
@@ -82,7 +80,6 @@
         (nil?)                                              ;; We don't expect an effect to be added.
         (is))))
 
-
 (deftest test-inject-global-interceptors
   (let [forward (-> (context [] [inject-global-interceptors] {:a 1})
                     (interceptor/invoke-interceptors :before))
@@ -108,8 +105,6 @@
                     (get-effect :db))]
     (is (= db :new-db-val))))
 
-
-
 (deftest test-fx-handler-interceptor
   (let [event   [:a :b]
         coeffect {:db 4 :event event :original-event event}
@@ -134,7 +129,7 @@
                                db-handler->interceptor)
 
         no-change-handler-i  (->  (fn [db v] db)
-                               db-handler->interceptor)
+                                  db-handler->interceptor)
 
         no-db-handler-i (-> (fn [ctx v] {})
                             fx-handler->interceptor)
@@ -163,8 +158,8 @@
   (testing "when no db effect is returned"
     (let [after-db-val (atom nil)]
       (-> (context [:a :b]
-                   [(after (fn [db] (reset! after-db-val db)))]
-                   {:a 1})
+            [(after (fn [db] (reset! after-db-val db)))]
+            {:a 1})
           (interceptor/invoke-interceptors :before)
           interceptor/change-direction
           (interceptor/invoke-interceptors :after))
@@ -172,8 +167,8 @@
   (testing "when a false db effect is returned"
     (let [after-db-val (atom :not-reset)]
       (-> (context [:a :b]
-                   [(after (fn [db] (reset! after-db-val db)))]
-                   {:a 2})
+            [(after (fn [db] (reset! after-db-val db)))]
+            {:a 2})
           (assoc-effect :db nil)
           (interceptor/invoke-interceptors :before)
           interceptor/change-direction
@@ -182,8 +177,8 @@
   (testing "when a nil db effect is returned"
     (let [after-db-val (atom :not-reset)]
       (-> (context [:a :b]
-                   [(after (fn [db] (reset! after-db-val db)))]
-                   {:a 3})
+            [(after (fn [db] (reset! after-db-val db)))]
+            {:a 3})
           (assoc-effect :db false)
           (interceptor/invoke-interceptors :before)
           interceptor/change-direction
@@ -221,11 +216,11 @@
                  :coeffects {:db {:a 1}}}]
     (is (= {:effects {:db {:a 2}}
             :coeffects {:db {:a 1}}}
-         (update-effect context :db update :a inc)))))
+           (update-effect context :db update :a inc)))))
 
 (deftest test-update-coeffect
   (let [context {:effects {:db {:a 1}}
                  :coeffects {:db {:a 1}}}]
     (is (= {:effects {:db {:a 1}}
             :coeffects {:db {:a 2}}}
-         (update-coeffect context :db update :a inc)))))
+           (update-coeffect context :db update :a inc)))))

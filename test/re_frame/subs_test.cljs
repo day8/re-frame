@@ -11,8 +11,8 @@
 
 (deftest test-reg-sub
   (re-frame/reg-sub-raw
-    :test-sub
-    (fn [db [_]] (reaction (deref db))))
+   :test-sub
+   (fn [db [_]] (reaction (deref db))))
 
   (let [test-sub (subs/subscribe [:test-sub])]
     (is (= @db/app-db @test-sub))
@@ -21,19 +21,19 @@
 
 (deftest test-chained-subs
   (re-frame/reg-sub-raw
-    :a-sub
-    (fn [db [_]] (reaction (:a @db))))
+   :a-sub
+   (fn [db [_]] (reaction (:a @db))))
 
   (re-frame/reg-sub-raw
-    :b-sub
-    (fn [db [_]] (reaction (:b @db))))
+   :b-sub
+   (fn [db [_]] (reaction (:b @db))))
 
   (re-frame/reg-sub-raw
-    :a-b-sub
-    (fn [db [_]]
-      (let [a (subs/subscribe [:a-sub])
-            b (subs/subscribe [:b-sub])]
-        (reaction {:a @a :b @b}))))
+   :a-b-sub
+   (fn [db [_]]
+     (let [a (subs/subscribe [:a-sub])
+           b (subs/subscribe [:b-sub])]
+       (reaction {:a @a :b @b}))))
 
   (let [test-sub (subs/subscribe [:a-b-sub])]
     (reset! db/app-db {:a 1 :b 2})
@@ -43,29 +43,28 @@
 
 (deftest test-sub-parameters
   (re-frame/reg-sub-raw
-    :test-sub
-    (fn [db [_ b]] (reaction [(:a @db) b])))
+   :test-sub
+   (fn [db [_ b]] (reaction [(:a @db) b])))
 
   (let [test-sub (subs/subscribe [:test-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
     (is (= [1 :c] @test-sub))))
 
-
 (deftest test-sub-chained-parameters
   (re-frame/reg-sub-raw
-    :a-sub
-    (fn [db [_ a]] (reaction [(:a @db) a])))
+   :a-sub
+   (fn [db [_ a]] (reaction [(:a @db) a])))
 
   (re-frame/reg-sub-raw
-    :b-sub
-    (fn [db [_ b]] (reaction [(:b @db) b])))
+   :b-sub
+   (fn [db [_ b]] (reaction [(:b @db) b])))
 
   (re-frame/reg-sub-raw
-    :a-b-sub
-    (fn [db [_ c]]
-      (let [a (subs/subscribe [:a-sub c])
-            b (subs/subscribe [:b-sub c])]
-        (reaction {:a @a :b @b}))))
+   :a-b-sub
+   (fn [db [_ c]]
+     (let [a (subs/subscribe [:a-sub c])
+           b (subs/subscribe [:b-sub c])]
+       (reaction {:a @a :b @b}))))
 
   (let [test-sub (subs/subscribe [:a-b-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
@@ -81,13 +80,13 @@
   (reset! side-effect-atom 0)
 
   (re-frame/reg-sub-raw
-    :side-effecting-handler
-    (fn side-effect
-      [db [_] [_]]
-      (swap! side-effect-atom inc)
-      (reaction @db)))
+   :side-effecting-handler
+   (fn side-effect
+     [db [_] [_]]
+     (swap! side-effect-atom inc)
+     (reaction @db)))
 
- (let [test-sub (subs/subscribe [:side-effecting-handler])]
+  (let [test-sub (subs/subscribe [:side-effecting-handler])]
     (reset! db/app-db :test)
     (is (= :test @test-sub))
     (is (= @side-effect-atom 1))
@@ -118,8 +117,8 @@
 
 (deftest test-reg-sub-macro
   (subs/reg-sub
-    :test-sub
-    (fn [db [_]] db))
+   :test-sub
+   (fn [db [_]] db))
 
   (let [test-sub (subs/subscribe [:test-sub])]
     (is (= @db/app-db @test-sub))
@@ -128,15 +127,15 @@
 
 (deftest test-reg-sub-macro-singleton
   (subs/reg-sub
-    :a-sub
-    (fn [db [_]] (:a db)))
+   :a-sub
+   (fn [db [_]] (:a db)))
 
   (subs/reg-sub
-    :a-b-sub
-    (fn [_ _ _]
-      (subs/subscribe [:a-sub]))
-    (fn [a [_]]
-      {:a a}))
+   :a-b-sub
+   (fn [_ _ _]
+     (subs/subscribe [:a-sub]))
+   (fn [a [_]]
+     {:a a}))
 
   (let [test-sub (subs/subscribe [:a-b-sub])]
     (reset! db/app-db {:a 1 :b 2})
@@ -146,20 +145,20 @@
 
 (deftest test-reg-sub-macro-vector
   (subs/reg-sub
-    :a-sub
-    (fn [db [_]] (:a db)))
+   :a-sub
+   (fn [db [_]] (:a db)))
 
   (subs/reg-sub
-    :b-sub
-    (fn [db [_]] (:b db)))
+   :b-sub
+   (fn [db [_]] (:b db)))
 
   (subs/reg-sub
-    :a-b-sub
-    (fn [_ _ _]
-      [(subs/subscribe [:a-sub])
-       (subs/subscribe [:b-sub])])
-    (fn [[a b] [_]]
-      {:a a :b b}))
+   :a-b-sub
+   (fn [_ _ _]
+     [(subs/subscribe [:a-sub])
+      (subs/subscribe [:b-sub])])
+   (fn [[a b] [_]]
+     {:a a :b b}))
 
   (let [test-sub (subs/subscribe [:a-b-sub])]
     (reset! db/app-db {:a 1 :b 2})
@@ -169,20 +168,20 @@
 
 (deftest test-reg-sub-macro-map
   (subs/reg-sub
-    :a-sub
-    (fn [db [_]] (:a db)))
+   :a-sub
+   (fn [db [_]] (:a db)))
 
   (subs/reg-sub
-    :b-sub
-    (fn [db [_]] (:b db)))
+   :b-sub
+   (fn [db [_]] (:b db)))
 
   (subs/reg-sub
-    :a-b-sub
-    (fn [_ _ _]
-      {:a (subs/subscribe [:a-sub])
-       :b (subs/subscribe [:b-sub])})
-    (fn [{:keys [a b]} [_]]
-      {:a a :b b}))
+   :a-b-sub
+   (fn [_ _ _]
+     {:a (subs/subscribe [:a-sub])
+      :b (subs/subscribe [:b-sub])})
+   (fn [{:keys [a b]} [_]]
+     {:a a :b b}))
 
   (let [test-sub (subs/subscribe [:a-b-sub])]
     (reset! db/app-db {:a 1 :b 2})
@@ -192,8 +191,8 @@
 
 (deftest test-sub-macro-parameters
   (subs/reg-sub
-    :test-sub
-    (fn [db [_ b]] [(:a db) b]))
+   :test-sub
+   (fn [db [_ b]] [(:a db) b]))
 
   (let [test-sub (subs/subscribe [:test-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
@@ -201,19 +200,19 @@
 
 (deftest test-sub-macros-chained-parameters
   (subs/reg-sub
-    :a-sub
-    (fn [db [_ a]] [(:a db) a]))
+   :a-sub
+   (fn [db [_ a]] [(:a db) a]))
 
   (subs/reg-sub
-    :b-sub
-    (fn [db [_ b]] [(:b db) b]))
+   :b-sub
+   (fn [db [_ b]] [(:b db) b]))
 
   (subs/reg-sub
-    :a-b-sub
-    (fn [[_ c] _]
-      [(subs/subscribe [:a-sub c])
-       (subs/subscribe [:b-sub c])])
-    (fn [[a b] [_ c]] {:a a :b b}))
+   :a-b-sub
+   (fn [[_ c] _]
+     [(subs/subscribe [:a-sub c])
+      (subs/subscribe [:b-sub c])])
+   (fn [[a b] [_ c]] {:a a :b b}))
 
   (let [test-sub (subs/subscribe [:a-b-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
@@ -222,13 +221,13 @@
 (deftest test-sub-macros-<-
   "test the syntactical sugar"
   (subs/reg-sub
-    :a-sub
-    (fn [db [_]] (:a db)))
+   :a-sub
+   (fn [db [_]] (:a db)))
 
   (subs/reg-sub
-        :a-b-sub
-        :<- [:a-sub]
-        (fn [a [_]] {:a a}))
+   :a-b-sub
+   :<- [:a-sub]
+   (fn [a [_]] {:a a}))
 
   (let [test-sub (subs/subscribe [:a-b-sub])]
     (reset! db/app-db {:a 1 :b 2})
@@ -237,18 +236,18 @@
 (deftest test-sub-macros-chained-parameters-<-
   "test the syntactical sugar"
   (subs/reg-sub
-    :a-sub
-    (fn [db [_]] (:a db)))
+   :a-sub
+   (fn [db [_]] (:a db)))
 
   (subs/reg-sub
-    :b-sub
-    (fn [db [_]] (:b db)))
+   :b-sub
+   (fn [db [_]] (:b db)))
 
   (subs/reg-sub
-        :a-b-sub
-        :<- [:a-sub]
-        :<- [:b-sub]
-        (fn [[a b] [_ c]] {:a a :b b}))
+   :a-b-sub
+   :<- [:a-sub]
+   :<- [:b-sub]
+   (fn [[a b] [_ c]] {:a a :b b}))
 
   (let [test-sub (subs/subscribe [:a-b-sub :c])]
     (reset! db/app-db {:a 1 :b 2})
@@ -325,7 +324,7 @@
    :test-b-sub
    :<- [:b-sub]
    :=> =)
-  
+
   (let [test-a-sub (subs/subscribe [:test-a-sub :c])
         test-b-sub (subs/subscribe [:test-b-sub 2])]
     (reset! db/app-db {:a 1 :b 2})
@@ -336,30 +335,30 @@
   (let [sub-called? (atom false)]
     (with-redefs [subs/subscribe (fn [& args] (reset! sub-called? true))]
       (subs/reg-sub
-        :a-sub
-        (fn [db [_]] (:a db)))
+       :a-sub
+       (fn [db [_]] (:a db)))
 
       (subs/reg-sub
-        :b-sub
-        (fn [db [_]] (:b db)))
+       :b-sub
+       (fn [db [_]] (:b db)))
 
       (subs/reg-sub
-        :fn-sub
-        (fn [[_ c] _]
-          [(subs/subscribe [:a-sub c])
-           (subs/subscribe [:b-sub c])])
-        (fn [db [_]] (:b db)))
+       :fn-sub
+       (fn [[_ c] _]
+         [(subs/subscribe [:a-sub c])
+          (subs/subscribe [:b-sub c])])
+       (fn [db [_]] (:b db)))
 
       (subs/reg-sub
-        :a-sugar-sub
-        :<- [:a-sub]
-        (fn [[a] [_ c]] {:a a}))
+       :a-sugar-sub
+       :<- [:a-sub]
+       (fn [[a] [_ c]] {:a a}))
 
       (subs/reg-sub
-        :a-b-sub
-        :<- [:a-sub]
-        :<- [:b-sub]
-        (fn [[a b] [_ c]] {:a a :b b})))
+       :a-b-sub
+       :<- [:a-sub]
+       :<- [:b-sub]
+       (fn [[a b] [_ c]] {:a a :b b})))
 
     (is (false? @sub-called?))))
 
@@ -367,9 +366,9 @@
 
 (deftest test-dynamic-subscriptions
   (subs/reg-sub
-    :dyn-sub
-    (fn [db ev dynv]
-      (first dynv)))
+   :dyn-sub
+   (fn [db ev dynv]
+     (first dynv)))
 
   (testing "happy case"
     (is (= 1 @(subs/subscribe [:dyn-sub] [(r/atom 1)]))))

@@ -7,9 +7,9 @@
 
 (test/use-fixtures :once {:before (fn []
                                     (trace/register-trace-cb :test
-                                      (fn [traces]
-                                        (doseq [trace traces]
-                                          (swap! test-traces conj trace)))))
+                                                             (fn [traces]
+                                                               (doseq [trace traces]
+                                                                 (swap! test-traces conj trace)))))
                           :after  (fn []
                                     (trace/remove-trace-cb :test))})
 

@@ -1,7 +1,6 @@
 (ns re-frame.db
   (:require [re-frame.interop :refer [ratom]]))
 
-
 ;; -- Application State  --------------------------------------------------------------------------
 ;;
 ;; Should not be accessed directly by application code.

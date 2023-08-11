@@ -7,7 +7,6 @@
             [re-frame.interceptor :as  interceptor]
             [re-frame.trace       :as trace :include-macros true]))
 
-
 (def kind :event)
 (assert (re-frame.registrar/kinds kind))
 
@@ -31,7 +30,6 @@
               (console :error "re-frame: when registering" id ", expected interceptors, but got:" not-i)))
           chain)))))
 
-
 (defn register
   "Associate the given event `id` with the given collection of `interceptors`.
 
@@ -43,8 +41,6 @@
    in an interceptor)."
   [id interceptors]
   (register-handler kind id (flatten-and-remove-nils id interceptors)))
-
-
 
 ;; -- handle event --------------------------------------------------------------------------------
 
