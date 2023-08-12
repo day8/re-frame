@@ -30,3 +30,8 @@
   {:pre [(map? (last args))]}
   (apply f (apply concat
                   (butlast args) (last args))))
+
+(defn common-key
+  "The first key in m1 which is also in m2."
+  [m1 m2]
+  (first (some #(find m1 %) (keys m2))))

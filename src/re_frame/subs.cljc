@@ -3,9 +3,10 @@
    [re-frame.db        :refer [app-db]]
    [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref? dispose! reagent-id reactive?]]
    [re-frame.loggers   :refer [console]]
-   [re-frame.utils     :refer [first-in-vector]]
+   [re-frame.utils     :refer [first-in-vector common-key]]
    [re-frame.registrar :refer [get-handler clear-handlers register-handler]]
-   [re-frame.trace     :as trace :include-macros true]))
+   [re-frame.trace     :as trace :include-macros true]
+   [re-frame :as-alias rf]))
 
 (def kind :sub)
 (assert (re-frame.registrar/kinds kind))
@@ -244,3 +245,65 @@
 
           (reset! reaction-id (reagent-id reaction))
           reaction))))))
+
+(def method->sub-fn (atom {})) ;; can we use a clojure.core multimethod?
+
+(defn dispatch-val [m] (common-key m @method->sub-fn))
+(defn sub-method [m] (->> m dispatch-val (get @method->sub-fn)))
+(defn sub-id [m] (->> m dispatch-val m))
+(defn reg-sub-method [k f] (swap! method->sub-fn assoc k f))
+
+(def cache (atom {}))
+(defn cached [query] (get-in @cache [(dispatch-val query) query]))
+(defn cache! [query r] (swap! cache assoc-in [(dispatch-val query) query] r) r)
+
+(defn clear!
+  ([] (reset! cache {}))
+  ([query] (clear! (dispatch-val query) query))
+  ([query md] (swap! cache update md dissoc query)))
+
+(defn sub-legacy
+  [query]
+  (let [dv (dispatch-val query)
+        id (sub-id query)
+        r ((get-handler kind id) app-db [id query])]
+    (or (cached query)
+        (do
+          (add-on-dispose! r #(clear! query dv))
+          (cache! query r)))))
+
+(defn sub
+  [query]
+  (when-let [md (sub-method query)]
+    (md query)))
+
+(reg-sub-method ::rf/sub-legacy sub-legacy)
+(assert (= :re-frame/sub-legacy
+           (dispatch-val {::rf/sub-legacy :items})))
+
+(def sid (keyword (gensym)))
+
+(reg-sub
+ sid
+ (fn [_ [dv query]]
+   (str "Hello World. \n "
+        "My id is " dv ". \n "
+        "My lifecycle is determined by " (dispatch-val query) " \n "
+        "and my query is " query ".")))
+
+(def q {::rf/sub-legacy sid})
+
+(println @(sub q))
+(assert @(sub q))
+
+(defn sub-safe [query]
+  (if (reactive?)
+    (sub-legacy query)
+    (let [id (sub-id query)
+          r ((get-handler kind id) app-db [id query])]
+      (or (cached query) r))))
+
+(reg-sub-method ::rf/sub-safe sub-safe)
+
+(def q-safe {::rf/sub-safe sid})
+(println @(sub q-safe))
