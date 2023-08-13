@@ -3,10 +3,9 @@
    [re-frame.db        :refer [app-db]]
    [re-frame.interop   :refer [add-on-dispose! debug-enabled? make-reaction ratom? deref? dispose! reagent-id reactive?]]
    [re-frame.loggers   :refer [console]]
-   [re-frame.utils     :refer [first-in-vector common-key]]
+   [re-frame.utils     :refer [first-in-vector]]
    [re-frame.registrar :refer [get-handler clear-handlers register-handler]]
-   [re-frame.trace     :as trace :include-macros true]
-   [re-frame :as-alias rf]))
+   [re-frame.trace     :as trace :include-macros true]))
 
 (def kind :sub)
 (assert (re-frame.registrar/kinds kind))
@@ -146,7 +145,7 @@
     x
     (list x)))
 
-(defn- deref-input-signals
+(defn deref-input-signals
   [signals query-id]
   (let [dereffed-signals (map-signals deref signals)]
     (cond
@@ -245,128 +244,3 @@
 
           (reset! reaction-id (reagent-id reaction))
           reaction))))))
-
-(def strategy->method (atom {})) ;; should we use a clojure.core multimethod?
-(reset! strategy->method {})
-
-(defn  legacy-strategy [v]
-  (when (vector? v)
-    (let [value (first-in-vector v)]
-      (if (map? value)
-        (common-key value @strategy->method)
-        (or (common-key (meta v) @strategy->method)
-            :default)))))
-
-(defn strategy [q] (or (legacy-strategy q)
-                       (common-key q @strategy->method)))
-
-(defn  legacy-query-id [v]
-  (when (vector? v)
-    (let [value (first-in-vector v)]
-      (if (map? value)
-        (some-> value strategy value)
-        value))))
-
-(defn query-id [q] (or (legacy-query-id q)
-                       (some-> q strategy q)))
-
-(defn method [q] (->> q strategy (get @strategy->method)))
-
-(defn handle [q] ((get-handler kind (query-id q)) app-db q))
-
-(def cache (atom {}))
-(defn cached [q] (get-in @cache [(strategy q) q]))
-(defn cache! [q r] (swap! cache assoc-in [(strategy q) q] r) r)
-
-(defn clear!
-  ([] (reset! cache {}))
-  ([q] (clear! q (strategy q)))
-  ([q strat] (swap! cache update strat dissoc q)))
-
-(defn sub [q]
-  (let [md (method q)]
-    (cond (map? q) (md q)
-          (get q 2) (apply md q) ;; this discards the meta of q :(
-          (vector? q) (md {(strategy q) (query-id q)}))))
-
-(defmulti reg (fn [k & _] k))
-(reset! (.-method-table reg) {})
-
-(defmethod reg :sub-method [_ k f]
-  (swap! strategy->method assoc k f))
-
-(defmethod reg :sub [kind id computation-fn]
-  (register-handler
-   kind
-   id
-   (fn [_ q]
-     (make-reaction
-      #(computation-fn
-        (deref-input-signals app-db id)
-        (if (vector? q)
-          q
-          (into [q] (::rf/legacy-args q))))))))
-
-(defn sub-reactive
-  ([m]
-   (or (cached m)
-       (let [md (strategy m)
-             r (handle m)]
-         (add-on-dispose! r #(clear! m md))
-         (cache! m r))))
-  ([id & args]
-   (let [v (into [id] args)]
-     (or (cached v)
-         (let [md (strategy v)
-               r (handle v)]
-           (add-on-dispose! r #(clear! v md))
-           (cache! v r))))))
-
-(reg :sub-method ::rf/sub-reactive sub-reactive)
-(reg :sub-method :default sub-reactive)
-
-(defn sub-safe
-  ([m]
-   (if (reactive?)
-     (sub-reactive m)
-     (or (cached m)
-         (handle m))))
-  ([id & args]
-   (let [v (into [id] args)]
-     (if (reactive?)
-       (apply sub-reactive v)
-       (or (cached v)
-           (handle v))))))
-
-(reg :sub-method ::rf/sub-safe sub-safe)
-
-#_(do
-    (def qid! (comp keyword gensym))
-
-    (defn report [_db query-v]
-      {:query query-v
-       :strategy (strategy query-v)
-       :query-id (query-id query-v)
-       :method (method query-v)
-       :legacy-args (::rf/legacy-args query-v)})
-
-    (def test-queries
-      (list
-       {::rf/sub-safe (qid!)}
-       {::rf/sub-reactive (qid!)}
-       {::rf/sub-safe (qid!)
-        ::rf/legacy-args [1 2 3]}
-       [{::rf/sub-reactive (qid!)} 1 2 3]
-       [(qid!)]
-       [(qid!) 1 2 3]
-       ^::rf/sub-reactive [(qid!)]
-       ;; the computation-fn can't know the strategy in this case:
-       ^::rf/sub-reactive [(qid!) 1 2 3]))
-
-    (doseq [q test-queries
-            :let [qid (query-id q)
-                  _ (reg :sub qid report)
-                  result @(sub q)]]
-      (cljs.pprint/pprint result)
-      (println)
-      (assert result)))
