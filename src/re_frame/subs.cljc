@@ -246,64 +246,127 @@
           (reset! reaction-id (reagent-id reaction))
           reaction))))))
 
-(def method->sub-fn (atom {})) ;; can we use a clojure.core multimethod?
+(def strategy->method (atom {})) ;; should we use a clojure.core multimethod?
+(reset! strategy->method {})
 
-(defn dispatch-val [m] (common-key m @method->sub-fn))
-(defn sub-method [m] (->> m dispatch-val (get @method->sub-fn)))
-(defn sub-id [m] (->> m dispatch-val m))
-(defn reg-sub-method [k f] (swap! method->sub-fn assoc k f))
+(defn  legacy-strategy [v]
+  (when (vector? v)
+    (let [value (first-in-vector v)]
+      (if (map? value)
+        (common-key value @strategy->method)
+        (or (common-key (meta v) @strategy->method)
+            :default)))))
+
+(defn strategy [q] (or (legacy-strategy q)
+                       (common-key q @strategy->method)))
+
+(defn  legacy-query-id [v]
+  (when (vector? v)
+    (let [value (first-in-vector v)]
+      (if (map? value)
+        (some-> value strategy value)
+        value))))
+
+(defn query-id [q] (or (legacy-query-id q)
+                       (some-> q strategy q)))
+
+(defn method [q] (->> q strategy (get @strategy->method)))
+
+(defn handle [q] ((get-handler kind (query-id q)) app-db q))
 
 (def cache (atom {}))
-(defn cached [query] (get-in @cache [(dispatch-val query) query]))
-(defn cache! [query r] (swap! cache assoc-in [(dispatch-val query) query] r) r)
+(defn cached [q] (get-in @cache [(strategy q) q]))
+(defn cache! [q r] (swap! cache assoc-in [(strategy q) q] r) r)
 
 (defn clear!
   ([] (reset! cache {}))
-  ([query] (clear! (dispatch-val query) query))
-  ([query md] (swap! cache update md dissoc query)))
+  ([q] (clear! q (strategy q)))
+  ([q strat] (swap! cache update strat dissoc q)))
 
-(defn sub-legacy
-  [query]
-  (let [dv (dispatch-val query)
-        id (sub-id query)
-        r ((get-handler kind id) app-db [id query])]
-    (or (cached query)
-        (do
-          (add-on-dispose! r #(clear! query dv))
-          (cache! query r)))))
+(defn sub [q]
+  (let [md (method q)]
+    (cond (map? q) (md q)
+          (get q 2) (apply md q) ;; this discards the meta of q :(
+          (vector? q) (md {(strategy q) (query-id q)}))))
 
-(defn sub
-  [query]
-  (when-let [md (sub-method query)]
-    (md query)))
+(defmulti reg (fn [k & _] k))
+(reset! (.-method-table reg) {})
 
-(reg-sub-method ::rf/sub-legacy sub-legacy)
-(assert (= :re-frame/sub-legacy
-           (dispatch-val {::rf/sub-legacy :items})))
+(defmethod reg :sub-method [_ k f]
+  (swap! strategy->method assoc k f))
 
-(def sid (keyword (gensym)))
+(defmethod reg :sub [kind id computation-fn]
+  (register-handler
+   kind
+   id
+   (fn [_ q]
+     (make-reaction
+      #(computation-fn
+        (deref-input-signals app-db id)
+        (if (vector? q)
+          q
+          (into [q] (::rf/legacy-args q))))))))
 
-(reg-sub
- sid
- (fn [_ [dv query]]
-   (str "Hello World. \n "
-        "My id is " dv ". \n "
-        "My lifecycle is determined by " (dispatch-val query) " \n "
-        "and my query is " query ".")))
+(defn sub-reactive
+  ([m]
+   (or (cached m)
+       (let [md (strategy m)
+             r (handle m)]
+         (add-on-dispose! r #(clear! m md))
+         (cache! m r))))
+  ([id & args]
+   (let [v (into [id] args)]
+     (or (cached v)
+         (let [md (strategy v)
+               r (handle v)]
+           (add-on-dispose! r #(clear! v md))
+           (cache! v r))))))
 
-(def q {::rf/sub-legacy sid})
+(reg :sub-method ::rf/sub-reactive sub-reactive)
+(reg :sub-method :default sub-reactive)
 
-(println @(sub q))
-(assert @(sub q))
+(defn sub-safe
+  ([m]
+   (if (reactive?)
+     (sub-reactive m)
+     (or (cached m)
+         (handle m))))
+  ([id & args]
+   (let [v (into [id] args)]
+     (if (reactive?)
+       (apply sub-reactive v)
+       (or (cached v)
+           (handle v))))))
 
-(defn sub-safe [query]
-  (if (reactive?)
-    (sub-legacy query)
-    (let [id (sub-id query)
-          r ((get-handler kind id) app-db [id query])]
-      (or (cached query) r))))
+(reg :sub-method ::rf/sub-safe sub-safe)
 
-(reg-sub-method ::rf/sub-safe sub-safe)
+#_(do
+    (def qid! (comp keyword gensym))
 
-(def q-safe {::rf/sub-safe sid})
-(println @(sub q-safe))
+    (defn report [_db query-v]
+      {:query query-v
+       :strategy (strategy query-v)
+       :query-id (query-id query-v)
+       :method (method query-v)
+       :legacy-args (::rf/legacy-args query-v)})
+
+    (def test-queries
+      (list
+       {::rf/sub-safe (qid!)}
+       {::rf/sub-reactive (qid!)}
+       {::rf/sub-safe (qid!)
+        ::rf/legacy-args [1 2 3]}
+       [{::rf/sub-reactive (qid!)} 1 2 3]
+       [(qid!)]
+       [(qid!) 1 2 3]
+       ^::rf/sub-reactive [(qid!)]
+       ;; the computation-fn can't know the strategy in this case:
+       ^::rf/sub-reactive [(qid!) 1 2 3]))
+
+    (doseq [q test-queries
+            :let [qid (query-id q)
+                  _ (reg :sub qid report)
+                  result @(sub q)]]
+      (cljs.pprint/pprint result)
+      (println)
+      (assert result)))
