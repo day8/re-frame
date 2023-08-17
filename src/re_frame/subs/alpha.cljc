@@ -8,6 +8,8 @@
 
 (def strategy->method (atom {})) ;; should we use a clojure.core multimethod?
 
+(defn clear-all-methods! [] (reset! strategy->method {}))
+
 (declare strategy)
 
 (defn legacy-strategy [v]
@@ -51,6 +53,19 @@
   (swap! strategy->method assoc k f))
 
 (defmethod reg :sub [_ id computation-fn]
+  (register-handler
+   kind
+   id
+   (fn [_ q]
+     (make-reaction
+      #(computation-fn
+        (deref-input-signals app-db id)
+        (if (map? q)
+          q
+          {(legacy-strategy q) (legacy-query-id q)
+           ::rf/query-v q}))))))
+
+(defmethod reg :legacy-sub [k id computation-fn]
   (register-handler
    kind
    id
@@ -106,27 +121,44 @@
 
     (def qid! (comp keyword gensym))
 
-    (defn report [_db query-v]
-      {:query query-v
+    (defn legacy-report [_db query-v]
+      {:query-v query-v
        :strategy (strategy query-v)
        :query-id (query-id query-v)
-       :method (method query-v)
-       :legacy-args (::rf/legacy-args query-v)})
+       :method (method query-v)})
 
-    (def test-queries
+    (defn report [_db q]
+      {:query q
+       :strategy (strategy q)
+       :query-id (query-id q)
+       :method (method q)
+       :query-v (::rf/query-v q)})
+
+    (def legacy-queries
+      (list [{::rf/sub-reactive (qid!)} 1 2 3]
+            [(qid!)]
+            [(qid!) 1 2 3]
+            ^::rf/sub-reactive [(qid!)]
+            ;; the computation-fn can't know the strategy in this case:
+            ^::rf/sub-reactive [(qid!) 1 2 3]))
+
+    (doseq [q legacy-queries
+            :let [qid (query-id q)
+                  _ (reg :legacy-sub qid legacy-report)
+                  result @(sub q)]]
+      (cljs.pprint/pprint result)
+      (println)
+      (assert result))
+
+    (def queries
       (list
        {::rf/sub-safe (qid!)}
        {::rf/sub-reactive (qid!)}
-       {::rf/sub-safe (qid!)
-        ::rf/legacy-args [1 2 3]}
-       [{::rf/sub-reactive (qid!)} 1 2 3]
-       [(qid!)]
-       [(qid!) 1 2 3]
-       ^::rf/sub-reactive [(qid!)]
-       ;; the computation-fn can't know the strategy in this case:
-       ^::rf/sub-reactive [(qid!) 1 2 3]))
+       (let [id (qid!)]
+         {::rf/sub-safe id
+          ::rf/query-v [id 1 2 3]})))
 
-    (doseq [q test-queries
+    (doseq [q queries
             :let [qid (query-id q)
                   _ (reg :sub qid report)
                   result @(sub q)]]
