@@ -156,59 +156,66 @@
     (trace/merge-trace! {:tags {:input-signals (doall (to-seq (map-signals reagent-id signals)))}})
     dereffed-signals))
 
+(defn sugar [query-id sub-fn query? & args]
+  (let [error-header (str "re-frame: reg-sub for " query-id ", ")
+        [op f :as comp-f] (take-last 2 args)
+        [input-args      ;; may be empty, or one signal fn, or pairs of  :<- / vector
+         computation-fn] (if (or (= 1 (count comp-f))
+                                 (fn? op)
+                                 (query? op))
+                           [(butlast args) (last args)]
+                           (let [args (drop-last 2 args)]
+                             (case op
+                               ;; return a function that calls the computation fn
+                               ;;  on the input signal, removing the query vector
+                               :->
+                               [args (fn [db _]
+                                       (f db))]
+                               ;; return a function that calls the computation fn
+                               ;;  on the input signal and the data in the query vector
+                               ;;  that is not the query-id
+                               :=>
+                               [args (fn [db q]
+                                       (if (map? q)
+                                         (f db q)
+                                         (let [[_ & qs] q]
+                                           (apply f db qs))))]
+                               ;; an incorrect keyword was passed
+                               (console :error error-header "expected :-> or :=> as second to last argument, got:" op))))
+        inputs-fn (case (count input-args)
+                    ;; no `inputs` function provided - give the default
+                    0 (fn
+                        ([_] app-db)
+                        ([_ _] app-db))
+
+                    ;; a single `inputs` fn
+                    1 (let [f (first input-args)]
+                        (when-not (fn? f)
+                          (console :error error-header "2nd argument expected to be an inputs function, got:" f))
+                        f)
+
+                    ;; one sugar pair
+                    2 (let [[marker vec] input-args]
+                        (when-not (= :<- marker)
+                          (console :error error-header "expected :<-, got:" marker))
+                        (fn inp-fn
+                          ([_] (sub-fn vec))
+                          ([_ _] (sub-fn vec))))
+
+                    ;; multiple sugar pairs
+                    (let [pairs   (partition 2 input-args)
+                          markers (map first pairs)
+                          vecs    (map second pairs)]
+                      (when-not (and (every? #{:<-} markers) (every? query? vecs))
+                        (console :error error-header "expected pairs of :<- and vectors, got:" pairs))
+                      (fn inp-fn
+                        ([_] (map sub-fn vecs))
+                        ([_ _] (map sub-fn vecs)))))]
+    [inputs-fn computation-fn]))
+
 (defn reg-sub
   [query-id & args]
-  (let [err-header       (str "re-frame: reg-sub for " query-id ", ")
-        [input-args      ;; may be empty, or one signal fn, or pairs of  :<- / vector
-         computation-fn] (let [[op f :as comp-f] (take-last 2 args)]
-                           (if (or (= 1 (count comp-f))
-                                   (fn? op)
-                                   (vector? op))
-                             [(butlast args) (last args)]
-                             (let [args (drop-last 2 args)]
-                               (case op
-                                 ;; return a function that calls the computation fn
-                                 ;;  on the input signal, removing the query vector
-                                 :->
-                                 [args (fn [db _]
-                                         (f db))]
-                                 ;; return a function that calls the computation fn
-                                 ;;  on the input signal and the data in the query vector
-                                 ;;  that is not the query-id
-                                 :=>
-                                 [args (fn [db [_ & qs]]
-                                         (apply f db qs))]
-                                 ;; an incorrect keyword was passed
-                                 (console :error err-header "expected :-> or :=> as second to last argument, got:" op)))))
-        inputs-fn      (case (count input-args)
-                         ;; no `inputs` function provided - give the default
-                         0 (fn
-                             ([_] app-db)
-                             ([_ _] app-db))
-
-                         ;; a single `inputs` fn
-                         1 (let [f (first input-args)]
-                             (when-not (fn? f)
-                               (console :error err-header "2nd argument expected to be an inputs function, got:" f))
-                             f)
-
-                         ;; one sugar pair
-                         2 (let [[marker vec] input-args]
-                             (when-not (= :<- marker)
-                               (console :error err-header "expected :<-, got:" marker))
-                             (fn inp-fn
-                               ([_] (subscribe vec))
-                               ([_ _] (subscribe vec))))
-
-                         ;; multiple sugar pairs
-                         (let [pairs   (partition 2 input-args)
-                               markers (map first pairs)
-                               vecs    (map second pairs)]
-                           (when-not (and (every? #{:<-} markers) (every? vector? vecs))
-                             (console :error err-header "expected pairs of :<- and vectors, got:" pairs))
-                           (fn inp-fn
-                             ([_] (map subscribe vecs))
-                             ([_ _] (map subscribe vecs)))))]
+  (let [[inputs-fn computation-fn] (apply sugar query-id subscribe vector? args)]
     (register-handler
      kind
      query-id
