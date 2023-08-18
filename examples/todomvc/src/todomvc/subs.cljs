@@ -1,5 +1,5 @@
 (ns todomvc.subs
-  (:require [re-frame.core :refer [reg-sub subscribe]]))
+  (:require [re-frame.alpha :refer [reg-sub subscribe reg]]))
 
 ;; -------------------------------------------------------------------------------------
 ;; Layer 2
@@ -160,3 +160,5 @@
  :<- [:completed-count]
  (fn [[todos completed] _]
    [(- (count todos) completed) completed]))
+
+(reg :sub :alpha? :-> (comp :alpha? :path :long :very))

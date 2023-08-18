@@ -2,7 +2,7 @@
   (:require-macros [secretary.core :refer [defroute]])
   (:require [goog.events :as events]
             [reagent.dom]
-            [re-frame.core :as rf :refer [dispatch dispatch-sync]]
+            [re-frame.alpha :as rf :refer [dispatch dispatch-sync]]
             [secretary.core :as secretary]
             [todomvc.events] ;; These two are only required to make the compiler
             [todomvc.subs]   ;; load them (see docs/App-Structure.md)

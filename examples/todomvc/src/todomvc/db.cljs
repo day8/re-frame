@@ -1,7 +1,7 @@
 (ns todomvc.db
   (:require [cljs.reader]
             [cljs.spec.alpha :as s]
-            [re-frame.core :as re-frame]))
+            [re-frame.alpha :as re-frame]))
 
 ;; -- Spec --------------------------------------------------------------------
 ;;

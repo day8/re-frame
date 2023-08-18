@@ -1,6 +1,6 @@
 (ns todomvc.views
   (:require [reagent.core  :as reagent]
-            [re-frame.core :refer [subscribe dispatch]]
+            [re-frame.alpha :refer [subscribe dispatch sub]]
             [clojure.string :as str]))
 
 (defn todo-input [{:keys [title on-save on-stop]}]
@@ -91,9 +91,17 @@
      :on-save #(when (seq %)
                  (dispatch [:add-todo %]))}]])
 
+(defn alpha []
+  (let [alpha? @(sub :alpha?)]
+    [:a {:href "#"
+         :style {:color (if alpha? "red" "gray")}
+         :on-click #(dispatch [:toggle-alpha])}
+     (if alpha? "alpha is running!" "try alpha?")]))
+
 (defn todo-app
   []
   [:<>
+   [alpha]
    [:section#todoapp
     [task-entry]
     (when (seq @(subscribe [:todos]))
