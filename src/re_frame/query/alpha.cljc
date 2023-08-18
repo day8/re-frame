@@ -13,11 +13,11 @@
 (defn legacy-lifecycle [v]
   (when (vector? v)
     (or (lifecycle (meta v))
-        ::rf/sub-default)))
+        :default)))
 
 (def lifecycle (some-fn legacy-lifecycle
                         ::rf/lifecycle
-                        (constantly ::rf/sub-default)))
+                        (constantly :default)))
 
 (defn legacy-query-id [q]
   (when (vector? q) (first q)))

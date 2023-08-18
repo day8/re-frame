@@ -82,7 +82,7 @@
         (add-on-dispose! r #(q/clear! q md))
         (q/cache! q r))))
 
-(reg :sub-lifecycle ::rf/sub-reactive sub-reactive)
+(reg :sub-lifecycle :reactive sub-reactive)
 
 (defn sub-safe [q]
   (if (reactive?)
@@ -90,14 +90,14 @@
     (or (q/cached q)
         (q/handle q))))
 
-(reg :sub-lifecycle ::rf/sub-safe sub-safe)
-(reg :sub-lifecycle ::rf/sub-default sub-safe)
+(reg :sub-lifecycle :safe sub-safe)
+(reg :sub-lifecycle :default sub-safe)
 
 (defn sub-forever [q]
   (or (q/cached q)
       (q/cache! q (q/handle q))))
 
-(reg :sub-lifecycle ::rf/sub-forever sub-forever)
+(reg :sub-lifecycle :forever sub-forever)
 
 #_(do
     (re-frame.core/clear-subscription-cache!)
@@ -112,10 +112,10 @@
 
     (def legacy-queries
       (list [(qid!) 1 2 3]
-            ^{::rf/lifecycle ::rf/sub-reactive} [(qid!) 1 2 3]
+            ^{::rf/lifecycle :reactive} [(qid!) 1 2 3]
             {::rf/q (qid!)}
             {::rf/q (qid!)
-             ::rf/lifecycle ::rf/sub-reactive}))
+             ::rf/lifecycle :reactive}))
 
     (doseq [q legacy-queries
             :let [qid (q/id q)
@@ -132,10 +132,10 @@
       (list
        {::rf/q (qid!)}
        {::rf/q (qid!)
-        ::rf/lifecycle ::rf/sub-reactive}
+        ::rf/lifecycle :reactive}
        {::rf/query-v [(qid!) 1 2 3]}
        [(qid!) 1 2 3]
-       ^{::rf/lifecycle ::rf/sub-reactive} [(qid!) 1 2 3]))
+       ^{::rf/lifecycle :reactive} [(qid!) 1 2 3]))
 
     (doseq [q queries
             :let [qid (q/id q)
