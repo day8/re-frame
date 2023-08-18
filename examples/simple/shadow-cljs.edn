@@ -1,16 +1,5 @@
-{:nrepl
- {:port 8777}
-
- :source-paths ["../../src" "src"]
-
- ;; We repeat re-frame's own dependencies here as instead of
- ;; depending on a re-frame artifact we add the re-frame source
- ;; from this repository directly to the :source-paths.
- :dependencies
- [[reagent                   "1.1.0"]
-  [net.cgrand/macrovich      "0.2.1"]
-  [org.clojure/tools.logging "1.2.4"]
-  [day8/shadow-git-inject    "0.0.5"]]
+{:deps true
+ :nrepl {:port 8777}
 
  :build-defaults
  {:build-hooks [(shadow-git-inject.core/hook)]}

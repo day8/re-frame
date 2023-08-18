@@ -1,0 +1,5 @@
+{:paths ["src"]
+ :deps {re-frame/re-frame      {:local/root "../.."}
+        reagent/reagent        {:mvn/version "1.2.0"}
+        thheller/shadow-cljs   {:mvn/version "2.25.2"}
+        day8/shadow-git-inject {:mvn/version "0.0.5"}}}
