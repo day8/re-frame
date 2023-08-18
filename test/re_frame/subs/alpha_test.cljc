@@ -2,64 +2,147 @@
   (:require [cljs.test         :as test :refer-macros [is deftest testing]]
             [reagent.ratom     :as r :refer-macros [reaction]]
             [re-frame.db       :as db]
-            [re-frame.core     :as re-frame]
             [re-frame.interop  :refer [reactive?]]
-            [re-frame.subs :refer [clear-all-handlers!]]
-            [re-frame.subs.alpha :as subs]))
+            [re-frame :as-alias rf]
+            [re-frame.alpha :refer [reg sub]]
+            [re-frame.query.alpha :as q]
+            [re-frame.register.alpha :as reg]
+            [re-frame.core :refer [reg-sub-raw]]
+            [re-frame.subs :refer [clear-all-handlers!]]))
 
 (test/use-fixtures :each {:before #(do (clear-all-handlers!)
-                                       (subs/clear-all-methods!))})
+                                       (q/clear!))})
+
+(def queries
+  {::map
+   {::rf/q ::map}
+   ::map-safe
+   {::rf/q ::map-safe
+    ::rf/lifecycle :safe}
+   ::map-reactive
+   {::rf/q ::map-reactive
+    ::rf/lifecycle :reactive}
+   ::map-forever
+   {::rf/q ::map-forever
+    ::rf/lifecycle :forever}
+   ::query-v
+   {::rf/q ::query-v
+    ::rf/query-v [::query-v 1 2 3]}
+   ::vec
+   [::vec 1 2 3]
+   ::vec-reactive
+   ^{::rf/lifecycle :reactive}
+   [::vec-reactive 1 2 3]})
+
+(defn report [_db q]
+  {:query q
+   :lifecycle (q/lifecycle q)
+   :query-id (q/id q)
+   :method (q/method q)})
 
 (deftest test-sub-method-registration
-  (let [q {}]
-    (testing "Method registration"
-      (subs/reg :sub-method ::test-method identity)
-      (is (= (get @subs/lifecycle->method ::test-method) identity)))
+  (testing "Method registration"
+    (reg :sub-lifecycle :test q/handle)
+    (is (fn? (get @reg/lifecycle->method :test)))))
 
-    (testing "Strategy lookup"
-      (is (every? #{::test-method} [(subs/lifecycle q)])))
-    (testing "Method lookup"
-      (is (= identity (subs/method q))))
+(deftest test-query-api
+  (testing "Query ID"
+    (doseq [[qid q] queries]
+      (is (= qid (q/id q)))))
+  (testing "Method lookup"
+    (doseq [[_ q] queries]
+      (is (fn? (q/method q)))))
 
-    (testing "Subscription registration"
-      (subs/reg :sub ::test-sub (fn [_ _] 42))
-      (is (= @(subs/sub q) 42)))))
+  (testing "Lifecycle"
+    (doseq [k [::map ::query-v ::vec]
+            :let [q (queries k)]]
+      (is (= :default (q/lifecycle q))))
+    (doseq [k [::map-reactive ::vec-reactive]
+            :let [q (queries k)]]
+      (is (= :reactive (q/lifecycle q))))))
+
+(deftest test-subscription
+  (testing "Subscription"
+    (doseq [[qid q] queries
+            :let [_ (reg :sub qid report)
+                  result @(sub q)]]
+      (is (map? (:query result)))
+      (is (= (:lifecycle result) (q/lifecycle q)))
+      (is (= (:query-id result) qid))
+      (is (= (:method result) (q/method q))))))
+
+(deftest test-legacy-subscription
+  (testing "Legacy Subscription"
+    (doseq [[qid q] queries
+            :let [_ (reg :legacy-sub qid report)
+                  result @(sub q)]]
+      (is (vector? (:query result)))
+      (is (= (:lifecycle result) (q/lifecycle q)))
+      (is (= (:query-id result) qid))
+      (is (= (:method result) (q/method q))))))
 
 (deftest test-caching
   (testing "Caching a subscription value"
     (let [test-query {:test-sub "cache"}]
-      (subs/cache! test-query 123)
-      (is (= (subs/cached test-query) 123))))
+      (q/cache! test-query 123)
+      (is (= (q/cached test-query) 123))))
 
   (testing "Clearing cache"
-    (subs/clear!)
-    (is (= @subs/cache {}))))
+    (q/clear!)
+    (is (= @q/cache {}))))
 
-(deftest test-subscription-methods
-  (testing "sub-reactive"
-    (let [test-query {:test-sub "reactive"}]
-      ;; Mock a reactive environment for the purpose of this test
+(def side-effect-atom (atom 0))
+
+(defn safe-test [q]
+  (q/clear!)
+  (reset! side-effect-atom 0)
+  (let [test-sub (sub q)]
+    (reset! db/app-db :test)
+    (is (= :test @test-sub))
+    (is (= @side-effect-atom 1))
+    ;; no caching is done
+    (sub q)
+    (is (= @side-effect-atom 2))
+    (with-redefs [reactive? (constantly true)]
+      (sub q)
+      (is (= @side-effect-atom 3))
+      ;; now the sub is cached
+      (sub q)
+      (is (= @side-effect-atom 3)))
+    ;; cached sub is now available outside reactive context
+    (sub q)
+    (is (= @side-effect-atom 3))))
+
+(deftest test-subscription-lifecycles
+  (reg-sub-raw
+   :side-effecting-handler
+   (fn side-effect [db _]
+     (swap! side-effect-atom inc)
+     (reaction @db)))
+
+  (testing "Default subscription lifecycle"
+    (safe-test {::rf/q :side-effecting-handler}))
+
+  (testing "Safe subscription lifecycle"
+    (safe-test {::rf/q :side-effecting-handler
+                ::rf/lifecycle :safe}))
+
+  (q/clear!)
+  (reset! side-effect-atom 0)
+
+  (testing "Reactive subscription lifecycle"
+    (let [q {::rf/q :side-effecting-handler
+             ::rf/lifecycle :reactive}]
+      (reset! db/app-db :test)
+      (is (= :test @(sub q)))
+      (is (= @side-effect-atom 1))
+      ;; sub is cached, even outside a reactive context
+      (sub q)
+      (is (= @side-effect-atom 1))
       (with-redefs [reactive? (constantly true)]
-        (subs/reg :sub :test-sub (fn [_ _] 999))
-        (is (= (subs/sub test-query) 999)))))
-
-  (testing "sub-safe"
-    (let [test-query {:test-sub "safe"}]
-      ;; Mock a non-reactive environment for the purpose of this test
-      (with-redefs [reactive? (constantly false)]
-        (subs/reg :sub :test-sub (fn [_ _] 888))
-        (is (= (subs/sub test-query) 888)))))
-
-  (testing "sub-default"
-    ;; Since sub-default points to sub-safe, this test is optional.
-    ;; Keeping it here for potential future changes.
-    (let [test-query {:test-sub "default"}]
-      ;; Mock a non-reactive environment for the purpose of this test
-      (with-redefs [reactive? (constantly false)]
-        (subs/reg :sub :test-sub (fn [_ _] 777))
-        (is (= (subs/sub test-query) 777))))))
-
-(deftest test-new-lifecycle-strategy-feature
-  ;; TODO: Define tests here based on the new lifecycle strategy features.
-  ;; You'd need to provide more specific details about this feature to write corresponding tests.
-  )
+        (sub q)
+        (is (= @side-effect-atom 1))
+        (sub q)
+        (is (= @side-effect-atom 1)))
+      (sub q)
+      (is (= @side-effect-atom 1)))))
