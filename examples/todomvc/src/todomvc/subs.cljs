@@ -13,10 +13,9 @@
 ;; that `app-db` changes (in any way). As a result, we want Layer 2 to be trivial.
 ;;
 (reg-sub
-  :showing          ;; usage:   (subscribe [:showing])
-  (fn [db _]        ;; db is the (map) value stored in the app-db atom
-    (:showing db))) ;; extract a value from the application state
-
+ :showing          ;; usage:   (subscribe [:showing])
+ (fn [db _]        ;; db is the (map) value stored in the app-db atom
+   (:showing db))) ;; extract a value from the application state
 
 ;; Next, the registration of a similar handler is done in two steps.
 ;; First, we `defn` a pure handler function.  Then, we use `reg-sub` to register it.
@@ -58,7 +57,7 @@
 ;; But now we are dealing with intermediate (layer 3) nodes, we'll need to provide both fns.
 ;;
 (reg-sub
-  :todos        ;; usage:   (subscribe [:todos])
+ :todos        ;; usage:   (subscribe [:todos])
 
   ;; This function returns the input signals.
   ;; In this case, it returns a single signal.
@@ -66,8 +65,8 @@
   ;; being the two values supplied in the originating `(subscribe X Y)`.
   ;; X will be the query vector and Y is an advanced feature and out of scope
   ;; for this explanation.
-  (fn [query-v _]
-    (subscribe [:sorted-todos]))    ;; returns a single input signal
+ (fn [query-v _]
+   (subscribe [:sorted-todos]))    ;; returns a single input signal
 
   ;; This 2nd fn does the computation. Data values in, derived data out.
   ;; It is the same as the two simple subscription handlers up at the top.
@@ -79,8 +78,8 @@
   ;;  - the input signals (a single item, a vector or a map)
   ;;  - the query vector supplied to query-v  (the query vector argument
   ;; to the "subscribe") and the 3rd one is for advanced cases, out of scope for this discussion.
-  (fn [sorted-todos query-v _]
-    (vals sorted-todos)))
+ (fn [sorted-todos query-v _]
+   (vals sorted-todos)))
 
 ;; So here we define the handler for another intermediate node.
 ;; This time the computation involves two input signals.
@@ -88,22 +87,22 @@
 ;;   - the first function (which returns the signals) returns a 2-vector
 ;;   - the second function (which is the computation) destructures this 2-vector as its first parameter
 (reg-sub
-  :visible-todos
+ :visible-todos
 
   ;; Signal Function
   ;; Tells us what inputs flow into this node.
   ;; Returns a vector of two input signals (in this case)
-  (fn [query-v _]
-    [(subscribe [:todos])
-     (subscribe [:showing])])
+ (fn [query-v _]
+   [(subscribe [:todos])
+    (subscribe [:showing])])
 
   ;; Computation Function
-  (fn [[todos showing] _]   ;; that 1st parameter is a 2-vector of values
-    (let [filter-fn (case showing
-                      :active (complement :done)
-                      :done   :done
-                      :all    identity)]
-      (filter filter-fn todos))))
+ (fn [[todos showing] _]   ;; that 1st parameter is a 2-vector of values
+   (let [filter-fn (case showing
+                     :active (complement :done)
+                     :done   :done
+                     :all    identity)]
+     (filter filter-fn todos))))
 
 ;; -------------------------------------------------------------------------------------
 ;; Hey, wait on!!
@@ -133,32 +132,31 @@
 ;; vector of input signals. The 1st function is not needed.
 ;; Here is the example above rewritten using the sugar.
 #_(reg-sub
-  :visible-todos
-  :<- [:todos]
-  :<- [:showing]
-  (fn [[todos showing] _]
-    (let [filter-fn (case showing
-                      :active (complement :done)
-                      :done   :done
-                      :all    identity)]
-      (filter filter-fn todos))))
-
-
-(reg-sub
-  :all-complete?
-  :<- [:todos]
-  (fn [todos _]
-    (every? :done todos)))
+   :visible-todos
+   :<- [:todos]
+   :<- [:showing]
+   (fn [[todos showing] _]
+     (let [filter-fn (case showing
+                       :active (complement :done)
+                       :done   :done
+                       :all    identity)]
+       (filter filter-fn todos))))
 
 (reg-sub
-  :completed-count
-  :<- [:todos]
-  (fn [todos _]
-    (count (filter :done todos))))
+ :all-complete?
+ :<- [:todos]
+ (fn [todos _]
+   (every? :done todos)))
 
 (reg-sub
-  :footer-counts
-  :<- [:todos]
-  :<- [:completed-count]
-  (fn [[todos completed] _]
-    [(- (count todos) completed) completed]))
+ :completed-count
+ :<- [:todos]
+ (fn [todos _]
+   (count (filter :done todos))))
+
+(reg-sub
+ :footer-counts
+ :<- [:todos]
+ :<- [:completed-count]
+ (fn [[todos completed] _]
+   [(- (count todos) completed) completed]))

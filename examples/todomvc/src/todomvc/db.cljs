@@ -3,7 +3,6 @@
             [cljs.spec.alpha :as s]
             [re-frame.core :as re-frame]))
 
-
 ;; -- Spec --------------------------------------------------------------------
 ;;
 ;; This is a clojure.spec specification for the value in app-db. It is like a
@@ -24,9 +23,9 @@
 (s/def ::done boolean?)
 (s/def ::todo (s/keys :req-un [::id ::title ::done]))
 (s/def ::todos (s/and                                       ;; should use the :kind kw to s/map-of (not supported yet)
-                 (s/map-of ::id ::todo)                     ;; in this map, each todo is keyed by its :id
-                 #(instance? PersistentTreeMap %)           ;; is a sorted-map (not just a map)
-                 ))
+                (s/map-of ::id ::todo)                      ;; in this map, each todo is keyed by its :id
+                #(instance? PersistentTreeMap %)            ;; is a sorted-map (not just a map)
+                ))
 (s/def ::showing                                            ;; what todos are shown to the user?
   #{:all                                                    ;; all todos are shown
     :active                                                 ;; only todos whose :done is false
@@ -47,7 +46,6 @@
   {:todos   (sorted-map)  ;; an empty list of todos. Use the (int) :id as the key
    :showing :all})        ;; show all todos
 
-
 ;; -- Local Storage  ----------------------------------------------------------
 ;;
 ;; Part of the todomvc challenge is to store todos in LocalStorage, and
@@ -63,7 +61,6 @@
   [todos]
   (.setItem js/localStorage ls-key (str todos)))     ;; sorted-map written as an EDN map
 
-
 ;; -- cofx Registrations  -----------------------------------------------------
 
 ;; Use `reg-cofx` to register a "coeffect handler" which will inject the todos
@@ -76,12 +73,12 @@
 ;; We must supply a `sorted-map` but in LocalStore it is stored as a `map`.
 ;;
 (re-frame/reg-cofx
-  :local-store-todos
-  (fn [cofx _]
+ :local-store-todos
+ (fn [cofx _]
       ;; put the localstore todos into the coeffect under :local-store-todos
-      (assoc cofx :local-store-todos
+   (assoc cofx :local-store-todos
              ;; read in todos from localstore, and process into a sorted map
-             (into (sorted-map)
-                   (some->> (.getItem js/localStorage ls-key)
-                            (cljs.reader/read-string)    ;; EDN map -> map
-                            )))))
+          (into (sorted-map)
+                (some->> (.getItem js/localStorage ls-key)
+                         (cljs.reader/read-string)    ;; EDN map -> map
+                         )))))

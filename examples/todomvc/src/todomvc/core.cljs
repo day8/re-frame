@@ -10,10 +10,8 @@
   (:import [goog History]
            [goog.history EventType]))
 
-
 ;; -- Debugging aids ----------------------------------------------------------
 (enable-console-print!)   ;; so that println writes to `console.log`
-
 
 ;; Put an initial value into app-db.
 ;; The event handler for `:initialise-db` can be found in `events.cljs`
@@ -36,7 +34,6 @@
     (events/listen EventType.NAVIGATE
                    (fn [^js/goog.History.Event event] (secretary/dispatch! (.-token event))))
     (.setEnabled true)))
-
 
 ;; -- Entry Point -------------------------------------------------------------
 
