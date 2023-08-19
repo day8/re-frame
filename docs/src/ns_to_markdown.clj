@@ -73,6 +73,7 @@
          (map second)
          (remove :protocol)
          (remove :anonymous)
+         (remove :api-docs/hide)
          (sort-by :line)
          (map read-var)
          (group-by :api-docs/heading)

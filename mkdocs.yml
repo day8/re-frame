@@ -96,6 +96,7 @@ nav:
     - Overview: api-intro.md
     - Builtin Effects: api-builtin-effects.md
     - re-frame.core: api-re-frame.core.md
+    - re-frame.alpha: api-re-frame.alpha.md
   - Releases:
     - 2023: releases/2023.md
     - 2022: releases/2022.md

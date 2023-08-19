@@ -30,11 +30,20 @@ jobs:
         working-directory: docs
         # Source: https://github.com/day8/re-frame/blob/master/docs/src/ns_to_markdown.clj
         run: clojure -m ns-to-markdown ../src/re_frame/core.cljc > api-re-frame.core.md
+      - name: Build re-frame.alpha Documentation
+        working-directory: docs
+        # Source: https://github.com/day8/re-frame/blob/master/docs/src/ns_to_markdown.clj
+        run: clojure -m ns-to-markdown ../src/re_frame/alpha.cljc > api-re-frame.alpha.md
       - name: Upload re-frame.core Documentation Artifact
         uses: actions/upload-artifact@v2
         with:
           name: api-re-frame.core.md
           path: docs/api-re-frame.core.md
+      - name: Upload re-frame.alpha Documentation Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: api-re-frame.alpha.md
+          path: docs/api-re-frame.alpha.md
 
   # This job builds the re-frame :docs app and uploads it as an artifact.
   # The app renders code blocks for the reader reader to edit & evaluate.
@@ -106,6 +115,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: api-re-frame.core.md
+          path: docs
+      - name: Download api-re-frame.alpha.md Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: api-re-frame.alpha.md
           path: docs
       - name: Download re-frame-docs App Artifact
         uses: actions/download-artifact@v2
