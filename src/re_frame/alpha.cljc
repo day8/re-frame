@@ -24,15 +24,19 @@
 
   `kind`: what kind of handler to register. Possible vals:
 
-    `:sub-lifecycle`: UNDOCUMENTED. See https://github.com/day8/re-frame/issues/680.
+  ** :sub-lifecycle **
 
-    `:legacy-sub`: (reg :sub query-id signal computation-fn)
+  UNDOCUMENTED. See https://github.com/day8/re-frame/issues/680.
+
+  ** :legacy-sub **
+
+     `(reg :sub query-id signal computation-fn)`
 
      Register a `signal-fn` and a `computation-fn` for a given `query-id`.
      `computation-fn` is a function of `[signals query-vector]`.
      See `:sub` for an explanation of all the arguments.
 
-     **Compatibility**
+     Compatibility:
 
      Call `sub` to invoke the `computation-fn`. If passed a query-map,
      `sub` converts it to a query-vector.
@@ -47,285 +51,287 @@
      converts to:
      `#!clj ^{::rf/query-m {::rf/q ::items}} [::items]`
 
-     #!clj
-     ```
-     {::rf/q ::items
-      ::rf/lifecycle :reactive
-      ::rf/query-v [::items 1 2 3]}
-     ```
-
-     converts to:
-     #!clj
-     ^{::rf/query-m {::rf/q ::items
-                     ::rf/lifecycle :reactive}}
-     [::items 1 2 3]
-
-
-    `:sub`: (reg :sub query-id signal computation-fn)
-
-            Register a `signal-fn` and a `computation-fn` for a given `query-id`.
-            `computation-fn` is a function of `[signals query-map]`.
-            Call `sub` to invoke the handler. If passed a query-vector,
-            re-frame converts it to a query map, merging in the value of
-            `:re-frame/query-m` from the metadata, and including
-            the original query-vector with a `:re-frame/query-v` key.
-
-            For instance,
-            `#!clj ^{:rf/query-m {:rf/lifecycle :reactive}} [::items 1 2 3]`
-            converts to:
-            #!clj
-            {::rf/q ::items
-             ::rf/lifecycle :reactive
-             ::rf/query-v [::items 1 2 3]}
-
-            For convenience, re-frame also merges in the `:re-frame/lifecycle`
-            key from the metadata. For instance,
-            `^{:rf/lifecycle :reactive} [::items 1 2 3]`
-            converts to:
-            #!clj
-            {::rf/q ::items
-             ::rf/lifecycle :reactive
-             ::rf/query-v [::items 1 2 3]}
-            ```
-
-            A call to `(reg :sub query-id signal-fn computation-fn)`
-            associates a `query-id` WITH two functions.
-
-            The two functions provide 'a mechanism' for creating a node
-            in the Signal Graph. When a node of type `query-id` is needed,
-            the two functions can be used to create it.
-
-              - `query-id` - typically a namespaced keyword (later used in subscribe).
-              - `signal-fn` - optional. Returns the input data-flows required by this kind of node.
-              - `computation-fn` - computes the value (output) of the node (from the input data flows).
-
-            Later, during app execution, a call to `(sub {:re-frame/q :sub-id :color :blue})`
-            will trigger the need for a new `:sub-id` Signal Graph node (matching the
-            query `{:re-frame/q :sub-id :color :blue}`). And, to create that node the two functions
-            associated with `:sub-id` will be looked up and used.
-
-            Just to be clear: calling `reg :sub` does not immediately create a node.
-            It only registers 'a mechanism' (the two functions) by which nodes
-            can be created later, when a node is bought into existence by the
-            use of `sub`.
-
-            The `computation-fn` is always the last argument supplied and has three ways to be called.
-            Two of these ways are syntactic sugar to provide easier access to functional abstractions around your data.
-
-            1. A function that will accept two parameters, the `input-values` and `query`. This is the
-               standard way to provide a `computation-function`
-
-                    #!clj
-                    (reg-sub
-                      :query-id
-                      (fn [input-values query]
-                        (:foo input-values)))
-
-            2. A single sugary tuple of `:->`and a 1-arity `computation-function`:
-
-                    #!clj
-                    (reg-sub
-                      :query-id
-                      :-> computation-fn)
-
-                This sugary variation allows you to pass a function that will expect only one parameter,
-                namely the `input-values`, and entirely omit the `query`. A typical `computation-function`
-                expects two parameters which can cause unfortunate results when attempting to use
-                clojure standard library functions, or other functions, in a functional manner.
-
-                For example, a significant number of subscriptions exist only to get a value
-                from the `input-values`. As shown below, this subscription will simply retrieve
-                the value associated with the `:foo` key in our db:
-
-                    #!clj
-                    (reg-sub
-                      :query-id
-                      (fn [db _]    ;; :<---- trivial boilerplate we might want to skip over
-                        (:foo db)))
-
-                This is slightly more boilerplate than we might like to do,
-                as we can use a keyword directly as a function, and we might like to do this:
-
-                    #!clj
-                    (reg-sub
-                      :query-id
-                      :foo)  ;; :<---- This could be dangerous. If `:foo` is not in db, we get the `query-vector` instead of `nil`.
+      #!clj
+      {::rf/q ::items
+       ::rf/lifecycle :reactive
+       ::rf/query-v [::items 1 2 3]}
+
+  
+      converts to:
+  
+      #!clj
+      ^{::rf/query-m {::rf/q ::items
+                      ::rf/lifecycle :reactive}}
+      [::items 1 2 3]
+
+    ** :sub **
+  
+    `(reg :sub query-id signal computation-fn)`
+
+    Register a `signal-fn` and a `computation-fn` for a given `query-id`.
+    `computation-fn` is a function of `[signals query-map]`.
+    Call `sub` to invoke the handler. If passed a query-vector,
+    re-frame converts it to a query map, merging in the value of
+    `:re-frame/query-m` from the metadata, and including
+    the original query-vector with a `:re-frame/query-v` key.
+
+    For instance,
+    `#!clj ^{:rf/query-m {:rf/lifecycle :reactive}} [::items 1 2 3]`
+    converts to:
+  
+      #!clj
+      {::rf/q ::items
+       ::rf/lifecycle :reactive
+       ::rf/query-v [::items 1 2 3]}
+
+    For convenience, re-frame also merges in the `:re-frame/lifecycle`
+    key from the metadata. For instance,
+    `#!clj ^{:rf/lifecycle :reactive} [::items 1 2 3]`
+    converts to:
+
+      #!clj
+      {:rf/q ::items
+       :rf/lifecycle :reactive
+       :rf/query-v [::items 1 2 3]}
+
+    A call to `(reg :sub query-id signal-fn computation-fn)`
+    associates a `query-id` WITH two functions.
+
+    The two functions provide 'a mechanism' for creating a node
+    in the Signal Graph. When a node of type `query-id` is needed,
+    the two functions can be used to create it.
+
+    - `query-id` - typically a namespaced keyword (later used in subscribe).
+    - `signal-fn` - optional. Returns the input data-flows required by this kind of node.
+    - `computation-fn` - computes the value (output) of the node (from the input data flows).
+
+    Later, during app execution, a call to `(sub {:re-frame/q :sub-id :color :blue})`
+    will trigger the need for a new `:sub-id` Signal Graph node (matching the
+    query `{:re-frame/q :sub-id :color :blue}`). And, to create that node the two functions
+    associated with `:sub-id` will be looked up and used.
+
+    Just to be clear: calling `reg :sub` does not immediately create a node.
+    It only registers 'a mechanism' (the two functions) by which nodes
+    can be created later, when a node is bought into existence by the
+    use of `sub`.
+
+    The `computation-fn` is always the last argument supplied and has three ways to be called.
+    Two of these ways are syntactic sugar to provide easier access to functional abstractions around your data.
+
+    1. A function that will accept two parameters, the `input-values` and `query`. This is the
+       standard way to provide a `computation-function`
+
+          #!clj
+          (reg-sub
+            :query-id
+            (fn [input-values query]
+              (:foo input-values)))
+
+    2. A single sugary tuple of `:->`and a 1-arity `computation-function`:
+  
+          #!clj
+          (reg-sub
+           :query-id
+           :-> computation-fn)
+
+        This sugary variation allows you to pass a function that will expect only one parameter,
+        namely the `input-values`, and entirely omit the `query`. A typical `computation-function`
+        expects two parameters which can cause unfortunate results when attempting to use
+        clojure standard library functions, or other functions, in a functional manner.
+
+        For example, a significant number of subscriptions exist only to get a value
+        from the `input-values`. As shown below, this subscription will simply retrieve
+        the value associated with the `:foo` key in our db:
+
+          #!clj
+          (reg-sub
+            :query-id
+            (fn [db _]    ;; :<---- trivial boilerplate we might want to skip over
+              (:foo db)))
+
+        This is slightly more boilerplate than we might like to do,
+        as we can use a keyword directly as a function, and we might like to do this:
+
+          #!clj
+          (reg-sub
+            :query-id
+            :foo)  ;; :<---- This could be dangerous. If `:foo` is not in db, we get the `query-vector` instead of `nil`.
 
-                By using `:->` our function would not contain the `query-vector`, and any
-                missing keys would be represented as such:
+        By using `:->` our function would not contain the `query-vector`, and any
+        missing keys would be represented as such:
 
-                    #!clj
-                    (reg-sub
-                      :query-id
-                      :-> :foo)
+          #!clj
+          (reg-sub
+            :query-id
+            :-> :foo)
 
-                This form allows us to ignore the `query` if our `computation-fn`
-                has no need for it, and be safe from any accidents. Any 1-arity function can be provided,
-                and for more complicated use cases, `partial`, `comp`, and anonymous functions can still be used.
+        This form allows us to ignore the `query` if our `computation-fn`
+        has no need for it, and be safe from any accidents. Any 1-arity function can be provided,
+        and for more complicated use cases, `partial`, `comp`, and anonymous functions can still be used.
 
-            3. A single sugary tuple of `:=>` and a multi-arity `computation-function`
+    3. A single sugary tuple of `:=>` and a multi-arity `computation-function`
 
-                    #!clj
-                    (reg-sub
-                      :query-id
-                      :=> computation-fn)
+          #!clj
+          (reg-sub
+            :query-id
+            :=> computation-fn)
 
-                A vector `query` can be broken into two components `[query-id & optional-values]`, and
-                some subscriptions require the `optional-values` for extra work within the subscription.
-                To use them in variation #1, we need to destructure our `computation-fn` parameters
-                in order to use them.
+        A vector `query` can be broken into two components `[query-id & optional-values]`, and
+        some subscriptions require the `optional-values` for extra work within the subscription.
+        To use them in variation #1, we need to destructure our `computation-fn` parameters
+        in order to use them.
 
-                    #!clj
-                    (reg-sub
-                      :query-id
-                      (fn [db [_ foo]]
-                        [db foo]))
+          #!clj
+          (reg-sub
+            :query-id
+            (fn [db [_ foo]]
+              [db foo]))
 
-                Again we are writing boilerplate just to reach our values, and we might prefer to
-                have direct access through a parameter vector like `[input-values optional-values]`
-                instead, so we might be able to use a multi-arity function directly as our `computation-fn`.
-                A rewrite of the above sub using this sugary syntax would look like this:
+        Again we are writing boilerplate just to reach our values, and we might prefer to
+        have direct access through a parameter vector like `[input-values optional-values]`
+        instead, so we might be able to use a multi-arity function directly as our `computation-fn`.
+        A rewrite of the above sub using this sugary syntax would look like this:
 
-                    #!clj
-                    (reg-sub
-                      :query-id
-                      :=> vector)  ;; :<---- Could also be `(fn [db foo] [db foo])`
+          #!clj
+          (reg-sub
+            :query-id
+            :=> vector)  ;; :<---- Could also be `(fn [db foo] [db foo])`
 
-                If handling a map query, `:=>` simply uses the entire map.
+        If handling a map query, `:=>` simply uses the entire map.
 
-            The `computation function` is expected to take two arguments:
+    The `computation function` is expected to take two arguments:
 
-              - `input-values` - the values which flow into this node (how is it wired into the graph?)
-              - `query` - the value passed to `sub`
+    - `input-values` - the values which flow into this node (how is it wired into the graph?)
+    - `query` - the value passed to `sub`
 
-            and it returns a computed value (which becomes the output of the node)
+   and it returns a computed value (which becomes the output of the node)
 
-            When `computation-fn` is called, the 2nd argument, `query`, will be that
-            value passed to `sub`. So, if the call was `(subscribe {:re-frame/q :sub-id :color :blue})`,
-            then the `query` supplied to the computation function will be `{:re-frame/q :sub-id :color :blue}`.
+    When `computation-fn` is called, the 2nd argument, `query`, will be that
+    value passed to `sub`. So, if the call was `(subscribe {:re-frame/q :sub-id :color :blue})`,
+    then the `query` supplied to the computation function will be `{:re-frame/q :sub-id :color :blue}`.
 
-            The argument(s) supplied to `reg-sub` between `query-id` and the `computation-function`
-            can vary in 3 ways, but whatever is there defines the `input signals` part
-            of `the mechanism`, specifying what input values \"flow into\" the
-            `computation function` (as the 1st argument) when it is called.
+    The argument(s) supplied to `reg-sub` between `query-id` and the `computation-function`
+    can vary in 3 ways, but whatever is there defines the `input signals` part
+    of `the mechanism`, specifying what input values \"flow into\" the
+    `computation function` (as the 1st argument) when it is called.
 
-            So, `reg-sub` can be called in one of three ways, because there are three ways
-            to define the input signals part. But note, the 2nd way, in which a
-            `signals function` is explicitly supplied, is the most canonical and
-            instructive. The other two are really just sugary variations.
+    So, `reg-sub` can be called in one of three ways, because there are three ways
+    to define the input signals part. But note, the 2nd way, in which a
+    `signals function` is explicitly supplied, is the most canonical and
+    instructive. The other two are really just sugary variations.
 
-            **First variation** - no input signal function given:
+    **First variation** - no input signal function given:
 
-                #!clj
-                (reg-sub
-                  :query-id
-                  a-computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)
+      #!clj
+      (reg-sub
+        :query-id
+        a-computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)
 
-               In the absence of an explicit `signals function`, the node's input signal defaults to `app-db`
-               and, as a result, the value within `app-db` (a map) is
-               given as the 1st argument when `a-computation-fn` is called.
+     In the absence of an explicit `signals function`, the node's input signal defaults to `app-db`
+     and, as a result, the value within `app-db` (a map) is
+     given as the 1st argument when `a-computation-fn` is called.
 
 
-            **Second variation** - a signal function is explicitly supplied:
+    **Second variation** - a signal function is explicitly supplied:
 
-                #!clj
-                (reg-sub
-                  :query-id
-                  signal-fn     ;; <-- here
-                  computation-fn)
+        #!clj
+        (reg-sub
+          :query-id
+          signal-fn     ;; <-- here
+          computation-fn)
 
-            This is the most canonical and instructive of the three variations.
+    This is the most canonical and instructive of the three variations.
 
-            When a node is created from the template, the `signal function` will be called and it
-            is expected to return the input signal(s) as either a singleton, if there is only
-            one, or a sequence if there are many, or a map with the signals as the values.
+    When a node is created from the template, the `signal function` will be called and it
+    is expected to return the input signal(s) as either a singleton, if there is only
+    one, or a sequence if there are many, or a map with the signals as the values.
 
-            The current values of the returned signals will be supplied as the 1st argument to
-            the `a-computation-fn` when it is called - and subject to what this `signal-fn` returns,
-            this value will be either a singleton, sequence or map of them (paralleling
-            the structure returned by the `signal function`).
+    The current values of the returned signals will be supplied as the 1st argument to
+    the `a-computation-fn` when it is called - and subject to what this `signal-fn` returns,
+    this value will be either a singleton, sequence or map of them (paralleling
+    the structure returned by the `signal function`).
 
-            This example `signal function` returns a 2-vector of input signals.
+    This example `signal function` returns a 2-vector of input signals.
 
-                #!clj
-                (fn [query]
-                   [(sub [:a-sub])
-                    (sub [:b-sub])])
+        #!clj
+        (fn [query]
+           [(sub [:a-sub])
+            (sub [:b-sub])])
 
-            The associated computation function must be written
-            to expect a 2-vector of values for its first argument:
+    The associated computation function must be written
+    to expect a 2-vector of values for its first argument:
 
-                #!clj
-                (fn [[a b] query]     ;; 1st argument is a seq of two values
-                  ....)
+        #!clj
+        (fn [[a b] query]     ;; 1st argument is a seq of two values
+          ....)
 
-            If, on the other hand, the signal function was simpler and returned a singleton, like this:
+    If, on the other hand, the signal function was simpler and returned a singleton, like this:
 
-                #!clj
-                (fn [query]
-                  (sub [:a-sub]))      ;; <-- returning a singleton
+        #!clj
+        (fn [query]
+          (sub [:a-sub]))      ;; <-- returning a singleton
 
-            then the associated computation function must be written to expect a single value
-            as the 1st argument:
+    then the associated computation function must be written to expect a single value
+    as the 1st argument:
 
-                #!clj
-                (fn [a query]       ;; 1st argument is a single value
-                   ...)
+        #!clj
+        (fn [a query]       ;; 1st argument is a single value
+           ...)
 
-            Further Note: variation #1 above, in which an `signal-fn` was not supplied, like this:
+    Further Note: variation #1 above, in which an `signal-fn` was not supplied, like this:
 
-                #!clj
-                (reg-sub
-                  :query-id
-                  a-computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)
+        #!clj
+        (reg-sub
+          :query-id
+          a-computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)
 
-            is the equivalent of using this
-            2nd variation and explicitly supplying a `signal-fn` which returns `app-db`:
+    is the equivalent of using this
+    2nd variation and explicitly supplying a `signal-fn` which returns `app-db`:
 
-                #!clj
-                (reg-sub
-                  :query-id
-                  (fn [_ _] re-frame/app-db)   ;; <-- explicit signal-fn
-                  a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
+        #!clj
+        (reg-sub
+          :query-id
+          (fn [_ _] re-frame/app-db)   ;; <-- explicit signal-fn
+          a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
 
-            **Third variation** - syntax Sugar
+    **Third variation** - syntax Sugar
 
-                #!clj
-                (reg-sub
-                  :a-b-sub
-                  :<- [:a-sub]
-                  :<- [:b-sub]
-                  (fn [[a b] query]    ;; 1st argument is a seq of two values
-                    {:a a :b b}))
+        #!clj
+        (reg-sub
+          :a-b-sub
+          :<- [:a-sub]
+          :<- [:b-sub]
+          (fn [[a b] query]    ;; 1st argument is a seq of two values
+            {:a a :b b}))
 
-            This 3rd variation is just syntactic sugar for the 2nd.  Instead of providing an
-            `signals-fn` you provide one or more pairs of `:<-` and a subscription vector.
+    This 3rd variation is just syntactic sugar for the 2nd.  Instead of providing an
+    `signals-fn` you provide one or more pairs of `:<-` and a subscription vector.
 
-            If you supply only one pair a singleton will be supplied to the computation function,
-            as if you had supplied a `signal-fn` returning only a single value:
+    If you supply only one pair a singleton will be supplied to the computation function,
+    as if you had supplied a `signal-fn` returning only a single value:
 
-                #!clj
-                (reg-sub
-                  :a-sub
-                  :<- [:a-sub]
-                  (fn [a query]      ;; only one pair, so 1st argument is a single value
-                    ...))
+        #!clj
+        (reg-sub
+          :a-sub
+          :<- [:a-sub]
+          (fn [a query]      ;; only one pair, so 1st argument is a single value
+            ...))
 
-            Syntactic sugar for both the `signal-fn` and `computation-fn` can be used together
-            and the direction of arrows shows the flow of data and functions. The example from
-            directly above is reproduced here:
+    Syntactic sugar for both the `signal-fn` and `computation-fn` can be used together
+    and the direction of arrows shows the flow of data and functions. The example from
+    directly above is reproduced here:
 
-                #!clj
-                (reg-sub
-                  :a-b-sub
-                  :<- [:a-sub]
-                  :<- [:b-sub]
-                  :-> (partial zipmap [:a :b]))
+        #!clj
+        (reg-sub
+          :a-b-sub
+          :<- [:a-sub]
+          :<- [:b-sub]
+          :-> (partial zipmap [:a :b]))
 
-            For further understanding, read the tutorials, and look at the detailed comments in
-            /examples/todomvc/src/subs.cljs.
+    For further understanding, read the tutorials, and look at the detailed comments in
+    /examples/todomvc/src/subs.cljs.
 
-            See also: `sub`
+    See also: `sub`
             "
   {:api-docs/heading "Registration"}
   [kind & args]
