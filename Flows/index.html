@@ -1455,15 +1455,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-story-so-far" class="md-nav__link">
-    The Story So Far
+  <a href="#flows_1" class="md-nav__link">
+    Flows
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#flows_1" class="md-nav__link">
-    Flows
+  <a href="#imaginary-example" class="md-nav__link">
+    Imaginary Example
   </a>
   
 </li>
@@ -1497,8 +1497,10 @@
                 
                   <h1>Flows</h1>
                 
-                <h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
-<h2 id="the-story-so-far">The Story So Far<a class="headerlink" href="#the-story-so-far" title="Permanent link">&para;</a></h2>
+                <blockquote>
+<p>This feature is proposed for re-frame. But it isn't available yet.  </p>
+</blockquote>
+<h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
 <p>re-frame's process: 
   1. Users cause Events.
   2. Events cause Effects
@@ -1506,43 +1508,63 @@
   4. State Changes cause View rerendering.</p>
 <p>We're about to add a new capability to step 3. </p>
 <h2 id="flows_1">Flows<a class="headerlink" href="#flows_1" title="Permanent link">&para;</a></h2>
-<p><code>Flows</code> compute derived values "automatically".  </p>
+<p><code>Flows</code> re-calculate derived values "automatically".</p>
 <p>A <code>Flow</code> "observes" N paths within <code>app-db</code>, and if any of them changes,
 then that <code>flow</code> will compute a new derivative value and store that value
 at another path within <code>app-db</code>.</p>
-<p>Error state is often derivative, so we'll use that as our motivating example. </p>
-<p>Imagine an app that maintains a vector at path <code>p</code> and imagine that it should 
-contain between 1 and 5 elements. When it has 0 items, 
-the app should display one message (and perhaps disable the "continue" button). And when it is over 
-5 elements, the app should show a warning saying that only the first 5 will be used. </p>
-<p>Yes, sorry, all very contrived.</p>
-<p>Now imagine that there are three different events (buttons?) that change the state of the vector:
+<p>Error state is often derivative, so we'll now use that as our animating example. </p>
+<h2 id="imaginary-example">Imaginary Example<a class="headerlink" href="#imaginary-example" title="Permanent link">&para;</a></h2>
+<p>Imagine an app that maintains a vector at path <code>p</code> and imagine this vector must 
+contain between 1 and 5 elements. 
+When it has 0 items, the app should display a message like "No items. Please add one" and 
+disable the "Continue" button. And, if the vector has more than 5 elements, the app should
+show a warning "Only the first 5 items will be used".  Yeah, I know, all very contrived.</p>
+<p>Further, imagine that there are three different events (dispatched because of user button clicks) that change the state of the vector:
   - <code>:clear-all</code>
   - <code>:add-item</code>
   - <code>:delete-item</code></p>
-<p>So, the error state controls the messages shown to the user and the button enabled/disabled state.
-This error state needs to be updated each time any of the three events happen. </p>
-<p>With a <code>flow</code>:
-  - it would observe the path to the vector with <code>app-db</code>
-  - any time it was changed, the flow would calculate the new error state (messages, etc)
+<p>So, this app has to re-calculate the error state each time one of these events happens.  It has to work out what messages to show 
+and what ones to remove, and if buttons should be enabled etc. </p>
+<p>A <code>flow</code> defines an automatic re-calculation. In the example above, a flow:
+  - would observe the path to the vector within <code>app-db</code>
+  - any time it was changed, the flow would re-calculate the new error state (messages, etc)
   - it would then store this new error state at some path within <code>app-db</code>
-  - it would happen automatically, irrespective of how the vector got updated (any of the event handlers)</p>
-<p>Subscriptions could then deliver this error state to the appropriate view,
+  - this process would happen automatically, irrespective of how the vector got changed (via any of the three event handlers)</p>
+<p>Subscriptions could then deliver the error state (held in app-db) to the appropriate view,
 which might show the messages and disable/enable the necessary buttons.</p>
-<p>Of course, without a flow, we could achieve the same thing by calling an error state calculation function inside of all three event handlers
-that update the vector. Certainly possible. But what if, at some time in the future, someone added a fourth event handler, which changed the vector but they forgot
-to calculate the error state?  It would be a bit more fragile WRT to change. </p>
-<p>Of course, it's all tradeoffs. Using a flow automates certain updates, but it is also less explicit. Automation can make code more abstract, perhaps to the point where it causes "spooky action at a distance". </p>
+<p>Of course, without a flow, we could achieve the same thing by calling an error state calculation function inside the three event handlers
+that update the vector. While possible, it would be fragile WRT to certain changes: what if, at some time in the future,
+someone added a fourth event handler that changed the vector, but they forgot
+to calculate the error state?</p>
+<p>Having said that, design is all tradeoffs. Using a flow to automate the recalculations might be more resilient to changes, but it is less explicit. Such
+automation can make code more abstract, perhaps to the point where it causes "spooky action at a distance" (it gets hard to figure out what
+is causing specific changes). </p>
 <h2 id="how">How?<a class="headerlink" href="#how" title="Permanent link">&para;</a></h2>
-<p>To register a flow, you have to supply 3 things: 
-   - a set of N inputs to watch  (path to the vector)
-   - a function to call (takes inputs as args) to compute the derived state (error state?) 
-   - a path to put the derived value after it is computed.</p>
+<p>To register a flow, you have to supply 3 things: </p>
+<ul>
+<li><code>inputs</code> a set of N input paths within app-db to watch  (path to the vector)</li>
+<li><code>calc</code> - a function to re-calculate the derived value (takes inputs as args) to compute the derived state (error state?) </li>
+<li><code>path</code> - the path at which to put the derived value after it is computed.</li>
+</ul>
+<p>You call the <code>reg-flow</code> with a map that provides the flow specification. </p>
 <div class="codehilite"><pre><span></span><code>(re-flow
-  {
+  {:value {
+     :inputs  {:v  [:some :path :into :app-db]}
+
+     :calc    (fn [{:keys [v] :as inputs}]
+                (let [len (count v)]
+                    })}
+   :path [:errors :path]})     
 </code></pre></div>
 
 
+<p>The inputs are given to the calc function.  </p>
+<p>XXX explain that :inputs path can be something more than a vector.  It can be the output of another flow. </p>
+<p>XXX Explain that 
+XXX Explain that :calc actually takes three args. </p>
+<p>XXX </p>
+<p>XXX 
+XXX see also the <code>on-change</code> interceptor </p>
 <p>Flows are something that happens after an event handler runs. Why?  Because flows </p>
                 
               
