@@ -88,7 +88,7 @@ jobs:
           name: todomvc-example-build-report
           path: examples/todomvc/target/build-report.html
       - name: Verify cljdoc Configuration
-        run: curl -fsSL https://raw.githubusercontent.com/cljdoc/cljdoc/master/script/verify-cljdoc-edn | bash -s doc/cljdoc.edn
+        run: curl -fsSL https://raw.githubusercontent.com/cljdoc/cljdoc/master/script/verify-cljdoc-edn | bash -s docs/cljdoc.edn
       - name: Slack notification
         uses: homoluctus/slatify@v2.0.1
         if: failure() || cancelled()
