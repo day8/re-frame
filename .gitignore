@@ -17,6 +17,7 @@ compiled/
 misc/
 /examples/todomvc/resources/public/js/
 /examples/simple/resources/public/js/
+/examples/flow/resources/public/js/
 /docs/js
 .floo
 .flooignore
@@ -31,6 +32,7 @@ build/
 *~
 /shadow-cljs.edn
 /.shadow-cljs/
+.shadow-cljs
 /site/
 .cpcache
 .lsp
