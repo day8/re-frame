@@ -95,12 +95,15 @@
   (str/join "\n" (cons (.-message v)
                        (sci/format-stacktrace (sci/stacktrace v)))))
 
-(defn success? [eval-result] (#{:success :success-promise} (:status eval-result)))
+(defn success? [eval-result]
+  (when eval-result
+    (contains? #{:success :success-promise} (:status eval-result))))
 
 (def green-check [:span {:style {:color "green"}} "✓"])
 (def red-x [:span {:style {:color "red"}} "✗"])
+(def grey [:span {:style {:color "grey"}} ""])
 
-(defn pass-fail [pass?] (if pass? green-check red-x))
+(defn pass-fail [pass?] (if (nil? pass?) grey (if pass? green-check red-x)))
 
 (defn editor-result [{:keys [return-str] :as eval-result}
                      & [{:keys [format]}]]
@@ -108,7 +111,8 @@
         format (or format :full)]
     [:div {:style {:white-space "pre-wrap"
                    :padding "1px 4px 0.5px 4px"
-                   :background-color (if pass? "#eeffee" "#ffeeee")
+                   :background-color (if (nil? pass?) "lightgrey"
+                                         (if pass? "#eeffee" "#ffeeee"))
                    :color "#444"
                    :font-family "monospace"}}
      [:span {:style {:pointer-events "none"
