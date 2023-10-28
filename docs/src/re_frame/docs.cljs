@@ -12,6 +12,7 @@
    [reagent.dom :as rdom]
    [re-frame.core]
    [re-frame.db]
+   [re-frame.alpha]
    [sci.core :as sci]
    [sci.configs.reagent.reagent :as sci.reagent]
    [sci.configs.re-frame.re-frame :as sci.re-frame]
@@ -27,6 +28,7 @@
 
 (let [ctx (sci/init {:namespaces {'re-frame.core sci.re-frame/re-frame-namespace
                                   're-frame.db sci.re-frame/re-frame-db-namespace
+                                  're-frame.alpha sci.re-frame/re-frame-alpha-namespace
                                   'reagent.core sci.reagent/reagent-namespace
                                   'reagent.dom reagent-dom-namespace}
                      :classes {'js js/globalThis
