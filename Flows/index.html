@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#flows" class="md-skip">
+        <a href="#the-story-so-far" class="md-skip">
           Skip to content
         </a>
       
@@ -1448,6 +1448,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#the-story-so-far" class="md-nav__link">
+    The story so far
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#flows" class="md-nav__link">
     Flows
   </a>
@@ -1455,22 +1462,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flows_1" class="md-nav__link">
-    Flows
+  <a href="#a-basic-use-case" class="md-nav__link">
+    A Basic use-case
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#imaginary-example" class="md-nav__link">
-    Imaginary Example
+  <a href="#remarks" class="md-nav__link">
+    Remarks
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#how" class="md-nav__link">
-    How?
+  <a href="#living-and-dying" class="md-nav__link">
+    Living and Dying
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redefining-and-undefining" class="md-nav__link">
+    Redefining and Undefining
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantics-and-placefulness" class="md-nav__link">
+    Semantics and Placefulness
   </a>
   
 </li>
@@ -1500,72 +1521,602 @@
                 <blockquote>
 <p>This feature is proposed for re-frame. But it isn't available yet.  </p>
 </blockquote>
+<h2 id="the-story-so-far">The story so far<a class="headerlink" href="#the-story-so-far" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Users</strong> cause <strong>Events</strong></li>
+<li><strong>Events</strong> cause <strong>Effects</strong></li>
+<li><strong>Effects</strong> cause <strong>State Changes</strong></li>
+<li><strong>State Changes</strong> cause <strong>View rerendering</strong></li>
+</ol>
+<p>We're about to add a new capability to step 3. Let's begin:</p>
+<div class="cm-doc">
+(ns re-frame.example.flows
+  (:require [re-frame.alpha :as rf]
+            [reagent.dom :as rdom]))
+</div>
+
 <h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
-<p>re-frame's process: 
-  1. Users cause Events.
-  2. Events cause Effects
-  3. Effects cause State Changes
-  4. State Changes cause View rerendering.</p>
-<p>We're about to add a new capability to step 3. </p>
-<h2 id="flows_1">Flows<a class="headerlink" href="#flows_1" title="Permanent link">&para;</a></h2>
-<p><code>Flows</code> re-calculate derived values "automatically".</p>
-<p>A <code>Flow</code> "observes" N paths within <code>app-db</code>, and if any of them changes,
-then that <code>flow</code> will compute a new derivative value and store that value
-at another path within <code>app-db</code>.</p>
-<p>Error state is often derivative, so we'll now use that as our animating example. </p>
-<h2 id="imaginary-example">Imaginary Example<a class="headerlink" href="#imaginary-example" title="Permanent link">&para;</a></h2>
-<p>Imagine an app that maintains a vector at path <code>p</code> and imagine this vector must 
-contain between 1 and 5 elements. 
-When it has 0 items, the app should display a message like "No items. Please add one" and 
-disable the "Continue" button. And, if the vector has more than 5 elements, the app should
-show a warning "Only the first 5 items will be used".  Yeah, I know, all very contrived.</p>
-<p>Further, imagine that there are three different events (dispatched because of user button clicks) that change the state of the vector:
-  - <code>:clear-all</code>
-  - <code>:add-item</code>
-  - <code>:delete-item</code></p>
-<p>So, this app has to re-calculate the error state each time one of these events happens.  It has to work out what messages to show 
-and what ones to remove, and if buttons should be enabled etc. </p>
-<p>A <code>flow</code> defines an automatic re-calculation. In the example above, a flow:
-  - would observe the path to the vector within <code>app-db</code>
-  - any time it was changed, the flow would re-calculate the new error state (messages, etc)
-  - it would then store this new error state at some path within <code>app-db</code>
-  - this process would happen automatically, irrespective of how the vector got changed (via any of the three event handlers)</p>
-<p>Subscriptions could then deliver the error state (held in app-db) to the appropriate view,
-which might show the messages and disable/enable the necessary buttons.</p>
-<p>Of course, without a flow, we could achieve the same thing by calling an error state calculation function inside the three event handlers
-that update the vector. While possible, it would be fragile WRT to certain changes: what if, at some time in the future,
-someone added a fourth event handler that changed the vector, but they forgot
-to calculate the error state?</p>
-<p>Having said that, design is all tradeoffs. Using a flow to automate the recalculations might be more resilient to changes, but it is less explicit. Such
-automation can make code more abstract, perhaps to the point where it causes "spooky action at a distance" (it gets hard to figure out what
-is causing specific changes). </p>
-<h2 id="how">How?<a class="headerlink" href="#how" title="Permanent link">&para;</a></h2>
-<p>To register a flow, you have to supply 3 things: </p>
+<p>A <code>flow</code> calculates a derived value "automatically". Here's a basic flow, which calculates the area of a room:</p>
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+{:id     :room-area
+ :inputs {:w [:room :width]
+          :h [:room :length]}
+ :output (fn [previous-area {:keys [w h] :as inputs}]
+           (* w h))
+ :path   [:room :area]}
+</div>
+
 <ul>
-<li><code>inputs</code> a set of N input paths within app-db to watch  (path to the vector)</li>
-<li><code>calc</code> - a function to re-calculate the derived value (takes inputs as args) to compute the derived state (error state?) </li>
-<li><code>path</code> - the path at which to put the derived value after it is computed.</li>
+<li>A <code>flow</code> has <code>:inputs</code>, obtained from paths in <code>app-db</code>.</li>
+<li>When the <code>:inputs</code> change, it evaluates a new <code>:output</code> value.</li>
+<li>Then, it puts the <code>:output</code> value back into <code>app-db</code>, at a specific <code>:path</code>.</li>
 </ul>
-<p>You call the <code>reg-flow</code> with a map that provides the flow specification. </p>
-<div class="codehilite"><pre><span></span><code>(re-flow
-  {:value {
-     :inputs  {:v  [:some :path :into :app-db]}
+<div class="admonition note">
+<p class="admonition-title">Prior art</p>
+<p>We built a rudimentary version of this pattern some years ago: the <a href="/re-frame/api-re-frame.core/#on-changes">on-changes interceptor</a></p>
+</div>
+<h2 id="a-basic-use-case">A Basic use-case<a class="headerlink" href="#a-basic-use-case" title="Permanent link">&para;</a></h2>
+<p>Let's try using our flow in an app (see the basic <a href="../dominoes-live/">app demo</a> if this is unfamiliar):</p>
+<div class="cm-doc">
+(rf/reg-sub      :width  (fn [db _]    (get-in db [:kitchen :width])))
+(rf/reg-sub      :length (fn [db _]    (get-in db [:kitchen :length])))
+(rf/reg-event-db :inc-w  (fn [db _] (update-in db [:kitchen :width] inc)))
+(rf/reg-event-db :inc-h  (fn [db _] (update-in db [:kitchen :length] inc)))
+(rf/reg-event-db :init   (fn [db _] {:kitchen {:width 20 :length 20}}))
 
-     :calc    (fn [{:keys [v] :as inputs}]
-                (let [len (count v)]
-                    })}
-   :path [:errors :path]})     
-</code></pre></div>
+(defn dimension-fields []
+  [:form
+   [:h4 "Kitchen Calculator"]
+   "width: "
+   @(rf/subscribe [:width])
+   [:a {:on-click #(rf/dispatch [:inc-w])} "+"]
+   [:br]
+   "length: "
+   @(rf/subscribe [:length])
+   [:a {:on-click #(rf/dispatch [:inc-h])} "+"]])
+</div>
 
+<p>Here comes the interesting part. We register our flow within the app:</p>
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+(def kitchen-area-flow
+  {:id     :kitchen-area
+   :inputs {:w [:kitchen :width]
+            :h [:kitchen :length]}
+   :output (fn area [previous-area {:keys [w h] :as inputs}]
+             (* w h))
+   :path   [:kitchen :area]})
 
-<p>The inputs are given to the calc function.  </p>
-<p>XXX explain that :inputs path can be something more than a vector.  It can be the output of another flow. </p>
-<p>XXX Explain that 
-XXX Explain that :calc actually takes three args. </p>
-<p>XXX </p>
-<p>XXX 
-XXX see also the <code>on-change</code> interceptor </p>
-<p>Flows are something that happens after an event handler runs. Why?  Because flows </p>
+(rf/reg-flow kitchen-area-flow)  
+</div>
+
+<p>We write a subscription to the <code>app-db</code> path where the flow puts its output:</p>
+<div class="cm-doc">
+(rf/reg-sub
+ ::kitchen-area
+ (fn [db _] (get-in db [:kitchen :area])))
+</div>
+
+<p>And we use the <code>::kitchen-area</code> subscription to render our final component:</p>
+<div class="cm-doc">
+(defn app-container [& children]
+  (into [:div {:style {:padding "1rem"
+                       :border  "2px solid grey"}}]
+        children))
+
+(defn room-calculator []
+  [:div
+   [dimension-fields]
+   " Area: "
+   @(rf/subscribe [::kitchen-area])])
+
+(rf/dispatch-sync [:init])
+(rdom/render [app-container [room-calculator]]
+             (js/document.getElementById "room-calculator"))
+</div>
+
+<div id="room-calculator"></div>
+
+<p>Isn't that remarkable! What, you say it's <em>unremarkable?</em> Well, that's even better.</p>
+<h2 id="remarks">Remarks<a class="headerlink" href="#remarks" title="Permanent link">&para;</a></h2>
+<p>Here's why this basic flow might not excite you:</p>
+<h4>Can't I just use events?</h4>
+<blockquote>
+<p>Re-frame can already set values. Events were the one true way to update <code>app-db</code>. Why invent <em>another</em> mechanism for this?</p>
+</blockquote>
+<p>In this sense, they are redundant. Rather than use a flow, you could simply call a <code>derive-area</code> within each relevant event:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+(defn derive-area [{:keys [width length] :as room}]
+  (assoc room :area (* width length)))
+
+(rf/reg-event-db
+ :width
+ (fn [db [_ w]]
+   (-> db
+       (assoc-in [:kitchen :width] w)
+       (update :kitchen derive-area))))
+</div>
+
+<p>This works just fine... <em>or does it</em>? Actually, we forgot to change the <code>:length</code> event. Our area calculation will be wrong every time the user changes the length! Easy to fix, but the point is that we had to fix it at all. How many events will we need to review? In a mature app, this is not a trivial question.</p>
+<p>Furthermore, is this really a <code>:width</code> event any more? Now it's more of a <code>:with-and-area</code> event. Flows can help keep concerns separate, avoiding this kind of semantic creep.</p>
+<p><em>Design is all tradeoffs</em>. Flows allow us to say "This value simply derives from these inputs. It simply changes when they do." We do this at the expense of some "spooky action at a distance" - in other words, we accept that no particular event will be responsible for that change.</p>
+<h4>Are flows just reactions, or cursors?</h4>
+<p>You might notice a similarity with <a href="https://reagent-project.github.io/docs/master/reagent.core.html#var-cursor">reagent.core/cursor</a>.</p>
+<p>Both offer ways to react to <em>part of</em> a value (such as a subtree within a map). Reagent controls <em>when</em> a cursor updates, presumably during the evaluation of a component function. Flows, on the other hand, are controlled by re-frame, running every time an <code>event</code> occurs.</p>
+<p>Cursors use a single path, whether reading with <code>deref</code>, or writing with <code>reset!</code> or <code>swap!</code>. With flows, you declare several input paths, and a separate output path. You don't <code>reset!</code> a <code>flow</code>. Instead, this just happens each <code>event</code>, if the inputs have changed.</p>
+<p>With flows, you can implement business logic as a reactive state machine, fully independent from Reagent &amp; React. This has some deep implications - see <a href="#">XXX-flow-rationale</a> for a full explanation.</p>
+<h4>Can't I just use subscriptions?</h4>
+<p>You could handle this feature with a <a href="/re-frame/subscriptions/#the-four-layers">layer-3 subscription</a>:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+(rf/reg-sub
+ ::kitchen-area-sub
+ (fn [_] [(subscribe [:width]) (subscribe [:length])])
+ (fn [[w h] _] (* w h)))
+</div>
+
+<p>Just like a flow, this subscription's value changes whenever the inputs change, and (obviously) you call <code>subscribe</code> to access that value.</p>
+<p>A flow stores its value in <code>app-db</code>, while subscriptions don't. We designed re-frame on the premise that <code>app-db</code> holds your <em>entire</em> app-state. Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. </p>
+<p>Just like with layered subscriptions, one flow can use the value of another. Remember the <code>:inputs</code> to our first flow?</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+{:inputs {:w [:kitchen :width]
+          :h [:kitchen :length]}}
+</div>
+
+<p>As you can see, vectors stand for paths in <code>app-db</code>. Single keywords, however, stand for <em>other flows</em>.</p>
+<p>Here's a flow using two other flows as inputs: <code>::kitchen-area</code> and <code>::living-room-area</code>. When either input changes value, our flow calls the <code>:output</code> function to recalculate its own value:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+{:id     :main-room-ratio
+ :inputs {:kitchen     ::kitchen-area
+          :living-room ::living-room-area}
+ :output (fn [_ {:keys [kitchen living-room]}]
+           (/ kitchen living-room))
+ :path   [:ratios :main-rooms]}
+</div>
+
+<p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
+<h4>What about caching? I thought subscriptions were optimized this way.</h4>
+<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls <code>subscribe</code>, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the→</p>
+<p>This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't <em>need</em> to couple their behavior with that of their calling components.</p>
+<p>The app-db represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!</p>
+<p>With flows, the process is simpler. <code>app-db</code> <em>is</em> the cache. You, the programmer, define explicitly when to recalculate the output, <em>and</em> when to store the output. To this end, flows provide optional keys: <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:</p>
+<h2 id="living-and-dying">Living and Dying<a class="headerlink" href="#living-and-dying" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>Between death... and arising... is found an existence— a "body"... that goes to the place of rebirth. This existence between two realms... is called intermediate existence.</p>
+<p>-- <em>Vasubandhu, on <a href="https://en.wikipedia.org/wiki/Bardo">bardos</a></em></p>
+</blockquote>
+<p>Let's try building an app using only flows, no subscriptions.</p>
+<p>Here's the smallest flow you can register. There's no <code>:path</code> key, so re-frame uses the <code>:id</code> by default. That means this flow's path is <code>[:current-tab]</code>:</p>
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+(rf/reg-flow
+ {:id :current-tab
+  :inputs {:tab [:tab]}
+  :output (fn [_ {:keys [tab]}] tab)})
+</div>
+
+<p>Re-frame provides a global <code>:flow</code> subscription, which can fetch the output value for any flow:</p>
+<div class="cm-doc">
+(def current-tab (rf/sub :flow {:id :current-tab}))
+</div>
+
+<p>Here's an event to change tabs:</p>
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+(rf/reg-event-db
+ :change-tab
+ (fn [db [_ tab]] (assoc db :tab tab)))
+</div>
+
+<p>A barebones tab picker, and something to show us the value of <code>app-db</code>:</p>
+<div class="cm-doc">
+(def tabs [:room-calculator :item-counter])
+
+(defn tab [id]
+  [:a {:style {:padding "1rem"
+               :color (when (= id @current-tab) "lightgreen")}
+       :on-click #(rf/dispatch [:change-tab id])}
+   (name id)])
+
+(defn tab-picker []
+  (into [:div] (for [id tabs] [tab id])))
+
+(defn debug-app-db []
+  [:code {:style {:font-size 12}}
+   (str @re-frame.db/app-db)])
+
+(defn item-counter [] [:<>])
+
+(defn tabbed-app []
+  [:div
+   [tab-picker]
+   [debug-app-db]
+   (case @current-tab
+     :room-calculator [room-calculator]
+     :item-counter [item-counter]
+     nil)])
+</div>
+
+<h4>Live?</h4>
+<p>Here's a more advanced version of our kitchen calculator flow.
+This replaces our first <code>:kitchen-area</code> flow, since it has the same <code>:id</code>:</p>
+<div class="cm-doc" data-cm-doc-result-format="pass-fail" data-cm-doc-no-eval-on-init>
+(rf/reg-flow
+ {:id     :kitchen-area
+  :inputs {:w [:kitchen :width]
+           :h [:kitchen :length]
+           :tab :current-tab}
+  :output (fn area [previous-area {:keys [w h] :as inputs}]
+            (* w h))
+  :path   [:kitchen :area]
+  :live?  (fn [db {:keys [tab]}]
+            (= tab :room-calculator))})
+</div>
+
+<p>Notice the different types of inputs. <code>:w [:kitchen :width]</code> represents an input as an <code>app-db</code> path, while <code>:tab :current-tab</code> identifies the value from the <code>:current-tab</code> flow we defined earlier.</p>
+<p>Also, notice the new <code>:tab</code> input, and the new <code>:live?</code>.</p>
+<p>Just like <code>:output</code>, <code>:live:?</code> is a function of <code>app-db</code> and the <code>:inputs</code>. Re-frame only calculates the <code>:output</code> when the <code>:live</code> function returns a truthy value. Otherwise, the flow is presumed dead.</p>
+<p>Let's test it out:</p>
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
+(rf/dispatch-sync [:init])
+(rdom/render [app-container [tabbed-app]] (js/document.getElementById "tabbed-app"))
+</div>
+
+<div class="admonition note">
+<p class="admonition-title">Click <code>eval</code> on the two code blocks above to start this app.</p>
+</div>
+<div id="tabbed-app"></div>
+
+<p>Try switching tabs. Notice how <code>:area</code> only exists when you're in the <code>room-calculator</code> tab. What's happening here?</p>
+<h4>Lifecycle</h4>
+<p>After handling an event, re-frame runs your flows. First, it evaluates <code>:live?</code>, using the new <code>app-db</code>.
+Depending on the return value of <code>:live?</code>, re-frame handles one of 4 possible state transitions:</p>
+<table>
+<thead>
+<tr>
+<th>transition</th>
+<th>action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>From <strong>live</strong> to <strong>live</strong></td>
+<td>run <code>:output</code></td>
+</tr>
+<tr>
+<td>From <strong>dead</strong> to <strong>live</strong></td>
+<td>run <code>:init</code> and <code>:output</code></td>
+</tr>
+<tr>
+<td>From <strong>live</strong> to <strong>dead</strong></td>
+<td>run <code>:cleanup</code></td>
+</tr>
+<tr>
+<td>From <strong>dead</strong> to <strong>dead</strong></td>
+<td>do nothing</td>
+</tr>
+</tbody>
+</table>
+<p>Basically, <em>living</em> flows get output, <em>dying</em> flows get cleaned up, <em>arising</em> flows get initiated and output.</p>
+<p>And independently of all this, <code>:output</code> is lazy. It only runs when <code>:inputs</code> have changed value.</p>
+<h4>Cleanup</h4>
+<p>Try adding this <code>:cleanup</code> key into the <code>:kitchen-area</code> flow above (be sure to <code>eval</code> the code block again).</p>
+<div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+:cleanup (fn [db path]
+           (assoc-in db path :unknown!))
+</div>
+
+<p>By default, <code>:cleanup</code> dissociates the path from <code>app-db</code>. By declaring this <code>:cleanup</code> key in your flow, you override that default function. Now, instead of removing <code>:area</code>, you set it to <code>:unknown!</code>.</p>
+<p>Now, is this a good idea? After all, we might consider the area known, as long as we know the width and length. Maybe we should do no cleanup, and keep the value, even when <code>:live?</code> returns false. In that case, our <code>:cleanup</code> function would simply be: <code>:cleanup (fn [db _] db)</code>.</p>
+<p>The point is, <em>you</em> decide when the signal lives or dies, not React.</p>
+<h4>Init</h4>
+<p><code>:init</code>, does nothing by default. Feel free to try out this custom <code>:init</code> function as well. Notice how it adds a key, and that key stays, regardless of our flow being dead or alive:</p>
+<div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+:init (fn [db path]
+        (assoc-in db (conj (vec (butlast path)) :initiated?) true))
+</div>
+
+<p>If you did want the <code>:initiated?</code> key to go away, you could handle that within <code>:cleanup</code>.</p>
+<p>It's common to design apps which prepare certain db paths when a high-level state changes, such as when switching tabs. With flows, this preparation is an official library feature. Instead of writing custom events, you can use the <code>:cleanup</code> and <code>:init</code> keys and your colleages will know exactly what you're doing.</p>
+<h4>Dedicated inputs</h4>
+<p>Now that we've introduced <code>:live?</code>, here's the canonical form of a flow:</p>
+<div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+{:id     :kitchen-area
+ :path   [:kitchen :area]
+ :output {:inputs {:w [:kitchen :width]
+                   :h [:kitchen :length]}
+          :fn (fn area [previous-area {:keys [w h] :as inputs}]
+                (* w h))}
+ :live?  {:inputs {:tab :current-tab}
+          :fn (fn [db {:keys [tab]}]
+                (= tab :room-calculator))}}
+</div>
+
+<p>Both <code>:output</code> and <code>:live?</code> have their own inputs. This way, you can control precisely what's required for either function, without any redundancy in your design. There may also be a performance gain, since once a flow is pronounced dead, there is no need to invoke <code>:output</code>. Thus, the <code>:inputs</code> to <code>:output</code> aren't needed.</p>
+<p>Until now, every flow we've considered had a top-level <code>:inputs</code> key. You can still include one with this form. In that case, those inputs are merged into the discrete inputs for both <code>:output</code> and <code>:live?</code>:</p>
+<div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+;; These are equivalent:
+
+(rf/reg-flow
+ {:id     :abc
+  :inputs {:apple [:fruits :apple]}
+  :output {:inputs {:banana [:fruits :banana]}
+           :fn (fn [_ {:keys [apple banana]}]
+                 (and apple banana))}
+  :live?  {:inputs {:carrot [:roots :carrot]}
+           :fn (fn [_ {:keys [apple carrot]}]
+                 (and apple carrot))}})
+
+(rf/reg-flow
+ {:id     :abc
+  :output {:inputs {:apple  [:fruits :apple]
+                    :banana [:fruits :banana]}
+           :fn (fn [_ {:keys [apple banana]}]
+                 (and apple banana))}
+  :live?  {:inputs {:apple  [:fruits :apple]
+                    :carrot [:roots :carrot]}
+           :fn (fn [_ {:keys [apple carrot]}]
+                 (and apple carrot))}})
+</div>
+
+<h2 id="redefining-and-undefining">Redefining and Undefining<a class="headerlink" href="#redefining-and-undefining" title="Permanent link">&para;</a></h2>
+<p>Not only do flows have a lifecycle (defined by <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>), but this lifecycle also includes registration and deregistration.</p>
+<ul>
+<li>
+<p>When you call <code>reg-flow</code>, or trigger the <code>:reg-flow</code> effect, that flow also comes alive (that means it runs <code>:init</code> and <code>:output</code>).</p>
+</li>
+<li>
+<p>When you call <code>clear-flow</code>, or trigger the <code>:clear-flow</code> effect, it dies (running <code>:cleanup</code>).</p>
+</li>
+</ul>
+<p>Here's another demonstration. Think of it as a stripped-down todomvc.
+You can add, remove or clear items in a list.</p>
+<div class="cm-doc">
+(rf/reg-sub ::items :-> (comp reverse ::items))
+
+(defn item [id]
+  [:div "Item " id])
+
+(defn items []
+  (into [:div] (map item) @(rf/subscribe [::items])))
+
+(rf/reg-event-db
+ ::add-item
+ (fn [db [_ id]] (update db ::items conj id)))
+
+(rf/reg-event-db
+ ::delete-item
+ (fn [db [_ id]] (update db ::items #(remove #{id} %))))
+
+(defn controls []
+  (let [id (atom 0)]
+    (fn []
+      [:div 
+       [:a {:on-click #(do (rf/dispatch [::add-item (inc @id)])
+                           (swap! id inc))} "Add"] " " 
+       [:a {:on-click #(do (rf/dispatch [::delete-item @id])
+                           (swap! id dec))} "Delete"] " "])))
+
+(rdom/render [app-container [controls] [items]]
+             (js/document.getElementById "item-counter-basic"))
+</div>
+
+<div id="item-counter-basic"></div>
+
+<p>Now, imagine your business adds some requirements:</p>
+<ul>
+<li>At least 1 item per person.</li>
+<li>No more than 3 items per person.</li>
+</ul>
+<p>First things first, we express these requirements as data:</p>
+<div class="cm-doc">
+(def base-requirements {:min-items 0 :max-items 3})
+</div>
+
+<p>Then, we'll use a flow to evaluate which requirements are met.</p>
+<p>Note that the requirements aren't about what <em>happens</em>, only what things <em>are</em>.
+In other words, it's your app <em>state</em> that matters, not any particular event or view.
+Our flow doesn't care how it happened that a requirement was met, nor what to do next.</p>
+<p>For reasons that will become clear, let's write a <a href="https://en.wikipedia.org/wiki/Factory_%28object-oriented_programming%29">factory function</a> for this flow:</p>
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+(defn error-state-flow [{:keys [min-items max-items] :as requirements}]
+  {:id ::error-state
+   :path [::error-state]
+   :inputs {:items [::items]
+            :tab :current-tab}
+   :output (fn [_ {:keys [items]}]
+             (let [ct (count items)]
+               (cond
+                 (> ct max-items)  :too-many
+                 (<= ct min-items) :not-enough                 
+                 :else             :ok)))
+   :live? (fn [db {:keys [tab]}]
+            (= tab :item-counter))})
+</div>
+
+<p>And start running a flow that fits our base requirements:</p>
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+(rf/reg-flow (error-state-flow base-requirements))
+</div>
+
+<p>Now this flow is calculating an error-state value, and adding it to <code>app-db</code> after every event (that is, as long as you're on the <code>:item-counter</code> tab, and the <code>:items</code> or the <code>:tab</code> have changed).</p>
+<p>Let's update the app to display our new error state:</p>
+<div class="cm-doc">
+
+(defn warning []
+  (let [error-state (rf/sub :flow {:id ::error-state})]
+    [:div {:style {:color "red"}}
+     (->> @error-state
+          (get {:too-many   "Too many items. Please remove one."
+                :not-enough "Not enough items. Please add one."
+                :ok         [:br]}))]))
+
+(defn item-counter []
+  [:<> [controls] [warning] [items]])
+
+(defn tabbed-app-with-error []
+  [:div
+   [tab-picker]
+   [debug-app-db]
+   (case @current-tab
+     :room-calculator [room-calculator]
+     :item-counter [item-counter]
+     nil)])
+
+(rf/dispatch-sync [:init])
+(rdom/render [app-container [tabbed-app-with-error]]
+             (js/document.getElementById "item-counter-error"))
+</div>
+
+<div id="item-counter-error"></div>
+
+<p>Your app is working fine, until the next redesign.
+Now, users should be able to choose how many items count as too many.
+A little contrived, I know. But not uncommon from a programming perspective.</p>
+<p>Luckily, our <code>error-state-flow</code> factory is flexible.
+It can put together a new flow for any new requirement.</p>
+<p>Therefore, building this new app is just a matter of triggering the <code>:reg-flow</code> effect with an updated flow.</p>
+<p>We build a basic form with the power to change the requirement:</p>
+<div class="cm-doc">
+(defn requirement-picker []
+  [:<>
+   "Max items: "
+   [:input {:style {:background "lightgrey"}
+            :type "number"
+            :on-change #(rf/dispatch [:change-requirements
+                                      {:max-items (-> % .-target .-value)}])}]])
+</div>
+
+<p>And a corresponding event, which triggers our <code>:reg-flow</code> effect.</p>
+<div class="cm-doc">
+(rf/reg-event-fx
+ :change-requirements
+ (fn [_ [_ new-requirements]]
+   {:fx [[:reg-flow (error-state-flow (merge base-requirements new-requirements))]]})) 
+</div>
+
+<p>What happens after <code>:reg-flow</code> runs? Are there now two flows? Actually, no.</p>
+<p>Flow registration works just like interceptor registration. If you register a flow with the same <code>:id</code> as an existing flow, it replaces that flow. That means every time we trigger <code>:reg-flow (error-state-flow ...)</code>, not only does it register the new flow but it clears the old one. The old flow runs <code>:cleanup</code>, and the new flow runs <code>:init</code> and <code>:output</code>.</p>
+<p>All this leads to a situation where not only does changing the inputs lead to new output, but so does changing the flow itself.
+Let's test it out:</p>
+<div class="cm-doc">
+(defn item-counter []
+  [:<> [controls] [requirement-picker] [warning] [items]])
+
+(defn tabbed-app-with-requirements []
+  [:div
+   [tab-picker]
+   [debug-app-db]
+   (case @current-tab
+     :room-calculator [room-calculator]
+     :item-counter [item-counter]
+     nil)])
+
+(rf/dispatch-sync [:init])
+(rdom/render [app-container [tabbed-app-with-error]]
+             (js/document.getElementById "item-counter-requirements"))
+</div>
+
+<div id="item-counter-requirements"></div>
+
+<h2 id="semantics-and-placefulness">Semantics and Placefulness<a class="headerlink" href="#semantics-and-placefulness" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>Have you been to Clevelinnati? No? Clevelinnati can be found at the geometric midpoint between Cleveland and Cincinnati. What's that, you say it's not on the map?
+Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactly how to get to get there... As long as Cleveland stays still.</p>
+</blockquote>
+<p>At this point, we've fully explored the capabilities of flows. In this section, we'll consider the nuances of subscriptions, and how flows stand to solve some of their funtamental shortcomings. Let's find out how:</p>
+<p>Introducing yet another demo app! Turns out, we were measuring the kitchen to fill it with balloons. It's a balloon prank planner app. Consider the following:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+(rf/reg-sub
+ ::kitchen-area
+ (fn [db] (get-in db [:kitchen :area])))
+
+(rf/reg-sub
+ ::kitchen-height
+ (fn [db] (get-in db [:kitchen :height])))
+
+(rf/reg-sub
+ ::kitchen-volume
+ (fn [_] [(rf/subscribe [::kitchen-area]) (rf/subscribe [::kitchen-height])])
+ (fn [area height] (* area  height)))
+
+(rf/reg-sub
+ ::num-balloons-to-fill-kitchen
+ (fn [_] [(rf/subscribe [::kitchen-volume])])
+ (fn [volume] (let [std-balloon-volume 2.5]
+               (/ volume std-balloon-volume))))
+
+(rf/reg-event-fx
+ ::order-ballons-for-kitchen-prank
+ (fn [{:keys [balloons-per-bag] :as cofx} _]
+   (let [num-balloons-to-fill-kitchen :???     ;; How can I get this value???
+         num-bags-to-buy (js/Math.ceil
+                          (/ num-balloons-to-fill-kitchen
+                             balloons-per-bag))]
+     {:fx [[:amazon {:fn :order
+                     :sku :balloon-bag
+                     :ct num-bags-to-buy}]]})))
+</div>
+
+<p>How can we get a correct value for <code>num-balloons-to-fill-kitchen</code>? You might try calling <code>(rf/subscribe [::num-balloons-to-fill-kitchen])</code>, but re-frame comes back with a warning about reactive context, and memory leaks... oh my!</p>
+<h4>Reactivity</h4>
+<p>We express some <a href="https://github.com/day8/re-frame/issues/753">business logic in subscriptions</a>, and some in events, but they're not really compatible.
+Between subscriptions and events, there is a <a href="https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/">coloring problem</a>.</p>
+<p>Subscriptions can only be accessed within a <a href="/re-frame/FAQs/UseASubscriptionInAnEventHandler">reactive context</a>.
+Since an event handler isn't reactive, it can't access any subscriptions.</p>
+<p>That means, to get a usable value for <code>num-balloons-to-fill-kitchen</code>, we have to duplicate all the business logic that we wrote into our subscriptions:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+(rf/reg-event-fx
+ ::order-ballons-for-kitchen-prank
+ (fn [{:keys [balloons-per-bag] :as cofx} _]
+   (let [kitchen-area (get-in db [:kitchen :area])
+         kitchen-height (get-in db [:kitchen :height])
+         kitchen-volume (* area height)      ;; eyelids start drooping here
+         std-balloon-volume 2.5              
+         num-balloons (/ kitchen-volume std-balloon-volume)
+         num-bags-to-buy (js/Math.ceil
+                          (/ num-baloons balloons-per-bag))]
+     {:fx [[:amazon {:fn :order
+                     :sku :balloon-bag
+                     :ct num-bags-to-buy}]]})))
+</div>
+
+<p>Not only have we <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">drenched</a> our code, but now it has to do all our calculations twice.</p>
+<p>Of course you can design around the problem, but at what cost?
+We sympathize with you developers, for the hours you may have spent poring over an event handler, just to re-write the code as a subscription, and vice-versa.</p>
+<h4>Paths</h4>
+<p>A <a href="/re-frame/subscriptions/#the-four-layers">layer-2</a> subscription basically <em>names</em> an <code>app-db</code> path. What does a layer-3 subscription <em>name</em>?</p>
+<p>A materialized view, or a derived value.</p>
+<p>Subscriptions occupy their own semantic domain, separate from <code>app-db</code>. Only view functions can we access this domain. Outside of views, they form an impenetrable blob.</p>
+<p>So, re-frame is simple. <code>app-db</code> represents and <em>names</em> the state of your app. Except, so does this network of subscription names. But you can't really <em>use</em> those, so just forget about it.</p>
+<h4>A better way</h4>
+<p>The good news:</p>
+<p><strong>You can access a flow's output value any time, anywhere,</strong> since flows are controlled by re-frame/interceptors, not reagent/reactions. Instead of thinking about reactive context, just think about when the latest event happened.</p>
+<p><strong>If you know a flow's name, you know its output location,</strong> since flows store their output in <code>app-db</code>, at a static path. It doesn't matter how many other flows that flow depends on. The correct value simply stays where want it.</p>
+<p>Like many Clojure patterns, flows are <em>both</em> nested <em>and</em> flat. Even though <code>::num-balloons-to-fill-kitchen</code> depends on other flows, we can access it directly:</p>
+<div class="cm-doc" data-cm-doc-no-eval-on-init data-cm-doc-no-edit data-cm-doc-no-result>
+(rf/reg-flow
+ {:id ::kitchen-volume
+  :inputs {:area [:kitchen :area]
+           :height [:kitchen :height]}
+  :output (fn [_ {:keys [area height]}]
+            (* area height))
+  :path [:kitchen :volume]})
+
+(rf/reg-flow
+ {:id ::num-balloons-to-fill-kitchen
+  :inputs {:volume ::kitchen-volume}
+  :output (fn [_ {:keys [volume]}]
+            (let [std-balloon-volume 2.5]
+               (/ volume std-balloon-volume)))})
+
+(rf/reg-event-fx
+ ::order-ballons-for-kitchen-prank
+ (fn [{:keys [balloons-per-bag] :as cofx} _]
+   (let [num-balloons (rf/flow-output db ::num-balloons-to-fill-kitchen) ;; easy!
+         num-bags-to-buy (js/Math.ceil
+                          (/ num-balloons
+                             balloons-per-bag))]
+     {:fx [[:amazon {:fn :order
+                     :sku :balloon-bag
+                     :ct num-bags-to-buy}]]})))
+</div>
                 
               
               
