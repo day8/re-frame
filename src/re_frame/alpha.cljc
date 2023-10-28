@@ -16,6 +16,7 @@
    [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
                                                            fx-handler->interceptor
                                                            ctx-handler->interceptor]]
+   [re-frame.flow.alpha       :as flow]
    [re-frame.utils            :as utils]
    [clojure.set               :as set]))
 
@@ -420,7 +421,13 @@
   ([id handler]
    (reg-event-db id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (db-handler->interceptor handler)])))
+   (events/register id [cofx/inject-db
+                        fx/do-fx
+                        flow/interceptor
+                        flow/do-fx
+                        std-interceptors/inject-global-interceptors
+                        interceptors
+                        (db-handler->interceptor handler)])))
 
 (defn reg-event-fx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
@@ -454,7 +461,14 @@
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (fx-handler->interceptor handler)])))
+   (events/register id [cofx/inject-db
+                        fx/do-fx
+                        flow/interceptor
+                        flow/do-fx
+                        std-interceptors/inject-global-interceptors
+                        flow/interceptor
+                        interceptors
+                        (fx-handler->interceptor handler)])))
 
 (defn reg-event-ctx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
@@ -485,7 +499,13 @@
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db fx/do-fx std-interceptors/inject-global-interceptors interceptors (ctx-handler->interceptor handler)])))
+   (events/register id [cofx/inject-db
+                        fx/do-fx
+                        flow/interceptor
+                        flow/do-fx
+                        std-interceptors/inject-global-interceptors
+                        interceptors
+                        (ctx-handler->interceptor handler)])))
 
 (defn clear-event
   "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`).
@@ -1217,6 +1237,32 @@
   {:api-docs/hide true}
   [id]
   (router/remove-post-event-callback re-frame.router/event-queue id))
+
+;; --  Flows ------------------------------------------------------------------
+
+(defn reg-flow
+  [m]
+  (flow/reg-flow m))
+
+(defn flow-output
+  [db id]
+  (flow/get-output db id))
+
+(defn flow
+  [k]
+  (flow/lookup k))
+
+(reg :sub :flow
+     (fn [db {:keys [id]}]
+       (flow/get-output db id)))
+
+(reg :sub :live?
+     (fn [db {:keys [id]}]
+       (flow/get-output db id)))
+
+(reg-fx :reg-flow flow/reg-flow)
+
+(reg-fx :clear-flow flow/clear-flow)
 
 ;; --  Deprecation ------------------------------------------------------------
 
