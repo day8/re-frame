@@ -133,24 +133,24 @@
                           :background-color "#ccc"
                           :padding "2px 4px"
                           :opacity (if (or hover? focus?) 1 0.5)}}
-               "eval"]])
+         "eval"]])
 
 (defn editor
   [{:keys [source-str eval-result !view validators evaluable? editable? eval-on-init? on-change hover? focus? result-format result?]}]
   (r/with-let
     [eval! (fn [] (p/let [[status return-val] (eval-str (cm-string @!view))]
-                   (reset! eval-result {:status status
-                                        :return-val return-val
-                                        :return-str (binding [*print-length* 20]
-                                                      (case status
-                                                        (:success :success-promise)
-                                                        (with-out-str (pp/pprint return-val))
-                                                        (:error :error-promise)
-                                                        (format-exception return-val)))
-                                        :source-str @source-str
-                                        :source-form (try (reader/read-string @source-str)
-                                                          (catch :default err nil))})
-                   (reset! focus? false)))
+                    (reset! eval-result {:status status
+                                         :return-val return-val
+                                         :return-str (binding [*print-length* 20]
+                                                       (case status
+                                                         (:success :success-promise)
+                                                         (with-out-str (pp/pprint return-val))
+                                                         (:error :error-promise)
+                                                         (format-exception return-val)))
+                                         :source-str @source-str
+                                         :source-form (try (reader/read-string @source-str)
+                                                           (catch :default err nil))})
+                    (reset! focus? false)))
      init! (fn [el]
              (reset! !view (cm/EditorView.
                             #js {:state (make-state {:source-str @source-str
@@ -217,5 +217,3 @@
                             :validators validators
                             :eval-result (r/atom nil)
                             :!view (atom nil)}] el))))
-
-
