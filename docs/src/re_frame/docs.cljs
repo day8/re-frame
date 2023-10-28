@@ -182,7 +182,7 @@
       (when evaluable?
         [eval-button {:on-eval eval! :hover? @hover? :focus? @focus?}])]
      [validation validators @eval-result]
-     (when @eval-result [:hr])]
+     (when (and result? @eval-result) [:hr])]
     (finally (.destroy @!view))))
 
 (defonce mounts
