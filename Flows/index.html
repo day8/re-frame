@@ -2035,7 +2035,7 @@ Our flow doesn't care how it happened that a requirement was met, nor what to do
 
 <p>Now this flow is calculating an error-state value, and adding it to <code>app-db</code> after every event (that is, as long as you're on the <code>:item-counter</code> tab, and the <code>:items</code> or the <code>:tab</code> have changed).</p>
 <p>Let's update the app to display our new error state:</p>
-<div class="cm-doc">
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
 
 (defn warning []
   (let [error-state (rf/sub :flow {:id ::error-state})]
@@ -2082,7 +2082,7 @@ It can put together a new flow for any new requirement.</p>
 </div>
 
 <p>And a corresponding event, which triggers our <code>:reg-flow</code> effect.</p>
-<div class="cm-doc">
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-event-fx
  :change-requirements
  (fn [_ [_ new-requirements]]
@@ -2093,7 +2093,7 @@ It can put together a new flow for any new requirement.</p>
 <p>Flow registration works just like interceptor registration. If you register a flow with the same <code>:id</code> as an existing flow, it replaces that flow. That means every time we trigger <code>:reg-flow (error-state-flow ...)</code>, not only does it register the new flow but it clears the old one. The old flow runs <code>:cleanup</code>, and the new flow runs <code>:init</code> and <code>:output</code>.</p>
 <p>All this leads to a situation where not only does changing the inputs lead to new output, but so does changing the flow itself.
 Let's test it out:</p>
-<div class="cm-doc">
+<div class="cm-doc" data-cm-doc-no-eval-on-init>
 (defn item-counter []
   [:<> [controls] [requirement-picker] [warning] [items]])
 
@@ -2118,7 +2118,7 @@ Let's test it out:</p>
 <p>Have you been to Clevelinnati? No? Clevelinnati can be found at the geometric midpoint between Cleveland and Cincinnati. What's that, you say it's not on the map?
 Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactly how to get to get there... As long as Cleveland stays still.</p>
 </blockquote>
-<p>At this point, we've fully explored the capabilities of flows. In this section, we'll consider the nuances of subscriptions, and how flows stand to solve some of their funtamental shortcomings. Let's find out how:</p>
+<p>At this point, we've fully explored the capabilities of flows. In this section, we'll consider the nuances of subscriptions, and how flows stand to solve some of their fundamental shortcomings. Let's find out how:</p>
 <p>Introducing yet another demo app! Turns out, we were measuring the kitchen to fill it with balloons. It's a balloon prank planner app. Consider the following:</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-sub
