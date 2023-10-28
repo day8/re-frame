@@ -181,7 +181,7 @@
       [:div {:style {:flex 1}}
        (when result?
          [editor-result @eval-result {:format result-format}])]
-      (when evaluable?
+      (when (and result? evaluable?)
         [eval-button {:on-eval eval! :hover? @hover? :focus? @focus?}])]
      [validation validators @eval-result]
      (when (and result? @eval-result) [:hr])]

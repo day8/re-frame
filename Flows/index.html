@@ -2186,7 +2186,7 @@ We sympathize with you developers, for the hours you may have spent poring over 
 <h4>A better way</h4>
 <p>The good news:</p>
 <p><strong>You can access a flow's output value any time, anywhere,</strong> since flows are controlled by re-frame/interceptors, not reagent/reactions. Instead of thinking about reactive context, just think about when the latest event happened.</p>
-<p><strong>If you know a flow's name, you know its output location,</strong> since flows store their output in <code>app-db</code>, at a static path. It doesn't matter how many other flows that flow depends on. The correct value simply stays where want it.</p>
+<p><strong>If you know a flow's name, you know its output location,</strong> since flows store their output in <code>app-db</code>, at a static path. It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.</p>
 <p>Like many Clojure patterns, flows are <em>both</em> nested <em>and</em> flat. Even though <code>::num-balloons-to-fill-kitchen</code> depends on other flows, we can access it directly:</p>
 <div class="cm-doc" data-cm-doc-no-eval-on-init data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-flow
