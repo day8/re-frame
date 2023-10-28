@@ -1741,7 +1741,7 @@
 <p>You might notice a similarity with <a href="https://reagent-project.github.io/docs/master/reagent.core.html#var-cursor">reagent.core/cursor</a>.</p>
 <p>Both offer ways to react to <em>part of</em> a value (such as a subtree within a map). Reagent controls <em>when</em> a cursor updates, presumably during the evaluation of a component function. Flows, on the other hand, are controlled by re-frame, running every time an <code>event</code> occurs.</p>
 <p>Cursors use a single path, whether reading with <code>deref</code>, or writing with <code>reset!</code> or <code>swap!</code>. With flows, you declare several input paths, and a separate output path. You don't <code>reset!</code> a <code>flow</code>. Instead, this just happens each <code>event</code>, if the inputs have changed.</p>
-<p>With flows, you can implement business logic as a reactive state machine, fully independent from Reagent &amp; React. This has some deep implications - see <a href="#">XXX-flow-rationale</a> for a full explanation.</p>
+<p>With flows, you can implement business logic as a reactive state machine, fully independent from Reagent &amp; React. This has some deep implications - see <a href="#semantics-and-placefulness">Semantics and Placefulness</a> for a full explanation.</p>
 <h4>Can't I just use subscriptions?</h4>
 <p>You could handle this feature with a <a href="/re-frame/subscriptions/#the-four-layers">layer-3 subscription</a>:</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
