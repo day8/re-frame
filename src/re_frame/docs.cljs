@@ -95,12 +95,15 @@
   (str/join "\n" (cons (.-message v)
                        (sci/format-stacktrace (sci/stacktrace v)))))
 
-(defn success? [eval-result] (#{:success :success-promise} (:status eval-result)))
+(defn success? [eval-result]
+  (when eval-result
+    (contains? #{:success :success-promise} (:status eval-result))))
 
 (def green-check [:span {:style {:color "green"}} "✓"])
 (def red-x [:span {:style {:color "red"}} "✗"])
+(def grey [:span {:style {:color "grey"}} ""])
 
-(defn pass-fail [pass?] (if pass? green-check red-x))
+(defn pass-fail [pass?] (if (nil? pass?) grey (if pass? green-check red-x)))
 
 (defn editor-result [{:keys [return-str] :as eval-result}
                      & [{:keys [format]}]]
@@ -108,7 +111,8 @@
         format (or format :full)]
     [:div {:style {:white-space "pre-wrap"
                    :padding "1px 4px 0.5px 4px"
-                   :background-color (if pass? "#eeffee" "#ffeeee")
+                   :background-color (if (nil? pass?) "lightgrey"
+                                         (if pass? "#eeffee" "#ffeeee"))
                    :color "#444"
                    :font-family "monospace"}}
      [:span {:style {:pointer-events "none"
@@ -132,7 +136,7 @@
                "eval"]])
 
 (defn editor
-  [{:keys [source-str eval-result !view validators evaluable? editable? eval-on-init? on-change hover? focus? result-format]}]
+  [{:keys [source-str eval-result !view validators evaluable? editable? eval-on-init? on-change hover? focus? result-format result?]}]
   (r/with-let
     [eval! (fn [] (p/let [[status return-val] (eval-str (cm-string @!view))]
                    (reset! eval-result {:status status
@@ -173,11 +177,12 @@
                     :width "100%"
                     :margin-top "0.5rem"}}
       [:div {:style {:flex 1}}
-       [editor-result @eval-result {:format result-format}]]
+       (when result?
+         [editor-result @eval-result {:format result-format}])]
       (when evaluable?
         [eval-button {:on-eval eval! :hover? @hover? :focus? @focus?}])]
      [validation validators @eval-result]
-     (when @eval-result [:hr])]
+     (when (and result? @eval-result) [:hr])]
     (finally (.destroy @!view))))
 
 (defonce mounts
@@ -186,6 +191,7 @@
             :let [editable? (not (.. el -dataset -cmDocNoEdit))
                   evaluable? (not (.. el -dataset -cmDocNoEval))
                   eval-on-init? (not (.. el -dataset -cmDocNoEvalOnInit))
+                  result? (not (.. el -dataset -cmDocNoResult))
                   result-format (keyword (or (.. el -dataset -cmDocResultFormat) "full"))
                   validator-els (.getElementsByClassName el "cm-doc-validator")
                   validators (into [] (comp
@@ -198,6 +204,7 @@
                             :editable? editable?
                             :evaluable? evaluable?
                             :eval-on-init? eval-on-init?
+                            :result? result?
                             :result-format result-format
                             :hover? (r/atom false)
                             :focus? (r/atom false)
