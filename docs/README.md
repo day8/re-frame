@@ -78,6 +78,3 @@ Removes trailing dash in page title due to empty site name.
 
 `stylesheets/re-frame.css`
 Our own custom styles.
-
-`stylesheets/codehilite-monokai.css`
-Our own port of the monokai theme to codehilite.

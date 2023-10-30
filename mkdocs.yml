@@ -127,5 +127,4 @@ extra_css:
   - "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,500;1,400&display=swap"
   - "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400&display=swap"
   - "stylesheets/dominoes-live.css"
-  - "stylesheets/codehilite-monokai.css"
   - "stylesheets/mkdocs.css"
