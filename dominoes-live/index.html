@@ -51,8 +51,6 @@
     
       <link rel="stylesheet" href="../stylesheets/dominoes-live.css">
     
-      <link rel="stylesheet" href="../stylesheets/codehilite-monokai.css">
-    
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
     
@@ -1864,7 +1862,7 @@ This live coding is powered by <a href="https://github.com/borkdude/sci">SCI</a>
 So, at the top, within the <code>ns</code>, we'll give the name and require the other namespaces we'll need: 
 <div class="cm-doc">
 (ns re-frame.simple
-  (:require [reagent.dom :as rdom]
+  (:require [reagent.dom.client :as rdc]
             [re-frame.core :as rf]))
 </div></p>
 <div class="admonition note">
@@ -2157,7 +2155,10 @@ If either value changes, Reagent will automatically re-run this view function,
 computing new hiccup, which means new DOM.</p>
 <p>Using the power of <code>sci</code>, we can render just the <code>clock</code> component: </p>
 <div class="cm-doc">
-(rdom/render [clock] (js/document.getElementById "clock"))
+(defonce clock-root
+  (rdc/create-root (js/document.getElementById "clock")))
+
+(rdc/render clock-root [clock])
 </div>
 
 <div id="clock"></div>
@@ -2186,7 +2187,10 @@ a <code>dispatch</code> to say when it has changed (look for <code>emit</code>).
 The user's interaction with the UI is usually a large source of events.</p>
 <p>Notice also how we use <code>@</code> in front of <code>subscribe</code> to obtain the value out of the subscription. It is almost as if the subscription is an atom holding a value (which can change over time). </p>
 <p>We can render the <code>color-input</code> as any other reagent component:
-<div class="cm-doc">(rdom/render [color-input] (js/document.getElementById "color-input"))
+<div class="cm-doc">
+(defonce color-input-root
+  (rdc/create-root (js/document.getElementById "color-input")))</p>
+<p>(rdc/render color-input-root [color-input])
 </div>
 <div id="color-input"></div></p>
 <p>And then there's a parent <code>view</code> to arrange the others. It contains no 
@@ -2219,10 +2223,13 @@ only ever sourced via subscriptions. </p>
    onto an existing DOM element (with id <code>app</code>). </li>
 </ol>
 <div class="cm-doc">
+
+(defonce dominoes-live-app-root
+  (rdc/create-root (js/document.getElementById "dominoes-live-app")))
 (defn mount-ui
   []
-  (rdom/render [ui]                 ;; mount the application's ui
-                  (js/document.getElementById "dominoes-live-app")))
+  (rdc/render dominoes-live-app-root [ui])) ;; mount the application's ui
+
 (defn run
   []
   (rf/dispatch-sync [:initialize])     ;; puts a value into application state
@@ -2244,8 +2251,10 @@ This is the element we used to show how the app looks at the top of this page</p
 <p>To save you the trouble of scrolling up to the top of the page, I decided to render the whole app as a 
 reagent element, just here:</p>
 <div class="cm-doc">
-(rdom/render [ui]
-             (js/document.getElementById "dominoes-live-app-2"))
+(defonce dominoes-live-app-2-root
+  (rdc/create-root (js/document.getElementById "dominoes-live-app-2")))
+
+(rdc/render dominoes-live-app-2-root [ui])
 </div>
 
 <div id="dominoes-live-app-2"></div>

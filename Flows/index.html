@@ -51,8 +51,6 @@
     
       <link rel="stylesheet" href="../stylesheets/dominoes-live.css">
     
-      <link rel="stylesheet" href="../stylesheets/codehilite-monokai.css">
-    
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
     
@@ -1630,7 +1628,7 @@
 <div class="cm-doc">
 (ns re-frame.example.flows
   (:require [re-frame.alpha :as rf]
-            [reagent.dom :as rdom]))
+            [reagent.dom.client :as rdc]))
 </div>
 
 <h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
@@ -1708,8 +1706,12 @@
    @(rf/subscribe [::kitchen-area])])
 
 (rf/dispatch-sync [:init])
-(rdom/render [app-container [room-calculator]]
-             (js/document.getElementById "room-calculator"))
+
+(defonce room-calculator-root
+  (rdc/create-root (js/document.getElementById "room-calculator")))
+
+(rdc/render room-calculator-root
+            [app-container [room-calculator]])
 </div>
 
 <div id="room-calculator"></div>
@@ -1853,7 +1855,11 @@ This replaces our first <code>:kitchen-area</code> flow, since it has the same <
 <p>Let's test it out:</p>
 <div class="cm-doc" data-cm-doc-no-eval-on-init>
 (rf/dispatch-sync [:init])
-(rdom/render [app-container [tabbed-app]] (js/document.getElementById "tabbed-app"))
+
+(defonce tabbed-app-root (rdc/create-root (js/document.getElementById "tabbed-app")))
+
+(rdc/render tabbed-app-root
+            [app-container [tabbed-app]])
 </div>
 
 <div class="admonition note">
@@ -1991,8 +1997,11 @@ You can add, remove or clear items in a list.</p>
        [:a {:on-click #(do (rf/dispatch [::delete-item @id])
                            (swap! id dec))} "Delete"] " "])))
 
-(rdom/render [app-container [controls] [items]]
-             (js/document.getElementById "item-counter-basic"))
+(defonce item-counter-basic-root
+  (rdc/create-root (js/document.getElementById "item-counter-basic")))
+
+(rdc/render item-counter-basic-root
+            [app-container [controls] [items]])
 </div>
 
 <div id="item-counter-basic"></div>
@@ -2058,8 +2067,12 @@ Our flow doesn't care how it happened that a requirement was met, nor what to do
      nil)])
 
 (rf/dispatch-sync [:init])
-(rdom/render [app-container [tabbed-app-with-error]]
-             (js/document.getElementById "item-counter-error"))
+
+(defonce item-counter-error-root 
+  (rdc/create-root (js/document.getElementById "item-counter-error")))
+
+(rdc/render item-counter-error-root
+            [app-container [tabbed-app-with-error]])
 </div>
 
 <div id="item-counter-error"></div>
@@ -2107,8 +2120,12 @@ Let's test it out:</p>
      nil)])
 
 (rf/dispatch-sync [:init])
-(rdom/render [app-container [tabbed-app-with-error]]
-             (js/document.getElementById "item-counter-requirements"))
+
+(defonce item-counter-requirements-root
+  (rdc/create-root (js/document.getElementById "item-counter-requirements")))
+
+(rdc/render item-counter-requirements-root
+            [app-container [tabbed-app-with-error]])
 </div>
 
 <div id="item-counter-requirements"></div>
