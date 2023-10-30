@@ -19,7 +19,7 @@ We're about to add a new capability to step 3. Let's begin:
 
 A `flow` calculates a derived value "automatically". Here's a basic flow, which calculates the area of a room:
 
-<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+<div class="cm-doc" data-cm-doc-no-result>
 {:id     :room-area
  :inputs {:w [:room :width]
           :h [:room :length]}
@@ -507,6 +507,8 @@ Let's update the app to display our new error state:
             [app-container [tabbed-app-with-error]])
 </div>
 
+!!! Note "Click `eval` on the code block above to start this app."
+
 <div id="item-counter-error"></div>
 
 Your app is working fine, until the next redesign.
@@ -532,7 +534,7 @@ We build a basic form with the power to change the requirement:
 
 And a corresponding event, which triggers our `:reg-flow` effect.
 
-<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+<div class="cm-doc" data-cm-doc-result-format="pass-fail" data-cm-doc-no-eval-on-init>
 (rf/reg-event-fx
  :change-requirements
  (fn [_ [_ new-requirements]]
@@ -567,6 +569,8 @@ Let's test it out:
 (rdc/render item-counter-requirements-root
             [app-container [tabbed-app-with-error]])
 </div>
+
+!!! Note "Click `eval` on the two code blocks above to start this app."
 
 <div id="item-counter-requirements"></div>
 
