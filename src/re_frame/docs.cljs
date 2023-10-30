@@ -18,10 +18,10 @@
    [sci.configs.re-frame.re-frame :as sci.re-frame]
    [sci.ctx-store :as ctx-store]))
 
-(def rdns (sci/create-ns 'reagent.dom nil))
+(def rdcns (sci/create-ns 'reagent.dom nil))
 
 (def reagent-dom-client-namespace
-  {'render (sci/copy-var rdc/render rdns)
+  {'render (sci/copy-var rdc/render rdcns)
    'create-root (sci/copy-var rdc/create-root rdcns)})
 
 (defn cm-string [cm-instance]
@@ -195,7 +195,7 @@
   (mapv rdc/create-root root-elements))
 
 (defonce mounts
-  (doseq [^js [el container] (zipmap root-elements root-containers)
+  (doseq [[^js el ^js container] (zipmap root-elements root-containers)
           :let [editable? (not (.. el -dataset -cmDocNoEdit))
                 evaluable? (not (.. el -dataset -cmDocNoEval))
                 eval-on-init? (not (.. el -dataset -cmDocNoEvalOnInit))

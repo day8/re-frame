@@ -1633,7 +1633,7 @@
 
 <h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
 <p>A <code>flow</code> calculates a derived value "automatically". Here's a basic flow, which calculates the area of a room:</p>
-<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+<div class="cm-doc" data-cm-doc-no-result>
 {:id     :room-area
  :inputs {:w [:room :width]
           :h [:room :length]}
@@ -2075,6 +2075,9 @@ Our flow doesn't care how it happened that a requirement was met, nor what to do
             [app-container [tabbed-app-with-error]])
 </div>
 
+<div class="admonition note">
+<p class="admonition-title">Click <code>eval</code> on the code block above to start this app.</p>
+</div>
 <div id="item-counter-error"></div>
 
 <p>Your app is working fine, until the next redesign.
@@ -2095,7 +2098,7 @@ It can put together a new flow for any new requirement.</p>
 </div>
 
 <p>And a corresponding event, which triggers our <code>:reg-flow</code> effect.</p>
-<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+<div class="cm-doc" data-cm-doc-result-format="pass-fail" data-cm-doc-no-eval-on-init>
 (rf/reg-event-fx
  :change-requirements
  (fn [_ [_ new-requirements]]
@@ -2128,6 +2131,9 @@ Let's test it out:</p>
             [app-container [tabbed-app-with-error]])
 </div>
 
+<div class="admonition note">
+<p class="admonition-title">Click <code>eval</code> on the two code blocks above to start this app.</p>
+</div>
 <div id="item-counter-requirements"></div>
 
 <h2 id="semantics-and-placefulness">Semantics and Placefulness<a class="headerlink" href="#semantics-and-placefulness" title="Permanent link">&para;</a></h2>
