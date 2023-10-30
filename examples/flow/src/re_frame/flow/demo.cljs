@@ -83,4 +83,4 @@
 (defn run
   []
   (rf/dispatch-sync [::init])
-  (rdom/render root-container [root]))
+  (rdc/render root-container [root]))

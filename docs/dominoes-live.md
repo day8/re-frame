@@ -38,7 +38,7 @@ Within our single namespace (called `re-frame.simple`), we'll need to use both `
 So, at the top, within the `ns`, we'll give the name and require the other namespaces we'll need: 
 <div class="cm-doc">
 (ns re-frame.simple
-  (:require [reagent.dom :as rdom]
+  (:require [reagent.dom.client :as rdc]
             [re-frame.core :as rf]))
 </div>
 
@@ -391,7 +391,10 @@ computing new hiccup, which means new DOM.
 Using the power of `sci`, we can render just the `clock` component: 
 
 <div class="cm-doc">
-(rdom/render [clock] (js/document.getElementById "clock"))
+(defonce clock-root
+  (rdc/create-root (js/document.getElementById "clock")))
+
+(rdc/render clock-root [clock])
 </div>
 <div id="clock"></div>
 
@@ -424,7 +427,11 @@ The user's interaction with the UI is usually a large source of events.
 Notice also how we use `@` in front of `subscribe` to obtain the value out of the subscription. It is almost as if the subscription is an atom holding a value (which can change over time). 
 
 We can render the `color-input` as any other reagent component:
-<div class="cm-doc">(rdom/render [color-input] (js/document.getElementById "color-input"))
+<div class="cm-doc">
+(defonce color-input-root
+  (rdc/create-root (js/document.getElementById "color-input")))
+
+(rdc/render color-input-root [color-input])
 </div>
 <div id="color-input"></div>
 
@@ -462,10 +469,13 @@ It has two tasks:
    onto an existing DOM element (with id `app`). 
 
 <div class="cm-doc">
+
+(defonce dominoes-live-app-root
+  (rdc/create-root (js/document.getElementById "dominoes-live-app")))
 (defn mount-ui
   []
-  (rdom/render [ui]                 ;; mount the application's ui
-                  (js/document.getElementById "dominoes-live-app")))
+  (rdc/render dominoes-live-app-root [ui])) ;; mount the application's ui
+
 (defn run
   []
   (rf/dispatch-sync [:initialize])     ;; puts a value into application state
@@ -491,8 +501,10 @@ To save you the trouble of scrolling up to the top of the page, I decided to ren
 reagent element, just here:
 
 <div class="cm-doc">
-(rdom/render [ui]
-             (js/document.getElementById "dominoes-live-app-2"))
+(defonce dominoes-live-app-2-root
+  (rdc/create-root (js/document.getElementById "dominoes-live-app-2")))
+
+(rdc/render dominoes-live-app-2-root [ui])
 </div>
 <div id="dominoes-live-app-2"></div>
 

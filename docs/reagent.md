@@ -6,9 +6,9 @@ Look at the front page of https://www.learnreframe.com/
 
 <div class="cljs-showcase">
 (ns simple.core
-  (:require [reagent.dom :as rdom]
+  (:require [reagent.dom.client :as rdc]
             [re-frame.core :as rf]
-            [clojure.string :as str])))
+            [clojure.string :as str]))
 </div>
 
 <div class="cm-doc">
@@ -25,10 +25,13 @@ Look at the front page of https://www.learnreframe.com/
 
 
 <div class="cm-doc">
+(defonce root-container
+  (rdc/create-root (js/document.getElementById "live-app")))
+
 (defn mount-ui
   []
-  (rdom/render [square]                 ;; mount the application's ui
-               (js/document.getElementById "live-app")))
+  (rdc/render root-container [square]))  ;; mount the application's ui
+
 (mount-ui)
 </div>
 

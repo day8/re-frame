@@ -9,7 +9,7 @@
    [clojure.pprint :as pp]
    [promesa.core :as p]
    [reagent.core :as r]
-   [reagent.dom :as rdom]
+   [reagent.dom.client :as rdc]
    [re-frame.core]
    [re-frame.db]
    [re-frame.alpha]
@@ -18,10 +18,11 @@
    [sci.configs.re-frame.re-frame :as sci.re-frame]
    [sci.ctx-store :as ctx-store]))
 
-(def rdns (sci/create-ns 'reagent.dom nil))
+(def rdcns (sci/create-ns 'reagent.dom nil))
 
-(def reagent-dom-namespace
-  {'render (sci/copy-var rdom/render rdns)})
+(def reagent-dom-client-namespace
+  {'render (sci/copy-var rdc/render rdcns)
+   'create-root (sci/copy-var rdc/create-root rdcns)})
 
 (defn cm-string [cm-instance]
   (-> cm-instance .-state .-doc .toString))
@@ -30,7 +31,7 @@
                                   're-frame.db sci.re-frame/re-frame-db-namespace
                                   're-frame.alpha sci.re-frame/re-frame-alpha-namespace
                                   'reagent.core sci.reagent/reagent-namespace
-                                  'reagent.dom reagent-dom-namespace}
+                                  'reagent.dom.client reagent-dom-client-namespace}
                      :classes {'js js/globalThis
                                :allow :all
                                'Math js/Math}
@@ -187,35 +188,40 @@
      (when (and result? @eval-result) [:hr])]
     (finally (.destroy @!view))))
 
+(defonce root-elements
+  (seq (js/document.querySelectorAll ".cm-doc")))
+
+(defonce root-containers
+  (mapv rdc/create-root root-elements))
+
 (defonce mounts
-  (let [els (seq (js/document.querySelectorAll ".cm-doc"))]
-    (doseq [^js el els
-            :let [editable? (not (.. el -dataset -cmDocNoEdit))
-                  evaluable? (not (.. el -dataset -cmDocNoEval))
-                  eval-on-init? (not (.. el -dataset -cmDocNoEvalOnInit))
-                  result? (not (.. el -dataset -cmDocNoResult))
-                  result-format (keyword (or (.. el -dataset -cmDocResultFormat) "full"))
-                  validator-els (.getElementsByClassName el "cm-doc-validator")
-                  validators (into [] (comp
-                                       (map #(.-innerText %))
-                                       (map eval-str)
-                                       (filter (comp #{:success} first))
-                                       (map second))
-                                   validator-els)]]
-      (rdom/render [editor {:parent el
-                            :editable? editable?
-                            :evaluable? evaluable?
-                            :eval-on-init? eval-on-init?
-                            :result? result?
-                            :result-format result-format
-                            :hover? (r/atom false)
-                            :focus? (r/atom false)
-                            :source-str (atom (some->> (array-seq (.-childNodes el))
-                                                       (filter (comp #{js/Node.TEXT_NODE}
-                                                                     #(.-nodeType %)))
-                                                       first
-                                                       .-textContent
-                                                       str/trim))
-                            :validators validators
-                            :eval-result (r/atom nil)
-                            :!view (atom nil)}] el))))
+  (doseq [[^js el ^js container] (zipmap root-elements root-containers)
+          :let [editable? (not (.. el -dataset -cmDocNoEdit))
+                evaluable? (not (.. el -dataset -cmDocNoEval))
+                eval-on-init? (not (.. el -dataset -cmDocNoEvalOnInit))
+                result? (not (.. el -dataset -cmDocNoResult))
+                result-format (keyword (or (.. el -dataset -cmDocResultFormat) "full"))
+                validator-els (.getElementsByClassName el "cm-doc-validator")
+                validators (into [] (comp
+                                     (map #(.-innerText %))
+                                     (map eval-str)
+                                     (filter (comp #{:success} first))
+                                     (map second))
+                                 validator-els)]]
+    (rdc/render container [editor {:parent el
+                                   :editable? editable?
+                                   :evaluable? evaluable?
+                                   :eval-on-init? eval-on-init?
+                                   :result? result?
+                                   :result-format result-format
+                                   :hover? (r/atom false)
+                                   :focus? (r/atom false)
+                                   :source-str (atom (some->> (array-seq (.-childNodes el))
+                                                              (filter (comp #{js/Node.TEXT_NODE}
+                                                                            #(.-nodeType %)))
+                                                              first
+                                                              .-textContent
+                                                              str/trim))
+                                   :validators validators
+                                   :eval-result (r/atom nil)
+                                   :!view (atom nil)}])))

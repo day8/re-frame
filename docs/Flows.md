@@ -12,7 +12,7 @@ We're about to add a new capability to step 3. Let's begin:
 <div class="cm-doc">
 (ns re-frame.example.flows
   (:require [re-frame.alpha :as rf]
-            [reagent.dom :as rdom]))
+            [reagent.dom.client :as rdc]))
 </div>
 
 ## Flows
@@ -95,8 +95,12 @@ And we use the `::kitchen-area` subscription to render our final component:
    @(rf/subscribe [::kitchen-area])])
 
 (rf/dispatch-sync [:init])
-(rdom/render [app-container [room-calculator]]
-             (js/document.getElementById "room-calculator"))
+
+(defonce room-calculator-root
+  (rdc/create-root (js/document.getElementById "room-calculator")))
+
+(rdc/render room-calculator-root
+            [app-container [room-calculator]])
 </div>
 
 <div id="room-calculator"></div>
@@ -279,7 +283,11 @@ Let's test it out:
 
 <div class="cm-doc" data-cm-doc-no-eval-on-init>
 (rf/dispatch-sync [:init])
-(rdom/render [app-container [tabbed-app]] (js/document.getElementById "tabbed-app"))
+
+(defonce tabbed-app-root (rdc/create-root (js/document.getElementById "tabbed-app")))
+
+(rdc/render tabbed-app-root
+            [app-container [tabbed-app]])
 </div>
 
 !!! Note "Click `eval` on the two code blocks above to start this app."
@@ -414,8 +422,11 @@ You can add, remove or clear items in a list.
        [:a {:on-click #(do (rf/dispatch [::delete-item @id])
                            (swap! id dec))} "Delete"] " "])))
 
-(rdom/render [app-container [controls] [items]]
-             (js/document.getElementById "item-counter-basic"))
+(defonce item-counter-basic-root
+  (rdc/create-root (js/document.getElementById "item-counter-basic")))
+
+(rdc/render item-counter-basic-root
+            [app-container [controls] [items]])
 </div>
 
 <div id="item-counter-basic"></div>
@@ -488,8 +499,12 @@ Let's update the app to display our new error state:
      nil)])
 
 (rf/dispatch-sync [:init])
-(rdom/render [app-container [tabbed-app-with-error]]
-             (js/document.getElementById "item-counter-error"))
+
+(defonce item-counter-error-root 
+  (rdc/create-root (js/document.getElementById "item-counter-error")))
+
+(rdc/render item-counter-error-root
+            [app-container [tabbed-app-with-error]])
 </div>
 
 <div id="item-counter-error"></div>
@@ -545,8 +560,12 @@ Let's test it out:
      nil)])
 
 (rf/dispatch-sync [:init])
-(rdom/render [app-container [tabbed-app-with-error]]
-             (js/document.getElementById "item-counter-requirements"))
+
+(defonce item-counter-requirements-root
+  (rdc/create-root (js/document.getElementById "item-counter-requirements")))
+
+(rdc/render item-counter-requirements-root
+            [app-container [tabbed-app-with-error]])
 </div>
 
 <div id="item-counter-requirements"></div>
