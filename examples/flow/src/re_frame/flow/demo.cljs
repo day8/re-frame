@@ -1,6 +1,6 @@
 (ns re-frame.flow.demo
   (:require
-   [reagent.dom :as rdom]
+   [reagent.dom.client :as rdc]
    [re-frame.alpha :as rf]))
 
 (rf/reg-sub ::items :-> (comp reverse ::items))
@@ -77,8 +77,10 @@
  ::init
  (fn [db _] db))
 
+(defonce root-container
+  (rdc/create-root (js/document.getElementById "app")))
+
 (defn run
   []
   (rf/dispatch-sync [::init])
-  (rdom/render [root]
-               (js/document.getElementById "app")))
+  (rdom/render root-container [root]))

@@ -1,4 +1,5 @@
 {:deps {day8/re-frame              {:local/root "../.."}
+        reagent/reagent            {:mvn/version "1.2.0"}
         thheller/shadow-cljs       {:mvn/version "2.25.2"}
         clj-commons/secretary      {:mvn/version "1.2.4"}
         day8.re-frame/tracing      {:mvn/version "0.6.2"}

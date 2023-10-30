@@ -1,7 +1,7 @@
 (ns todomvc.core
   (:require-macros [secretary.core :refer [defroute]])
   (:require [goog.events :as events]
-            [reagent.dom]
+            [reagent.dom.client :as rdc]
             [re-frame.alpha :as rf :refer [dispatch dispatch-sync]]
             [secretary.core :as secretary]
             [todomvc.events] ;; These two are only required to make the compiler
@@ -37,13 +37,15 @@
 
 ;; -- Entry Point -------------------------------------------------------------
 
+(defonce root-container
+  (rdc/create-root (.getElementById js/document "app")))
+
 (defn render
   []
   ;; Render the UI into the HTML's <div id="app" /> element
   ;; The view function `todomvc.views/todo-app` is the
   ;; root view for the entire UI.
-  (reagent.dom/render [todomvc.views/todo-app]
-                      (.getElementById js/document "app")))
+  (rdc/render root-container [todomvc.views/todo-app]))
 
 (defn ^:dev/after-load clear-cache-and-render!
   []

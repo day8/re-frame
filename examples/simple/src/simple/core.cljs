@@ -1,5 +1,5 @@
 (ns simple.core
-  (:require [reagent.dom :as rdom]
+  (:require [reagent.dom.client :as rdc]
             [re-frame.core :as rf]))
 
 ;; A detailed walk-through of this source code is provided in the docs:
@@ -78,10 +78,12 @@
 
 ;; -- Entry Point -------------------------------------------------------------
 
+(defonce root-container
+  (rdc/create-root (js/document.getElementById "app")))
+
 (defn mount-ui
   []
-  (rdom/render [ui]
-               (js/document.getElementById "app")))
+  (rdc/render root-container [ui]))
 
 (defn ^:dev/after-load clear-cache-and-render!
   []
