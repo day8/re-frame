@@ -1615,7 +1615,9 @@
                   <h1>Flows</h1>
                 
                 <blockquote>
-<p>This feature is proposed for re-frame. But it isn't available yet.  </p>
+<p>This is an experimental, proposed feature for re-frame.
+We'd love to hear your feedback!
+Please join our discussions on <a href="https://github.com/day8/re-frame/discussions/795">github</a> and <a href="https://clojurians.slack.com/archives/C073DKH9P/p1698792674379499">slack</a>.</p>
 </blockquote>
 <h2 id="the-story-so-far">The story so far<a class="headerlink" href="#the-story-so-far" title="Permanent link">&para;</a></h2>
 <ol>
@@ -1774,7 +1776,7 @@
 
 <p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
 <h4>What about caching? I thought subscriptions were optimized this way.</h4>
-<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls <code>subscribe</code>, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the→</p>
+<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls <code>subscribe</code>, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the subscription is freed.</p>
 <p>This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't <em>need</em> to couple their behavior with that of their calling components.</p>
 <p>The app-db represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!</p>
 <p>With flows, the process is simpler. <code>app-db</code> <em>is</em> the cache. You, the programmer, define explicitly when to recalculate the output, <em>and</em> when to store the output. To this end, flows provide optional keys: <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:</p>
@@ -2081,7 +2083,7 @@ Our flow doesn't care how it happened that a requirement was met, nor what to do
 <div id="item-counter-error"></div>
 
 <p>Your app is working fine, until the next redesign.
-Now, users should be able to choose how many items count as too many.
+Now, users must be able to choose the maximum item limit.
 A little contrived, I know. But not uncommon from a programming perspective.</p>
 <p>Luckily, our <code>error-state-flow</code> factory is flexible.
 It can put together a new flow for any new requirement.</p>
@@ -2165,7 +2167,7 @@ Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactl
 
 (rf/reg-event-fx
  ::order-ballons-for-kitchen-prank
- (fn [{:keys [balloons-per-bag] :as cofx} _]
+ (fn [{:keys [balloons-per-bag db] :as cofx} _]
    (let [num-balloons-to-fill-kitchen :???     ;; How can I get this value???
          num-bags-to-buy (js/Math.ceil
                           (/ num-balloons-to-fill-kitchen
@@ -2181,11 +2183,12 @@ Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactl
 Between subscriptions and events, there is a <a href="https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/">coloring problem</a>.</p>
 <p>Subscriptions can only be accessed within a <a href="/re-frame/FAQs/UseASubscriptionInAnEventHandler">reactive context</a>.
 Since an event handler isn't reactive, it can't access any subscriptions.</p>
-<p>That means, to get a usable value for <code>num-balloons-to-fill-kitchen</code>, we have to duplicate all the business logic that we wrote into our subscriptions:</p>
+<p>Furthermore, subscriptions have an <code>input-signals</code> function. This allows the value of one subscription to flow into another. But events have no such thing.</p>
+<p>That means, to get a usable value for <code>num-balloons-to-fill-kitchen</code>, we have to duplicate the business logic that we wrote into our subscription, along with the <em>entire</em> subgraph of inputs which our subscription is composed of:</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-event-fx
  ::order-ballons-for-kitchen-prank
- (fn [{:keys [balloons-per-bag] :as cofx} _]
+ (fn [{:keys [balloons-per-bag db] :as cofx} _]
    (let [kitchen-area (get-in db [:kitchen :area])
          kitchen-height (get-in db [:kitchen :height])
          kitchen-volume (* area height)      ;; eyelids start drooping here
