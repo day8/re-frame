@@ -1,4 +1,6 @@
-> This feature is proposed for re-frame. But it isn't available yet.  
+> This is an experimental, proposed feature for re-frame.
+> We'd love to hear your feedback!
+> Please join our discussions on [github](https://github.com/day8/re-frame/discussions/795) and [slack](https://clojurians.slack.com/archives/C073DKH9P/p1698792674379499).
 
 ## The story so far 
 
@@ -186,7 +188,7 @@ As before, once `:output` runs, the resulting value is stored at `:path`. So, th
 
 #### What about caching? I thought subscriptions were optimized this way.
 
-Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls `subscribe`, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the→
+Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls `subscribe`, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the subscription is freed.
 
 This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't *need* to couple their behavior with that of their calling components.
 
@@ -512,7 +514,7 @@ Let's update the app to display our new error state:
 <div id="item-counter-error"></div>
 
 Your app is working fine, until the next redesign.
-Now, users should be able to choose how many items count as too many.
+Now, users must be able to choose the maximum item limit.
 A little contrived, I know. But not uncommon from a programming perspective.
 
 Luckily, our `error-state-flow` factory is flexible.
@@ -605,7 +607,7 @@ Introducing yet another demo app! Turns out, we were measuring the kitchen to fi
 
 (rf/reg-event-fx
  ::order-ballons-for-kitchen-prank
- (fn [{:keys [balloons-per-bag] :as cofx} _]
+ (fn [{:keys [balloons-per-bag db] :as cofx} _]
    (let [num-balloons-to-fill-kitchen :???     ;; How can I get this value???
          num-bags-to-buy (js/Math.ceil
                           (/ num-balloons-to-fill-kitchen
@@ -625,12 +627,14 @@ Between subscriptions and events, there is a [coloring problem](https://journal.
 Subscriptions can only be accessed within a [reactive context](/re-frame/FAQs/UseASubscriptionInAnEventHandler).
 Since an event handler isn't reactive, it can't access any subscriptions.
 
-That means, to get a usable value for `num-balloons-to-fill-kitchen`, we have to duplicate all the business logic that we wrote into our subscriptions:
+Furthermore, subscriptions have an `input-signals` function. This allows the value of one subscription to flow into another. But events have no such thing.
+
+That means, to get a usable value for `num-balloons-to-fill-kitchen`, we have to duplicate the business logic that we wrote into our subscription, along with the *entire* subgraph of inputs which our subscription is composed of:
 
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-event-fx
  ::order-ballons-for-kitchen-prank
- (fn [{:keys [balloons-per-bag] :as cofx} _]
+ (fn [{:keys [balloons-per-bag db] :as cofx} _]
    (let [kitchen-area (get-in db [:kitchen :area])
          kitchen-height (get-in db [:kitchen :height])
          kitchen-volume (* area height)      ;; eyelids start drooping here
