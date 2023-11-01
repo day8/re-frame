@@ -953,6 +953,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#flow-specification" class="md-nav__link">
+    Flow Specification
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-does-this-all-happen" class="md-nav__link">
+    When Does This All Happen?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#a-basic-use-case" class="md-nav__link">
     A Basic use-case
   </a>
@@ -1558,6 +1572,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#flow-specification" class="md-nav__link">
+    Flow Specification
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-does-this-all-happen" class="md-nav__link">
+    When Does This All Happen?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#a-basic-use-case" class="md-nav__link">
     A Basic use-case
   </a>
@@ -1621,12 +1649,13 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
 </blockquote>
 <h2 id="the-story-so-far">The story so far<a class="headerlink" href="#the-story-so-far" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Users</strong> cause <strong>Events</strong></li>
+<li><strong>System Actors</strong> (typically users) cause <strong>Events</strong></li>
 <li><strong>Events</strong> cause <strong>Effects</strong></li>
 <li><strong>Effects</strong> cause <strong>State Changes</strong></li>
 <li><strong>State Changes</strong> cause <strong>View rerendering</strong></li>
 </ol>
-<p>We're about to add a new capability to step 3. Let's begin:</p>
+<p>We're about to introduce a new feature in step 3. This new feature supports <code>re-frame's</code> tag line "derived values, flowing".  </p>
+<p>To begin, we add the necessary <code>requires</code> for the live coding on this page (the feature being introduced is in the <code>alpha</code> namespace) :</p>
 <div class="cm-doc">
 (ns re-frame.example.flows
   (:require [re-frame.alpha :as rf]
@@ -1634,7 +1663,11 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
 </div>
 
 <h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
-<p>A <code>flow</code> calculates a derived value "automatically". Here's a basic flow, which calculates the area of a room:</p>
+<p>A <code>flow</code> calculates a derived value "automatically". </p>
+<p>When one part of state changes, another part is recalculated. More specifically, when the values at one or more paths within <code>app-db</code> change, then the value at another path is recalculated. </p>
+<p>re-frame flows are registered by the API function <code>reg-flow</code>.  You call it with a <code>flow specification</code>, which is just a map, that defines the input paths to be monitored, the function to calculate the new value, and the path where output should be placed. </p>
+<h2 id="flow-specification">Flow Specification<a class="headerlink" href="#flow-specification" title="Permanent link">&para;</a></h2>
+<p>It is just a map. Here's one which automatically calculates the area of a room from width and height:</p>
 <div class="cm-doc" data-cm-doc-no-result>
 {:id     :room-area
  :inputs {:w [:room :width]
@@ -1645,16 +1678,15 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
 </div>
 
 <ul>
-<li>A <code>flow</code> has <code>:inputs</code>, obtained from paths in <code>app-db</code>.</li>
-<li>When the <code>:inputs</code> change, it evaluates a new <code>:output</code> value.</li>
-<li>Then, it puts the <code>:output</code> value back into <code>app-db</code>, at a specific <code>:path</code>.</li>
+<li>A <code>flow</code> has <code>:inputs</code>, specified as paths into <code>app-db</code></li>
+<li>When the values at <code>:inputs</code> change, the <code>:output</code> function is called to calculate a new value</li>
+<li>The newly calculated value is put back into <code>app-db</code> at <code>:path</code> </li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Prior art</p>
-<p>We built a rudimentary version of this pattern some years ago: the <a href="/re-frame/api-re-frame.core/#on-changes">on-changes interceptor</a></p>
-</div>
+<h2 id="when-does-this-all-happen">When Does This All Happen?<a class="headerlink" href="#when-does-this-all-happen" title="Permanent link">&para;</a></h2>
+<p>We already know that event handlers create effects and that typically one of them is change to <code>app-db</code>.  Immediately after <code>app-db</code> is changed, flows are "run".  That means inputs paths in <code>app-db</code> are checked for changes and where necessary output values are recalculated and also put into <code>app-db</code>.  </p>
+<p>So, effects can cause further effects. And, yes, if necessary, the effects of one flow can feed into another flow. </p>
 <h2 id="a-basic-use-case">A Basic use-case<a class="headerlink" href="#a-basic-use-case" title="Permanent link">&para;</a></h2>
-<p>Let's try using our flow in an app (see the basic <a href="../dominoes-live/">app demo</a> if this is unfamiliar):</p>
+<p>Let's use our flow in a simple app. The user can enter <code>height</code> and <code>width</code> and in response, they see <code>area</code>: </p>
 <div class="cm-doc">
 (rf/reg-sub      :width  (fn [db _]    (get-in db [:kitchen :width])))
 (rf/reg-sub      :length (fn [db _]    (get-in db [:kitchen :length])))
@@ -1674,9 +1706,9 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
    [:a {:on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
-<p>Here comes the interesting part. We register our flow within the app:</p>
+<p>Now the interesting part, we use <code>reg-flow</code>: </p>
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
-(def kitchen-area-flow
+(def kitchen-area-flow-specification
   {:id     :kitchen-area
    :inputs {:w [:kitchen :width]
             :h [:kitchen :length]}
@@ -1684,17 +1716,17 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
              (* w h))
    :path   [:kitchen :area]})
 
-(rf/reg-flow kitchen-area-flow)  
+(rf/reg-flow kitchen-area-flow-specification)
 </div>
 
-<p>We write a subscription to the <code>app-db</code> path where the flow puts its output:</p>
+<p>We write a subscription for the flow's output <code>:path</code>:</p>
 <div class="cm-doc">
 (rf/reg-sub
  ::kitchen-area
  (fn [db _] (get-in db [:kitchen :area])))
 </div>
 
-<p>And we use the <code>::kitchen-area</code> subscription to render our final component:</p>
+<p>And, we use this subscription in a view: </p>
 <div class="cm-doc">
 (defn app-container [& children]
   (into [:div {:style {:padding "1rem"
@@ -1705,7 +1737,7 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
   [:div
    [dimension-fields]
    " Area: "
-   @(rf/subscribe [::kitchen-area])])
+   @(rf/subscribe [::kitchen-area])])  ;;  <--- subscribing
 
 (rf/dispatch-sync [:init])
 
@@ -1718,7 +1750,7 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
 
 <div id="room-calculator"></div>
 
-<p>Isn't that remarkable! What, you say it's <em>unremarkable?</em> Well, that's even better.</p>
+<p>Isn't that remarkable? What, you say it's <em>unremarkable?</em> Well, that's even better.</p>
 <h2 id="remarks">Remarks<a class="headerlink" href="#remarks" title="Permanent link">&para;</a></h2>
 <p>Here's why this basic flow might not excite you:</p>
 <h4>Can't I just use events?</h4>
@@ -2208,6 +2240,10 @@ We sympathize with you developers, for the hours you may have spent poring over 
 <p>A <a href="/re-frame/subscriptions/#the-four-layers">layer-2</a> subscription basically <em>names</em> an <code>app-db</code> path. What does a layer-3 subscription <em>name</em>?</p>
 <p>A materialized view, or a derived value.</p>
 <p>Subscriptions occupy their own semantic domain, separate from <code>app-db</code>. Only within view functions (and other subscriptions) can we access this domain. Outside of views, they form an impenetrable blob.</p>
+<div class="admonition note">
+<p class="admonition-title">Prior art</p>
+<p>We built a rudimentary version of this pattern some years ago: the <a href="/re-frame/api-re-frame.core/#on-changes">on-changes interceptor</a></p>
+</div>
 <p>So, re-frame is simple. <code>app-db</code> represents and <em>names</em> the state of your app. Except, so does this network of subscription names. But you can't really <em>use</em> those, so just forget about it.</p>
 <h4>Statefulness</h4>
 <p>Remember our <a href="#the-story-so-far">story so far</a>? Turns out, it's not so simple. 
