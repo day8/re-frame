@@ -1692,7 +1692,7 @@ More concretely, when one or more paths within <code>app-db</code> change value,
 <p>Notes:</p>
 <ul>
 <li><code>:inputs</code> is a map from keywords (identifiers) to <code>app-db</code> paths</li>
-<li>When the values at the <code>:inputs</code> paths change, the an <code>:output</code> function is called to calculate a new derived value. It is called with two args:<ul>
+<li>When the values at the <code>:inputs</code> paths change, the <code>:output</code> function is called to calculate a new derived value. It is called with two args:<ul>
 <li>any previously calculated derived value  (ignored in the code above)</li>
 <li>a map with the same keys as <code>:inputs</code> and, for each, the current value from <code>app-db</code> at the associated path. </li>
 </ul>
@@ -1911,7 +1911,7 @@ This replaces our first <code>:kitchen-area</code> flow, since it has the same <
 
 <p>Notice the different types of inputs. <code>:w [:kitchen :width]</code> represents an input as an <code>app-db</code> path, while <code>:tab :current-tab</code> identifies the value from the <code>:current-tab</code> flow we defined earlier.</p>
 <p>Also, notice the new <code>:tab</code> input, and the new <code>:live?</code>.</p>
-<p>Just like <code>:output</code>, <code>:live:?</code> is a function of <code>app-db</code> and the <code>:inputs</code>. Re-frame only calculates the <code>:output</code> when the <code>:live</code> function returns a truthy value. Otherwise, the flow is presumed dead.</p>
+<p>Just like <code>:output</code>, <code>:live:?</code> is a function of <code>app-db</code> and the <code>:inputs</code>. Re-frame only calculates the <code>:output</code> when the <code>:live?</code> function returns a truthy value. Otherwise, the flow is presumed dead.</p>
 <p>Let's test it out:</p>
 <div class="cm-doc" data-cm-doc-no-eval-on-init>
 (rf/dispatch-sync [:init])
@@ -1958,7 +1958,7 @@ Depending on the return value of <code>:live?</code>, re-frame handles one of 4 
 </tbody>
 </table>
 <p>Basically, <em>living</em> flows get output, <em>dying</em> flows get cleaned up, <em>arising</em> flows get initiated and output.</p>
-<p>And independently of all this, <code>:output</code> is lazy. It only runs when <code>:inputs</code> have changed value.</p>
+<p>And independently of all this, <code>:output</code> only runs when <code>:inputs</code> have changed value.</p>
 <h4>Cleanup</h4>
 <p>Try adding this <code>:cleanup</code> key into the <code>:kitchen-area</code> flow above (be sure to <code>eval</code> the code block again).</p>
 <div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
@@ -1968,7 +1968,7 @@ Depending on the return value of <code>:live?</code>, re-frame handles one of 4 
 
 <p>By default, <code>:cleanup</code> dissociates the path from <code>app-db</code>. By declaring this <code>:cleanup</code> key in your flow, you override that default function. Now, instead of removing <code>:area</code>, you set it to <code>:unknown!</code>.</p>
 <p>Now, is this a good idea? After all, we might consider the area known, as long as we know the width and length. Maybe we should do no cleanup, and keep the value, even when <code>:live?</code> returns false. In that case, our <code>:cleanup</code> function would simply be: <code>:cleanup (fn [db _] db)</code>.</p>
-<p>The point is, <em>you</em> decide when the signal lives or dies, not React.</p>
+<p>The point is, <em>you</em> express when the signal lives or dies, not your render tree.</p>
 <h4>Init</h4>
 <p><code>:init</code>, does nothing by default. Feel free to try out this custom <code>:init</code> function as well. Notice how it adds a key, and that key stays, regardless of our flow being dead or alive:</p>
 <div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
@@ -1977,7 +1977,7 @@ Depending on the return value of <code>:live?</code>, re-frame handles one of 4 
 </div>
 
 <p>If you did want the <code>:initiated?</code> key to go away, you could handle that within <code>:cleanup</code>.</p>
-<p>It's common to design apps which prepare certain db paths when a high-level state changes, such as when switching tabs. With flows, this preparation is an official library feature. Instead of writing custom events, you can use the <code>:cleanup</code> and <code>:init</code> keys and your colleages will know exactly what you're doing.</p>
+<p>It's common to design apps which prepare certain db paths when a high-level state changes, such as when switching tabs. With flows, this preparation is an official library feature. Instead of writing custom events, you can use the <code>:cleanup</code> and <code>:init</code> keys and your colleagues will know exactly what you're doing.</p>
 <h4>Dedicated inputs</h4>
 <p>Now that we've introduced <code>:live?</code>, here's the canonical form of a flow:</p>
 <div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
@@ -2206,22 +2206,22 @@ Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactl
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-sub
  ::kitchen-area
- (fn [db] (get-in db [:kitchen :area])))
+ (fn [db _] (get-in db [:kitchen :area])))
 
 (rf/reg-sub
  ::kitchen-height
- (fn [db] (get-in db [:kitchen :height])))
+ (fn [db _] (get-in db [:kitchen :height])))
 
 (rf/reg-sub
  ::kitchen-volume
  (fn [_] [(rf/subscribe [::kitchen-area]) (rf/subscribe [::kitchen-height])])
- (fn [area height] (* area  height)))
+ (fn [[area height] _] (* area  height)))
 
 (rf/reg-sub
  ::num-balloons-to-fill-kitchen
  (fn [_] [(rf/subscribe [::kitchen-volume])])
- (fn [volume] (let [std-balloon-volume 2.5]
-               (/ volume std-balloon-volume))))
+ (fn [[volume] _] (let [std-balloon-volume 2.5]
+                   (/ volume std-balloon-volume))))
 
 (rf/reg-event-fx
  ::order-ballons-for-kitchen-prank
@@ -2273,7 +2273,8 @@ We sympathize with you developers, for the hours you may have spent poring over 
 <p>So, re-frame is simple. <code>app-db</code> represents and <em>names</em> the state of your app. Except, so does this network of subscription names. But you can't really <em>use</em> those, so just forget about it.</p>
 <h4>Statefulness</h4>
 <p>Remember our <a href="#the-story-so-far">story so far</a>? Turns out, it's not so simple. 
-Not only do <em>state changes</em> cause <em>rendering</em>, but <em>rendering</em> also causes <em>state changes</em>.</p>
+Not only do <em>state changes</em> cause <em>rendering</em>, but <em>rendering</em> also causes <em>state changes</em>.
+Specifically, render logic changes the state of subscriptions.</p>
 <p>Your app's actual story might go something like this:</p>
 <blockquote>
 <p>An event fires. A subscription runs. An outer component passes new props to an inner one. A reaction runs. Another reaction runs. A component unmounts. That subscription disposes, clearing its cache.</p>
