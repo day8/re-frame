@@ -953,13 +953,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flows_1" class="md-nav__link">
-    Flows
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#flow-specification" class="md-nav__link">
     Flow Specification
   </a>
@@ -1579,13 +1572,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flows_1" class="md-nav__link">
-    Flows
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#flow-specification" class="md-nav__link">
     Flow Specification
   </a>
@@ -1683,14 +1669,13 @@ y'know. Pretty good.</p>
 <h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
 <p>This tutorial introduces a feature called <code>Flows</code>, a trailing part of step 3 - call it step 3.b. 
 <code>re-frame's</code> tagline is "derived values, flowing" and, well, <code>Flows</code> helps data to flow.</p>
-<h2 id="flows_1">Flows<a class="headerlink" href="#flows_1" title="Permanent link">&para;</a></h2>
 <p>A <code>flow</code> calculates a derived value "automatically".</p>
 <p>When one part of the application state changes, another part is recalculated automatically. 
-More concretely, when the values at one or more paths within <code>app-db</code> change, then the value at another path is recalculated automatically.</p>
+More concretely, when one or more paths within <code>app-db</code> change value, then the value at another path is recalculated automatically.</p>
 <p>re-frame <code>flows</code> are registered using the API function <code>reg-flow</code>.  You call it with a single <code>flow specification</code> argument, a map that defines:
   - the input paths to be monitored for change
-  - the function to call to calculate the new derived value
-  - and the path where the returned derived value should be placed</p>
+  - a function to call to calculate the new derived value
+  - a path where the derived value should be placed</p>
 <h2 id="flow-specification">Flow Specification<a class="headerlink" href="#flow-specification" title="Permanent link">&para;</a></h2>
 <p>It is just a map. Here's an example specification to automatically calculate the <code>area</code> of a room from <code>width</code> and <code>height</code>:</p>
 <div class="cm-doc" data-cm-doc-no-result>
@@ -1703,13 +1688,13 @@ More concretely, when the values at one or more paths within <code>app-db</code>
 </div>
 
 <p>Notes:
-- <code>:inputs</code> is a mapping from keywords to <code>app-db</code> paths
+- <code>:inputs</code> is a map from keywords (identifiers) to <code>app-db</code> paths
 - When the values at the <code>:inputs</code> paths change, the an <code>:output</code> function is called to calculate a new derived value. It is called with two args:
-    - any previously calculated derived value
-    - a map with the same keys as <code>:inputs</code> and, for each, the current value from <code>app-db</code> at that path. 
-- The newly calculated derived value (<code>width</code> in the example - the output of the function call) is put back into <code>app-db</code> at <code>:path</code> </p>
+    - any previously calculated derived value  (ignored in the code above)
+    - a map with the same keys as <code>:inputs</code> and, for each, the current value from <code>app-db</code> at the associated path. 
+- The newly calculated, returned, derived value (<code>width</code> in the example - the output of the function call) is put back into <code>app-db</code> at <code>:path</code> </p>
 <h2 id="when-does-this-all-happen">When Does This All Happen?<a class="headerlink" href="#when-does-this-all-happen" title="Permanent link">&para;</a></h2>
-<p><code>event handlers</code> create <code>effects</code> and, typically, one is a change to <code>app-db</code>.  Immediately after <code>app-db</code> is changed, flows are "run". That's why above I called Flows step 3.b. When <code>Flows</code> are <code>run</code>, input paths in <code>app-db</code> are checked for changes, and where necessary, output values are recalculated and put into <code>app-db</code>.</p>
+<p><code>event handlers</code> create <code>effects</code>, and, typically, one is a change to <code>app-db</code>.  Immediately after <code>app-db</code> is changed, flows are "run". That's why above I called Flows step 3.b. When <code>Flows</code> are <code>run</code>, input paths in <code>app-db</code> are checked for changes, and where necessary, output values are recalculated and put into <code>app-db</code>.</p>
 <p>So, because of Flows, effects to <code>app-db</code> can cause further effects to <code>app-db</code>. And, yes, if necessary, the effects of one flow can feed into another flow - the <code>:path</code> output of one flow can be one of the  <code>:inputs</code> of another flow.</p>
 <h2 id="a-basic-example">A Basic Example<a class="headerlink" href="#a-basic-example" title="Permanent link">&para;</a></h2>
 <p>To show <code>Flows</code> in action, let's do some live coding. First, we add the necessary <code>requires</code> (<code>reg-flow</code> is still in the <code>alpha</code> namespace):</p>
@@ -1719,7 +1704,7 @@ More concretely, when the values at one or more paths within <code>app-db</code>
             [reagent.dom.client :as rdc]))
 </div>
 
-<p>Here's our app: the user can enter <code>height</code> and <code>width</code> values and, in response, they see <code>area</code>: </p>
+<p>And, here's the code for our app: the user can enter <code>height</code> and <code>width</code> values and, in response, they see <code>area</code>: </p>
 <div class="cm-doc">
 (rf/reg-sub      :width  (fn [db _]    (get-in db [:kitchen :width])))
 (rf/reg-sub      :length (fn [db _]    (get-in db [:kitchen :length])))
@@ -1732,11 +1717,11 @@ More concretely, when the values at one or more paths within <code>app-db</code>
    [:h4 "Kitchen Calculator"]
    "width: "
    @(rf/subscribe [:width])
-   [:a {:on-click #(rf/dispatch [:inc-w])} "+"]
+   [:button {:on-click #(rf/dispatch [:inc-w])} "+"]
    [:br]
    "length: "
    @(rf/subscribe [:length])
-   [:a {:on-click #(rf/dispatch [:inc-h])} "+"]])
+   [:button {:on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
 <p>Now the interesting part, we use <code>reg-flow</code>: </p>
