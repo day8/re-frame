@@ -147,7 +147,7 @@ Both offer ways to react to *part of* a value (such as a subtree within a map). 
 
 Cursors use a single path, whether reading with `deref`, or writing with `reset!` or `swap!`. With flows, you declare several input paths, and a separate output path. You don't `reset!` a `flow`. Instead, this just happens each `event`, if the inputs have changed.
 
-With flows, you can implement business logic as a reactive state machine, fully independent from Reagent & React. This has some deep implications - see [Semantics and Placefulness](#semantics-and-placefulness) for a full explanation.
+With flows, you can implement business logic as a reactive state machine, fully independent from Reagent & React. This has some deep implications - see [Semantics, Place and State](#semantics-place-and-state) for more explanation.
 
 #### Can't I just use subscriptions?
 
@@ -190,7 +190,7 @@ As before, once `:output` runs, the resulting value is stored at `:path`. So, th
 
 Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls `subscribe`, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the subscription is freed.
 
-This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't *need* to couple their behavior with that of their calling components.
+This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't *need* to couple their behavior with that of their calling components. See [statefulness](#statefulness) for further discussion.
 
 The app-db represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!
 
@@ -576,7 +576,7 @@ Let's test it out:
 
 <div id="item-counter-requirements"></div>
 
-## Semantics and Placefulness
+## Semantics, Place and State
 
 > Have you been to Clevelinnati? No? Clevelinnati can be found at the geometric midpoint between Cleveland and Cincinnati. What's that, you say it's not on the map?
 Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactly how to get to get there... As long as Cleveland stays still.
@@ -658,9 +658,44 @@ A [layer-2](/re-frame/subscriptions/#the-four-layers) subscription basically *na
 
 A materialized view, or a derived value.
 
-Subscriptions occupy their own semantic domain, separate from `app-db`. Only view functions can we access this domain. Outside of views, they form an impenetrable blob.
+Subscriptions occupy their own semantic domain, separate from `app-db`. Only within view functions (and other subscriptions) can we access this domain. Outside of views, they form an impenetrable blob.
 
 So, re-frame is simple. `app-db` represents and *names* the state of your app. Except, so does this network of subscription names. But you can't really *use* those, so just forget about it.
+
+#### Statefulness
+
+Remember our [story so far](#the-story-so-far)? Turns out, it's not so simple. 
+Not only do *state changes* cause *rendering*, but *rendering* also causes *state changes*.
+
+Your app's actual story might go something like this:
+
+> An event fires. A subscription runs. An outer component passes new props to an inner one. A reaction runs. Another reaction runs. A component unmounts. That subscription disposes, clearing its cache.
+
+Sound familiar?
+
+> Then, the same event fires. Another component mounts. The same subscription runs. Its calculation is heavy, so your app lags every time.
+> "Wait," you ask, "what happened to the cache? Why is my subscription recalculating when its inputs are the same?"
+> After a lot of headscratching, you find out it's because the subscription itself is not the same. Render logic caused it to dispose, and a new one took its place.
+
+This isn't a bug, nor is it inevitable, but in our experience, complexity adds up fast. Once Reagent, Re-frame and React begin to share the concern of reactive dataflow, they can race, or play chicken. I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!
+
+When a view calls `subscribe`, it creates a reaction. When that view unmounts, it frees the reaction. These are side-effects on the signal *graph* (that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).
+
+```
+event -> app-db -> signals -> view -> event
+                                  ∟-> signal graph -> signals -> view
+```
+
+Something is looping in on itself here:
+
+- The value of `app-db` determines when a view lives or dies.
+- *And*, the value of a view determines when a signal lives or dies. 
+- *And*, the value of a signal determines when a view lives or dies.
+
+If views are fully determined by the value of `app-db`, when why have signals be determined by views? 
+Why not simply have `app-db` determine everything?
+
+`event -> app-db -> signal graph -> signals -> view -> event`
 
 #### A better way
 
@@ -669,6 +704,8 @@ The good news:
 __You can access a flow's output value any time, anywhere,__ since flows are controlled by re-frame/interceptors, not reagent/reactions. Instead of thinking about reactive context, just think about when the latest event happened.
 
 __If you know a flow's name, you know its output location,__ since flows store their output in `app-db`, at a static path. It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.
+
+__A flow's lifecycle is a pure function of `app-db`__ (technically, `app-db` and `:inputs`, but `:inputs` themselves are pure functions of `app-db`, whether they be paths or other flows). That means you explicitly define when a flow lives, dies, is registered or cleared-- *not* React.
 
 Like many Clojure patterns, flows are *both* nested *and* flat. Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can access it directly:
 
