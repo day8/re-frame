@@ -54,7 +54,7 @@ It is just a map. Here's an example specification to automatically calculate the
 Notes:
 
 - `:inputs` is a map from keywords (identifiers) to `app-db` paths
-- When the values at the `:inputs` paths change, the an `:output` function is called to calculate a new derived value. It is called with two args:
+- When the values at the `:inputs` paths change, the `:output` function is called to calculate a new derived value. It is called with two args:
     - any previously calculated derived value  (ignored in the code above)
     - a map with the same keys as `:inputs` and, for each, the current value from `app-db` at the associated path. 
 - The newly calculated, returned, derived value (`width` in the example - the output of the function call) is put back into `app-db` at `:path` 
@@ -318,7 +318,7 @@ Notice the different types of inputs. `:w [:kitchen :width]` represents an input
 
 Also, notice the new `:tab` input, and the new `:live?`.
 
-Just like `:output`, `:live:?` is a function of `app-db` and the `:inputs`. Re-frame only calculates the `:output` when the `:live` function returns a truthy value. Otherwise, the flow is presumed dead.
+Just like `:output`, `:live:?` is a function of `app-db` and the `:inputs`. Re-frame only calculates the `:output` when the `:live?` function returns a truthy value. Otherwise, the flow is presumed dead.
 
 Let's test it out:
 
@@ -351,7 +351,7 @@ Depending on the return value of `:live?`, re-frame handles one of 4 possible st
 
 Basically, *living* flows get output, *dying* flows get cleaned up, *arising* flows get initiated and output.
 
-And independently of all this, `:output` is lazy. It only runs when `:inputs` have changed value.
+And independently of all this, `:output` only runs when `:inputs` have changed value.
 
 #### Cleanup
 
@@ -366,7 +366,7 @@ By default, `:cleanup` dissociates the path from `app-db`. By declaring this `:c
 
 Now, is this a good idea? After all, we might consider the area known, as long as we know the width and length. Maybe we should do no cleanup, and keep the value, even when `:live?` returns false. In that case, our `:cleanup` function would simply be: `:cleanup (fn [db _] db)`.
 
-The point is, *you* decide when the signal lives or dies, not React.
+The point is, *you* express when the signal lives or dies, not your render tree.
 
 #### Init
 
@@ -379,7 +379,7 @@ The point is, *you* decide when the signal lives or dies, not React.
 
 If you did want the `:initiated?` key to go away, you could handle that within `:cleanup`.
 
-It's common to design apps which prepare certain db paths when a high-level state changes, such as when switching tabs. With flows, this preparation is an official library feature. Instead of writing custom events, you can use the `:cleanup` and `:init` keys and your colleages will know exactly what you're doing.
+It's common to design apps which prepare certain db paths when a high-level state changes, such as when switching tabs. With flows, this preparation is an official library feature. Instead of writing custom events, you can use the `:cleanup` and `:init` keys and your colleagues will know exactly what you're doing.
 
 #### Dedicated inputs
 
@@ -627,22 +627,22 @@ Introducing yet another demo app! Turns out, we were measuring the kitchen to fi
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-sub
  ::kitchen-area
- (fn [db] (get-in db [:kitchen :area])))
+ (fn [db _] (get-in db [:kitchen :area])))
 
 (rf/reg-sub
  ::kitchen-height
- (fn [db] (get-in db [:kitchen :height])))
+ (fn [db _] (get-in db [:kitchen :height])))
 
 (rf/reg-sub
  ::kitchen-volume
  (fn [_] [(rf/subscribe [::kitchen-area]) (rf/subscribe [::kitchen-height])])
- (fn [area height] (* area  height)))
+ (fn [[area height] _] (* area  height)))
 
 (rf/reg-sub
  ::num-balloons-to-fill-kitchen
  (fn [_] [(rf/subscribe [::kitchen-volume])])
- (fn [volume] (let [std-balloon-volume 2.5]
-               (/ volume std-balloon-volume))))
+ (fn [[volume] _] (let [std-balloon-volume 2.5]
+                   (/ volume std-balloon-volume))))
 
 (rf/reg-event-fx
  ::order-ballons-for-kitchen-prank
@@ -709,6 +709,7 @@ So, re-frame is simple. `app-db` represents and *names* the state of your app. E
 
 Remember our [story so far](#the-story-so-far)? Turns out, it's not so simple. 
 Not only do *state changes* cause *rendering*, but *rendering* also causes *state changes*.
+Specifically, render logic changes the state of subscriptions.
 
 Your app's actual story might go something like this:
 
