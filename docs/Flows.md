@@ -33,9 +33,10 @@ When one part of the application state changes, another part is recalculated aut
 More concretely, when one or more paths within `app-db` change value, then the value at another path is recalculated automatically.
 
 re-frame `flows` are registered using the API function `reg-flow`.  You call it with a single `flow specification` argument, a map that defines:
-  - the input paths to be monitored for change
-  - a function to call to calculate the new derived value
-  - a path where the derived value should be placed
+
+- the input paths to be monitored for change
+- a function to call to calculate the new derived value
+- a path where the derived value should be placed
 
 ## Flow Specification
 
@@ -51,6 +52,7 @@ It is just a map. Here's an example specification to automatically calculate the
 </div>
 
 Notes:
+
 - `:inputs` is a map from keywords (identifiers) to `app-db` paths
 - When the values at the `:inputs` paths change, the an `:output` function is called to calculate a new derived value. It is called with two args:
     - any previously calculated derived value  (ignored in the code above)
@@ -87,11 +89,11 @@ And, here's the code for our app: the user can enter `height` and `width` values
    [:h4 "Kitchen Calculator"]
    "width: "
    @(rf/subscribe [:width])
-   [:button {:on-click #(rf/dispatch [:inc-w])} "+"]
+   [:a {:on-click #(rf/dispatch [:inc-w])} "+"]
    [:br]
    "length: "
    @(rf/subscribe [:length])
-   [:button {:on-click #(rf/dispatch [:inc-h])} "+"]])
+   [:a {:on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
 Now the interesting part, we use `reg-flow`: 
@@ -172,15 +174,19 @@ This works just fine... *or does it*? Actually, we forgot to change the `:length
 *Design is all tradeoffs*. Flows allow us to say "This value simply derives from these inputs. It simply changes when they do." We do this at the expense of some "spooky action at a distance" - in other words, we accept that no particular event will be responsible for that change.
 
 
-#### Are flows just reactions, or cursors?
+#### Are flows just reactions?
 
-You might notice a similarity with [reagent.core/cursor](https://reagent-project.github.io/docs/master/reagent.core.html#var-cursor).
+You might notice a similarity with [reagent.core/reaction](https://reagent-project.github.io/docs/master/reagent.core.html#var-reaction).
 
-Both offer ways to react to *part of* a value (such as a subtree within a map). Reagent controls *when* a cursor updates, presumably during the evaluation of a component function. Flows, on the other hand, are controlled by re-frame, running every time an `event` occurs.
+Both yield an "automatically" changing value. 
 
-Cursors use a single path, whether reading with `deref`, or writing with `reset!` or `swap!`. With flows, you declare several input paths, and a separate output path. You don't `reset!` a `flow`. Instead, this just happens each `event`, if the inputs have changed.
+Reagent controls *when* a reaction updates, presumably during the evaluation of a component function.
+Flows, on the other hand, are controlled by re-frame, running every time an `event` occurs.
 
-With flows, you can implement business logic as a reactive state machine, fully independent from Reagent & React. This has some deep implications - see [Semantics, Place and State](#semantics-place-and-state) for more explanation.
+When a component derefs a reaction, that component knows to re-render when the value changes.
+
+You can't deref a flow directly. It doesn't emit a value directly to any caller. 
+Instead, it emits a new version of `app-db`. The rest of your app reacts to `app-db`, not your flow.
 
 #### Can't I just use subscriptions?
 
