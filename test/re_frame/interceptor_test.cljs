@@ -266,14 +266,14 @@
             (is (= "Oopsie" (ex-message e)))
             (is (= {:foo :bar} (ex-data e)))))))
 
-    (testing "throws via exception->ex-info when there's an error handler"
+    (testing "throws via exception->ex-info when there's a :re-frame.interceptor/augment-exceptions? context key"
       ;; actual handler doesn't matter here, we just need a registered handler so invoke-exception
       (registrar/register-handler :error :event-handler identity)
       (try
         (let [exception (ex-info "Oopsie" {:foo :bar})
               interceptor {:id :throws
                            :before #(throw exception)}
-              context {:a 1}]
+              context {:a 1 :re-frame.interceptor/augment-exceptions? true}]
           (try
             (invoke-interceptor-fn context interceptor :before)
             (is false "interceptor should have thrown")

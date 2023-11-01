@@ -74,16 +74,15 @@
            e))
 
 (defn- invoke-interceptor-fn
-  [context interceptor direction]
-  (let [f (get interceptor direction)
-        error-handler (registrar/get-handler :error :event-handler)]
+  [{::keys [augment-exceptions?] :as context} interceptor direction]
+  (let [f (get interceptor direction)]
     (cond
       (not f) context
-      (not error-handler) (f context)
-      :else (try
-              (f context)
-              (catch #?(:clj Exception :cljs :default) e
-                (throw (exception->ex-info e interceptor direction)))))))
+      augment-exceptions? (try
+                            (f context)
+                            (catch #?(:clj Exception :cljs :default) e
+                              (throw (exception->ex-info e interceptor direction))))
+      :else (f context))))
 
 (defn- invoke-interceptors
   "Loop over all interceptors, calling `direction` function on each,
@@ -154,10 +153,8 @@
       (enqueue (:stack context))))
 
 (defn execute*
-  [event-v interceptors]
-  (trace/merge-trace!
-   {:tags {:interceptors interceptors}})
-  (-> (context event-v interceptors)
+  [ctx]
+  (-> ctx
       (invoke-interceptors :before)
       change-direction
       (invoke-interceptors :after)))
@@ -217,9 +214,13 @@
    already done.  In advanced cases, these values can be modified by the
    functions through which the context is threaded."
   [event-v interceptors]
-  (if-let [error-handler (registrar/get-handler :error :event-handler)]
-    (try
-      (execute* event-v interceptors)
-      (catch #?(:clj Exception :cljs :default) e
-        (error-handler (add-error-context e {:event-v event-v}))))
-    (execute* event-v interceptors)))
+  (let [ctx (context event-v interceptors)
+        error-handler (registrar/get-handler :error :event-handler)]
+    (trace/merge-trace!
+     {:tags {:interceptors interceptors}})
+    (if-not error-handler
+      (execute* ctx)
+      (try
+        (execute* (assoc ctx ::augment-exceptions? true))
+        (catch #?(:clj Exception :cljs :default) e
+          (error-handler (add-error-context e {:event-v event-v})))))))
