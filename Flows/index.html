@@ -940,13 +940,20 @@
       
         <li class="md-nav__item">
   <a href="#the-story-so-far" class="md-nav__link">
-    The story so far
+    The Story So Far
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#flows" class="md-nav__link">
+    Flows
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flows_1" class="md-nav__link">
     Flows
   </a>
   
@@ -967,8 +974,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-basic-use-case" class="md-nav__link">
-    A Basic use-case
+  <a href="#a-basic-example" class="md-nav__link">
+    A Basic Example
   </a>
   
 </li>
@@ -1559,13 +1566,20 @@
       
         <li class="md-nav__item">
   <a href="#the-story-so-far" class="md-nav__link">
-    The story so far
+    The Story So Far
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#flows" class="md-nav__link">
+    Flows
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flows_1" class="md-nav__link">
     Flows
   </a>
   
@@ -1586,8 +1600,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-basic-use-case" class="md-nav__link">
-    A Basic use-case
+  <a href="#a-basic-example" class="md-nav__link">
+    A Basic Example
   </a>
   
 </li>
@@ -1647,46 +1661,53 @@
 We'd love to hear your feedback!
 Please join our discussions on <a href="https://github.com/day8/re-frame/discussions/795">github</a> and <a href="https://clojurians.slack.com/archives/C073DKH9P/p1698792674379499">slack</a>.</p>
 </blockquote>
-<h2 id="the-story-so-far">The story so far<a class="headerlink" href="#the-story-so-far" title="Permanent link">&para;</a></h2>
+<h2 id="the-story-so-far">The Story So Far<a class="headerlink" href="#the-story-so-far" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>System Actors</strong> (typically users) cause <strong>Events</strong></li>
+<li><strong>Users</strong> cause <strong>Events</strong></li>
 <li><strong>Events</strong> cause <strong>Effects</strong></li>
 <li><strong>Effects</strong> cause <strong>State Changes</strong></li>
 <li><strong>State Changes</strong> cause <strong>View rerendering</strong></li>
 </ol>
-<p>We're about to introduce a new feature in step 3. This new feature supports <code>re-frame's</code> tag line "derived values, flowing".  </p>
-<p>To begin, we add the necessary <code>requires</code> for the live coding on this page (the feature being introduced is in the <code>alpha</code> namespace) :</p>
+<h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
+<p>This tutorial introduces a feature called <code>Flows</code>, which is a part of step 3 - a later stage in step 3, call it step 3.b. 
+<code>re-frame's</code> tagline is "derived values, flowing" and, well, <code>Flows</code> helps data to flow.</p>
+<h2 id="flows_1">Flows<a class="headerlink" href="#flows_1" title="Permanent link">&para;</a></h2>
+<p>A <code>flow</code> calculates a derived value "automatically".</p>
+<p>When one part of the application state changes, another part is recalculated automatically. 
+More concretely, when the values at one or more paths within <code>app-db</code> change, then the value at another path is recalculated automatically.</p>
+<p>re-frame <code>flows</code> are registered using the API function <code>reg-flow</code>.  You call it with a single <code>flow specification</code> argument, a map that defines:
+  - the input paths to be monitored for change
+  - the function to call to calculate the new derived value
+  - and the path where the returned derived value should be placed</p>
+<h2 id="flow-specification">Flow Specification<a class="headerlink" href="#flow-specification" title="Permanent link">&para;</a></h2>
+<p>It is just a map. Here's an example which automatically calculates the <code>area</code> of a room from <code>width</code> and <code>height</code>:</p>
+<div class="cm-doc" data-cm-doc-no-result>
+{:id     :room-area
+ :inputs {:w [:room :width]
+          :h [:room :length]}
+ :output (fn calc-area [previous-area {:keys [w h] :as inputs}]
+           (* w h))
+ :path   [:room :area]}
+</div>
+
+<p>Notes:
+- <code>:inputs</code> is a mapping from keywords to <code>app-db</code> paths
+- When the values at the <code>:inputs</code> paths change, the <code>:output</code> function is called to calculate a new derived value. It is called with two args:
+    - the previously calculated derived value
+    - a map with the same keys as <code>:inputs</code>, and for each the current value at the path. So, in the example above, it is <code>:w</code> and <code>:h</code> keys. 
+- The newly calculated derived value (<code>width</code> - the output of the function call) is put back into <code>app-db</code> at <code>:path</code> </p>
+<h2 id="when-does-this-all-happen">When Does This All Happen?<a class="headerlink" href="#when-does-this-all-happen" title="Permanent link">&para;</a></h2>
+<p><code>event handlers</code> create <code>effects</code> and, typically, one is a change to <code>app-db</code>.  Immediately after <code>app-db</code> is changed, flows are "run". That's why above I called Flows step 3.b. When <code>Flows</code> are <code>run</code>, input paths in <code>app-db</code> are checked for changes, and where necessary, output values are recalculated and put into <code>app-db</code>.</p>
+<p>So, because of Flows, effects to <code>app-db</code> can cause further effects to <code>app-db</code>. And, yes, if necessary, the effects of one flow can feed into another flow - the <code>:path</code> output of one flow can be one of the  <code>:inputs</code> of another flow.</p>
+<h2 id="a-basic-example">A Basic Example<a class="headerlink" href="#a-basic-example" title="Permanent link">&para;</a></h2>
+<p>To shows <code>Flows</code> in action, let's do some live coding. First, we add the necessary <code>requires</code> (<code>reg-flow</code> is still in the <code>alpha</code> namespace):</p>
 <div class="cm-doc">
 (ns re-frame.example.flows
   (:require [re-frame.alpha :as rf]
             [reagent.dom.client :as rdc]))
 </div>
 
-<h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
-<p>A <code>flow</code> calculates a derived value "automatically". </p>
-<p>When one part of state changes, another part is recalculated. More specifically, when the values at one or more paths within <code>app-db</code> change, then the value at another path is recalculated. </p>
-<p>re-frame flows are registered by the API function <code>reg-flow</code>.  You call it with a <code>flow specification</code>, which is just a map, that defines the input paths to be monitored, the function to calculate the new value, and the path where output should be placed. </p>
-<h2 id="flow-specification">Flow Specification<a class="headerlink" href="#flow-specification" title="Permanent link">&para;</a></h2>
-<p>It is just a map. Here's one which automatically calculates the area of a room from width and height:</p>
-<div class="cm-doc" data-cm-doc-no-result>
-{:id     :room-area
- :inputs {:w [:room :width]
-          :h [:room :length]}
- :output (fn [previous-area {:keys [w h] :as inputs}]
-           (* w h))
- :path   [:room :area]}
-</div>
-
-<ul>
-<li>A <code>flow</code> has <code>:inputs</code>, specified as paths into <code>app-db</code></li>
-<li>When the values at <code>:inputs</code> change, the <code>:output</code> function is called to calculate a new value</li>
-<li>The newly calculated value is put back into <code>app-db</code> at <code>:path</code> </li>
-</ul>
-<h2 id="when-does-this-all-happen">When Does This All Happen?<a class="headerlink" href="#when-does-this-all-happen" title="Permanent link">&para;</a></h2>
-<p>We already know that event handlers create effects and that typically one of them is change to <code>app-db</code>.  Immediately after <code>app-db</code> is changed, flows are "run".  That means inputs paths in <code>app-db</code> are checked for changes and where necessary output values are recalculated and also put into <code>app-db</code>.  </p>
-<p>So, effects can cause further effects. And, yes, if necessary, the effects of one flow can feed into another flow. </p>
-<h2 id="a-basic-use-case">A Basic use-case<a class="headerlink" href="#a-basic-use-case" title="Permanent link">&para;</a></h2>
-<p>Let's use our flow in a simple app. The user can enter <code>height</code> and <code>width</code> and in response, they see <code>area</code>: </p>
+<p>Now, let's use our flow in a simple app. The user can enter <code>height</code> and <code>width</code> and in response, they see <code>area</code>: </p>
 <div class="cm-doc">
 (rf/reg-sub      :width  (fn [db _]    (get-in db [:kitchen :width])))
 (rf/reg-sub      :length (fn [db _]    (get-in db [:kitchen :length])))
