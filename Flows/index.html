@@ -981,8 +981,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#semantics-and-placefulness" class="md-nav__link">
-    Semantics and Placefulness
+  <a href="#semantics-place-and-state" class="md-nav__link">
+    Semantics, Place and State
   </a>
   
 </li>
@@ -1586,8 +1586,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#semantics-and-placefulness" class="md-nav__link">
-    Semantics and Placefulness
+  <a href="#semantics-place-and-state" class="md-nav__link">
+    Semantics, Place and State
   </a>
   
 </li>
@@ -1745,7 +1745,7 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
 <p>You might notice a similarity with <a href="https://reagent-project.github.io/docs/master/reagent.core.html#var-cursor">reagent.core/cursor</a>.</p>
 <p>Both offer ways to react to <em>part of</em> a value (such as a subtree within a map). Reagent controls <em>when</em> a cursor updates, presumably during the evaluation of a component function. Flows, on the other hand, are controlled by re-frame, running every time an <code>event</code> occurs.</p>
 <p>Cursors use a single path, whether reading with <code>deref</code>, or writing with <code>reset!</code> or <code>swap!</code>. With flows, you declare several input paths, and a separate output path. You don't <code>reset!</code> a <code>flow</code>. Instead, this just happens each <code>event</code>, if the inputs have changed.</p>
-<p>With flows, you can implement business logic as a reactive state machine, fully independent from Reagent &amp; React. This has some deep implications - see <a href="#semantics-and-placefulness">Semantics and Placefulness</a> for a full explanation.</p>
+<p>With flows, you can implement business logic as a reactive state machine, fully independent from Reagent &amp; React. This has some deep implications - see <a href="#semantics-place-and-state">Semantics, Place and State</a> for more explanation.</p>
 <h4>Can't I just use subscriptions?</h4>
 <p>You could handle this feature with a <a href="/re-frame/subscriptions/#the-four-layers">layer-3 subscription</a>:</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
@@ -1777,7 +1777,7 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
 <p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
 <h4>What about caching? I thought subscriptions were optimized this way.</h4>
 <p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls <code>subscribe</code>, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the subscription is freed.</p>
-<p>This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't <em>need</em> to couple their behavior with that of their calling components.</p>
+<p>This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't <em>need</em> to couple their behavior with that of their calling components. See <a href="#statefulness">statefulness</a> for further discussion.</p>
 <p>The app-db represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!</p>
 <p>With flows, the process is simpler. <code>app-db</code> <em>is</em> the cache. You, the programmer, define explicitly when to recalculate the output, <em>and</em> when to store the output. To this end, flows provide optional keys: <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:</p>
 <h2 id="living-and-dying">Living and Dying<a class="headerlink" href="#living-and-dying" title="Permanent link">&para;</a></h2>
@@ -2138,7 +2138,7 @@ Let's test it out:</p>
 </div>
 <div id="item-counter-requirements"></div>
 
-<h2 id="semantics-and-placefulness">Semantics and Placefulness<a class="headerlink" href="#semantics-and-placefulness" title="Permanent link">&para;</a></h2>
+<h2 id="semantics-place-and-state">Semantics, Place and State<a class="headerlink" href="#semantics-place-and-state" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Have you been to Clevelinnati? No? Clevelinnati can be found at the geometric midpoint between Cleveland and Cincinnati. What's that, you say it's not on the map?
 Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactly how to get to get there... As long as Cleveland stays still.</p>
@@ -2207,12 +2207,42 @@ We sympathize with you developers, for the hours you may have spent poring over 
 <h4>Paths</h4>
 <p>A <a href="/re-frame/subscriptions/#the-four-layers">layer-2</a> subscription basically <em>names</em> an <code>app-db</code> path. What does a layer-3 subscription <em>name</em>?</p>
 <p>A materialized view, or a derived value.</p>
-<p>Subscriptions occupy their own semantic domain, separate from <code>app-db</code>. Only view functions can we access this domain. Outside of views, they form an impenetrable blob.</p>
+<p>Subscriptions occupy their own semantic domain, separate from <code>app-db</code>. Only within view functions (and other subscriptions) can we access this domain. Outside of views, they form an impenetrable blob.</p>
 <p>So, re-frame is simple. <code>app-db</code> represents and <em>names</em> the state of your app. Except, so does this network of subscription names. But you can't really <em>use</em> those, so just forget about it.</p>
+<h4>Statefulness</h4>
+<p>Remember our <a href="#the-story-so-far">story so far</a>? Turns out, it's not so simple. 
+Not only do <em>state changes</em> cause <em>rendering</em>, but <em>rendering</em> also causes <em>state changes</em>.</p>
+<p>Your app's actual story might go something like this:</p>
+<blockquote>
+<p>An event fires. A subscription runs. An outer component passes new props to an inner one. A reaction runs. Another reaction runs. A component unmounts. That subscription disposes, clearing its cache.</p>
+</blockquote>
+<p>Sound familiar?</p>
+<blockquote>
+<p>Then, the same event fires. Another component mounts. The same subscription runs. Its calculation is heavy, so your app lags every time.
+"Wait," you ask, "what happened to the cache? Why is my subscription recalculating when its inputs are the same?"
+After a lot of headscratching, you find out it's because the subscription itself is not the same. Render logic caused it to dispose, and a new one took its place.</p>
+</blockquote>
+<p>This isn't a bug, nor is it inevitable, but in our experience, complexity adds up fast. Once Reagent, Re-frame and React begin to share the concern of reactive dataflow, they can race, or play chicken. I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!</p>
+<p>When a view calls <code>subscribe</code>, it creates a reaction. When that view unmounts, it frees the reaction. These are side-effects on the signal <em>graph</em> (that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).</p>
+<div class="codehilite"><pre><span></span><code>event -&gt; app-db -&gt; signals -&gt; view -&gt; event
+                                  ∟-&gt; signal graph -&gt; signals -&gt; view
+</code></pre></div>
+
+
+<p>Something is looping in on itself here:</p>
+<ul>
+<li>The value of <code>app-db</code> determines when a view lives or dies.</li>
+<li><em>And</em>, the value of a view determines when a signal lives or dies. </li>
+<li><em>And</em>, the value of a signal determines when a view lives or dies.</li>
+</ul>
+<p>If views are fully determined by the value of <code>app-db</code>, when why have signals be determined by views? 
+Why not simply have <code>app-db</code> determine everything?</p>
+<p><code>event -&gt; app-db -&gt; signal graph -&gt; signals -&gt; view -&gt; event</code></p>
 <h4>A better way</h4>
 <p>The good news:</p>
 <p><strong>You can access a flow's output value any time, anywhere,</strong> since flows are controlled by re-frame/interceptors, not reagent/reactions. Instead of thinking about reactive context, just think about when the latest event happened.</p>
 <p><strong>If you know a flow's name, you know its output location,</strong> since flows store their output in <code>app-db</code>, at a static path. It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.</p>
+<p><strong>A flow's lifecycle is a pure function of <code>app-db</code></strong> (technically, <code>app-db</code> and <code>:inputs</code>, but <code>:inputs</code> themselves are pure functions of <code>app-db</code>, whether they be paths or other flows). That means you explicitly define when a flow lives, dies, is registered or cleared-- <em>not</em> React.</p>
 <p>Like many Clojure patterns, flows are <em>both</em> nested <em>and</em> flat. Even though <code>::num-balloons-to-fill-kitchen</code> depends on other flows, we can access it directly:</p>
 <div class="cm-doc" data-cm-doc-no-eval-on-init data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-flow
