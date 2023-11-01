@@ -2,16 +2,60 @@
 > We'd love to hear your feedback!
 > Please join our discussions on [github](https://github.com/day8/re-frame/discussions/795) and [slack](https://clojurians.slack.com/archives/C073DKH9P/p1698792674379499).
 
-## The story so far 
+## The Story So Far 
 
-1. **System Actors** (typically users) cause **Events**
+1. **Users** cause **Events**
 2. **Events** cause **Effects**
 3. **Effects** cause **State Changes**
 4. **State Changes** cause **View rerendering**
 
-We're about to introduce a new feature in step 3. This new feature supports `re-frame's` tag line "derived values, flowing".  
+## Flows
 
-To begin, we add the necessary `requires` for the live coding on this page (the feature being introduced is in the `alpha` namespace) :
+This tutorial introduces a feature called `Flows`, which is a part of step 3 - a later stage in step 3, call it step 3.b. 
+`re-frame's` tagline is "derived values, flowing" and, well, `Flows` helps data to flow.
+
+## Flows
+
+A `flow` calculates a derived value "automatically".
+
+When one part of the application state changes, another part is recalculated automatically. 
+More concretely, when the values at one or more paths within `app-db` change, then the value at another path is recalculated automatically.
+
+re-frame `flows` are registered using the API function `reg-flow`.  You call it with a single `flow specification` argument, a map that defines:
+  - the input paths to be monitored for change
+  - the function to call to calculate the new derived value
+  - and the path where the returned derived value should be placed
+
+
+## Flow Specification
+
+It is just a map. Here's an example which automatically calculates the `area` of a room from `width` and `height`:
+
+<div class="cm-doc" data-cm-doc-no-result>
+{:id     :room-area
+ :inputs {:w [:room :width]
+          :h [:room :length]}
+ :output (fn calc-area [previous-area {:keys [w h] :as inputs}]
+           (* w h))
+ :path   [:room :area]}
+</div>
+
+Notes:
+- `:inputs` is a mapping from keywords to `app-db` paths
+- When the values at the `:inputs` paths change, the `:output` function is called to calculate a new derived value. It is called with two args:
+    - the previously calculated derived value
+    - a map with the same keys as `:inputs`, and for each the current value at the path. So, in the example above, it is `:w` and `:h` keys. 
+- The newly calculated derived value (`width` - the output of the function call) is put back into `app-db` at `:path` 
+
+## When Does This All Happen?
+
+`event handlers` create `effects` and, typically, one is a change to `app-db`.  Immediately after `app-db` is changed, flows are "run". That's why above I called Flows step 3.b. When `Flows` are `run`, input paths in `app-db` are checked for changes, and where necessary, output values are recalculated and put into `app-db`.
+
+So, because of Flows, effects to `app-db` can cause further effects to `app-db`. And, yes, if necessary, the effects of one flow can feed into another flow - the `:path` output of one flow can be one of the  `:inputs` of another flow.
+
+## A Basic Example
+
+To shows `Flows` in action, let's do some live coding. First, we add the necessary `requires` (`reg-flow` is still in the `alpha` namespace):
 
 <div class="cm-doc">
 (ns re-frame.example.flows
@@ -19,40 +63,7 @@ To begin, we add the necessary `requires` for the live coding on this page (the 
             [reagent.dom.client :as rdc]))
 </div>
 
-## Flows
-
-A `flow` calculates a derived value "automatically". 
-
-When one part of state changes, another part is recalculated. More specifically, when the values at one or more paths within `app-db` change, then the value at another path is recalculated. 
-
-re-frame flows are registered by the API function `reg-flow`.  You call it with a `flow specification`, which is just a map, that defines the input paths to be monitored, the function to calculate the new value, and the path where output should be placed. 
-
-## Flow Specification
-
-It is just a map. Here's one which automatically calculates the area of a room from width and height:
-
-<div class="cm-doc" data-cm-doc-no-result>
-{:id     :room-area
- :inputs {:w [:room :width]
-          :h [:room :length]}
- :output (fn [previous-area {:keys [w h] :as inputs}]
-           (* w h))
- :path   [:room :area]}
-</div>
-
-- A `flow` has `:inputs`, specified as paths into `app-db`
-- When the values at `:inputs` change, the `:output` function is called to calculate a new value
-- The newly calculated value is put back into `app-db` at `:path` 
-
-## When Does This All Happen?
-
-We already know that event handlers create effects and that typically one of them is change to `app-db`.  Immediately after `app-db` is changed, flows are "run".  That means inputs paths in `app-db` are checked for changes and where necessary output values are recalculated and also put into `app-db`.  
-
-So, effects can cause further effects. And, yes, if necessary, the effects of one flow can feed into another flow. 
-
-## A Basic use-case
-
-Let's use our flow in a simple app. The user can enter `height` and `width` and in response, they see `area`: 
+Now, let's use our flow in a simple app. The user can enter `height` and `width` and in response, they see `area`: 
 
 <div class="cm-doc">
 (rf/reg-sub      :width  (fn [db _]    (get-in db [:kitchen :width])))
