@@ -4,12 +4,14 @@
 
 ## The story so far 
 
-1. **Users** cause **Events**
+1. **System Actors** (typically users) cause **Events**
 2. **Events** cause **Effects**
 3. **Effects** cause **State Changes**
 4. **State Changes** cause **View rerendering**
 
-We're about to add a new capability to step 3. Let's begin:
+We're about to introduce a new feature in step 3. This new feature supports `re-frame's` tag line "derived values, flowing".  
+
+To begin, we add the necessary `requires` for the live coding on this page (the feature being introduced is in the `alpha` namespace) :
 
 <div class="cm-doc">
 (ns re-frame.example.flows
@@ -19,7 +21,15 @@ We're about to add a new capability to step 3. Let's begin:
 
 ## Flows
 
-A `flow` calculates a derived value "automatically". Here's a basic flow, which calculates the area of a room:
+A `flow` calculates a derived value "automatically". 
+
+When one part of state changes, another part is recalculated. More specifically, when the values at one or more paths within `app-db` change, then the value at another path is recalculated. 
+
+re-frame flows are registered by the API function `reg-flow`.  You call it with a `flow specification`, which is just a map, that defines the input paths to be monitored, the function to calculate the new value, and the path where output should be placed. 
+
+## Flow Specification
+
+It is just a map. Here's one which automatically calculates the area of a room from width and height:
 
 <div class="cm-doc" data-cm-doc-no-result>
 {:id     :room-area
@@ -30,16 +40,19 @@ A `flow` calculates a derived value "automatically". Here's a basic flow, which 
  :path   [:room :area]}
 </div>
 
-- A `flow` has `:inputs`, obtained from paths in `app-db`.
-- When the `:inputs` change, it evaluates a new `:output` value.
-- Then, it puts the `:output` value back into `app-db`, at a specific `:path`.
+- A `flow` has `:inputs`, specified as paths into `app-db`
+- When the values at `:inputs` change, the `:output` function is called to calculate a new value
+- The newly calculated value is put back into `app-db` at `:path` 
 
-!!! Note "Prior art"
-    We built a rudimentary version of this pattern some years ago: the [on-changes interceptor](/re-frame/api-re-frame.core/#on-changes)
+## When Does This All Happen?
+
+We already know that event handlers create effects and that typically one of them is change to `app-db`.  Immediately after `app-db` is changed, flows are "run".  That means inputs paths in `app-db` are checked for changes and where necessary output values are recalculated and also put into `app-db`.  
+
+So, effects can cause further effects. And, yes, if necessary, the effects of one flow can feed into another flow. 
 
 ## A Basic use-case
 
-Let's try using our flow in an app (see the basic [app demo](dominoes-live.md) if this is unfamiliar):
+Let's use our flow in a simple app. The user can enter `height` and `width` and in response, they see `area`: 
 
 <div class="cm-doc">
 (rf/reg-sub      :width  (fn [db _]    (get-in db [:kitchen :width])))
@@ -60,10 +73,10 @@ Let's try using our flow in an app (see the basic [app demo](dominoes-live.md) i
    [:a {:on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
-Here comes the interesting part. We register our flow within the app:
+Now the interesting part, we use `reg-flow`: 
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
-(def kitchen-area-flow
+(def kitchen-area-flow-specification
   {:id     :kitchen-area
    :inputs {:w [:kitchen :width]
             :h [:kitchen :length]}
@@ -71,10 +84,10 @@ Here comes the interesting part. We register our flow within the app:
              (* w h))
    :path   [:kitchen :area]})
 
-(rf/reg-flow kitchen-area-flow)  
+(rf/reg-flow kitchen-area-flow-specification)
 </div>
 
-We write a subscription to the `app-db` path where the flow puts its output:
+We write a subscription for the flow's output `:path`:
 
 <div class="cm-doc">
 (rf/reg-sub
@@ -82,7 +95,7 @@ We write a subscription to the `app-db` path where the flow puts its output:
  (fn [db _] (get-in db [:kitchen :area])))
 </div>
 
-And we use the `::kitchen-area` subscription to render our final component:
+And, we use this subscription in a view: 
 
 <div class="cm-doc">
 (defn app-container [& children]
@@ -94,7 +107,7 @@ And we use the `::kitchen-area` subscription to render our final component:
   [:div
    [dimension-fields]
    " Area: "
-   @(rf/subscribe [::kitchen-area])])
+   @(rf/subscribe [::kitchen-area])])  ;;  <--- subscribing
 
 (rf/dispatch-sync [:init])
 
@@ -108,7 +121,7 @@ And we use the `::kitchen-area` subscription to render our final component:
 <div id="room-calculator"></div>
   
 
-Isn't that remarkable! What, you say it's *unremarkable?* Well, that's even better.
+Isn't that remarkable? What, you say it's *unremarkable?* Well, that's even better.
 
 ## Remarks
 
@@ -659,6 +672,10 @@ A [layer-2](/re-frame/subscriptions/#the-four-layers) subscription basically *na
 A materialized view, or a derived value.
 
 Subscriptions occupy their own semantic domain, separate from `app-db`. Only within view functions (and other subscriptions) can we access this domain. Outside of views, they form an impenetrable blob.
+
+
+!!! Note "Prior art"
+    We built a rudimentary version of this pattern some years ago: the [on-changes interceptor](/re-frame/api-re-frame.core/#on-changes)
 
 So, re-frame is simple. `app-db` represents and *names* the state of your app. Except, so does this network of subscription names. But you can't really *use* those, so just forget about it.
 
