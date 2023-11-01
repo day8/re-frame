@@ -27,18 +27,15 @@ y'know. Pretty good.
 This tutorial introduces a feature called `Flows`, a trailing part of step 3 - call it step 3.b. 
 `re-frame's` tagline is "derived values, flowing" and, well, `Flows` helps data to flow.
 
-## Flows
-
 A `flow` calculates a derived value "automatically".
 
 When one part of the application state changes, another part is recalculated automatically. 
-More concretely, when the values at one or more paths within `app-db` change, then the value at another path is recalculated automatically.
+More concretely, when one or more paths within `app-db` change value, then the value at another path is recalculated automatically.
 
 re-frame `flows` are registered using the API function `reg-flow`.  You call it with a single `flow specification` argument, a map that defines:
   - the input paths to be monitored for change
-  - the function to call to calculate the new derived value
-  - and the path where the returned derived value should be placed
-
+  - a function to call to calculate the new derived value
+  - a path where the derived value should be placed
 
 ## Flow Specification
 
@@ -54,15 +51,15 @@ It is just a map. Here's an example specification to automatically calculate the
 </div>
 
 Notes:
-- `:inputs` is a mapping from keywords to `app-db` paths
+- `:inputs` is a map from keywords (identifiers) to `app-db` paths
 - When the values at the `:inputs` paths change, the an `:output` function is called to calculate a new derived value. It is called with two args:
-    - any previously calculated derived value
-    - a map with the same keys as `:inputs` and, for each, the current value from `app-db` at that path. 
-- The newly calculated derived value (`width` in the example - the output of the function call) is put back into `app-db` at `:path` 
+    - any previously calculated derived value  (ignored in the code above)
+    - a map with the same keys as `:inputs` and, for each, the current value from `app-db` at the associated path. 
+- The newly calculated, returned, derived value (`width` in the example - the output of the function call) is put back into `app-db` at `:path` 
 
 ## When Does This All Happen?
 
-`event handlers` create `effects` and, typically, one is a change to `app-db`.  Immediately after `app-db` is changed, flows are "run". That's why above I called Flows step 3.b. When `Flows` are `run`, input paths in `app-db` are checked for changes, and where necessary, output values are recalculated and put into `app-db`.
+`event handlers` create `effects`, and, typically, one is a change to `app-db`.  Immediately after `app-db` is changed, flows are "run". That's why above I called Flows step 3.b. When `Flows` are `run`, input paths in `app-db` are checked for changes, and where necessary, output values are recalculated and put into `app-db`.
 
 So, because of Flows, effects to `app-db` can cause further effects to `app-db`. And, yes, if necessary, the effects of one flow can feed into another flow - the `:path` output of one flow can be one of the  `:inputs` of another flow.
 
@@ -76,7 +73,7 @@ To show `Flows` in action, let's do some live coding. First, we add the necessar
             [reagent.dom.client :as rdc]))
 </div>
 
-Here's our app: the user can enter `height` and `width` values and, in response, they see `area`: 
+And, here's the code for our app: the user can enter `height` and `width` values and, in response, they see `area`: 
 
 <div class="cm-doc">
 (rf/reg-sub      :width  (fn [db _]    (get-in db [:kitchen :width])))
@@ -90,11 +87,11 @@ Here's our app: the user can enter `height` and `width` values and, in response,
    [:h4 "Kitchen Calculator"]
    "width: "
    @(rf/subscribe [:width])
-   [:a {:on-click #(rf/dispatch [:inc-w])} "+"]
+   [:button {:on-click #(rf/dispatch [:inc-w])} "+"]
    [:br]
    "length: "
    @(rf/subscribe [:length])
-   [:a {:on-click #(rf/dispatch [:inc-h])} "+"]])
+   [:button {:on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
 Now the interesting part, we use `reg-flow`: 
