@@ -1672,10 +1672,12 @@ y'know. Pretty good.</p>
 <p>A <code>flow</code> calculates a derived value "automatically".</p>
 <p>When one part of the application state changes, another part is recalculated automatically. 
 More concretely, when one or more paths within <code>app-db</code> change value, then the value at another path is recalculated automatically.</p>
-<p>re-frame <code>flows</code> are registered using the API function <code>reg-flow</code>.  You call it with a single <code>flow specification</code> argument, a map that defines:
-  - the input paths to be monitored for change
-  - a function to call to calculate the new derived value
-  - a path where the derived value should be placed</p>
+<p>re-frame <code>flows</code> are registered using the API function <code>reg-flow</code>.  You call it with a single <code>flow specification</code> argument, a map that defines:</p>
+<ul>
+<li>the input paths to be monitored for change</li>
+<li>a function to call to calculate the new derived value</li>
+<li>a path where the derived value should be placed</li>
+</ul>
 <h2 id="flow-specification">Flow Specification<a class="headerlink" href="#flow-specification" title="Permanent link">&para;</a></h2>
 <p>It is just a map. Here's an example specification to automatically calculate the <code>area</code> of a room from <code>width</code> and <code>height</code>:</p>
 <div class="cm-doc" data-cm-doc-no-result>
@@ -1687,12 +1689,16 @@ More concretely, when one or more paths within <code>app-db</code> change value,
  :path   [:room :area]}
 </div>
 
-<p>Notes:
-- <code>:inputs</code> is a map from keywords (identifiers) to <code>app-db</code> paths
-- When the values at the <code>:inputs</code> paths change, the an <code>:output</code> function is called to calculate a new derived value. It is called with two args:
-    - any previously calculated derived value  (ignored in the code above)
-    - a map with the same keys as <code>:inputs</code> and, for each, the current value from <code>app-db</code> at the associated path. 
-- The newly calculated, returned, derived value (<code>width</code> in the example - the output of the function call) is put back into <code>app-db</code> at <code>:path</code> </p>
+<p>Notes:</p>
+<ul>
+<li><code>:inputs</code> is a map from keywords (identifiers) to <code>app-db</code> paths</li>
+<li>When the values at the <code>:inputs</code> paths change, the an <code>:output</code> function is called to calculate a new derived value. It is called with two args:<ul>
+<li>any previously calculated derived value  (ignored in the code above)</li>
+<li>a map with the same keys as <code>:inputs</code> and, for each, the current value from <code>app-db</code> at the associated path. </li>
+</ul>
+</li>
+<li>The newly calculated, returned, derived value (<code>width</code> in the example - the output of the function call) is put back into <code>app-db</code> at <code>:path</code> </li>
+</ul>
 <h2 id="when-does-this-all-happen">When Does This All Happen?<a class="headerlink" href="#when-does-this-all-happen" title="Permanent link">&para;</a></h2>
 <p><code>event handlers</code> create <code>effects</code>, and, typically, one is a change to <code>app-db</code>.  Immediately after <code>app-db</code> is changed, flows are "run". That's why above I called Flows step 3.b. When <code>Flows</code> are <code>run</code>, input paths in <code>app-db</code> are checked for changes, and where necessary, output values are recalculated and put into <code>app-db</code>.</p>
 <p>So, because of Flows, effects to <code>app-db</code> can cause further effects to <code>app-db</code>. And, yes, if necessary, the effects of one flow can feed into another flow - the <code>:path</code> output of one flow can be one of the  <code>:inputs</code> of another flow.</p>
@@ -1717,11 +1723,11 @@ More concretely, when one or more paths within <code>app-db</code> change value,
    [:h4 "Kitchen Calculator"]
    "width: "
    @(rf/subscribe [:width])
-   [:button {:on-click #(rf/dispatch [:inc-w])} "+"]
+   [:a {:on-click #(rf/dispatch [:inc-w])} "+"]
    [:br]
    "length: "
    @(rf/subscribe [:length])
-   [:button {:on-click #(rf/dispatch [:inc-h])} "+"]])
+   [:a {:on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
 <p>Now the interesting part, we use <code>reg-flow</code>: </p>
@@ -1790,11 +1796,14 @@ More concretely, when one or more paths within <code>app-db</code> change value,
 
 <p>This works just fine... <em>or does it</em>? Actually, we forgot to change the <code>:length</code> event. Our area calculation will be wrong every time the user changes the length! Easy to fix, but the point is that we had to fix it at all. How many events will we need to review? In a mature app, this is not a trivial question.</p>
 <p><em>Design is all tradeoffs</em>. Flows allow us to say "This value simply derives from these inputs. It simply changes when they do." We do this at the expense of some "spooky action at a distance" - in other words, we accept that no particular event will be responsible for that change.</p>
-<h4>Are flows just reactions, or cursors?</h4>
-<p>You might notice a similarity with <a href="https://reagent-project.github.io/docs/master/reagent.core.html#var-cursor">reagent.core/cursor</a>.</p>
-<p>Both offer ways to react to <em>part of</em> a value (such as a subtree within a map). Reagent controls <em>when</em> a cursor updates, presumably during the evaluation of a component function. Flows, on the other hand, are controlled by re-frame, running every time an <code>event</code> occurs.</p>
-<p>Cursors use a single path, whether reading with <code>deref</code>, or writing with <code>reset!</code> or <code>swap!</code>. With flows, you declare several input paths, and a separate output path. You don't <code>reset!</code> a <code>flow</code>. Instead, this just happens each <code>event</code>, if the inputs have changed.</p>
-<p>With flows, you can implement business logic as a reactive state machine, fully independent from Reagent &amp; React. This has some deep implications - see <a href="#semantics-place-and-state">Semantics, Place and State</a> for more explanation.</p>
+<h4>Are flows just reactions?</h4>
+<p>You might notice a similarity with <a href="https://reagent-project.github.io/docs/master/reagent.core.html#var-reaction">reagent.core/reaction</a>.</p>
+<p>Both yield an "automatically" changing value. </p>
+<p>Reagent controls <em>when</em> a reaction updates, presumably during the evaluation of a component function.
+Flows, on the other hand, are controlled by re-frame, running every time an <code>event</code> occurs.</p>
+<p>When a component derefs a reaction, that component knows to re-render when the value changes.</p>
+<p>You can't deref a flow directly. It doesn't emit a value directly to any caller. 
+Instead, it emits a new version of <code>app-db</code>. The rest of your app reacts to <code>app-db</code>, not your flow.</p>
 <h4>Can't I just use subscriptions?</h4>
 <p>You could handle this feature with a <a href="/re-frame/subscriptions/#the-four-layers">layer-3 subscription</a>:</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
