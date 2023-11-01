@@ -84,16 +84,21 @@ And, here's the code for our app: the user can enter `height` and `width` values
 (rf/reg-event-db :inc-h  (fn [db _] (update-in db [:kitchen :length] inc)))
 (rf/reg-event-db :init   (fn [db _] {:kitchen {:width 20 :length 20}}))
 
+(def clickable
+  {:cursor "pointer" :border "2px solid grey" :user-select "none"})
+
 (defn dimension-fields []
   [:form
    [:h4 "Kitchen Calculator"]
-   "width: "
+   "width:"
    @(rf/subscribe [:width])
-   [:a {:on-click #(rf/dispatch [:inc-w])} "+"]
+   [:span {:style clickable
+           :on-click #(rf/dispatch [:inc-w])} "+"]
    [:br]
-   "length: "
+   "length:"
    @(rf/subscribe [:length])
-   [:a {:on-click #(rf/dispatch [:inc-h])} "+"]])
+   [:span {:style clickable
+           :on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
 Now the interesting part, we use `reg-flow`: 
@@ -129,7 +134,7 @@ And, we use this subscription in a view:
 (defn room-calculator []
   [:div
    [dimension-fields]
-   " Area: "
+   " Area:"
    @(rf/subscribe [::kitchen-area])])  ;;  <--- subscribing
 
 (rf/dispatch-sync [:init])
@@ -271,17 +276,21 @@ A barebones tab picker, and something to show us the value of `app-db`:
 <div class="cm-doc">
 (def tabs [:room-calculator :item-counter])
 
+(def clickable-tab (into clickable {:padding "0.5rem"}))
+(def active-tab (into clickable-tab {:color "green"}))
+
 (defn tab [id]
-  [:a {:style {:padding "1rem"
-               :color (when (= id @current-tab) "lightgreen")}
-       :on-click #(rf/dispatch [:change-tab id])}
+  [:span {:style (if (= id @current-tab)
+                   active-tab clickable-tab)
+          :on-click #(rf/dispatch [:change-tab id])}
    (name id)])
 
 (defn tab-picker []
   (into [:div] (for [id tabs] [tab id])))
 
 (defn debug-app-db []
-  [:code {:style {:font-size 12}}
+  [:pre
+   {:style {:font-size 12 :margin "1rem" :white-space "pre-wrap"}}
    (str @re-frame.db/app-db)])
 
 (defn item-counter [] [:<>])
@@ -441,7 +450,7 @@ You can add, remove or clear items in a list.
 (rf/reg-sub ::items :-> (comp reverse ::items))
 
 (defn item [id]
-  [:div "Item " id])
+  [:div "Item" id])
 
 (defn items []
   (into [:div] (map item) @(rf/subscribe [::items])))
@@ -458,10 +467,12 @@ You can add, remove or clear items in a list.
   (let [id (atom 0)]
     (fn []
       [:div 
-       [:a {:on-click #(do (rf/dispatch [::add-item (inc @id)])
-                           (swap! id inc))} "Add"] " " 
-       [:a {:on-click #(do (rf/dispatch [::delete-item @id])
-                           (swap! id dec))} "Delete"] " "])))
+       [:span {:style clickable
+               :on-click #(do (rf/dispatch [::add-item (inc @id)])
+                              (swap! id inc))} "Add"] " " 
+       [:span {:style clickable
+               :on-click #(do (rf/dispatch [::delete-item @id])
+                              (swap! id dec))} "Delete"] " "])))
 
 (defonce item-counter-basic-root
   (rdc/create-root (js/document.getElementById "item-counter-basic")))
@@ -567,10 +578,12 @@ We build a basic form with the power to change the requirement:
 (defn requirement-picker []
   [:<>
    "Max items: "
-   [:input {:style {:background "lightgrey"}
-            :type "number"
-            :on-change #(rf/dispatch [:change-requirements
-                                      {:max-items (-> % .-target .-value)}])}]])
+   [:input
+    {:style {:background "lightgrey"}
+     :type "number"
+     :on-change #(rf/dispatch
+                  [:change-requirements
+                   {:max-items (-> % .-target .-value)}])}]])
 </div>
 
 And a corresponding event, which triggers our `:reg-flow` effect.
