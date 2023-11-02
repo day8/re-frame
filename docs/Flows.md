@@ -230,15 +230,7 @@ Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-ro
 
 As before, once `:output` runs, the resulting value is stored at `:path`. So, the new value of `app-db` will contain a number at the path `[:ratios :main-rooms]`
 
-### What about caching? I thought subscriptions were optimized this way.
-
-Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls `subscribe`, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the subscription is freed.
-
-This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't *need* to couple their behavior with that of their calling components.
-
-The app-db represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!
-
-With flows, the process is simpler. `app-db` *is* the cache. You, the programmer, define explicitly when to recalculate the output, *and* when to store the output. To this end, flows provide optional keys: `:live?`, `:init` and `:cleanup`. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:
+For subscriptions, caching can be an issue (see [caching](#caching)). With flows, the process is simpler. `app-db` *is* the cache, since flows always store their output value within it. You, the programmer, define explicitly when to recalculate the output, *and* when to store the output. To this end, flows provide optional keys: `:live?`, `:init` and `:cleanup`. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:
 
 ## Living and Dying
 
@@ -703,6 +695,14 @@ Not only have we [drenched](https://en.wikipedia.org/wiki/Don%27t_repeat_yoursel
 
 Of course you can design around the problem, but at what cost?
 We sympathize with you developers, for the hours you may have spent poring over an event handler, just to re-write the code as a subscription, and vice-versa.
+
+### Caching
+
+Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when components call `subscribe` with a particular `query-v`, re-frame sets up a callback. When those components unmount, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the subscription is freed.
+
+This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't *need* to couple their behavior with that of their calling components.
+
+The app-db represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!
 
 ### Paths
 
