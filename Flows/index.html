@@ -1002,13 +1002,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#what-about-caching-i-thought-subscriptions-were-optimized-this-way" class="md-nav__link">
-    What about caching? I thought subscriptions were optimized this way.
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1080,6 +1073,13 @@
           <li class="md-nav__item">
   <a href="#reactivity" class="md-nav__link">
     Reactivity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caching" class="md-nav__link">
+    Caching
   </a>
   
 </li>
@@ -1718,13 +1718,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#what-about-caching-i-thought-subscriptions-were-optimized-this-way" class="md-nav__link">
-    What about caching? I thought subscriptions were optimized this way.
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1796,6 +1789,13 @@
           <li class="md-nav__item">
   <a href="#reactivity" class="md-nav__link">
     Reactivity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caching" class="md-nav__link">
+    Caching
   </a>
   
 </li>
@@ -2044,11 +2044,7 @@ Instead, it emits a new version of <code>app-db</code>. The rest of your app rea
 </div>
 
 <p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
-<h3 id="what-about-caching-i-thought-subscriptions-were-optimized-this-way">What about caching? I thought subscriptions were optimized this way.<a class="headerlink" href="#what-about-caching-i-thought-subscriptions-were-optimized-this-way" title="Permanent link">&para;</a></h3>
-<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls <code>subscribe</code>, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the subscription is freed.</p>
-<p>This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't <em>need</em> to couple their behavior with that of their calling components.</p>
-<p>The app-db represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!</p>
-<p>With flows, the process is simpler. <code>app-db</code> <em>is</em> the cache. You, the programmer, define explicitly when to recalculate the output, <em>and</em> when to store the output. To this end, flows provide optional keys: <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:</p>
+<p>For subscriptions, caching can be an issue (see <a href="#caching">caching</a>). With flows, the process is simpler. <code>app-db</code> <em>is</em> the cache, since flows always store their output value within it. You, the programmer, define explicitly when to recalculate the output, <em>and</em> when to store the output. To this end, flows provide optional keys: <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:</p>
 <h2 id="living-and-dying">Living and Dying<a class="headerlink" href="#living-and-dying" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Between death... and arising... is found an existence— a "body"... that goes to the place of rebirth. This existence between two realms... is called intermediate existence.</p>
@@ -2481,6 +2477,10 @@ Since an event handler isn't reactive, it can't access any subscriptions.</p>
 <p>Not only have we <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">drenched</a> our code, but now it has to do all our calculations twice.</p>
 <p>Of course you can design around the problem, but at what cost?
 We sympathize with you developers, for the hours you may have spent poring over an event handler, just to re-write the code as a subscription, and vice-versa.</p>
+<h3 id="caching">Caching<a class="headerlink" href="#caching" title="Permanent link">&para;</a></h3>
+<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when components call <code>subscribe</code> with a particular <code>query-v</code>, re-frame sets up a callback. When those components unmount, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the subscription is freed.</p>
+<p>This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't <em>need</em> to couple their behavior with that of their calling components.</p>
+<p>The app-db represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!</p>
 <h3 id="paths">Paths<a class="headerlink" href="#paths" title="Permanent link">&para;</a></h3>
 <p>A <a href="/re-frame/subscriptions/#the-four-layers">layer-2</a> subscription basically <em>names</em> an <code>app-db</code> path. What does a layer-3 subscription <em>name</em>?</p>
 <p>A materialized view, or a derived value.</p>
