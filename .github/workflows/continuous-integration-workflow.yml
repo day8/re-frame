@@ -25,6 +25,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
+      - run: git config --system --add safe.directory /__w/re-frame/re-frame
       - name: Maven cache
         id: maven-cache
         uses: actions/cache@v2
