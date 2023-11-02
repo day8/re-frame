@@ -730,7 +730,7 @@ Your app's actual story might go something like this:
 
 > An event fires. A subscription runs. An outer component passes new props to an inner one. A reaction runs. Another reaction runs. A component unmounts. That subscription disposes, clearing its cache.
 
-Sound familiar?
+Sound [familiar](https://github.com/day8/re-frame/discussions/776)?
 
 > Then, the same event fires. Another component mounts. The same subscription runs. Its calculation is heavy, so your app lags every time.
 > "Wait," you ask, "what happened to the cache? Why is my subscription recalculating when its inputs are the same?"
