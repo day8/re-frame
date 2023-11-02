@@ -1312,8 +1312,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#unreleased" class="md-nav__link">
-    Unreleased
+  <a href="#140-2023-11-02" class="md-nav__link">
+    1.4.0 (2023-11-02)
   </a>
   
 </li>
@@ -1494,8 +1494,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#unreleased" class="md-nav__link">
-    Unreleased
+  <a href="#140-2023-11-02" class="md-nav__link">
+    1.4.0 (2023-11-02)
   </a>
   
 </li>
@@ -1528,10 +1528,7 @@
 <blockquote>
 <p>The re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for Maven/deps/Lein.</p>
 </blockquote>
-<h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>Committed but unreleased changes are put here, at the top. Older releases are detailed chronologically below.</p>
-</blockquote>
+<h2 id="140-2023-11-02">1.4.0 (2023-11-02)<a class="headerlink" href="#140-2023-11-02" title="Permanent link">&para;</a></h2>
 <h4>Breaking</h4>
 <ul>
 <li><code>re-frame.std-interceptors/path</code> now keeps a <code>:re-frame.db/path-history</code> key in the context, not a <code>:re-frame-path/db-store</code> key. This shouldn't affect users, unless you're directly hacking the event loop.</li>
@@ -1541,6 +1538,7 @@
 <ul>
 <li>Interceptors now have an optional <code>:comment</code> key. It's a no-op.</li>
 <li><code>re-frame.std-interceptors/path</code> now remembers the path it uses in a <code>:comment</code>. ((re-frame-10x#165)[https://github.com/day8/re-frame-10x/issues/165])</li>
+<li><code>re-frame.alpha</code> namespace, for testing proposed features (see <a href="https://github.com/day8/re-frame/discussions/795">flows</a> and <a href="https://github.com/day8/re-frame/issues/680#issuecomment-1676487563">polymorphic subscriptions</a>)</li>
 </ul>
 <h4>Changed</h4>
 <ul>
