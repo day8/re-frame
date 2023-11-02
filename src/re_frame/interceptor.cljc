@@ -78,11 +78,12 @@
   (let [f (get interceptor direction)]
     (cond
       (not f) context
-      augment-exceptions? (try
-                            (f context)
-                            (catch #?(:clj Exception :cljs :default) e
-                              (throw (exception->ex-info e interceptor direction))))
-      :else (f context))))
+      (not augment-exceptions?) (f context)
+      :else
+      (try
+        (f context)
+        (catch #?(:clj Exception :cljs :default) e
+          (throw (exception->ex-info e interceptor direction)))))))
 
 (defn- invoke-interceptors
   "Loop over all interceptors, calling `direction` function on each,
@@ -159,9 +160,9 @@
       change-direction
       (invoke-interceptors :after)))
 
-(defn- add-error-context [e extra-data]
+(defn- merge-ex-data [e & ms]
   (ex-info #?(:clj (.getMessage e) :cljs (ex-message e))
-           (merge (ex-data e) extra-data)
+           (apply merge (ex-data e) ms)
            #?(:clj (.getCause e) :cljs (ex-cause e))))
 
 (defn execute
@@ -223,4 +224,5 @@
       (try
         (execute* (assoc ctx ::augment-exceptions? true))
         (catch #?(:clj Exception :cljs :default) e
-          (error-handler (add-error-context e {:event-v event-v})))))))
+          (error-handler (ex-cause e)
+                         (merge-ex-data e {:event-v event-v})))))))

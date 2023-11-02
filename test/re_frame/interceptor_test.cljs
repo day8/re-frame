@@ -289,8 +289,8 @@
 
 (deftest test-exceptions
   (let [error-atom (atom nil)
-        error-handler (fn [e]
-                        (reset! error-atom e))
+        error-handler (fn [error error-info]
+                        (reset! error-atom [error error-info]))
         exception (js/Error "Thrown from interceptor")
         throws-before (->interceptor :id :throws-before
                                      :before (fn [_] (throw exception)))
@@ -310,11 +310,16 @@
       (try
         (is (registrar/get-handler :error))
         (interceptor/execute [:_] interceptors)
-        (let [error @error-atom]
-          (is (= exception (ex-cause error)))
-          (is (= {:direction :before
-                  :event-v [:_]
-                  :interceptor :throws-before}
-                 (ex-data error))))
+        (let [[original-error re-frame-error] @error-atom
+              {:keys [direction event-v interceptor]} (ex-data re-frame-error)]
+          (is (= "Interceptor Exception: Thrown from interceptor"
+                 (ex-message re-frame-error)))
+          (is (= "Thrown from interceptor"
+                 (ex-message original-error)))
+          (is (not= (.-stack original-error)
+                    (.-stack re-frame-error)))
+          (is (= :before direction))
+          (is (= [:_] event-v))
+          (is (= :throws-before interceptor)))
         (finally
           (registrar/clear-handlers :error))))))

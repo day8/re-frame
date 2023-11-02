@@ -521,6 +521,37 @@
   ([id]
    (registrar/clear-handlers events/kind id)))
 
+;; -- error handler -----------------------------------------------------------
+
+(defn reg-event-error-handler
+  "Register the given event error `handler` (function) that will catch unhandled exceptions
+  thrown in the interceptors/handler chain.
+
+  Only one `handler` can be registered. Registering a new `handler` clears the existing `handler`.
+
+  This `handler` function has the signature:
+
+  `(handler [original-error re-frame-error])`
+
+  - `original-error`: A plaform-native Error object.
+     Represents the original error thrown by user code.
+
+     This is the error you see when no `handler` is registered.
+     To preserve this behavior, simply call `(throw original-error)`
+     at the end of your handler function.
+
+  - `re-frame-error`: A clojure ExceptionInfo object.
+     Includes the stacktrace of re-frame's internal functions,
+     and extra data about the current interceptor context.
+     Call `(ex-data re-frame-error)` to get this info.
+     It includes:
+
+     - `:interceptor`: the `:id` of the throwing interceptor.
+     - `:direction`: `:before` or `:after`.
+     - `:event-v`: the re-frame event which invoked this interceptor."
+  [handler]
+  (registrar/register-handler :error :event-handler handler))
+
 ;; -- subscriptions -----------------------------------------------------------
 
 (defn sub
