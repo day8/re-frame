@@ -57,16 +57,16 @@
        ::rf/lifecycle :reactive
        ::rf/query-v [::items 1 2 3]}
 
-  
+
       converts to:
-  
+
       #!clj
       ^{::rf/query-m {::rf/q ::items
                       ::rf/lifecycle :reactive}}
       [::items 1 2 3]
 
     ** :sub **
-  
+
     `(reg :sub query-id signal computation-fn)`
 
     Register a `signal-fn` and a `computation-fn` for a given `query-id`.
@@ -79,7 +79,7 @@
     For instance,
     `#!clj ^{:rf/query-m {:rf/lifecycle :reactive}} [::items 1 2 3]`
     converts to:
-  
+
       #!clj
       {::rf/q ::items
        ::rf/lifecycle :reactive
@@ -129,7 +129,7 @@
               (:foo input-values)))
 
     2. A single sugary tuple of `:->`and a 1-arity `computation-function`:
-  
+
           #!clj
           (reg-sub
            :query-id
