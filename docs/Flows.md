@@ -155,7 +155,7 @@ Isn't that remarkable? What, you say it's *unremarkable?* Well, that's even bett
 
 Here's why this basic flow might not excite you:
 
-#### Can't I just use events?
+### Can't I just use events?
 
 > Re-frame can already set values. Events were the one true way to update `app-db`. Why invent _another_ mechanism for this?
 
@@ -179,7 +179,7 @@ This works just fine... *or does it*? Actually, we forgot to change the `:length
 *Design is all tradeoffs*. Flows allow us to say "This value simply derives from these inputs. It simply changes when they do." We do this at the expense of some "spooky action at a distance" - in other words, we accept that no particular event will be responsible for that change.
 
 
-#### Are flows just reactions?
+### Are flows just reactions?
 
 You might notice a similarity with [reagent.core/reaction](https://reagent-project.github.io/docs/master/reagent.core.html#var-reaction).
 
@@ -193,7 +193,7 @@ When a component derefs a reaction, that component knows to re-render when the v
 You can't deref a flow directly. It doesn't emit a value directly to any caller. 
 Instead, it emits a new version of `app-db`. The rest of your app reacts to `app-db`, not your flow.
 
-#### Can't I just use subscriptions?
+### Can't I just use subscriptions?
 
 You could handle this feature with a [layer-3 subscription](/re-frame/subscriptions/#the-four-layers):
 
@@ -230,7 +230,7 @@ Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-ro
 
 As before, once `:output` runs, the resulting value is stored at `:path`. So, the new value of `app-db` will contain a number at the path `[:ratios :main-rooms]`
 
-#### What about caching? I thought subscriptions were optimized this way.
+### What about caching? I thought subscriptions were optimized this way.
 
 Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when a component calls `subscribe`, re-frame sets up a callback. When that component unmounts, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the subscription is freed.
 
@@ -305,7 +305,7 @@ A barebones tab picker, and something to show us the value of `app-db`:
      nil)])
 </div>
 
-#### Live?
+### Live?
 
 Here's a more advanced version of our kitchen calculator flow.
 This replaces our first `:kitchen-area` flow, since it has the same `:id`:
@@ -346,7 +346,7 @@ Let's test it out:
 
 Try switching tabs. Notice how `:area` only exists when you're in the `room-calculator` tab. What's happening here?
 
-#### Lifecycle
+### Lifecycle
 
 After handling an event, re-frame runs your flows. First, it evaluates `:live?`, using the new `app-db`.
 Depending on the return value of `:live?`, re-frame handles one of 4 possible state transitions:
@@ -362,7 +362,7 @@ Basically, *living* flows get output, *dying* flows get cleaned up, *arising* fl
 
 And independently of all this, `:output` only runs when `:inputs` have changed value.
 
-#### Cleanup
+### Cleanup
 
 Try adding this `:cleanup` key into the `:kitchen-area` flow above (be sure to `eval` the code block again).
 
@@ -377,7 +377,7 @@ Now, is this a good idea? After all, we might consider the area known, as long a
 
 The point is, *you* express when the signal lives or dies, not your render tree.
 
-#### Init
+### Init
 
 `:init`, does nothing by default. Feel free to try out this custom `:init` function as well. Notice how it adds a key, and that key stays, regardless of our flow being dead or alive:
 
@@ -390,7 +390,7 @@ If you did want the `:initiated?` key to go away, you could handle that within `
 
 It's common to design apps which prepare certain db paths when a high-level state changes, such as when switching tabs. With flows, this preparation is an official library feature. Instead of writing custom events, you can use the `:cleanup` and `:init` keys and your colleagues will know exactly what you're doing.
 
-#### Dedicated inputs
+### Dedicated inputs
 
 Now that we've introduced `:live?`, here's the canonical form of a flow:
 
@@ -671,7 +671,7 @@ Introducing yet another demo app! Turns out, we were measuring the kitchen to fi
 
 How can we get a correct value for `num-balloons-to-fill-kitchen`? You might try calling `(rf/subscribe [::num-balloons-to-fill-kitchen])`, but re-frame comes back with a warning about reactive context, and memory leaks... oh my!
 
-#### Reactivity
+### Reactivity
 
 We express some [business logic in subscriptions](https://github.com/day8/re-frame/issues/753), and some in events, but they're not really compatible.
 Between subscriptions and events, there is a [coloring problem](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/).
@@ -704,7 +704,7 @@ Not only have we [drenched](https://en.wikipedia.org/wiki/Don%27t_repeat_yoursel
 Of course you can design around the problem, but at what cost?
 We sympathize with you developers, for the hours you may have spent poring over an event handler, just to re-write the code as a subscription, and vice-versa.
 
-#### Paths
+### Paths
 
 A [layer-2](/re-frame/subscriptions/#the-four-layers) subscription basically *names* an `app-db` path. What does a layer-3 subscription *name*?
 
@@ -718,7 +718,7 @@ Subscriptions occupy their own semantic domain, separate from `app-db`. Only wit
 
 So, re-frame is simple. `app-db` represents and *names* the state of your app. Except, so does this network of subscription names. But you can't really *use* those, so just forget about it.
 
-#### Statefulness
+### Statefulness
 
 Remember our [story so far](#the-story-so-far)? Turns out, it's not so simple. 
 Not only do *state changes* cause *rendering*, but *rendering* also causes *state changes*.
@@ -754,7 +754,7 @@ Why not simply have `app-db` determine everything?
 
 `event -> app-db -> signal graph -> signals -> view -> event`
 
-#### A better way
+### A better way
 
 The good news:
 
