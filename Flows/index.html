@@ -2499,7 +2499,7 @@ Specifically, render logic changes the state of subscriptions.</p>
 <blockquote>
 <p>An event fires. A subscription runs. An outer component passes new props to an inner one. A reaction runs. Another reaction runs. A component unmounts. That subscription disposes, clearing its cache.</p>
 </blockquote>
-<p>Sound familiar?</p>
+<p>Sound <a href="https://github.com/day8/re-frame/discussions/776">familiar</a>?</p>
 <blockquote>
 <p>Then, the same event fires. Another component mounts. The same subscription runs. Its calculation is heavy, so your app lags every time.
 "Wait," you ask, "what happened to the cache? Why is my subscription recalculating when its inputs are the same?"
