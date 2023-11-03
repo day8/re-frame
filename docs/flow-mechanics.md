@@ -192,7 +192,7 @@ I haven't been entirely straight with you:
 re-computation happens about 16ms after an input Signals change is detected, or after the
 current thread of processing finishes, whichever is the greater. So if you are in a REPL
 and you run the lines of code above one after the other too quickly,  you might not see the
-re-computation done immediately after `n` gets reset!, because the next animationFrame
+re-computation done immediately after `fw` gets reset!, because the next animationFrame
 hasn't run (yet).  But you could add a `(reagent.core/flush)` after the reset! to force
 re-computation to happen straight away.
 
