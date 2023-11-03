@@ -1775,7 +1775,7 @@ changes, which in turn means that the value in <code>hiccup-ratom</code> changes
 re-computation happens about 16ms after an input Signals change is detected, or after the
 current thread of processing finishes, whichever is the greater. So if you are in a REPL
 and you run the lines of code above one after the other too quickly,  you might not see the
-re-computation done immediately after <code>n</code> gets reset!, because the next animationFrame
+re-computation done immediately after <code>fw</code> gets reset!, because the next animationFrame
 hasn't run (yet).  But you could add a <code>(reagent.core/flush)</code> after the reset! to force
 re-computation to happen straight away.</p>
 </li>
