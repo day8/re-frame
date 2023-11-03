@@ -707,6 +707,8 @@
   [handler]
   (registrar/register-handler :error :event-handler handler))
 
+(reg-event-error-handler interceptor/default-error-handler)
+
 ;; -- interceptors ------------------------------------------------------------
 
 (def ^{:api-docs/heading "Interceptors"} debug

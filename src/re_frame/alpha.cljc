@@ -552,6 +552,8 @@
   [handler]
   (registrar/register-handler :error :event-handler handler))
 
+(reg-event-error-handler interceptor/default-error-handler)
+
 ;; -- subscriptions -----------------------------------------------------------
 
 (defn sub

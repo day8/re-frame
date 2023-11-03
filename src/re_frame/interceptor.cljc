@@ -4,6 +4,7 @@
    [re-frame.interop :refer [empty-queue debug-enabled?]]
    [re-frame.trace :as trace :include-macros true]
    [re-frame.registrar :as registrar]
+   [re-frame.utils :as u]
    [clojure.set :as set]))
 
 (def mandatory-interceptor-keys #{:id :after :before})
@@ -165,6 +166,19 @@
            (apply merge (ex-data e) ms)
            #?(:clj (.getCause e) :cljs (ex-cause e))))
 
+(defn default-error-handler [original-error re-frame-error]
+  (let [{:keys [event-v direction interceptor]} (ex-data re-frame-error)
+        event-handler? (#{:db-handler :fx-handler :ctx-handler} interceptor)]
+    (apply console :error
+           "An error occured while handling the re-frame event:"
+           (str event-v)
+           "\n"
+           (map str
+                (if event-handler?
+                  ["Within the" (first event-v) "event handler function."]
+                  ["Within the" direction "phase of the" (pr-str interceptor) "interceptor."])))
+    (throw original-error)))
+
 (defn execute
   "Executes the given chain (coll) of interceptors.
 
@@ -219,10 +233,8 @@
         error-handler (registrar/get-handler :error :event-handler)]
     (trace/merge-trace!
      {:tags {:interceptors interceptors}})
-    (if-not error-handler
-      (execute* ctx)
-      (try
-        (execute* (assoc ctx ::augment-exceptions? true))
-        (catch #?(:clj Exception :cljs :default) e
-          (error-handler (ex-cause e)
-                         (merge-ex-data e {:event-v event-v})))))))
+    (try
+      (execute* (assoc ctx ::augment-exceptions? true))
+      (catch #?(:clj Exception :cljs :default) e
+        (error-handler (ex-cause e)
+                       (merge-ex-data e {:event-v event-v}))))))
