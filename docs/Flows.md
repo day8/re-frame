@@ -13,41 +13,39 @@
 
 ## Flows
 
-This tutorial introduces a feature called `Flows`, which occur when an effect changes `app-db`, in step 3.
+This tutorial introduces `Flows`, which occur in step 3 after an effect changes `app-db`.
 
 A `Flow` calculates a derived value "automatically".
 When one part of the application state changes, another part is recalculated.
 More concretely, when the values change at one or more paths within `app-db`, then the value at another path is recalculated automatically.
 
-`re-frame's` tagline is "derived values, flowing", and `Flows` implement one stage in the dataflow. But note:  these are synchronous data flows, not to be confused with [async flows](https://github.com/day8/re-frame-async-flow-fx).
+`re-frame's` tagline is "derived values, flowing", and `Flows` implement dataflow. But note:  these is synchronous dataflow, not to be confused with [async flows](https://github.com/day8/re-frame-async-flow-fx).
 
 ## Why?
 
-`Flows` help when you need to maintain the integrity of data derived from multiple other pieces of data.
+`Flows` help you to maintain the integrity of data derived from multiple other pieces of data.
 
-Trying to maintain cascading error states is one easily relatable example. Imagine your UI has a validation rule: `start date` must be before `end date`. 
+One easily relatable usecase is of trying to maintain cascading error states. Imagine your UI has a validation rule: `start date` must be before `end date`. 
 
-Here, error state is a function of two other values (start and end date). After a change to the value of either `start date` or `end date`, 
-this error state value must be calculated, and it will be used to determine if the `submit` button is enabled or not, and if an error message 
+After a change to the value of either `start date` or `end date`, 
+an error value must be calculated, and it will be used to determine if the `submit` button is enabled or not, and if an error message 
 is displayed or not.
 
-Now, imagine our UI has more than one validation rule and that each is a function of different values. Now, many pieces of error state must be calculated, 
-one for each rule, and the submit button state is a function of all rules combined. Cascading, derived values.
+Now, make it more complicated. Imagine your UI has more than one validation rule and that each is a function of multiple different values. Now, there are many error states to be calculated, 
+one for each rule, and the submit button state is a calculation involving all the error states combined. Cascading, derived values - a multi-step dataflow.
 
-In this case, on any user data entry, all the rules should be reevaluated to 
+On any data entry, all the rules should be reevaluated to 
 determine if they are broken (derived values!). If they are, then particular messages should be generated (more derived values!).
 Then, in the final step, the state of the submit button should be determined (another derived value!) from the error state of all the rules (previously derived!). 
 
-So, cascading error states is a generic, relatable example, but there will be many other, domain-specific examples also elegantly handled by `Flows`.
+So, cascading error states is a generic, relatable example, but there will be many other, domain-specific examples also neatly handled by `Flows`.
 
-Warning: at this point, given the explanations and wording above, you might be tempted to view `Flows` as having
-something to do with a rules engine, but it absolutely isn't that. It is simply a method for implementing dataflow.
-Each value is derivative of other values, with multiple levels of that process arranged in a tree structure
-in which many leaf values contribute to a terminal root value (think submit button state!). 
+Warning: given the wording above, some end up thinking of `Flows` as having something to do 
+with a rules/logic engine, but it absolutely isn't that. It is just a method for implementing dataflow.
 
 ## Flow Specification
 
-`Flows` are registered using `reg-flow`, which you call with a single map argument that is the `flow specification` defining: 
+`Flows` are registered using `reg-flow`, which is part of the re-frame API.  You call it with a single argument, which is the `flow specification` - a map - defining: 
 
 - the input paths to be monitored for change
 - a function to call to calculate the new derived value
