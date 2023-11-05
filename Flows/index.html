@@ -953,6 +953,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#why" class="md-nav__link">
+    Why?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#flow-specification" class="md-nav__link">
     Flow Specification
   </a>
@@ -1669,6 +1676,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#why" class="md-nav__link">
+    Why?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#flow-specification" class="md-nav__link">
     Flow Specification
   </a>
@@ -1873,19 +1887,35 @@ y'know. Pretty good.</p>
 <li><strong>State Changes</strong> cause <strong>View rerendering</strong></li>
 </ol>
 <h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
-<p>This tutorial introduces a feature called <code>Flows</code>, a trailing part of step 3 - call it step 3.b. 
-<code>re-frame's</code> tagline is "derived values, flowing" and, well, <code>Flows</code> helps data to flow.</p>
-<p>A <code>flow</code> calculates a derived value "automatically".</p>
-<p>When one part of the application state changes, another part is recalculated automatically. 
-More concretely, when one or more paths within <code>app-db</code> change value, then the value at another path is recalculated automatically.</p>
-<p>re-frame <code>flows</code> are registered using the API function <code>reg-flow</code>.  You call it with a single <code>flow specification</code> argument, a map that defines:</p>
+<p>This tutorial introduces a feature called <code>Flows</code>, which occurs when an effect changes <code>app-db</code>, in step 3.</p>
+<p>A <code>Flow</code> calculates a derived value "automatically".
+When one part of the application state (<code>app-db</code>) changes, another part is recalculated.
+More concretely, when the values change at one or more paths within <code>app-db</code>, then the value at another path is recalculated automatically.</p>
+<p><code>re-frame's</code> tagline is "derived values, flowing", and <code>Flows</code> implement one stage in the dataflow. But note:  these are synchronous data flows, not to be confused with <a href="https://github.com/day8/re-frame-async-flow-fx">async flows</a>.</p>
+<h2 id="why">Why?<a class="headerlink" href="#why" title="Permanent link">&para;</a></h2>
+<p><code>Flows</code> are helpful when you need to maintain the integrity of data derived from multiple other pieces of data.</p>
+<p>Trying to maintain cascading error states is one easily relatable example. Imagine your UI has a validation rule: <code>start date</code> must be before <code>end date</code>. </p>
+<p>Here, a value representing the error state is a function of two other values (start and end date). After a change to the value of either <code>start date</code> or <code>end date</code>, 
+another value must be calculated and that value will be used to determine if the <code>submit</code> button is enabled or not, and if an error message 
+is to be displayed or not.</p>
+<p>Now imagine our UI has more than one validation rule and that each is a function of different values. Now, many pieces of error state must be calculated, 
+one for each rule, and the submit button state is a function of all rules combined. Cascading derived values.</p>
+<p>In this case, each time any data on the form changes, all the rules should be reevaluated to 
+determine if they are broken (derived values!). If they are, then particular messages should be generated (more derived values!).
+Then, in the final step, the state of the submit button should be determined (another derived value!) from the error state of all the rules (previously derived!). </p>
+<p>So, cascading error states is a generic, relatable example, but there will be many other, domain-specific, kinds of examples also elegantly handled by <code>Flows</code>.</p>
+<p>Warning: at this point, given the explanations and wording above, you might be tempted to view <code>Flows</code> as having
+something to do with a rules engine but it absolutely isn't that. It is simply a method for implementing dataflow.
+Each value is derivative of other values, with perhaps multiple levels of that process arranged in a tree structure
+in which many leaf values contribute to a terminal, root value (think submit button state!). </p>
+<h2 id="flow-specification">Flow Specification<a class="headerlink" href="#flow-specification" title="Permanent link">&para;</a></h2>
+<p><code>Flows</code> are registered using <code>reg-flow</code>, which you call with a single map argument that is the <code>flow specification</code> defining: </p>
 <ul>
 <li>the input paths to be monitored for change</li>
 <li>a function to call to calculate the new derived value</li>
 <li>a path where the derived value should be placed</li>
 </ul>
-<h2 id="flow-specification">Flow Specification<a class="headerlink" href="#flow-specification" title="Permanent link">&para;</a></h2>
-<p>It is just a map. Here's an example specification to automatically calculate the <code>area</code> of a room from <code>width</code> and <code>height</code>:</p>
+<p>Here's an example specification to automatically calculate the <code>area</code> of a room from <code>width</code> and <code>height</code>:</p>
 <div class="cm-doc" data-cm-doc-no-result>
 {:id     :room-area
  :inputs {:w [:room :width]
