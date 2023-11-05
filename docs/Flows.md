@@ -70,7 +70,7 @@ Notes:
 - When the values at the `:inputs` paths change, the `:output` function is called to calculate a new derived value. It is called with two args:
     - any previously calculated derived value  (ignored in the code above)
     - a map with the same keys as `:inputs` and, for each, the current value from `app-db` at the associated path. 
-- The newly calculated, returned, derived value (`width` in the example - the output of the function call) is put back into `app-db` at `:path` 
+- The newly calculated, returned, derived value (`area` in the example - the output of the function call) is put back into `app-db` at `:path` 
 
 ## When Does This All Happen?
 
