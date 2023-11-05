@@ -4,17 +4,6 @@
 
 ---
 
-> This, milord, is my family's axe. We have owned it for almost nine hundred years, see. Of course,
-sometimes it needed a new blade. And sometimes it has required a new handle, new designs on the
-metalwork, a little refreshing of the ornamentation ... but is this not the nine hundred-year-old
-axe of my family? And because it has changed gently over time, it is still a pretty good axe,
-y'know. Pretty good.
-
-> -- Terry Pratchett, The Fifth Elephant <br>
-> &nbsp;&nbsp;&nbsp; reflecting on identity, flow and derived values  (aka [The Ship of Theseus](https://en.wikipedia.org/wiki/Ship_of_Theseus))
-<br/> 
-<br/>
-
 ## The Story So Far 
 
 1. **Users** cause **Events**
@@ -24,37 +13,37 @@ y'know. Pretty good.
 
 ## Flows
 
-This tutorial introduces a feature called `Flows`, which occurs when an effect changes `app-db`, in step 3.
+This tutorial introduces a feature called `Flows`, which occur when an effect changes `app-db`, in step 3.
 
 A `Flow` calculates a derived value "automatically".
-When one part of the application state (`app-db`) changes, another part is recalculated.
+When one part of the application state changes, another part is recalculated.
 More concretely, when the values change at one or more paths within `app-db`, then the value at another path is recalculated automatically.
 
 `re-frame's` tagline is "derived values, flowing", and `Flows` implement one stage in the dataflow. But note:  these are synchronous data flows, not to be confused with [async flows](https://github.com/day8/re-frame-async-flow-fx).
 
 ## Why?
 
-`Flows` are helpful when you need to maintain the integrity of data derived from multiple other pieces of data.
+`Flows` help when you need to maintain the integrity of data derived from multiple other pieces of data.
 
 Trying to maintain cascading error states is one easily relatable example. Imagine your UI has a validation rule: `start date` must be before `end date`. 
 
-Here, a value representing the error state is a function of two other values (start and end date). After a change to the value of either `start date` or `end date`, 
-another value must be calculated and that value will be used to determine if the `submit` button is enabled or not, and if an error message 
-is to be displayed or not.
+Here, error state is a function of two other values (start and end date). After a change to the value of either `start date` or `end date`, 
+this error state value must be calculated, and it will be used to determine if the `submit` button is enabled or not, and if an error message 
+is displayed or not.
 
-Now imagine our UI has more than one validation rule and that each is a function of different values. Now, many pieces of error state must be calculated, 
-one for each rule, and the submit button state is a function of all rules combined. Cascading derived values.
+Now, imagine our UI has more than one validation rule and that each is a function of different values. Now, many pieces of error state must be calculated, 
+one for each rule, and the submit button state is a function of all rules combined. Cascading, derived values.
 
-In this case, each time any data on the form changes, all the rules should be reevaluated to 
+In this case, on any user data entry, all the rules should be reevaluated to 
 determine if they are broken (derived values!). If they are, then particular messages should be generated (more derived values!).
 Then, in the final step, the state of the submit button should be determined (another derived value!) from the error state of all the rules (previously derived!). 
 
-So, cascading error states is a generic, relatable example, but there will be many other, domain-specific, kinds of examples also elegantly handled by `Flows`.
+So, cascading error states is a generic, relatable example, but there will be many other, domain-specific examples also elegantly handled by `Flows`.
 
 Warning: at this point, given the explanations and wording above, you might be tempted to view `Flows` as having
-something to do with a rules engine but it absolutely isn't that. It is simply a method for implementing dataflow.
-Each value is derivative of other values, with perhaps multiple levels of that process arranged in a tree structure
-in which many leaf values contribute to a terminal, root value (think submit button state!). 
+something to do with a rules engine, but it absolutely isn't that. It is simply a method for implementing dataflow.
+Each value is derivative of other values, with multiple levels of that process arranged in a tree structure
+in which many leaf values contribute to a terminal root value (think submit button state!). 
 
 ## Flow Specification
 
