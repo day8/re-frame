@@ -1922,7 +1922,7 @@ in which many leaf values contribute to a terminal root value (think submit butt
 <li>a map with the same keys as <code>:inputs</code> and, for each, the current value from <code>app-db</code> at the associated path. </li>
 </ul>
 </li>
-<li>The newly calculated, returned, derived value (<code>width</code> in the example - the output of the function call) is put back into <code>app-db</code> at <code>:path</code> </li>
+<li>The newly calculated, returned, derived value (<code>area</code> in the example - the output of the function call) is put back into <code>app-db</code> at <code>:path</code> </li>
 </ul>
 <h2 id="when-does-this-all-happen">When Does This All Happen?<a class="headerlink" href="#when-does-this-all-happen" title="Permanent link">&para;</a></h2>
 <p><code>event handlers</code> create <code>effects</code>, and, typically, one is a change to <code>app-db</code>.  Immediately after <code>app-db</code> is changed, flows are "run". That's why above I called Flows step 3.b. When <code>Flows</code> are <code>run</code>, input paths in <code>app-db</code> are checked for changes, and where necessary, output values are recalculated and put into <code>app-db</code>.</p>
