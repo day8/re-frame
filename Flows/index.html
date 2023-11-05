@@ -1876,29 +1876,27 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
 <li><strong>State Changes</strong> cause <strong>View rerendering</strong></li>
 </ol>
 <h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
-<p>This tutorial introduces a feature called <code>Flows</code>, which occur when an effect changes <code>app-db</code>, in step 3.</p>
+<p>This tutorial introduces <code>Flows</code>, which occur in step 3 after an effect changes <code>app-db</code>.</p>
 <p>A <code>Flow</code> calculates a derived value "automatically".
 When one part of the application state changes, another part is recalculated.
 More concretely, when the values change at one or more paths within <code>app-db</code>, then the value at another path is recalculated automatically.</p>
-<p><code>re-frame's</code> tagline is "derived values, flowing", and <code>Flows</code> implement one stage in the dataflow. But note:  these are synchronous data flows, not to be confused with <a href="https://github.com/day8/re-frame-async-flow-fx">async flows</a>.</p>
+<p><code>re-frame's</code> tagline is "derived values, flowing", and <code>Flows</code> implement dataflow. But note:  these is synchronous dataflow, not to be confused with <a href="https://github.com/day8/re-frame-async-flow-fx">async flows</a>.</p>
 <h2 id="why">Why?<a class="headerlink" href="#why" title="Permanent link">&para;</a></h2>
-<p><code>Flows</code> help when you need to maintain the integrity of data derived from multiple other pieces of data.</p>
-<p>Trying to maintain cascading error states is one easily relatable example. Imagine your UI has a validation rule: <code>start date</code> must be before <code>end date</code>. </p>
-<p>Here, error state is a function of two other values (start and end date). After a change to the value of either <code>start date</code> or <code>end date</code>, 
-this error state value must be calculated, and it will be used to determine if the <code>submit</code> button is enabled or not, and if an error message 
+<p><code>Flows</code> help you to maintain the integrity of data derived from multiple other pieces of data.</p>
+<p>One easily relatable usecase is of trying to maintain cascading error states. Imagine your UI has a validation rule: <code>start date</code> must be before <code>end date</code>. </p>
+<p>After a change to the value of either <code>start date</code> or <code>end date</code>, 
+an error value must be calculated, and it will be used to determine if the <code>submit</code> button is enabled or not, and if an error message 
 is displayed or not.</p>
-<p>Now, imagine our UI has more than one validation rule and that each is a function of different values. Now, many pieces of error state must be calculated, 
-one for each rule, and the submit button state is a function of all rules combined. Cascading, derived values.</p>
-<p>In this case, on any user data entry, all the rules should be reevaluated to 
+<p>Now, make it more complicated. Imagine your UI has more than one validation rule and that each is a function of multiple different values. Now, there are many error states to be calculated, 
+one for each rule, and the submit button state is a calculation involving all the error states combined. Cascading, derived values - a multi-step dataflow.</p>
+<p>On any data entry, all the rules should be reevaluated to 
 determine if they are broken (derived values!). If they are, then particular messages should be generated (more derived values!).
 Then, in the final step, the state of the submit button should be determined (another derived value!) from the error state of all the rules (previously derived!). </p>
-<p>So, cascading error states is a generic, relatable example, but there will be many other, domain-specific examples also elegantly handled by <code>Flows</code>.</p>
-<p>Warning: at this point, given the explanations and wording above, you might be tempted to view <code>Flows</code> as having
-something to do with a rules engine, but it absolutely isn't that. It is simply a method for implementing dataflow.
-Each value is derivative of other values, with multiple levels of that process arranged in a tree structure
-in which many leaf values contribute to a terminal root value (think submit button state!). </p>
+<p>So, cascading error states is a generic, relatable example, but there will be many other, domain-specific examples also neatly handled by <code>Flows</code>.</p>
+<p>Warning: given the wording above, some end up thinking of <code>Flows</code> as having something to do 
+with a rules/logic engine, but it absolutely isn't that. It is just a method for implementing dataflow.</p>
 <h2 id="flow-specification">Flow Specification<a class="headerlink" href="#flow-specification" title="Permanent link">&para;</a></h2>
-<p><code>Flows</code> are registered using <code>reg-flow</code>, which you call with a single map argument that is the <code>flow specification</code> defining: </p>
+<p><code>Flows</code> are registered using <code>reg-flow</code>, which is part of the re-frame API.  You call it with a single argument, which is the <code>flow specification</code> - a map - defining: </p>
 <ul>
 <li>the input paths to be monitored for change</li>
 <li>a function to call to calculate the new derived value</li>
