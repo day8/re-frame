@@ -4,58 +4,31 @@
 
 ---
 
-## The Story So Far 
+## Flow
 
-1. **Users** cause **Events**
-2. **Events** cause **Effects**
-3. **Effects** cause **State Changes**
-4. **State Changes** cause **View rerendering**
+This tutorial introduces **Flows**, part of [Domino 3](http://localhost:8000/re-frame/dominoes-30k/#domino-3-effect-handling) (effects).
 
-## Flows
+!!! Note "Not to be confused with..."
+    - [re-frame-async-flow-fx](https://github.com/day8/re-frame-async-flow-fx). A `re-frame/flow` is totally sychronous, running on every event.
+    - The [on-changes interceptor](/re-frame/api-re-frame.core/#on-changes). Flows are an evolution of this idea.
 
-This tutorial introduces `Flows`, which occur in step 3 after an effect changes `app-db`.
+A **Flow** calculates a derived value "automatically".  
+When one part of the application state changes, another part is recalculated.  
+More concretely, when the values change at one or more paths within `app-db`, then the value at another path is automatically recalculated.
 
-A `Flow` calculates a derived value "automatically". 
-When one part of the application state changes, another part is recalculated.
-More concretely, when the values change at one or more paths within `app-db`, then the value at another path is recalculated automatically.
+!!! Note "The DataFlow Paradigm"
 
-## The DataFlow Paradigm 
+The dataflow programming paradigm emerged in the 1970s, so it is almost as foundational as functional programming. 
+Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. 
 
-Using `Flows`, you can create simple dataflows.
+Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. 
+There's a reason `re-frame's` tagline is "derived data, flowing".
 
-The dataflow programming paradigm emerged in the 1970s, so it is almost as foundational as functional programming. Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. 
+## A flow literal
 
-Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. There's a reason `re-frame's` tagline is "derived values, flowing". 
+Re-frame uses flows to change your app's state, but a `flow` itself is an immutable value.
 
-> BTW, this is synchronous dataflow. You should not confuse this with [async flows](https://github.com/day8/re-frame-async-flow-fx).
-
-## Motivation?
-
-`Flows` will help you in at least two usecases. 
-
-**First**, your app has to maintain a value calculated from multiple inputs, each of which varies independently (ie. the inputs are updated via different event handlers).
-
-One relatable example is that of trying to maintain cascading error states. Imagine your UI has a validation rule: `start date` must be before `end date`. 
-After the user changes either value, the error state must be calculated, and this is used to determine if the `submit` button is enabled or not, and if an error message 
-is displayed or not.
-
-Now, make it more complicated: imagine your UI has many validation rules and error state must be calculated for each of them. And the submit button state is
-a secondary calculation that combines these error states. Cascading, derived values. In this tree-ish arrangement, data flows from the leaves (what the user entered), through intermediate nodes (error predicate functions), through to the root (submit button state). In this tree, both the intermediate values and the root value are important.
-
-**Second**,  if you find yourself asking the question: "how do I use a subscription in my event handler?".  Answer: you don't. Instead, you use a Flow. 
-
-`Subscriptions` calculate a derived value. So do `Flows`. A key difference is that `Flow` values are stored in `app-db` and that makes them available to event handlers.  Of course, subscriptions are delightfully simple, because they both calculate and deliver data to views, and their lifecycle is automatically handled by the views using them. Flows are more manual/flexible. But when you need a derived value in an event handler, you have moved beyond `subscriptions` to needing a `Flow`
-
-
-## Flow Specification
-
-`Flows` are registered using `reg-flow`, which is part of the re-frame API.  You call it with a single argument, which is the `flow specification` - a map - defining: 
-
-- the input paths to be monitored for change
-- a function to call to calculate the new derived value
-- a path where the derived value should be placed
-
-Here's an example specification to automatically calculate the `area` of a room from `width` and `height`:
+Here's a basic `flow`. It describes how to derive the area of a room from its dimensions:
 
 <div class="cm-doc" data-cm-doc-no-result>
 {:id     :room-area
@@ -66,19 +39,12 @@ Here's an example specification to automatically calculate the `area` of a room 
  :path   [:room :area]}
 </div>
 
-Notes:
+- **`:id`** - uniquely identifies this flow.
+- **`:inputs`** - a map of `app-db` paths to observe for changes.
+- **`:output`** - calculates the new derived value. Accepts the previous result, and a map of input values.
+- **`:path`** - denotes *where* the derived value should be stored.
 
-- `:inputs` is a map from keywords (identifiers) to `app-db` paths
-- When the values at the `:inputs` paths change, the `:output` function is called to calculate a new derived value. It is called with two args:
-    - any previously calculated derived value  (ignored in the code above)
-    - a map with the same keys as `:inputs` and, for each, the current value from `app-db` at the associated path. 
-- The newly calculated, returned, derived value (`area` in the example - the output of the function call) is put back into `app-db` at `:path` 
-
-## When Does This All Happen?
-
-`event handlers` create `effects`, and, typically, one is a change to `app-db`.  Immediately after `app-db` is changed, flows are "run". That's why above I called Flows step 3.b. When `Flows` are `run`, input paths in `app-db` are checked for changes, and where necessary, output values are recalculated and put into `app-db`.
-
-So, because of Flows, effects to `app-db` can cause further effects to `app-db`. And, yes, if necessary, the effects of one flow can feed into another flow - the `:path` output of one flow can be one of the  `:inputs` of another flow.
+Every event, when the values of `:inputs` change, `:output` is run, and the result is stored in `app-db` at `:path`.
 
 ## A Basic Example
 
@@ -119,7 +85,7 @@ And, here's the code for our app: the user can enter `height` and `width` values
 Now the interesting part, we use `reg-flow`: 
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
-(def kitchen-area-flow-specification
+(def kitchen-area-flow
   {:id     :kitchen-area
    :inputs {:w [:kitchen :width]
             :h [:kitchen :length]}
@@ -127,8 +93,13 @@ Now the interesting part, we use `reg-flow`:
              (* w h))
    :path   [:kitchen :area]})
 
-(rf/reg-flow kitchen-area-flow-specification)
+(rf/reg-flow kitchen-area-flow)
 </div>
+
+!!! Note: "Arity-2 version"
+    In addition to `(reg-flow flow)`, you can also call `(reg-flow id flow)`.
+    This gives it a signature just like the usual `reg-event-` and `reg-sub` calls.
+    Our example would look like `(reg-flow :kitchen-area {...})`.
 
 We write a subscription for the flow's output `:path`:
 
@@ -162,13 +133,30 @@ And, we use this subscription in a view:
 </div>
 
 <div id="room-calculator"></div>
-  
+
+## How does it work?
+
+`event handlers` yield `effects`. Typically, they yield a `:db` effect, causing a new value of `app-db`.  
+But first, re-frame updates your `:db` effect by running each registered `flow`.
+
+!!! Note: "Caution: implicit behavior ahead"
+    Here, the tradeoff becomes clear. A `flow` can change `app-db` implicitly.
+    This means the `:db` effect which you express in your event handlers may not match the actual `app-db` you'll get as a result.
+
+Re-frame achieves this using an [interceptor](/re-frame/Interceptors/). Here's what it does:
+
+- Destructure the current `app-db`, resolving the paths in `:inputs` - this yields a value like `{:w 10 :h 15}`.
+- Destructure the *previous* `app-db` as well, to see if any of these values have changed.
+  - For instance, if it sees `{:w 11 :h 24}`, that means the inputs have changed. `{:w 10 :h 15}` would mean no change.
+- *If* the inputs have changed:
+  - Call the `:output` function, passing it the previous result, and the current `:inputs`.
+  - Store the newly derived value (in this case, `150`) in `app-db`, at the `:path`.
 
 Isn't that remarkable? What, you say it's *unremarkable?* Well, that's even better.
 
 ## Remarks
 
-Here's why this basic flow might not excite you:
+Reality check. Here's why this basic flow might not excite you:
 
 ### Can't I just use events?
 
@@ -190,27 +178,48 @@ In this sense, they are redundant. Rather than use a flow, you could simply call
 
 This works just fine... *or does it*? Actually, we forgot to change the `:length` event. Our area calculation will be wrong every time the user changes the length! Easy to fix, but the point is that we had to fix it at all. How many events will we need to review? In a mature app, this is not a trivial question.
 
-
 *Design is all tradeoffs*. Flows allow us to say "This value simply derives from these inputs. It simply changes when they do." We do this at the expense of some "spooky action at a distance" - in other words, we accept that no particular event will be responsible for that change.
-
 
 ### Are flows just reactions?
 
-You might notice a similarity with [reagent.core/reaction](https://reagent-project.github.io/docs/master/reagent.core.html#var-reaction).
-
+You might notice a similarity with [reagent.core/reaction](https://reagent-project.github.io/docs/master/reagent.core.html#var-reaction). 
 Both yield an "automatically" changing value. 
 
-Reagent controls *when* a reaction updates, presumably during the evaluation of a component function.
+Reagent controls *when* a reaction updates, presumably during the evaluation of a component function.  
 Flows, on the other hand, are controlled by re-frame, running every time an `event` occurs.
 
 When a component derefs a reaction, that component knows to re-render when the value changes.
 
-You can't deref a flow directly. It doesn't emit a value directly to any caller. 
+You can't deref a flow directly. It doesn't emit a value directly to any caller.   
 Instead, it emits a new version of `app-db`. The rest of your app reacts to `app-db`, not your flow.
+
+### But really, why do I need flows?
+
+
+`Flows` will help you in at least two usecases. 
+
+**First**, your app has to maintain a value calculated from multiple inputs, each of which varies independently (ie. the inputs are updated via different event handlers).
+
+One relatable example is that of trying to maintain cascading error states. Imagine your UI has a validation rule: `start date` must be before `end date`. 
+After the user changes either value, the error state must be calculated, and this is used to determine if the `submit` button is enabled or not, and if an error message 
+is displayed or not.
+
+Now, make it more complicated: imagine your UI has many validation rules and error state must be calculated for each of them. And the submit button state is
+a secondary calculation that combines these error states. Cascading, derived values. In this tree-ish arrangement, data flows from the leaves (what the user entered), through intermediate nodes (error predicate functions), through to the root (submit button state). In this tree, both the intermediate values and the root value are important.
+
+### 
+
+Answer: you don't. Instead, you use a Flow. 
+
+`Subscriptions` calculate a derived value. So do `Flows`. A key difference is that `Flow` values are stored in `app-db` and that makes them available to event handlers.  Of course, subscriptions are delightfully simple, because they both calculate and deliver data to views, and their lifecycle is automatically handled by the views using them. Flows are more manual/flexible. But when you need a derived value in an event handler, you have moved beyond `subscriptions` to needing a `Flow`
+
+### Is this a rules engine?
+
+You might be tempted to view `Flows` as having something to do with a rules engine, but it absolutely isn't that. It is simply a method for implementing dataflow. Each value is derivative of other values, with multiple levels of that process arranged in a tree structure in which many leaf values contribute to a terminal root value (think submit button state!). 
 
 ### Can't I just use subscriptions?
 
-You could handle this feature with a [layer-3 subscription](/re-frame/subscriptions/#the-four-layers):
+You could derive your kitche's area with a [layer-3 subscription](/re-frame/subscriptions/#the-four-layers):
 
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-sub
@@ -219,9 +228,9 @@ You could handle this feature with a [layer-3 subscription](/re-frame/subscripti
  (fn [[w h] _] (* w h)))
 </div>
 
-Just like a flow, this subscription's value changes whenever the inputs change, and (obviously) you call `subscribe` to access that value.
+Just like a `flow`, this subscription's value changes whenever the inputs change, and (obviously) you call `subscribe` to access that value.
 
-A flow stores its value in `app-db`, while subscriptions don't. We designed re-frame on the premise that `app-db` holds your *entire* app-state. Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. 
+A flow stores its `:output` value in `app-db`, while subscriptions don't. We designed re-frame on the premise that `app-db` holds your *entire* app-state. Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. It's also more practical (see [Reactive Context](#reactive-context).
 
 Just like with layered subscriptions, one flow can use the value of another. Remember the `:inputs` to our first flow?
 
@@ -635,7 +644,7 @@ Let's test it out:
 
 <div id="item-counter-requirements"></div>
 
-## Semantics, Place and State
+## Advanced topics - Semantics, Place and State
 
 > Have you been to Clevelinnati? No? Clevelinnati can be found at the geometric midpoint between Cleveland and Cincinnati. What's that, you say it's not on the map?
 Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactly how to get to get there... As long as Cleveland stays still.
@@ -678,7 +687,7 @@ Introducing yet another demo app! Turns out, we were measuring the kitchen to fi
 
 How can we get a correct value for `num-balloons-to-fill-kitchen`? You might try calling `(rf/subscribe [::num-balloons-to-fill-kitchen])`, but re-frame comes back with a warning about reactive context, and memory leaks... oh my!
 
-### Reactivity
+### Reactive context
 
 We express some [business logic in subscriptions](https://github.com/day8/re-frame/issues/753), and some in events, but they're not really compatible.
 Between subscriptions and events, there is a [coloring problem](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/).
@@ -729,10 +738,6 @@ A materialized view, or a derived value.
 
 Subscriptions occupy their own semantic domain, separate from `app-db`. Only within view functions (and other subscriptions) can we access this domain. Outside of views, they form an impenetrable blob.
 
-
-!!! Note "Prior art"
-    We built a rudimentary version of this pattern some years ago: the [on-changes interceptor](/re-frame/api-re-frame.core/#on-changes)
-
 So, re-frame is simple. `app-db` represents and *names* the state of your app. Except, so does this network of subscription names. But you can't really *use* those, so just forget about it.
 
 ### Statefulness
@@ -766,8 +771,8 @@ Something is looping in on itself here:
 - *And*, the value of a view determines when a signal lives or dies. 
 - *And*, the value of a signal determines when a view lives or dies.
 
-If views are fully determined by the value of `app-db`, when why have signals be determined by views? 
-Why not simply have `app-db` determine everything?
+If views derive solely from `app-db`, when why must signals derive from views?
+Why not simply have *everything* derive from `app-db`?
 
 `event -> app-db -> signal graph -> signals -> view -> event`
 
@@ -779,7 +784,7 @@ __You can access a flow's output value any time, anywhere,__ since flows are con
 
 __If you know a flow's name, you know its output location,__ since flows store their output in `app-db`, at a static path. It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.
 
-__A flow's lifecycle is a pure function of `app-db`__ (technically, `app-db` and `:inputs`, but `:inputs` themselves are pure functions of `app-db`, whether they be paths or other flows). That means you explicitly define when a flow lives, dies, is registered or cleared-- *not* React.
+__A flow's lifecycle is a pure function of `app-db`__. That means you explicitly define when a flow lives, dies, is registered or cleared. You do this directly, not via your component tree.
 
 Like many Clojure patterns, flows are *both* nested *and* flat. Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can access it directly:
 
