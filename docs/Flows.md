@@ -15,33 +15,37 @@
 
 This tutorial introduces `Flows`, which occur in step 3 after an effect changes `app-db`.
 
-A `Flow` calculates a derived value "automatically".
+A `Flow` calculates a derived value "automatically". 
 When one part of the application state changes, another part is recalculated.
 More concretely, when the values change at one or more paths within `app-db`, then the value at another path is recalculated automatically.
 
-`re-frame's` tagline is "derived values, flowing", and `Flows` implement dataflow. But note:  these is synchronous dataflow, not to be confused with [async flows](https://github.com/day8/re-frame-async-flow-fx).
+## The DataFlow Paradigm 
 
-## Why?
+Using `Flows`, you can create simple dataflows.
 
-`Flows` help you to maintain the integrity of data derived from multiple other pieces of data.
+The dataflow programming paradigm emerged in the 1970s, so it is almost as foundational as functional programming. Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. 
 
-One easily relatable usecase is of trying to maintain cascading error states. Imagine your UI has a validation rule: `start date` must be before `end date`. 
+Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. There's a reason `re-frame's` tagline is "derived values, flowing". 
 
-After a change to the value of either `start date` or `end date`, 
-an error value must be calculated, and it will be used to determine if the `submit` button is enabled or not, and if an error message 
+> BTW, this is synchronous dataflow. You should not confuse this with [async flows](https://github.com/day8/re-frame-async-flow-fx).
+
+## Motivation?
+
+`Flows` will help you in at least two usecases. 
+
+**First**, your app has to maintain a value calculated from multiple inputs, each of which varies independently (ie. the inputs are updated via different event handlers).
+
+One relatable example is that of trying to maintain cascading error states. Imagine your UI has a validation rule: `start date` must be before `end date`. 
+After the user changes either value, the error state must be calculated, and this is used to determine if the `submit` button is enabled or not, and if an error message 
 is displayed or not.
 
-Now, make it more complicated. Imagine your UI has more than one validation rule and that each is a function of multiple different values. Now, there are many error states to be calculated, 
-one for each rule, and the submit button state is a calculation involving all the error states combined. Cascading, derived values - a multi-step dataflow.
+Now, make it more complicated: imagine your UI has many validation rules and error state must be calculated for each of them. And the submit button state is
+a secondary calculation that combines these error states. Cascading, derived values. In this tree-ish arrangement, data flows from the leaves (what the user entered), through intermediate nodes (error predicate functions), through to the root (submit button state). In this tree, both the intermediate values and the root value are important.
 
-On any data entry, all the rules should be reevaluated to 
-determine if they are broken (derived values!). If they are, then particular messages should be generated (more derived values!).
-Then, in the final step, the state of the submit button should be determined (another derived value!) from the error state of all the rules (previously derived!). 
+**Second**,  if you find yourself asking the question: "how do I use a subscription in my event handler?".  Answer: you don't. Instead, you use a Flow. 
 
-So, cascading error states is a generic, relatable example, but there will be many other, domain-specific examples also neatly handled by `Flows`.
+`Subscriptions` calculate a derived value. So do `Flows`. A key difference is that `Flow` values are stored in `app-db` and that makes them available to event handlers.  Of course, subscriptions are delightfully simple, because they both calculate and deliver data to views, and their lifecycle is automatically handled by the views using them. Flows are more manual/flexible. But when you need a derived value in an event handler, you have moved beyond `subscriptions` to needing a `Flow`
 
-Warning: given the wording above, some end up thinking of `Flows` as having something to do 
-with a rules/logic engine, but it absolutely isn't that. It is just a method for implementing dataflow.
 
 ## Flow Specification
 
