@@ -145,10 +145,10 @@ Re-frame achieves this using an [interceptor](/re-frame/Interceptors/). Here's w
 
 - Destructure the current `app-db`, resolving the paths in `:inputs` - this yields a value like `{:w 10 :h 15}`.
 - Destructure the *previous* `app-db` as well, to see if any of these values have changed.
-  - For instance, if it sees `{:w 11 :h 24}`, that means the inputs have changed. `{:w 10 :h 15}` would mean no change.
+    - For instance, if it sees `{:w 11 :h 24}`, that means the inputs have changed. `{:w 10 :h 15}` would mean no change.
 - *If* the inputs have changed:
-  - Call the `:output` function, passing it the previous result, and the current `:inputs`.
-  - Store the newly derived value (in this case, `150`) in `app-db`, at the `:path`.
+    - Call the `:output` function, passing it the previous result, and the current `:inputs`.
+    - Store the newly derived value (in this case, `150`) in `app-db`, at the `:path`.
 
 Isn't that remarkable? What, you say it's *unremarkable?* Well, that's even better.
 
@@ -193,23 +193,21 @@ Instead, it emits a new version of `app-db`. The rest of your app reacts to `app
 
 ### But really, why do I need flows?
 
+Some apps do complex tasks, with deep layers of branching and looping. 
+But most apps do simple things, as well. 
+Many such tasks amount to synchronization - maintaining an invariant within a changing data structure.
 
-`Flows` will help you in at least two usecases. 
-
-**First**, your app has to maintain a value calculated from multiple inputs, each of which varies independently (ie. the inputs are updated via different event handlers).
+And of course, a task which seems complex may just be a chain of simple tasks.
 
 One relatable example is that of trying to maintain cascading error states. Imagine your UI has a validation rule: `start date` must be before `end date`. 
-After the user changes either value, the error state must be calculated, and this is used to determine if the `submit` button is enabled or not, and if an error message 
-is displayed or not.
+After the user changes either value, the error state must be calculated. This is used to determine if the `submit` button is enabled or not, and if an error message is displayed or not.
 
-Now, make it more complicated: imagine your UI has many validation rules and error state must be calculated for each of them. And the submit button state is
-a secondary calculation that combines these error states. Cascading, derived values. In this tree-ish arrangement, data flows from the leaves (what the user entered), through intermediate nodes (error predicate functions), through to the root (submit button state). In this tree, both the intermediate values and the root value are important.
+Now, imagine your UI has many validation rules, and an error state must be calculated for each of them. 
+In this case, the submit button state is a secondary calculation which combines these error states. 
+Cascading, derived values. 
 
-### 
-
-Answer: you don't. Instead, you use a Flow. 
-
-`Subscriptions` calculate a derived value. So do `Flows`. A key difference is that `Flow` values are stored in `app-db` and that makes them available to event handlers.  Of course, subscriptions are delightfully simple, because they both calculate and deliver data to views, and their lifecycle is automatically handled by the views using them. Flows are more manual/flexible. But when you need a derived value in an event handler, you have moved beyond `subscriptions` to needing a `Flow`
+Data flows from the leaves (what the user entered), through intermediate nodes (error predicate functions), through to the root (submit button state). 
+Both the intermediate values and the root value are important.
 
 ### Is this a rules engine?
 
