@@ -1,9 +1,11 @@
 (ns re-frame.flow.alpha
   (:require
+   [re-frame.db :as db]
    [re-frame.utils :as u]
    [re-frame.registrar :refer [get-handler]]
    [re-frame.loggers     :refer [console]]
-   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect update-effect]]))
+   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect update-effect]]
+   [reagent.core :as r]))
 
 (def db-path? vector?)
 
@@ -68,7 +70,8 @@
   ([k m] (reg-flow (assoc m :id k)))
   ([m] (swap! flows assoc
               (id m) (with-meta (->flow (merge (default (id m)) m))
-                       {::new true}))))
+                       {::new true
+                        ::ref (r/cursor db/app-db (:path m))}))))
 
 (defn clear-flow
   ([]

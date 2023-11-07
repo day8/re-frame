@@ -15,7 +15,10 @@
     (or (lifecycle (meta v))
         :default)))
 
+(def flow-lifecycle (comp #{:flow} ::rf/q))
+
 (def lifecycle (some-fn legacy-lifecycle
+                        flow-lifecycle
                         ::rf/lifecycle
                         (constantly :default)))
 

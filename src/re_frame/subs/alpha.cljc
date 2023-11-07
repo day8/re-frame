@@ -1,11 +1,14 @@
 (ns re-frame.subs.alpha
-  (:require [re-frame.subs :refer [deref-input-signals sugar warn-when-not-reactive]]
-            [re-frame.registrar :refer [register-handler]]
-            [re-frame.register.alpha :refer [reg lifecycle->method]]
-            [re-frame.interop :refer [add-on-dispose! make-reaction reactive? reagent-id]]
-            [re-frame.query.alpha :as q]
-            [re-frame :as-alias rf]
-            [re-frame.trace :as trace :include-macros true]))
+  (:require
+   [reagent.core :as r]
+   [re-frame.subs :refer [deref-input-signals sugar warn-when-not-reactive]]
+   [re-frame.registrar :refer [register-handler]]
+   [re-frame.register.alpha :refer [reg lifecycle->method]]
+   [re-frame.interop :refer [add-on-dispose! make-reaction reactive? reagent-id]]
+   [re-frame.query.alpha :as q]
+   [re-frame :as-alias rf]
+   [re-frame.trace :as trace :include-macros true]
+   [re-frame.flow.alpha :as flow]))
 
 (defmethod reg :sub-lifecycle [_ k f]
   (swap! lifecycle->method assoc
@@ -98,3 +101,11 @@
       (q/cache! q (q/handle q))))
 
 (reg :sub-lifecycle :forever sub-forever)
+
+(def nil-ref (r/atom nil))
+
+(defn sub-flow [q]
+  (or (some-> q :id flow/lookup meta :re-frame.flow.alpha/ref)
+      nil-ref))
+
+(reg :sub-lifecycle :flow sub-flow)
