@@ -137,7 +137,7 @@ And, we use this subscription in a view:
 `event handlers` yield `effects`. Typically, they yield a `:db` effect, causing a new value of `app-db`.  
 But first, re-frame updates your `:db` effect by running each registered `flow`.
 
-!!! Note: "Caution: implicit behavior ahead"
+!!! Note "Caution: implicit behavior ahead"
     Here, the tradeoff becomes clear. A `flow` can change `app-db` implicitly.
     This means the `:db` effect which you express in your event handlers may not match the actual `app-db` you'll get as a result.
 
