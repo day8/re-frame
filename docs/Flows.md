@@ -4,8 +4,6 @@
 
 ---
 
-## Flow
-
 This tutorial introduces **Flows**, part of [Domino 3](http://localhost:8000/re-frame/dominoes-30k/#domino-3-effect-handling) (effects).
 
 !!! Note "Not to be confused with..."
