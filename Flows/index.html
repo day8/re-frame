@@ -2006,9 +2006,11 @@ Our example would look like <code>(reg-flow :kitchen-area {...})</code>.</p>
 <h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">&para;</a></h2>
 <p><code>event handlers</code> yield <code>effects</code>. Typically, they yield a <code>:db</code> effect, causing a new value of <code>app-db</code>.<br />
 But first, re-frame updates your <code>:db</code> effect by running each registered <code>flow</code>.</p>
-<p>!!! Note: "Caution: implicit behavior ahead"
-    Here, the tradeoff becomes clear. A <code>flow</code> can change <code>app-db</code> implicitly.
-    This means the <code>:db</code> effect which you express in your event handlers may not match the actual <code>app-db</code> you'll get as a result.</p>
+<div class="admonition note">
+<p class="admonition-title">Caution: implicit behavior ahead</p>
+<p>Here, the tradeoff becomes clear. A <code>flow</code> can change <code>app-db</code> implicitly.
+This means the <code>:db</code> effect which you express in your event handlers may not match the actual <code>app-db</code> you'll get as a result.</p>
+</div>
 <p>Re-frame achieves this using an <a href="/re-frame/Interceptors/">interceptor</a>. Here's what it does:</p>
 <ul>
 <li>Destructure the current <code>app-db</code>, resolving the paths in <code>:inputs</code> - this yields a value like <code>{:w 10 :h 15}</code>.</li>
