@@ -953,6 +953,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#registering-a-flow" class="md-nav__link">
+    Registering a flow
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-does-it-work" class="md-nav__link">
     How does it work?
   </a>
@@ -1676,6 +1683,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#registering-a-flow" class="md-nav__link">
+    Registering a flow
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-does-it-work" class="md-nav__link">
     How does it work?
   </a>
@@ -1881,11 +1895,11 @@ When one part of the application state changes, another part is recalculated.<br
 More concretely, when the values change at one or more paths within <code>app-db</code>, then the value at another path is automatically recalculated.</p>
 <div class="admonition note">
 <p class="admonition-title">The DataFlow Paradigm</p>
-</div>
 <p>The dataflow programming paradigm emerged in the 1970s, so it is almost as foundational as functional programming. 
-Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. </p>
-<p>Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. 
+Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. 
+Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. 
 There's a reason <code>re-frame's</code> tagline is "derived data, flowing".</p>
+</div>
 <h2 id="a-flow-literal">A flow literal<a class="headerlink" href="#a-flow-literal" title="Permanent link">&para;</a></h2>
 <p>Re-frame uses flows to change your app's state, but a <code>flow</code> itself is an immutable value.</p>
 <p>Here's a basic <code>flow</code>. It describes how to derive the area of a room from its dimensions:</p>
@@ -1938,6 +1952,7 @@ There's a reason <code>re-frame's</code> tagline is "derived data, flowing".</p>
            :on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
+<h2 id="registering-a-flow">Registering a flow<a class="headerlink" href="#registering-a-flow" title="Permanent link">&para;</a></h2>
 <p>Now the interesting part, we use <code>reg-flow</code>: </p>
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (def kitchen-area-flow
@@ -1951,10 +1966,12 @@ There's a reason <code>re-frame's</code> tagline is "derived data, flowing".</p>
 (rf/reg-flow kitchen-area-flow)
 </div>
 
-<p>!!! Note: "Arity-2 version"
-    In addition to <code>(reg-flow flow)</code>, you can also call <code>(reg-flow id flow)</code>.
-    This gives it a signature just like the usual <code>reg-event-</code> and <code>reg-sub</code> calls.
-    Our example would look like <code>(reg-flow :kitchen-area {...})</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Arity-2 version</p>
+<p>In addition to <code>(reg-flow flow)</code>, you can also call <code>(reg-flow id flow)</code>.
+This gives it a signature just like the usual <code>reg-event-</code> and <code>reg-sub</code> calls.
+Our example would look like <code>(reg-flow :kitchen-area {...})</code>.</p>
+</div>
 <p>We write a subscription for the flow's output <code>:path</code>:</p>
 <div class="cm-doc">
 (rf/reg-sub
