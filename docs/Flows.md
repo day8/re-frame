@@ -15,12 +15,10 @@ When one part of the application state changes, another part is recalculated.
 More concretely, when the values change at one or more paths within `app-db`, then the value at another path is automatically recalculated.
 
 !!! Note "The DataFlow Paradigm"
-
-The dataflow programming paradigm emerged in the 1970s, so it is almost as foundational as functional programming. 
-Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. 
-
-Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. 
-There's a reason `re-frame's` tagline is "derived data, flowing".
+    The dataflow programming paradigm emerged in the 1970s, so it is almost as foundational as functional programming. 
+    Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. 
+    Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. 
+    There's a reason `re-frame's` tagline is "derived data, flowing".
 
 ## A flow literal
 
@@ -80,6 +78,8 @@ And, here's the code for our app: the user can enter `height` and `width` values
            :on-click #(rf/dispatch [:inc-h])} "+"]])
 </div>
 
+## Registering a flow
+
 Now the interesting part, we use `reg-flow`: 
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
@@ -94,7 +94,7 @@ Now the interesting part, we use `reg-flow`:
 (rf/reg-flow kitchen-area-flow)
 </div>
 
-!!! Note: "Arity-2 version"
+!!! Note "Arity-2 version"
     In addition to `(reg-flow flow)`, you can also call `(reg-flow id flow)`.
     This gives it a signature just like the usual `reg-event-` and `reg-sub` calls.
     Our example would look like `(reg-flow :kitchen-area {...})`.
