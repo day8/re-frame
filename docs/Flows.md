@@ -143,7 +143,8 @@ But first, re-frame updates your `:db` effect by running each registered `flow`.
 
 Re-frame achieves this using an [interceptor](/re-frame/Interceptors/). Here's what it does:
 
-- Destructure the current `app-db`, resolving the paths in `:inputs` - this yields a value like `{:w 10 :h 15}`.
+- Destructure the current `app-db`, resolving the paths in `:inputs` 
+    - this yields a value like `{:w 10 :h 15}`.
 - Destructure the *previous* `app-db` as well, to see if any of these values have changed.
     - For instance, if it sees `{:w 11 :h 24}`, that means the inputs have changed. `{:w 10 :h 15}` would mean no change.
 - *If* the inputs have changed:
@@ -211,7 +212,7 @@ Both the intermediate values and the root value are important.
 
 ### Is this a rules engine?
 
-You might be tempted to view `Flows` as having something to do with a rules engine, but it absolutely isn't that. It is simply a method for implementing dataflow. Each value is derivative of other values, with multiple levels of that process arranged in a tree structure in which many leaf values contribute to a terminal root value (think submit button state!). 
+You might be tempted to view `Flows` as having something to do with a rules engine, but it absolutely isn't that. It is simply a method for implementing dataflow. Each value is derivative of other values, with multiple levels of that process arranged in a tree structure in which many leaf values contribute to a terminal root value (think submit button state!).
 
 ### Can't I just use subscriptions?
 
