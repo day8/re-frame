@@ -75,11 +75,11 @@
            e))
 
 (defn- invoke-interceptor-fn
-  [{::keys [augment-exceptions?] :as context} interceptor direction]
+  [{::keys [original-exception?] :as context} interceptor direction]
   (let [f (get interceptor direction)]
     (cond
       (not f) context
-      (not augment-exceptions?) (f context)
+      original-exception? (f context)
       :else
       (try
         (f context)
@@ -233,8 +233,10 @@
         error-handler (registrar/get-handler :error :event-handler)]
     (trace/merge-trace!
      {:tags {:interceptors interceptors}})
-    (try
-      (execute* (assoc ctx ::augment-exceptions? true))
-      (catch #?(:clj Exception :cljs :default) e
-        (error-handler (ex-cause e)
-                       (merge-ex-data e {:event-v event-v}))))))
+    (if-not error-handler
+      (execute* (assoc ctx ::original-exception? true))
+      (try
+        (execute* ctx)
+        (catch #?(:clj Exception :cljs :default) e
+          (error-handler (ex-cause e)
+                         (merge-ex-data e {:event-v event-v})))))))

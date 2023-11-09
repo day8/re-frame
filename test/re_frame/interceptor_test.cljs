@@ -22,7 +22,14 @@
   (f)
   (clear-global-interceptor :interceptor-test))
 
+(defn error-handler-fixture
+  [f]
+  (let [original-handler (registrar/get-handler :error :event-handler)]
+    (f)
+    (registrar/register-handler :error :event-handler original-handler)))
+
 (use-fixtures :once global-interceptor-fixture)
+(use-fixtures :each error-handler-fixture)
 
 (deftest test-trim-v
   (let [ctx           (context [:event-id :b :c] [])
@@ -252,12 +259,11 @@
       (is (= {:a 2}
              (invoke-interceptor-fn context interceptor :before))))
 
-    (testing "throws original exception to flow when there is no error handler"
-      (is (nil? (registrar/get-handler :error :event-handler)) "no error-handler was registered")
+    (testing "throws original exception to flow when there's a :re-frame.interceptor/original-exception? context key"
       (let [exception (ex-info "Oopsie" {:foo :bar})
             interceptor {:id :throws
                          :before #(throw exception)}
-            context {:a 1}]
+            context {:a 1 :re-frame.interceptor/original-exception? true}]
         (try
           (invoke-interceptor-fn context interceptor :before)
           (is false "interceptor should have thrown")
@@ -266,14 +272,14 @@
             (is (= "Oopsie" (ex-message e)))
             (is (= {:foo :bar} (ex-data e)))))))
 
-    (testing "throws via exception->ex-info when there's a :re-frame.interceptor/augment-exceptions? context key"
+    (testing "throws via exception->ex-info"
       ;; actual handler doesn't matter here, we just need a registered handler so invoke-exception
       (registrar/register-handler :error :event-handler identity)
       (try
         (let [exception (ex-info "Oopsie" {:foo :bar})
               interceptor {:id :throws
                            :before #(throw exception)}
-              context {:a 1 :re-frame.interceptor/augment-exceptions? true}]
+              context {:a 1}]
           (try
             (invoke-interceptor-fn context interceptor :before)
             (is false "interceptor should have thrown")
@@ -297,7 +303,8 @@
         interceptors [throws-before]]
 
     (testing "an exception in an interceptor, without error handler"
-      (is (nil? (registrar/get-handler :error)))
+      (registrar/register-handler :error :event-handler nil)
+      (is (nil? (registrar/get-handler :error :event-handler)))
       (try
         (interceptor/execute [:_] interceptors)
         (is false "interceptor should have thrown")
