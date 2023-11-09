@@ -1999,7 +1999,10 @@ This means the <code>:db</code> effect which you express in your event handlers 
 </div>
 <p>Re-frame achieves this using an <a href="/re-frame/Interceptors/">interceptor</a>. Here's what it does:</p>
 <ul>
-<li>Destructure the current <code>app-db</code>, resolving the paths in <code>:inputs</code> - this yields a value like <code>{:w 10 :h 15}</code>.</li>
+<li>Destructure the current <code>app-db</code>, resolving the paths in <code>:inputs</code> <ul>
+<li>this yields a value like <code>{:w 10 :h 15}</code>.</li>
+</ul>
+</li>
 <li>Destructure the <em>previous</em> <code>app-db</code> as well, to see if any of these values have changed.<ul>
 <li>For instance, if it sees <code>{:w 11 :h 24}</code>, that means the inputs have changed. <code>{:w 10 :h 15}</code> would mean no change.</li>
 </ul>
@@ -2053,7 +2056,7 @@ Cascading, derived values. </p>
 <p>Data flows from the leaves (what the user entered), through intermediate nodes (error predicate functions), through to the root (submit button state). 
 Both the intermediate values and the root value are important.</p>
 <h3 id="is-this-a-rules-engine">Is this a rules engine?<a class="headerlink" href="#is-this-a-rules-engine" title="Permanent link">&para;</a></h3>
-<p>You might be tempted to view <code>Flows</code> as having something to do with a rules engine, but it absolutely isn't that. It is simply a method for implementing dataflow. Each value is derivative of other values, with multiple levels of that process arranged in a tree structure in which many leaf values contribute to a terminal root value (think submit button state!). </p>
+<p>You might be tempted to view <code>Flows</code> as having something to do with a rules engine, but it absolutely isn't that. It is simply a method for implementing dataflow. Each value is derivative of other values, with multiple levels of that process arranged in a tree structure in which many leaf values contribute to a terminal root value (think submit button state!).</p>
 <h3 id="cant-i-just-use-subscriptions">Can't I just use subscriptions?<a class="headerlink" href="#cant-i-just-use-subscriptions" title="Permanent link">&para;</a></h3>
 <p>You could derive your kitche's area with a <a href="/re-frame/subscriptions/#the-four-layers">layer-3 subscription</a>:</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>

@@ -1312,6 +1312,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    Unreleased
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#140-2023-11-02" class="md-nav__link">
     1.4.0 (2023-11-02)
   </a>
@@ -1494,6 +1501,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    Unreleased
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#140-2023-11-02" class="md-nav__link">
     1.4.0 (2023-11-02)
   </a>
@@ -1528,6 +1542,14 @@
 <blockquote>
 <p>The re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for Maven/deps/Lein.</p>
 </blockquote>
+<h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h4>Breaking</h4>
+<ul>
+<li>Re-frame may store a <code>:re-frame/system</code> key within <code>app-db</code>.
+    We hope colocating re-frame's internal state with <code>app-db</code> gives better
+    access to debugging tools, for example.
+    For now, only <code>re-frame.alpha</code> does this, storing the flow registry.</li>
+</ul>
 <h2 id="140-2023-11-02">1.4.0 (2023-11-02)<a class="headerlink" href="#140-2023-11-02" title="Permanent link">&para;</a></h2>
 <h4>Breaking</h4>
 <ul>
