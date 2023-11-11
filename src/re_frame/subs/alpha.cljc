@@ -105,7 +105,9 @@
 (def nil-ref (r/atom nil))
 
 (defn sub-flow [q]
-  (or (some-> q :id flow/lookup meta :re-frame.flow.alpha/ref)
-      nil-ref))
+  (r/reaction
+   (if-let [ref (some-> q :id flow/lookup meta :re-frame.flow.alpha/ref)]
+     @ref
+     (do @re-frame.db/app-db @nil-ref))))
 
 (reg :sub-lifecycle :flow sub-flow)
