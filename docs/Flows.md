@@ -146,7 +146,8 @@ Re-frame achieves this using an [interceptor](/re-frame/Interceptors/). Here's w
 - Destructure the current `app-db`, resolving the paths in `:inputs` 
     - this yields a value like `{:w 10 :h 15}`.
 - Destructure the *previous* `app-db` as well, to see if any of these values have changed.
-    - For instance, if it sees `{:w 11 :h 24}`, that means the inputs have changed. `{:w 10 :h 15}` would mean no change.
+    - For instance, if it sees `{:w 11 :h 24}`, that means the inputs have changed. 
+    - `{:w 10 :h 15}` would mean no change.
 - *If* the inputs have changed:
     - Call the `:output` function, passing it the previous result, and the current `:inputs`.
     - Store the newly derived value (in this case, `150`) in `app-db`, at the `:path`.
@@ -227,7 +228,9 @@ You could derive your kitche's area with a [layer-3 subscription](/re-frame/subs
 
 Just like a `flow`, this subscription's value changes whenever the inputs change, and (obviously) you call `subscribe` to access that value.
 
-A flow stores its `:output` value in `app-db`, while subscriptions don't. We designed re-frame on the premise that `app-db` holds your *entire* app-state. Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. It's also more practical (see [Reactive Context](#reactive-context).
+A flow stores its `:output` value in `app-db`, while subscriptions don't. We designed re-frame on the premise that `app-db` holds your *entire* app-state. 
+Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. 
+It's also more practical (see [Reactive Context](#reactive-context).
 
 Just like with layered subscriptions, one flow can use the value of another. Remember the `:inputs` to our first flow?
 
@@ -251,7 +254,11 @@ Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-ro
 
 As before, once `:output` runs, the resulting value is stored at `:path`. So, the new value of `app-db` will contain a number at the path `[:ratios :main-rooms]`
 
-For subscriptions, caching can be an issue (see [caching](#caching)). With flows, the process is simpler. `app-db` *is* the cache, since flows always store their output value within it. You, the programmer, define explicitly when to recalculate the output, *and* when to store the output. To this end, flows provide optional keys: `:live?`, `:init` and `:cleanup`. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:
+For subscriptions, caching can be an issue (see [caching](#caching)). With flows, the process is simpler. 
+`app-db` *is* the cache, since flows always store their output value within it. 
+You, the programmer, define explicitly when to recalculate the output, *and* when to store the output. 
+To this end, flows provide optional keys: `:live?`, `:init` and `:cleanup`. 
+Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:
 
 ## Living and Dying
 
@@ -719,13 +726,23 @@ We sympathize with you developers, for the hours you may have spent poring over 
 
 ### Caching
 
-Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when components call `subscribe` with a particular `query-v`, re-frame sets up a callback. When those components unmount, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the subscription is freed.
+Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. 
+Basically, when components call `subscribe` with a particular `query-v`, re-frame sets up a callback. 
+When those components unmount, this callback deletes the stored value. 
+It removes the subscription from the graph, so that it will no longer recalculate. 
+This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the subscription is freed.
 
-This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. You can't But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't *need* to couple their behavior with that of their calling components.
+This often works as intended, and nothing gets in our way. 
+It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. 
+But when these values are expensive to produce or store, their existence starts to matter. 
+The fact that some view is creating and destroying them starts to seem arbitrary. 
+Subscriptions don't *need* to couple their behavior with that of their calling components.
 
-The easy, automatic lifecycle behavior of subscriptions comes with a coupling of concerns. You can't directly control this lifecycle. You have to contol it by proxy, by mounting and unmounting your views. You can't *think* about your signal graph without thinking about views first.
+The easy, automatic lifecycle behavior of subscriptions comes with a coupling of concerns. You can't directly control this lifecycle. 
+You have to contol it by proxy, by mounting and unmounting your views. You can't *think* about your signal graph without thinking about views first.
 
-The `app-db` represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!
+The `app-db` represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. 
+We're tired of designing our whole business to change every time we wash the windows!
 
 ### Paths
 
