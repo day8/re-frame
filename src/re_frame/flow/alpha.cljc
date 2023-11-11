@@ -13,7 +13,7 @@
 
 (def id? keyword?)
 
-(def flows (r/cursor db/app-db [:re-frame/system :flows]))
+(def flows (atom {}))
 
 (defn lookup [x]
   (cond
