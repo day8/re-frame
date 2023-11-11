@@ -770,9 +770,13 @@ Sound [familiar](https://github.com/day8/re-frame/discussions/776)?
 > "Wait," you ask, "what happened to the cache? Why is my subscription recalculating when its inputs are the same?"
 > After a lot of headscratching, you find out it's because the subscription itself is not the same. Render logic caused it to dispose, and a new one took its place.
 
-This isn't a bug, nor is it inevitable, but in our experience, complexity adds up fast. Once Reagent, Re-frame and React begin to share the concern of reactive dataflow, they can race, or play chicken. I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!
+This isn't a bug, nor is it inevitable, but in our experience, complexity adds up fast. 
+Once Reagent, Re-frame and React begin to share the concern of reactive dataflow, they can race, or play chicken. 
+I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!
 
-When a view calls `subscribe`, it creates a reaction. When that view unmounts, it frees the reaction. These are side-effects on the signal *graph* (that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).
+When a view calls `subscribe`, it creates a reaction. When that view unmounts, it frees the reaction. 
+These are side-effects on the signal *graph* 
+(that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).
 
 ```
 event -> app-db -> signals -> view -> event
@@ -794,13 +798,17 @@ Why not simply have *everything* derive from `app-db`?
 
 The good news:
 
-__You can access a flow's output value any time, anywhere,__ since flows are controlled by re-frame/interceptors, not reagent/reactions. Instead of thinking about reactive context, just think about when the latest event happened.
+__You can access a flow's output value any time, anywhere,__ since flows are controlled by re-frame/interceptors, not reagent/reactions. 
+Instead of thinking about reactive context, just think about the outcome of the latest event.
 
-__If you know a flow's name, you know its output location,__ since flows store their output in `app-db`, at a static path. It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.
+__If you know a flow's name, you know its output location,__ since flows store their output in `app-db`, at a static path. 
+It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.
 
-__A flow's lifecycle is a pure function of `app-db`__. That means you explicitly define when a flow lives, dies, is registered or cleared. You do this directly, not via your component tree.
+__A flow's lifecycle is a pure function of `app-db`__. 
+That means you explicitly define when a flow lives, dies, is registered or cleared. You do this directly, not via your component tree.
 
-Like many Clojure patterns, flows are *both* nested *and* flat. Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can access it directly:
+Like many Clojure patterns, flows are *both* nested *and* flat. 
+Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can access it directly:
 
 <div class="cm-doc" data-cm-doc-no-eval-on-init data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-flow
