@@ -2560,8 +2560,12 @@ Specifically, render logic changes the state of subscriptions.</p>
 "Wait," you ask, "what happened to the cache? Why is my subscription recalculating when its inputs are the same?"
 After a lot of headscratching, you find out it's because the subscription itself is not the same. Render logic caused it to dispose, and a new one took its place.</p>
 </blockquote>
-<p>This isn't a bug, nor is it inevitable, but in our experience, complexity adds up fast. Once Reagent, Re-frame and React begin to share the concern of reactive dataflow, they can race, or play chicken. I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!</p>
-<p>When a view calls <code>subscribe</code>, it creates a reaction. When that view unmounts, it frees the reaction. These are side-effects on the signal <em>graph</em> (that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).</p>
+<p>This isn't a bug, nor is it inevitable, but in our experience, complexity adds up fast. 
+Once Reagent, Re-frame and React begin to share the concern of reactive dataflow, they can race, or play chicken. 
+I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!</p>
+<p>When a view calls <code>subscribe</code>, it creates a reaction. When that view unmounts, it frees the reaction. 
+These are side-effects on the signal <em>graph</em> 
+(that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).</p>
 <div class="codehilite"><pre><span></span><code>event -&gt; app-db -&gt; signals -&gt; view -&gt; event
                                   ∟-&gt; signal graph -&gt; signals -&gt; view
 </code></pre></div>
@@ -2578,10 +2582,14 @@ Why not simply have <em>everything</em> derive from <code>app-db</code>?</p>
 <p><code>event -&gt; app-db -&gt; signal graph -&gt; signals -&gt; view -&gt; event</code></p>
 <h3 id="a-better-way">A better way<a class="headerlink" href="#a-better-way" title="Permanent link">&para;</a></h3>
 <p>The good news:</p>
-<p><strong>You can access a flow's output value any time, anywhere,</strong> since flows are controlled by re-frame/interceptors, not reagent/reactions. Instead of thinking about reactive context, just think about when the latest event happened.</p>
-<p><strong>If you know a flow's name, you know its output location,</strong> since flows store their output in <code>app-db</code>, at a static path. It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.</p>
-<p><strong>A flow's lifecycle is a pure function of <code>app-db</code></strong>. That means you explicitly define when a flow lives, dies, is registered or cleared. You do this directly, not via your component tree.</p>
-<p>Like many Clojure patterns, flows are <em>both</em> nested <em>and</em> flat. Even though <code>::num-balloons-to-fill-kitchen</code> depends on other flows, we can access it directly:</p>
+<p><strong>You can access a flow's output value any time, anywhere,</strong> since flows are controlled by re-frame/interceptors, not reagent/reactions. 
+Instead of thinking about reactive context, just think about the outcome of the latest event.</p>
+<p><strong>If you know a flow's name, you know its output location,</strong> since flows store their output in <code>app-db</code>, at a static path. 
+It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.</p>
+<p><strong>A flow's lifecycle is a pure function of <code>app-db</code></strong>. 
+That means you explicitly define when a flow lives, dies, is registered or cleared. You do this directly, not via your component tree.</p>
+<p>Like many Clojure patterns, flows are <em>both</em> nested <em>and</em> flat. 
+Even though <code>::num-balloons-to-fill-kitchen</code> depends on other flows, we can access it directly:</p>
 <div class="cm-doc" data-cm-doc-no-eval-on-init data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-flow
  {:id ::kitchen-volume
