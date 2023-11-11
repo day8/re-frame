@@ -2004,7 +2004,8 @@ This means the <code>:db</code> effect which you express in your event handlers 
 </ul>
 </li>
 <li>Destructure the <em>previous</em> <code>app-db</code> as well, to see if any of these values have changed.<ul>
-<li>For instance, if it sees <code>{:w 11 :h 24}</code>, that means the inputs have changed. <code>{:w 10 :h 15}</code> would mean no change.</li>
+<li>For instance, if it sees <code>{:w 11 :h 24}</code>, that means the inputs have changed. </li>
+<li><code>{:w 10 :h 15}</code> would mean no change.</li>
 </ul>
 </li>
 <li><em>If</em> the inputs have changed:<ul>
@@ -2067,7 +2068,9 @@ Both the intermediate values and the root value are important.</p>
 </div>
 
 <p>Just like a <code>flow</code>, this subscription's value changes whenever the inputs change, and (obviously) you call <code>subscribe</code> to access that value.</p>
-<p>A flow stores its <code>:output</code> value in <code>app-db</code>, while subscriptions don't. We designed re-frame on the premise that <code>app-db</code> holds your <em>entire</em> app-state. Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. It's also more practical (see <a href="#reactive-context">Reactive Context</a>.</p>
+<p>A flow stores its <code>:output</code> value in <code>app-db</code>, while subscriptions don't. We designed re-frame on the premise that <code>app-db</code> holds your <em>entire</em> app-state. 
+Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. 
+It's also more practical (see <a href="#reactive-context">Reactive Context</a>.</p>
 <p>Just like with layered subscriptions, one flow can use the value of another. Remember the <code>:inputs</code> to our first flow?</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 {:inputs {:w [:kitchen :width]
@@ -2086,7 +2089,11 @@ Both the intermediate values and the root value are important.</p>
 </div>
 
 <p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
-<p>For subscriptions, caching can be an issue (see <a href="#caching">caching</a>). With flows, the process is simpler. <code>app-db</code> <em>is</em> the cache, since flows always store their output value within it. You, the programmer, define explicitly when to recalculate the output, <em>and</em> when to store the output. To this end, flows provide optional keys: <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>. Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:</p>
+<p>For subscriptions, caching can be an issue (see <a href="#caching">caching</a>). With flows, the process is simpler. 
+<code>app-db</code> <em>is</em> the cache, since flows always store their output value within it. 
+You, the programmer, define explicitly when to recalculate the output, <em>and</em> when to store the output. 
+To this end, flows provide optional keys: <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>. 
+Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:</p>
 <h2 id="living-and-dying">Living and Dying<a class="headerlink" href="#living-and-dying" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Between death... and arising... is found an existence— a "body"... that goes to the place of rebirth. This existence between two realms... is called intermediate existence.</p>
@@ -2520,10 +2527,20 @@ Since an event handler isn't reactive, it can't access any subscriptions.</p>
 <p>Of course you can design around the problem, but at what cost?
 We sympathize with you developers, for the hours you may have spent poring over an event handler, just to re-write the code as a subscription, and vice-versa.</p>
 <h3 id="caching">Caching<a class="headerlink" href="#caching" title="Permanent link">&para;</a></h3>
-<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. Basically, when components call <code>subscribe</code> with a particular <code>query-v</code>, re-frame sets up a callback. When those components unmount, this callback deletes the stored value. It removes the subscription from the graph, so that it will no longer recalculate. This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the subscription is freed.</p>
-<p>This often works as intended, and nothing gets in our way. It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. You can't But when these values are expensive to produce or store, their existence starts to matter. The fact that some view is creating and destroying them starts to seem arbitrary. Subscriptions don't <em>need</em> to couple their behavior with that of their calling components.</p>
-<p>The easy, automatic lifecycle behavior of subscriptions comes with a coupling of concerns. You can't directly control this lifecycle. You have to contol it by proxy, by mounting and unmounting your views. You can't <em>think</em> about your signal graph without thinking about views first.</p>
-<p>The <code>app-db</code> represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. We're tired of designing our whole business to change every time we wash the windows!</p>
+<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. 
+Basically, when components call <code>subscribe</code> with a particular <code>query-v</code>, re-frame sets up a callback. 
+When those components unmount, this callback deletes the stored value. 
+It removes the subscription from the graph, so that it will no longer recalculate. 
+This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the subscription is freed.</p>
+<p>This often works as intended, and nothing gets in our way. 
+It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. 
+But when these values are expensive to produce or store, their existence starts to matter. 
+The fact that some view is creating and destroying them starts to seem arbitrary. 
+Subscriptions don't <em>need</em> to couple their behavior with that of their calling components.</p>
+<p>The easy, automatic lifecycle behavior of subscriptions comes with a coupling of concerns. You can't directly control this lifecycle. 
+You have to contol it by proxy, by mounting and unmounting your views. You can't <em>think</em> about your signal graph without thinking about views first.</p>
+<p>The <code>app-db</code> represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. 
+We're tired of designing our whole business to change every time we wash the windows!</p>
 <h3 id="paths">Paths<a class="headerlink" href="#paths" title="Permanent link">&para;</a></h3>
 <p>A <a href="/re-frame/subscriptions/#the-four-layers">layer-2</a> subscription basically <em>names</em> an <code>app-db</code> path. What does a layer-3 subscription <em>name</em>?</p>
 <p>A materialized view, or a derived value.</p>
