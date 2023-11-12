@@ -13,7 +13,7 @@
 
 (def id? keyword?)
 
-(def flows (atom {}))
+(def flows (r/atom {}))
 
 (defn lookup [x]
   (cond
