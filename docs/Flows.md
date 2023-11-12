@@ -9,6 +9,7 @@ This tutorial introduces **Flows**, part of [Domino 3](http://localhost:8000/re-
 !!! Note "Not to be confused with..."
     - [re-frame-async-flow-fx](https://github.com/day8/re-frame-async-flow-fx). A `re-frame/flow` is totally sychronous, running on every event.
     - The [on-changes interceptor](/re-frame/api-re-frame.core/#on-changes). Flows are an evolution of this idea.
+    - [domino](https://github.com/domino-clj/domino). Another take on dataflow programming, inspired by re-frame.
 
 A **Flow** calculates a derived value "automatically".  
 When one part of the application state changes, another part is recalculated.  
