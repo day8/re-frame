@@ -65,6 +65,7 @@
 (defn warning []
   (let [error-state (rf/subscribe :flow {:id ::error-state})]
     [:div {:style {:color "red"}}
+     (gensym)
      (->> @error-state
           (get {:too-many "Warning: only the first 5 items will be used."
                 :none     "No items. Please add one."
