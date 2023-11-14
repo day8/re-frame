@@ -47,17 +47,35 @@
    :output (constantly true)
    :live? (constantly true)
    :live-inputs {}
-   :init (fn [db path] db)
+   :init (fn [db path] (assoc-in db path {}))
    :cleanup deep-cleanup})
 
-(map :inputs (vals @flows))
+(defn warn-stale-dependencies [new-flow]
+  (doseq [{:keys [id path inputs]} (vals @flows)
+          :let [bad-output-flows (filter (comp #{path} second) (:inputs new-flow))
+                bad-input-flows  (filter (comp #{(:path new-flow)} second) inputs)]]
+    (when (some seq [bad-output-flows bad-input-flows])
+      (console :warn "Warning: while registering the" (:id new-flow) "flow:")
+      (doseq [[input path] bad-output-flows]
+        (console :warn "you registered the input" input
+                 "as a db path, but the flow" id
+                 "already outputs to this path:" (str path)
+                 "consider using re-frame.flow/output to reflect this dependency."))
+      (doseq [_ bad-input-flows]
+        (console :warn "you registered the output path" (str (:path new-flow) ",")
+                 "but the flow" id
+                 "already inputs from this path."
+                 "Consider changing the inputs of" id
+                 "to reflect this dependency.")))))
 
 (defn reg-flow
   ([k m] (reg-flow (assoc m :id k)))
-  ([m] (swap! flows assoc
-              (id m) (with-meta (merge (default (id m)) m)
-                       {::new? true
-                        ::ref (r/cursor db/app-db (:path m))}))))
+  ([m]
+   (warn-stale-dependencies m)
+   (swap! flows assoc
+          (id m) (with-meta (merge (default (id m)) m)
+                   {::new? true
+                    ::ref (r/cursor db/app-db (:path m))}))))
 
 (defn clear-flow
   ([]
