@@ -43,34 +43,23 @@
        new-data
        (recur new-data (pop path))))))
 
-(defn ->flow [{:keys [output live? inputs] :as m}]
-  (-> m
-      (cond-> (and output (not (map? output)))
-        (update :output #(do {:fn %})))
-      (cond-> output
-        (update-in [:output :inputs] merge inputs))
-      (cond-> (and live? (not (map? live?)))
-        (update :live? #(do {:fn %})))
-      (cond-> live?
-        (update-in [:live? :inputs] merge inputs))
-      (dissoc :inputs)))
-
 (defn default [id]
   {:id id
    :path [id]
    :inputs {}
-   :live? {:inputs {}
-           :fn (constantly true)}
-   :output {:inputs {}
-            :fn (constantly (str "Hello World " (gensym)))}
-   :init (fn [db path] (assoc-in db path {}))
+   :output (constantly true)
+   :live? (constantly true)
+   :live-inputs {}
+   :init (fn [db path] db)
    :cleanup deep-cleanup})
+
+(map :inputs (vals @flows))
 
 (defn reg-flow
   ([k m] (reg-flow (assoc m :id k)))
   ([m] (swap! flows assoc
-              (id m) (with-meta (->flow (merge (default (id m)) m))
-                       {::new true
+              (id m) (with-meta (merge (default (id m)) m)
+                       {::new? true
                         ::ref (r/cursor db/app-db (:path m))}))))
 
 (defn clear-flow
@@ -107,13 +96,10 @@
                                 " which has no associated handler. Ignoring.")))
                    (update-in ctx [:effects :fx] (partial remove (set flow-fx)))))))}))
 
-(defn update-flow [ctx flow]
-  (let [{:keys                           [path init cleanup]
-         ::keys                          [cleared?]
-         {live? :fn live-inputs :inputs} :live?
-         {output :fn inputs :inputs}     :output}
-        flow
-        new?               (::new (meta flow))
+(defn update-flow [ctx {:as flow
+                        :keys  [path init cleanup live? inputs live-inputs output]
+                        ::keys [cleared?]}]
+  (let [{::keys [new?]}   (meta flow)
         old-db             (get-coeffect ctx :db)
         new-db             (or (get-effect ctx :db) old-db)
         id->old-live-input (u/map-vals (partial get-output old-db) live-inputs)
@@ -143,7 +129,7 @@
     :after (fn [ctx]
              (let [all-flows (with-cleared @flows)]
                (swap! flows vary-meta dissoc ::cleared)
-               (swap! flows (partial u/map-vals #(vary-meta % dissoc ::new)))
+               (swap! flows (partial u/map-vals #(vary-meta % dissoc ::new?)))
                (reduce update-flow ctx ((memoize topsort) all-flows))))}))
 
 #_(do
