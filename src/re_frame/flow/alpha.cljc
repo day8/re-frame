@@ -15,10 +15,7 @@
 
 (def flows (r/atom {}))
 
-(defn lookup [x]
-  (cond
-    (flow? x) x
-    (id? x) (get @flows x)))
+(defn lookup [id] (get @flows id))
 
 (defn id [x]
   (cond-> x (flow? x) :id))
