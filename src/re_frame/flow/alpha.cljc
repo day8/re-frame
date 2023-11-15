@@ -112,7 +112,7 @@
                    (update-in ctx [:effects :fx] (partial remove (set flow-fx)))))))}))
 
 (defn update-flow [ctx {:as flow
-                        :keys  [path init cleanup live? inputs live-inputs output]
+                        :keys  [path init cleanup live? inputs live-inputs output id]
                         ::keys [cleared?]}]
   (let [{::keys [new?]}   (meta flow)
         old-db             (get-coeffect ctx :db)
@@ -130,8 +130,10 @@
                                               dirty? (update-in path output id->input))
                              [:dead :dead] identity
                              [:live :dead] #(cleanup % path)
-                             [:dead :live] #(cond-> (init % path)
-                                              (or dirty? new?) (update-in path output id->input)))]
+                             [:dead :live] #(if-not (or dirty? #p new?)
+                                              %
+                                              (do (swap! flows update id vary-meta dissoc ::new?)
+                                                  (update-in (init % path) path output id->input))))]
     (update-effect ctx :db (fnil update-db (get-coeffect ctx :db)))))
 
 (defn with-cleared [m]
@@ -144,7 +146,6 @@
     :after (fn [ctx]
              (let [all-flows (with-cleared @flows)]
                (swap! flows vary-meta dissoc ::cleared)
-               (swap! flows (partial u/map-vals #(vary-meta % dissoc ::new?)))
                (reduce update-flow ctx ((memoize topsort) all-flows))))}))
 
 #_(do
