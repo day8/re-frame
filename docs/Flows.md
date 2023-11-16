@@ -276,7 +276,7 @@ It can still be hard to predict when a flow will run, leading to defensive progr
 Sometimes we'd like to simply turn our flow off, so we can stop thinking about it.
 For this, we use a `:live?` function.
 
-The quote above deals with human life, but you can also think of `:live?` as in a tv or internet broadcast.
+The quote above deals with phenomenal life, but you can also think of `:live?` as in a tv or internet broadcast.
 Data flows, but only when the flow itself is live.
 
 Here's another room area flow:
@@ -355,8 +355,6 @@ Let's test it out:
                                            [tabbed-app]])
 </div>
 
-!!! Note "Click `eval` on the two code blocks above to start this app."
-
 <div id="tabbed-app"></div>
 
 Try switching tabs. Notice how `:area` only exists when you're in the `room-calculator` tab. What's happening here?
@@ -409,13 +407,14 @@ It's common to design apps which prepare certain db paths when a high-level stat
 
 Not only do flows have a lifecycle (defined by `:live?`, `:init` and `:cleanup`), but this lifecycle also includes registration and deregistration.
 
-- When you call `reg-flow`, or trigger the `:reg-flow` effect, that flow also comes alive (that means it runs `:init` and `:output`).
-
-- When you call `clear-flow`, or trigger the `:clear-flow` effect, it dies (running `:cleanup`).
+- When you call `reg-flow`, that flow comes alive.
+    - `:init` and `:output` run, even if the inputs haven't changed.
+    - That's because the flow itself has changed.
+- When you call `clear-flow`, it dies (running `:cleanup`).
+- Re-frame provides `:reg-flow` and `:clear-flow` [effects](#re-frame/Effects/) for this purpose.
 
 Here's another demonstration. Think of it as a stripped-down todomvc.
-You can add, remove or clear items in a list.
-
+You can add and remove items in a list:
 <div class="cm-doc">
 (rf/reg-sub ::items :-> (comp reverse ::items))
 
@@ -465,11 +464,13 @@ First things first, we express these requirements as data:
 
 Then, we'll use a flow to evaluate which requirements are met.
 
-Note that the requirements aren't about what *happens*, only what things *are*.
-In other words, it's your app *state* that matters, not any particular event or view.
-Our flow doesn't care how it happened that a requirement was met, nor what to do next.
+!!! Note "State, not events"
+    These requirements aren't about what *happens*, only what things *are*.
+    It's your app *state* that matters, not any particular event or view.
+    Our flow doesn't care how it happened that a requirement was met, nor what to do next.
 
-For reasons that will become clear, let's write a [factory function](https://en.wikipedia.org/wiki/Factory_%28object-oriented_programming%29) for this flow:
+For reasons that will become clear, let's write a [factory function](https://en.wikipedia.org/wiki/Factory_%28object-oriented_programming%29) for this flow. 
+It builds a flow that validates our item list against the requirements:
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (defn error-state-flow [{:keys [min-items max-items] :as requirements}]
@@ -485,14 +486,15 @@ For reasons that will become clear, let's write a [factory function](https://en.
                  :else             :ok)))})
 </div>
 
-And start running a flow that fits our base requirements:
+And register a flow that fits our base requirements:
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-flow (error-state-flow base-requirements))
 </div>
 
-Now this flow is calculating an error-state value, and adding it to `app-db` after every event 
-(that is, as long as the `:items` or the `:tab` have changed).
+Now this flow is calculating an error-state value, and adding it to `app-db` after every event. 
+This happens as long as the `::items` have changed... right? 
+Actually, there's another way to make a flow recalculate - we can reregister it.
 
 Let's update the app to display our new error state:
 
@@ -517,16 +519,14 @@ Let's update the app to display our new error state:
 
 <div id="item-counter-error"></div>
 
-Your app is working fine, until the next redesign.
-Now, users must be able to choose the maximum item limit.
+Your app is working fine, until your next design meeting.
+Now they want a way to change the max item limit.
 A little contrived, I know. But not uncommon from a programming perspective.
 
-Luckily, our `error-state-flow` factory is flexible.
-It can put together a new flow for any new requirement.
+Luckily, our flow factory can make a new flow for any requirement. 
+Therefore, putting in this feature is just a matter of triggering the `:reg-flow` effect.
 
-Therefore, building this new app is just a matter of triggering the `:reg-flow` effect with an updated flow.
-
-We build a basic form with the power to change the requirement:
+We build a basic form to change the requirement:
 
 <div class="cm-doc">
 (defn requirement-picker []
@@ -540,7 +540,7 @@ We build a basic form with the power to change the requirement:
                    {:max-items (-> % .-target .-value)}])}]])
 </div>
 
-And a corresponding event, which triggers our `:reg-flow` effect.
+And a corresponding event, which triggers our `:reg-flow` effect:
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-event-fx
@@ -551,9 +551,12 @@ And a corresponding event, which triggers our `:reg-flow` effect.
 
 What happens after `:reg-flow` runs? Are there now two flows? Actually, no.
 
-Flow registration works just like interceptor registration. If you register a flow with the same `:id` as an existing flow, it replaces that flow. That means every time we trigger `:reg-flow (error-state-flow ...)`, not only does it register the new flow but it clears the old one. The old flow runs `:cleanup`, and the new flow runs `:init` and `:output`.
+- If you register a new flow with the same `:id`, it replaces the old one. 
+- When we trigger `[:reg-flow (error-state-flow ...)]`
+    - The old `:error-state` flow runs `:cleanup`
+    - The new `:error-state` flow runs `:init` and `:output`
 
-All this leads to a situation where not only does changing the inputs lead to new output, but so does changing the flow itself.
+Not only does changing the inputs lead to new output, but so does changing the flow itself.
 Let's test it out:
 
 <div class="cm-doc">
