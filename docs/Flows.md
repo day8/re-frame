@@ -124,6 +124,8 @@ And, we use this subscription in a view:
    " Area:"
    @(rf/subscribe [:area room])])  ;;  <--- subscribing
 
+(rf/dispatch-sync [:init])
+
 (defonce garage-calculator-root
   (rdc/create-root (js/document.getElementById "garage-calculator")))
 
@@ -248,8 +250,8 @@ Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-ro
 
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 {:id     :main-room-ratio
- :inputs {:kitchen     ::kitchen-area
-          :living-room ::living-room-area}
+ :inputs {:kitchen     (rf/flow-input ::kitchen-area)
+          :living-room (rf/flow-input ::living-room-area)}
  :output (fn [_ {:keys [kitchen living-room]}]
            (/ kitchen living-room))
  :path   [:ratios :main-rooms]}
@@ -281,15 +283,15 @@ Here's another room area flow:
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-flow
- {:id     :garage-area
-  :inputs {:w [:garage :width]
-           :h [:garage :length]}
+ {:id     :kitchen-area
+  :inputs {:w [:kitchen :width]
+           :h [:kitchen :length]}
   :output (fn area [previous-area {:keys [w h] :as inputs}]
             (* w h))
-  :path   [:garage :area]
+  :path   [:kitchen :area]
   :live-inputs {:tab [:tab]}
   :live?  (fn [db {:keys [tab]}]
-            (= tab :room-calculator))})
+            (= tab :kitchen))})
 </div>
 
 Re-frame provides a global `:flow` subscription, which can fetch the output value for any flow:
@@ -297,7 +299,7 @@ Re-frame provides a global `:flow` subscription, which can fetch the output valu
 A barebones tab picker, and something to show us the value of `app-db`:
 
 <div class="cm-doc">
-(def tabs [:room-calculator :something-else])
+(def tabs [:kitchen :garage])
 
 (def clickable-tab (into clickable {:padding "0.5rem"}))
 (def active-tab (into clickable-tab {:color "green"}))
@@ -320,8 +322,8 @@ A barebones tab picker, and something to show us the value of `app-db`:
     [:div
      [tab-picker @current-tab]
      (case @current-tab
-       :room-calculator [room-calculator :garage]
-       :something-else [:<>]
+       :kitchen [room-calculator :kitchen]
+       :garage [room-calculator :garage]
        nil)]))
 </div>
 
@@ -379,7 +381,7 @@ And independently of all this, `:output` only runs when `:inputs` have changed v
 
 Try adding this `:cleanup` key into the `:kitchen-area` flow above (be sure to `eval` the code block again).
 
-<div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+<div class="cm-doc" data-cm-doc-no-result>
 :cleanup (fn [db path]
            (assoc-in db path :unknown!))
 </div>
@@ -394,7 +396,7 @@ The point is, *you* express when the signal lives or dies, not your render tree.
 
 `:init`, does nothing by default. Feel free to try out this custom `:init` function as well. Notice how it adds a key, and that key stays, regardless of our flow being dead or alive:
 
-<div class="cm-doc" data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+<div class="cm-doc" data-cm-doc-no-result>
 :init (fn [db path]
         (assoc-in db (conj (vec (butlast path)) :initiated?) true))
 </div>
@@ -417,12 +419,6 @@ You can add, remove or clear items in a list.
 <div class="cm-doc">
 (rf/reg-sub ::items :-> (comp reverse ::items))
 
-(defn item [id]
-  [:div "Item" id])
-
-(defn items []
-  (into [:div] (map item) @(rf/subscribe [::items])))
-
 (rf/reg-event-db
  ::add-item
  (fn [db [_ id]] (update db ::items conj id)))
@@ -430,6 +426,11 @@ You can add, remove or clear items in a list.
 (rf/reg-event-db
  ::delete-item
  (fn [db [_ id]] (update db ::items #(remove #{id} %))))
+
+(defn item [id] [:div "Item" id])
+
+(defn items []
+  (into [:div] (map item) @(rf/subscribe [::items])))
 
 (defn controls []
   (let [id (atom 0)]
@@ -475,15 +476,13 @@ For reasons that will become clear, let's write a [factory function](https://en.
   {:id ::error-state
    :path [::error-state]
    :inputs {:items [::items]
-            :tab :current-tab}
+            :tab (rf/flow-input :current-tab)}
    :output (fn [_ {:keys [items]}]
              (let [ct (count items)]
                (cond
                  (> ct max-items)  :too-many
-                 (<= ct min-items) :not-enough                 
-                 :else             :ok)))
-   :live? (fn [db {:keys [tab]}]
-            (= tab :item-counter))})
+                 (<= ct min-items) :not-enough
+                 :else             :ok)))})
 </div>
 
 And start running a flow that fits our base requirements:
@@ -492,11 +491,12 @@ And start running a flow that fits our base requirements:
 (rf/reg-flow (error-state-flow base-requirements))
 </div>
 
-Now this flow is calculating an error-state value, and adding it to `app-db` after every event (that is, as long as you're on the `:item-counter` tab, and the `:items` or the `:tab` have changed).
+Now this flow is calculating an error-state value, and adding it to `app-db` after every event 
+(that is, as long as the `:items` or the `:tab` have changed).
 
 Let's update the app to display our new error state:
 
-<div class="cm-doc" data-cm-doc-no-eval-on-init>
+<div class="cm-doc">
 
 (defn warning []
   (let [error-state (rf/sub :flow {:id ::error-state})]
@@ -506,28 +506,14 @@ Let's update the app to display our new error state:
                 :not-enough "Not enough items. Please add one."
                 :ok         [:br]}))]))
 
-(defn item-counter []
-  [:<> [controls] [warning] [items]])
-
-(defn tabbed-app-with-error []
-  [:div
-   [tab-picker]
-   [debug-app-db]
-   (case @current-tab
-     :room-calculator [room-calculator]
-     :item-counter [item-counter]
-     nil)])
-
 (rf/dispatch-sync [:init])
 
 (defonce item-counter-error-root 
   (rdc/create-root (js/document.getElementById "item-counter-error")))
 
 (rdc/render item-counter-error-root
-            [app-container [tabbed-app-with-error]])
+            [app-container [debug-app-db] [controls] [warning] [items]])
 </div>
-
-!!! Note "Click `eval` on the code block above to start this app."
 
 <div id="item-counter-error"></div>
 
@@ -556,7 +542,7 @@ We build a basic form with the power to change the requirement:
 
 And a corresponding event, which triggers our `:reg-flow` effect.
 
-<div class="cm-doc" data-cm-doc-result-format="pass-fail" data-cm-doc-no-eval-on-init>
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-event-fx
  :change-requirements
  (fn [_ [_ new-requirements]]
@@ -570,29 +556,15 @@ Flow registration works just like interceptor registration. If you register a fl
 All this leads to a situation where not only does changing the inputs lead to new output, but so does changing the flow itself.
 Let's test it out:
 
-<div class="cm-doc" data-cm-doc-no-eval-on-init>
-(defn item-counter []
-  [:<> [controls] [requirement-picker] [warning] [items]])
-
-(defn tabbed-app-with-requirements []
-  [:div
-   [tab-picker]
-   [debug-app-db]
-   (case @current-tab
-     :room-calculator [room-calculator]
-     :item-counter [item-counter]
-     nil)])
-
+<div class="cm-doc">
 (rf/dispatch-sync [:init])
 
 (defonce item-counter-requirements-root
   (rdc/create-root (js/document.getElementById "item-counter-requirements")))
 
 (rdc/render item-counter-requirements-root
-            [app-container [tabbed-app-with-error]])
+            [app-container [debug-app-db] [controls] [requirement-picker] [warning] [items]])
 </div>
-
-!!! Note "Click `eval` on the two code blocks above to start this app."
 
 <div id="item-counter-requirements"></div>
 
@@ -605,7 +577,7 @@ At this point, we've fully explored the capabilities of flows. In this section, 
 
 Introducing yet another demo app! Turns out, we were measuring the kitchen to fill it with balloons. It's a balloon prank planner app. Consider the following:
 
-<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-eval-on-init data-cm-doc-no-edit data-cm-doc-no-result>
 (rf/reg-sub
  ::kitchen-area
  (fn [db _] (get-in db [:kitchen :area])))
@@ -651,7 +623,7 @@ Furthermore, subscriptions have an `input-signals` function. This allows the val
 
 That means, to get a usable value for `num-balloons-to-fill-kitchen`, we have to duplicate the business logic that we wrote into our subscription, along with the *entire* subgraph of inputs which our subscription is composed of:
 
-<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
 (rf/reg-event-fx
  ::order-ballons-for-kitchen-prank
  (fn [{:keys [balloons-per-bag db] :as cofx} _]
@@ -758,7 +730,7 @@ That means you explicitly define when a flow lives, dies, is registered or clear
 Like many Clojure patterns, flows are *both* nested *and* flat. 
 Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can access it directly:
 
-<div class="cm-doc" data-cm-doc-no-eval-on-init data-cm-doc-no-edit data-cm-doc-no-result>
+<div class="cm-doc" data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
 (rf/reg-flow
  {:id ::kitchen-volume
   :inputs {:area [:kitchen :area]
