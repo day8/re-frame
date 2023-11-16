@@ -1273,9 +1273,7 @@
 
 ;; --  Flows ------------------------------------------------------------------
 
-(defn reg-flow
-  [m]
-  (flow/reg-flow m))
+(def reg-flow flow/reg-flow)
 
 (defn flow-output
   [db id]
