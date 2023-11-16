@@ -11,7 +11,7 @@
 
 (def flow? map?)
 
-(def id? keyword?)
+(def flow-input? (comp some? ::input))
 
 (def flows (r/atom {}))
 
@@ -20,9 +20,11 @@
 (defn id [x]
   (cond-> x (flow? x) :id))
 
-(defn input-ids [{{live-inputs :inputs} :live?
-                  {calc-inputs :inputs} :output}]
-  (mapv id (remove db-path? (-> #{} (into (vals live-inputs)) (into (vals calc-inputs))))))
+(defn input-ids [{:keys [inputs live-inputs]}]
+  (vec (distinct (into []
+                       (comp (remove db-path?)
+                             (map #(or (::input %) %)))
+                       (concat (vals inputs) (vals live-inputs))))))
 
 (defn topsort [flows]
   (map flows (reverse (u/topsort-kahn (u/map-vals input-ids flows)))))
@@ -109,6 +111,8 @@
   (if (vector? value)
     (get-in db value)
     (some->> value lookup :path (get-output db))))
+
+(defn flow-input [flow] {::input (id flow)})
 
 (def flow-fx-ids #{:reg-flow :clear-flow})
 

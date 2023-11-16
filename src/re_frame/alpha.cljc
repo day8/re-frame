@@ -1279,6 +1279,8 @@
   [db id]
   (flow/get-output db id))
 
+(def flow-input flow/flow-input)
+
 (defn flow
   [k]
   (flow/lookup k))
