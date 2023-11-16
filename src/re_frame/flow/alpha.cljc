@@ -111,10 +111,10 @@
                                 " which has no associated handler. Ignoring.")))
                    (update-in ctx [:effects :fx] (partial remove (set flow-fx)))))))}))
 
-(defn update-flow [ctx {:as flow
+(defn update-flow [ctx {:as    flow
                         :keys  [path init cleanup live? inputs live-inputs output id]
                         ::keys [cleared?]}]
-  (let [{::keys [new?]}   (meta flow)
+  (let [{::keys [new?]}    (meta flow)
         old-db             (get-coeffect ctx :db)
         new-db             (or (get-effect ctx :db) old-db)
         id->old-live-input (u/map-vals (partial get-output old-db) live-inputs)
@@ -122,18 +122,16 @@
         id->old-input      (u/map-vals (partial get-output old-db) inputs)
         id->input          (u/map-vals (partial get-output new-db) inputs)
         dirty?             (not= id->input id->old-input)
-        bardo              (mapv #(if % :live :dead)
-                                 [(and (live? old-db id->old-live-input) (not new?))
-                                  (and (live? new-db id->live-input) (not cleared?))])
+        bardo              [(cond new? :new (live? old-db id->old-live-input) :live :else :dead)
+                            (cond cleared? :cleared (live? new-db id->live-input) :live :else :dead)]
         update-db          (case bardo
-                             [:live :live] #(cond-> %
-                                              dirty? (update-in path output id->input))
-                             [:dead :dead] identity
-                             [:live :dead] #(cleanup % path)
-                             [:dead :live] #(if-not (or dirty? #p new?)
-                                              %
-                                              (do (swap! flows update id vary-meta dissoc ::new?)
-                                                  (update-in (init % path) path output id->input))))]
+                             [:new :live]     #(do (swap! flows update id vary-meta dissoc ::new?)
+                                                   (update-in (init % path) path output id->input))
+                             [:live :cleared] #(cleanup % path)
+                             [:live :live]    #(cond-> % dirty? (update-in path output id->input))
+                             [:live :dead]    #(cleanup % path)
+                             [:dead :live]    #(update-in (init % path) path output id->input)
+                             identity)]
     (update-effect ctx :db (fnil update-db (get-coeffect ctx :db)))))
 
 (defn with-cleared [m]
