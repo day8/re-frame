@@ -107,7 +107,7 @@
    (swap! flows assoc
           (id m) (with-meta (merge (default (id m)) m)
                    {::new? true
-                    ::ref (r/cursor db/app-db (:path m))}))))
+                    ::ref (r/reaction (get-in @db/app-db (:path m)))}))))
 
 (defn clear-flow
   ([]
