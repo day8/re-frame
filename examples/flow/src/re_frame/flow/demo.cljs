@@ -78,7 +78,7 @@
     "Register flow"]])
 
 (defn warning []
-  (let [error-state (rf/subscribe :flow {:id ::error-state})]
+  (let [error-state (rf/subscribe [:flow {:id ::error-state}])]
     [:div {:style {:color "red"}}
      (->> @error-state
           (get {:too-many "Warning: only the first 3 items will be used."

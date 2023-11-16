@@ -602,6 +602,14 @@
 
   See also: `reg-sub`
 
+  **Flows**
+
+  Flows have their own lifecycle, and you don't need to provide an `::rf/lifecycle` key.
+  To subscribe to a flow, simply call:
+
+      #!clj
+      (sub :flow {:id :your-flow-id})
+
   **Legacy support**
 
   `dyn-v` is not supported.
@@ -1300,7 +1308,9 @@
 ;; --  Deprecation ------------------------------------------------------------
 
 (def ^{:api-docs/heading "Legacy Compatibility"} subscribe
-  "Equivalent to `sub`."
+  "Equivalent to `sub` (except with flows, which have their own lifecycle and are not cached).
+
+  Call `(subscribe [:flow {:id :your-flow-id}])` to subscribe to a flow."
   sub)
 
 (defn reg-sub

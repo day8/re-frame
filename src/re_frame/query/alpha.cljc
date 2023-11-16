@@ -15,17 +15,17 @@
     (or (lifecycle (meta v))
         :default)))
 
-(def flow-lifecycle (comp #{:flow} ::rf/q))
-
-(def lifecycle (some-fn legacy-lifecycle
-                        flow-lifecycle
-                        ::rf/lifecycle
-                        (constantly :default)))
-
 (defn legacy-query-id [q]
   (when (vector? q) (first q)))
 
 (def id (some-fn legacy-query-id ::rf/q))
+
+(def flow-lifecycle (comp #{:flow} id))
+
+(def lifecycle (some-fn flow-lifecycle
+                        legacy-lifecycle
+                        ::rf/lifecycle
+                        (constantly :default)))
 
 (defn method [q] (@lifecycle->method (lifecycle q)))
 
