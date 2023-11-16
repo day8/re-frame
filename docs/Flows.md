@@ -31,14 +31,16 @@ Here's a basic `flow`. It describes how to derive the area of a room from its di
 {:id     :room-area
  :inputs {:w [:room :width]
           :h [:room :length]}
- :output (fn calc-area [previous-area {:keys [w h] :as inputs}]
+ :output (fn calc-area [{:keys [w h] :as inputs}]
            (* w h))
  :path   [:room :area]}
 </div>
 
 - **`:id`** - uniquely identifies this flow.
 - **`:inputs`** - a map of `app-db` paths to observe for changes.
-- **`:output`** - calculates the new derived value. Accepts the previous result, and a map of input values.
+- **`:output`** - calculates the new derived value.
+    - Takes a map of resolved inputs.
+    - Simply takes `app-db` if there are no inputs.
 - **`:path`** - denotes *where* the derived value should be stored.
 
 Every event, when the values of `:inputs` change, `:output` is run, and the result is stored in `app-db` at `:path`.
@@ -90,8 +92,7 @@ Now the interesting part, we use `reg-flow`:
   {:id     :garage-area
    :inputs {:w [:garage :width]
             :h [:garage :length]}
-   :output (fn area [previous-area {:keys [w h] :as inputs}]
-             (* w h))
+   :output (fn [{:keys [w h]}] (* w h))
    :path   [:garage :area]})
 
 (rf/reg-flow garage-area-flow)
@@ -252,7 +253,7 @@ Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-ro
 {:id     :main-room-ratio
  :inputs {:kitchen     (rf/flow-input ::kitchen-area)
           :living-room (rf/flow-input ::living-room-area)}
- :output (fn [_ {:keys [kitchen living-room]}]
+ :output (fn [{:keys [kitchen living-room]}]
            (/ kitchen living-room))
  :path   [:ratios :main-rooms]}
 </div>
@@ -286,11 +287,10 @@ Here's another room area flow:
  {:id     :kitchen-area
   :inputs {:w [:kitchen :width]
            :h [:kitchen :length]}
-  :output (fn area [previous-area {:keys [w h] :as inputs}]
-            (* w h))
+  :output (fn [{:keys [w h]}] (* w h))
   :path   [:kitchen :area]
   :live-inputs {:tab [:tab]}
-  :live?  (fn [db {:keys [tab]}]
+  :live?  (fn [{:keys [tab]}]
             (= tab :kitchen))})
 </div>
 
@@ -478,7 +478,7 @@ It builds a flow that validates our item list against the requirements:
    :path [::error-state]
    :inputs {:items [::items]
             :tab (rf/flow-input :current-tab)}
-   :output (fn [_ {:keys [items]}]
+   :output (fn [{:keys [items]}]
              (let [ct (count items)]
                (cond
                  (> ct max-items)  :too-many
@@ -738,14 +738,14 @@ Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can acce
  {:id ::kitchen-volume
   :inputs {:area [:kitchen :area]
            :height [:kitchen :height]}
-  :output (fn [_ {:keys [area height]}]
+  :output (fn [{:keys [area height]}]
             (* area height))
   :path [:kitchen :volume]})
 
 (rf/reg-flow
  {:id ::num-balloons-to-fill-kitchen
   :inputs {:volume ::kitchen-volume}
-  :output (fn [_ {:keys [volume]}]
+  :output (fn [{:keys [volume]}]
             (let [std-balloon-volume 2.5]
                (/ volume std-balloon-volume)))})
 
