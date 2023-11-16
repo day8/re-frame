@@ -1,7 +1,19 @@
 (ns re-frame.flow.demo
   (:require
    [reagent.dom.client :as rdc]
-   [re-frame.alpha :as rf]))
+   [re-frame.alpha :as rf]
+   [zprint.core :as zp]
+   [clojure.string :as str]
+   [re-frame.db :refer [app-db]]))
+
+(defn debug-app-db []
+  (fn []
+    [:pre {:style {:position "absolute" :bottom 0 :right 0 :font-size 8}}
+     (some-> app-db
+             deref
+             (zp/zprint-str {:style :justified})
+             (str/replace #"re-frame.flow.demo/" ":")
+             (str/replace #"re-fine." ":"))]))
 
 (rf/reg-sub ::items :-> (comp reverse ::items))
 
@@ -42,9 +54,12 @@
    :inputs {:items [::items]}
    :output (fn [_ {:keys [items]}]
              (cond
-               (> (count items) 5) :too-many
-               (empty? items)      :none
-               :else               :ok))})
+               (> (count items) 2) :too-many
+               (empty? items)      :none))
+   :live-inputs {:items [::items]}
+   :live? (fn [{:keys [items]}]
+            (let [ct (count items)]
+              (or (zero? ct) (> ct 3))))})
 
 (rf/reg-flow error-state-flow)
 
@@ -66,12 +81,11 @@
   (let [error-state (rf/subscribe :flow {:id ::error-state})]
     [:div {:style {:color "red"}}
      (->> @error-state
-          (get {:too-many "Warning: only the first 5 items will be used."
-                :none     "No items. Please add one."
-                :ok       [:br]}))]))
+          (get {:too-many "Warning: only the first 3 items will be used."
+                :none     "No items. Please add one."}))]))
 
 (defn root []
-  [:div [controls] [flow-controls] [warning] [items]])
+  [:div [controls] [flow-controls] [warning] [items] [debug-app-db]])
 
 (rf/reg-event-db
  ::init
