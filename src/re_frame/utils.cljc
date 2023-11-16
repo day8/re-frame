@@ -73,3 +73,5 @@
           (throw (#?(:clj Exception. :cljs js/Error.)
                   (str "Graph has a cycle: " cycle))))))))
 
+(defn remove-orphans [graph]
+  (map-vals (partial filterv (set (keys graph))) graph))

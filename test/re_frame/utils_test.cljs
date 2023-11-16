@@ -18,4 +18,7 @@
           e (atom nil)]
       (is (thrown-with-msg? js/Error
                             #"Graph has a cycle:"
-                            (u/topsort-kahn cyclic-graph))))))
+                            (u/topsort-kahn cyclic-graph)))))
+  (testing "orphaned edges"
+    (is (= {:A [:B] :B []} (u/remove-orphans {:A [:B :C]
+                                              :B []})))))

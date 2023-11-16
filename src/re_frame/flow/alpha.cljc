@@ -27,7 +27,12 @@
                        (concat (vals inputs) (vals live-inputs))))))
 
 (defn topsort [flows]
-  (map flows (reverse (u/topsort-kahn (u/map-vals input-ids flows)))))
+  (->> flows
+       (u/map-vals input-ids)
+       u/remove-orphans
+       u/topsort-kahn
+       reverse
+       (map flows)))
 
 (defn safe-update-in [m path f & args]
   (if (empty? path)
@@ -66,6 +71,11 @@
              {}
              flows))
 
+(defn validate-inputs [{:keys [inputs] :as flow}]
+  (doseq [[id input] inputs
+          :when (not ((some-fn db-path? flow-input?) input))]
+    (throw (js/Error. "bad input"))))
+
 (defn warn-stale-dependencies [flows new-flow]
   (let [dependencies (stale-dependencies flows new-flow)
         dependents (stale-dependents flows new-flow)
@@ -92,6 +102,7 @@
 (defn reg-flow
   ([k m] (reg-flow (assoc m :id k)))
   ([m]
+   (validate-inputs m)
    (warn-stale-dependencies @flows m)
    (swap! flows assoc
           (id m) (with-meta (merge (default (id m)) m)
