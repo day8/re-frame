@@ -50,28 +50,47 @@
    :init (fn [db path] (assoc-in db path {}))
    :cleanup deep-cleanup})
 
-(defn warn-stale-dependencies [new-flow]
-  (doseq [{:keys [id path inputs]} (vals @flows)
-          :let [bad-output-flows (filter (comp #{path} second) (:inputs new-flow))
-                bad-input-flows  (filter (comp #{(:path new-flow)} second) inputs)]]
-    (when (some seq [bad-output-flows bad-input-flows])
-      (console :warn "Warning: while registering the" (:id new-flow) "flow:")
-      (doseq [[input path] bad-output-flows]
-        (console :warn "you registered the input" input
-                 "as a db path, but the flow" id
-                 "already outputs to this path:" (str path)
-                 "consider using re-frame.flow/output to reflect this dependency."))
-      (doseq [_ bad-input-flows]
-        (console :warn "you registered the output path" (str (:path new-flow) ",")
-                 "but the flow" id
-                 "already inputs from this path."
-                 "Consider changing the inputs of" id
-                 "to reflect this dependency.")))))
+(defn stale-dependencies [flows {:keys [inputs]}]
+  (reduce-kv (fn [m k {:keys [path]}]
+               (cond-> m
+                 (contains? (set (vals inputs)) path) (assoc k path)))
+             {}
+             flows))
+
+(defn stale-dependents [flows {:keys [path]}]
+  (reduce-kv (fn [m k {:keys [inputs]}]
+               (let [bad-inputs (into {} (filter (comp #{path} val)) inputs)]
+                 (cond-> m (seq bad-inputs) (assoc k bad-inputs))))
+             {}
+             flows))
+
+(defn warn-stale-dependencies [flows new-flow]
+  (let [dependencies (stale-dependencies flows new-flow)
+        dependents (stale-dependents flows new-flow)
+        warn-dependency (fn [[id path]]
+                          ["- Input" (str path)
+                           "matches the output path of" (str id) ".\n"
+                           "  For an explicit dependency, change it to (re-frame/flow-input"
+                           (str id ").") "\n"])
+        warn-dependent (fn [[id inputs]]
+                         (mapcat (fn [[input-id path]]
+                                   ["- Output" (str (:path new-flow))
+                                    "matches the input" (str input-id)
+                                    "of the flow" (str id ".\n")
+                                    "  For an explicit dependency, change that input to"
+                                    "(re-frame/flow-input" (str (:id new-flow) ").") "\n"])
+                                 inputs))]
+    (when (some seq [dependents dependencies])
+      (apply console :warn "Warning: You called `reg-flow` with the flow" (str (:id new-flow))
+             "but this created stale dependencies.\n"
+             "Your flows may not evaluate in the correct order.\n"
+             (concat (mapcat warn-dependency dependencies)
+                     (mapcat warn-dependent dependents))))))
 
 (defn reg-flow
   ([k m] (reg-flow (assoc m :id k)))
   ([m]
-   (warn-stale-dependencies m)
+   (warn-stale-dependencies @flows m)
    (swap! flows assoc
           (id m) (with-meta (merge (default (id m)) m)
                    {::new? true
