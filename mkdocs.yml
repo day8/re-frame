@@ -73,6 +73,7 @@ nav:
       - Using Stateful JS Components: Using-Stateful-JS-Components.md
       - The Logo Backstory: The-re-frame-logo.md
       - Flows.md
+      - Flows - advanced topics: flows-advanced-topics.md
   - FAQs:
     - "How can I Inspect app-db?": FAQs/Inspecting-app-db.md
     - "What Is Best Practice?": FAQs/BestPractice.md
