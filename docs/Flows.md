@@ -245,9 +245,11 @@ Just like with layered subscriptions, one flow can use the value of another. Rem
 
 ## Layering flows
 
-As you can see, vectors stand for paths in `app-db`. Single keywords, however, stand for *other flows*.
+As you can see, vectors stand for paths in `app-db`.
+The `flow-input` function, however, gives us access to *other flows*.
 
-Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-room-area`. When either input changes value, our flow calls the `:output` function to recalculate its own value:
+Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-room-area`.
+When either input changes value, our flow calls the `:output` function to recalculate its own value:
 
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 {:id     :main-room-ratio
