@@ -4,14 +4,14 @@
    [re-frame.utils :as u]
    [re-frame.registrar :refer [get-handler]]
    [re-frame.loggers     :refer [console]]
-   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect update-effect]]
+   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect update-effect assoc-effect]]
    [reagent.core :as r]))
 
 (def db-path? vector?)
 
 (def flow? map?)
 
-(def flow-input? (comp some? ::input))
+(def flow<-? (comp some? ::flow<-))
 
 (def flows (r/atom {}))
 
@@ -20,7 +20,7 @@
 (defn input-ids [{:keys [inputs live-inputs]}]
   (vec (distinct (into []
                        (comp (remove db-path?)
-                             (map #(or (::input %) %)))
+                             (map #(or (::flow<- %) %)))
                        (concat (vals inputs) (vals live-inputs))))))
 
 (defn topsort [flows]
@@ -54,50 +54,51 @@
    :init (fn [db path] (assoc-in db path {}))
    :cleanup deep-cleanup})
 
-(defn stale-dependencies [flows {:keys [inputs]}]
+(defn stale-in-flows [flows {:keys [inputs]}]
   (reduce-kv (fn [m k {:keys [path]}]
                (cond-> m
                  (contains? (set (vals inputs)) path) (assoc k path)))
              {}
              flows))
 
-(defn stale-dependents [flows {:keys [path]}]
+(defn stale-out-flows [flows {:keys [path]}]
   (reduce-kv (fn [m k {:keys [inputs]}]
                (let [bad-inputs (into {} (filter (comp #{path} val)) inputs)]
                  (cond-> m (seq bad-inputs) (assoc k bad-inputs))))
              {}
              flows))
 
-(defn validate-inputs [{:keys [inputs] :as flow}]
-  (doseq [[id input] inputs
-          :when (not ((some-fn db-path? flow-input?) input))]
+(defn validate-inputs [{:keys [inputs]}]
+  (doseq [[_ input] inputs
+          :when (not ((some-fn db-path? flow<-?) input))]
     (throw (js/Error. "bad input"))))
 
 (defn warn-stale-dependencies [flows new-flow]
-  (let [dependencies (stale-dependencies flows new-flow)
-        dependents (stale-dependents flows new-flow)
-        warn-dependency (fn [[id path]]
-                          ["- Input" (str path)
-                           "matches the output path of" (str id) ".\n"
-                           "  For an explicit dependency, change it to (re-frame/flow-input"
-                           (str id ").") "\n"])
-        warn-dependent (fn [[id inputs]]
-                         (mapcat (fn [[input-id path]]
-                                   ["- Output" (str (:path new-flow))
-                                    "matches the input" (str input-id)
-                                    "of the flow" (str id ".\n")
-                                    "  For an explicit dependency, change that input to"
-                                    "(re-frame/flow-input" (str (:id new-flow) ").") "\n"])
-                                 inputs))]
-    (when (some seq [dependents dependencies])
+  (let [ins (stale-in-flows flows new-flow)
+        outs (stale-out-flows flows new-flow)
+        warn-ins (fn [[id path]]
+                   ["- Input" (str path)
+                    "matches the output path of" (str id) ".\n"
+                    "  For an explicit dependency, change it to (re-frame/flow<-"
+                    (str id ").") "\n"])
+        warn-outs (fn [[id inputs]]
+                    (mapcat (fn [[input-id _]]
+                              ["- Output" (str (:path new-flow))
+                               "matches the input" (str input-id)
+                               "of the flow" (str id ".\n")
+                               "  For an explicit dependency, change that input to"
+                               "(re-frame/flow<-" (str (:id new-flow) ").") "\n"])
+                            inputs))
+        warnings (concat (mapcat warn-ins ins) (mapcat warn-outs outs))]
+    (when (seq warnings)
       (apply console :warn "Warning: You called `reg-flow` with the flow" (str (:id new-flow))
              "but this created stale dependencies.\n"
              "Your flows may not evaluate in the correct order.\n"
-             (concat (mapcat warn-dependency dependencies)
-                     (mapcat warn-dependent dependents))))))
+             warnings))))
 
 (defn reg-flow
-  ([k m] (reg-flow (assoc m :id k)))
+  ([k m]
+   (reg-flow (assoc m :id k)))
   ([m]
    (validate-inputs m)
    (warn-stale-dependencies @flows m)
@@ -120,7 +121,7 @@
     (get-in db value)
     (some->> value lookup :path (get-output db))))
 
-(defn flow-input [flow] {::input (:idg flow)})
+(defn flow<- [flow] {::flow<- (:idg flow)})
 
 (def flow-fx-ids #{:reg-flow :clear-flow})
 
@@ -148,23 +149,25 @@
                         ::keys [cleared?]}]
   (let [{::keys [new?]}    (meta flow)
         old-db             (get-coeffect ctx :db)
-        new-db             (or (get-effect ctx :db) old-db)
+        db                 (or (get-effect ctx :db) old-db)
         id->old-live-input (resolve-inputs old-db live-inputs)
-        id->live-input     (resolve-inputs new-db live-inputs)
+        id->live-input     (resolve-inputs db live-inputs)
         id->old-input      (resolve-inputs old-db inputs)
-        id->input          (resolve-inputs new-db inputs)
+        id->input          (resolve-inputs db inputs)
         dirty?             (not= id->input id->old-input)
         bardo              [(cond new? :new (live? id->old-live-input) :live :else :dead)
                             (cond cleared? :cleared (live? id->live-input) :live :else :dead)]
-        update-db          (case bardo
-                             [:new :live]     #(do (swap! flows update id vary-meta dissoc ::new?)
-                                                   (assoc-in (init % path) path (output id->input)))
-                             [:live :cleared] #(cleanup % path)
-                             [:live :live]    #(cond-> % dirty? (assoc-in path (output id->input)))
-                             [:live :dead]    #(cleanup % path)
-                             [:dead :live]    #(assoc-in (init % path) path (output id->input))
-                             identity)]
-    (update-effect ctx :db (fnil update-db (get-coeffect ctx :db)))))
+        new-db          (case bardo
+                          [:new :live]     (do (swap! flows update id vary-meta dissoc ::new?)
+                                               (-> (init db path)
+                                                   (assoc-in path (output id->input))))
+                          [:live :cleared] (cleanup db path)
+                          [:live :live]    (cond-> db dirty? (assoc-in path (output id->input)))
+                          [:live :dead]    (cleanup db path)
+                          [:dead :live]    (-> (init db path)
+                                               (assoc-in path (output id->input)))
+                          identity)]
+    (assoc-effect ctx :db new-db)))
 
 (defn with-cleared [m]
   (into m (map (fn [[k v]] [[::cleared k (gensym)] (assoc v ::cleared? true)])

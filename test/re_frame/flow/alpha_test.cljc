@@ -9,14 +9,14 @@
 (deftest abstractions
   (is (f/db-path? []))
   (is (f/flow? {}))
-  (is (f/flow-input? {::f/input :a})))
+  (is (f/flow<-? {::f/input :a})))
 
 (deftest helpers
   (let [c {:id :c
            :inputs {:db-path [:some :path]
-                    :flow-a (rf/flow-input :a)}
+                    :flow-a (rf/flow<- :a)}
            :live-inputs {:db-path [:some :path]
-                         :flow-b (rf/flow-input :b)}
+                         :flow-b (rf/flow<- :b)}
            :path [:x :y :z]}]
     (rf/reg-flow c)
     (rf/reg-flow {:id :a})
@@ -29,9 +29,9 @@
     (testing "deep cleanup"
       (is (= {} (f/deep-cleanup {:a {:b {:c {:d 1}}}} [:a :b :c :d])))
       (is (= {:a {:x 2}} (f/deep-cleanup {:a {:x 2 :b {:c {:d 1}}}} [:a :b :c :d]))))
-    (testing "stale dependencies"
-      (is (= {:flow-a [:a]} (f/stale-dependencies {:flow-a {:path [:a]}}
-                                                  {:inputs {:a [:a]}})))
+    (testing "stale inputs & outputs"
+      (is (= {:flow-a [:a]} (f/stale-in-flows {:flow-a {:path [:a]}}
+                                              {:inputs {:a [:a]}})))
 
-      (is (= {:flow-a {:b [:b]}} (f/stale-dependents {:flow-a {:inputs {:b [:b]}}}
-                                                     {:path [:b]}))))))
+      (is (= {:flow-a {:b [:b]}} (f/stale-out-flows {:flow-a {:inputs {:b [:b]}}}
+                                                    {:path [:b]}))))))

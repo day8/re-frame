@@ -1287,7 +1287,7 @@
   [db id]
   (flow/get-output db id))
 
-(def flow-input flow/flow-input)
+(def flow<- flow/flow<-)
 
 (defn flow
   [k]

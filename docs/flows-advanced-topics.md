@@ -190,7 +190,7 @@ Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can acce
 
 (rf/reg-flow
  {:id ::num-balloons-to-fill-kitchen
-  :inputs {:volume (rf/flow-input ::kitchen-volume)}
+  :inputs {:volume (rf/flow<- ::kitchen-volume)}
   :output (fn [{:keys [volume]}]
             (let [std-balloon-volume 2.5]
                (/ volume std-balloon-volume)))})

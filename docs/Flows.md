@@ -246,15 +246,15 @@ Just like with layered subscriptions, one flow can use the value of another. Rem
 ## Layering flows
 
 As you can see, vectors stand for paths in `app-db`.
-The `flow-input` function, however, gives us access to *other flows*.
+The `flow<-` function, however, gives us access to *other flows*.
 
 Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-room-area`.
 When either input changes value, our flow calls the `:output` function to recalculate its own value:
 
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 {:id     :main-room-ratio
- :inputs {:kitchen     (rf/flow-input ::kitchen-area)
-          :living-room (rf/flow-input ::living-room-area)}
+ :inputs {:kitchen     (rf/flow<- ::kitchen-area)
+          :living-room (rf/flow<- ::living-room-area)}
  :output (fn [{:keys [kitchen living-room]}]
            (/ kitchen living-room))
  :path   [:ratios :main-rooms]}
@@ -479,7 +479,7 @@ It builds a flow that validates our item list against the requirements:
   {:id ::error-state
    :path [::error-state]
    :inputs {:items [::items]
-            :tab (rf/flow-input :current-tab)}
+            :tab (rf/flow<- :current-tab)}
    :output (fn [{:keys [items]}]
              (let [ct (count items)]
                (cond
