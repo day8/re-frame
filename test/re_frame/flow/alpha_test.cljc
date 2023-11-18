@@ -9,8 +9,7 @@
 (deftest abstractions
   (is (f/db-path? []))
   (is (f/flow? {}))
-  (is (f/flow-input? {::f/input :a}))
-  (is (= :a (f/id {:id :a}))))
+  (is (f/flow-input? {::f/input :a})))
 
 (deftest helpers
   (let [c {:id :c
@@ -23,7 +22,7 @@
     (rf/reg-flow {:id :a})
     (rf/reg-flow {:id :b})
     (testing "registration"
-      (is (= :a (f/id (rf/flow :a)))))
+      (is (= :a (:id (rf/flow :a)))))
     (testing "topological sort"
       (is (= #{:a :b} (set (f/input-ids c))))
       (is (= :c (last (map :id (f/topsort @f/flows))))))

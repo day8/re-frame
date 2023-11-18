@@ -17,9 +17,6 @@
 
 (defn lookup [id] (get @flows id))
 
-(defn id [x]
-  (cond-> x (flow? x) :id))
-
 (defn input-ids [{:keys [inputs live-inputs]}]
   (vec (distinct (into []
                        (comp (remove db-path?)
@@ -105,9 +102,9 @@
    (validate-inputs m)
    (warn-stale-dependencies @flows m)
    (swap! flows assoc
-          (id m) (with-meta (merge (default (id m)) m)
-                   {::new? true
-                    ::ref (r/reaction (get-in @db/app-db (:path m)))}))))
+          (:id m) (with-meta (merge (default (:id m)) m)
+                    {::new? true
+                     ::ref (r/reaction (get-in @db/app-db (:path m)))}))))
 
 (defn clear-flow
   ([]
@@ -115,15 +112,15 @@
    (swap! flows empty))
   ([x]
    (when-let [flow (lookup x)]
-     (swap! flows vary-meta update ::cleared assoc (id flow) flow)
-     (swap! flows dissoc (id flow)))))
+     (swap! flows vary-meta update ::cleared assoc (:id flow) flow)
+     (swap! flows dissoc (:id flow)))))
 
 (defn get-output [db value]
   (if (vector? value)
     (get-in db value)
     (some->> value lookup :path (get-output db))))
 
-(defn flow-input [flow] {::input (id flow)})
+(defn flow-input [flow] {::input (:idg flow)})
 
 (def flow-fx-ids #{:reg-flow :clear-flow})
 
