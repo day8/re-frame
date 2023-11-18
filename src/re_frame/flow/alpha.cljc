@@ -124,23 +124,21 @@
 
 (def flow-fx-ids #{:reg-flow :clear-flow})
 
+(defn do-effect [[k v]] ((get-handler :fx k false) v))
+
+(def remove-fx (partial remove flow-fx-ids))
+
 (def do-fx
   (->interceptor
    {:id :do-flow-fx
-    :after (fn [{{:keys [fx] :as effects} :effects :as ctx}]
-             (let [flow-fx
-                   (into (filterv (comp flow-fx-ids first) fx)
-                         (select-keys effects flow-fx-ids))]
-               (if (empty? flow-fx)
-                 ctx
-                 (do
-                   (doseq [[k v] flow-fx]
-                     (if-let [f (get-handler :fx k false)]
-                       (f v)
-                       (console :warn "re-frame: in \":fx\" effect found "
-                                k
-                                " which has no associated handler. Ignoring.")))
-                   (update-in ctx [:effects :fx] (partial remove (set flow-fx)))))))}))
+    :after (fn [{{:keys [fx] :as effects} :effects
+                 :as ctx}]
+             (let [flow-fx (concat (select-keys effects flow-fx-ids)
+                                   (filterv (comp flow-fx-ids first) fx))]
+               (doall (map do-effect flow-fx))
+               (-> ctx
+                   (update-in [:effects :fx] remove-fx)
+                   (update :effects remove-fx))))}))
 
 (defn resolve-inputs [db inputs]
   (if (empty? inputs) db (u/map-vals (partial get-output db) inputs)))
