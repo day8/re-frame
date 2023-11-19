@@ -301,7 +301,7 @@ As before, once `:output` runs, the resulting value is stored at `:path`. So, th
 For subscriptions, caching can be an issue (see [caching](#caching)). With flows, the process is simpler. 
 `app-db` *is* the cache, since flows always store their output value within it. 
 You, the programmer, define explicitly when to recalculate the output, *and* when to store the output. 
-To this end, flows provide optional keys: `:live?`, `:init` and `:cleanup`. 
+To this end, flows provide optional keys: `:live?` and `:cleanup`. 
 Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:
 
 ## Living and Dying
@@ -427,19 +427,6 @@ By default, `:cleanup` dissociates the path from `app-db`. By declaring this `:c
 Now, is this a good idea? After all, we might consider the area known, as long as we know the width and length. Maybe we should do no cleanup, and keep the value, even when `:live?` returns false. In that case, our `:cleanup` function would simply be: `:cleanup (fn [db _] db)`.
 
 The point is, *you* express when the signal lives or dies, not your render tree.
-
-### Init
-
-`:init`, does nothing by default. Feel free to try out this custom `:init` function as well. Notice how it adds a key, and that key stays, regardless of our flow being dead or alive:
-
-<div class="cm-doc" data-cm-doc-no-result>
-:init (fn [db path]
-        (assoc-in db (conj (vec (butlast path)) :initiated?) true))
-</div>
-
-If you did want the `:initiated?` key to go away, you could handle that within `:cleanup`.
-
-It's common to design apps which prepare certain db paths when a high-level state changes, such as when switching tabs. With flows, this preparation is an official library feature. Instead of writing custom events, you can use the `:cleanup` and `:init` keys and your colleagues will know exactly what you're doing.
 
 ## Redefining and Undefining
 
