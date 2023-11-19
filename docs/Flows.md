@@ -11,19 +11,39 @@ This tutorial introduces **Flows**, part of [Domino 3](http://localhost:8000/re-
     - The [on-changes interceptor](/re-frame/api-re-frame.core/#on-changes). Flows are an evolution of this idea.
     - [domino](https://github.com/domino-clj/domino). Another take on dataflow programming, inspired by re-frame.
 
-A **Flow** calculates a derived value "automatically".  
-When one part of the application state changes, another part is recalculated.  
-More concretely, when the values change at one or more paths within `app-db`, then the value at another path is automatically recalculated.
+## What are flows?
+
+A **flow** describes how to derive a value from other values.  
+When one part of your app state changes, another part changes in response.  
+More concretely, when the values change at one or more paths within `app-db`,
+then the value at another path is "automatically" recalculated.
+
+## Why do we need flows?
+We turn to flows when we need a dynamic relationship between values - a "difference which makes a difference" ([Bateson](http://faculty.washington.edu/jernel/521/Form.htm)).
+
+For instance, how would you model this problem?
+
+- a `length` and a `width` make an `area`
+- changing either value changes the `area`
+- deleting either value deletes the `area`
+- a bad value invalidates the `area`
+- leaving the page deletes the `area`
+
+In re-frame, [data coordinates functions](/re-frame/re-frame/). 
+Here, we need multiple data sources (`length`, `width`) to coordinate a single function (`area`).
+A subscription could do this, but with [caveats](/re-frame/flows-advanced-topics#reactive-context).
+
+We think flows offer a [Better Way](/re-frame/flows-advanced-topics#a-better-way), both simpler and more practical.
 
 !!! Note "The DataFlow Paradigm"
-    The dataflow programming paradigm emerged in the 1970s, so it is almost as foundational as functional programming. 
+    Dataflow programming emerged in the 1970s, so it is almost as foundational as functional programming. 
     Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. 
+    In contrast with imperative building blocks like 'if/then', 'next' and 'goto',
+    dataflow programming implements control flow via the propagation of change.
     Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. 
-    There's a reason `re-frame's` tagline is "derived data, flowing".
+    Hence, `re-frame's` tagline: "derived data, flowing".
 
-## A flow literal
-
-Re-frame uses flows to change your app's state, but a `flow` itself is an immutable value.
+## A Basic Flow
 
 Here's a basic `flow`. It describes how to derive the area of a room from its dimensions:
 
@@ -37,17 +57,18 @@ Here's a basic `flow`. It describes how to derive the area of a room from its di
 </div>
 
 - **`:id`** - uniquely identifies this flow.
-- **`:inputs`** - a map of `app-db` paths to observe for changes.
+- **`:inputs`** - a map of `app-db` paths to observe for change.
 - **`:output`** - calculates the new derived value.
     - Takes a map of resolved inputs.
     - Simply takes `app-db` if there are no inputs.
 - **`:path`** - denotes *where* the derived value should be stored.
 
-Every event, when the values of `:inputs` change, `:output` is run, and the result is stored in `app-db` at `:path`.
+On every event, when the values at `:inputs` change, `:output` is run, and the result is stored in `app-db` at `:path`.
 
 ## A Basic Example
 
-To show `Flows` in action, let's do some live coding. First, we add the necessary `requires` (`reg-flow` is still in the `alpha` namespace):
+To show `Flows` in action, let's do some live coding. 
+First, we add the necessary `requires` (`reg-flow` is still in the `alpha` namespace):
 
 <div class="cm-doc">
 (ns re-frame.example.flows
@@ -88,14 +109,12 @@ And, here's the code for our app: the user can enter `height` and `width` values
 Now the interesting part, we use `reg-flow`: 
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
-(def garage-area-flow
+(rf/reg-flow
   {:id     :garage-area
    :inputs {:w [:garage :width]
             :h [:garage :length]}
    :output (fn [{:keys [w h]}] (* w h))
    :path   [:garage :area]})
-
-(rf/reg-flow garage-area-flow)
 </div>
 
 !!! Note "Arity-2 version"
@@ -135,6 +154,23 @@ And, we use this subscription in a view:
 </div>
 
 <div id="garage-calculator"></div>
+
+
+!!! Note "Our dataflow model"
+    Dataflow is often conceptualized as a graph.
+    Data flows through edges, and transforms through nodes.  
+    Here's how our DSL articulates the traditional dataflow model:
+    
+    - `flow` - a map, serving as a node specification
+    - `:id` - uniquely identifies a node
+    - `:inputs` - a set of edges from other nodes
+    - `reg-flow` - creates a running node from a specification
+    
+    Crucially, the name `flow` isn't exactly short for "dataflow".
+    A `flow` is a static value, specifying one segment of a dataflow graph.
+    Dataflow is a dynamic phenomenon, not a value.
+    Both the data and the graph itself change over time.
+    Changing the graph is a matter of [registering and clearing](#redefining-and-undefining) flows.
 
 ## How does it work?
 
@@ -296,8 +332,6 @@ Here's another room area flow:
             (= tab :kitchen))})
 </div>
 
-Re-frame provides a global `:flow` subscription, which can fetch the output value for any flow:
-
 A barebones tab picker, and something to show us the value of `app-db`:
 
 <div class="cm-doc">
@@ -378,6 +412,8 @@ Basically, *living* flows get output, *dying* flows get cleaned up, *arising* fl
 And independently of all this, `:output` only runs when `:inputs` have changed value.
 
 ### Cleanup
+
+A `:cleanup` function takes `app-db` and the `:path`, and returns a new `app-db`. 
 
 Try adding this `:cleanup` key into the `:kitchen-area` flow above (be sure to `eval` the code block again).
 
