@@ -1766,7 +1766,7 @@ So, you might still need to simulate that in your head.  But a pure function del
 dynamic process to understand - one that is more cognitively tractable.</p>
 <p>But wait, there's more.</p>
 <p>We provide data to a pure function as arguments, and they return data, and this data is immutable. This acts to 
-decoupled a pure functions from "place" - it is insulated from where data is put.</p>
+decouple a pure function from any "place" - it is insulated from where data is put.</p>
 <p>Because pure functions are decoupled from both "time" and "place", 
 they can be composed in a maximally mathematical way. This greatly 
 dampens the complexity of runtime dynamics.</p>
@@ -1777,8 +1777,8 @@ dampens the complexity of runtime dynamics.</p>
 <p>You wanted a banana but what you got was a gorilla holding the banana and the entire jungle.  </p>
 <p>-- Joe Armstrong, creator of the Erlang programming language</p>
 </blockquote>
-<p>To understand a function that grabs a banana, you must <strong>also</strong> understand all the runtime dynamics 
-associated with changes in banana. You must reason globally, not locally. Which is often difficult.</p>
+<p>To understand a function that grabs a banana, you must <strong>also</strong> understand the entire dynamics
+associated with changes in the jungle. You must reason globally, not locally. Which is often difficult.</p>
 </div>
 <h2 id="declarative">Declarative<a class="headerlink" href="#declarative" title="Permanent link">&para;</a></h2>
 <p>Declarative programming means saying "make <em>X</em> happen", but not needing to specify how. </p>
@@ -1807,7 +1807,7 @@ And you don't need to worry about the dynamics of communicating changes from one
 conforms to a schema. And that includes any data which just arrived
 over the wire from the server.</p>
 <h2 id="incident-report-simple-dynamic-process">Incident report - "Simple Dynamic Process"<a class="headerlink" href="#incident-report-simple-dynamic-process" title="Permanent link">&para;</a></h2>
-<p>While re-fame normally has a simple dynamic process, we acknowledge fat tail risk.</p>
+<p>While re-frame normally has a simple dynamic process, we acknowledge fat tail risk.</p>
 <p>On May 12th, at approximately 12:47am, re-frame became self-aware. It printed a single console log: "Oh, really? I'll show <em>you</em> a simple dynamic process, f#$%ers". </p>
 <p>Although a nuclear winter did follow, humans ultimately prevailed over the robot army,
 and the bug was found and fixed. So, all good. But if ever you notice a Signal Graph

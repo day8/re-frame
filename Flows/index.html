@@ -675,15 +675,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#subscribing-to-flows" class="md-nav__link">
-    Subscribing to flows
+  <a href="#layering-flows" class="md-nav__link">
+    Layering flows
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#layering-flows" class="md-nav__link">
-    Layering flows
+  <a href="#subscribing-to-flows" class="md-nav__link">
+    Subscribing to flows
   </a>
   
 </li>
@@ -1718,15 +1718,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#subscribing-to-flows" class="md-nav__link">
-    Subscribing to flows
+  <a href="#layering-flows" class="md-nav__link">
+    Layering flows
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#layering-flows" class="md-nav__link">
-    Layering flows
+  <a href="#subscribing-to-flows" class="md-nav__link">
+    Subscribing to flows
   </a>
   
 </li>
@@ -1955,8 +1955,8 @@ Here's how our DSL articulates the traditional dataflow model:</p>
 <li><code>reg-flow</code> - creates a running node from a specification</li>
 </ul>
 <p>Crucially, the name <code>flow</code> isn't exactly short for "dataflow".
-A <code>flow</code> is a static value, specifying one segment of a dataflow graph.
-Dataflow is a dynamic phenomenon, not a value.
+A <code>flow</code> is a static value, specifying one possible segment of a dataflow graph.
+Dataflow is a <a href="/re-frame/on-dynamics/#on-dynamics">dynamic process</a>, not a value.
 Both the data and the graph itself change over time.
 Changing the graph is a matter of <a href="#redefining-and-undefining">registering and clearing</a> flows.</p>
 </div>
@@ -2011,7 +2011,7 @@ This means the <code>:db</code> effect which you express in your event handlers 
 <p>You might notice a similarity with <a href="https://reagent-project.github.io/docs/master/reagent.core.html#var-reaction">reagent.core/reaction</a>. 
 Both yield an "automatically" changing value. </p>
 <p>Reagent controls <em>when</em> a reaction updates, presumably during the evaluation of a component function.<br />
-Flows, on the other hand, are controlled by re-frame, running every time an <code>event</code> occurs.</p>
+Flows, on the other hand, are part of <a href="/re-frame/on-dynamics/#re-frame-time">re-frame time</a>, running every time an <code>event</code> occurs.</p>
 <p>When a component derefs a reaction, that component knows to re-render when the value changes.</p>
 <p>You can't deref a flow directly. It doesn't emit a value directly to any caller. <br />
 Instead, it emits a new version of <code>app-db</code>. The rest of your app reacts to <code>app-db</code>, not your flow.</p>
@@ -2042,30 +2042,15 @@ Both the intermediate values and the root value are important.</p>
 <p>Just like a <code>flow</code>, this subscription's value changes whenever the inputs change, and (obviously) you call <code>subscribe</code> to access that value.</p>
 <p>A flow stores its <code>:output</code> value in <code>app-db</code>, while subscriptions don't. We designed re-frame on the premise that <code>app-db</code> holds your <em>entire</em> app-state. 
 Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. 
-It's also more practical (see <a href="/re-frame/flows-advanced-topics#reactive-context">Reactive Context</a>.</p>
+It's also more practical (see <a href="/re-frame/flows-advanced-topics#reactive-context">Reactive Context</a>).</p>
 <p>Just like with layered subscriptions, one flow can use the value of another. Remember the <code>:inputs</code> to our first flow?</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
 {:inputs {:w [:garage :width]
           :h [:garage :length]}}
 </div>
 
-<h2 id="subscribing-to-flows">Subscribing to flows<a class="headerlink" href="#subscribing-to-flows" title="Permanent link">&para;</a></h2>
-<p>In our examples so far, we've used a regular subscription, getting our flow's output path.
-In <code>re-frame.alpha</code>, you can also subscribe to a flow by name.
-This bypasses the <a href="/re-frame/flows-advanced-topics#caching">caching behavior</a> of a standard subscription.</p>
-<p>Here's how you can subscribe to our garage-area flow.
-The stable way, with a query vector:</p>
-<div class="codehilite"><pre><span></span><code>(re-frame.alpha/subscribe [:flow {:id :garage-area}])`
-</code></pre></div>
-
-
-<p>And the experimental way, with a query map:</p>
-<div class="codehilite"><pre><span></span><code>(re-frame.alpha/sub :flow {:id :garage-area})
-</code></pre></div>
-
-
 <h2 id="layering-flows">Layering flows<a class="headerlink" href="#layering-flows" title="Permanent link">&para;</a></h2>
-<p>As you can see, vectors stand for paths in <code>app-db</code>.
+<p>In the values of the <code>:inputs</code> map, vectors stand for paths in <code>app-db</code>.
 The <code>flow&lt;-</code> function, however, gives us access to <em>other flows</em>.</p>
 <p>Here's a flow using two other flows as inputs: <code>::kitchen-area</code> and <code>::living-room-area</code>.
 When either input changes value, our flow calls the <code>:output</code> function to recalculate its own value:</p>
@@ -2078,12 +2063,23 @@ When either input changes value, our flow calls the <code>:output</code> functio
  :path   [:ratios :main-rooms]}
 </div>
 
-<p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
-<p>For subscriptions, caching can be an issue (see <a href="#caching">caching</a>). With flows, the process is simpler. 
-<code>app-db</code> <em>is</em> the cache, since flows always store their output value within it. 
-You, the programmer, define explicitly when to recalculate the output, <em>and</em> when to store the output. 
-To this end, flows provide optional keys: <code>:live?</code> and <code>:cleanup</code>. 
-Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:</p>
+<p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. 
+So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
+<h2 id="subscribing-to-flows">Subscribing to flows<a class="headerlink" href="#subscribing-to-flows" title="Permanent link">&para;</a></h2>
+<p>In our examples so far, we've used a regular subscription, getting our flow's output path.
+In <code>re-frame.alpha</code>, you can also subscribe to a flow by name.
+This bypasses the <a href="/re-frame/flows-advanced-topics#caching">caching behavior</a> of a standard subscription.</p>
+<p>Here's how you can subscribe to our garage-area flow.
+The stable way, with a query vector:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+(re-frame.alpha/subscribe [:flow {:id :garage-area}])
+</div>
+
+<p>And the experimental way, with a query map:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+(re-frame.alpha/sub :flow {:id :garage-area})
+</div>
+
 <h2 id="living-and-dying">Living and Dying<a class="headerlink" href="#living-and-dying" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>Between death... and arising... is found an existence— a "body"... that goes to the place of rebirth. This existence between two realms... is called intermediate existence.</p>
@@ -2094,7 +2090,7 @@ It can still be hard to predict when a flow will run, leading to defensive progr
 Sometimes we'd like to simply turn our flow off, so we can stop thinking about it.
 For this, we use a <code>:live?</code> function.</p>
 <p>The quote above deals with phenomenal life, but you can also think of <code>:live?</code> as in a tv or internet broadcast.
-Data flows, but only when the flow itself is live.</p>
+Data flows, but only when the <code>flow</code> itself is live.</p>
 <p>Let's try it out. For example, here's a barebones tab picker, and something to show us the value of <code>app-db</code>:</p>
 <div class="cm-doc">
 (def tabs [:kitchen :garage])
@@ -2269,7 +2265,7 @@ It's your app <em>state</em> that matters, not any particular event or view.
 Our flow doesn't care how it happened that a requirement was met, nor what to do next.</p>
 </div>
 <p>For reasons that will become clear, let's write a <a href="https://en.wikipedia.org/wiki/Factory_%28object-oriented_programming%29">factory function</a> for this flow. 
-It builds a flow that validates our item list against the requirements:</p>
+It builds a flow that validates our item list against any given requirements:</p>
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (defn error-state-flow [{:keys [min-items max-items] :as requirements}]
   {:id :error-state
@@ -2283,13 +2279,13 @@ It builds a flow that validates our item list against the requirements:</p>
                  :else             :ok)))})
 </div>
 
-<p>And register a flow that fits our base requirements:</p>
+<p>And let's register a flow that fits our base requirements:</p>
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-flow (error-state-flow base-requirements))
 </div>
 
 <p>Now this flow is calculating an error-state value, and adding it to <code>app-db</code> after every event. 
-This happens as long as the <code>:items</code> have changed... right?
+This happens whenever <code>:items</code> have changed... right?
 Actually, there's another way to make a flow recalculate - we can re-register it.</p>
 <p>Let's update the app to display our new error state:</p>
 <div class="cm-doc">
