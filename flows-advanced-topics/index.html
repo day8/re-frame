@@ -1630,13 +1630,13 @@ You might try calling <code>(rf/subscribe [::num-balloons-to-fill-kitchen])</cod
 and memory leaks... oh my!</p>
 <h3 id="reactive-context">Reactive context<a class="headerlink" href="#reactive-context" title="Permanent link">&para;</a></h3>
 <p>To know if a thing has changed, you have to remember what it was.
-To propagate change from one value to the next, you have to remember the relationship between them (a <a href="https://clojuredocs.org/clojure.core/add-watch"><code>watchable</code></a>).
-Remembering is a side-effect.</p>
+To propagate change from one value to the next, you have to remember their relationship (a <a href="https://clojuredocs.org/clojure.core/add-watch"><code>watchable</code></a>).
+Memory is state. Remembering is a side-effect.</p>
 <p>Reagent does this. Its main constructs - <em>reactive atom</em>, and <em>component</em> - are stateful, impure.
 We depend on this memory. It abstracts the essential complexity of reactive programming.</p>
-<p>Reagent manages atoms and components with an event loop. Only in the context of this loop can be sure reagent's memory is consistent.
+<p>Reagent manages atoms and components with an event loop. Only in the context of this loop can we be sure reagent's memory is consistent.
 Literally, this is called <a href="https://github.com/reagent-project/reagent/blob/a14faba55e373000f8f93edfcfce0d1222f7e71a/src/reagent/ratom.cljs#L12"><code>*ratom-context*</code></a>.</p>
-<p>Generally, <code>*ratom-context*</code> only has value during the evaluation of a component function (i.e., at "render time"). 
+<p>Generally, <code>*ratom-context*</code> only has value during the evaluation of a component function (i.e., at "render time").
 When <code>*ratom-context*</code> has no value, reactive atoms behave differently.</p>
 <p>You can simply call <a href="http://reagent-project.github.io/docs/master/reagent.ratom.html#var-reactive.3F"><code>reagent.ratom/reactive?</code></a> 
 to find out whether your code is running in a reactive context.</p>
@@ -1644,11 +1644,12 @@ to find out whether your code is running in a reactive context.</p>
 <p>Now, here's where re-frame enters the picture:</p>
 <ul>
 <li>An <strong>event handler</strong> is a pure function, with no reactive context (it has an <a href="/re-frame/Interceptors">interceptor</a> context).</li>
+<li>A <strong>subscription handler</strong> is pure, too.</li>
 <li>A <strong>subscription</strong>, on the other hand, is a reactive atom (with <em>no</em> interceptor context).</li>
 <li>Calling <code>subscribe</code> has the side-effect of <em>creating</em> a <strong>subscription</strong>.</li>
 </ul>
-<p>Outside of a component function, a subscription's behavior differs:
-Not only the behavior of the reactive atom, but also the behavior of re-frame's subscription <a href="#caching">caching</a> mechanism.</p>
+<p>Outside of a reactive context, a subscription's behavior differs:
+Not only the behavior of the reactive atom, but also the behavior of its <a href="#caching">caching</a> mechanism.</p>
 <h4>What this means for your app</h4>
 <p>Subscriptions and event handlers differ in purity and runtime context.
 This means they have a <a href="https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/">coloring problem</a>.</p>

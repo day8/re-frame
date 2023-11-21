@@ -1707,7 +1707,7 @@ Your subscription handler may be pure, but <code>subscribe</code> always has a s
 Calling <code>subscribe</code> inside an event handler goes against re-frame's design, which is based on handlers being pure functions.</p>
 <h3 id="incidental-safety">Incidental safety<a class="headerlink" href="#incidental-safety" title="Permanent link">&para;</a></h3>
 <p>Calling <code>subscribe</code> <em>outside</em> a component is somewhat safe, as long as you've also called it <em>inside</em> a component.
-The <em>outside</em> one has no way to dispose, but the <em>inside</em> one might dispose it later.</p>
+The <em>outside</em> one has no way to dispose, but the <em>inside</em> one might dispose later.</p>
 <p>Of course, that requires your component to be around while your other code runs.
 If that component unmounts and never comes back, then you're on your own again.</p>
 <p>This isn't a real solution, it's just incidental safety.</p>
@@ -1717,7 +1717,8 @@ If that component unmounts and never comes back, then you're on your own again.<
 <h4><em>Don't</em> call <code>subscribe</code> in your event handler:</h4>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> <span class="ss">:areas</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span><span class="p">]</span> <span class="p">(</span><span class="nb">map </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">r</span><span class="p">]</span> <span class="p">(</span><span class="nb">* </span><span class="nv">Math/PI</span> <span class="nv">r</span> <span class="nv">r</span><span class="p">))</span> <span class="p">(</span><span class="ss">:circles</span> <span class="nv">db</span><span class="p">))))</span>
 
-<span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">store-areas</span>
+<span class="p">(</span><span class="nf">reg-event-fx</span> 
+  <span class="ss">:store-areas</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">_</span><span class="p">]</span>
     <span class="p">{</span><span class="ss">:local-store</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:areas</span><span class="p">])}))</span>
 </code></pre></div>
@@ -1730,7 +1731,8 @@ If that component unmounts and never comes back, then you're on your own again.<
 
 <span class="p">(</span><span class="nf">reg-sub</span> <span class="nv">areas</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span> <span class="p">(</span><span class="nf">get-areas</span> <span class="nv">db</span><span class="p">)))</span>
 
-<span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">store-areas</span>
+<span class="p">(</span><span class="nf">reg-event-fx</span> 
+  <span class="ss">:store-areas</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">_</span><span class="p">]</span>
     <span class="p">{</span><span class="ss">:local-store</span> <span class="p">(</span><span class="nf">get-areas</span> <span class="nv">db</span><span class="p">)}))</span>
 </code></pre></div>
@@ -1744,7 +1746,9 @@ If that component unmounts and never comes back, then you're on your own again.<
 
 
 <h4><em>Do</em> <code>dispatch</code> an event in a callback:</h4>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">rf/reg-fx</span> <span class="ss">:circle-effect</span> <span class="nv">circle-effect!</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
   <span class="ss">:clicked-button</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[{{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">circles</span><span class="p">]}</span> <span class="ss">:db</span> <span class="ss">:as</span> <span class="nv">coeffects</span><span class="p">}</span> <span class="nv">event-v</span><span class="p">]</span>
     <span class="p">{</span><span class="ss">:circle-effect</span> <span class="nv">circles</span><span class="p">}))</span>
