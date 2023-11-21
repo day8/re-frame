@@ -84,7 +84,6 @@ nav:
     - "Why is my input field laggy?": FAQs/laggy-input.md
     - "How long after I do a dispatch does the event get handled?": FAQs/When-Does-Dispatch-Happen.md
     - "How can I use a subscription in an Event Handler": FAQs/UseASubscriptionInAnEventHandler.md
-    - "How can I use a subscription in Js Event": FAQs/UseASubscriptionInAJsEvent.md
     - "How do I use logging method X": FAQs/Logging.md
     - "Dispatched Events Are Null": FAQs/Null-Dispatched-Events.md
     - "Why do we need to clear the subscription cache when reloading with Figwheel?": FAQs/Why-Clear-Sub-Cache.md

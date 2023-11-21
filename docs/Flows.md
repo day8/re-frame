@@ -279,6 +279,23 @@ Just like with layered subscriptions, one flow can use the value of another. Rem
           :h [:garage :length]}}
 </div>
 
+## Subscribing to flows
+In our examples so far, we've used a regular subscription, getting our flow's output path.
+In `re-frame.alpha`, you can also subscribe to a flow by name.
+This bypasses the [caching behavior](/re-frame/flows-advanced-topics#caching) of a standard subscription.
+
+Here's how you can subscribe to our garage-area flow.
+The stable way, with a query vector:
+
+```
+(re-frame.alpha/subscribe [:flow {:id :garage-area}])`
+```
+
+And the experimental way, with a query map:
+```
+(re-frame.alpha/sub :flow {:id :garage-area})
+```
+
 ## Layering flows
 
 As you can see, vectors stand for paths in `app-db`.

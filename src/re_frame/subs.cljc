@@ -68,7 +68,6 @@
   (when (and debug-enabled? (not (reactive?)))
     (console :warn
              "re-frame: Subscribe was called outside of a reactive context.\n"
-             "See: https://day8.github.io/re-frame/FAQs/UseASubscriptionInAJsEvent/\n"
              "https://day8.github.io/re-frame/FAQs/UseASubscriptionInAnEventHandler/")))
 
 (defn subscribe
