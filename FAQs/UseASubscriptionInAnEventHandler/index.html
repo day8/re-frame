@@ -1680,8 +1680,11 @@
 <h2 id="the-root-problem">The Root Problem<a class="headerlink" href="#the-root-problem" title="Permanent link">&para;</a></h2>
 <p>Subscriptions are stateful. That said, they offer a 90% solution where you don't have to worry about their state.
 But this comes with a caveat: <strong>the only safe place to call <code>subscribe</code> is within a reagent component function.</strong> </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>See <a href="/re-frame/flows-advanced-topics/#reactive-context">Flows - Reactive Context</a>
 for an in-depth explanation.</p>
+</div>
 <h3 id="dom-event-handlers">DOM event handlers<a class="headerlink" href="#dom-event-handlers" title="Permanent link">&para;</a></h3>
 <p>Inner functions, such as DOM event handlers, don't count. With a hiccup like <code>[:button {:on-click #(subscribe [:some (gensym)])}]</code>, we expect the browser to call our <code>#(subscribe [:some (gensym)])</code> function at some later time. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If your browser calls this function a thousand times, re-frame will "create" a thousand subscriptions, and there's no code in place to "dispose" them later.</p>
 <h3 id="re-frame-event-handlers">Re-frame event handlers<a class="headerlink" href="#re-frame-event-handlers" title="Permanent link">&para;</a></h3>
@@ -1705,7 +1708,7 @@ If that component unmounts and never comes back, then you're on your own again.<
 <p>This isn't a real solution, it's just incidental safety.</p>
 <h2 id="solutions">Solutions<a class="headerlink" href="#solutions" title="Permanent link">&para;</a></h2>
 <h3 id="restructure-your-app">Restructure your app<a class="headerlink" href="#restructure-your-app" title="Permanent link">&para;</a></h3>
-<p>Sometimes it's enough to factor our your calculations, so they can be shared between subscription and event handlers.</p>
+<p>Sometimes it's enough to factor out your calculations, so they can be shared between subscription and event handlers.</p>
 <h4><em>Don't</em> call <code>subscribe</code> in your event handler:</h4>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> <span class="ss">:areas</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span><span class="p">]</span> <span class="p">(</span><span class="nb">map </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">r</span><span class="p">]</span> <span class="p">(</span><span class="nb">* </span><span class="nv">Math/PI</span> <span class="nv">r</span> <span class="nv">r</span><span class="p">))</span> <span class="p">(</span><span class="ss">:circles</span> <span class="nv">db</span><span class="p">))))</span>
 
@@ -1720,7 +1723,7 @@ If that component unmounts and never comes back, then you're on your own again.<
 
 <span class="p">(</span><span class="k">def </span><span class="nv">get-areas</span> <span class="p">(</span><span class="nb">comp </span><span class="nv">circle-area</span> <span class="ss">:circles</span><span class="p">))</span>
 
-<span class="p">(</span><span class="nf">reg-sub</span> <span class="nv">areas</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span><span class="p">]</span> <span class="p">(</span><span class="nf">get-areas</span> <span class="nv">db</span><span class="p">)))</span>
+<span class="p">(</span><span class="nf">reg-sub</span> <span class="nv">areas</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span> <span class="p">(</span><span class="nf">get-areas</span> <span class="nv">db</span><span class="p">)))</span>
 
 <span class="p">(</span><span class="nf">reg-event-fx</span> <span class="nv">store-areas</span>
   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">_</span><span class="p">]</span>
