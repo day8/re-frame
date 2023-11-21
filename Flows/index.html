@@ -2214,19 +2214,24 @@ Depending on the return value of <code>:live?</code>, re-frame handles one of 4 
 <li>Re-frame provides <code>:reg-flow</code> and <code>:clear-flow</code> <a href="#re-frame/Effects/">effects</a> for this purpose.</li>
 </ul>
 <p>Here's another demonstration. Think of it as a stripped-down todomvc.
-You can add and remove items in a list:
+You can add and remove items in a list:</p>
 <div class="cm-doc">
-(rf/reg-sub :items :-&gt; (comp reverse :items))</p>
-<p>(rf/reg-event-db
+(rf/reg-sub :items :-> (comp reverse :items))
+
+(rf/reg-event-db
  ::add-item
- (fn [db [_ id]] (update db :items conj id)))</p>
-<p>(rf/reg-event-db
+ (fn [db [_ id]] (update db :items conj id)))
+
+(rf/reg-event-db
  ::delete-item
- (fn [db [_ id]] (update db :items #(remove #{id} %))))</p>
-<p>(defn item [id] [:div "Item" id])</p>
-<p>(defn items []
-  (into [:div] (map item) @(rf/subscribe [:items])))</p>
-<p>(defn controls []
+ (fn [db [_ id]] (update db :items #(remove #{id} %))))
+
+(defn item [id] [:div "Item" id])
+
+(defn items []
+  (into [:div] (map item) @(rf/subscribe [:items])))
+
+(defn controls []
   (let [id (or (apply max @(rf/subscribe [:items])) 0)]
     [:div
      [:span {:style clickable
@@ -2234,12 +2239,15 @@ You can add and remove items in a list:
       "Add"] " "
      [:span {:style clickable
              :on-click #(rf/dispatch [::delete-item id])}
-      "Delete"] " "]))</p>
-<p>(defonce item-counter-basic-root
-  (rdc/create-root (js/document.getElementById "item-counter-basic")))</p>
-<p>(rdc/render item-counter-basic-root
+      "Delete"] " "]))
+
+(defonce item-counter-basic-root
+  (rdc/create-root (js/document.getElementById "item-counter-basic")))
+
+(rdc/render item-counter-basic-root
             [app-container [controls] [items]])
-</div></p>
+</div>
+
 <div id="item-counter-basic"></div>
 
 <p>Now, imagine your business adds some requirements:</p>
