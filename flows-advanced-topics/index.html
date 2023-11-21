@@ -11,23 +11,23 @@
         <meta name="description" content="Derived data, flowing">
       
       
-        <link rel="canonical" href="https://day8.github.io/re-frame/FAQs/UseASubscriptionInAJsEvent/">
+        <link rel="canonical" href="https://day8.github.io/re-frame/flows-advanced-topics/">
       
       
         <meta name="author" content="Mike Thompson">
       
-      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.9">
     
     
     
-    <title>How can I use a subscription in Js Event</title>
+    <title>Flows - advanced topics</title>
     
 
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.36ee6aaa.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.36ee6aaa.min.css">
       
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.83bccb1f.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.83bccb1f.min.css">
       
       
         
@@ -49,9 +49,9 @@
     
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400&display=swap">
     
-      <link rel="stylesheet" href="../../stylesheets/dominoes-live.css">
+      <link rel="stylesheet" href="../stylesheets/dominoes-live.css">
     
-      <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
+      <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
     
       
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#question" class="md-skip">
+        <a href="#reactive-context" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +133,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              How can I use a subscription in Js Event
+              Flows - advanced topics
             
           </span>
         </div>
@@ -210,7 +210,7 @@
         
   <li class="md-tabs__item">
     
-      <a href="../.." class="md-tabs__link">
+      <a href=".." class="md-tabs__link">
         Home
       </a>
     
@@ -222,7 +222,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../re-frame/" class="md-tabs__link">
+        <a href="../re-frame/" class="md-tabs__link md-tabs__link--active">
           Docs
         </a>
       
@@ -235,7 +235,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../Inspecting-app-db/" class="md-tabs__link md-tabs__link--active">
+        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -248,7 +248,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../api-intro/" class="md-tabs__link">
+        <a href="../api-intro/" class="md-tabs__link">
           API
         </a>
       
@@ -261,7 +261,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../releases/2023/" class="md-tabs__link">
+        <a href="../releases/2023/" class="md-tabs__link">
           Releases
         </a>
       
@@ -274,7 +274,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../External-Resources/" class="md-tabs__link">
+        <a href="../External-Resources/" class="md-tabs__link">
           Resources
         </a>
       
@@ -326,7 +326,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../.." title="Home" class="md-nav__link">
+    <a href=".." title="Home" class="md-nav__link">
       Home
     </a>
   </li>
@@ -336,10 +336,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
     
     <label class="md-nav__link" for="nav-2">
       Docs
@@ -363,7 +365,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../re-frame/" title="re-frame" class="md-nav__link">
+    <a href="../re-frame/" title="re-frame" class="md-nav__link">
       re-frame
     </a>
   </li>
@@ -400,7 +402,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../a-loop/" title="A Data Loop" class="md-nav__link">
+    <a href="../a-loop/" title="A Data Loop" class="md-nav__link">
       A Data Loop
     </a>
   </li>
@@ -412,7 +414,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../application-state/" title="State" class="md-nav__link">
+    <a href="../application-state/" title="State" class="md-nav__link">
       State
     </a>
   </li>
@@ -424,7 +426,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../dominoes-30k/" title="Code" class="md-nav__link">
+    <a href="../dominoes-30k/" title="Code" class="md-nav__link">
       Code
     </a>
   </li>
@@ -436,7 +438,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../event-handling-infographic/" title="Infographics" class="md-nav__link">
+    <a href="../event-handling-infographic/" title="Infographics" class="md-nav__link">
       Infographics
     </a>
   </li>
@@ -448,7 +450,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../subscriptions/" title="Subscriptions" class="md-nav__link">
+    <a href="../subscriptions/" title="Subscriptions" class="md-nav__link">
       Subscriptions
     </a>
   </li>
@@ -460,7 +462,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../dominoes-live/" title="Live" class="md-nav__link">
+    <a href="../dominoes-live/" title="Live" class="md-nav__link">
       Live
     </a>
   </li>
@@ -502,7 +504,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../EffectfulHandlers/" title="Effectful Handlers" class="md-nav__link">
+    <a href="../EffectfulHandlers/" title="Effectful Handlers" class="md-nav__link">
       Effectful Handlers
     </a>
   </li>
@@ -514,7 +516,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Interceptors/" title="Interceptors" class="md-nav__link">
+    <a href="../Interceptors/" title="Interceptors" class="md-nav__link">
       Interceptors
     </a>
   </li>
@@ -526,7 +528,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Effects/" title="Effects" class="md-nav__link">
+    <a href="../Effects/" title="Effects" class="md-nav__link">
       Effects
     </a>
   </li>
@@ -538,7 +540,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Coeffects/" title="Coeffects" class="md-nav__link">
+    <a href="../Coeffects/" title="Coeffects" class="md-nav__link">
       Coeffects
     </a>
   </li>
@@ -550,7 +552,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../review-todomvc/" title="Review TodoMVC" class="md-nav__link">
+    <a href="../review-todomvc/" title="Review TodoMVC" class="md-nav__link">
       Review TodoMVC
     </a>
   </li>
@@ -592,7 +594,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../correcting-a-wrong/" title="Correcting a wrong" class="md-nav__link">
+    <a href="../correcting-a-wrong/" title="Correcting a wrong" class="md-nav__link">
       Correcting a wrong
     </a>
   </li>
@@ -604,7 +606,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../flow-mechanics/" title="Flow Mechanics" class="md-nav__link">
+    <a href="../flow-mechanics/" title="Flow Mechanics" class="md-nav__link">
       Flow Mechanics
     </a>
   </li>
@@ -621,7 +623,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../start-coding/" title="START CODING" class="md-nav__link">
+    <a href="../start-coding/" title="START CODING" class="md-nav__link">
       START CODING
     </a>
   </li>
@@ -658,7 +660,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../all-models-are-wrong/" title="Other Models" class="md-nav__link">
+    <a href="../all-models-are-wrong/" title="Other Models" class="md-nav__link">
       Other Models
     </a>
   </li>
@@ -670,7 +672,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../on-dynamics/" title="On Dynamics" class="md-nav__link">
+    <a href="../on-dynamics/" title="On Dynamics" class="md-nav__link">
       On Dynamics
     </a>
   </li>
@@ -682,7 +684,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../data-oriented-design/" title="Data Oriented Design" class="md-nav__link">
+    <a href="../data-oriented-design/" title="Data Oriented Design" class="md-nav__link">
       Data Oriented Design
     </a>
   </li>
@@ -694,7 +696,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../interconnections/" title="Interconnections" class="md-nav__link">
+    <a href="../interconnections/" title="Interconnections" class="md-nav__link">
       Interconnections
     </a>
   </li>
@@ -706,7 +708,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../historical/" title="Historical" class="md-nav__link">
+    <a href="../historical/" title="Historical" class="md-nav__link">
       Historical
     </a>
   </li>
@@ -721,10 +723,12 @@
           
           
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7" checked>
     
     <label class="md-nav__link" for="nav-2-7">
       MORE ADVANCED
@@ -748,7 +752,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../on-stable-dom-handlers/" title="Stable Dom Handlers" class="md-nav__link">
+    <a href="../on-stable-dom-handlers/" title="Stable Dom Handlers" class="md-nav__link">
       Stable Dom Handlers
     </a>
   </li>
@@ -760,7 +764,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../browser-dynamics/" title="Browser Dynamics" class="md-nav__link">
+    <a href="../browser-dynamics/" title="Browser Dynamics" class="md-nav__link">
       Browser Dynamics
     </a>
   </li>
@@ -772,7 +776,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../reusable-components/" title="Reusable Components" class="md-nav__link">
+    <a href="../reusable-components/" title="Reusable Components" class="md-nav__link">
       Reusable Components
     </a>
   </li>
@@ -784,7 +788,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../App-Structure/" title="App Structure" class="md-nav__link">
+    <a href="../App-Structure/" title="App Structure" class="md-nav__link">
       App Structure
     </a>
   </li>
@@ -796,7 +800,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Loading-Initial-Data/" title="Loading Initial Data" class="md-nav__link">
+    <a href="../Loading-Initial-Data/" title="Loading Initial Data" class="md-nav__link">
       Loading Initial Data
     </a>
   </li>
@@ -808,7 +812,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Talking-To-Servers/" title="Talking To Servers" class="md-nav__link">
+    <a href="../Talking-To-Servers/" title="Talking To Servers" class="md-nav__link">
       Talking To Servers
     </a>
   </li>
@@ -820,7 +824,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Subscribing-To-External-Data/" title="Subscribing to External Data" class="md-nav__link">
+    <a href="../Subscribing-To-External-Data/" title="Subscribing to External Data" class="md-nav__link">
       Subscribing to External Data
     </a>
   </li>
@@ -832,7 +836,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Debugging/" title="Debugging" class="md-nav__link">
+    <a href="../Debugging/" title="Debugging" class="md-nav__link">
       Debugging
     </a>
   </li>
@@ -844,7 +848,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Testing/" title="Testing" class="md-nav__link">
+    <a href="../Testing/" title="Testing" class="md-nav__link">
       Testing
     </a>
   </li>
@@ -856,7 +860,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Performance-Problems/" title="Eek! Performance Problems" class="md-nav__link">
+    <a href="../Performance-Problems/" title="Eek! Performance Problems" class="md-nav__link">
       Eek! Performance Problems
     </a>
   </li>
@@ -868,7 +872,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Solve-the-CPU-hog-problem/" title="Solve the CPU hog problem" class="md-nav__link">
+    <a href="../Solve-the-CPU-hog-problem/" title="Solve the CPU hog problem" class="md-nav__link">
       Solve the CPU hog problem
     </a>
   </li>
@@ -880,7 +884,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Using-Stateful-JS-Components/" title="Using Stateful JS Components" class="md-nav__link">
+    <a href="../Using-Stateful-JS-Components/" title="Using Stateful JS Components" class="md-nav__link">
       Using Stateful JS Components
     </a>
   </li>
@@ -892,7 +896,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../The-re-frame-logo/" title="The Logo Backstory" class="md-nav__link">
+    <a href="../The-re-frame-logo/" title="The Logo Backstory" class="md-nav__link">
       The Logo Backstory
     </a>
   </li>
@@ -904,12 +908,90 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Flows/" title="Flows" class="md-nav__link">
+    <a href="../Flows/" title="Flows" class="md-nav__link">
       Flows
     </a>
   </li>
 
         
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Flows - advanced topics
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Flows - advanced topics" class="md-nav__link md-nav__link--active">
+      Flows - advanced topics
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reactive-context" class="md-nav__link">
+    Reactive context
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caching" class="md-nav__link">
+    Caching
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#paths" class="md-nav__link">
+    Paths
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statefulness" class="md-nav__link">
+    Statefulness
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-better-way" class="md-nav__link">
+    A better way
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -924,12 +1006,10 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
     
     <label class="md-nav__link" for="nav-3">
       FAQs
@@ -953,7 +1033,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
+    <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
   </li>
@@ -965,7 +1045,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../BestPractice/" title="What Is Best Practice?" class="md-nav__link">
+    <a href="../FAQs/BestPractice/" title="What Is Best Practice?" class="md-nav__link">
       What Is Best Practice?
     </a>
   </li>
@@ -977,7 +1057,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../LoadOnMount/" title="How Do I Load On Mount?" class="md-nav__link">
+    <a href="../FAQs/LoadOnMount/" title="How Do I Load On Mount?" class="md-nav__link">
       How Do I Load On Mount?
     </a>
   </li>
@@ -989,7 +1069,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../DoINeedReFrame/" title="Reagent looks terrific. Why do I need re-frame?" class="md-nav__link">
+    <a href="../FAQs/DoINeedReFrame/" title="Reagent looks terrific. Why do I need re-frame?" class="md-nav__link">
       Reagent looks terrific. Why do I need re-frame?
     </a>
   </li>
@@ -1001,7 +1081,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../FocusOnElement/" title="How to focus on an HTML element" class="md-nav__link">
+    <a href="../FAQs/FocusOnElement/" title="How to focus on an HTML element" class="md-nav__link">
       How to focus on an HTML element
     </a>
   </li>
@@ -1013,7 +1093,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../GlobalInterceptors/" title="How do I register a global interceptor" class="md-nav__link">
+    <a href="../FAQs/GlobalInterceptors/" title="How do I register a global interceptor" class="md-nav__link">
       How do I register a global interceptor
     </a>
   </li>
@@ -1025,7 +1105,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../laggy-input/" title="Why is my input field laggy?" class="md-nav__link">
+    <a href="../FAQs/laggy-input/" title="Why is my input field laggy?" class="md-nav__link">
       Why is my input field laggy?
     </a>
   </li>
@@ -1037,7 +1117,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../When-Does-Dispatch-Happen/" title="How long after I do a dispatch does the event get handled?" class="md-nav__link">
+    <a href="../FAQs/When-Does-Dispatch-Happen/" title="How long after I do a dispatch does the event get handled?" class="md-nav__link">
       How long after I do a dispatch does the event get handled?
     </a>
   </li>
@@ -1049,7 +1129,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../UseASubscriptionInAnEventHandler/" title="How can I use a subscription in an Event Handler" class="md-nav__link">
+    <a href="../FAQs/UseASubscriptionInAnEventHandler/" title="How can I use a subscription in an Event Handler" class="md-nav__link">
       How can I use a subscription in an Event Handler
     </a>
   </li>
@@ -1059,73 +1139,9 @@
           
           
 
-  
-
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        How can I use a subscription in Js Event
-        <span class="md-nav__icon md-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
-        </span>
-      </label>
-    
-    <a href="./" title="How can I use a subscription in Js Event" class="md-nav__link md-nav__link--active">
-      How can I use a subscription in Js Event
-    </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-      </span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#question" class="md-nav__link">
-    Question
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-wrong-way" class="md-nav__link">
-    The Wrong Way
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-better-way" class="md-nav__link">
-    The Better Way
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
-  </li>
-
-        
-          
-          
-          
-
 
   <li class="md-nav__item">
-    <a href="../Logging/" title="How do I use logging method X" class="md-nav__link">
+    <a href="../FAQs/Logging/" title="How do I use logging method X" class="md-nav__link">
       How do I use logging method X
     </a>
   </li>
@@ -1137,7 +1153,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../Null-Dispatched-Events/" title="Dispatched Events Are Null" class="md-nav__link">
+    <a href="../FAQs/Null-Dispatched-Events/" title="Dispatched Events Are Null" class="md-nav__link">
       Dispatched Events Are Null
     </a>
   </li>
@@ -1149,7 +1165,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../Why-Clear-Sub-Cache/" title="Why do we need to clear the subscription cache when reloading with Figwheel?" class="md-nav__link">
+    <a href="../FAQs/Why-Clear-Sub-Cache/" title="Why do we need to clear the subscription cache when reloading with Figwheel?" class="md-nav__link">
       Why do we need to clear the subscription cache when reloading with Figwheel?
     </a>
   </li>
@@ -1161,7 +1177,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../PollADatabaseEvery60/" title="How do I turn on/off polling a database every 60 secs" class="md-nav__link">
+    <a href="../FAQs/PollADatabaseEvery60/" title="How do I turn on/off polling a database every 60 secs" class="md-nav__link">
       How do I turn on/off polling a database every 60 secs
     </a>
   </li>
@@ -1173,7 +1189,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../ViewsOnGlobalRegistration/" title="re-frame uses side-effecting registrations. Should I feel dirty?" class="md-nav__link">
+    <a href="../FAQs/ViewsOnGlobalRegistration/" title="re-frame uses side-effecting registrations. Should I feel dirty?" class="md-nav__link">
       re-frame uses side-effecting registrations. Should I feel dirty?
     </a>
   </li>
@@ -1185,7 +1201,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../Why-CLJC/" title="Why is re-frame implemented in `.cljc` files" class="md-nav__link">
+    <a href="../FAQs/Why-CLJC/" title="Why is re-frame implemented in `.cljc` files" class="md-nav__link">
       Why is re-frame implemented in `.cljc` files
     </a>
   </li>
@@ -1197,7 +1213,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../DB_Normalisation/" title="How do I store normalised data in app-db?" class="md-nav__link">
+    <a href="../FAQs/DB_Normalisation/" title="How do I store normalised data in app-db?" class="md-nav__link">
       How do I store normalised data in app-db?
     </a>
   </li>
@@ -1209,7 +1225,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../FullStackReframe/" title="How do I do full-stack re-frame?" class="md-nav__link">
+    <a href="../FAQs/FullStackReframe/" title="How do I do full-stack re-frame?" class="md-nav__link">
       How do I do full-stack re-frame?
     </a>
   </li>
@@ -1251,7 +1267,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-intro/" title="Overview" class="md-nav__link">
+    <a href="../api-intro/" title="Overview" class="md-nav__link">
       Overview
     </a>
   </li>
@@ -1263,7 +1279,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-builtin-effects/" title="Builtin Effects" class="md-nav__link">
+    <a href="../api-builtin-effects/" title="Builtin Effects" class="md-nav__link">
       Builtin Effects
     </a>
   </li>
@@ -1275,7 +1291,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1287,7 +1303,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1329,7 +1345,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2023/" title="2023" class="md-nav__link">
+    <a href="../releases/2023/" title="2023" class="md-nav__link">
       2023
     </a>
   </li>
@@ -1341,7 +1357,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2022/" title="2022" class="md-nav__link">
+    <a href="../releases/2022/" title="2022" class="md-nav__link">
       2022
     </a>
   </li>
@@ -1353,7 +1369,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2021/" title="2021" class="md-nav__link">
+    <a href="../releases/2021/" title="2021" class="md-nav__link">
       2021
     </a>
   </li>
@@ -1365,7 +1381,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2020/" title="2020" class="md-nav__link">
+    <a href="../releases/2020/" title="2020" class="md-nav__link">
       2020
     </a>
   </li>
@@ -1377,7 +1393,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2019/" title="2019" class="md-nav__link">
+    <a href="../releases/2019/" title="2019" class="md-nav__link">
       2019
     </a>
   </li>
@@ -1389,7 +1405,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2018/" title="2018" class="md-nav__link">
+    <a href="../releases/2018/" title="2018" class="md-nav__link">
       2018
     </a>
   </li>
@@ -1401,7 +1417,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2017/" title="2017" class="md-nav__link">
+    <a href="../releases/2017/" title="2017" class="md-nav__link">
       2017
     </a>
   </li>
@@ -1413,7 +1429,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2016/" title="2016" class="md-nav__link">
+    <a href="../releases/2016/" title="2016" class="md-nav__link">
       2016
     </a>
   </li>
@@ -1425,7 +1441,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../releases/2015/" title="2015" class="md-nav__link">
+    <a href="../releases/2015/" title="2015" class="md-nav__link">
       2015
     </a>
   </li>
@@ -1467,7 +1483,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../External-Resources/" title="Resources" class="md-nav__link">
+    <a href="../External-Resources/" title="Resources" class="md-nav__link">
       Resources
     </a>
   </li>
@@ -1502,22 +1518,36 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#question" class="md-nav__link">
-    Question
+  <a href="#reactive-context" class="md-nav__link">
+    Reactive context
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-wrong-way" class="md-nav__link">
-    The Wrong Way
+  <a href="#caching" class="md-nav__link">
+    Caching
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-better-way" class="md-nav__link">
-    The Better Way
+  <a href="#paths" class="md-nav__link">
+    Paths
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statefulness" class="md-nav__link">
+    Statefulness
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-better-way" class="md-nav__link">
+    A better way
   </a>
   
 </li>
@@ -1534,7 +1564,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/day8/re-frame/edit/master/docs/FAQs/UseASubscriptionInAJsEvent.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/day8/re-frame/edit/master/docs/flows-advanced-topics.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -1542,47 +1572,221 @@
                   
                 
                 
-                  <h1>How can I use a subscription in Js Event</h1>
+                  <h1>Flows - advanced topics</h1>
                 
-                <h3 id="question">Question<a class="headerlink" href="#question" title="Permanent link">&para;</a></h3>
-<p>How do I access the value of a subscription from within a Reagent or JavaScript event (such as on-click)?</p>
-<h3 id="the-wrong-way">The Wrong Way<a class="headerlink" href="#the-wrong-way" title="Permanent link">&para;</a></h3>
-<p>You should NOT do this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:type</span> <span class="s">&quot;button&quot;</span> 
-         <span class="ss">:value</span> <span class="s">&quot;Click me!&quot;</span>
-         <span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">sub-val</span>  <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:something</span><span class="p">])]</span>   <span class="c1">;;&lt;--- Eeek</span>
-       <span class="nv">....</span><span class="p">)}]</span>
+                <blockquote>
+<p>Have you been to Clevelinnati? No? Clevelinnati can be found at the geometric midpoint between Cleveland and Cincinnati. What's that, you say it's not on the map?
+Well, no worries. Now that I've defined Clevelinnati for you, you'll know exactly how to get to get there... As long as Cleveland stays still.</p>
+</blockquote>
+<p>Previously, we explored the capabilities of <a href="/re-frame/Flows">flows</a>.
+We discussed a flow which derives the area of a room from its dimensions:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+{:id     :kitchen-area
+ :inputs {:w [:kitchen :width]
+          :h [:kitchen :length]}
+ :output (fn [{:keys [w h]}] (* w h))
+ :path   [:kitchen :area]
+ :live-inputs {:tab [:tab]}
+ :live?  (fn [{:keys [tab]}]
+           (= tab :kitchen))}
+</div>
+
+<p>Here, we'll consider the nuances of re-frame's reactive model, and how flows stand to solve some of its fundamental shortcomings.</p>
+<p>Introducing yet another demo app! Turns out, we were measuring the kitchen to fill it with balloons. It's a balloon prank planner app. Consider the following:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-eval-on-init data-cm-doc-no-edit data-cm-doc-no-result>
+(rf/reg-sub
+ ::kitchen-area
+ (fn [db _] (get-in db [:kitchen :area])))
+
+(rf/reg-sub
+ ::kitchen-height
+ (fn [db _] (get-in db [:kitchen :height])))
+
+(rf/reg-sub
+ ::kitchen-volume
+ (fn [_] [(rf/subscribe [::kitchen-area]) (rf/subscribe [::kitchen-height])])
+ (fn [[area height] _] (* area  height)))
+
+(rf/reg-sub
+ ::num-balloons-to-fill-kitchen
+ (fn [_] [(rf/subscribe [::kitchen-volume])])
+ (fn [[volume] _] (let [std-balloon-volume 2.5]
+                   (/ volume std-balloon-volume))))
+
+(rf/reg-event-fx
+ ::order-ballons-for-kitchen-prank
+ (fn [{:keys [balloons-per-bag db] :as cofx} _]
+   (let [num-balloons-to-fill-kitchen :???     ;; How can I get this value???
+         num-bags-to-buy (js/Math.ceil
+                          (/ num-balloons-to-fill-kitchen
+                             balloons-per-bag))]
+     {:fx [[:amazon {:fn :order
+                     :sku :balloon-bag
+                     :ct num-bags-to-buy}]]})))
+</div>
+
+<p>How can we get a correct value for <code>num-balloons-to-fill-kitchen</code>?
+You might try calling <code>(rf/subscribe [::num-balloons-to-fill-kitchen])</code>, but re-frame comes back with a warning about reactive context, 
+and memory leaks... oh my!</p>
+<h3 id="reactive-context">Reactive context<a class="headerlink" href="#reactive-context" title="Permanent link">&para;</a></h3>
+<p>To know if a thing has changed, you have to remember what it was.
+To propagate change from one value to the next, you have to remember the relationship between them (a <a href="https://clojuredocs.org/clojure.core/add-watch"><code>watchable</code></a>).
+Remembering is a side-effect.</p>
+<p>Reagent does this. Its main constructs - <em>reactive atom</em>, and <em>component</em> - are stateful, impure.
+We depend on this memory. It abstracts the essential complexity of reactive programming.</p>
+<p>Reagent manages atoms and components with an event loop. Only in the context of this loop can be sure reagent's memory is consistent.
+Literally, this is called <a href="https://github.com/reagent-project/reagent/blob/a14faba55e373000f8f93edfcfce0d1222f7e71a/src/reagent/ratom.cljs#L12"><code>*ratom-context*</code></a>.</p>
+<p>Generally, <code>*ratom-context*</code> only has value during the evaluation of a component function (i.e., at "render time"). 
+When <code>*ratom-context*</code> has no value, reactive atoms behave differently.</p>
+<p>You can simply call <a href="http://reagent-project.github.io/docs/master/reagent.ratom.html#var-reactive.3F"><code>reagent.ratom/reactive?</code></a> 
+to find out whether your code is running in a reactive context.</p>
+<h4>Reactive context in re-frame</h4>
+<p>Now, here's where re-frame enters the picture:</p>
+<ul>
+<li>An <strong>event handler</strong> is a pure function, with no reactive context (it has an <a href="/re-frame/Interceptors">interceptor</a> context).</li>
+<li>A <strong>subscription</strong>, on the other hand, is a reactive atom (with <em>no</em> interceptor context).</li>
+<li>Calling <code>subscribe</code> has the side-effect of <em>creating</em> a <strong>subscription</strong>.</li>
+</ul>
+<p>Outside of a component function, a subscription's behavior differs:
+Not only the behavior of the reactive atom, but also the behavior of re-frame's subscription <a href="#caching">caching</a> mechanism.</p>
+<h4>What this means for your app</h4>
+<p>Subscriptions and event handlers differ in purity and runtime context.
+This means they have a <a href="https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/">coloring problem</a>.</p>
+<p>We <a href="https://github.com/day8/re-frame/issues/753">express some business logic with subscriptions</a>, and some with events. 
+This introduces the coloring problem to our business domain.</p>
+<p>We can ignore the problem in <a href="https://github.com/day8/re-frame/issues/740#issuecomment-955749230">some cases</a>,
+but the essential consequence of calling <code>subscribe</code> in an event handler is an unsafe cache.
+Calling <code>subscribe</code> allocates physical memory on the client, and re-frame has no way to deallocate it.
+This puts us back in C territory.</p>
+<p>Thus, to safely get a value for <code>num-balloons-to-fill-kitchen</code>, we have to duplicate the business logic that we wrote into our subscription,
+along with the <em>entire</em> subgraph of subscription inputs:</p>
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+(rf/reg-event-fx
+ ::order-ballons-for-kitchen-prank
+ (fn [{:keys [balloons-per-bag db] :as cofx} _]
+   (let [kitchen-area (get-in db [:kitchen :area])
+         kitchen-height (get-in db [:kitchen :height])
+         kitchen-volume (* area height)      ;; eyelids start drooping here
+         std-balloon-volume 2.5
+         num-balloons (/ kitchen-volume std-balloon-volume)
+         num-bags-to-buy (js/Math.ceil
+                          (/ num-baloons balloons-per-bag))]
+     {:fx [[:amazon {:fn :order
+                     :sku :balloon-bag
+                     :ct num-bags-to-buy}]]})))
+</div>
+
+<p>Not only have we <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">drenched</a> our code, but now it has to do all our calculations twice.</p>
+<p>Of course you can design around the problem, but at what cost?
+We sympathize with you developers, for the hours you may have spent poring over an event handler, just to re-write the code as a subscription, and vice-versa.</p>
+<h3 id="caching">Caching<a class="headerlink" href="#caching" title="Permanent link">&para;</a></h3>
+<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it.
+Basically, when components call <code>subscribe</code> with a particular <code>query-v</code>, re-frame sets up a callback.
+When those components unmount, this callback deletes the stored value.
+It removes the subscription from the graph, so that it will no longer recalculate.
+This is a form of <a href="https://en.wikipedia.org/wiki/Reference_counting">reference counting</a> - once the last subscribing component unmounts, then the subscription is freed.</p>
+<p>This often works as intended, and nothing gets in our way.
+It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa.
+But when these values are expensive to produce or store, their existence starts to matter.
+The fact that some view is creating and destroying them starts to seem arbitrary.
+Subscriptions don't <em>need</em> to couple their behavior with that of their calling components.</p>
+<p>The easy, automatic lifecycle behavior of subscriptions comes with a coupling of concerns. You can't directly control this lifecycle.
+You have to contol it by proxy, by mounting and unmounting your views. You can't <em>think</em> about your signal graph without thinking about views first.</p>
+<p>The <code>app-db</code> represents your business state, and signals represent outcomes of your business logic. Views are just window dressing.
+We're tired of designing our whole business to change every time we wash the windows!</p>
+<h3 id="paths">Paths<a class="headerlink" href="#paths" title="Permanent link">&para;</a></h3>
+<p>A <a href="/re-frame/subscriptions/#the-four-layers">layer-2</a> subscription basically <em>names</em> an <code>app-db</code> path. 
+What does a layer-3 subscription <em>name</em>?</p>
+<p>A materialized view of data, or a derived value.</p>
+<p>Subscriptions occupy their own semantic territory, separate from <code>app-db</code>.
+Only within view functions (and other subscriptions) can we access this domain.
+Outside of views, they form an impenetrable blob.</p>
+<p>So, re-frame is simple. <code>app-db</code> represents and <em>names</em> the state of your app.
+Except, so does this network of subscription names. But you can't always <em>use</em> those, only sometimes.</p>
+<h3 id="statefulness">Statefulness<a class="headerlink" href="#statefulness" title="Permanent link">&para;</a></h3>
+<p>Here's the story we like to tell about re-frame:</p>
+<ul>
+<li><strong>User Actions</strong> cause <strong>Events</strong></li>
+<li><strong>Events</strong> cause <strong>Effects</strong></li>
+<li><strong>Effects</strong> cause <strong>State Changes</strong></li>
+<li><strong>State changes</strong> cause <strong>View Rendering</strong></li>
+</ul>
+<p>Turns out, it's not so simple. 
+Not only do <em>state changes</em> cause <em>view rendering</em>, but <em>view rendering</em> also causes <em>state changes</em>.
+Specifically, render logic changes the state of subscriptions.</p>
+<p>Your app's actual story might go something like this:</p>
+<blockquote>
+<p>An event fires. A subscription runs. An outer component passes new props to an inner one. A reaction runs. Another reaction runs. A component unmounts. That subscription disposes, clearing its cache.</p>
+</blockquote>
+<p>Sound <a href="https://github.com/day8/re-frame/discussions/776">familiar</a>?</p>
+<blockquote>
+<p>Then, the same event fires. Another component mounts. The same subscription runs. Its calculation is heavy, so your app lags every time.
+"Wait," you ask, "what happened to the cache? Why is my subscription recalculating when its inputs are the same?"
+After a lot of headscratching, you find out it's because the subscription itself is not the same. Render logic caused it to dispose, and a new one took its place.</p>
+</blockquote>
+<p>This isn't a bug, nor is it inevitable, but in our experience, complexity adds up fast. 
+Once Reagent, Re-frame and React begin to share the concern of reactive dataflow, they can race, or play chicken. 
+I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!</p>
+<p>When a view calls <code>subscribe</code>, it creates a reaction. When that view unmounts, it frees the reaction. 
+These are side-effects on the signal <em>graph</em> 
+(that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).</p>
+<div class="codehilite"><pre><span></span><code>event -&gt; app-db -&gt; signals -&gt; view -&gt; event
+                                  ∟-&gt; signal graph -&gt; signals -&gt; view
 </code></pre></div>
 
 
-<p>because that <code>subscribe</code>:
-1. might create a memory leak (the subscription might not be "freed")
-2. makes the event handler impure (it grabs a global value)</p>
-<h3 id="the-better-way">The Better Way<a class="headerlink" href="#the-better-way" title="Permanent link">&para;</a></h3>
-<p>If your <code>on-click</code> function requires access to re-frame data, the first thing you should do is convert it to a re-frame event and dispatch that instead.</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
-  <span class="ss">:input/on-click</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">coeffects</span> <span class="nv">event</span><span class="p">]</span>
-    <span class="nv">....</span>
-    <span class="p">))</span>
-</code></pre></div>
+<p>Something is looping in on itself here:</p>
+<ul>
+<li>The value of <code>app-db</code> determines when a view lives or dies.</li>
+<li><em>And</em>, the value of a view determines when a signal lives or dies. </li>
+<li><em>And</em>, the value of a signal determines when a view lives or dies.</li>
+</ul>
+<p>If views derive solely from <code>app-db</code>, when why must signals derive from views?
+Why not simply have <em>everything</em> derive from <code>app-db</code>?</p>
+<p><code>event -&gt; app-db -&gt; signal graph -&gt; signals -&gt; view -&gt; event</code></p>
+<h3 id="a-better-way">A better way<a class="headerlink" href="#a-better-way" title="Permanent link">&para;</a></h3>
+<p>Here's the good news about <a href="/re-frame/Flows">flows</a>:</p>
+<p><strong>You can access a flow's output value any time, anywhere,</strong>
+since flows are controlled by re-frame/interceptors, not reagent/reactions.
+Instead of thinking about reactive context, just think about the outcome of the latest event.
+If you know <code>app-db</code>, you know your flow value. 
+You can also <a href="/re-frame/Flows/#subscribing-to-flows">subscribe to flows</a>.</p>
+<p><strong>If you know a flow's name, you know its location,</strong>
+since flows store their output in <code>app-db</code>, at a static path.
+It doesn't matter what other flows &amp; paths it depends on.
+The value you need simply stays where you put it.</p>
+<p><strong>A flow's lifecycle is a pure function of <code>app-db</code></strong>.
+That means you explicitly define when a flow lives, dies, is registered or cleared.
+You do this directly, not via your component tree.</p>
+<p>Like many Clojure patterns, flows are <em>both</em> nested <em>and</em> flat.
+Even though <code>::num-balloons-to-fill-kitchen</code> depends on other flows, we can access it directly:</p>
+<div class="cm-doc" data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
+(rf/reg-flow
+ {:id ::kitchen-volume
+  :inputs {:area [:kitchen :area]
+           :height [:kitchen :height]}
+  :output (fn [{:keys [area height]}]
+            (* area height))
+  :path [:kitchen :volume]})
 
+(rf/reg-flow
+ {:id ::num-balloons-to-fill-kitchen
+  :inputs {:volume (rf/flow<- ::kitchen-volume)}
+  :output (fn [{:keys [volume]}]
+            (let [std-balloon-volume 2.5]
+               (/ volume std-balloon-volume)))})
 
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:type</span> <span class="s">&quot;button&quot;</span> 
-        <span class="ss">:value</span> <span class="s">&quot;Click me!&quot;</span>
-        <span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:input/on-click</span> <span class="nv">%</span><span class="p">])}]</span>
-</code></pre></div>
-
-
-<p>Since you have access to the <code>coeffects</code> now, you may be able to get the data you need directly rather than using a subscription.</p>
-<p>If you still need to use a subscription, then visit <a href="../UseASubscriptionInAnEventHandler/">How can I use a subscription in an Event Handler</a> to see how to inject the subscription value directly into your <code>coeffects</code> and avoid the possibility of a memory leak.</p>
-<hr />
-<p>Up:  <a href="README.md">FAQ Index</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+(rf/reg-event-fx
+ ::order-ballons-for-kitchen-prank
+ (fn [{:keys [balloons-per-bag] :as cofx} _]
+   (let [num-balloons (rf/get-flow db ::num-balloons-to-fill-kitchen) ;; easy!
+         num-bags-to-buy (js/Math.ceil
+                          (/ num-balloons
+                             balloons-per-bag))]
+     {:fx [[:amazon {:fn :order
+                     :sku :balloon-bag
+                     :ct num-bags-to-buy}]]})))
+</div>
                 
               
               
@@ -1633,8 +1837,8 @@
         <!-- Link to previous page -->
         
           <a
-            href="../UseASubscriptionInAnEventHandler/"
-            title="How can I use a subscription in an Event Handler"
+            href="../Flows/"
+            title="Flows"
             class="md-footer-nav__link md-footer-nav__link--prev"
             rel="prev"
           >
@@ -1646,7 +1850,7 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                How can I use a subscription in an Event Handler
+                Flows
               </div>
             </div>
           </a>
@@ -1655,8 +1859,8 @@
         <!-- Link to next page -->
         
           <a
-            href="../Logging/"
-            title="How do I use logging method X"
+            href="../FAQs/Inspecting-app-db/"
+            title="How can I Inspect app-db?"
             class="md-footer-nav__link md-footer-nav__link--next"
             rel="next"
           >
@@ -1665,7 +1869,7 @@
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                How do I use logging method X
+                How can I Inspect app-db?
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
@@ -1721,15 +1925,15 @@
 
     </div>
     
-      <script src="../../assets/javascripts/vendor.df0def68.min.js"></script>
-      <script src="../../assets/javascripts/bundle.ba57d267.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      <script src="../assets/javascripts/vendor.df0def68.min.js"></script>
+      <script src="../assets/javascripts/bundle.ba57d267.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
       
       <script>
         app = initialize({
-          base: "../..",
+          base: "..",
           features: ["tabs"],
           search: Object.assign({
-            worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
+            worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
