@@ -2190,8 +2190,7 @@ Depending on the return value of <code>:live?</code>, re-frame handles one of 4 
 </tr>
 </tbody>
 </table>
-<p>Basically, <em>living</em> flows get output, <em>dying</em> flows get cleaned up, <em>arising</em> flows get initiated and output.</p>
-<p>And independently of all this, <code>:output</code> only runs when <code>:inputs</code> have changed value.</p>
+<p>Basically, <em>arising</em> flows get output, <em>living</em> flows get output as needed, and <em>dying</em> flows get cleaned up.</p>
 <h3 id="cleanup">Cleanup<a class="headerlink" href="#cleanup" title="Permanent link">&para;</a></h3>
 <p>A <code>:cleanup</code> function takes <code>app-db</code> and the <code>:path</code>, and returns a new <code>app-db</code>. </p>
 <p>Try adding this <code>:cleanup</code> key into the <code>:kitchen-area</code> flow above (be sure to <code>eval</code> the code block again).</p>
