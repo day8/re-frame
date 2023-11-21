@@ -816,8 +816,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statefulness" class="md-nav__link">
-    Statefulness
+  <a href="#signal-graph-state" class="md-nav__link">
+    Signal graph state
   </a>
   
 </li>
@@ -1539,8 +1539,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statefulness" class="md-nav__link">
-    Statefulness
+  <a href="#signal-graph-state" class="md-nav__link">
+    Signal graph state
   </a>
   
 </li>
@@ -1630,7 +1630,7 @@ You might try calling <code>(rf/subscribe [::num-balloons-to-fill-kitchen])</cod
 and memory leaks... oh my!</p>
 <h3 id="reactive-context">Reactive context<a class="headerlink" href="#reactive-context" title="Permanent link">&para;</a></h3>
 <p>To know if a thing has changed, you have to remember what it was.
-To propagate change from one value to the next, you have to remember their relationship (a <a href="https://clojuredocs.org/clojure.core/add-watch"><code>watchable</code></a>).
+To propagate change from one identity to the another, you have to remember their relationship (a <a href="https://clojuredocs.org/clojure.core/add-watch"><code>watchable</code></a>).
 Memory is state. Remembering is a side-effect.</p>
 <p>Reagent does this. Its main constructs - <em>reactive atom</em>, and <em>component</em> - are stateful, impure.
 We depend on this memory. It abstracts the essential complexity of reactive programming.</p>
@@ -1641,17 +1641,17 @@ When <code>*ratom-context*</code> has no value, reactive atoms behave differentl
 <p>You can simply call <a href="http://reagent-project.github.io/docs/master/reagent.ratom.html#var-reactive.3F"><code>reagent.ratom/reactive?</code></a> 
 to find out whether your code is running in a reactive context.</p>
 <h4>Reactive context in re-frame</h4>
-<p>Now, here's where re-frame enters the picture:</p>
+<p>Here's where re-frame enters the picture:</p>
 <ul>
-<li>An <strong>event handler</strong> is a pure function, with no reactive context (it has an <a href="/re-frame/Interceptors">interceptor</a> context).</li>
+<li>An <strong>event handler</strong> is a pure function, with no reactive context.</li>
 <li>A <strong>subscription handler</strong> is pure, too.</li>
-<li>A <strong>subscription</strong>, on the other hand, is a reactive atom (with <em>no</em> interceptor context).</li>
+<li>A <strong>subscription</strong>, on the other hand, is a reactive atom.</li>
 <li>Calling <code>subscribe</code> has the side-effect of <em>creating</em> a <strong>subscription</strong>.</li>
 </ul>
 <p>Outside of a reactive context, a subscription's behavior differs:
-Not only the behavior of the reactive atom, but also the behavior of its <a href="#caching">caching</a> mechanism.</p>
-<h4>What this means for your app</h4>
-<p>Subscriptions and event handlers differ in purity and runtime context.
+Not only the behavior of the reactive atom, but also its <a href="#caching">caching</a> behavior.</p>
+<h4>Reactive context in your app</h4>
+<p>Subscriptions and handlers differ in purity and runtime context.
 This means they have a <a href="https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/">coloring problem</a>.</p>
 <p>We <a href="https://github.com/day8/re-frame/issues/753">express some business logic with subscriptions</a>, and some with events. 
 This introduces the coloring problem to our business domain.</p>
@@ -1659,7 +1659,7 @@ This introduces the coloring problem to our business domain.</p>
 but the essential consequence of calling <code>subscribe</code> in an event handler is an unsafe cache.
 Calling <code>subscribe</code> allocates physical memory on the client, and re-frame has no way to deallocate it.
 This puts us back in C territory.</p>
-<p>Thus, to safely get a value for <code>num-balloons-to-fill-kitchen</code>, we have to duplicate the business logic that we wrote into our subscription,
+<p>Instead, to safely get a value for <code>num-balloons-to-fill-kitchen</code>, we have to duplicate the business logic that we wrote into our subscription,
 along with the <em>entire</em> subgraph of subscription inputs:</p>
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
 (rf/reg-event-fx
@@ -1681,7 +1681,7 @@ along with the <em>entire</em> subgraph of subscription inputs:</p>
 <p>Of course you can design around the problem, but at what cost?
 We sympathize with you developers, for the hours you may have spent poring over an event handler, just to re-write the code as a subscription, and vice-versa.</p>
 <h3 id="caching">Caching<a class="headerlink" href="#caching" title="Permanent link">&para;</a></h3>
-<p>Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it.
+<p>Subscriptions have a built-in caching mechanism, which stores the value as long as there is a component in the render tree which uses it.
 Basically, when components call <code>subscribe</code> with a particular <code>query-v</code>, re-frame sets up a callback.
 When those components unmount, this callback deletes the stored value.
 It removes the subscription from the graph, so that it will no longer recalculate.
@@ -1704,7 +1704,7 @@ Only within view functions (and other subscriptions) can we access this domain.
 Outside of views, they form an impenetrable blob.</p>
 <p>So, re-frame is simple. <code>app-db</code> represents and <em>names</em> the state of your app.
 Except, so does this network of subscription names. But you can't always <em>use</em> those, only sometimes.</p>
-<h3 id="statefulness">Statefulness<a class="headerlink" href="#statefulness" title="Permanent link">&para;</a></h3>
+<h3 id="signal-graph-state">Signal graph state<a class="headerlink" href="#signal-graph-state" title="Permanent link">&para;</a></h3>
 <p>Here's the story we like to tell about re-frame:</p>
 <ul>
 <li><strong>User Actions</strong> cause <strong>Events</strong></li>
@@ -1729,8 +1729,8 @@ After a lot of headscratching, you find out it's because the subscription itself
 Once Reagent, Re-frame and React begin to share the concern of reactive dataflow, they can race, or play chicken. 
 I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!</p>
 <p>When a view calls <code>subscribe</code>, it creates a reaction. When that view unmounts, it frees the reaction. 
-These are side-effects on the signal <em>graph</em> 
-(that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).</p>
+These are side-effects on the signal graph
+(that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing that value).</p>
 <div class="codehilite"><pre><span></span><code>event -&gt; app-db -&gt; signals -&gt; view -&gt; event
                                   ∟-&gt; signal graph -&gt; signals -&gt; view
 </code></pre></div>
