@@ -1703,10 +1703,10 @@ for an in-depth explanation.</p>
 
 
 <p>Furthermore, this is a conceptual issue.
-Subscription handlers are pure, but <code>subscribe</code> has a side-effect.
-Calling <code>subscribe</code> inside an event handler goes against re-frame's design system, which is based on handlers being pure functions.</p>
+Your subscription handler may be pure, but <code>subscribe</code> always has a side-effect.
+Calling <code>subscribe</code> inside an event handler goes against re-frame's design, which is based on handlers being pure functions.</p>
 <h3 id="incidental-safety">Incidental safety<a class="headerlink" href="#incidental-safety" title="Permanent link">&para;</a></h3>
-<p>Calling <code>subscribe</code> <em>outside</em> a component will be somewhat safe, as long as you've also called it <em>inside</em> a component.
+<p>Calling <code>subscribe</code> <em>outside</em> a component is somewhat safe, as long as you've also called it <em>inside</em> a component.
 The <em>outside</em> one has no way to dispose, but the <em>inside</em> one might dispose it later.</p>
 <p>Of course, that requires your component to be around while your other code runs.
 If that component unmounts and never comes back, then you're on your own again.</p>
@@ -1739,7 +1739,7 @@ If that component unmounts and never comes back, then you're on your own again.<
 <h4><em>Don't</em> call <code>subscribe</code> in a callback:</h4>
 <div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:type</span> <span class="s">&quot;button&quot;</span> 
          <span class="ss">:value</span> <span class="s">&quot;Click me!&quot;</span>
-         <span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nb">doto </span><span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:circles</span><span class="p">])</span> <span class="nv">circle-effect</span><span class="p">)}]</span>
+         <span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nb">doto </span><span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:circles</span><span class="p">])</span> <span class="nv">circle-effect!</span><span class="p">)}]</span>
 </code></pre></div>
 
 
@@ -1767,7 +1767,7 @@ It will recalculate every time you call <code>sub</code>, unless you've already 
 <h3 id="re-frame-utils">re-frame-utils<a class="headerlink" href="#re-frame-utils" title="Permanent link">&para;</a></h3>
 <p>The 3rd party library <code>re-frame-utils</code> provides an <a href="https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc">inject coeffect</a>.
 This allows you to access a subscription's value within a re-frame event handler.</p>
-<p>This way, you declare an interceptor that resolves your subscription. Then your event handler function can destructure the value from the coeffects:</p>
+<p>This way, you declare an interceptor that resolves your subscription. Then, your event handler function can destructure the value from the coeffects:</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>         <span class="c1">;; handler must access coeffects, so use -fx</span>
   <span class="ss">:event-id</span> 
   <span class="p">(</span><span class="nf">vimsical.re-frame.cofx.inject/inject</span> <span class="p">[</span><span class="ss">:query-id</span> <span class="ss">:param</span><span class="p">])</span>  <span class="c1">;; &lt;-- interceptor will inject subscription value into coeffects</span>
