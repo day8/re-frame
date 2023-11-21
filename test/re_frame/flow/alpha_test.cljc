@@ -26,9 +26,7 @@
     (testing "topological sort"
       (is (= #{:a :b} (set (f/input-ids c))))
       (is (= :c (last (map :id (f/topsort @f/flows))))))
-    (testing "deep cleanup"
-      (is (= {} (f/deep-cleanup {:a {:b {:c {:d 1}}}} [:a :b :c :d])))
-      (is (= {:a {:x 2}} (f/deep-cleanup {:a {:x 2 :b {:c {:d 1}}}} [:a :b :c :d]))))
+
     (testing "stale inputs & outputs"
       (is (= {:flow-a [:a]} (f/stale-in-flows {:flow-a {:path [:a]}}
                                               {:inputs {:a [:a]}})))

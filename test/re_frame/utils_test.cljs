@@ -22,3 +22,9 @@
   (testing "orphaned edges"
     (is (= {:A [:B] :B []} (u/remove-orphans {:A [:B :C]
                                               :B []})))))
+
+(testing "deep dissoc"
+  (is (= {} (u/deep-dissoc {:a {:b {:c {:d 1}}}}
+                           [:a :b :c :d])))
+  (is (= {:a {:x 2}} (u/deep-dissoc {:a {:x 2 :b {:c {:d 1}}}}
+                                    [:a :b :c :d]))))

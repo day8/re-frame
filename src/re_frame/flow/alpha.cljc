@@ -31,19 +31,6 @@
        reverse
        (map flows)))
 
-(defn safe-update-in [m path f & args]
-  (if (empty? path)
-    (apply f m args)
-    (apply update-in m path f args)))
-
-(defn deep-cleanup [db path]
-  (if
-   (empty? path) db
-   (let [new-data (safe-update-in db (pop path) dissoc (peek path))]
-     (if-not (empty? (get-in new-data (pop path)))
-       new-data
-       (recur new-data (pop path))))))
-
 (defn default [id]
   {:id id
    :path [id]
@@ -51,8 +38,7 @@
    :output (constantly true)
    :live? (constantly true)
    :live-inputs {}
-   :init (fn [db path] (assoc-in db path {}))
-   :cleanup deep-cleanup})
+   :cleanup u/deep-dissoc})
 
 (defn stale-in-flows [flows {:keys [inputs]}]
   (reduce-kv (fn [m k {:keys [path]}]

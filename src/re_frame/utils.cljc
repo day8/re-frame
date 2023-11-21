@@ -75,3 +75,34 @@
 
 (defn remove-orphans [graph]
   (map-vals (partial filterv (set (keys graph))) graph))
+
+(defn safe-update-in [m path f & args]
+  (if (empty? path)
+    (apply f m args)
+    (apply update-in m path f args)))
+
+(defn deep-dissoc
+  "Dissoces the map entry at the path, then recurs through the ancestors,
+  dissocing each ancestor until one is found with a descendent outside the path.
+
+  ```
+  (deep-dissoc {:a {:b {:c {:d 1}}}}
+               [:a :b :c :d])
+  ```
+
+  This yields an empty map, since each node has a sole descendant.
+
+  ```
+  (deep-dissoc {:a {:x 2 :b {:c {:d 1}}}}
+               [:a :b :c :d])
+  ```
+
+  This yields `{:a {:x 2}}`, since `:a` has a descendent `:x` outside the path.
+  "
+  [m path]
+  (if
+   (empty? path) m
+   (let [new-data (safe-update-in m (pop path) dissoc (peek path))]
+     (if-not (empty? (get-in new-data (pop path)))
+       new-data
+       (recur new-data (pop path))))))
