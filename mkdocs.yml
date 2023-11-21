@@ -47,6 +47,7 @@ nav:
       - Interceptors.md
       - Effects.md
       - Coeffects.md
+      - Flows.md
       - Review TodoMVC: review-todomvc.md
     - "INTERMEDIATE 4,5 & 6":
       - Correcting a wrong: correcting-a-wrong.md
@@ -59,6 +60,7 @@ nav:
       - "Interconnections": interconnections.md
       - "Historical": historical.md
     - MORE ADVANCED:
+      - Flows - advanced topics: flows-advanced-topics.md
       - Stable Dom Handlers: on-stable-dom-handlers.md
       - Browser Dynamics: browser-dynamics.md
       - Reusable Components: reusable-components.md
@@ -72,8 +74,6 @@ nav:
       - Solve the CPU hog problem: Solve-the-CPU-hog-problem.md
       - Using Stateful JS Components: Using-Stateful-JS-Components.md
       - The Logo Backstory: The-re-frame-logo.md
-      - Flows.md
-      - Flows - advanced topics: flows-advanced-topics.md
   - FAQs:
     - "How can I Inspect app-db?": FAQs/Inspecting-app-db.md
     - "What Is Best Practice?": FAQs/BestPractice.md

@@ -99,7 +99,7 @@
    (swap! flows empty))
   ([id]
    (when-let [flow (lookup id)]
-     (swap! flows dissoc flow)
+     (swap! flows dissoc id)
      (swap! flows vary-meta update ::cleared assoc (:id flow) flow))))
 
 (defn flow<- [id] {::flow<- id})

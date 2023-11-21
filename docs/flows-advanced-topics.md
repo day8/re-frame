@@ -51,19 +51,55 @@ Introducing yet another demo app! Turns out, we were measuring the kitchen to fi
                      :ct num-bags-to-buy}]]})))
 </div>
 
-How can we get a correct value for `num-balloons-to-fill-kitchen`? You might try calling `(rf/subscribe [::num-balloons-to-fill-kitchen])`, but re-frame comes back with a warning about reactive context, and memory leaks... oh my!
+How can we get a correct value for `num-balloons-to-fill-kitchen`?
+You might try calling `(rf/subscribe [::num-balloons-to-fill-kitchen])`, but re-frame comes back with a warning about reactive context, 
+and memory leaks... oh my!
 
 ### Reactive context
 
-We express some [business logic in subscriptions](https://github.com/day8/re-frame/issues/753), and some in events, but they're not really compatible.
-Between subscriptions and events, there is a [coloring problem](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/).
+To know if a thing has changed, you have to remember what it was.
+To propagate change from one value to the next, you have to remember their relationship (a [`watchable`](https://clojuredocs.org/clojure.core/add-watch)).
+Memory is state. Remembering is a side-effect.
 
-Subscriptions can only be accessed within a [reactive context](/re-frame/FAQs/UseASubscriptionInAnEventHandler).
-Since an event handler isn't reactive, it can't access any subscriptions.
+Reagent does this. Its main constructs - *reactive atom*, and *component* - are stateful, impure.
+We depend on this memory. It abstracts the essential complexity of reactive programming.
 
-Furthermore, subscriptions have an `input-signals` function. This allows the value of one subscription to flow into another. But events have no such thing.
+Reagent manages atoms and components with an event loop. Only in the context of this loop can we be sure reagent's memory is consistent.
+Literally, this is called [`*ratom-context*`](https://github.com/reagent-project/reagent/blob/a14faba55e373000f8f93edfcfce0d1222f7e71a/src/reagent/ratom.cljs#L12).
 
-That means, to get a usable value for `num-balloons-to-fill-kitchen`, we have to duplicate the business logic that we wrote into our subscription, along with the *entire* subgraph of inputs which our subscription is composed of:
+Generally, `*ratom-context*` only has value during the evaluation of a component function (i.e., at "render time").
+When `*ratom-context*` has no value, reactive atoms behave differently.
+
+You can simply call [`reagent.ratom/reactive?`](http://reagent-project.github.io/docs/master/reagent.ratom.html#var-reactive.3F) 
+to find out whether your code is running in a reactive context.
+
+#### Reactive context in re-frame
+
+Now, here's where re-frame enters the picture:
+
+- An **event handler** is a pure function, with no reactive context (it has an [interceptor](/re-frame/Interceptors) context).
+- A **subscription handler** is pure, too.
+- A **subscription**, on the other hand, is a reactive atom (with *no* interceptor context).
+- Calling `subscribe` has the side-effect of *creating* a **subscription**.
+
+Outside of a reactive context, a subscription's behavior differs:
+Not only the behavior of the reactive atom, but also the behavior of its [caching](#caching) mechanism.
+
+#### What this means for your app
+
+Subscriptions and event handlers differ in purity and runtime context.
+This means they have a [coloring problem](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/).
+
+We [express some business logic with subscriptions](https://github.com/day8/re-frame/issues/753), and some with events. 
+This introduces the coloring problem to our business domain.
+
+We can ignore the problem in [some cases](https://github.com/day8/re-frame/issues/740#issuecomment-955749230),
+but the essential consequence of calling `subscribe` in an event handler is an unsafe cache.
+Calling `subscribe` allocates physical memory on the client, and re-frame has no way to deallocate it.
+This puts us back in C territory.
+
+Thus, to safely get a value for `num-balloons-to-fill-kitchen`, we have to duplicate the business logic that we wrote into our subscription,
+along with the *entire* subgraph of subscription inputs:
 
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
 (rf/reg-event-fx
@@ -72,7 +108,7 @@ That means, to get a usable value for `num-balloons-to-fill-kitchen`, we have to
    (let [kitchen-area (get-in db [:kitchen :area])
          kitchen-height (get-in db [:kitchen :height])
          kitchen-volume (* area height)      ;; eyelids start drooping here
-         std-balloon-volume 2.5              
+         std-balloon-volume 2.5
          num-balloons (/ kitchen-volume std-balloon-volume)
          num-bags-to-buy (js/Math.ceil
                           (/ num-baloons balloons-per-bag))]
@@ -88,33 +124,37 @@ We sympathize with you developers, for the hours you may have spent poring over 
 
 ### Caching
 
-Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it. 
-Basically, when components call `subscribe` with a particular `query-v`, re-frame sets up a callback. 
-When those components unmount, this callback deletes the stored value. 
-It removes the subscription from the graph, so that it will no longer recalculate. 
+Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it.
+Basically, when components call `subscribe` with a particular `query-v`, re-frame sets up a callback.
+When those components unmount, this callback deletes the stored value.
+It removes the subscription from the graph, so that it will no longer recalculate.
 This is a form of [reference counting](https://en.wikipedia.org/wiki/Reference_counting) - once the last subscribing component unmounts, then the subscription is freed.
 
-This often works as intended, and nothing gets in our way. 
-It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa. 
-But when these values are expensive to produce or store, their existence starts to matter. 
-The fact that some view is creating and destroying them starts to seem arbitrary. 
+This often works as intended, and nothing gets in our way.
+It's elegant in a sense - a view requires certain values, and those values only matter when the view exists. And vice versa.
+But when these values are expensive to produce or store, their existence starts to matter.
+The fact that some view is creating and destroying them starts to seem arbitrary.
 Subscriptions don't *need* to couple their behavior with that of their calling components.
 
-The easy, automatic lifecycle behavior of subscriptions comes with a coupling of concerns. You can't directly control this lifecycle. 
+The easy, automatic lifecycle behavior of subscriptions comes with a coupling of concerns. You can't directly control this lifecycle.
 You have to contol it by proxy, by mounting and unmounting your views. You can't *think* about your signal graph without thinking about views first.
 
-The `app-db` represents your business state, and signals represent outcomes of your business logic. Views are just window dressing. 
+The `app-db` represents your business state, and signals represent outcomes of your business logic. Views are just window dressing.
 We're tired of designing our whole business to change every time we wash the windows!
 
 ### Paths
 
-A [layer-2](/re-frame/subscriptions/#the-four-layers) subscription basically *names* an `app-db` path. What does a layer-3 subscription *name*?
+A [layer-2](/re-frame/subscriptions/#the-four-layers) subscription basically *names* an `app-db` path. 
+What does a layer-3 subscription *name*?
 
-A materialized view, or a derived value.
+A materialized view of data, or a derived value.
 
-Subscriptions occupy their own semantic domain, separate from `app-db`. Only within view functions (and other subscriptions) can we access this domain. Outside of views, they form an impenetrable blob.
+Subscriptions occupy their own semantic territory, separate from `app-db`.
+Only within view functions (and other subscriptions) can we access this domain.
+Outside of views, they form an impenetrable blob.
 
-So, re-frame is simple. `app-db` represents and *names* the state of your app. Except, so does this network of subscription names. But you can't really *use* those, so just forget about it.
+So, re-frame is simple. `app-db` represents and *names* the state of your app.
+Except, so does this network of subscription names. But you can't always *use* those, only sometimes.
 
 ### Statefulness
 
@@ -165,18 +205,24 @@ Why not simply have *everything* derive from `app-db`?
 
 ### A better way
 
-Here's the good news about flows:
+Here's the good news about [flows](/re-frame/Flows):
 
-__You can access a flow's output value any time, anywhere,__ since flows are controlled by re-frame/interceptors, not reagent/reactions. 
+__You can access a flow's output value any time, anywhere,__
+since flows are controlled by re-frame/interceptors, not reagent/reactions.
 Instead of thinking about reactive context, just think about the outcome of the latest event.
+If you know `app-db`, you know your flow value. 
+You can also [subscribe to flows](/re-frame/Flows/#subscribing-to-flows).
 
-__If you know a flow's name, you know its output location,__ since flows store their output in `app-db`, at a static path. 
-It doesn't matter how many other flows that flow depends on. The correct value simply stays where you put it.
+__If you know a flow's name, you know its location,__
+since flows store their output in `app-db`, at a static path.
+It doesn't matter what other flows & paths it depends on.
+The value you need simply stays where you put it.
 
-__A flow's lifecycle is a pure function of `app-db`__. 
-That means you explicitly define when a flow lives, dies, is registered or cleared. You do this directly, not via your component tree.
+__A flow's lifecycle is a pure function of `app-db`__.
+That means you explicitly define when a flow lives, dies, is registered or cleared.
+You do this directly, not via your component tree.
 
-Like many Clojure patterns, flows are *both* nested *and* flat. 
+Like many Clojure patterns, flows are *both* nested *and* flat.
 Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can access it directly:
 
 <div class="cm-doc" data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
@@ -198,7 +244,7 @@ Even though `::num-balloons-to-fill-kitchen` depends on other flows, we can acce
 (rf/reg-event-fx
  ::order-ballons-for-kitchen-prank
  (fn [{:keys [balloons-per-bag] :as cofx} _]
-   (let [num-balloons (rf/flow-output db ::num-balloons-to-fill-kitchen) ;; easy!
+   (let [num-balloons (rf/get-flow db ::num-balloons-to-fill-kitchen) ;; easy!
          num-bags-to-buy (js/Math.ceil
                           (/ num-balloons
                              balloons-per-bag))]

@@ -13,8 +13,9 @@ How do I access the value of a subscription from within an event handler?
 Subscriptions are stateful. That said, they offer a 90% solution where you don't have to worry about their state.
 But this comes with a caveat: **the only safe place to call `subscribe` is within a reagent component function.** 
 
-See [Flows - Reactive Context](/re-frame/flows-advanced-topics/#reactive-context)
-for an in-depth explanation.
+!!! Note
+    See [Flows - Reactive Context](/re-frame/flows-advanced-topics/#reactive-context)
+    for an in-depth explanation.
 
 ### DOM event handlers
 
@@ -56,7 +57,7 @@ This isn't a real solution, it's just incidental safety.
 
 ### Restructure your app
 
-Sometimes it's enough to factor our your calculations, so they can be shared between subscription and event handlers.
+Sometimes it's enough to factor out your calculations, so they can be shared between subscription and event handlers.
 
 #### *Don't* call `subscribe` in your event handler:
 
@@ -76,7 +77,7 @@ Sometimes it's enough to factor our your calculations, so they can be shared bet
 
 (def get-areas (comp circle-area :circles))
 
-(reg-sub areas (fn [db] (get-areas db)))
+(reg-sub areas (fn [db _] (get-areas db)))
 
 (reg-event-fx 
   :store-areas

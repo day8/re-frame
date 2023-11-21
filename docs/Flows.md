@@ -19,7 +19,7 @@ More concretely, when the values change at one or more paths within `app-db`,
 then the value at another path is "automatically" recalculated.
 
 ## Why do we need flows?
-We turn to flows when we need a dynamic relationship between values - a "difference which makes a difference" ([Bateson](http://faculty.washington.edu/jernel/521/Form.htm)).
+We turn to flows when we need a dynamic relationship between values - a ["difference which makes a difference"](http://faculty.washington.edu/jernel/521/Form.htm).
 
 For instance, how would you model this problem?
 
@@ -38,7 +38,7 @@ We think flows offer a [Better Way](/re-frame/flows-advanced-topics#a-better-way
 !!! Note "The DataFlow Paradigm"
     Dataflow programming emerged in the 1970s, so it is almost as foundational as functional programming. 
     Indeed, reactive programming - so much the rage these days - is simply a subset of dataflow programming. 
-    In contrast with imperative building blocks like 'if/then', 'next' and 'goto',
+    In contrast with imperative building blocks like `if/then`, `next` and `goto`,
     dataflow programming implements control flow via the propagation of change.
     Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. 
     Hence, `re-frame's` tagline: "derived data, flowing".
@@ -242,11 +242,12 @@ Many such tasks amount to synchronization - maintaining an invariant within a ch
 And of course, a task which seems complex may just be a chain of simple tasks.
 
 One relatable example is that of trying to maintain cascading error states. Imagine your UI has a validation rule: `start date` must be before `end date`. 
-After the user changes either value, the error state must be calculated. This is used to determine if the `submit` button is enabled or not, and if an error message is displayed or not.
+After the user changes either value, the error state must be calculated.
+The result indicates whether to enable the submit button or display an error message.
 
-Now, imagine your UI has many validation rules, and an error state must be calculated for each of them. 
-In this case, the submit button state is a secondary calculation which combines these error states. 
-Cascading, derived values. 
+Now, imagine your UI has many validation rules, each with its own error state. 
+In this case, the submit button state is a secondary calculation which combines these error states.
+Cascading, derived values.
 
 Data flows from the leaves (what the user entered), through intermediate nodes (error predicate functions), through to the root (submit button state). 
 Both the intermediate values and the root value are important.
@@ -280,6 +281,7 @@ Just like with layered subscriptions, one flow can use the value of another. Rem
 </div>
 
 ## Subscribing to flows
+
 In our examples so far, we've used a regular subscription, getting our flow's output path.
 In `re-frame.alpha`, you can also subscribe to a flow by name.
 This bypasses the [caching behavior](/re-frame/flows-advanced-topics#caching) of a standard subscription.
@@ -335,21 +337,7 @@ For this, we use a `:live?` function.
 The quote above deals with phenomenal life, but you can also think of `:live?` as in a tv or internet broadcast.
 Data flows, but only when the flow itself is live.
 
-Here's another room area flow:
-
-<div class="cm-doc" data-cm-doc-result-format="pass-fail">
-(rf/reg-flow
- {:id     :kitchen-area
-  :inputs {:w [:kitchen :width]
-           :h [:kitchen :length]}
-  :output (fn [{:keys [w h]}] (* w h))
-  :path   [:kitchen :area]
-  :live-inputs {:tab [:tab]}
-  :live?  (fn [{:keys [tab]}]
-            (= tab :kitchen))})
-</div>
-
-A barebones tab picker, and something to show us the value of `app-db`:
+Let's try it out. For example, here's a barebones tab picker, and something to show us the value of `app-db`:
 
 <div class="cm-doc">
 (def tabs [:kitchen :garage])
@@ -382,15 +370,25 @@ A barebones tab picker, and something to show us the value of `app-db`:
 
 ### Live?
 
-Here's a more advanced version of our kitchen calculator flow.
-This replaces our first `:kitchen-area` flow, since it has the same `:id`:
+Here's a more advanced version of our room calculator flow.
 
+<div class="cm-doc" data-cm-doc-result-format="pass-fail">
+(rf/reg-flow
+ {:id     :kitchen-area
+  :inputs {:w [:kitchen :width]
+           :h [:kitchen :length]}
+  :output (fn [{:keys [w h]}] (* w h))
+  :path   [:kitchen :area]
+  :live-inputs {:tab [:tab]}
+  :live?  (fn [{:keys [tab]}]
+            (= tab :kitchen))})
+</div>
 
-Notice the different types of inputs. `:w [:kitchen :width]` represents an input as an `app-db` path, while `:tab :current-tab` identifies the value from the `:current-tab` flow we defined earlier.
+Notice the new `:live-inputs` and `:live?` keys.
+Just like `:output`, `:live:?` is a function of the resolved `:live-inputs`.
 
-Also, notice the new `:tab` input, and the new `:live?`.
-
-Just like `:output`, `:live:?` is a function of `app-db` and the `:inputs`. Re-frame only calculates the `:output` when the `:live?` function returns a truthy value. Otherwise, the flow is presumed dead.
+Re-frame only calculates the `:output` when the `:live?` function returns a truthy value. 
+Otherwise, the flow is presumed dead.
 
 Let's test it out:
 
@@ -410,7 +408,8 @@ Let's test it out:
 
 <div id="tabbed-app"></div>
 
-Try switching tabs. Notice how `:area` only exists when you're in the `room-calculator` tab. What's happening here?
+Try switching tabs.
+Notice how the path `[:kitchen :area]` only exists when you're in the `room-calculator` tab. What's happening here?
 
 ### Lifecycle
 
@@ -419,14 +418,12 @@ Depending on the return value of `:live?`, re-frame handles one of 4 possible st
 
 | transition | action | 
 |---|---|
-| From **live** to **live** |  run `:output` | 
-| From **dead** to **live** |  run `:init` and `:output` |
+| From **live** to **live** |  run `:output` (when `:inputs` have changed) | 
+| From **dead** to **live** |  run `:output` |
 | From **live** to **dead** |  run `:cleanup` |
 | From **dead** to **dead** |  do nothing |
 
-Basically, *living* flows get output, *dying* flows get cleaned up, *arising* flows get initiated and output.
-
-And independently of all this, `:output` only runs when `:inputs` have changed value.
+Basically, *arising* flows get output, *living* flows get output as needed, and *dying* flows get cleaned up.
 
 ### Cleanup
 
@@ -447,42 +444,42 @@ The point is, *you* express when the signal lives or dies, not your render tree.
 
 ## Redefining and Undefining
 
-Not only do flows have a lifecycle (defined by `:live?`, `:init` and `:cleanup`), but this lifecycle also includes registration and deregistration.
+Not only do flows have a lifecycle (defined by `:live?` and `:cleanup`), but this lifecycle also includes registration and deregistration.
 
 - When you call `reg-flow`, that flow comes alive.
-    - `:init` and `:output` run, even if the inputs haven't changed.
+    - `:output` runs, even if the inputs haven't changed.
     - That's because the flow itself has changed.
 - When you call `clear-flow`, it dies (running `:cleanup`).
 - Re-frame provides `:reg-flow` and `:clear-flow` [effects](#re-frame/Effects/) for this purpose.
 
 Here's another demonstration. Think of it as a stripped-down todomvc.
 You can add and remove items in a list:
+
 <div class="cm-doc">
-(rf/reg-sub ::items :-> (comp reverse ::items))
+(rf/reg-sub :items :-> (comp reverse :items))
 
 (rf/reg-event-db
  ::add-item
- (fn [db [_ id]] (update db ::items conj id)))
+ (fn [db [_ id]] (update db :items conj id)))
 
 (rf/reg-event-db
  ::delete-item
- (fn [db [_ id]] (update db ::items #(remove #{id} %))))
+ (fn [db [_ id]] (update db :items #(remove #{id} %))))
 
 (defn item [id] [:div "Item" id])
 
 (defn items []
-  (into [:div] (map item) @(rf/subscribe [::items])))
+  (into [:div] (map item) @(rf/subscribe [:items])))
 
 (defn controls []
-  (let [id (atom 0)]
-    (fn []
-      [:div 
-       [:span {:style clickable
-               :on-click #(do (rf/dispatch [::add-item (inc @id)])
-                              (swap! id inc))} "Add"] " " 
-       [:span {:style clickable
-               :on-click #(do (rf/dispatch [::delete-item @id])
-                              (swap! id dec))} "Delete"] " "])))
+  (let [id (or (apply max @(rf/subscribe [:items])) 0)]
+    [:div
+     [:span {:style clickable
+             :on-click #(rf/dispatch [::add-item (inc id)])}
+      "Add"] " "
+     [:span {:style clickable
+             :on-click #(rf/dispatch [::delete-item id])}
+      "Delete"] " "]))
 
 (defonce item-counter-basic-root
   (rdc/create-root (js/document.getElementById "item-counter-basic")))
@@ -516,10 +513,9 @@ It builds a flow that validates our item list against the requirements:
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (defn error-state-flow [{:keys [min-items max-items] :as requirements}]
-  {:id ::error-state
-   :path [::error-state]
-   :inputs {:items [::items]
-            :tab (rf/flow<- :current-tab)}
+  {:id :error-state
+   :path [:error-state]
+   :inputs {:items [:items]}
    :output (fn [{:keys [items]}]
              (let [ct (count items)]
                (cond
@@ -535,15 +531,15 @@ And register a flow that fits our base requirements:
 </div>
 
 Now this flow is calculating an error-state value, and adding it to `app-db` after every event. 
-This happens as long as the `::items` have changed... right? 
-Actually, there's another way to make a flow recalculate - we can reregister it.
+This happens as long as the `:items` have changed... right?
+Actually, there's another way to make a flow recalculate - we can re-register it.
 
 Let's update the app to display our new error state:
 
 <div class="cm-doc">
 
 (defn warning []
-  (let [error-state (rf/sub :flow {:id ::error-state})]
+  (let [error-state (rf/sub :flow {:id :error-state})]
     [:div {:style {:color "red"}}
      (->> @error-state
           (get {:too-many   "Too many items. Please remove one."
@@ -594,9 +590,9 @@ And a corresponding event, which triggers our `:reg-flow` effect:
 What happens after `:reg-flow` runs? Are there now two flows? Actually, no.
 
 - If you register a new flow with the same `:id`, it replaces the old one. 
-- When we trigger `[:reg-flow (error-state-flow ...)]`
+- When we trigger `[:reg-flow (error-state-flow ...)]`:
     - The old `:error-state` flow runs `:cleanup`
-    - The new `:error-state` flow runs `:init` and `:output`
+    - The new `:error-state` flow runs `:output`
 
 Not only does changing the inputs lead to new output, but so does changing the flow itself.
 Let's test it out:
