@@ -97,17 +97,12 @@
   ([]
    (swap! flows vary-meta update ::cleared into @flows)
    (swap! flows empty))
-  ([x]
-   (when-let [flow (lookup x)]
-     (swap! flows vary-meta update ::cleared assoc (:id flow) flow)
-     (swap! flows dissoc (:id flow)))))
+  ([id]
+   (when-let [flow (lookup id)]
+     (swap! flows dissoc flow)
+     (swap! flows vary-meta update ::cleared assoc (:id flow) flow))))
 
-(defn get-output [db value]
-  (if (vector? value)
-    (get-in db value)
-    (some->> value lookup :path (get-output db))))
-
-(defn flow<- [flow] {::flow<- (:idg flow)})
+(defn flow<- [id] {::flow<- id})
 
 (def flow-fx-ids #{:reg-flow :clear-flow})
 
@@ -125,35 +120,41 @@
                (doall (map do-effect flow-fx))
                (-> ctx
                    (update-in [:effects :fx] remove-fx)
-                   (update :effects remove-fx))))}))
+                   (update :effects (comp (partial into {}) remove-fx)))))}))
+
+(defn resolve-input [db input]
+  (if (vector? input)
+    (get-in db input)
+    (some->> input ::flow<- lookup :path (resolve-input db))))
 
 (defn resolve-inputs [db inputs]
-  (if (empty? inputs) db (u/map-vals (partial get-output db) inputs)))
+  (if (empty? inputs) db (u/map-vals (partial resolve-input db) inputs)))
 
-(defn update-flow [ctx {:as    flow
-                        :keys  [path init cleanup live? inputs live-inputs output id]
-                        ::keys [cleared?]}]
-  (let [{::keys [new?]}    (meta flow)
-        old-db             (get-coeffect ctx :db)
-        db                 (or (get-effect ctx :db) old-db)
-        id->old-live-input (resolve-inputs old-db live-inputs)
-        id->live-input     (resolve-inputs db live-inputs)
-        id->old-input      (resolve-inputs old-db inputs)
-        id->input          (resolve-inputs db inputs)
-        dirty?             (not= id->input id->old-input)
-        bardo              [(cond new? :new (live? id->old-live-input) :live :else :dead)
-                            (cond cleared? :cleared (live? id->live-input) :live :else :dead)]
-        new-db          (case bardo
-                          [:new :live]     (do (swap! flows update id vary-meta dissoc ::new?)
-                                               (-> (init db path)
-                                                   (assoc-in path (output id->input))))
-                          [:live :cleared] (cleanup db path)
-                          [:live :live]    (cond-> db dirty? (assoc-in path (output id->input)))
-                          [:live :dead]    (cleanup db path)
-                          [:dead :live]    (-> (init db path)
-                                               (assoc-in path (output id->input)))
-                          identity)]
-    (assoc-effect ctx :db new-db)))
+(defn run [ctx {:as    flow
+                :keys  [path cleanup live? inputs live-inputs output id]
+                ::keys [cleared?]}]
+  (let [{::keys [new?]} (meta flow)
+        old-db          (get-coeffect ctx :db)
+        db              (or (get-effect ctx :db) old-db)
+
+        id->old-in (resolve-inputs old-db inputs)
+        id->in     (resolve-inputs db inputs)
+        dirty?     (not= id->in id->old-in)
+
+        id->old-live-in (resolve-inputs old-db live-inputs)
+        id->live-in     (resolve-inputs db live-inputs)
+        bardo           [(cond new?     :new (live? id->old-live-in) :live :else :dead)
+                         (cond cleared? :cleared (live? id->live-in) :live :else :dead)]
+
+        new-db (case bardo
+                 [:live :live]    (cond-> db dirty? (assoc-in path (output id->in)))
+                 [:live :dead]    (cleanup db path)
+                 [:dead :live]    (assoc-in db path (output id->in))
+                 [:new :live]     (do (swap! flows update id vary-meta dissoc ::new?)
+                                      (assoc-in db path (output id->in)))
+                 [:live :cleared] (cleanup db path)
+                 nil)]
+    (cond-> ctx new-db (assoc-effect :db new-db))))
 
 (defn with-cleared [m]
   (into m (map (fn [[k v]] [[::cleared k (gensym)] (assoc v ::cleared? true)])
@@ -165,7 +166,7 @@
     :after (fn [ctx]
              (let [all-flows (with-cleared @flows)]
                (swap! flows vary-meta dissoc ::cleared)
-               (reduce update-flow ctx ((memoize topsort) all-flows))))}))
+               (reduce run ctx ((memoize topsort) all-flows))))}))
 
 #_(do
     (def still-alive

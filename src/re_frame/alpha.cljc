@@ -1283,23 +1283,19 @@
 
 (def reg-flow flow/reg-flow)
 
-(defn flow-output
-  [db id]
-  (flow/get-output db id))
+(def clear-flow flow/clear-flow)
+
+(defn get-flow [db id] (flow/resolve-input db (flow/flow<- id)))
 
 (def flow<- flow/flow<-)
 
-(defn flow
-  [k]
-  (flow/lookup k))
-
 (reg :sub :flow
-     (fn [db {:keys [id]}]
-       (flow/get-output db id)))
+     (fn [db input]
+       (flow/resolve-input db input)))
 
 (reg :sub :live?
-     (fn [db {:keys [id]}]
-       (flow/get-output db id)))
+     (fn [db input]
+       (flow/resolve-input db input)))
 
 (reg-fx :reg-flow flow/reg-flow)
 
