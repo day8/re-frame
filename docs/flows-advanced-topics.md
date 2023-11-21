@@ -58,7 +58,7 @@ and memory leaks... oh my!
 ### Reactive context
 
 To know if a thing has changed, you have to remember what it was.
-To propagate change from one value to the next, you have to remember their relationship (a [`watchable`](https://clojuredocs.org/clojure.core/add-watch)).
+To propagate change from one identity to the another, you have to remember their relationship (a [`watchable`](https://clojuredocs.org/clojure.core/add-watch)).
 Memory is state. Remembering is a side-effect.
 
 Reagent does this. Its main constructs - *reactive atom*, and *component* - are stateful, impure.
@@ -75,19 +75,19 @@ to find out whether your code is running in a reactive context.
 
 #### Reactive context in re-frame
 
-Now, here's where re-frame enters the picture:
+Here's where re-frame enters the picture:
 
-- An **event handler** is a pure function, with no reactive context (it has an [interceptor](/re-frame/Interceptors) context).
+- An **event handler** is a pure function, with no reactive context.
 - A **subscription handler** is pure, too.
-- A **subscription**, on the other hand, is a reactive atom (with *no* interceptor context).
+- A **subscription**, on the other hand, is a reactive atom.
 - Calling `subscribe` has the side-effect of *creating* a **subscription**.
 
 Outside of a reactive context, a subscription's behavior differs:
-Not only the behavior of the reactive atom, but also the behavior of its [caching](#caching) mechanism.
+Not only the behavior of the reactive atom, but also its [caching](#caching) behavior.
 
-#### What this means for your app
+#### Reactive context in your app
 
-Subscriptions and event handlers differ in purity and runtime context.
+Subscriptions and handlers differ in purity and runtime context.
 This means they have a [coloring problem](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/).
 
 We [express some business logic with subscriptions](https://github.com/day8/re-frame/issues/753), and some with events. 
@@ -98,7 +98,7 @@ but the essential consequence of calling `subscribe` in an event handler is an u
 Calling `subscribe` allocates physical memory on the client, and re-frame has no way to deallocate it.
 This puts us back in C territory.
 
-Thus, to safely get a value for `num-balloons-to-fill-kitchen`, we have to duplicate the business logic that we wrote into our subscription,
+Instead, to safely get a value for `num-balloons-to-fill-kitchen`, we have to duplicate the business logic that we wrote into our subscription,
 along with the *entire* subgraph of subscription inputs:
 
 <div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result data-cm-doc-no-eval-on-init>
@@ -124,7 +124,7 @@ We sympathize with you developers, for the hours you may have spent poring over 
 
 ### Caching
 
-Subscriptions have a hidden caching mechanism, which stores the value as long as there is a component in the render tree which uses it.
+Subscriptions have a built-in caching mechanism, which stores the value as long as there is a component in the render tree which uses it.
 Basically, when components call `subscribe` with a particular `query-v`, re-frame sets up a callback.
 When those components unmount, this callback deletes the stored value.
 It removes the subscription from the graph, so that it will no longer recalculate.
@@ -156,7 +156,7 @@ Outside of views, they form an impenetrable blob.
 So, re-frame is simple. `app-db` represents and *names* the state of your app.
 Except, so does this network of subscription names. But you can't always *use* those, only sometimes.
 
-### Statefulness
+### Signal graph state
 
 Here's the story we like to tell about re-frame:
 
@@ -184,8 +184,8 @@ Once Reagent, Re-frame and React begin to share the concern of reactive dataflow
 I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I run you first!
 
 When a view calls `subscribe`, it creates a reaction. When that view unmounts, it frees the reaction. 
-These are side-effects on the signal *graph* 
-(that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing their output value).
+These are side-effects on the signal graph
+(that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing that value).
 
 ```
 event -> app-db -> signals -> view -> event
