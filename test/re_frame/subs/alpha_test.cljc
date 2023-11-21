@@ -97,8 +97,8 @@
   (q/clear!)
   (reset! side-effect-atom 0)
   (let [test-sub (sub q)]
-    (reset! db/app-db :test)
-    (is (= :test @test-sub))
+    (reset! db/app-db {:test true})
+    (is (= {:test true} @test-sub))
     (is (= @side-effect-atom 1))
     ;; no caching is done
     (sub q)
@@ -133,8 +133,8 @@
   (testing "Reactive subscription lifecycle"
     (let [q {::rf/q :side-effecting-handler
              ::rf/lifecycle :reactive}]
-      (reset! db/app-db :test)
-      (is (= :test @(sub q)))
+      (reset! db/app-db {:test true})
+      (is (= {:test true} @(sub q)))
       (is (= @side-effect-atom 1))
       ;; sub is cached, even outside a reactive context
       (sub q)
