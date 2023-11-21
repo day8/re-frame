@@ -1815,7 +1815,7 @@ When one part of your app state changes, another part changes in response.<br />
 More concretely, when the values change at one or more paths within <code>app-db</code>,
 then the value at another path is "automatically" recalculated.</p>
 <h2 id="why-do-we-need-flows">Why do we need flows?<a class="headerlink" href="#why-do-we-need-flows" title="Permanent link">&para;</a></h2>
-<p>We turn to flows when we need a dynamic relationship between values - a "difference which makes a difference" (<a href="http://faculty.washington.edu/jernel/521/Form.htm">Bateson</a>).</p>
+<p>We turn to flows when we need a dynamic relationship between values - a <a href="http://faculty.washington.edu/jernel/521/Form.htm">"difference which makes a difference"</a>.</p>
 <p>For instance, how would you model this problem?</p>
 <ul>
 <li>a <code>length</code> and a <code>width</code> make an <code>area</code></li>
@@ -2021,10 +2021,11 @@ But most apps do simple things, as well.
 Many such tasks amount to synchronization - maintaining an invariant within a changing data structure.</p>
 <p>And of course, a task which seems complex may just be a chain of simple tasks.</p>
 <p>One relatable example is that of trying to maintain cascading error states. Imagine your UI has a validation rule: <code>start date</code> must be before <code>end date</code>. 
-After the user changes either value, the error state must be calculated. This is used to determine if the <code>submit</code> button is enabled or not, and if an error message is displayed or not.</p>
-<p>Now, imagine your UI has many validation rules, and an error state must be calculated for each of them. 
-In this case, the submit button state is a secondary calculation which combines these error states. 
-Cascading, derived values. </p>
+After the user changes either value, the error state must be calculated.
+The result indicates whether to enable the submit button or display an error message.</p>
+<p>Now, imagine your UI has many validation rules, each with its own error state. 
+In this case, the submit button state is a secondary calculation which combines these error states.
+Cascading, derived values.</p>
 <p>Data flows from the leaves (what the user entered), through intermediate nodes (error predicate functions), through to the root (submit button state). 
 Both the intermediate values and the root value are important.</p>
 <h3 id="is-this-a-rules-engine">Is this a rules engine?<a class="headerlink" href="#is-this-a-rules-engine" title="Permanent link">&para;</a></h3>
@@ -2203,10 +2204,10 @@ Depending on the return value of <code>:live?</code>, re-frame handles one of 4 
 <p>Now, is this a good idea? After all, we might consider the area known, as long as we know the width and length. Maybe we should do no cleanup, and keep the value, even when <code>:live?</code> returns false. In that case, our <code>:cleanup</code> function would simply be: <code>:cleanup (fn [db _] db)</code>.</p>
 <p>The point is, <em>you</em> express when the signal lives or dies, not your render tree.</p>
 <h2 id="redefining-and-undefining">Redefining and Undefining<a class="headerlink" href="#redefining-and-undefining" title="Permanent link">&para;</a></h2>
-<p>Not only do flows have a lifecycle (defined by <code>:live?</code>, <code>:init</code> and <code>:cleanup</code>), but this lifecycle also includes registration and deregistration.</p>
+<p>Not only do flows have a lifecycle (defined by <code>:live?</code> and <code>:cleanup</code>), but this lifecycle also includes registration and deregistration.</p>
 <ul>
 <li>When you call <code>reg-flow</code>, that flow comes alive.<ul>
-<li><code>:init</code> and <code>:output</code> run, even if the inputs haven't changed.</li>
+<li><code>:output</code> runs, even if the inputs haven't changed.</li>
 <li>That's because the flow itself has changed.</li>
 </ul>
 </li>
