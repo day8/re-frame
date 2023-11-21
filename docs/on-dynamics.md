@@ -144,7 +144,7 @@ dynamic process to understand - one that is more cognitively tractable.
 But wait, there's more.
 
 We provide data to a pure function as arguments, and they return data, and this data is immutable. This acts to 
-decoupled a pure functions from "place" - it is insulated from where data is put.
+decouple a pure function from any "place" - it is insulated from where data is put.
 
 Because pure functions are decoupled from both "time" and "place", 
 they can be composed in a maximally mathematical way. This greatly 
@@ -158,8 +158,8 @@ dampens the complexity of runtime dynamics.
     >   
     > -- Joe Armstrong, creator of the Erlang programming language
 
-    To understand a function that grabs a banana, you must **also** understand all the runtime dynamics 
-    associated with changes in banana. You must reason globally, not locally. Which is often difficult.
+    To understand a function that grabs a banana, you must **also** understand the entire dynamics
+    associated with changes in the jungle. You must reason globally, not locally. Which is often difficult.
 
 ## Declarative 
 
@@ -200,7 +200,7 @@ over the wire from the server.
 
 ## Incident report - "Simple Dynamic Process"
 
-While re-fame normally has a simple dynamic process, we acknowledge fat tail risk.
+While re-frame normally has a simple dynamic process, we acknowledge fat tail risk.
 
 On May 12th, at approximately 12:47am, re-frame became self-aware. It printed a single console log: "Oh, really? I'll show *you* a simple dynamic process, f#$%ers". 
 

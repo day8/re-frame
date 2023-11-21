@@ -100,11 +100,11 @@ Look carefully into re-frame, and you'll see the primacy of data everywhere.
 
     There is also string-oriented programming which is what you often employ with regexes or SQL. 
     
-    We have all used a string containing just the right format with a regex engine. And we've all given a string containing SQL to a database engine, which it knows how to interpret it.
+    We have all used a string containing just the right format with a regex engine. And we've all given a string containing SQL to a database engine, which knows how to interpret it.
     
     When the strings concerned are literals, this can be straightforward. But it quickly gets ugly if we have to start computing the strings - if we have to use string interpolation to build up the string to be executed. And, of course, this happens a lot with SQL, and it is awful. Consequently, there are a thousand workarounds.
 
-    Data is a better medium for computing code, than strings. Datalog (data) is better than SQL (strings).
+    Data is a better medium for computing code than strings. Datalog (data) is better than SQL (strings).
 
 
 !!! Note "Multiple Execution Contexts"

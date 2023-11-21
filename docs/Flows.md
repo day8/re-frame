@@ -167,8 +167,8 @@ And, we use this subscription in a view:
     - `reg-flow` - creates a running node from a specification
     
     Crucially, the name `flow` isn't exactly short for "dataflow".
-    A `flow` is a static value, specifying one segment of a dataflow graph.
-    Dataflow is a dynamic phenomenon, not a value.
+    A `flow` is a static value, specifying one possible segment of a dataflow graph.
+    Dataflow is a [dynamic process](/re-frame/on-dynamics/#on-dynamics), not a value.
     Both the data and the graph itself change over time.
     Changing the graph is a matter of [registering and clearing](#redefining-and-undefining) flows.
 
@@ -226,7 +226,7 @@ You might notice a similarity with [reagent.core/reaction](https://reagent-proje
 Both yield an "automatically" changing value. 
 
 Reagent controls *when* a reaction updates, presumably during the evaluation of a component function.  
-Flows, on the other hand, are controlled by re-frame, running every time an `event` occurs.
+Flows, on the other hand, are part of [re-frame time](/re-frame/on-dynamics/#re-frame-time), running every time an `event` occurs.
 
 When a component derefs a reaction, that component knows to re-render when the value changes.
 
@@ -271,7 +271,7 @@ Just like a `flow`, this subscription's value changes whenever the inputs change
 
 A flow stores its `:output` value in `app-db`, while subscriptions don't. We designed re-frame on the premise that `app-db` holds your *entire* app-state. 
 Arguably, derived values belong there too. We feel there's an inherent reasonability to storing everything in one place. 
-It's also more practical (see [Reactive Context](/re-frame/flows-advanced-topics#reactive-context).
+It's also more practical (see [Reactive Context](/re-frame/flows-advanced-topics#reactive-context)).
 
 Just like with layered subscriptions, one flow can use the value of another. Remember the `:inputs` to our first flow?
 
@@ -280,27 +280,9 @@ Just like with layered subscriptions, one flow can use the value of another. Rem
           :h [:garage :length]}}
 </div>
 
-## Subscribing to flows
-
-In our examples so far, we've used a regular subscription, getting our flow's output path.
-In `re-frame.alpha`, you can also subscribe to a flow by name.
-This bypasses the [caching behavior](/re-frame/flows-advanced-topics#caching) of a standard subscription.
-
-Here's how you can subscribe to our garage-area flow.
-The stable way, with a query vector:
-
-```
-(re-frame.alpha/subscribe [:flow {:id :garage-area}])`
-```
-
-And the experimental way, with a query map:
-```
-(re-frame.alpha/sub :flow {:id :garage-area})
-```
-
 ## Layering flows
 
-As you can see, vectors stand for paths in `app-db`.
+In the values of the `:inputs` map, vectors stand for paths in `app-db`.
 The `flow<-` function, however, gives us access to *other flows*.
 
 Here's a flow using two other flows as inputs: `::kitchen-area` and `::living-room-area`.
@@ -315,13 +297,27 @@ When either input changes value, our flow calls the `:output` function to recalc
  :path   [:ratios :main-rooms]}
 </div>
 
-As before, once `:output` runs, the resulting value is stored at `:path`. So, the new value of `app-db` will contain a number at the path `[:ratios :main-rooms]`
+As before, once `:output` runs, the resulting value is stored at `:path`. 
+So, the new value of `app-db` will contain a number at the path `[:ratios :main-rooms]`
 
-For subscriptions, caching can be an issue (see [caching](#caching)). With flows, the process is simpler. 
-`app-db` *is* the cache, since flows always store their output value within it. 
-You, the programmer, define explicitly when to recalculate the output, *and* when to store the output. 
-To this end, flows provide optional keys: `:live?` and `:cleanup`. 
-Let's read on, and discover how these keys work together to fully define the lifecycle and caching behavior of a flow:
+## Subscribing to flows
+
+In our examples so far, we've used a regular subscription, getting our flow's output path.
+In `re-frame.alpha`, you can also subscribe to a flow by name.
+This bypasses the [caching behavior](/re-frame/flows-advanced-topics#caching) of a standard subscription.
+
+Here's how you can subscribe to our garage-area flow.
+The stable way, with a query vector:
+
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+(re-frame.alpha/subscribe [:flow {:id :garage-area}])
+</div>
+
+And the experimental way, with a query map:
+
+<div class="cm-doc" data-cm-doc-no-eval data-cm-doc-no-edit data-cm-doc-no-result>
+(re-frame.alpha/sub :flow {:id :garage-area})
+</div>
 
 ## Living and Dying
 
@@ -335,7 +331,7 @@ Sometimes we'd like to simply turn our flow off, so we can stop thinking about i
 For this, we use a `:live?` function.
 
 The quote above deals with phenomenal life, but you can also think of `:live?` as in a tv or internet broadcast.
-Data flows, but only when the flow itself is live.
+Data flows, but only when the `flow` itself is live.
 
 Let's try it out. For example, here's a barebones tab picker, and something to show us the value of `app-db`:
 
@@ -509,7 +505,7 @@ Then, we'll use a flow to evaluate which requirements are met.
     Our flow doesn't care how it happened that a requirement was met, nor what to do next.
 
 For reasons that will become clear, let's write a [factory function](https://en.wikipedia.org/wiki/Factory_%28object-oriented_programming%29) for this flow. 
-It builds a flow that validates our item list against the requirements:
+It builds a flow that validates our item list against any given requirements:
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (defn error-state-flow [{:keys [min-items max-items] :as requirements}]
@@ -524,14 +520,14 @@ It builds a flow that validates our item list against the requirements:
                  :else             :ok)))})
 </div>
 
-And register a flow that fits our base requirements:
+And let's register a flow that fits our base requirements:
 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (rf/reg-flow (error-state-flow base-requirements))
 </div>
 
 Now this flow is calculating an error-state value, and adding it to `app-db` after every event. 
-This happens as long as the `:items` have changed... right?
+This happens whenever `:items` have changed... right?
 Actually, there's another way to make a flow recalculate - we can re-register it.
 
 Let's update the app to display our new error state:
