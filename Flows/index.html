@@ -1943,23 +1943,6 @@ Our example would look like <code>(reg-flow :garage-area {...})</code>.</p>
 
 <div id="garage-calculator"></div>
 
-<div class="admonition note">
-<p class="admonition-title">Our dataflow model</p>
-<p>Dataflow is often conceptualized as a graph.
-Data flows through edges, and transforms through nodes.<br />
-Here's how our DSL articulates the traditional dataflow model:</p>
-<ul>
-<li><code>flow</code> - a map, serving as a node specification</li>
-<li><code>:id</code> - uniquely identifies a node</li>
-<li><code>:inputs</code> - a set of edges from other nodes</li>
-<li><code>reg-flow</code> - creates a running node from a specification</li>
-</ul>
-<p>Crucially, the name <code>flow</code> isn't exactly short for "dataflow".
-A <code>flow</code> is a static value, specifying one possible segment of a dataflow graph.
-Dataflow is a <a href="/re-frame/on-dynamics/#on-dynamics">dynamic process</a>, not a value.
-Both the data and the graph itself change over time.
-Changing the graph is a matter of <a href="#redefining-and-undefining">registering and clearing</a> flows.</p>
-</div>
 <h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permanent link">&para;</a></h2>
 <p><code>event handlers</code> yield <code>effects</code>. Typically, they yield a <code>:db</code> effect, causing a new value of <code>app-db</code>.<br />
 But first, re-frame updates your <code>:db</code> effect by running each registered <code>flow</code>.</p>
@@ -2065,6 +2048,31 @@ When either input changes value, our flow calls the <code>:output</code> functio
 
 <p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. 
 So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
+<p>Under the hood, flows relate to each other in a depedency graph. 
+An input like <code>(rf/flow&lt;- ::kitchen-area)</code> creates a dependency.
+That means re-frame will always run <code>::kitchen-area</code> first, 
+ensuring its output value is current before :main-room-ratio flow can use it.</p>
+<div class="admonition note">
+<p class="admonition-title">Our dataflow model</p>
+<p>Dataflow is often conceptualized as a graph.
+Data flows through edges, and transforms through nodes.<br />
+Here's how our DSL articulates the traditional dataflow model:</p>
+<ul>
+<li><code>flow</code> - a map, serving as a node specification</li>
+<li><code>:id</code> - uniquely identifies a node</li>
+<li><code>:inputs</code> - a set of edges from other nodes</li>
+<li><code>flow&lt;-</code> - declares another node id as an input dependency</li>
+<li><code>reg-flow</code> - creates a running node from a specification</li>
+</ul>
+<p>Crucially, the name <code>flow</code> isn't exactly short for "dataflow".
+A <code>flow</code> is a static value, specifying one possible segment of a dataflow graph.
+Dataflow is a <a href="/re-frame/on-dynamics/#on-dynamics">dynamic process</a>, not a value.
+Both the data and the graph itself can change over time.</p>
+<ul>
+<li>Changing the data means running the flows which are currently registered.</li>
+<li>Changing the graph is a matter of <a href="#redefining-and-undefining">registering and clearing</a> flows.</li>
+</ul>
+</div>
 <h2 id="subscribing-to-flows">Subscribing to flows<a class="headerlink" href="#subscribing-to-flows" title="Permanent link">&para;</a></h2>
 <p>In our examples so far, we've used a regular subscription, getting our flow's output path.
 In <code>re-frame.alpha</code>, you can also subscribe to a flow by name.

@@ -1704,7 +1704,7 @@ for an in-depth explanation.</p>
 
 <p>Furthermore, this is a conceptual issue.
 Your subscription handler may be pure, but <code>subscribe</code> always has a side-effect.
-Calling <code>subscribe</code> inside an event handler goes against re-frame's design, which is based on handlers being pure functions.</p>
+Calling <code>subscribe</code> inside an event handler goes against re-frame's design, which is based on <a href="/re-frame/on-dynamics/#pure-functions">handlers being pure functions</a>.</p>
 <h3 id="incidental-safety">Incidental safety<a class="headerlink" href="#incidental-safety" title="Permanent link">&para;</a></h3>
 <p>Calling <code>subscribe</code> <em>outside</em> a component is somewhat safe, as long as you've also called it <em>inside</em> a component.
 The <em>outside</em> one has no way to dispose, but the <em>inside</em> one might dispose later.</p>
