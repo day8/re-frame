@@ -22,10 +22,11 @@ But this comes with a caveat: **the only safe place to call `subscribe` is withi
 Inner functions, such as DOM event handlers, don't count. Consider this component:
 
 ```clj
-[:button {:on-click #(subscribe [:some (gensym)])}]
+(defn my-btn []
+  [:button {:on-click #(subscribe [:some (gensym)])}])
 ```
 
-Our `:on-click` function isn't actually called here. Instead, we've given the function to the browser, expecting it to get called later. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If the browser calls your `:on-click` a thousand times, re-frame will "create" a thousand unique subscriptions, and there's no code in place to "dispose" them later.
+Our `:on-click` function isn't actually called when the component renders. Instead, we've given the function to the browser, expecting it to get called later. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If the browser calls your `:on-click` a thousand times, re-frame will "create" a thousand unique subscriptions, and there's no code in place to "dispose" them later.
 
 ### Re-frame event handlers
 
@@ -41,7 +42,7 @@ Re-frame event handlers don't count either. Re-frame calls your event handlers w
 
 Furthermore, this is a conceptual issue.
 Your subscription handler may be pure, but `subscribe` always has a side-effect.
-Calling `subscribe` inside an event handler goes against re-frame's design, which is based on handlers being pure functions.
+Calling `subscribe` inside an event handler goes against re-frame's design, which is based on [handlers being pure functions](/re-frame/on-dynamics/#pure-functions).
 
 ### Incidental safety
 

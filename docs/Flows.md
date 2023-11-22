@@ -155,23 +155,6 @@ And, we use this subscription in a view:
 
 <div id="garage-calculator"></div>
 
-
-!!! Note "Our dataflow model"
-    Dataflow is often conceptualized as a graph.
-    Data flows through edges, and transforms through nodes.  
-    Here's how our DSL articulates the traditional dataflow model:
-    
-    - `flow` - a map, serving as a node specification
-    - `:id` - uniquely identifies a node
-    - `:inputs` - a set of edges from other nodes
-    - `reg-flow` - creates a running node from a specification
-    
-    Crucially, the name `flow` isn't exactly short for "dataflow".
-    A `flow` is a static value, specifying one possible segment of a dataflow graph.
-    Dataflow is a [dynamic process](/re-frame/on-dynamics/#on-dynamics), not a value.
-    Both the data and the graph itself change over time.
-    Changing the graph is a matter of [registering and clearing](#redefining-and-undefining) flows.
-
 ## How does it work?
 
 `event handlers` yield `effects`. Typically, they yield a `:db` effect, causing a new value of `app-db`.  
@@ -299,6 +282,30 @@ When either input changes value, our flow calls the `:output` function to recalc
 
 As before, once `:output` runs, the resulting value is stored at `:path`. 
 So, the new value of `app-db` will contain a number at the path `[:ratios :main-rooms]`
+
+Under the hood, flows relate to each other in a depedency graph. 
+An input like `(rf/flow<- ::kitchen-area)` creates a dependency.
+That means re-frame will always run `::kitchen-area` first, 
+ensuring its output value is current before your `:main-room-ratio` flow can use it.
+
+!!! Note "Our dataflow model"
+    Dataflow is often conceptualized as a graph.
+    Data flows through edges, and transforms through nodes.  
+    Here's how our DSL articulates the traditional dataflow model:
+    
+    - `flow` - a map, serving as a node specification
+    - `:id` - uniquely identifies a node
+    - `:inputs` - a set of edges from other nodes
+    - `flow<-` - declares another node id as an input dependency
+    - `reg-flow` - creates a running node from a specification
+
+    Crucially, the name `flow` isn't exactly short for "dataflow".
+    A `flow` is a static value, specifying one possible segment of a dataflow graph.
+    Dataflow is a [dynamic process](/re-frame/on-dynamics/#on-dynamics), not a value.
+    Both the data and the graph itself can change over time.
+    
+    - Changing the data means running the flows which are currently registered.
+    - Changing the graph is a matter of [registering and clearing](#redefining-and-undefining) flows.
 
 ## Subscribing to flows
 
