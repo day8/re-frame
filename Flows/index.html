@@ -2051,7 +2051,7 @@ So, the new value of <code>app-db</code> will contain a number at the path <code
 <p>Under the hood, flows relate to each other in a depedency graph. 
 An input like <code>(rf/flow&lt;- ::kitchen-area)</code> creates a dependency.
 That means re-frame will always run <code>::kitchen-area</code> first, 
-ensuring its output value is current before :main-room-ratio flow can use it.</p>
+ensuring its output value is current before your <code>:main-room-ratio</code> flow can use it.</p>
 <div class="admonition note">
 <p class="admonition-title">Our dataflow model</p>
 <p>Dataflow is often conceptualized as a graph.

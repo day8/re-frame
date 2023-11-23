@@ -1687,11 +1687,12 @@ for an in-depth explanation.</p>
 </div>
 <h3 id="dom-event-handlers">DOM event handlers<a class="headerlink" href="#dom-event-handlers" title="Permanent link">&para;</a></h3>
 <p>Inner functions, such as DOM event handlers, don't count. Consider this component:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:button</span> <span class="p">{</span><span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:some</span> <span class="p">(</span><span class="nf">gensym</span><span class="p">)])}]</span>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-btn</span> <span class="p">[]</span>
+  <span class="p">[</span><span class="ss">:button</span> <span class="p">{</span><span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:some</span> <span class="p">(</span><span class="nf">gensym</span><span class="p">)])}])</span>
 </code></pre></div>
 
 
-<p>Our <code>:on-click</code> function isn't actually called here. Instead, we've given the function to the browser, expecting it to get called later. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If the browser calls your <code>:on-click</code> a thousand times, re-frame will "create" a thousand unique subscriptions, and there's no code in place to "dispose" them later.</p>
+<p>Our <code>:on-click</code> function isn't actually called when the component renders. Instead, we've given the function to the browser, expecting it to get called later. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If the browser calls your <code>:on-click</code> a thousand times, re-frame will "create" a thousand unique subscriptions, and there's no code in place to "dispose" them later.</p>
 <h3 id="re-frame-event-handlers">Re-frame event handlers<a class="headerlink" href="#re-frame-event-handlers" title="Permanent link">&para;</a></h3>
 <p>Re-frame event handlers don't count either. Re-frame calls your event handlers within its own loop, which runs in a totally separate context from reagent's render loop.</p>
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
