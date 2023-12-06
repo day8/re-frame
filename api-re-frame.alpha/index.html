@@ -1290,19 +1290,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#null" class="md-nav__link">
-    null
+  <a href="#subscription" class="md-nav__link">
+    Subscription
   </a>
   
-    <nav class="md-nav" aria-label="null">
+    <nav class="md-nav" aria-label="Subscription">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#reg-event-error-handler" class="md-nav__link">
-    reg-event-error-handler
+  <a href="#sub" class="md-nav__link">
+    sub
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flows" class="md-nav__link">
+    Flows
+  </a>
+  
+    <nav class="md-nav" aria-label="Flows">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#reg-flow" class="md-nav__link">
@@ -1328,26 +1341,6 @@
           <li class="md-nav__item">
   <a href="#flow-" class="md-nav__link">
     flow&lt;-
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#subscription" class="md-nav__link">
-    Subscription
-  </a>
-  
-    <nav class="md-nav" aria-label="Subscription">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sub" class="md-nav__link">
-    sub
   </a>
   
 </li>
@@ -1622,19 +1615,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#null" class="md-nav__link">
-    null
+  <a href="#subscription" class="md-nav__link">
+    Subscription
   </a>
   
-    <nav class="md-nav" aria-label="null">
+    <nav class="md-nav" aria-label="Subscription">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#reg-event-error-handler" class="md-nav__link">
-    reg-event-error-handler
+  <a href="#sub" class="md-nav__link">
+    sub
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flows" class="md-nav__link">
+    Flows
+  </a>
+  
+    <nav class="md-nav" aria-label="Flows">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#reg-flow" class="md-nav__link">
@@ -1660,26 +1666,6 @@
           <li class="md-nav__item">
   <a href="#flow-" class="md-nav__link">
     flow&lt;-
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#subscription" class="md-nav__link">
-    Subscription
-  </a>
-  
-    <nav class="md-nav" aria-label="Subscription">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sub" class="md-nav__link">
-    sub
   </a>
   
 </li>
@@ -2074,44 +2060,6 @@
 <p>For further understanding, read the tutorials, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs.</p>
 <p>See also: <code>sub</code></p>
-<h2 id="null">null<a class="headerlink" href="#null" title="Permanent link">&para;</a></h2>
-<h3 id="reg-event-error-handler">reg-event-error-handler<a class="headerlink" href="#reg-event-error-handler" title="Permanent link">&para;</a></h3>
-<p><code class="highlight"><span class="p">(</span><span class="nf">reg-event-error-handler</span> <span class="nv">handler</span><span class="p">)</span></code></p>
-<p>Register the given event error <code>handler</code> (function) that will catch unhandled exceptions
-thrown in the interceptors/handler chain.</p>
-<p>Only one <code>handler</code> can be registered. Registering a new <code>handler</code> clears the existing <code>handler</code>.</p>
-<p>This <code>handler</code> function has the signature:</p>
-<p><code>(handler [original-error re-frame-error])</code></p>
-<ul>
-<li><code>original-error</code>: A plaform-native Error object.
-   Represents the original error thrown by user code.</li>
-</ul>
-<p>This is the error you see when no <code>handler</code> is registered.
-   To preserve this behavior, simply call <code>(throw original-error)</code>
-   at the end of your handler function.</p>
-<ul>
-<li>
-<p><code>re-frame-error</code>: A clojure ExceptionInfo object.
-   Includes the stacktrace of re-frame's internal functions,
-   and extra data about the current interceptor context.
-   Call <code>(ex-data re-frame-error)</code> to get this info.
-   It includes:</p>
-</li>
-<li>
-<p><code>:interceptor</code>: the <code>:id</code> of the throwing interceptor.</p>
-</li>
-<li><code>:direction</code>: <code>:before</code> or <code>:after</code>.</li>
-<li><code>:event-v</code>: the re-frame event which invoked this interceptor.</li>
-</ul>
-<h3 id="reg-flow">reg-flow<a class="headerlink" href="#reg-flow" title="Permanent link">&para;</a></h3>
-<p>null</p>
-<h3 id="clear-flow">clear-flow<a class="headerlink" href="#clear-flow" title="Permanent link">&para;</a></h3>
-<p>null</p>
-<h3 id="get-flow">get-flow<a class="headerlink" href="#get-flow" title="Permanent link">&para;</a></h3>
-<p><code class="highlight"><span class="p">(</span><span class="nf">get-flow</span> <span class="nv">db</span> <span class="nv">id</span><span class="p">)</span></code></p>
-<p>null</p>
-<h3 id="flow-">flow&lt;-<a class="headerlink" href="#flow-" title="Permanent link">&para;</a></h3>
-<p>null</p>
 <h2 id="subscription">Subscription<a class="headerlink" href="#subscription" title="Permanent link">&para;</a></h2>
 <h3 id="sub">sub<a class="headerlink" href="#sub" title="Permanent link">&para;</a></h3>
 <p><code class="highlight"><span class="p">(</span><span class="nf">sub</span> <span class="nv">q</span><span class="p">)</span></code></p>
@@ -2168,6 +2116,64 @@ To subscribe to a flow, simply call:</p>
 
 <p><strong>Legacy support</strong></p>
 <p><code>dyn-v</code> is not supported.</p>
+<h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
+<h3 id="reg-flow">reg-flow<a class="headerlink" href="#reg-flow" title="Permanent link">&para;</a></h3>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-flow</span> <span class="nv">flow</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">reg-flow</span> <span class="nv">id</span> <span class="nv">flow</span><span class="p">)</span></code></p>
+<p>Registers a <code>flow</code>.</p>
+<p>A full tutorial can be found at https://day8.github.io/re-frame/Flows</p>
+<p>Re-frame uses the flow registry to execute a dataflow graph.</p>
+<p>On every event, re-frame runs each registered <code>flow</code>.
+It resolves the flow's inputs, determines if the flow is live, and if so,
+evaluates the output function, putting the result in <code>app-db</code> at the path.</p>
+<p>A <code>flow</code> is a map, specifying one dataflow node. It has keys:</p>
+<ul>
+<li><code>:id</code>: uniquely identifies the node.</li>
+<li>When a <code>flow</code> is already registered with the same <code>:id</code>, replaces it.</li>
+<li>You can provide an <code>id</code> argument to <code>reg-flow</code>, instead of including <code>:id</code>.</li>
+<li><code>:inputs</code>: a map of <code>keyword-&gt;input</code>. An input can be one of two types:</li>
+<li>vector: expresses a path in <code>app-db</code>.</li>
+<li>map: expresses the output of another flow, identified by a
+     <code>::re-frame.flow.alpha/flow&lt;-</code> key.
+     Call the <code>re-frame.alpha/flow&lt;-</code> function to construct this map.</li>
+<li><code>:output</code>: a function of the <code>keyword-&gt;resolved-input</code> map, returning the output value of the node.</li>
+<li>A resolved vector input is the value in <code>app-db</code> at that path.</li>
+<li>A resolved <code>flow&lt;-</code> input is the value in <code>app-db</code> at the path of the named flow.</li>
+<li>Re-frame topologically sorts the flows, to make sure any input flows always run first.</li>
+<li>Re-frame throws an error at registration time if any flow inputs form a cycle.</li>
+<li><code>:path</code>: specifies the <code>app-db</code> location where the <code>:output</code> value is stored.</li>
+<li><code>:live-inputs</code>: a map of <code>keyword-&gt;live-input</code> for the <code>:live?</code> function.</li>
+<li>A <code>live-input</code> works the same way an <code>input</code>.</li>
+<li><code>:live?</code>: a predicate function of the <code>keyword-&gt;resolved-live-input</code> map,    returning the current lifecycle state of the node.</li>
+<li><code>:cleanup</code>: a function of <code>app-db</code> and the <code>:path</code>.</li>
+<li>Returns a new <code>app-db</code>.</li>
+<li>Runs the first time <code>:live?</code> returns <code>false</code></li>
+<li>Runs when the flow is cleared (see <code>re-frame.alpha/clear-flow</code>).</li>
+</ul>
+<p><code>:id</code> is the only required key. All others have a default value:</p>
+<ul>
+<li><code>:path</code>: <code>[id]</code></li>
+<li><code>:inputs</code>: <code>{}</code></li>
+<li><code>:output</code>: <code>(constantly true)</code></li>
+<li><code>:live?</code>: <code>(constantly true)</code></li>
+<li><code>:live-inputs</code>: <code>{}</code></li>
+<li><code>:cleanup</code>: <code>re-frame.utils/dissoc-in</code></li>
+</ul>
+<h3 id="clear-flow">clear-flow<a class="headerlink" href="#clear-flow" title="Permanent link">&para;</a></h3>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-flow</span><span class="p">)</span></code></p>
+<p><code class="highlight"><span class="p">(</span><span class="nf">clear-flow</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p>Arguments: <code>[id]</code>
+Deregisters a flow, identified by <code>id</code>.</p>
+<p>Later, re-frame will update <code>app-db</code> with the flow's <code>:cleanup</code> function.</p>
+<p>If <code>clear-flow</code> is invoked by the <code>:clear-flow</code> effect, this cleanup happens in the <code>:after</code> phase of the same event returning <code>:clear-flow</code>.</p>
+<p>If you call <code>clear-flow</code> directly, cleanup will happen on the next event.</p>
+<h3 id="get-flow">get-flow<a class="headerlink" href="#get-flow" title="Permanent link">&para;</a></h3>
+<p><code class="highlight"><span class="p">(</span><span class="nf">get-flow</span> <span class="nv">db</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p>Returns the value within <code>db</code> at the <code>:path</code> given by the registered flow
+with an <code>:id</code> key equal to <code>id</code>, if it exists. Otherwise, returns nil.</p>
+<h3 id="flow-">flow&lt;-<a class="headerlink" href="#flow-" title="Permanent link">&para;</a></h3>
+<p><code class="highlight"><span class="p">(</span><span class="nf">flow&lt;-</span> <span class="nv">id</span><span class="p">)</span></code></p>
+<p>Creates an input from a flow id.</p>
 <h2 id="legacy-compatibility">Legacy Compatibility<a class="headerlink" href="#legacy-compatibility" title="Permanent link">&para;</a></h2>
 <h3 id="subscribe">subscribe<a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h3>
 <p>Equivalent to <code>sub</code> (except with flows, which have their own lifecycle and are not cached).</p>
