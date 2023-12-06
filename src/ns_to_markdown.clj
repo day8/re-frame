@@ -54,9 +54,10 @@
 
 (defn unindent
   [doc]
-  (->> (string/split-lines doc)
-       (map #(string/replace % #"^\s{0,2}" ""))
-       (string/join "\n")))
+  (some->> doc
+           (string/split-lines )
+           (map #(string/replace % #"^\s{0,2}" ""))
+           (string/join "\n")))
 
 (defn read-var
   [var]
