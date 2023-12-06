@@ -549,6 +549,7 @@
      - `:interceptor`: the `:id` of the throwing interceptor.
      - `:direction`: `:before` or `:after`.
      - `:event-v`: the re-frame event which invoked this interceptor."
+  {:api-docs/hide true}
   [handler]
   (registrar/register-handler :error :event-handler handler))
 
@@ -1281,13 +1282,77 @@
 
 ;; --  Flows ------------------------------------------------------------------
 
-(def reg-flow flow/reg-flow)
+(defn reg-flow
+  "Registers a `flow`.
 
-(def clear-flow flow/clear-flow)
+  A full tutorial can be found at https://day8.github.io/re-frame/Flows
 
-(defn get-flow [db id] (flow/resolve-input db (flow/flow<- id)))
+  Re-frame uses the flow registry to execute a dataflow graph.
 
-(def flow<- flow/flow<-)
+  On every event, re-frame runs each registered `flow`.
+  It resolves the flow's inputs, determines if the flow is live, and if so,
+  evaluates the output function, putting the result in `app-db` at the path.
+
+  A `flow` is a map, specifying one dataflow node. It has keys:
+
+  - `:id`: uniquely identifies the node.
+     - When a `flow` is already registered with the same `:id`, replaces it.
+     - You can provide an `id` argument to `reg-flow`, instead of including `:id`.
+  - `:inputs`: a map of `keyword->input`. An input can be one of two types:
+     - vector: expresses a path in `app-db`.
+     - map: expresses the output of another flow, identified by a
+       `::re-frame.flow.alpha/flow<-` key.
+       Call the `re-frame.alpha/flow<-` function to construct this map.
+  - `:output`: a function of the `keyword->resolved-input` map, returning the output value of the node.
+     - A resolved vector input is the value in `app-db` at that path.
+     - A resolved `flow<-` input is the value in `app-db` at the path of the named flow.
+     - Re-frame topologically sorts the flows, to make sure any input flows always run first.
+     - Re-frame throws an error at registration time if any flow inputs form a cycle.
+  - `:path`: specifies the `app-db` location where the `:output` value is stored.
+  - `:live-inputs`: a map of `keyword->live-input` for the `:live?` function.
+     - A `live-input` works the same way an `input`.
+  - `:live?`: a predicate function of the `keyword->resolved-live-input` map,    returning the current lifecycle state of the node.
+  - `:cleanup`: a function of `app-db` and the `:path`.
+     - Returns a new `app-db`.
+     - Runs the first time `:live?` returns `false`
+     - Runs when the flow is cleared (see `re-frame.alpha/clear-flow`).
+
+  `:id` is the only required key. All others have a default value:
+
+  - `:path`: `[id]`
+  - `:inputs`: `{}`
+  - `:output`: `(constantly true)`
+  - `:live?`: `(constantly true)`
+  - `:live-inputs`: `{}`
+  - `:cleanup`: `re-frame.utils/dissoc-in`"
+  {:api-docs/heading "Flows"}
+  ([flow] (flow/reg-flow flow))
+  ([id flow] (flow/reg-flow id flow)))
+
+(defn clear-flow
+  "Arguments: `[id]`
+  Deregisters a flow, identified by `id`.
+
+  Later, re-frame will update `app-db` with the flow's `:cleanup` function.
+
+  If `clear-flow` is invoked by the `:clear-flow` effect, this cleanup happens in the `:after` phase of the same event returning `:clear-flow`.
+
+  If you call `clear-flow` directly, cleanup will happen on the next event."
+  {:api-docs/heading "Flows"}
+  ([] (flow/clear-flow))
+  ([id] (flow/clear-flow id)))
+
+(defn get-flow
+  "Returns the value within `db` at the `:path` given by the registered flow
+  with an `:id` key equal to `id`, if it exists. Otherwise, returns nil."
+  {:api-docs/heading "Flows"}
+  [db id] (flow/resolve-input db (flow/flow<- id)))
+
+(defn flow<-
+  "Creates an input from a flow id."
+  {:api-docs/heading "Flows"}
+  [id]
+  (flow/flow<- id))
 
 (reg :sub :flow
      (fn [db input]
