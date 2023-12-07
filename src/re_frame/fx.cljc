@@ -56,7 +56,13 @@
                 (doseq [[effect-key effect-value] effects-without-db]
                   (if-let [effect-fn (get-handler kind effect-key false)]
                     (effect-fn effect-value)
-                    (console :warn "re-frame: no handler registered for effect:" effect-key ". Ignoring."))))))))
+                    (console :warn
+                             "re-frame: no handler registered for effect:"
+                             effect-key
+                             ". Ignoring."
+                             (when (= :event effect-key)
+                               (str "You may be trying to return a coeffect map from an event-fx handler. "
+                                    "See https://day8.github.io/re-frame/use-cofx-as-fx/"))))))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 
