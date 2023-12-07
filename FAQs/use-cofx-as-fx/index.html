@@ -1592,10 +1592,12 @@ Such a <code>db</code> handler behaves like a reducing function:</p>
 
 
 <p>With <code>reg-event-fx</code>, you receive a map of coeffect values, and you're expected to return a map of effect values. 
-It's a coincidence that <code>:db</code> is the name of both an effect and a coeffect.
+It's a coincidence that <code>:db</code> identifies both an effect <em>and</em> a coeffect.
 But re-frame adds other coeffects, such as <code>:event</code>, which it does <em>not</em> consider effects.</p>
 <p>So your handler ends up doing <code>(update-in {:db {:clicks 0} :event [::cow-clicked-bad] :your-other-coeffect 25} ...)</code>. </p>
-<p>Any coeffects you declare cause this problem, too. You might have a coeffect, like <code>:db</code>, which shares its name with an effect. But that's a deliberate design decision, not a default.</p>
+<p>There's probably no effect handler for <code>:event</code>. Hence the warning.
+Coeffects which you declare, such as <code>your-other-coeffect</code>, may cause the same problem.</p>
+<p>You might have a coeffect, similar to <code>:db</code>, which shares its name with an effect. But that's a deliberate design decision, not a default.</p>
                 
               
               
