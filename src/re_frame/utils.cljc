@@ -1,6 +1,7 @@
 (ns re-frame.utils
   (:require
-   [re-frame.loggers :refer [console]]))
+   [re-frame.loggers :refer [console]]
+   [re-frame.interop :as interop]))
 
 (defn dissoc-in
   "Dissociates an entry from a nested associative structure returning a new
@@ -53,7 +54,7 @@
                           {} graph)
         ks (keys graph)]
     (loop [q (filter #(zero? (get in-degree % 0)) ks)
-           sorted #queue []
+           sorted interop/empty-queue
            in-degree in-degree]
       (cond
         (seq q)

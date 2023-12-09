@@ -5,6 +5,7 @@
    [re-frame.registrar :refer [get-handler]]
    [re-frame.loggers     :refer [console]]
    [re-frame.interceptor :refer [->interceptor get-effect get-coeffect update-effect assoc-effect]]
+   [re-frame.interop :as interop]
    [reagent.core :as r]))
 
 (def db-path? vector?)
@@ -13,7 +14,7 @@
 
 (def flow<-? (comp some? ::flow<-))
 
-(def flows (r/atom {}))
+(def flows (interop/ratom {}))
 
 (defn lookup [id] (get @flows id))
 

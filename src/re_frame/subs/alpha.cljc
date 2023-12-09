@@ -4,7 +4,7 @@
    [re-frame.subs :refer [deref-input-signals sugar warn-when-not-reactive]]
    [re-frame.registrar :refer [register-handler]]
    [re-frame.register.alpha :refer [reg lifecycle->method]]
-   [re-frame.interop :refer [add-on-dispose! make-reaction reactive? reagent-id]]
+   [re-frame.interop :refer [add-on-dispose! make-reaction reactive? reagent-id ratom]]
    [re-frame.query.alpha :as q]
    [re-frame :as-alias rf]
    [re-frame.trace :as trace :include-macros true]
@@ -102,7 +102,7 @@
 
 (reg :sub-lifecycle :forever sub-forever)
 
-(def nil-ref (r/atom nil))
+(def nil-ref (ratom nil))
 
 (defn sub-flow [q]
   (or (some-> (:id (or (second (::rf/query-v q)) q))
