@@ -207,8 +207,8 @@ One way to imagine the whole event handling process would be to see it written l
 
 ## Infographics
 
-<a href="../images/interceptors.png">
-  <img src="../images/interceptors.png">
+<a href="./images/interceptors.png">
+  <img src="./images/interceptors.png">
 </a>
 
 ## Self Modifying
