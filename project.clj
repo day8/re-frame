@@ -12,7 +12,9 @@
                  [thheller/shadow-cljs      "2.23.3" :scope "provided"]
                  [reagent/reagent           "1.2.0"]
                  [net.cgrand/macrovich      "0.2.1"]
-                 [org.clojure/tools.logging "1.2.4"]]
+                 [org.clojure/tools.logging "1.2.4"]
+                 [org.babashka/sci "0.8.40" :scope "provided"]
+                 [funcool/promesa "10.0.575" :scope "provided"]]
 
   :plugins      [[day8/lein-git-inject "0.0.15"]
                  [lein-shadow          "0.4.1"]]
@@ -78,7 +80,7 @@
 
   :aliases {"watch" ["do"
                      ["clean"]
-                     ["with-profile" "+docs" "shadow" "watch" "browser-test" "karma-test" "docs"]]
+                     ["shadow" "watch" "browser-test" "karma-test" "docs"]]
 
             "ci"    ["do"
                      ["clean"]
@@ -87,4 +89,4 @@
 
             "docs" ["do"
                     ["clean"]
-                    ["with-profile" "+docs" "shadow" "release" ":docs"]]})
+                    ["shadow" "release" ":docs"]]})
