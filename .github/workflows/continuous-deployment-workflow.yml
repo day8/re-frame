@@ -145,7 +145,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           body: |
-            [Changelog](http://day8.github.io/re-frame/releases/2020/)
+            [Changelog](http://day8.github.io/re-frame/releases/2024/)
           draft: false
           prerelease: false
       - name: Slack notification
