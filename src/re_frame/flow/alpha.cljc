@@ -1,12 +1,12 @@
 (ns re-frame.flow.alpha
   (:require
-   [re-frame.db :as db]
+   #?(:cljs [re-frame.db :as db])
    [re-frame.utils :as u]
    [re-frame.registrar :refer [get-handler]]
    [re-frame.loggers     :refer [console]]
-   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect update-effect assoc-effect]]
+   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect assoc-effect]]
    [re-frame.interop :as interop]
-   [reagent.core :as r]))
+   #?(:cljs [reagent.core :as r])))
 
 (def db-path? vector?)
 
@@ -58,7 +58,7 @@
 (defn validate-inputs [{:keys [inputs]}]
   (doseq [[_ input] inputs
           :when (not ((some-fn db-path? flow<-?) input))]
-    (throw (js/Error. "bad input"))))
+    (throw (#?(:clj Exception. :cljs js/Error.) "bad input"))))
 
 (defn warn-stale-dependencies [flows new-flow]
   (let [ins (stale-in-flows flows new-flow)
@@ -91,8 +91,10 @@
    (warn-stale-dependencies @flows m)
    (swap! flows assoc
           (:id m) (with-meta (merge (default (:id m)) m)
-                    {::new? true
-                     ::ref (r/reaction (get-in @db/app-db (:path m)))}))))
+                    (merge
+                     {::new? true}
+                     #?(:cljs
+                        {::ref (r/reaction (get-in @db/app-db (:path m)))}))))))
 
 (defn clear-flow
   ([]

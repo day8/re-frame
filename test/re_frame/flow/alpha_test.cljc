@@ -1,6 +1,6 @@
 (ns re-frame.flow.alpha-test
   (:require
-   [cljs.test :refer [is deftest async use-fixtures testing]]
+   [cljs.test :refer [is deftest use-fixtures testing]]
    [re-frame.alpha :as rf]
    [re-frame.flow.alpha :as f]
    [re-frame.db :refer [app-db]]))

@@ -1,6 +1,5 @@
 (ns re-frame.subs.alpha
   (:require
-   [reagent.core :as r]
    [re-frame.subs :refer [deref-input-signals sugar warn-when-not-reactive]]
    [re-frame.registrar :refer [register-handler]]
    [re-frame.register.alpha :refer [reg lifecycle->method]]
