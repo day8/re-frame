@@ -99,6 +99,7 @@ nav:
     - re-frame.core: api-re-frame.core.md
     - re-frame.alpha: api-re-frame.alpha.md
   - Releases:
+    - 2024: releases/2024.md
     - 2023: releases/2023.md
     - 2022: releases/2022.md
     - 2021: releases/2021.md
