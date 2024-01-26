@@ -80,7 +80,7 @@
 
   :aliases {"watch" ["do"
                      ["clean"]
-                     ["shadow" "watch" "browser-test" "karma-test" "docs"]]
+                     ["with-profile" "+docs" "shadow" "watch" "browser-test" "karma-test" "docs"]]
 
             "ci"    ["do"
                      ["clean"]
@@ -89,4 +89,4 @@
 
             "docs" ["do"
                     ["clean"]
-                    ["shadow" "release" ":docs"]]})
+                    ["with-profile" "+docs" "shadow" "release" ":docs"]]})
