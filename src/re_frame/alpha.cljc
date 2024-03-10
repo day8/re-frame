@@ -466,7 +466,6 @@
                         flow/interceptor
                         flow/do-fx
                         std-interceptors/inject-global-interceptors
-                        flow/interceptor
                         interceptors
                         (fx-handler->interceptor handler)])))
 
