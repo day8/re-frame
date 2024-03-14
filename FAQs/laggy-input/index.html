@@ -1583,7 +1583,7 @@
 <li>That means the text in the box will revert from <code>state B</code> to <code>state A</code> (the character just typed won't be in the input)</li>
 <li>Now if nothing happened till the next animation frame the situation would resolve itself. Because <code>state B</code> would be rendered next time because the event which included the 
   new character would have been processed well before then. </li>
-<li>BUT if the user immediately types another character, the state dispatched will be <code>State A + new character</code>. The prevous character typed, 
+<li>BUT if the user immediately types another character, the state dispatched will be <code>State A + new character</code>. The previous character typed, 
      which caused A -&gt; B, is now lost. </li>
 </ol>
 <p>Bottom line: with very fast typing, characters can get dropped just before animation-frames.</p>

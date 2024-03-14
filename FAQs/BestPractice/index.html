@@ -1668,7 +1668,7 @@ a map containing two standard keys <code>:db</code> and <code>:fx</code>.  Learn
 <h3 id="avoid-placeful-events">Avoid Placeful Events<a class="headerlink" href="#avoid-placeful-events" title="Permanent link">&para;</a></h3>
 <p>Originally, it was recommended that events be a vector like this <code>[:some-event-id  arg1 arg2]</code>. This works reasonably for simple cases, but it does introduce fragility for more complex use cases due to the lnherent "placefulness" of vectors. </p>
 <p>A better practice is to encapsulate the "args" into a single map: <code>[:some-event-id  {:x arg1 :another arg2}]</code></p>
-<p>And then to optionally use the <code>unwrap</code> middleware on the asspciated event handlers. See <a href="http://day8.github.io/re-frame/api-re-frame.core/#unwrap">here</a></p>
+<p>And then to optionally use the <code>unwrap</code> middleware on the associated event handlers. See <a href="http://day8.github.io/re-frame/api-re-frame.core/#unwrap">here</a></p>
                 
               
               
