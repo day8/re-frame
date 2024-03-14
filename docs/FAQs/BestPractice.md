@@ -44,5 +44,5 @@ Originally, it was recommended that events be a vector like this `[:some-event-i
 
 A better practice is to encapsulate the "args" into a single map: `[:some-event-id  {:x arg1 :another arg2}]`
 
-And then to optionally use the `unwrap` middleware on the asspciated event handlers. See [here](http://day8.github.io/re-frame/api-re-frame.core/#unwrap)
+And then to optionally use the `unwrap` middleware on the associated event handlers. See [here](http://day8.github.io/re-frame/api-re-frame.core/#unwrap)
 
