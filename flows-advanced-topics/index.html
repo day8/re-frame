@@ -1654,7 +1654,7 @@ You might try calling <code>(rf/subscribe [::num-balloons-to-fill-kitchen])</cod
 and memory leaks... oh my!</p>
 <h3 id="reactive-context">Reactive context<a class="headerlink" href="#reactive-context" title="Permanent link">&para;</a></h3>
 <p>To know if a thing has changed, you have to remember what it was.
-To propagate change from one identity to the another, you have to remember their relationship (a <a href="https://clojuredocs.org/clojure.core/add-watch"><code>watchable</code></a>).
+To propagate change from one identity to another, you have to remember their relationship (a <a href="https://clojuredocs.org/clojure.core/add-watch"><code>watchable</code></a>).
 Memory is state. Remembering is a side-effect.</p>
 <p>Reagent does this. Its main constructs - <em>reactive atom</em>, and <em>component</em> - are stateful, impure.
 We depend on this memory. It abstracts the essential complexity of reactive programming.</p>
