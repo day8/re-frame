@@ -28,7 +28,7 @@ That `on-change` handler is being called after the user types every character.  
   6. That means the text in the box will revert from `state B` to `state A` (the character just typed won't be in the input)
   7. Now if nothing happened till the next animation frame the situation would resolve itself. Because `state B` would be rendered next time because the event which included the 
   new character would have been processed well before then. 
-  6. BUT if the user immediately types another character, the state dispatched will be `State A + new character`. The prevous character typed, 
+  6. BUT if the user immediately types another character, the state dispatched will be `State A + new character`. The previous character typed, 
      which caused A -> B, is now lost. 
 
 Bottom line: with very fast typing, characters can get dropped just before animation-frames.
