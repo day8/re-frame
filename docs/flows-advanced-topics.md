@@ -58,7 +58,7 @@ and memory leaks... oh my!
 ### Reactive context
 
 To know if a thing has changed, you have to remember what it was.
-To propagate change from one identity to the another, you have to remember their relationship (a [`watchable`](https://clojuredocs.org/clojure.core/add-watch)).
+To propagate change from one identity to another, you have to remember their relationship (a [`watchable`](https://clojuredocs.org/clojure.core/add-watch)).
 Memory is state. Remembering is a side-effect.
 
 Reagent does this. Its main constructs - *reactive atom*, and *component* - are stateful, impure.
