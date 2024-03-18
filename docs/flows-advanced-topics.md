@@ -198,7 +198,7 @@ Something is looping in on itself here:
 - *And*, the value of a view determines when a signal lives or dies. 
 - *And*, the value of a signal determines when a view lives or dies.
 
-If views derive solely from `app-db`, when why must signals derive from views?
+If views derive solely from `app-db`, then why must signals derive from views?
 Why not simply have *everything* derive from `app-db`?
 
 `event -> app-db -> signal graph -> signals -> view -> event`
