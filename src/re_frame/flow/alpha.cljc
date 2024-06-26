@@ -165,8 +165,10 @@
 
 (def interceptor
   (->interceptor
-   {:id :flow
-    :after (fn [ctx]
-             (let [all-flows (with-cleared @flows)]
-               (swap! flows vary-meta dissoc ::cleared)
-               (reduce run ctx ((memoize topsort) all-flows))))}))
+   {:id    :flow
+    :after (comp (fn [ctx]
+                   (let [all-flows (with-cleared @flows)]
+                     (swap! flows vary-meta dissoc ::cleared)
+                     (reduce run ctx ((memoize topsort) all-flows))))
+                 (fn [{{:keys [db]} :effects :as ctx}]
+                   (assoc ctx :re-frame/pre-flow-db db)))}))

@@ -423,10 +423,10 @@
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
-                        flow/interceptor
-                        flow/do-fx
                         std-interceptors/inject-global-interceptors
                         interceptors
+                        flow/interceptor
+                        flow/do-fx
                         (db-handler->interceptor handler)])))
 
 (defn reg-event-fx
@@ -463,10 +463,10 @@
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
-                        flow/interceptor
-                        flow/do-fx
                         std-interceptors/inject-global-interceptors
                         interceptors
+                        flow/interceptor
+                        flow/do-fx
                         (fx-handler->interceptor handler)])))
 
 (defn reg-event-ctx
@@ -500,10 +500,10 @@
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
-                        flow/interceptor
-                        flow/do-fx
                         std-interceptors/inject-global-interceptors
                         interceptors
+                        flow/interceptor
+                        flow/do-fx
                         (ctx-handler->interceptor handler)])))
 
 (defn clear-event
