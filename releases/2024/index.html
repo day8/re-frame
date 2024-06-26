@@ -1324,6 +1324,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#144-2024-06-24" class="md-nav__link">
+    1.4.4 (2024-06-24)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#143-2024-01-25" class="md-nav__link">
     1.4.3 (2024-01-25)
   </a>
@@ -1518,6 +1525,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#144-2024-06-24" class="md-nav__link">
+    1.4.4 (2024-06-24)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#143-2024-01-25" class="md-nav__link">
     1.4.3 (2024-01-25)
   </a>
@@ -1552,6 +1566,18 @@
 <blockquote>
 <p>The re-frame <a href="https://clojars.org/re-frame/">Clojars page</a> contains dependency coordinates for Maven/deps/Lein.</p>
 </blockquote>
+<h2 id="144-2024-06-24">1.4.4 (2024-06-24)<a class="headerlink" href="#144-2024-06-24" title="Permanent link">&para;</a></h2>
+<h4>Changed</h4>
+<div class="codehilite"><pre><span></span><code>- Changed flows to calculate the new app-db earlier in the chain.
+  - Benefit: user-defined interceptors are aware of the post-flow app-db value.
+  - Drawback: they can&#39;t access the value of app-db directly resulting from the event handler.
+  - Drawback: they can&#39;t access flow-related effects like `:reg-flow`.
+
+- Added a :re-frame/pre-flow-db key to the context
+  - This way, user-defined interceptors can still access the app-db value resulting directly from the event handler.
+</code></pre></div>
+
+
 <h2 id="143-2024-01-25">1.4.3 (2024-01-25)<a class="headerlink" href="#143-2024-01-25" title="Permanent link">&para;</a></h2>
 <h4>Fixed</h4>
 <div class="codehilite"><pre><span></span><code>- cljdoc analysis &amp; build errors (see https://github.com/cljdoc/cljdoc/issues/853)
