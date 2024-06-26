@@ -1569,7 +1569,7 @@
 <h2 id="144-2024-06-24">1.4.4 (2024-06-24)<a class="headerlink" href="#144-2024-06-24" title="Permanent link">&para;</a></h2>
 <h4>Changed</h4>
 <div class="codehilite"><pre><span></span><code>- Changed flows to calculate the new app-db earlier in the chain.
-  - Benefit: user-defined interceptors are aware of the post-flow app-db value.
+  - Benefit:  user-defined interceptors can access post-flow app-db value.
   - Drawback: they can&#39;t access the value of app-db directly resulting from the event handler.
   - Drawback: they can&#39;t access flow-related effects like `:reg-flow`.
 
