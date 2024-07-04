@@ -1,4 +1,4 @@
-![](images/logo/Guggenheim.jpg)
+![](images/logo/re-frame-colour.png)
 
 #
 ## Who?
