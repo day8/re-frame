@@ -1,5 +1,4 @@
-![](images/logo/re-frame-colour.png)
-
+<p align="center"><img src="https://github.com/day8/re-frame/blob/master/docs/images/logo/re-frame-colour.png?raw=true" alt="re-frame logo"></p>
 #
 ## Who?
 
