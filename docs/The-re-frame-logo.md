@@ -1,6 +1,5 @@
 
-
-<p align="center"><img src="images/logo/re-frame-colour.png?raw=true" alt="re-frame logo"></p>
+<p align="center"><img src="../images/logo/re-frame-colour.png?raw=true" alt="re-frame logo"></p>
 
 #
 ## Who?
