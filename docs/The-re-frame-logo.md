@@ -1,7 +1,4 @@
-
-<p align="center">
-  ![](images/logo/Guggenheim.jpg)
-</p>
+![](images/logo/Guggenheim.jpg)
 
 #
 ## Who?
