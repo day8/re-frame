@@ -611,3 +611,4 @@ Let's test it out:
 </div>
 
 <div id="item-counter-requirements"></div>
+
