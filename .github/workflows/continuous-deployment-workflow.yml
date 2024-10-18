@@ -71,11 +71,11 @@ jobs:
           npm install
           npm run release
           npm run build-report
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: simple-example-build-report
           path: examples/simple/target/build-report.html
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: todomvc-example-build-report
           path: examples/todomvc/target/build-report.html

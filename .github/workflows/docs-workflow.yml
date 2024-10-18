@@ -36,12 +36,12 @@ jobs:
         # Source: https://github.com/day8/re-frame/blob/master/docs/src/ns_to_markdown.clj
         run: clojure -m ns-to-markdown ../src/re_frame/alpha.cljc > api-re-frame.alpha.md
       - name: Upload re-frame.core Documentation Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: api-re-frame.core.md
           path: docs/api-re-frame.core.md
       - name: Upload re-frame.alpha Documentation Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: api-re-frame.alpha.md
           path: docs/api-re-frame.alpha.md
@@ -95,7 +95,7 @@ jobs:
         run: |
           tar Jcf re-frame-docs-app.tar.xz js
       - name: Upload re-frame-docs App Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: re-frame-docs-app
           path: docs/re-frame-docs-app.tar.xz
@@ -115,17 +115,17 @@ jobs:
         uses: actions/checkout@v2
       - run: git config --system --add safe.directory /__w/re-frame/re-frame
       - name: Download api-re-frame.core.md Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: api-re-frame.core.md
           path: docs
       - name: Download api-re-frame.alpha.md Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: api-re-frame.alpha.md
           path: docs
       - name: Download re-frame-docs App Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: re-frame-docs-app
           path: docs
@@ -137,7 +137,7 @@ jobs:
       - name: Create MkDocs Artifact
         run: tar zcf mkdocs.tar.gz site/
       - name: Upload MkDocs Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: mkdocs
           path: mkdocs.tar.gz
@@ -154,7 +154,7 @@ jobs:
           ref: "gh-pages"
           path: "gh-pages"
       - name: Download MkDocs Artifact
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: mkdocs
       - name: Extract MkDocs Artifact
