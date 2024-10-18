@@ -10,7 +10,7 @@ The essence of science is earnestness of inquiry.
 
 > Eddington defined science as “the earnest endeavour to put into order the facts of experience” 
 
-So what are we doing here?  Marketing (Narative warefare) for the re-frame framework or computer science. 
+So what are we doing here?  Marketing (Narrative warefare) for the re-frame framework or computer science. 
 
 ## Pros
 
@@ -23,7 +23,7 @@ So what are we doing here?  Marketing (Narative warefare) for the re-frame frame
   - it leverages 
     - pure functions
     - immutable data 
-    - declarative style, useing data-based DSLs
+    - declarative style, using data-based DSLs
     - a shockingly effective and beautiful language (50 years of refinement by the finest minds in computer science) 
     - React's entire ecosystem of components - although Hooks is starting to bimodalate (?word) the ecosystem.
     - full interop with js
@@ -58,7 +58,7 @@ As the framework author, I should be a relentless chearleader, right?. The gyrat
 
 But one of the best ways for me to help you, an evaluator of this framework, is explain where and how it doesn't work well? That's this section. 
 
-Every design represents a point in design space, with pros and cons. The tradeoffs are the intersting bit.
+Every design represents a point in design space, with pros and cons. The tradeoffs are the interesting bit.
 
 So I'll do that now. 
 
@@ -67,7 +67,7 @@ I will not try to contrast re-frame with your other framework options. I wish I 
 that, but to do that well, i would need deep knowledge of all the frameworks, and I don't know of
 anyone who really has that. Certainly not me. I try to keep an eye on them, but by "deep knowledge"
 I mean you need to have used it in anger, professionally for a couple of years. Anything less and 
-the comparisions tend to be too shallow and misleading - which means: not unsful - particularly when they
+the comparisons tend to be too shallow and misleading - which means: not unsful - particularly when they
 are written by someone with a 
 
 

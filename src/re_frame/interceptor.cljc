@@ -170,7 +170,7 @@
   (let [{:keys [event-v direction interceptor]} (ex-data re-frame-error)
         event-handler? (#{:db-handler :fx-handler :ctx-handler} interceptor)]
     (apply console :error
-           "An error occured while handling the re-frame event:"
+           "An error occurred while handling the re-frame event:"
            (str event-v)
            "\n"
            (map str

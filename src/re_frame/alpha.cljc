@@ -532,7 +532,7 @@
 
   `(handler [original-error re-frame-error])`
 
-  - `original-error`: A plaform-native Error object.
+  - `original-error`: A platform-native Error object.
      Represents the original error thrown by user code.
 
      This is the error you see when no `handler` is registered.

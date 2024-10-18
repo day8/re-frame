@@ -23,7 +23,7 @@ Clojure is a modern LISP.
 
 Alan Kay once described LISP as "Maxwell's equations of software".
 Paul Graham believes LISP was a competitive advantage for his startup.
-Eric Raymmond said that learning LISP was profoundly enligthening and that knowing it would make you a better programmer for the rest of your days.
+Eric Raymmond said that learning LISP was profoundly enligtening and that knowing it would make you a better programmer for the rest of your days.
 
 In the 70s, 80s and 90s, the LISP community went through a washing machine phase of evolutionary churn. 
 Innovation flourished, experiments happened, prototype ideas were tested and knowledge foliated.
@@ -121,7 +121,7 @@ using Clojure's data literals and we've covered data literals.
 
 You are going to be surprised and delighted with the simplicity of "evaluation".
 
-**1st Evaluation Rule:** all data litterals other than `lists` and `symbols` **evaluate** to themselves.
+**1st Evaluation Rule:** all data literals other than `lists` and `symbols` **evaluate** to themselves.
 
 |  Value              |   Evaluates To              |  Comment    |
 |---------------------|-----------------------------|-------------|
@@ -180,7 +180,7 @@ Example symbol evaluations:
 !!! Note "Symbols are often bound to functions"
 
     For the moment, you'll have to take my word on this: the symbol `#!clj inc`
-    is bound to a function in Clojure's standard library. As a result, when you evaulate `#!clj inc`, you get the function!! Because that's what `inc` is bound to.
+    is bound to a function in Clojure's standard library. As a result, when you evaluate `#!clj inc`, you get the function!! Because that's what `inc` is bound to.
 
     There's also another symbol, `#!clj count`, which is bound to different function in the standard library. 
 
@@ -395,7 +395,7 @@ This is a naming convention. It is used for symbols bound to predicate functions
 | `#!clj (empty? [:some :thing])` | `#!clj false`                | |
 
 Again, we can use `#!clj ?` in names because it is not 
-an operator, as it is in other lanugages. 
+an operator, as it is in other languages. 
 
 ---
 ## What Have You Learned ?
@@ -1145,7 +1145,7 @@ XXX tracking is reified dynamics. residential
 
 We have learned:
 
-  - in ClojureScript we evaulate data, to create new data
+  - in ClojureScript we evaluate data, to create new data
   - virtually all data literals evaluate to themselves
   - 
 
