@@ -7,7 +7,7 @@
 This tutorial introduces **Flows**, part of [Domino 3](http://localhost:8000/re-frame/dominoes-30k/#domino-3-effect-handling) (effects).
 
 !!! Note "Not to be confused with..."
-    - [re-frame-async-flow-fx](https://github.com/day8/re-frame-async-flow-fx). A `re-frame/flow` is totally sychronous, running on every event.
+    - [re-frame-async-flow-fx](https://github.com/day8/re-frame-async-flow-fx). A `re-frame/flow` is totally synchronous, running on every event.
     - The [on-changes interceptor](/re-frame/api-re-frame.core/#on-changes). Flows are an evolution of this idea.
     - [domino](https://github.com/domino-clj/domino). Another take on dataflow programming, inspired by re-frame.
 
@@ -283,7 +283,7 @@ When either input changes value, our flow calls the `:output` function to recalc
 As before, once `:output` runs, the resulting value is stored at `:path`. 
 So, the new value of `app-db` will contain a number at the path `[:ratios :main-rooms]`
 
-Under the hood, flows relate to each other in a depedency graph. 
+Under the hood, flows relate to each other in a dependency graph. 
 An input like `(rf/flow<- ::kitchen-area)` creates a dependency.
 That means re-frame will always run `::kitchen-area` first, 
 ensuring its output value is current before your `:main-room-ratio` flow can use it.

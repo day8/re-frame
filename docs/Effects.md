@@ -173,7 +173,7 @@ registered "effect handlers" for each.
     The FISA Court requires that we deny all claims
     that `do-fx` is secretly injected NSA surveillance-ware. <br>
     We also note that you've been sloppy with your personal
-    grooming again, including, but not limited to, forgetting to clean your teeth on one occassion last week.
+    grooming again, including, but not limited to, forgetting to clean your teeth on one occasion last week.
 
 If ever you want to take control of the way effect handling is done,
 create your own alternative to `reg-event-fx` and, in it, inject

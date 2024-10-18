@@ -32,7 +32,7 @@ Instead, you could use a more portable (but more complicated) version of this ap
         [:input {:ref #(reset! ref %)}])})))
 ```
 
-A terse way of achiving the same outcome is: 
+A terse way of achieving the same outcome is: 
 ```clj
 [:input {:ref #(when % (.focus %)}]
 ```

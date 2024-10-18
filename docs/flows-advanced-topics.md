@@ -111,7 +111,7 @@ along with the *entire* subgraph of subscription inputs:
          std-balloon-volume 2.5
          num-balloons (/ kitchen-volume std-balloon-volume)
          num-bags-to-buy (js/Math.ceil
-                          (/ num-baloons balloons-per-bag))]
+                          (/ num-balloons balloons-per-bag))]
      {:fx [[:amazon {:fn :order
                      :sku :balloon-bag
                      :ct num-bags-to-buy}]]})))
@@ -137,7 +137,7 @@ The fact that some view is creating and destroying them starts to seem arbitrary
 Subscriptions don't *need* to couple their behavior with that of their calling components.
 
 The easy, automatic lifecycle behavior of subscriptions comes with a coupling of concerns. You can't directly control this lifecycle.
-You have to contol it by proxy, by mounting and unmounting your views. You can't *think* about your signal graph without thinking about views first.
+You have to control it by proxy, by mounting and unmounting your views. You can't *think* about your signal graph without thinking about views first.
 
 The `app-db` represents your business state, and signals represent outcomes of your business logic. Views are just window dressing.
 We're tired of designing our whole business to change every time we wash the windows!

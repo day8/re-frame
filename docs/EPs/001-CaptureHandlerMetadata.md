@@ -177,7 +177,7 @@ XXX
   - XXX implications for Cursive - it currently special-cases re-frame registration function -- give ColinF a heads up?? 
   - XXX Dear God, consider changes to documentation/tutorials 
   - XXX means giving up syntax sugar for reg-sub ?
-  - XXX any format for `:doc` for display in HTML?  Or just texual. 
+  - XXX any format for `:doc` for display in HTML?  Or just textual. 
 
 
 

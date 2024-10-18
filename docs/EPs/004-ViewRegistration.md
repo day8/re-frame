@@ -24,7 +24,7 @@ What might need to be injected (as args) into a view:
   - other context: data from higher in the DOM tree
   - animation?  CSS  ?
 
-XXX searches up the DOM heirarchy looking for a `frame` context then extracts dispatch and subscribe.  Sounds inefficient. 
+XXX searches up the DOM hierarchy looking for a `frame` context then extracts dispatch and subscribe.  Sounds inefficient. 
 
 ### Code Doodle #1
 
@@ -95,7 +95,7 @@ Use of `:my-view-id `:
    :something 
    (fn [arg1 arg2] 
       ;; obtain dispatch and subscription 
-      ;; obtain a subscription ot two 
+      ;; obtain a subscription or two 
       ;; add a key on the component 
       (fn [arg1 arg2] 
           ))

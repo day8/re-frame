@@ -29,9 +29,9 @@ really required to get the job done. So lean and minimal is no longer a goal.
    npm run watch
    ```
 
-5. Wait for the compile in step 4 to finish. At a minumum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
+5. Wait for the compile in step 4 to finish. At a minimum, 15 seconds. But, if you are new to ClojureScript and some downloads are needed (caches are empty), it might take a minute or two. Eventually you should see `[:client] Build Completed (...)`
 
-6. Wait for step 5 to do the compile, and then open in UI in the broswer:
+6. Wait for step 5 to do the compile, and then open in UI in the browser:
    ```sh
    open http://localhost:8280
    ```

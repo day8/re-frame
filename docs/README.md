@@ -47,7 +47,7 @@ docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material:5.1.1
 
 Then, in your browser tab, load `http://localhost:8000/`. You should see the website Home page. 
 
-You can now edit the markdown in `/docs` and your changes will be hot reloaded into the brower tab for inspection.
+You can now edit the markdown in `/docs` and your changes will be hot reloaded into the browser tab for inspection.
 
 
 ## Configuration

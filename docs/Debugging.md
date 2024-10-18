@@ -1,4 +1,4 @@
-We recomend you use:
+We recommend you use:
 
  - [re-frame-10x](https://github.com/day8/re-frame-10x) or [refrisk](https://github.com/flexsurfer/re-frisk)
 - with [clj-devtools](https://github.com/binaryage/cljs-devtools)

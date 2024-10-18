@@ -2,7 +2,7 @@
 
 **Data-Oriented programming happens when "data is code".**  The data can be evaluated/executed. 
 
-This data must be in a specific format - it must conform to a DSL (domain-specific language) - and there must be an interpreter for this DSL. When you feed correctly formated data into the interpreter, it is executed. "Data is code" for this interpreter.
+This data must be in a specific format - it must conform to a DSL (domain-specific language) - and there must be an interpreter for this DSL. When you feed correctly formatted data into the interpreter, it is executed. "Data is code" for this interpreter.
 
 Okay, we'll cycle back to this in a minute. But first ...
 
@@ -115,7 +115,7 @@ Look carefully into re-frame, and you'll see the primacy of data everywhere.
     For example, with hiccup at runtime two things are happening: 
 
       - one execution context (ClojureScript) creates the data `(into [:div] (map renderer items))`
-      - one execution context interpets the data (as code) - Reagent.
+      - one execution context interprets the data (as code) - Reagent.
 
     Same for string-oriented programming. One context creates the regex string (perhaps it is just a literal in that context). And the other context executes it. 
 
