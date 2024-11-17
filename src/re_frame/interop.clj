@@ -1,5 +1,5 @@
 (ns re-frame.interop
-  (:import [java.util.concurrent Executor Executors]))
+  (:import [java.util.concurrent Executor ExecutorService Executors TimeUnit]))
 
 ;; The purpose of this file is to provide JVM-runnable implementations of the
 ;; CLJS equivalents in interop.cljs.
@@ -94,3 +94,21 @@
 (defn reactive?
   []
   true)
+
+(defn reset-executor!
+  "Creates a fresh single-threaded executor when the current one is shutdown. Essential for environments like AWS Lambda
+   where the executor must be recycled between function invocations."
+  []
+  (when (and executor (.isShutdown ^ExecutorService executor))
+    (alter-var-root #'executor
+                    (fn [_] (Executors/newSingleThreadExecutor)))))
+
+(defn shutdown-executor!
+  "Cleanly terminates the executor service and waits for pending tasks to complete.
+   Required when running from CLI, tests or Lambda functions to prevent the JVM from hanging,
+   since the executor runs on non-daemon threads. The await-timeout-ms parameter sets how long
+   to wait for task completion in milliseconds. Call reset-executor! to restart execution capabilities."
+  [await-timeout-ms]
+  (.shutdown ^ExecutorService executor)
+  (.awaitTermination ^ExecutorService executor await-timeout-ms TimeUnit/MILLISECONDS))
+
