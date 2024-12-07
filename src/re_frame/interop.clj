@@ -1,5 +1,4 @@
-(ns re-frame.interop
-  (:import [java.util.concurrent Executor ExecutorService Executors TimeUnit]))
+(ns re-frame.interop)
 
 ;; The purpose of this file is to provide JVM-runnable implementations of the
 ;; CLJS equivalents in interop.cljs.
@@ -22,13 +21,10 @@
 (defn on-load
   [listener]) ;; no-op
 
-(defonce ^:private executor (Executors/newSingleThreadExecutor))
-
 (defonce ^:private on-dispose-callbacks (atom {}))
 
 (defn next-tick [f]
-  (let [bound-f (bound-fn [& args] (apply f args))]
-    (.execute ^Executor executor bound-f))
+  (f)
   nil)
 
 (def empty-queue clojure.lang.PersistentQueue/EMPTY)
@@ -94,13 +90,4 @@
 (defn reactive?
   []
   true)
-
-(defn shutdown-executor!
-  "Cleanly terminates the executor service and waits for pending tasks to complete.
-   Required when running from CLI, tests or Lambda functions to prevent the JVM from hanging,
-   since the executor runs on non-daemon threads. The await-timeout-ms parameter sets how long
-   to wait for task completion in milliseconds. Call reset-executor! to restart execution capabilities."
-  [await-timeout-ms]
-  (.shutdown ^ExecutorService executor)
-  (.awaitTermination ^ExecutorService executor await-timeout-ms TimeUnit/MILLISECONDS))
 
