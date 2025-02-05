@@ -496,8 +496,10 @@
   "
   {:api-docs/heading "Subscriptions"}
   ([query]
+   (subs/warn-when-not-reactive)
    (subs/subscribe query))
   ([query dynv]
+   (subs/warn-when-not-reactive)
    (subs/subscribe query dynv)))
 
 (defn clear-sub ;; think unreg-sub
