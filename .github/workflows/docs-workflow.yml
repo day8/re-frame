@@ -14,7 +14,7 @@ jobs:
   # The ns-to-markdown job generates API documentation from the source code and uploads that as an artifact.
   ns-to-markdown:
     name: re-frame.core Markdown
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       # Source: https://github.com/day8/dockerfiles-for-dev-ci-images
       image: ghcr.io/day8/chrome-56:2
@@ -51,7 +51,7 @@ jobs:
 
   re-frame-docs-app:
     name: Re-frame Docs App
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: ghcr.io/day8/dockerfile-for-dev-ci-image/dev-ci:1
       credentials:
@@ -107,7 +107,7 @@ jobs:
     needs:
       - ns-to-markdown
       - re-frame-docs-app
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container:
       image: "squidfunk/mkdocs-material:5.5.9"
     steps:
@@ -146,7 +146,7 @@ jobs:
   github-pages:
     name: GitHub Pages
     needs: mkdocs
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout GitHub Pages Branch
         uses: actions/checkout@v2
