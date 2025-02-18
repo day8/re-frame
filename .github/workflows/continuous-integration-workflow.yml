@@ -28,21 +28,21 @@ jobs:
       - run: git config --system --add safe.directory /__w/re-frame/re-frame
       - name: Maven cache
         id: maven-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /root/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj', '.github/workflows/**') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: npm cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('project.clj') }}-${{ hashFiles('**/deps.cljs') }}
           restore-keys: |
             ${{ runner.os }}-npm-
       - name: shadow-cljs compiler cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: .shadow-cljs
           key: ${{ runner.os }}-shadow-cljs-${{ github.sha }}
