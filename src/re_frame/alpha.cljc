@@ -423,9 +423,9 @@
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
+                        flow/interceptor
                         std-interceptors/inject-global-interceptors
                         interceptors
-                        flow/interceptor
                         flow/do-fx
                         (db-handler->interceptor handler)])))
 
@@ -463,9 +463,9 @@
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
+                        flow/interceptor
                         std-interceptors/inject-global-interceptors
                         interceptors
-                        flow/interceptor
                         flow/do-fx
                         (fx-handler->interceptor handler)])))
 
@@ -500,9 +500,9 @@
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
+                        flow/interceptor
                         std-interceptors/inject-global-interceptors
                         interceptors
-                        flow/interceptor
                         flow/do-fx
                         (ctx-handler->interceptor handler)])))
 
