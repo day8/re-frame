@@ -151,23 +151,26 @@
 
         id->old-live-in (resolve-inputs old-db live-inputs)
         id->live-in     (resolve-inputs db live-inputs)
+
+        old-output      (get-in old-db path)
+
         bardo           [(cond new? :new (live? id->old-live-in) :live :else :dead)
                          (cond cleared? :cleared (live? id->live-in) :live :else :dead)]
 
         new-db (case bardo
-                 [:live :live]    (cond-> db dirty? (assoc-in path (output id->in id->old-in)))
+                 [:live :live]    (cond-> db dirty? (assoc-in path (output id->in id->old-in old-output)))
                  [:live :dead]    (cleanup db path)
-                 [:dead :live]    (assoc-in db path (output id->in id->old-in))
+                 [:dead :live]    (assoc-in db path (output id->in id->old-in old-output))
                  [:new :live]     (do (swap! flows update id vary-meta dissoc ::new?)
-                                      (assoc-in db path (output id->in id->old-in)))
+                                      (assoc-in db path (output id->in id->old-in old-output)))
                  [:live :cleared] (cleanup db path)
                  nil)
 
         new-fx (when flow-fx
                  (case bardo
-                   [:live :live] (when dirty? (concat fx (flow-fx id->in id->old-in)))
-                   [:dead :live] (concat fx (flow-fx id->in id->old-in))
-                   [:new :live]  (concat fx (flow-fx id->in id->old-in))
+                   [:live :live] (when dirty? (concat fx (flow-fx id->in id->old-in old-output)))
+                   [:dead :live] (concat fx (flow-fx id->in id->old-in old-output))
+                   [:new :live]  (concat fx (flow-fx id->in id->old-in old-output))
                    nil))]
     (cond-> ctx
       new-db (assoc-effect :db new-db)
