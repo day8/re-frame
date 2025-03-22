@@ -4,7 +4,8 @@
    [re-frame.utils :as u]
    [re-frame.registrar :refer [get-handler]]
    [re-frame.loggers     :refer [console]]
-   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect assoc-effect]]
+   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect
+                                 assoc-effect update-effect]]
    [re-frame.interop :as interop]
    #?(:cljs [reagent.core :as r])))
 
@@ -135,12 +136,14 @@
 (defn resolve-inputs [db inputs]
   (if (empty? inputs) db (u/map-vals (partial resolve-input db) inputs)))
 
-(defn run [ctx {:as    flow
-                :keys  [path cleanup live? inputs live-inputs output id]
-                ::keys [cleared?]}]
+(defn run [ctx {:as     flow
+                :keys   [path cleanup live? inputs live-inputs output id]
+                flow-fx :fx
+                ::keys  [cleared?]}]
   (let [{::keys [new?]} (meta flow)
         old-db          (get-coeffect ctx :db)
         db              (or (get-effect ctx :db) old-db)
+        fx              (get-effect ctx :fx)
 
         id->old-in (resolve-inputs old-db inputs)
         id->in     (resolve-inputs db inputs)
@@ -148,18 +151,27 @@
 
         id->old-live-in (resolve-inputs old-db live-inputs)
         id->live-in     (resolve-inputs db live-inputs)
-        bardo           [(cond new?     :new (live? id->old-live-in) :live :else :dead)
+        bardo           [(cond new? :new (live? id->old-live-in) :live :else :dead)
                          (cond cleared? :cleared (live? id->live-in) :live :else :dead)]
 
         new-db (case bardo
-                 [:live :live]    (cond-> db dirty? (assoc-in path (output id->in)))
+                 [:live :live]    (cond-> db dirty? (assoc-in path (output id->in id->old-in)))
                  [:live :dead]    (cleanup db path)
-                 [:dead :live]    (assoc-in db path (output id->in))
+                 [:dead :live]    (assoc-in db path (output id->in id->old-in))
                  [:new :live]     (do (swap! flows update id vary-meta dissoc ::new?)
-                                      (assoc-in db path (output id->in)))
+                                      (assoc-in db path (output id->in id->old-in)))
                  [:live :cleared] (cleanup db path)
-                 nil)]
-    (cond-> ctx new-db (assoc-effect :db new-db))))
+                 nil)
+
+        new-fx (when flow-fx
+                 (case bardo
+                   [:live :live] (when dirty? (concat fx (flow-fx id->in id->old-in)))
+                   [:dead :live] (concat fx (flow-fx id->in id->old-in))
+                   [:new :live]  (concat fx (flow-fx id->in id->old-in))
+                   nil))]
+    (cond-> ctx
+      new-db (assoc-effect :db new-db)
+      new-fx (assoc-effect :fx new-fx))))
 
 (defn with-cleared [m]
   (into m (map (fn [[k v]] [[::cleared k (gensym)] (assoc v ::cleared? true)])
