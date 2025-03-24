@@ -114,7 +114,9 @@
 
 (defn do-effect [[k v]] ((get-handler :fx k false) v))
 
-(def remove-fx (partial remove flow-fx-ids))
+(def remove-fx (partial remove (comp flow-fx-ids first)))
+
+(def dissoc-fx #(apply dissoc % flow-fx-ids))
 
 (def do-fx
   (->interceptor
@@ -126,7 +128,7 @@
                (doall (map do-effect flow-fx))
                (-> ctx
                    (update-in [:effects :fx] remove-fx)
-                   (update :effects (comp (partial into {}) remove-fx)))))}))
+                   (update :effects dissoc-fx))))}))
 
 (defn resolve-input [db input]
   (if (vector? input)
