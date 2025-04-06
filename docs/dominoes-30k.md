@@ -27,7 +27,7 @@ in re-frame is done by a `ViewFunction`. Perhaps it was rendered like this:
 (defn delete-button 
   [item-id]
   [:div.garbage-bin 
-    :on-click #(re-frame.core/dispatch [:delete-item item-id])])
+    {:on-click #(re-frame.core/dispatch [:delete-item item-id])}])
 ```
 
 It is that `on-click` handler (function) which interests us. When the user clicks on the garbage-bin icon, that function is called. 
