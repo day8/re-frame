@@ -1,7 +1,7 @@
 (ns re-frame.flow.alpha-test
   (:require
    [cljs.test :refer [is deftest use-fixtures testing]]
-   [spy.core :as spy]
+   ;[spy.core :as spy]
    [re-frame.alpha :as rf]
    [re-frame.flow.alpha :as f]
    [re-frame.db :refer [app-db]]))
@@ -147,7 +147,9 @@
                  :path [:y]
                  :output #(swap! ct inc)}]
     (testing "registering just once with :reg-flow fx"
-      (with-redefs [f/reg-flow (spy/spy f/reg-flow)]
+      (with-redefs [
+                    ;f/reg-flow (spy/spy f/reg-flow)
+                    ]
         (rf/reg-event-fx :init (fn [_ _] {:db {:x 0} :fx [[:reg-flow ct-flow]]}))
         (rf/dispatch-sync [:init])
         (is (= 1 @ct))
