@@ -24,7 +24,8 @@
   :git-inject {:version-pattern #"v(\d+\.\d+\.\d+.*)"}
 
   :profiles {:debug {:debug true}
-             :dev   {:dependencies [[binaryage/devtools "1.0.3"]]
+             :dev   {:dependencies [[binaryage/devtools "1.0.3"]
+                                    [tortue/spy "2.15.0"]]
                      :plugins      [[com.github.liquidz/antq "RELEASE"]
                                     [lein-shell              "0.5.0"]]
                      :antq         {}}

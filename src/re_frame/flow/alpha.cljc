@@ -88,6 +88,8 @@
    (reg-flow (assoc m :id k)))
   ([m]
    (validate-inputs m)
+   #?(:cljs (js/console.log "existing flows:" (keys @flows)))
+   #?(:cljs (js/console.log "registering flow" (:id m)))
    (warn-stale-dependencies @flows m)
    (swap! flows assoc
           (:id m) (with-meta (merge (default (:id m)) m)

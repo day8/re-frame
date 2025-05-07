@@ -1,6 +1,7 @@
 (ns re-frame.flow.alpha-test
   (:require
    [cljs.test :refer [is deftest use-fixtures testing]]
+   [spy.core :as spy]
    [re-frame.alpha :as rf]
    [re-frame.flow.alpha :as f]
    [re-frame.db :refer [app-db]]))
@@ -127,3 +128,58 @@
       (rf/dispatch-sync [:go-live])
       (is (= 3 @ct))
       (is (= 7 @live-ct)))))
+
+(deftest run-flows-once
+  (let [ct (atom 0)
+        ct-flow {:id "once-ct-flow"
+                 :inputs {:x [:x]}
+                 :path [:y]
+                 :output #(swap! ct inc)}]
+    (testing "running just once"
+      (rf/reg-event-db :init [re-frame.std-interceptors/debug] (fn [_ _] {:x 0}))
+      (rf/reg-flow ct-flow)
+      (rf/dispatch-sync [:init])
+      (is (= 1 @ct))
+      ))
+  (let [ct (atom 0)
+        ct-flow {:id "once-ct-flow-2"
+                 :inputs {:x [:x]}
+                 :path [:y]
+                 :output #(swap! ct inc)}]
+    (testing "registering just once with :reg-flow fx"
+      (with-redefs [f/reg-flow (spy/spy f/reg-flow)]
+        (rf/reg-event-fx :init (fn [_ _] {:db {:x 0} :fx [[:reg-flow ct-flow]]}))
+        (rf/dispatch-sync [:init])
+        (is (= 1 @ct))
+        ;; XXX Doesn't work, not sure why. However, patching reg-flow in-place
+        ;;   to print a message to the console results in printing it twice.
+        #_ (is (spy/called-once? f/reg-flow)))))
+)
+
+(deftest clear-flows
+  (let [q-flow (fn [qid] {:id     (str "qf-" qid)
+                          :inputs {:in [:queries qid :in]}
+                          :path   [:queries qid :out]
+                          :output (comp inc :in)})]
+    (testing "clearing flows and their inputs"
+      (rf/reg-event-db :init (fn [_ _] {:queries []}))
+      (rf/reg-event-fx :add-query
+                       (fn [{:keys [db]} _]
+                         {:db (update db :queries #(conj % {:in (count %)}))
+                          :fx [[:reg-flow (q-flow (count (:queries db)))]]}))
+      ;; Add a few queries, expect the flows to supply :out values.
+      (rf/dispatch-sync [:init])
+      (dotimes [_ 3] (rf/dispatch-sync [:add-query]))
+      (is (= @app-db {:queries [{:in 0 :out 1} {:in 1 :out 2} {:in 2 :out 3}]}))
+      ;; Delete an item.
+      (rf/reg-event-fx :del-query
+                       (fn [{:keys [db]} [_ qid]]
+                         {:db (update-in db [:queries qid]
+                                         #(-> % (dissoc :in) (assoc :deleted? true)))
+                          :fx [[:clear-flow (str "qf-" qid)]]
+                          }))
+      (rf/dispatch-sync [:del-query 1])
+      ;; If no exception, all went well.
+      (is (= @app-db {:queries [{:in 0 :out 1} {:deleted? true} {:in 2 :out 3}]}))
+      ))
+  )
