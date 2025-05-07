@@ -113,7 +113,7 @@
 
 (defn do-effect [[k v]] ((get-handler :fx k false) v))
 
-(def remove-fx (partial remove flow-fx-ids))
+(def remove-fx (partial remove (comp flow-fx-ids first)))
 
 (def do-fx
   (->interceptor
