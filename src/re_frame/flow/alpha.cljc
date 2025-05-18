@@ -156,8 +156,8 @@
 
         old-output      (get-in old-db path)
 
-        bardo           [(cond new? :new (live? id->old-live-in) :live :else :dead)
-                         (cond cleared? :cleared (live? id->live-in) :live :else :dead)]
+        bardo           [(cond new? :new (live? (assoc id->old-live-in :db old-db)) :live :else :dead)
+                         (cond cleared? :cleared (live? (assoc id->live-in :db db)) :live :else :dead)]
 
         new-db (case bardo
                  [:live :live]    (cond-> db dirty? (assoc-in path (output id->in id->old-in old-output)))
