@@ -238,8 +238,10 @@ __path__ adds a `:comment` describing _which_ path it goes to.
 > All truths are easy to understand once they are discovered <br>
 >   -- Galileo Galilei
 
-This elegant and flexible arrangement was originally
-designed by the [Pedestal Team](https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md). Thanks!
+This elegant and flexible arrangement was
+adapted for Clojure by the [Pedestal Team](https://github.com/pedestal/pedestal/blob/master/guides/documentation/service-interceptors.md). Thanks!
+
+Pre-Clojure work on interceptors can be found in [Tomcat's interceptors](https://tomcatbook.sourceforge.net/book/defaulthtml/ch04.html), Netty's ChannelPipeline handlers, and the [J2EE InterceptingFilter pattern](https://tomcatbook.sourceforge.net/book/defaulthtml/ch04.html) from _Pattern-Oriented Software Architecture, 2nd ed_.
 
 ## Let's Write An Interceptor
 
