@@ -43,6 +43,7 @@ We think flows offer a [Better Way](/re-frame/flows-advanced-topics#a-better-way
     Both the functional and dataflow paradigms have profoundly influenced the design of re-frame. 
     Hence, `re-frame's` tagline: "derived data, flowing".
 
+
 ## A Basic Flow
 
 Here's a basic `flow`. It describes how to derive the area of a room from its dimensions:
