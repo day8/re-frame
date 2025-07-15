@@ -159,7 +159,7 @@ jobs:
           name: mkdocs
       - name: Extract MkDocs Artifact
         run: |
-          tar zxf mkdocs/mkdocs.tar.gz
+          tar zxf mkdocs.tar.gz
           rm -rf gh-pages/*
           cp -Rv site/* gh-pages/
       - name: Commit
