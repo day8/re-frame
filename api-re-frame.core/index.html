@@ -2874,7 +2874,7 @@ performed.</p>
 <p><code>dynv</code> exists for historical reasons and is borderline deprecated these days.
 It is a vector of signals. Re-frame will dereference each of them and pass a
 vector of their values to your subscription handler as a third argument.
-If there's logic determing <strong>what</strong> query to subscribe <strong>to</strong>, consider
+If there's logic determining <strong>what</strong> query to subscribe <strong>to</strong>, consider
 expressing it in a <code>signal function</code>, or use <code>reg-sub-raw</code>. Failing that, <code>dynv</code>
 allows you to colocate this logic with the <code>subscribe</code> call.</p>
 <p><strong>Example Usage</strong>:</p>
@@ -3048,7 +3048,7 @@ thrown in the interceptors/handler chain.</p>
 <p><code>(handler [original-error re-frame-error])</code></p>
 <ul>
 <li>
-<p><code>original-error</code>: A plaform-native Error object.
+<p><code>original-error</code>: A platform-native Error object.
    Represents the original error thrown by user code.
    this is the error you see when no <code>handler</code> is registered.</p>
 </li>

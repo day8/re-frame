@@ -1828,7 +1828,7 @@ Please join our discussions on <a href="https://github.com/day8/re-frame/discuss
 <div class="admonition note">
 <p class="admonition-title">Not to be confused with...</p>
 <ul>
-<li><a href="https://github.com/day8/re-frame-async-flow-fx">re-frame-async-flow-fx</a>. A <code>re-frame/flow</code> is totally sychronous, running on every event.</li>
+<li><a href="https://github.com/day8/re-frame-async-flow-fx">re-frame-async-flow-fx</a>. A <code>re-frame/flow</code> is totally synchronous, running on every event.</li>
 <li>The <a href="/re-frame/api-re-frame.core/#on-changes">on-changes interceptor</a>. Flows are an evolution of this idea.</li>
 <li><a href="https://github.com/domino-clj/domino">domino</a>. Another take on dataflow programming, inspired by re-frame.</li>
 </ul>
@@ -2072,7 +2072,7 @@ When either input changes value, our flow calls the <code>:output</code> functio
 
 <p>As before, once <code>:output</code> runs, the resulting value is stored at <code>:path</code>. 
 So, the new value of <code>app-db</code> will contain a number at the path <code>[:ratios :main-rooms]</code></p>
-<p>Under the hood, flows relate to each other in a depedency graph. 
+<p>Under the hood, flows relate to each other in a dependency graph. 
 An input like <code>(rf/flow&lt;- ::kitchen-area)</code> creates a dependency.
 That means re-frame will always run <code>::kitchen-area</code> first, 
 ensuring its output value is current before your <code>:main-room-ratio</code> flow can use it.</p>

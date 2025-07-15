@@ -1686,7 +1686,7 @@ in re-frame is done by a <code>ViewFunction</code>. Perhaps it was rendered like
 <div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">delete-button</span> 
   <span class="p">[</span><span class="nv">item-id</span><span class="p">]</span>
   <span class="p">[</span><span class="ss">:div.garbage-bin</span> 
-    <span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nf">re-frame.core/dispatch</span> <span class="p">[</span><span class="ss">:delete-item</span> <span class="nv">item-id</span><span class="p">])])</span>
+    <span class="p">{</span><span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nf">re-frame.core/dispatch</span> <span class="p">[</span><span class="ss">:delete-item</span> <span class="nv">item-id</span><span class="p">])}])</span>
 </code></pre></div>
 
 
