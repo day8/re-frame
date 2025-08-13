@@ -60,20 +60,20 @@
      :sub
      id
      (fn subs-handler-fn [_ q]
-       (let [subscriptions (inputs-fn q nil)
+       (let [q (if (map? q)
+                 (-> (or (::rf/query-v q) [(q/id q)])
+                     (vary-meta assoc
+                                ::rf/lifecycle (q/lifecycle q)
+                                ::rf/query-m q))
+                 q)
+             subscriptions (inputs-fn q nil)
              rid (atom nil)
              r (make-reaction
                 #(trace/with-trace {:operation (q/id q)
                                     :op-type   :sub/run
                                     :tags      {:query      q
                                                 :reaction   @rid}}
-                   (let [q (if (map? q)
-                             (-> (or (::rf/query-v q) [(q/id q) q])
-                                 (vary-meta assoc
-                                            ::rf/lifecycle (q/lifecycle q)
-                                            ::rf/query-m q))
-                             q)
-                         subscription (computation-fn
+                   (let [subscription (computation-fn
                                        (deref-input-signals subscriptions id)
                                        q)]
                      (trace/merge-trace! {:tags {:value subscription}})
