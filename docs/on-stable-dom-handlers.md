@@ -19,7 +19,7 @@ Equality tests are at the heart of the issue, so let's start by considering this
    [1 :2 "3"])
 ```
 ***Question***: will it evaluate to `true` or `false`? <br/>
-***Answer***: `true`. Because the elements `#!clj 1`, `#!clj :2` and `#!clj "3"` are identities, so different instances test equal, and because vector equality is determined by element equality.
+***Answer***: `true`. Because the elements `1`, `:2` and `"3"` are identities, so different instances test equal, and because vector equality is determined by element equality.
 
 
 ## Implications For Reagent
@@ -38,7 +38,7 @@ Imagine that `parent` has already rendered once. And then something causes
 it to re-render (perhaps its parent re-renders and supplies a different `x`).
 
 When `parent` re-renders, it will re-render `child` and supply three 
-props: `#!clj 1`, `#!clj :2` and `#!clj "3"`. But these props
+props: `1`, `:2` and `"3"`. But these props
 will be the same as the ones supplied with the "last render" and, as a result,
 Reagent calculates that it doesn't need to perform the re-render of `child`.
 
@@ -47,13 +47,13 @@ function the same props/args as last time, results in the same result (the same 
 And so Reagent avoids doing this unnecessary work. It is an efficiency thing.
 
 ***Question***:  But how does Reagent check for this "sameness" between the props supplied "this render" vs the "last render"? <br/>
-***Answer***: by testing the props using `#!clj =` 
+***Answer***: by testing the props using `=` 
 
 So:
 
-  - `#!clj 1` (last time) is `#!clj =` to `#!clj 1` (this time)
-  - `#!clj :2` is `#!clj =` to `#!clj :2`
-  - and `#!clj "3"` too is equal to last time
+  - `1` (last time) is `=` to `1` (this time)
+  - `:2` is `=` to `:2`
+  - and `"3"` too is equal to last time
 
 All three props are `=` to last time, which allows Reagent to skip the re-render of `child`. 
 
@@ -68,7 +68,7 @@ Consider this test:
 ```
 ***Question***:  will it evaluate to `true` or `false`? <br/>
 ***Answer***: `false`. You might be able to see that the two anonymous functions are equal, 
-but `=` says "no". Anonymous functions are not like `#!clj 1`  or `#!clj :2` 
+but `=` says "no". Anonymous functions are not like `1`  or `:2` 
 
 Armed with this knowledge, what happens if we add a new prop for `child` and make it an anonymous callback function?  Like this: 
 ```clj 

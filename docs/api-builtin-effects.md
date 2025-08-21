@@ -17,7 +17,7 @@ more or less.
 Each effect consists of an `id` and a `payload` pair. The `id` identifies the effect required and the `payload` 
 carries additional information which will parameterise the action taken.
 
-So, if an effect map was `#!clj {:db new-value}`, it would contain only one effect with an `id` of `:db` and a payload of `new-value`. 
+So, if an effect map was `{:db new-value}`, it would contain only one effect with an `id` of `:db` and a payload of `new-value`. 
 
 In the example above, the effect `:fx` has a vector payload.
 That vector is a sequence of other effects, each captured as a 2-vector: `[id payload]` - for example `[:full-screen true]`.
