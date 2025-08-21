@@ -123,7 +123,7 @@
   [name-without-ns arglists]
   (reduce
     (fn [markdown arglist]
-      (str markdown "\n" (format "`(%s%s)`\n" name-without-ns (arglist->markdown arglist))))
+      (str markdown "\n```clojure\n" (format "(%s%s)\n" name-without-ns (arglist->markdown arglist)) "```\n"))
     ""
     arglists))
 
