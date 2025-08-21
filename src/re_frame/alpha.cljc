@@ -1290,7 +1290,7 @@
 
   On every event, re-frame runs each registered `flow`.
   It resolves the flow's inputs, determines if the flow is live, and if so,
-  evaluates the output function, putting the result in `app-db` at the path.
+  evaluates the output function, putting the result in `app-db` at the `:path`.
 
   A `flow` is a map, specifying one dataflow node. It has keys:
 
@@ -1310,7 +1310,8 @@
   - `:path`: specifies the `app-db` location where the `:output` value is stored.
   - `:live-inputs`: a map of `keyword->live-input` for the `:live?` function.
      - A `live-input` works the same way an `input`.
-  - `:live?`: a predicate function of the `keyword->resolved-live-input` map,    returning the current lifecycle state of the node.
+  - `:live?`: a predicate function of the `keyword->resolved-live-input` map,
+     returning the current lifecycle state of the node.
   - `:cleanup`: a function of `app-db` and the `:path`.
      - Returns a new `app-db`.
      - Runs the first time `:live?` returns `false`
@@ -1318,7 +1319,7 @@
 
   `:id` is the only required key. All others have a default value:
 
-  - `:path`: `[id]`
+  - `:path`: `id` if `id` is sequential, otherwise `[id]`.
   - `:inputs`: `{}`
   - `:output`: `(constantly true)`
   - `:live?`: `(constantly true)`

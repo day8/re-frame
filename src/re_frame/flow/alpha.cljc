@@ -36,13 +36,13 @@
 (def topsort* (memoize topsort))
 
 (defn default [id]
-  {:id id
-   :path [id]
-   :inputs {}
-   :output (constantly true)
-   :live? (constantly true)
+  {:id          id
+   :path        (if (sequential? id) (vec id) [id])
+   :inputs      {}
+   :output      (constantly true)
+   :live?       (constantly true)
    :live-inputs {}
-   :cleanup u/deep-dissoc})
+   :cleanup     u/deep-dissoc})
 
 (defn stale-in-flows [flows {:keys [inputs]}]
   (reduce-kv (fn [m k {:keys [path]}]
