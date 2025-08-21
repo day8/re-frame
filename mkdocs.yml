@@ -23,6 +23,10 @@ theme:
     code: Source Code Pro
   features:
     - tabs
+    - content.code.annotate
+    - content.code.copy
+  hljs_languages:
+    - clojure
 
 extra:
   social:
@@ -121,8 +125,9 @@ markdown_extensions:
   - toc:
       permalink: true
       toc_depth: 3
-  - codehilite:
-      guess_lang: false
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
 
 extra_css:
   - "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,500;1,400&display=swap"
