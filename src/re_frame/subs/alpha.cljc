@@ -23,10 +23,12 @@
    (if (keyword? q)
      (sub q {})
      (let [md (q/method q)]
-       (cond (map? q) (md q)
-             (vector? q) (md {::rf/q (q/id q)
-                              ::rf/lifecycle (q/lifecycle q)
-                              ::rf/query-v q})))))
+       (cond (map? q)    (md q)
+             (vector? q) (md (merge
+                              {::rf/q         (q/id q)
+                               ::rf/query-v   q
+                               ::rf/lifecycle (q/lifecycle q)}
+                              (::rf/query-m (meta q))))))))
   ([id q]
    (sub (assoc q ::rf/q id))))
 
