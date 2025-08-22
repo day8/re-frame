@@ -125,7 +125,8 @@ markdown_extensions:
   - toc:
       permalink: true
       toc_depth: 3
-  - pymdownx.highlight
+  - pymdownx.highlight:
+      use_pygments: false
   - pymdownx.inlinehilite
   - pymdownx.superfences
 
@@ -134,3 +135,8 @@ extra_css:
   - "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400&display=swap"
   - "stylesheets/dominoes-live.css"
   - "stylesheets/mkdocs.css"
+  - "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css"
+
+extra_javascript:
+  - "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"
+  - "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"
