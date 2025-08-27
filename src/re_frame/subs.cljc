@@ -194,22 +194,22 @@
                         f)
 
                     ;; one sugar pair
-                    2 (let [[marker vec] input-args]
+                    2 (let [[marker q] input-args]
                         (when-not (= :<- marker)
                           (console :error error-header "expected :<-, got:" marker))
                         (fn inp-fn
-                          ([_] (sub-fn vec))
-                          ([_ _] (sub-fn vec))))
+                          ([_] (sub-fn q))
+                          ([_ _] (sub-fn q))))
 
                     ;; multiple sugar pairs
                     (let [pairs   (partition 2 input-args)
                           markers (map first pairs)
-                          vecs    (map second pairs)]
-                      (when-not (and (every? #{:<-} markers) (every? query? vecs))
+                          q       (map second pairs)]
+                      (when-not (and (every? #{:<-} markers) (every? query? q))
                         (console :error error-header "expected pairs of :<- and vectors, got:" pairs))
                       (fn inp-fn
-                        ([_] (map sub-fn vecs))
-                        ([_ _] (map sub-fn vecs)))))]
+                        ([_] (map sub-fn q))
+                        ([_ _] (map sub-fn q)))))]
     [inputs-fn computation-fn]))
 
 (defn reg-sub
