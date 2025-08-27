@@ -68,7 +68,9 @@
                                                 :reaction   @rid}}
                    (let [q (if (map? q)
                              (-> (or (::rf/query-v q) [(q/id q)])
-                                 (vary-meta assoc ::rf/lifecycle (q/lifecycle q)))
+                                 (vary-meta assoc
+                                            ::rf/lifecycle (q/lifecycle q)
+                                            ::rf/query-m q))
                              q)
                          subscription (computation-fn
                                        (deref-input-signals subscriptions id)
