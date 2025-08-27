@@ -303,7 +303,13 @@ Likewise, invoking a `:legacy-sub` mechanism with a `query-map`
 will cause re-frame to pass along an equivalent vector.
 
 When this conversion is done, re-frame includes the original form
-in the metadata. For instance, the query:
+in the metadata (using either `:re-frame/query-m` or `:re-frame/query-v`).
+
+When converting from a map to a vector, `:re-frame/query-v` is used, if present.
+Otherwise, the original map is included as the
+second item (commonly thought of as the \"params\" of that query).
+
+For instance, the query:
 
 `{:re-frame/q ::items}`
 
@@ -311,7 +317,7 @@ converts to:
 
 ```clojure
 ^{:re-frame/query-m {:re-frame/q ::items}}
-[::items]
+[::items {:re-frame/q ::items}]
 ```
 
 Likewise, the query:

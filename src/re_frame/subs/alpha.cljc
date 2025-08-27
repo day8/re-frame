@@ -67,7 +67,7 @@
                                     :tags      {:query      q
                                                 :reaction   @rid}}
                    (let [q (if (map? q)
-                             (-> (or (::rf/query-v q) [(q/id q)])
+                             (-> (or (::rf/query-v q) [(q/id q) q])
                                  (vary-meta assoc
                                             ::rf/lifecycle (q/lifecycle q)
                                             ::rf/query-m q))
