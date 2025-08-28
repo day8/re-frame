@@ -446,10 +446,11 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
   but not now. And if the queue already contains events, they
   will be processed first.
 
-  Usage:
+  ## Usage
 
-      
-      (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
+  ```clojure
+  (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
+  ```
   "
   {:api-docs/hide true}
   [event]
@@ -470,14 +471,15 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
   Only use it in the narrow set of cases where any delay in
   processing is a problem:
 
-    1. the `:on-change` handler of a text field where we are expecting fast typing
-    2. when initialising your app - see 'main' in examples/todomvc/src/core.cljs
-    3. in a unit test where immediate, synchronous processing is useful
+  1. the `:on-change` handler of a text field where we are expecting fast typing
+  2. when initialising your app - see 'main' in examples/todomvc/src/core.cljs
+  3. in a unit test where immediate, synchronous processing is useful
 
-  Usage:
+  ## Usage
 
-      
-      (dispatch-sync [:sing :falsetto \"piano accordion\"])
+  ```clojure
+  (dispatch-sync [:sing :falsetto \"piano accordion\"])
+  ```
   "
   {:api-docs/hide true}
   [event]
@@ -489,26 +491,30 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain:
 
-    - `id` is typically a namespaced keyword  (but can be anything)
-    - `handler` is a function: (db event) -> db
-    - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
+  - `id` is typically a namespaced keyword  (but can be anything)
+  - `handler` is a function: (db event) -> db
+  - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
-  Example Usage:
-      
-      (reg-event-db
-        :token
-        (fn [db event]
-          (assoc db :some-key (get event 2)))  ;; return updated db
+  ## Example Usage
+
+  ```clojure
+  (reg-event-db
+    :token
+    (fn [db event]
+      (assoc db :some-key (get event 2)))  ;; return updated db
+  ```
 
   Or perhaps:
-      
-      (reg-event-db
-        :namespaced/id           ;; <-- namespaced keywords are often used
-        [one two three]          ;; <-- a seq of interceptors
-        (fn [db [_ arg1 arg2]]   ;; <-- event vector is destructured
-          (-> db
-            (dissoc arg1)
-            (update :key + arg2))))   ;; return updated db
+
+  ```clojure
+  (reg-event-db
+    :namespaced/id           ;; <-- namespaced keywords are often used
+    [one two three]          ;; <-- a seq of interceptors
+    (fn [db [_ arg1 arg2]]   ;; <-- event vector is destructured
+      (-> db
+        (dissoc arg1)
+        (update :key + arg2))))   ;; return updated db
+  ```
   "
   {:api-docs/hide true}
   ([id handler]
@@ -526,29 +532,29 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain:
 
-    - `id` is typically a namespaced keyword  (but can be anything)
-    - `handler` is a function: (coeffects-map event-vector) -> effects-map
-    - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
+  - `id` is typically a namespaced keyword  (but can be anything)
+  - `handler` is a function: (coeffects-map event-vector) -> effects-map
+  - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
+  ## Example Usage
 
-  Example Usage:
-
-      
-      (reg-event-fx
-        :event-id
-        (fn [cofx event]
-          {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
-
+  ```clojure
+  (reg-event-fx
+    :event-id
+    (fn [cofx event]
+      {:db (assoc (:db cofx) :some-key (get event 2))}))   ;; return a map of effects
+  ```
 
   Or perhaps:
 
-      
-      (reg-event-fx
-        :namespaced/id           ;; <-- namespaced keywords are often used
-        [one two three]          ;; <-- a seq of interceptors
-        (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
-          {:db (assoc db :some-key arg1)          ;; return a map of effects
-           :fx [[:dispatch [:some-event arg2]]]}))
+  ```clojure
+  (reg-event-fx
+    :namespaced/id           ;; <-- namespaced keywords are often used
+    [one two three]          ;; <-- a seq of interceptors
+    (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
+      {:db (assoc db :some-key arg1)          ;; return a map of effects
+       :fx [[:dispatch [:some-event arg2]]]}))
+  ```
   "
   {:api-docs/hide true}
   ([id handler]
