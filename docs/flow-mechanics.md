@@ -217,7 +217,7 @@ You use it like other registration functions:
 The interesting bit is how `some-fn` is written. Here's an example:
 ```clj
 (defn some-fn
-  [app-db event]    ;; app-db is not a value, it is a reagent/atom
+  [app-db query-v]    ;; app-db is not a value, it is a reagent/atom
   (reaction (get-in @app-db [:some :path])))  ;; returns a reaction
 ```
 Notice:
@@ -233,7 +233,7 @@ Unlike `reg-sub`, there is no 3-arity version of `reg-sub-raw`, so there's no wa
 Instead, even simpler, you can just use `subscribe` within the `reaction` itself. For example:
 ```clj
 (defn some-fn
-   [app-db event]
+   [app-db query-v]
    (reaction
      (let [a-path-element @(subscribe [:get-path-part])]   ;; <-- subscribe used here
        (get-in @app-db [:some a-path-element]))))
@@ -276,7 +276,7 @@ we could rewrite this use of `reg-sub` using `reg-sub-raw` like this:
 ```clj
 (reg-sub-raw
   :visible-todos
-  (fn [app-db event]  ;; app-db not used, name shown for clarity
+  (fn [app-db query-v]  ;; app-db not used, name shown for clarity
     (reaction         ;; wrap the computation in a reaction
       (let [todos   @(subscribe [:todos])   ;; input signal #1
             showing @(subscribe [:showing]) ;; input signal #2
