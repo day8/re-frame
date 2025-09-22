@@ -11,157 +11,116 @@ on:
     branches: 'master'
 
 jobs:
-  # The ns-to-markdown job generates API documentation from the source code and uploads that as an artifact.
-  ns-to-markdown:
-    name: re-frame.core Markdown
-    runs-on: ubuntu-24.04
-    container:
-      # Source: https://github.com/day8/dockerfiles-for-dev-ci-images
-      image: ghcr.io/day8/chrome-56:2
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - name: Checkout Current Branch
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - run: git config --system --add safe.directory /__w/re-frame/re-frame
-      - name: Build re-frame.core Documentation
-        working-directory: docs
-        # Source: https://github.com/day8/re-frame/blob/master/docs/src/ns_to_markdown.clj
-        run: clojure -m ns-to-markdown ../src/re_frame/core.cljc > api-re-frame.core.md
-      - name: Build re-frame.alpha Documentation
-        working-directory: docs
-        # Source: https://github.com/day8/re-frame/blob/master/docs/src/ns_to_markdown.clj
-        run: clojure -m ns-to-markdown ../src/re_frame/alpha.cljc > api-re-frame.alpha.md
-      - name: Upload re-frame.core Documentation Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-re-frame.core.md
-          path: docs/api-re-frame.core.md
-      - name: Upload re-frame.alpha Documentation Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-re-frame.alpha.md
-          path: docs/api-re-frame.alpha.md
-
-  # This job builds the re-frame :docs app and uploads it as an artifact.
-  # The app renders code blocks for the reader reader to edit & evaluate.
-
   re-frame-docs-app:
     name: Re-frame Docs App
     runs-on: ubuntu-24.04
-    container:
-      image: ghcr.io/day8/dockerfile-for-dev-ci-image/dev-ci:1
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Current Branch
-        uses: actions/checkout@v2
-      - run: git config --system --add safe.directory /__w/re-frame/re-frame
+        uses: actions/checkout@v5
+
+      - run: git config --global --add safe.directory /__w/re-frame/re-frame
+
       - name: Maven cache
         id: maven-cache
         uses: actions/cache@v4
         with:
-          path: /root/.m2/repository
+          path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('project.clj', '.github/workflows/**') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: Install node packages
-        run: |
-          npm install
-      - name: Run lein docs
-        if: steps.maven-cache.outputs.cache-hit != 'true'
+
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli:  'latest'
+          bb:   'latest'
+
+      - run: bb release-docs
         env:
           CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
           CLOJARS_TOKEN: ${{ secrets.CLOJARS_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          lein docs
-      - name: Run lein -o docs
-        if: steps.maven-cache.outputs.cache-hit == 'true'
-        env:
-          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
-          CLOJARS_TOKEN: ${{ secrets.CLOJARS_TOKEN }}
-          GITHUB_USERNAME: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          lein -o docs
+
       - name: Create re-frame-docs App Artifact
         working-directory: docs
         run: |
+          mv api-re-frame.alpha.md js
+          mv api-re-frame.core.md js
           tar Jcf re-frame-docs-app.tar.xz js
+
       - name: Upload re-frame-docs App Artifact
         uses: actions/upload-artifact@v4
         with:
           name: re-frame-docs-app
           path: docs/re-frame-docs-app.tar.xz
 
-  # MkDocs is the actual static site generator. It downloads the api-re-frame.core.md and docs app artifacts,
-  #  then generates additional files based on configuration and markdown.
   mkdocs:
     name: MkDocs
     needs:
-      - ns-to-markdown
       - re-frame-docs-app
     runs-on: ubuntu-24.04
     container:
       image: "squidfunk/mkdocs-material:5.5.9"
     steps:
       - name: Checkout Current Branch
-        uses: actions/checkout@v2
-      - run: git config --system --add safe.directory /__w/re-frame/re-frame
-      - name: Download api-re-frame.core.md Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: api-re-frame.core.md
-          path: docs
-      - name: Download api-re-frame.alpha.md Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: api-re-frame.alpha.md
-          path: docs
+        uses: actions/checkout@v4
+
+      - run: git config --global --add safe.directory /__w/re-frame/re-frame
+
       - name: Download re-frame-docs App Artifact
         uses: actions/download-artifact@v4
         with:
           name: re-frame-docs-app
           path: docs
+
       - name: Extract re-frame-docs App Artifact
         working-directory: docs
-        run: tar Jxf re-frame-docs-app.tar.xz
+        run: |
+          tar Jxf re-frame-docs-app.tar.xz
+          mv js/api-re-frame.alpha.md api-re-frame.alpha.md
+          mv js/api-re-frame.core.md api-re-frame.core.md
+
       - name: Build MkDocs Documentation
         run: mkdocs build
+
       - name: Create MkDocs Artifact
         run: tar zcf mkdocs.tar.gz site/
+
       - name: Upload MkDocs Artifact
         uses: actions/upload-artifact@v4
         with:
           name: mkdocs
           path: mkdocs.tar.gz
 
-  # The GitHub Pages job downloads the final MkDocs artifact and commits it to the gh-pages branch for deployment.
   github-pages:
     name: GitHub Pages
     needs: mkdocs
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout GitHub Pages Branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
         with:
           ref: "gh-pages"
           path: "gh-pages"
+
       - name: Download MkDocs Artifact
         uses: actions/download-artifact@v4
         with:
           name: mkdocs
+
       - name: Extract MkDocs Artifact
         run: |
           tar zxf mkdocs.tar.gz
           rm -rf gh-pages/*
           cp -Rv site/* gh-pages/
+
       - name: Commit
         working-directory: ./gh-pages
         run: |
@@ -169,6 +128,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add -A
           git commit -m "Update docs"
+
       - name: Push
         working-directory: ./gh-pages
         run: |

@@ -3,9 +3,6 @@
 
  :deps true
 
- :build-defaults
- {:build-hooks [(shadow-git-inject.core/hook)]}
-
  :dev-http
  {8280 "resources/public"}
 

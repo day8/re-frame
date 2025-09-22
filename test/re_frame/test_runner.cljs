@@ -2,8 +2,7 @@
   (:refer-clojure :exclude (set-print-fn!))
   (:require
    [cljs.test :as cljs-test :include-macros true]
-   [jx.reporter.karma :as karma :include-macros true]
-    ;; Test Namespaces -------------------------------
+   ;; Test Namespaces -------------------------------
    [re-frame.interceptor-test]
    [re-frame.subs-test]
    [re-frame.fx-test]
@@ -24,13 +23,3 @@
    're-frame.trace-test
    're-frame.restore-test))
 
-;; ---- KARMA  -----------------------------------------------------------------
-
-(defn ^:export run-karma [karma]
-  (karma/run-tests
-   karma
-   're-frame.interceptor-test
-   're-frame.subs-test
-   're-frame.fx-test
-   're-frame.trace-test
-   're-frame.restore-test))

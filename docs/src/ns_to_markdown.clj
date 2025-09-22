@@ -139,6 +139,16 @@
   [{:keys [heading publics]}]
   (reduce str (format "## %s\n\n" heading) (map var->markdown publics)))
 
+(defn hook
+  {:shadow.build/stage :flush}
+  [build-state & {:as in-file->out-file}]
+  (doseq [[in-file out-file] in-file->out-file
+          :let               [ns-data (read-file in-file)
+                              out-str (str (ns->markdown ns-data)
+                                           (reduce str "" (map group->markdown
+                                                               (:publics ns-data))))]]
+    (spit out-file out-str))
+  build-state)
 
 (defn -main
   [& args]

@@ -14,17 +14,16 @@ the [ClojureScript mailing list](https://groups.google.com/forum/#!forum/clojure
 
 ## Running tests
 
-To run the tests, you must have recent versions of node, npm and Leiningen.
+To run the tests, you must have npm, babashka and chromium.
 
-To build the tests and run them in one step via karma, just:
+To build the tests and run them in one step, just:
 ```sh
-npm install -g karma-cli
-lein ci 
+bb watch
 ```
 
 You can also get auto compiles via:
 ```sh
-lein watch
+bb watch-test
 ```
 then open [http://localhost:3449/](http://localhost:3449/) in a browser for an auto-reloaded browser-based test runner.
 

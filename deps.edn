@@ -1,10 +1,35 @@
-
-;; Allows users of deps.edn to more conveniently fork / make PRs to re-frame
-
-{:deps {org.clojure/clojure       {:mvn/version "1.10.3"
-                                   :scope "provided"}
-        org.clojure/clojurescript {:mvn/version "1.10.844"
-                                   :scope "provided"}
-        reagent/reagent           {:mvn/version "1.2.0"}
-        net.cgrand/macrovich      {:mvn/version "0.2.1"}
-        org.clojure/tools.logging {:mvn/version "1.1.0"}}}
+{:paths   ["src"]
+ :deps    {org.clojure/clojure       {:mvn/version "1.12.1"}
+           org.clojure/clojurescript {:mvn/version "1.12.42"}
+           net.cgrand/macrovich      {:mvn/version "0.2.1"}
+           org.clojure/tools.logging {:mvn/version "1.2.4"}}
+ :aliases {:provided    {:extra-deps {org.clojure/clojure       {:mvn/version "1.12.1"}
+                                      org.clojure/clojurescript {:mvn/version "1.12.42"}
+                                      reagent/reagent           {:mvn/version "1.2.0"}}}
+           :test        {:extra-paths ["test"]
+                         :exec-fn     day8.chrome-shadow-test-runner/run
+                         :main-opts   ["-m" "shadow.cljs.devtools.cli"]
+                         :exec-args   {:test-dir    "run/compiled/browser/test"
+                                       :chrome-path "chromium"}
+                         :extra-deps  {day8.re-frame/test   {:mvn/version "0.1.7"}
+                                       thheller/shadow-cljs {:mvn/version "3.2.0"}
+                                       binaryage/devtools   {:mvn/version "1.0.3"}
+                                       reagent/reagent      {:mvn/version "1.2.0"}}}
+           :docs        {:extra-paths ["docs/src"]
+                         :extra-deps  {org.babashka/sci        {:mvn/version "0.8.40"}
+                                       funcool/promesa         {:mvn/version "10.0.575"}
+                                       thheller/shadow-cljs    {:mvn/version "3.2.0"}
+                                       reagent/reagent         {:mvn/version "1.2.0"}
+                                       rewrite-clj/rewrite-clj {:mvn/version "1.1.47"}
+                                       day8/dev                {:git/url "https://github.com/day8/dev.git"
+                                                                :git/sha "51facb409f850cbf339085b69029e09902609a5d"}}
+                         :main-opts   ["-m" "shadow.cljs.devtools.cli"]}
+           :clein       {:extra-deps {io.github.noahtheduke/clein {:mvn/version "0.4.1"}}
+                         :main-opts  ["-m" "noahtheduke.clein"]}
+           :clein/build {:lib      re-com/re-com
+                         :main     re-com.core
+                         :url      "https://github.com/day8/re-com"
+                         :version  ".version"
+                         :license  {:name "MIT"
+                                    :url  "https://opensource.org/licenses/MIT"}
+                         :src-dirs ["src"]}}}

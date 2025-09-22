@@ -6,10 +6,6 @@
 pom.xml
 pom.xml.asc
 *.jar
-.lein-deps-sum
-.lein-repl-history
-.lein-plugins/
-.lein-failures
 core/
 out/
 /target/
@@ -28,9 +24,12 @@ docs/build/index.html
 docs/**/*.epub
 docs/**/*.pdf
 docs/**/*.mobi
+docs/api-re-frame.alpha.md
+docs/api-re-frame.core.md
 build/
 *~
-/shadow-cljs.edn
+/package.json
+/package-lock.json
 /.shadow-cljs/
 .shadow-cljs
 /site/

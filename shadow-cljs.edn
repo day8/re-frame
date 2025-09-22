@@ -1,0 +1,24 @@
+{:deps   true
+ :nrepl  {:port 8777}
+ :builds {:browser-test
+          {:compiler-options
+           {:external-config
+            {:devtools/config
+             {:features-to-install [:formatters :hints]}}
+            :pretty-print true}
+           :devtools  {:http-port 3449
+                       :http-root "run/compiled/browser/test"
+                       :preloads  [devtools.preload]}
+           :ns-regexp "re-frame\\..*-test$"
+           :target    :browser-test
+           :test-dir  "run/compiled/browser/test"}
+
+          :docs
+          {:devtools   {:repl-pprint true}
+           :modules    {:docs {:entries [re-frame.docs]
+                               :init-fn re-frame.docs/init!}}
+           :output-dir "docs/js"
+           :target     :browser
+           :build-hooks
+           [(ns-to-markdown/hook {"src/re_frame/core.cljc"  "docs/api-re-frame.core.md"
+                                  "src/re_frame/alpha.cljc" "docs/api-re-frame.alpha.md"})]}}}

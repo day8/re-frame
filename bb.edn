@@ -1,0 +1,13 @@
+{:min-bb-version "0.4.0"
+ :deps
+ {day8/dev {:git/url "https://github.com/day8/dev.git"
+            :git/sha "ee68b27193db92964201cbb4dcbb0e6e25890f06"}}
+ :tasks
+ {:requires    ([day8.dev :as dev])
+  test         (do (clojure "-M:test" "compile" "browser-test")
+                   (clojure "-X:test"))
+  watch-test   (clojure "-M:test watch browser-test")
+  watch-docs   (clojure "-M:docs" "watch" "docs")
+  release-docs (clojure "-M:docs" "release" "docs")
+  clojars      (do (dev/version-dotfile!)
+                   (clojure "-M:clein" "deploy"))}}

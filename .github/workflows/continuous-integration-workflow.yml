@@ -17,23 +17,19 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    container:
-      # Source: https://github.com/day8/dockerfiles-for-dev-ci-images
-      image: ghcr.io/day8/chrome-56:5.0.0
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
-      - run: git config --system --add safe.directory /__w/re-frame/re-frame
+      - uses: actions/checkout@v5
+      - run: git config --global --add safe.directory /__w/re-frame/re-frame
+
       - name: Maven cache
         id: maven-cache
         uses: actions/cache@v4
         with:
-          path: /root/.m2/repository
+          path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj', '.github/workflows/**') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+
       - name: npm cache
         uses: actions/cache@v4
         with:
@@ -41,6 +37,7 @@ jobs:
           key: ${{ runner.os }}-npm-${{ hashFiles('project.clj') }}-${{ hashFiles('**/deps.cljs') }}
           restore-keys: |
             ${{ runner.os }}-npm-
+
       - name: shadow-cljs compiler cache
         uses: actions/cache@v4
         with:
@@ -48,48 +45,41 @@ jobs:
           key: ${{ runner.os }}-shadow-cljs-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-shadow-cljs-
-      - if: steps.maven-cache.outputs.cache-hit != 'true'
-        run: lein ci
-      - if: steps.maven-cache.outputs.cache-hit != 'true'
-        name: Run cd examples/simple && lein shadow-release && lein build-report
+
+      - uses: browser-actions/setup-chrome@v1
+        id: setup-chrome
+        with:
+          chrome-version: 811961
+
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli:  'latest'
+          bb:   'latest'
+
+      - run: bb test :chrome-path '"${{ steps.setup-chrome.outputs.chrome-path }}"'
+
+      - name: Test simple example
         working-directory: examples/simple
         run: |
           npm install
           npm run release
-          npm run build-report
-      - if: steps.maven-cache.outputs.cache-hit != 'true'
-        name: Run cd examples/todomvc && lein shadow-release && lein build-report
+
+      - name: Test todomvc example
         working-directory: examples/todomvc
         run: |
           npm install
           npm run release
-          npm run build-report
-      - if: steps.maven-cache.outputs.cache-hit == 'true'
-        run: lein -o ci
-      - if: steps.maven-cache.outputs.cache-hit == 'true'
-        name: Run cd examples/simple && lein -o shadow-release && lein -o build-report
-        working-directory: examples/simple
-        run: |
-          npm install
-          npm run release
-          npm run build-report
-      - if: steps.maven-cache.outputs.cache-hit == 'true'
-        name: Run cd examples/todomvc && lein -o shadow-release && lein -o build-report
-        working-directory: examples/todomvc
-        run: |
-          npm install
-          npm run release
-          npm run build-report
-      - uses: actions/upload-artifact@v4
-        with:
-          name: simple-example-build-report
-          path: examples/simple/target/build-report.html
-      - uses: actions/upload-artifact@v4
-        with:
-          name: todomvc-example-build-report
-          path: examples/todomvc/target/build-report.html
+
       - name: Verify cljdoc Configuration
         run: curl -fsSL https://raw.githubusercontent.com/cljdoc/cljdoc/master/script/verify-cljdoc-edn | bash -s docs/cljdoc.edn
+
       - name: Slack notification
         uses: homoluctus/slatify@v2.0.1
         if: failure() || cancelled()
