@@ -405,11 +405,19 @@ Re-frame provides these lifecycles.
 Looks up the node, creating it if necessary. It is never cleared.
 
 **`:reactive`**
-Looks up the node, creating it if necessary. Adds a back-reference to
-the reagent component
+Looks up the node, creating it if necessary. Stores it in the graph
+for as long as one or more reagent components depend on it.
 
-When called outside a reactive context, since there is no component,
-there is no way to clear the subscription.
+Given a specific `query`, re-frame stores a set of back-references to
+each reagent component which depends on its dataflow node - in other words, each
+component which called `(sub query)` within its render function. References are
+added when components call `sub`, and removed when they unmount.
+When the last component unmounts, and no components depend on the node,
+then re-frame clears the node.
+
+`:reactive` is unsafe when called outside a reactive context
+(in other words, not inside a reagent component's render function).
+Since there is no component, there is no way to clear the node.
 In cases where sub is called many times with many different queries,
 this effectively leaks memory. Re-frame prints a warning in this case.
 
@@ -424,7 +432,7 @@ then the subscription will recalculate its output each time it's called,
 even when its inputs are the same.
 
 But, as long as there are reagent components, then cacheing and deduplication will
-work as normal. In most cases, we expect `:safe` to be the most reasonable tradeoff
+work as normal. In most cases, we expect `:safe` to be a reasonable tradeoff
 between performance and memory-safety.
 
 Note: for more details on reactive context, see https://day8.github.io/re-frame/flows-advanced-topics/#reactive-context
@@ -668,11 +676,9 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
         ...)
 
    which is typically written tersely as simple:
-
       
       (let [items  @(sub {:re-frame/q ::items})]
         ...)
-
 
   `query` is a map containing:
     `:re-frame/q`:         Required. Names the query. Typically a namespaced keyword.
@@ -683,13 +689,13 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
 
   **Example Usage**:
 
-      
-      (require '[re-frame :as-alias rf])
-      (sub {::rf/q ::items
-                  ::rf/lifecycle ::rf/reactive
-                  :color \"blue\"
-                  :size :small})
-
+```clojure
+(require '[re-frame :as-alias rf])
+(sub {::rf/q         ::items
+      ::rf/lifecycle ::rf/reactive
+      :color         \"blue\"
+      :size          :small})
+```
   Note: for any given call to `sub there must have been a previous call
   to `reg`, registering the query handler (functions) associated with
   `query-id`.
@@ -698,8 +704,6 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
 
   Two, or more, concurrent subscriptions for the same query will
   source reactive updates from the one executing handler.
-
-  See also: `reg-sub`
 
   **Flows**
 
@@ -712,7 +716,9 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
   **Legacy support**
 
   `dyn-v` is not supported.
-  "
+
+  See also: `reg`
+"
   {:api-docs/heading "Subscription"}
   ([q]
    (subs.alpha/sub q))
