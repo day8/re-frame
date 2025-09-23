@@ -50,32 +50,32 @@
                                 (reset! id 0))} "Clear"] " "])))
 
 (def error-state-flow
-  {:id ::error-state
-   :path [::error-state]
-   :inputs {:items [::items]}
-   :output (fn [_ {:keys [items]}]
-             (cond
-               (> (count items) 2) :too-many
-               (empty? items)      :none))
+  {:id          ::error-state
+   :path        [::error-state]
+   :inputs      {:items [::items]}
+   :output      (fn [{:keys [items]}]
+                  (cond
+                    (> (count items) 2) :too-many
+                    (empty? items)      :none))
    :live-inputs {:items [::items]}
-   :live? (fn [{:keys [items]}]
-            (let [ct (count items)]
-              (or (zero? ct) (> ct 3))))})
+   :live?       (fn [{:keys [items]}]
+                  (let [ct (count items)]
+                    (or (zero? ct) (> ct 3))))})
 
 (rfa/reg-flow error-state-flow)
 
 (rf/reg-event-fx
- ::clear-flow
+ ::clear-flow-button-pressed
  (fn [_ _] {:fx [[:clear-flow ::error-state]]}))
 
 (rf/reg-event-fx
- ::reg-flow
+ ::reg-flow-button-pressed
  (fn [_ _] {:fx [[:reg-flow error-state-flow]]}))
 
 (defn flow-controls []
-  [:div [:button {:on-click #(do (rf/dispatch [::clear-flow]))}
+  [:div [:button {:on-click #(rf/dispatch [::clear-flow-button-pressed])}
          "Clear flow"] " "
-   [:button {:on-click #(do (rf/dispatch [::reg-flow]))}
+   [:button {:on-click #(rf/dispatch [::reg-flow-button-pressed])}
     "Register flow"]])
 
 (defn warning []
