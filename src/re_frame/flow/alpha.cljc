@@ -4,8 +4,8 @@
    [re-frame.utils :as u]
    [re-frame.registrar :refer [get-handler]]
    [re-frame.loggers     :refer [console]]
-   [re-frame.interceptor :refer [->interceptor get-effect get-coeffect
-                                 assoc-effect update-effect]]
+   [re-frame.interceptor :refer [->interceptor get-effect
+                                 get-coeffect assoc-effect]]
    [re-frame.interop :as interop]
    #?(:cljs [reagent.core :as r])))
 
@@ -16,6 +16,8 @@
 (def flow<-? (comp some? ::flow<-))
 
 (def flows (interop/ratom {}))
+
+(def flow-states (atom {}))
 
 (defn lookup [id] (get @flows id))
 
@@ -33,7 +35,7 @@
        reverse
        (map flows)))
 
-(def topsort* (memoize topsort))
+(def topsort* (u/memoize-one topsort))
 
 (defn default [id]
   {:id          id
@@ -92,21 +94,20 @@
   ([m]
    (validate-inputs m)
    (warn-stale-dependencies @flows m)
-   (swap! flows assoc
-          (:id m) (with-meta (merge (default (:id m)) m)
-                    (merge
-                     {::new? true}
-                     #?(:cljs
-                        {::ref (r/reaction (get-in @db/app-db (:path m)))}))))))
+   (swap! flow-states update ::born (fnil conj #{}) (:id m))
+   (swap! flows assoc (:id m)
+          (-> (merge (default (:id m)) m)
+              (with-meta #?(:cljs
+                            {::ref (r/reaction (get-in @db/app-db (:path m)))}))))))
 
 (defn clear-flow
   ([]
-   (swap! flows vary-meta update ::cleared into @flows)
-   (swap! flows empty))
+   (swap! flows empty)
+   (swap! flow-states update ::cleared into @flows))
   ([id]
    (when-let [flow (lookup id)]
      (swap! flows dissoc id)
-     (swap! flows vary-meta update ::cleared assoc (:id flow) flow))))
+     (swap! flow-states update ::cleared assoc (:id flow) flow))))
 
 (defn flow<- [id] {::flow<- id})
 
@@ -140,14 +141,13 @@
 (defn resolve-inputs [db inputs]
   (if (empty? inputs) db (u/map-vals (partial resolve-input db) inputs)))
 
-(defn run [ctx {:as     flow
-                :keys   [path cleanup live? inputs live-inputs output id]
+(defn run [ctx {:keys   [path cleanup live? inputs live-inputs output id]
                 flow-fx :fx
                 ::keys  [cleared?]}]
-  (let [{::keys [new?]} (meta flow)
-        old-db          (get-coeffect ctx :db)
-        db              (or (get-effect ctx :db) old-db)
-        fx              (get-effect ctx :fx)
+  (let [new?   (contains? (::born @flow-states) id)
+        old-db (get-coeffect ctx :db)
+        db     (or (get-effect ctx :db) old-db)
+        fx     (get-effect ctx :fx)
 
         id->old-in (resolve-inputs old-db inputs)
         id->in     (resolve-inputs db inputs)
@@ -156,16 +156,16 @@
         id->old-live-in (resolve-inputs old-db live-inputs)
         id->live-in     (resolve-inputs db live-inputs)
 
-        old-output      (get-in old-db path)
+        old-output (get-in old-db path)
 
-        bardo           [(cond new? :new (live? (assoc id->old-live-in :db old-db)) :live :else :dead)
-                         (cond cleared? :cleared (live? (assoc id->live-in :db db)) :live :else :dead)]
+        bardo [(cond new? :born (live? (assoc id->old-live-in :db old-db)) :live :else :dead)
+               (cond cleared? :cleared (live? (assoc id->live-in :db db)) :live :else :dead)]
 
         new-db (case bardo
                  [:live :live]    (cond-> db dirty? (assoc-in path (output id->in id->old-in old-output)))
                  [:live :dead]    (cleanup db path)
                  [:dead :live]    (assoc-in db path (output id->in id->old-in old-output))
-                 [:new :live]     (do (swap! flows update id vary-meta dissoc ::new?)
+                 [:born :live]    (do (swap! flow-states update ::born disj id)
                                       (assoc-in db path (output id->in id->old-in old-output)))
                  [:live :cleared] (cleanup db path)
                  nil)
@@ -174,22 +174,24 @@
                  (case bardo
                    [:live :live] (when dirty? (concat fx (flow-fx id->in id->old-in old-output)))
                    [:dead :live] (concat fx (flow-fx id->in id->old-in old-output))
-                   [:new :live]  (concat fx (flow-fx id->in id->old-in old-output))
+                   [:born :live] (concat fx (flow-fx id->in id->old-in old-output))
                    nil))]
     (cond-> ctx
       new-db (assoc-effect :db new-db)
       new-fx (assoc-effect :fx new-fx))))
 
 (defn with-cleared [m]
-  (into m (map (fn [[k v]] [[::cleared k (gensym)] (assoc v ::cleared? true)])
-               (::cleared (meta m)))))
+  (let [cleared-flow (fn [[k v]] [[::cleared k] (assoc v ::cleared? true)])]
+    (into m
+          (map cleared-flow)
+          (::cleared @flow-states))))
 
 (def interceptor
   (->interceptor
    {:id    :flow
     :after (comp (fn [ctx]
                    (let [all-flows (with-cleared @flows)]
-                     (swap! flows vary-meta dissoc ::cleared)
-                     (reduce run ctx (topsort all-flows))))
+                     (swap! flow-states dissoc ::cleared)
+                     (reduce run ctx (topsort* all-flows))))
                  (fn [{{:keys [db]} :effects :as ctx}]
                    (assoc ctx :re-frame/pre-flow-db db)))}))

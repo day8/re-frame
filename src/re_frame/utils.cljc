@@ -107,3 +107,15 @@
      (if-not (empty? (get-in new-data (pop path)))
        new-data
        (recur new-data (pop path))))))
+
+(defn memoize-one
+  "Based on clojure.core/memoize,
+  except it can only remember a single value."
+  [f]
+  (let [mem (atom {})]
+    (fn [& args]
+      (if-let [e (find @mem args)]
+        (val e)
+        (let [ret (apply f args)]
+          (reset! mem {args ret})
+          ret)))))
