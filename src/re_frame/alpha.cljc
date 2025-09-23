@@ -18,7 +18,7 @@
 
 - `:sub`: runs a subscription query which is a map.
 - `:legacy-sub`: runs a subscription query which is a vector.
-- `:sub-lifecycle`: See https://github.com/day8/re-frame/issues/680.
+- `:sub-lifecycle`: creates dataflow nodes, optionally caching them.
 
 #### reg :sub
 
@@ -345,21 +345,30 @@ converts to:
 
 `(reg :sub-lifecycle lifecycle-id lifecycle-fn)`
 
-Registers a `lifecycle-fn` for a given `lifecycle-id`.
+A lifecycle-fn controls how dataflow nodes are created,
+sometimes managing their lifecycle within a cache (i.e. the signal graph).
 
-When `sub` (or `subscribe`) is called, re-frame uses the `query` to look up the associated lifecycle.
-Map queries can optionally specify this with a `:re-frame/lifecycle` key.
-Vector queries can include the `:re-frame/lifecycle` key in the vector's metadata.
+When `sub` (or `subscribe`) is called, re-frame uses information within the `query`
+to look up and call the associated lifecycle-fn. The lifecycle-fn returns the actual dataflow node.
+
+It can do other things along the way - primarily, it can make use of a cache. This cache of nodes
+can make a subscription more performant. Instead of creating a node and calculating
+its value every time you call `sub`, re-frame can look up nodes it has already created,
+along with their previous calculations.
+
+The `lifecycle-id` determines which lifecycle-fn a subscription will use.
+When `(sub query)` is called, re-frame always derives the `lifecycle-id` from the `query`:
+
+  - Map queries can specify this with a `:re-frame/lifecycle` key.
+  - Vector queries can include the `:re-frame/lifecycle` key in the vector's metadata.
 
 When a `query` does not explicitly declare a lifecycle,
 re-frame uses the `:safe` lifecycle by default.
 
 ##### Writing a `lifecycle-fn`
 
-Whenever `sub` is called, re-frame determines the `lifecycle-id` from the `query`, and
-calls the associated `lifecycle-fn`.
-
-It passes the `query` to the `lifecycle-fn`.
+Whenever `sub` is called, re-frame determines the `lifecycle-id` from the `query`.
+Then, it calls the associated `lifecycle-fn`, passing it the `query`.
 
 The task of a `lifecycle-fn` is return the dataflow node necessary to calculate
 the output value for `query`. Along the way, it can also store the node
@@ -416,12 +425,13 @@ You can use your new lifecycle by declaring `:re-frame/lifecycle`:
 After subscribing to more than three different queries, the sliding behavior will happen,
 clearing some of the corresponding dataflow nodes from the cache.
 
-  `(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 2]})`
-  `(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 3]})`
-  `(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 4]})` ;; now [:hi 1] is cleared
-
-Note: Lifecycles are an alpha feature. Don't expect re-frame.core to work the same way.
-It's totally valid to add metadata to a query, but re-frame.core will ignore it.
+  ```clojure
+  (re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 2]})
+  (re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 3]})
+  (re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 4]}) ;; now [:hi 1] is cleared
+  ```
+Note: Lifecycles are an alpha feature. Don't expect `re-frame.core` to work the same way.
+It's totally valid to add metadata to a query, but `re-frame.core` will ignore it.
 For instance, this subscription creates a dataflow node with the `:reactive` lifecycle,
 even though you've \"declared\" something else:
 
@@ -437,30 +447,31 @@ and, elsewhere, subscribe to that same query using `re-frame.alpha/sub`, without
 
 Re-frame provides these lifecycles. The default lifecycle is `:safe`.
 
-**`:forever`**
-Looks up the node, creating it if necessary. It is never cleared.
+**`:no-cache`** Creates a dataflow node and eagerly computes a subscription's value,
+without storing the node in the signal graph.
 
-**`:reactive`**
-Looks up the node, creating it if necessary. Stores it in the graph
-for as long as one or more reagent components depend on it.
+If the subscription depends on other subscriptions, then re-frame will try to dispose them,
+effectively making them `:no-cache` as well (as long as nothing else depends on them).
+Thus, input signals are also cleared from memory when they aren't needed.
 
-Given a specific `query`, re-frame stores a set of back-references to
-each reagent component which depends on its dataflow node - in other words, each
-component which called `(sub query)` within its render function. References are
-added when components call `sub`, and removed when they unmount.
-When the last component unmounts, and no components depend on the node,
-then re-frame clears the node.
+Note: Technically, if an input subscription has inputs of its own, those won't get cleared from memory.
+In practice, these deps-of-deps will be layer-2 subscriptions,
+which should be simple enough to avoid leaking memory anyway.
+Otherwise, you could write a new lifecycle-fn to recursively cleanup the full dependency tree.
 
-`:reactive` is unsafe when called outside a reactive context
-(in other words, not inside a reagent component's render function).
-Since there is no component, there is no way to clear the node.
-In cases where sub is called many times with many different queries,
-this effectively leaks memory. Re-frame prints a warning in this case.
+**`:safe`** subscribes in a memory-safe way, using the cache when it can,
+and eagerly computing its output when it can't.
 
-**`:safe`**
-Works the same as `:reactive` when called within a reactive context.
-Outside a reactive context, returns the dataflow node if it exists.
-If not, returns a new dataflow node, but does not store it in the graph.
+Re-frame uses `:safe` by default, whenever you use `re-frame.alpha/sub`
+or `re-frame.alpha/subscribe` without declaring a lifecycle explicitly.
+
+There is one exception to this memory-safety, which should be negligible (see `:no-cache` for details).
+
+If your dataflow-node is already cached (for instance, by calling `sub` in the render-fn of a mounted component),
+then `:safe` will use the cached node, skipping the eager computation and cleanup.
+
+Re-frame also checks checks the cache for an equivalent node with the `:reactive` lifecycle.
+If such a node exists, re-frame uses it directly, without re-calculating or touching the cache.
 
 Consequently:
 When there are no reagent components mounted which depend on the subscription,
@@ -470,6 +481,35 @@ even when its inputs are the same.
 But, as long as there are reagent components, then cacheing and deduplication will
 work as normal. In most cases, we expect `:safe` to be a reasonable tradeoff
 between performance and memory-safety.
+
+**`:forever`** Creates a long-lived subscription.
+Re-frame looks up the cached subscription, creating it if necessary.
+The subscription is permanently cached, never cleared. Re-frame eagerly
+runs the subscription on creation, to create its input signals.
+
+This behavior extends to input signals, making `:forever` effectively \"contagious\".
+If the subscription depends on other subscriptions,
+those subscriptions will be permanently stored in the cache,
+despite other mechanisms' attempts to clear them (see `:no-cache` and `:reactive`).
+This is because reagent's internals prevent disposal of \"watched\" reactions, and
+a `:forever` subscription \"watches\" its inputs forever.
+
+**`:reactive`** Looks up subscription from a cache, creating it if necessary.
+The subscription stays in the cache for as long as one or more reagent
+components depend on it.
+
+Given a specific `query`, re-frame stores a set of back-references to
+each reagent component which depends on its dataflow node - in other
+words, each component which called `(sub query)` within its render
+function. References are added when components call `sub`, and
+removed when they unmount.  When the last component unmounts, and no
+components depend on the node, then re-frame clears the node.
+
+`:reactive` is unsafe when called outside a reactive context (in other
+words, not inside a reagent component's render function). Since
+there is no component, there is no way to clear the node. In cases
+where sub is called many times with many different queries, this
+effectively leaks memory. Re-frame prints a warning in this case.
 
 Note: for more details on reactive context, see https://day8.github.io/re-frame/flows-advanced-topics/#reactive-context
 "
@@ -495,8 +535,9 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
         ...)
 
   `query` is a map containing:
-    `:re-frame/q`:         Required. Names the query. Typically a namespaced keyword.
-    `:re-frame/lifecycle`: Optional. See docs for `reg-sub-lifecycle`.
+
+  - `:re-frame/q`:         Required. Names the query. Typically a namespaced keyword.
+  - `:re-frame/lifecycle`: Optional. See docs for `reg :sub-lifecycle`.
 
   The entire `query` is passed to the subscription handler. This means you can use
   additional keys to parameterise the query it performs.
@@ -513,11 +554,6 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
   Note: for any given call to `sub there must have been a previous call
   to `reg`, registering the query handler (functions) associated with
   `query-id`.
-
-  **De-duplication**
-
-  Two, or more, concurrent subscriptions for the same query will
-  source reactive updates from the one executing handler.
 
   **Flows**
 

@@ -1,4 +1,5 @@
 > This is an experimental, proposed feature for re-frame.
+> You can use flows today, with the ["re-frame alpha"](/FAQs/alpha.md)
 > We'd love to hear your feedback!
 > Please join our discussions on [github](https://github.com/day8/re-frame/discussions/795) and [slack](https://clojurians.slack.com/archives/C073DKH9P/p1698792674379499).
 
