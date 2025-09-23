@@ -112,7 +112,9 @@
 
 (def flow-fx-ids #{:reg-flow :clear-flow})
 
-(defn do-effect [[k v]] ((get-handler :fx k false) v))
+(defn do-effect [[k v]]
+  (let [handler (case k :reg-flow reg-flow :clear-flow clear-flow)]
+    (handler v)))
 
 (def remove-fx (partial remove (comp flow-fx-ids first)))
 

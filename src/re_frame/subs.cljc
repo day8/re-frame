@@ -32,10 +32,21 @@
   (clear-handlers kind)
   (clear-subscription-cache!))
 
+(defn cache-key
+  "Constructs a cache-key that is compatible with re-frame.subs/alpha. That way,
+  an alpha subscription can look up the cached reaction of a core subscription, rather
+  that needing to recalculate. Since this is core, we don't actually support lifecycles here.
+  That's why `:reactive` is hard-coded, even though the user may have declared a lifecycle."
+  [[query-id :as query-v] dynv]
+  [{:re-frame/query-v   query-v
+    :re-frame/q         query-id
+    :re-frame/lifecycle :reactive}
+   dynv])
+
 (defn cache-and-return
   "cache the reaction r"
   [query-v dynv r]
-  (let [cache-key [query-v dynv]]
+  (let [k (cache-key query-v dynv)]
     ;; when this reaction is no longer being used, remove it from the cache
     (add-on-dispose! r #(trace/with-trace {:operation (first-in-vector query-v)
                                            :op-type   :sub/dispose
@@ -43,15 +54,15 @@
                                                        :reaction (reagent-id r)}}
                           (swap! query->reaction
                                  (fn [query-cache]
-                                   (if (and (contains? query-cache cache-key) (identical? r (get query-cache cache-key)))
-                                     (dissoc query-cache cache-key)
+                                   (if (and (contains? query-cache k) (identical? r (get query-cache k)))
+                                     (dissoc query-cache k)
                                      query-cache)))))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction (fn [query-cache]
                              (when debug-enabled?
-                               (when (contains? query-cache cache-key)
-                                 (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" cache-key)))
-                             (assoc query-cache cache-key r)))
+                               (when (contains? query-cache k)
+                                 (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" k)))
+                             (assoc query-cache k r)))
     (trace/merge-trace! {:tags {:reaction (reagent-id r)}})
     r)) ;; return the actual reaction
 
@@ -59,7 +70,7 @@
   ([query-v]
    (cache-lookup query-v []))
   ([query-v dyn-v]
-   (get @query->reaction [query-v dyn-v])))
+   (get @query->reaction (cache-key query-v dyn-v))))
 
 ;; -- subscribe ---------------------------------------------------------------
 

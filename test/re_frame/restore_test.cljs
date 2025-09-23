@@ -29,7 +29,7 @@
       (is (zero? (count original-subs)))
       @(subscribe [:test-sub])
       (is (one? (count @subs/query->reaction)))
-      (is (contains? @subs/query->reaction [[:test-sub] []]))
+      (is (contains? @subs/query->reaction (subs/cache-key [:test-sub] [])))
       (restore-fn)
       (is (zero? (count @subs/query->reaction))))))
 
@@ -41,10 +41,10 @@
           restore-fn    (make-restore-fn)]
       (is (one? (count original-subs)))
       @(subscribe [:test-sub2])
-      (is (contains? @subs/query->reaction [[:test-sub2] []]))
+      (is (contains? @subs/query->reaction (subs/cache-key [:test-sub2] [])))
       (is (two? (count @subs/query->reaction)))
       (restore-fn)
-      (is (not (contains? @subs/query->reaction [[:test-sub2] []])))
+      (is (not (contains? @subs/query->reaction (subs/cache-key [:test-sub2] []))))
       (is (one? (count @subs/query->reaction))))))
 
 (deftest make-restore-fn-test3

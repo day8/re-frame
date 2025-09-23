@@ -1,6 +1,6 @@
 (ns re-frame.query.alpha
   (:require
-   [re-frame :as-alias rf]
+   [re-frame.subs :as subs]
    [re-frame.db :refer [app-db]]
    [re-frame.interop :refer [reagent-id]]
    [re-frame.loggers :refer [console]]
@@ -13,38 +13,41 @@
 (defn legacy-lifecycle [v]
   (when (vector? v)
     (or (lifecycle (meta v))
-        :default)))
+        :safe)))
 
 (defn legacy-query-id [q]
   (when (vector? q) (first q)))
 
-(def id (some-fn legacy-query-id ::rf/q))
+(def id (some-fn legacy-query-id :re-frame/q))
 
 (def flow-lifecycle (comp #{:flow} id))
 
 (def lifecycle (some-fn flow-lifecycle
                         legacy-lifecycle
-                        ::rf/lifecycle
-                        (constantly :default)))
+                        :re-frame/lifecycle
+                        (constantly :safe)))
 
 (defn method [q] (@lifecycle->method (lifecycle q)))
 
 (defn clear-all-methods! [] (reset! lifecycle->method {}))
 
-(def cache (atom {}))
+(def cache subs/query->reaction)
 
-(defn cached [q] (if-some [r (get-in @cache [(lifecycle q) q])]
+(def default-dynv [])
+
+(defn cache-key [q] [q default-dynv])
+
+(defn cached [q] (if-some [r (get @cache (cache-key q))]
                    (do (trace/merge-trace! {:tags {:cached? true
                                                    :reaction (reagent-id r)}})
                        r)
                    (trace/merge-trace! {:tags {:cached? false}})))
 
-(defn cache! [q r] (swap! cache assoc-in [(lifecycle q) q] r) r)
+(defn cache! [q r] (swap! cache assoc (cache-key q) r) r)
 
 (defn clear!
   ([] (reset! cache {}))
-  ([q] (clear! q (lifecycle q)))
-  ([q strat] (swap! cache update strat dissoc q)))
+  ([q] (swap! cache dissoc (cache-key q))))
 
 (defn handle [q]
   (let [handler (get-handler :sub (id q))]

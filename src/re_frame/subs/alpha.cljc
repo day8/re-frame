@@ -3,11 +3,12 @@
    [re-frame.subs :refer [deref-input-signals sugar warn-when-not-reactive]]
    [re-frame.registrar :refer [register-handler]]
    [re-frame.register.alpha :refer [reg lifecycle->method]]
-   [re-frame.interop :refer [add-on-dispose! make-reaction reactive? reagent-id ratom]]
+   [re-frame.interop :refer [add-on-dispose! make-reaction reactive? reagent-id ratom dispose!]]
    [re-frame.query.alpha :as q]
    [re-frame :as-alias rf]
    [re-frame.trace :as trace :include-macros true]
-   [re-frame.flow.alpha :as flow]))
+   [re-frame.flow.alpha :as flow]
+   #?(:cljs [reagent.ratom :as ratom])))
 
 (defmethod reg :sub-lifecycle [_ k f]
   (swap! lifecycle->method assoc
@@ -83,25 +84,43 @@
 (defn sub-reactive [q]
   (warn-when-not-reactive)
   (or (q/cached q)
-      (let [md (q/lifecycle q)
-            r (q/handle q)]
-        (add-on-dispose! r #(q/clear! q md))
+      (let [r (q/handle q)]
+        (add-on-dispose! r #(q/clear! q))
         (q/cache! q r))))
 
 (reg :sub-lifecycle :reactive sub-reactive)
+
+#?(:cljs
+   (def sync-watchers-and-compute! ratom/run))
+
+#?(:cljs
+   (defn cleanup-deps! [^js r]
+     (doseq [^js watch (.-watching r)]
+       (when-not (seq (dissoc (.-watches watch) r))
+         (dispose! watch)))))
+
+(defn sub-no-cache [q]
+  (doto (q/handle q)
+    #?(:cljs sync-watchers-and-compute!)
+    #?(:cljs cleanup-deps!)))
+
+(reg :sub-lifecycle :no-cache sub-no-cache)
 
 (defn sub-safe [q]
   (if (reactive?)
     (sub-reactive q)
     (or (q/cached q)
-        (q/handle q))))
+        (q/cached (assoc q :re-frame/lifecycle :reactive))
+        (sub-no-cache q))))
 
 (reg :sub-lifecycle :safe sub-safe)
 (reg :sub-lifecycle :default sub-safe)
 
 (defn sub-forever [q]
   (or (q/cached q)
-      (q/cache! q (q/handle q))))
+      (q/cache!
+       q (doto (q/handle q)
+           #?(:cljs sync-watchers-and-compute!)))))
 
 (reg :sub-lifecycle :forever sub-forever)
 

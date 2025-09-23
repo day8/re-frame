@@ -1,7 +1,8 @@
 (ns re-frame.flow.demo
   (:require
    [reagent.dom.client :as rdc]
-   [re-frame.alpha :as rf]
+   [re-frame.alpha :as rfa]
+   [re-frame.core :as rf]
    [zprint.core :as zp]
    [clojure.string :as str]
    [re-frame.db :refer [app-db]]))
@@ -61,7 +62,7 @@
             (let [ct (count items)]
               (or (zero? ct) (> ct 3))))})
 
-(rf/reg-flow error-state-flow)
+(rfa/reg-flow error-state-flow)
 
 (rf/reg-event-fx
  ::clear-flow
@@ -78,7 +79,7 @@
     "Register flow"]])
 
 (defn warning []
-  (let [error-state (rf/subscribe [:flow {:id ::error-state}])]
+  (let [error-state (rfa/subscribe [:flow {:id ::error-state}])]
     [:div {:style {:color "red"}}
      (->> @error-state
           (get {:too-many "Warning: only the first 3 items will be used."

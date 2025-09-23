@@ -1467,9 +1467,6 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
      (fn [db input]
        (flow/resolve-input db input)))
 
-(reg-fx :reg-flow flow/reg-flow)
-
-(reg-fx :clear-flow flow/clear-flow)
 
 ;; --  Deprecation ------------------------------------------------------------
 
