@@ -542,47 +542,56 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
 (defn reg-flow
   "Registers a `flow`.
 
-  A full tutorial can be found at https://day8.github.io/re-frame/Flows
+A full tutorial can be found at https://day8.github.io/re-frame/Flows
 
-  Re-frame uses the flow registry to execute a dataflow graph.
+Re-frame uses the flow registry to execute a dataflow graph.
 
-  On every event, re-frame runs each registered `flow`.
-  It resolves the flow's inputs, determines if the flow is live, and if so,
-  evaluates the output function, putting the result in `app-db` at the `:path`.
+On every event, re-frame runs each registered `flow`.
+It resolves the flow's inputs, determines if the flow is live, and if so,
+evaluates the output function, putting the result in `app-db` at the `:path`.
 
-  A `flow` is a map, specifying one dataflow node. It has keys:
+A `flow` is a map, specifying one dataflow node. It has keys:
 
-  - `:id`: uniquely identifies the node.
-     - When a `flow` is already registered with the same `:id`, replaces it.
-     - You can provide an `id` argument to `reg-flow`, instead of including `:id`.
-  - `:inputs`: a map of `keyword->input`. An input can be one of two types:
-     - vector: expresses a path in `app-db`.
-     - map: expresses the output of another flow, identified by a
-       `::re-frame.flow.alpha/flow<-` key.
-       Call the `re-frame.alpha/flow<-` function to construct this map.
-  - `:output`: a function of the `keyword->resolved-input` map, returning the output value of the node.
-     - A resolved vector input is the value in `app-db` at that path.
-     - A resolved `flow<-` input is the value in `app-db` at the path of the named flow.
-     - Re-frame topologically sorts the flows, to make sure any input flows always run first.
-     - Re-frame throws an error at registration time if any flow inputs form a cycle.
-  - `:path`: specifies the `app-db` location where the `:output` value is stored.
+  **`:id`**: uniquely identifies the node.
+
+- When a `flow` is already registered with the same `:id`, replaces it.
+- You can provide an `id` argument to `reg-flow`, instead of including `:id`.
+
+  **`:inputs`**: a map of `keyword->input`. An input can be one of two types:
+
+- vector: expresses a path in `app-db`.
+- map: expresses the output of another flow, identified by a `::re-frame.flow.alpha/flow<-` key.
+  Call the `re-frame.alpha/flow<-` function to construct this map.
+
+  **`:output`**: a function of the `keyword->resolved-input` map returning the output value of the node.
+
+- A resolved vector input is the value in `app-db` at that path.
+- A resolved `flow<-` input is the value in `app-db` at the path of the named flow.
+- Re-frame topologically sorts the flows, to make sure any input flows always run first.
+- Re-frame throws an error at registration time if any flow inputs form a cycle.
+
+  **`:path`**: specifies the `app-db` location where the `:output` value is stored.
+
   - `:live-inputs`: a map of `keyword->live-input` for the `:live?` function.
-     - A `live-input` works the same way an `input`.
+  - A `live-input` works the same way an `input`.
   - `:live?`: a predicate function of the `keyword->resolved-live-input` map,
-     returning the current lifecycle state of the node.
-  - `:cleanup`: a function of `app-db` and the `:path`.
-     - Returns a new `app-db`.
-     - Runs the first time `:live?` returns `false`
-     - Runs when the flow is cleared (see `re-frame.alpha/clear-flow`).
+    returning the current lifecycle state of the node.
 
-  `:id` is the only required key. All others have a default value:
+  **`:cleanup`**: a function of `app-db` and the `:path`.
 
-  - `:path`: `id` if `id` is sequential, otherwise `[id]`.
-  - `:inputs`: `{}`
-  - `:output`: `(constantly true)`
-  - `:live?`: `(constantly true)`
-  - `:live-inputs`: `{}`
-  - `:cleanup`: `re-frame.utils/dissoc-in`"
+- Returns a new `app-db`.
+- Runs the first time `:live?` returns `false`
+- Runs when the flow is cleared (see `re-frame.alpha/clear-flow`).
+
+  The only required key is `:id`. All others have a default value:
+
+- `:path`: `id` if `id` is sequential, otherwise `[id]`.
+- `:inputs`: `{}`
+- `:output`: `(constantly true)`
+- `:live?`: `(constantly true)`
+- `:live-inputs`: `{}`
+- `:cleanup`: `re-frame.utils/dissoc-in`
+"
   {:api-docs/heading "Flows"}
   ([flow] (flow/reg-flow flow))
   ([id flow] (flow/reg-flow id flow)))
@@ -629,16 +638,15 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
   Call `(subscribe [:flow {:id :your-flow-id}])` to subscribe to a flow."
   sub)
 
-(defn reg-sub
+(defn ^:api-docs/hide reg-sub
   "Equivalent to `reg` `:legacy-sub`."
-  {:api-docs/heading "Legacy Compatibility"}
   [& args]
   (apply reg :legacy-sub args))
 
-(def dispatch re-frame.core/dispatch)
-(def dispatch-sync re-frame.core/dispatch-sync)
+(def ^:api-docs/hide dispatch re-frame.core/dispatch)
+(def ^:api-docs/hide dispatch-sync re-frame.core/dispatch-sync)
 
-(defn reg-event-db
+(defn ^:api-docs/hide reg-event-db
   ([id handler]
    (reg-event-db id nil handler))
   ([id interceptors handler]
@@ -649,7 +657,7 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
                         interceptors
                         flow/do-fx
                         (db-handler->interceptor handler)])))
-(defn reg-event-fx
+(defn ^:api-docs/hide reg-event-fx
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
@@ -661,7 +669,7 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
                         flow/do-fx
                         (fx-handler->interceptor handler)])))
 
-(defn reg-event-ctx
+(defn ^:api-docs/hide reg-event-ctx
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
@@ -673,42 +681,42 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
                         flow/do-fx
                         (ctx-handler->interceptor handler)])))
 
-(def clear-event re-frame.core/clear-event)
-(def reg-event-error-handler re-frame.core/reg-event-error-handler)
+(def ^:api-docs/hide clear-event re-frame.core/clear-event)
+(def ^:api-docs/hide reg-event-error-handler re-frame.core/reg-event-error-handler)
 (reg-event-error-handler interceptor/default-error-handler)
-(def clear-sub re-frame.core/clear-sub)
-(def reg-sub-raw re-frame.core/reg-sub-raw)
-(def clear-subscription-cache! re-frame.core/clear-subscription-cache!)
+(def ^:api-docs/hide clear-sub re-frame.core/clear-sub)
+(def ^:api-docs/hide reg-sub-raw re-frame.core/reg-sub-raw)
+(def ^:api-docs/hide clear-subscription-cache! re-frame.core/clear-subscription-cache!)
 
-(defn reg-fx [id handler]
+(defn ^:api-docs/hide reg-fx [id handler]
   (assert (not (#{:reg-flow :clear-flow} id))
           "The effect keys `:reg-flow` and `:clear-flow` are reserved for `re-frame.alpha`")
   (re-frame.core/reg-fx id handler))
 
-(def clear-fx re-frame.core/clear-fx)
-(def reg-cofx re-frame.core/reg-cofx)
-(def inject-cofx re-frame.core/inject-cofx)
-(def clear-cofx re-frame.core/clear-cofx)
-(def debug re-frame.core/debug)
-(def path re-frame.core/path)
-(def enrich re-frame.core/enrich)
-(def unwrap re-frame.core/unwrap)
-(def trim-v re-frame.core/trim-v)
-(def after re-frame.core/after)
-(def on-changes re-frame.core/on-changes)
-(def reg-global-interceptor re-frame.core/reg-global-interceptor)
-(def clear-global-interceptor re-frame.core/clear-global-interceptor)
-(def ->interceptor re-frame.core/->interceptor)
-(def get-coeffect re-frame.core/get-coeffect)
-(def assoc-coeffect re-frame.core/assoc-coeffect)
-(def get-effect re-frame.core/get-effect)
-(def assoc-effect re-frame.core/assoc-effect)
-(def enqueue re-frame.core/enqueue)
-(def set-loggers! re-frame.core/set-loggers!)
-(def console re-frame.core/console)
-(def make-restore-fn re-frame.core/make-restore-fn)
-(def purge-event-queue re-frame.core/purge-event-queue)
-(def add-post-event-callback re-frame.core/add-post-event-callback)
-(def remove-post-event-callback re-frame.core/remove-post-event-callback)
-(def register-handler re-frame.core/register-handler)
-(def register-sub re-frame.core/register-sub)
+(def ^:api-docs/hide clear-fx re-frame.core/clear-fx)
+(def ^:api-docs/hide reg-cofx re-frame.core/reg-cofx)
+(def ^:api-docs/hide inject-cofx re-frame.core/inject-cofx)
+(def ^:api-docs/hide clear-cofx re-frame.core/clear-cofx)
+(def ^:api-docs/hide debug re-frame.core/debug)
+(def ^:api-docs/hide path re-frame.core/path)
+(def ^:api-docs/hide enrich re-frame.core/enrich)
+(def ^:api-docs/hide unwrap re-frame.core/unwrap)
+(def ^:api-docs/hide trim-v re-frame.core/trim-v)
+(def ^:api-docs/hide after re-frame.core/after)
+(def ^:api-docs/hide on-changes re-frame.core/on-changes)
+(def ^:api-docs/hide reg-global-interceptor re-frame.core/reg-global-interceptor)
+(def ^:api-docs/hide clear-global-interceptor re-frame.core/clear-global-interceptor)
+(def ^:api-docs/hide ->interceptor re-frame.core/->interceptor)
+(def ^:api-docs/hide get-coeffect re-frame.core/get-coeffect)
+(def ^:api-docs/hide assoc-coeffect re-frame.core/assoc-coeffect)
+(def ^:api-docs/hide get-effect re-frame.core/get-effect)
+(def ^:api-docs/hide assoc-effect re-frame.core/assoc-effect)
+(def ^:api-docs/hide enqueue re-frame.core/enqueue)
+(def ^:api-docs/hide set-loggers! re-frame.core/set-loggers!)
+(def ^:api-docs/hide console re-frame.core/console)
+(def ^:api-docs/hide make-restore-fn re-frame.core/make-restore-fn)
+(def ^:api-docs/hide purge-event-queue re-frame.core/purge-event-queue)
+(def ^:api-docs/hide add-post-event-callback re-frame.core/add-post-event-callback)
+(def ^:api-docs/hide remove-post-event-callback re-frame.core/remove-post-event-callback)
+(def ^:api-docs/hide register-handler re-frame.core/register-handler)
+(def ^:api-docs/hide register-sub re-frame.core/register-sub)
