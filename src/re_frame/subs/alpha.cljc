@@ -54,18 +54,21 @@
          (reset! rid (reagent-id r))
          r)))))
 
+(defn compat [q]
+  (if (map? q)
+    (-> (or (:re-frame/query-v q) [(q/id q)])
+        (vary-meta assoc
+                   :re-frame/lifecycle (q/lifecycle q)
+                   :re-frame/query-m q))
+    q))
+
 (defmethod reg :legacy-sub [_ id & args]
   (let [[inputs-fn computation-fn] (apply sugar id sub q/query? args)]
     (register-handler
      :sub
      id
      (fn subs-handler-fn [_ q]
-       (let [q (if (map? q)
-                 (-> (or (::rf/query-v q) [(q/id q)])
-                     (vary-meta assoc
-                                ::rf/lifecycle (q/lifecycle q)
-                                ::rf/query-m q))
-                 q)
+       (let [q (compat q)
              subscriptions (inputs-fn q nil)
              rid (atom nil)
              r (make-reaction

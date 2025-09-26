@@ -15,6 +15,7 @@
    [re-frame.loggers          :as loggers]
    [re-frame.db               :as db]
    [re-frame.interop          :as interop]
+   [re-frame.query.alpha      :as q]
    [clojure.set               :as set]
    [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
                                                            fx-handler->interceptor
@@ -751,7 +752,11 @@ A `flow` is a map, specifying one dataflow node. It has keys:
 
 (defn ^:api-docs/hide reg-sub-raw
   [query-id handler-fn]
-  (registrar/register-handler subs/kind query-id handler-fn))
+  (registrar/register-handler
+   subs/kind
+   query-id
+   (fn raw-subs-handler-fn [db q]
+     (handler-fn db (subs.alpha/compat q)))))
 
 (defn ^:api-docs/hide clear-subscription-cache!
   []
