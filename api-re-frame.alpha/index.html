@@ -11,7 +11,7 @@
         <meta name="description" content="Derived data, flowing">
       
       
-        <link rel="canonical" href="https://day8.github.io/re-frame/reagent/">
+        <link rel="canonical" href="https://day8.github.io/re-frame/api-re-frame.alpha/">
       
       
         <meta name="author" content="Mike Thompson">
@@ -21,7 +21,7 @@
     
     
     
-    <title>Reagent</title>
+    <title>re-frame.alpha</title>
     
 
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#atoms" class="md-skip">
+        <a href="#re-framealpha" class="md-skip">
           Skip to content
         </a>
       
@@ -135,7 +135,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              Reagent
+              re-frame.alpha
             
           </span>
         </div>
@@ -203,14 +203,16 @@
         
           
 
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
   <li class="md-tabs__item">
     
-      <a href=".." class="md-tabs__link md-tabs__link--active">
+      <a href=".." class="md-tabs__link">
         Home
       </a>
     
@@ -248,7 +250,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../api-intro/" class="md-tabs__link">
+        <a href="../api-intro/" class="md-tabs__link md-tabs__link--active">
           API
         </a>
       
@@ -1194,10 +1196,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
     
     <label class="md-nav__link" for="nav-4">
       API
@@ -1255,11 +1259,147 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        re-frame.alpha
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="re-frame.alpha" class="md-nav__link md-nav__link--active">
       re-frame.alpha
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#registration" class="md-nav__link">
+    Registration
+  </a>
+  
+    <nav class="md-nav" aria-label="Registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reg" class="md-nav__link">
+    reg
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subscription" class="md-nav__link">
+    Subscription
+  </a>
+  
+    <nav class="md-nav" aria-label="Subscription">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sub" class="md-nav__link">
+    sub
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flows" class="md-nav__link">
+    Flows
+  </a>
+  
+    <nav class="md-nav" aria-label="Flows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reg-flow" class="md-nav__link">
+    reg-flow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear-flow" class="md-nav__link">
+    clear-flow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-flow" class="md-nav__link">
+    get-flow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flow-" class="md-nav__link">
+    flow&lt;-
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#legacy-compatibility" class="md-nav__link">
+    Legacy Compatibility
+  </a>
+  
+    <nav class="md-nav" aria-label="Legacy Compatibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    subscribe
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -1474,6 +1614,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -1484,9 +1626,103 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#atoms" class="md-nav__link">
-    Atoms
+  <a href="#registration" class="md-nav__link">
+    Registration
   </a>
+  
+    <nav class="md-nav" aria-label="Registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reg" class="md-nav__link">
+    reg
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subscription" class="md-nav__link">
+    Subscription
+  </a>
+  
+    <nav class="md-nav" aria-label="Subscription">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sub" class="md-nav__link">
+    sub
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flows" class="md-nav__link">
+    Flows
+  </a>
+  
+    <nav class="md-nav" aria-label="Flows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reg-flow" class="md-nav__link">
+    reg-flow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear-flow" class="md-nav__link">
+    clear-flow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-flow" class="md-nav__link">
+    get-flow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flow-" class="md-nav__link">
+    flow&lt;-
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#legacy-compatibility" class="md-nav__link">
+    Legacy Compatibility
+  </a>
+  
+    <nav class="md-nav" aria-label="Legacy Compatibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    subscribe
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1502,7 +1738,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/day8/re-frame/edit/master/docs/reagent.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/day8/re-frame/edit/master/docs/api-re-frame.alpha.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -1510,66 +1746,491 @@
                   
                 
                 
-                  <h1>Reagent</h1>
-                
-                <p>Clojurescript is ergonomic, stable, functional language</p>
-<p>Look at the front page of https://www.learnreframe.com/</p>
-<div class="cljs-showcase">
-(ns simple.core
-  (:require [reagent.dom.client :as rdc]
-            [re-frame.core :as rf]
-            [clojure.string :as str]))
-</div>
+                <h1 id="re-framealpha">re-frame.alpha<a class="headerlink" href="#re-framealpha" title="Permanent link">&para;</a></h1>
+<h2 id="registration">Registration<a class="headerlink" href="#registration" title="Permanent link">&para;</a></h2>
+<h3 id="reg">reg<a class="headerlink" href="#reg" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-clojure">(reg kind &amp; args)</code></pre>
 
-<div class="cm-doc">
-(defn square
-   []
-   [:svg {:width "400" :height "110"}
-     [:rect {:width "300" :height "100"}]])
-</div>
+<p>Registers a handler.</p>
+<p><code>kind</code>: what kind of handler to register. Possible vals:</p>
+<ul>
+<li><code>:sub</code>: runs a subscription query which is a map.</li>
+<li><code>:legacy-sub</code>: runs a subscription query which is a vector.</li>
+<li><code>:sub-lifecycle</code>: creates dataflow nodes, optionally caching them.</li>
+</ul>
+<h4>reg :sub</h4>
+<p><code>(reg :sub query-id signal-fn computation-fn)</code></p>
+<p>Register a <code>signal-fn</code> and a <code>computation-fn</code> for a given <code>query-id</code>.
+<code>computation-fn</code> is a function of <code>[signals query-map]</code>.</p>
+<p>The two functions provide a "mechanism" for creating a node
+in the Signal Graph. When a node of type <code>query-id</code> is needed,
+the two functions can be used to create it.</p>
+<ul>
+<li><code>query-id</code> - typically a namespaced keyword (later used in subscribe).</li>
+<li><code>signal-fn</code> - optional. Returns the input signals required by this kind of node.</li>
+<li><code>computation-fn</code> - computes the value (output) of the node from the input signals and the query.</li>
+</ul>
+<p>Later, during app execution, a call to <code>(sub {:re-frame/q ::greet :name "dave"})</code>
+will trigger the need for a new <code>::greet</code> Signal Graph node (matching the
+query <code>{:re-frame/q ::greet :name "dave"}</code>). Re-frame will look up the
+associated <code>signal-fn</code> and <code>computation-fn</code>, combining them to create the node.</p>
+<p>Just to be clear: calling <code>reg :sub</code> does not immediately create a node.
+It only registers a "mechanism" (the two functions) by which nodes
+can be created later, when a node is bought into existence by the
+use of <code>sub</code>.</p>
+<h5>Declaring the <code>computation-fn</code></h5>
+<p>The last argument to <code>reg</code> must be the actual <code>computation-fn</code>, but the
+full declaration can be done in two ways:</p>
+<ol>
+<li>The standard way:
+A function accepting two arguments, <code>input-values</code> and <code>query</code>:</li>
+</ol>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:query-id
+(fn [input-values query]
+ (:foo input-values)))</code></pre>
 
-<div class="cm-doc">
-[square]
-</div>
+<ol>
+<li>Syntactic sugar:
+The keyword <code>:-&gt;</code>, followed by a 1-arity <code>computation-function</code>:</li>
+</ol>
+<p><code>(reg-sub :query-id :-&gt; computation-fn)</code></p>
+<p>This sugary variation allows you to pass a function that will expect only one argument,
+namely the <code>input-values</code>, and entirely omit the <code>query</code>. A typical <code>computation-function</code>
+expects two arguments, which can cause unfortunate results when attempting to use
+clojure standard library functions, or other functions, in a functional manner.</p>
+<p>For example, a significant number of subscriptions exist only to get a value
+from the <code>input-values</code>. As shown below, this subscription will simply retrieve
+the value associated with the <code>:foo</code> key in our db:</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:query-id
+(fn [db _] (:foo db))) ;; :&lt;---- boilerplate</code></pre>
 
-<div class="cm-doc">
-(defonce root-container
-  (rdc/create-root (js/document.getElementById "live-app")))
+<p>This is slightly more boilerplate than we might want. 
+Instead, we could use a keyword directly as a function:</p>
+<p><code>(reg-sub :query-id :foo)</code></p>
+<p>However, this could be dangerous. Remember that re-frame passes 
+two arguments to the <code>computation-fn</code>: <code>input-values</code> and <code>query</code>. 
+If the keyword <code>:foo</code> is missing from the <code>input-values</code>, our <code>:foo</code>
+getter will use its second argument as a default value, returning the
+<code>query</code>. That would be nonsense - the query is not the computation.</p>
+<p>In other words, the computation should have no default output.
+To achieve that, we use the token <code>:-&gt;</code>.</p>
+<p><code>(reg-sub :query-id :-&gt; :foo)</code></p>
+<p>This form tells re-frame to pass only one argument to your <code>computation-fn</code>,
+the <code>input-values</code>. Thus, your <code>:foo</code> getter will safely return <code>nil</code>
+when the key is not found.</p>
+<p>Beyond keywords, you can provide any 1-arity function.
+For more complicated use cases, <code>partial</code>, <code>comp</code>, and anonymous functions 
+will work as expected.</p>
+<h5>Declaring the <code>signal-fn</code></h5>
+<p>The argument(s) declared after <code>query-id</code> and before <code>computation-fn</code>
+define the <code>input signals</code> part of the "mechanism". They specify what input values 
+"flow" into the <code>computation-fn</code> (as the 1st argument) when it is called.</p>
+<p>So, there are three ways to declare the input signals.
+But note, the 2nd way, in which a
+<code>signal-fn</code> is explicitly supplied, is the most canonical and
+instructive. The other two are really just sugary variations.</p>
+<p><strong>First Variation</strong>: No input signal function given:</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:query-id
+computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)</code></pre>
 
-(defn mount-ui
-  []
-  (rdc/render root-container [square]))  ;; mount the application's ui
+<p>the node's input signal defaults to <code>app-db</code>
+and, as a result, the value within <code>app-db</code> (a map) is
+given as the 1st argument when <code>a-computation-fn</code> is called.</p>
+<p><strong>Second Variation</strong>: A signal function is explicitly supplied.</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:query-id
+signal-fn     ;; &lt;-- here
+computation-fn)</code></pre>
 
-(mount-ui)
-</div>
+<p>This is the most canonical and instructive of the three variations.</p>
+<p>When a node is created, the <code>signal-fn</code> will be called, returning the input signal(s).
+as either a singleton, if there is only one, or a sequence if there are many,
+or a map with the signals as the values.</p>
+<p>The current values of the returned signals will be supplied as the 1st argument to
+the <code>computation-fn</code> when it is called - and subject to what this <code>signal-fn</code> returns,
+this value will be either a singleton, sequence or map of them (paralleling
+the structure returned by the <code>signal function</code>).</p>
+<p>This example <code>signal function</code> returns a 2-vector of input signals.</p>
+<pre class="highlight"><code class="language-clojure">(fn [query]
+[(sub {:re-frame/q :a})
+ (sub {:re-frame/q :b})])</code></pre>
 
-<div id="live-app">
-  <div class="preload">  
-    The live application should start here in 60 seconds ...
-    <br><br>
-    Doesn't work? Maybe try disabling your adblocker for this site.
+<p>The associated computation function must be written
+to expect a 2-vector of values for its first argument:</p>
+<pre class="highlight"><code class="language-clojure">(fn [[a b] query]  ;; 1st argument is a seq of two values
+...)</code></pre>
 
-  </div>
-</div>
+<p>If, on the other hand, the signal function was simpler and returned a singleton, like this:</p>
+<p><pre class="highlight"><code class="language-clojure">(fn [query]
+(sub {:re-frame/q :a}))   ;; &lt;-- returning a singleton</code></pre>
+then the associated computation function must be written to expect a single value
+as the 1st argument:</p>
+<pre class="highlight"><code class="language-clojure">(fn [a query]    ;; 1st argument is a single value
+...)</code></pre>
 
-<pre class="highlight"><code>(defn square 
-   [colour size]
-   [:div {:style 
-            {:width (str (or size "20") "px")
-             :height (str (or size "20") "px")
-             :display "inline-block"
-             :background-color colour}}])
+<p>Further Note: variation #1 above, in which an <code>signal-fn</code> was not supplied, like this:</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:query-id
+computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)</code></pre>
 
-[:div [square "blue" 40] [square "green"]]</code></pre>
+<p>is the equivalent of using this
+2nd variation and explicitly supplying a <code>signal-fn</code> which returns <code>app-db</code>:</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:query-id
+(fn [_ _] re-frame/app-db)   ;; &lt;-- explicit signal-fn
+a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)</code></pre>
 
-<p>XXX work from </p>
-<h2 id="atoms">Atoms<a class="headerlink" href="#atoms" title="Permanent link">&para;</a></h2>
-<p>Atoms are a clojure language concept. They provide a way to store a mutable value - a value which can change over time. This value in an atom might be an int or a map ... anything. </p>
-<p>You used the function <code>deref</code> to o obtain the value held in an atom. So if <code>a</code> is an atom, 
-then <code>(deref a)</code> will extrct the value. The shorthand is <code>@a</code>. </p>
-<p>You can set the value of an atom with <code>reset!</code>, like this <code>(reset! a :foo)</code>. </p>
-<p>Alternatively, you canuse <code>swap!</code> to update the value in an atom. <code>swap!</code> takes a pure function as an argument which is to perform this <code>update</code>. It is expected to takes the current value in the atom as an argument, and to return the updated value to be put back in the atom. </p>
-<p>For example <code>(swap! a + 5 6)</code> will call the function <code>+</code> with three values:  the value in <code>a</code> and <code>5</code> and <code>6</code>. So this will effectively add 11 to the value currently in <code>a</code> and store that value back into <code>a</code>. </p>
+<p><strong>Third variation</strong>: Syntactic sugar</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:a-b-sub
+:&lt;- [:a-sub]
+:&lt;- [:b-sub]
+(fn [[a b] query]    ;; 1st argument is a seq of two values
+ {:a a :b b}))</code></pre>
+
+<p>This 3rd variation is just syntactic sugar for the 2nd.  Instead of providing an
+<code>signals-fn</code> you provide one or more pairs of <code>:&lt;-</code> and a subscription vector.</p>
+<p>If you supply only one pair, a singleton will be supplied to the computation function,
+as if you had supplied a <code>signal-fn</code> returning only a single value:</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:a-sub
+:&lt;- [:a-sub]
+(fn [a query]      ;; only one pair, so 1st argument is a single value
+ ...))</code></pre>
+
+<p>Syntactic sugar for both the <code>signal-fn</code> and <code>computation-fn</code> can be used together
+and the direction of arrows shows the flow of data and functions. The example from
+directly above is reproduced here:</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:a-b-sub
+:&lt;- [:a-sub]
+:&lt;- [:b-sub]
+:-&gt; (partial zipmap [:a :b]))</code></pre>
+
+<p>For further understanding, read the tutorials, and look at the detailed comments in
+/examples/todomvc/src/subs.cljs.</p>
+<h4>reg :legacy-sub</h4>
+<p><code>(reg :legacy-sub query-id signal computation-fn)</code></p>
+<p>Register a <code>signal-fn</code> and a <code>computation-fn</code> for a given <code>query-id</code>.
+For details, see <code>:sub</code>, above. Compared with <code>:sub</code>, <code>:legacy-sub</code>
+supports a vector as the <code>query</code>, rather than a map. For instance:</p>
+<p><code>(sub [::greet {:name "dave"}])</code></p>
+<p>In this case, <code>::greet</code> is the <code>query-id</code>. Re-frame looks up the associated 
+<code>signal-fn</code> and <code>computation-fn</code> and computes the output of the node,
+creating it if necessary. It passes the entire vector to your <code>computation-fn</code>
+as the second argument.</p>
+<h5>Declaring the <code>computation-fn</code> (:sub-legacy)</h5>
+<p>Legacy subscriptions have another kind of syntactic sugar,
+in addition to those supported by <code>:sub</code>:</p>
+<p>The token <code>:=&gt;</code>, followed by a multi-arity <code>computation-function</code>.</p>
+<p><code>(reg-sub :query-id :=&gt; computation-fn)</code></p>
+<p>A vector <code>query</code> can be broken into two components, <code>[query-id &amp; optional-values]</code>.
+Some subscriptions require the <code>optional-values</code> for extra work within the subscription.
+Canonically, we'd need to destructure these <code>optional-values</code>:</p>
+<pre class="highlight"><code class="language-clojure">(reg-sub
+:query-id
+(fn [db [_ foo]] [db foo]))</code></pre>
+
+<p>Again, we are writing boilerplate just to reach our values. Instead, we might prefer to
+have direct access through a parameter vector like <code>[input-values optional-values]</code>.
+That way, we could provide a multi-arity function directly as our <code>computation-fn</code>:</p>
+<p><code>(reg-sub :query-id :=&gt; vector)  ;; :&lt;---- Could also be (fn [db foo] [db foo])</code></p>
+<h5>Compatibility:</h5>
+<p>Query-maps are a more recent development for re-frame.
+They are implemented in a backwards-compatible way.
+That means you you can pass either a vector or a map to <code>sub</code>,
+regardless of what kind of "mechanism" was registered for
+that <code>query-id</code> (whether via <code>:sub</code> or <code>:legacy-sub</code>).</p>
+<p>If you call <code>(reg :sub ...)</code>, you have registered a <code>computation-fn</code>
+and <code>signal-fn</code> which both expect to be passed a <code>query-map</code>.
+If you then call <code>(sub [...])</code>, passing a <code>query-vector</code>, re-frame will
+transparently adapt your vector, passing an equivalent map to your functions.</p>
+<p>Likewise, invoking a <code>:legacy-sub</code> mechanism with a <code>query-map</code>
+will cause re-frame to pass along an equivalent vector.</p>
+<p>When this conversion is done, re-frame includes the original form
+in the metadata (using either <code>:re-frame/query-m</code> or <code>:re-frame/query-v</code>).</p>
+<p>When converting from a map to a vector, <code>:re-frame/query-v</code> is used, if present.
+Otherwise, the original map is included as the
+second item (commonly thought of as the "params" of that query).</p>
+<p>For instance, the query:</p>
+<p><code>{:re-frame/q ::items}</code></p>
+<p>converts to:</p>
+<pre class="highlight"><code class="language-clojure">^{:re-frame/query-m {:re-frame/q ::items}}
+[::items {:re-frame/q ::items}]</code></pre>
+
+<p>Likewise, the query:</p>
+<p><code>[::items 1 2 3]</code></p>
+<p>converts to:</p>
+<pre class="highlight"><code class="language-clojure">{:re-frame/q         ::items
+:re-frame/lifecycle :safe
+:re-frame/query-v   [::items 1 2 3]}</code></pre>
+
+<p>Note that since <code>1 2 3</code> aren't named, there's no way to represent them
+in the map. Instead, they can be destructured from the <code>:re-frame/query-v</code> key.</p>
+<p>This <code>:re-frame/query-v</code> is also taken into consideration when converting a
+map to a vector. For instance:</p>
+<pre class="highlight"><code class="language-clojure">{:re-frame/q         ::items
+:re-frame/lifecycle :reactive
+:re-frame/query-v   [::items 1 2 3]}</code></pre>
+
+<p>converts to:</p>
+<pre class="highlight"><code class="language-clojure">^{:re-frame/query-m {:re-frame/q         ::items
+                   :re-frame/lifecycle :reactive}}
+[::items 1 2 3]</code></pre>
+
+<h4>reg :sub-lifecycle</h4>
+<p><code>(reg :sub-lifecycle lifecycle-id lifecycle-fn)</code></p>
+<p>A lifecycle-fn controls how dataflow nodes are created,
+sometimes managing their lifecycle within a cache (i.e. the signal graph).</p>
+<p>When <code>sub</code> (or <code>subscribe</code>) is called, re-frame uses information within the <code>query</code>
+to look up and call the associated lifecycle-fn. The lifecycle-fn returns the actual dataflow node.</p>
+<p>It can do other things along the way - primarily, it can make use of a cache. This cache of nodes
+can make a subscription more performant. Instead of creating a node and calculating
+its value every time you call <code>sub</code>, re-frame can look up nodes it has already created,
+along with their previous calculations.</p>
+<p>The <code>lifecycle-id</code> determines which lifecycle-fn a subscription will use.
+When <code>(sub query)</code> is called, re-frame always derives the <code>lifecycle-id</code> from the <code>query</code>:</p>
+<ul>
+<li>Map queries can specify this with a <code>:re-frame/lifecycle</code> key.</li>
+<li>Vector queries can include the <code>:re-frame/lifecycle</code> key in the vector's metadata.</li>
+</ul>
+<p>When a <code>query</code> does not explicitly declare a lifecycle,
+re-frame uses the <code>:safe</code> lifecycle by default.</p>
+<h5>Writing a <code>lifecycle-fn</code></h5>
+<p>Whenever <code>sub</code> is called, re-frame determines the <code>lifecycle-id</code> from the <code>query</code>.
+Then, it calls the associated <code>lifecycle-fn</code>, passing it the <code>query</code>.</p>
+<p>The task of a <code>lifecycle-fn</code> is return the dataflow node necessary to calculate
+the output value for <code>query</code>. Along the way, it can also store the node
+within a cache (a.k.a. the signal graph).</p>
+<p>The <code>re-frame.query</code> namespace provides some helper functions for this:</p>
+<p><strong><code>cached</code></strong>
+Accepts a <code>query</code>.
+Returns the matching dataflow node from the signal graph,
+or <code>nil</code> if it is not found.</p>
+<p><strong><code>handle</code></strong>
+Accepts a <code>query</code>.
+Returns a new dataflow node.</p>
+<p><strong><code>cache!</code></strong>
+Accepts a <code>query</code> and a dataflow node.
+Adds the dataflow node to the signal graph.
+The node can be looked up later, using <code>cached</code>.</p>
+<p><strong><code>clear!</code></strong>
+Accepts a <code>query</code>.
+Removes the associated dataflow-node from the signal graph.</p>
+<h5><code>lifecycle-fn</code> example</h5>
+<p>For demonstration, here is a "sliding" lifecycle-fn which caches the last three queries:</p>
+<pre class="highlight"><code class="language-clojure">(def history (atom []))
+(def size 3)
+(def overflow? #(&gt; (count @history) size))
+(def slide! #(swap! history (comp vec rest)))
+
+(defn sub-sliding [q]
+(if-let [cached-node (q/cached q)]
+  cached-node
+  (let [new-node (q/handle q)]
+    (q/cache! q new-node)
+    (swap! history conj q)
+    (when (overflow?)
+      (q/clear! (first @history))
+      (slide!))
+    new-node)))
+
+(reg :sub-lifecycle :sliding sub-sliding)</code></pre>
+
+<p>You can use your new lifecycle by declaring <code>:re-frame/lifecycle</code>:</p>
+<p><code>(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 1]})</code></p>
+<p>After subscribing to more than three different queries, the sliding behavior will happen,
+clearing some of the corresponding dataflow nodes from the cache.</p>
+<p><pre class="highlight"><code class="language-clojure">(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 2]})
+(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 3]})
+(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 4]}) ;; now [:hi 1] is cleared</code></pre>
+Note: Lifecycles are an alpha feature. Don't expect <code>re-frame.core</code> to work the same way.
+It's totally valid to add metadata to a query, but <code>re-frame.core</code> will ignore it.
+For instance, this subscription creates a dataflow node with the <code>:reactive</code> lifecycle,
+even though you've "declared" something else:</p>
+<p><code>(re-frame.core/subscribe ^{:re-frame/lifecycle :sliding} [:hi 4]})</code></p>
+<p>On the other hand, re-frame.alpha can make use of nodes created by re-frame.core.
+Specifically, the <code>:safe</code> lifecycle also checks for an equivalent query
+in the cache of <code>:reactive</code> nodes.
+That way, you can subscribe to a query using plain old <code>re-frame.core/subscribe</code> within a view function,
+and, elsewhere, subscribe to that same query using <code>re-frame.alpha/sub</code>, without needing to recalculate.</p>
+<h5>Standard lifecycles</h5>
+<p>Re-frame provides these lifecycles. The default lifecycle is <code>:safe</code>.</p>
+<p><strong><code>:no-cache</code></strong> Creates a dataflow node and eagerly computes a subscription's value,
+without storing the node in the signal graph.</p>
+<p>If the subscription depends on other subscriptions, then re-frame will try to dispose them,
+effectively making them <code>:no-cache</code> as well (as long as nothing else depends on them).
+Thus, input signals are also cleared from memory when they aren't needed.</p>
+<p>Note: Technically, if an input subscription has inputs of its own, those won't get cleared from memory.
+In practice, these deps-of-deps will be layer-2 subscriptions,
+which should be simple enough to avoid leaking memory anyway.
+Otherwise, you could write a new lifecycle-fn to recursively cleanup the full dependency tree.</p>
+<p><strong><code>:safe</code></strong> subscribes in a memory-safe way, using the cache when it can,
+and eagerly computing its output when it can't.</p>
+<p>Re-frame uses <code>:safe</code> by default, whenever you use <code>re-frame.alpha/sub</code>
+or <code>re-frame.alpha/subscribe</code> without declaring a lifecycle explicitly.</p>
+<p>There is one exception to this memory-safety, which should be negligible (see <code>:no-cache</code> for details).</p>
+<p>If your dataflow-node is already cached (for instance, by calling <code>sub</code> in the render-fn of a mounted component),
+then <code>:safe</code> will use the cached node, skipping the eager computation and cleanup.</p>
+<p>Re-frame also checks checks the cache for an equivalent node with the <code>:reactive</code> lifecycle.
+If such a node exists, re-frame uses it directly, without re-calculating or touching the cache.</p>
+<p>Consequently:
+When there are no reagent components mounted which depend on the subscription,
+then the subscription will recalculate its output each time it's called,
+even when its inputs are the same.</p>
+<p>But, as long as there are reagent components, then cacheing and deduplication will
+work as normal. In most cases, we expect <code>:safe</code> to be a reasonable tradeoff
+between performance and memory-safety.</p>
+<p><strong><code>:forever</code></strong> Creates a long-lived subscription.
+Re-frame looks up the cached subscription, creating it if necessary.
+The subscription is permanently cached, never cleared. Re-frame eagerly
+runs the subscription on creation, to create its input signals.</p>
+<p>This behavior extends to input signals, making <code>:forever</code> effectively "contagious".
+If the subscription depends on other subscriptions,
+those subscriptions will be permanently stored in the cache,
+despite other mechanisms' attempts to clear them (see <code>:no-cache</code> and <code>:reactive</code>).
+This is because reagent's internals prevent disposal of "watched" reactions, and
+a <code>:forever</code> subscription "watches" its inputs forever.</p>
+<p><strong><code>:reactive</code></strong> Looks up subscription from a cache, creating it if necessary.
+The subscription stays in the cache for as long as one or more reagent
+components depend on it.</p>
+<p>Given a specific <code>query</code>, re-frame stores a set of back-references to
+each reagent component which depends on its dataflow node - in other
+words, each component which called <code>(sub query)</code> within its render
+function. References are added when components call <code>sub</code>, and
+removed when they unmount.  When the last component unmounts, and no
+components depend on the node, then re-frame clears the node.</p>
+<p><code>:reactive</code> is unsafe when called outside a reactive context (in other
+words, not inside a reagent component's render function). Since
+there is no component, there is no way to clear the node. In cases
+where sub is called many times with many different queries, this
+effectively leaks memory. Re-frame prints a warning in this case.</p>
+<p>Note: for more details on reactive context, see https://day8.github.io/re-frame/flows-advanced-topics/#reactive-context</p>
+<h2 id="subscription">Subscription<a class="headerlink" href="#subscription" title="Permanent link">&para;</a></h2>
+<h3 id="sub">sub<a class="headerlink" href="#sub" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-clojure">(sub q)</code></pre>
+
+<pre class="highlight"><code class="language-clojure">(sub id q)</code></pre>
+
+<p>Given a <code>query</code>, returns a Reagent <code>reaction</code> which will, over
+time, reactively deliver a stream of values. So, in FRP-ish terms,
+it returns a <code>Signal</code>.</p>
+<p>To obtain the current value from the Signal, it must be dereferenced:</p>
+<pre class="highlight"><code>(let [signal (sub {:re-frame/q ::items})
+      value  (deref signal)]     ;; could be written as @signal
+  ...)
+</code></pre>
+
+<p>which is typically written tersely as simple:</p>
+<pre class="highlight"><code>(let [items  @(sub {:re-frame/q ::items})]
+  ...)
+</code></pre>
+
+<p><code>query</code> is a map containing:</p>
+<ul>
+<li><code>:re-frame/q</code>:         Required. Names the query. Typically a namespaced keyword.</li>
+<li><code>:re-frame/lifecycle</code>: Optional. See docs for <code>reg :sub-lifecycle</code>.</li>
+</ul>
+<p>The entire <code>query</code> is passed to the subscription handler. This means you can use
+additional keys to parameterise the query it performs.</p>
+<p><strong>Example Usage</strong>:</p>
+<p><pre class="highlight"><code class="language-clojure">(require '[re-frame :as-alias rf])
+(sub {::rf/q         ::items
+    ::rf/lifecycle ::rf/reactive
+    :color         "blue"
+    :size          :small})</code></pre>
+Note: for any given call to <code>sub there must have been a previous call
+to</code>reg<code>, registering the query handler (functions) associated with</code>query-id`.</p>
+<p><strong>Flows</strong></p>
+<p>Flows have their own lifecycle, and you don't need to provide an <code>::rf/lifecycle</code> key.
+To subscribe to a flow, simply call:</p>
+<pre class="highlight"><code>(sub :flow {:id :your-flow-id})
+</code></pre>
+
+<p><strong>Legacy support</strong></p>
+<p><code>dyn-v</code> is not supported.</p>
+<p>See also: <code>reg</code></p>
+<h2 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h2>
+<h3 id="reg-flow">reg-flow<a class="headerlink" href="#reg-flow" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-clojure">(reg-flow flow)</code></pre>
+
+<pre class="highlight"><code class="language-clojure">(reg-flow id flow)</code></pre>
+
+<p>Registers a <code>flow</code>.</p>
+<p>A full tutorial can be found at https://day8.github.io/re-frame/Flows</p>
+<p>Re-frame uses the flow registry to execute a dataflow graph.</p>
+<p>On every event, re-frame runs each registered <code>flow</code>.
+It resolves the flow's inputs, determines if the flow is live, and if so,
+evaluates the output function, putting the result in <code>app-db</code> at the <code>:path</code>.</p>
+<p>A <code>flow</code> is a map, specifying one dataflow node. It has keys:</p>
+<p><strong><code>:id</code></strong>: uniquely identifies the node.</p>
+<ul>
+<li>When a <code>flow</code> is already registered with the same <code>:id</code>, replaces it.</li>
+<li>You can provide an <code>id</code> argument to <code>reg-flow</code>, instead of including <code>:id</code>.</li>
+</ul>
+<p><strong><code>:inputs</code></strong>: a map of <code>keyword-&gt;input</code>. An input can be one of two types:</p>
+<ul>
+<li>vector: expresses a path in <code>app-db</code>.</li>
+<li>map: expresses the output of another flow, identified by a <code>::re-frame.flow.alpha/flow&lt;-</code> key.
+Call the <code>re-frame.alpha/flow&lt;-</code> function to construct this map.</li>
+</ul>
+<p><strong><code>:output</code></strong>: a function of the <code>keyword-&gt;resolved-input</code> map returning the output value of the node.</p>
+<ul>
+<li>A resolved vector input is the value in <code>app-db</code> at that path.</li>
+<li>A resolved <code>flow&lt;-</code> input is the value in <code>app-db</code> at the path of the named flow.</li>
+<li>Re-frame topologically sorts the flows, to make sure any input flows always run first.</li>
+<li>Re-frame throws an error at registration time if any flow inputs form a cycle.</li>
+</ul>
+<p><strong><code>:path</code></strong>: specifies the <code>app-db</code> location where the <code>:output</code> value is stored.</p>
+<ul>
+<li><code>:live-inputs</code>: a map of <code>keyword-&gt;live-input</code> for the <code>:live?</code> function.</li>
+<li>A <code>live-input</code> works the same way an <code>input</code>.</li>
+<li><code>:live?</code>: a predicate function of the <code>keyword-&gt;resolved-live-input</code> map,
+  returning the current lifecycle state of the node.</li>
+</ul>
+<p><strong><code>:cleanup</code></strong>: a function of <code>app-db</code> and the <code>:path</code>.</p>
+<ul>
+<li>Returns a new <code>app-db</code>.</li>
+<li>Runs the first time <code>:live?</code> returns <code>false</code></li>
+<li>Runs when the flow is cleared (see <code>re-frame.alpha/clear-flow</code>).</li>
+</ul>
+<p>The only required key is <code>:id</code>. All others have a default value:</p>
+<ul>
+<li><code>:path</code>: <code>id</code> if <code>id</code> is sequential, otherwise <code>[id]</code>.</li>
+<li><code>:inputs</code>: <code>{}</code></li>
+<li><code>:output</code>: <code>(constantly true)</code></li>
+<li><code>:live?</code>: <code>(constantly true)</code></li>
+<li><code>:live-inputs</code>: <code>{}</code></li>
+<li><code>:cleanup</code>: <code>re-frame.utils/dissoc-in</code></li>
+</ul>
+<h3 id="clear-flow">clear-flow<a class="headerlink" href="#clear-flow" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-clojure">(clear-flow)</code></pre>
+
+<pre class="highlight"><code class="language-clojure">(clear-flow id)</code></pre>
+
+<p>Arguments: <code>[id]</code>
+Deregisters a flow, identified by <code>id</code>.</p>
+<p>Later, re-frame will update <code>app-db</code> with the flow's <code>:cleanup</code> function.</p>
+<p>If <code>clear-flow</code> is invoked by the <code>:clear-flow</code> effect, this cleanup happens in the <code>:after</code> phase of the same event returning <code>:clear-flow</code>.</p>
+<p>If you call <code>clear-flow</code> directly, cleanup will happen on the next event.</p>
+<h3 id="get-flow">get-flow<a class="headerlink" href="#get-flow" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-clojure">(get-flow db id)</code></pre>
+
+<p>Returns the value within <code>db</code> at the <code>:path</code> given by the registered flow
+with an <code>:id</code> key equal to <code>id</code>, if it exists. Otherwise, returns nil.</p>
+<h3 id="flow-">flow&lt;-<a class="headerlink" href="#flow-" title="Permanent link">&para;</a></h3>
+<pre class="highlight"><code class="language-clojure">(flow&lt;- id)</code></pre>
+
+<p>Creates an input from a flow id.</p>
+<h2 id="legacy-compatibility">Legacy Compatibility<a class="headerlink" href="#legacy-compatibility" title="Permanent link">&para;</a></h2>
+<h3 id="subscribe">subscribe<a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h3>
+<p>Equivalent to <code>sub</code>.</p>
+<p>Uses a different the <code>:safe</code> lifecyle by default, compared with <code>re-frame.core</code>, which uses <code>:reactive</code>.</p>
+<p>Flows each have their own lifecycle and are not cached using the same mechanism as subscriptions.
+Call <code>(subscribe [:flow {:id :your-flow-id}])</code> to subscribe to a flow.</p>
                 
               
               
@@ -1610,6 +2271,58 @@ then <code>(deref a)</code> will extrct the value. The shorthand is <code>@a</co
 <footer class="md-footer">
 
   <!-- Link to previous and/or next page -->
+  
+    <div class="md-footer-nav">
+      <nav
+        class="md-footer-nav__inner md-grid"
+        aria-label="Footer"
+      >
+
+        <!-- Link to previous page -->
+        
+          <a
+            href="../api-re-frame.core/"
+            title="re-frame.core"
+            class="md-footer-nav__link md-footer-nav__link--prev"
+            rel="prev"
+          >
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                re-frame.core
+              </div>
+            </div>
+          </a>
+        
+
+        <!-- Link to next page -->
+        
+          <a
+            href="../releases/2024/"
+            title="2024"
+            class="md-footer-nav__link md-footer-nav__link--next"
+            rel="next"
+          >
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                2024
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
 
   <!-- Further information -->
