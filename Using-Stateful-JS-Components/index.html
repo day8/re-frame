@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1053,6 +1055,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1323,7 +1337,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1335,7 +1349,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1655,41 +1669,39 @@ thrill of that forbidden fruit. </p>
 </ul>
 <p>The pattern involves the outer component, which sources data, supplying this data to the inner component <strong>via props</strong>. </p>
 <h2 id="example-using-google-maps">Example Using Google Maps<a class="headerlink" href="#example-using-google-maps" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">gmap-inner</span> <span class="p">[]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">gmap</span>    <span class="p">(</span><span class="nf">atom</span> <span class="nv">nil</span><span class="p">)</span>
-        <span class="nv">options</span> <span class="p">(</span><span class="nf">clj-&gt;js</span> <span class="p">{</span><span class="s">&quot;zoom&quot;</span> <span class="mi">9</span><span class="p">})</span>
-        <span class="nv">update</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">comp</span><span class="p">]</span>
-                  <span class="p">(</span><span class="k">let </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">latitude</span> <span class="nv">longitude</span><span class="p">]}</span> <span class="p">(</span><span class="nf">reagent/props</span> <span class="nv">comp</span><span class="p">)</span>
-                        <span class="nv">latlng</span> <span class="p">(</span><span class="nf">js/google.maps.LatLng.</span> <span class="nv">latitude</span> <span class="nv">longitude</span><span class="p">)]</span>
-                    <span class="p">(</span><span class="nf">.setPosition</span> <span class="p">(</span><span class="ss">:marker</span> <span class="o">@</span><span class="nv">gmap</span><span class="p">)</span> <span class="nv">latlng</span><span class="p">)</span>
-                    <span class="p">(</span><span class="nf">.panTo</span> <span class="p">(</span><span class="ss">:map</span> <span class="o">@</span><span class="nv">gmap</span><span class="p">)</span> <span class="nv">latlng</span><span class="p">)))]</span>
+<pre class="highlight"><code class="language-clj">(defn gmap-inner []
+  (let [gmap    (atom nil)
+        options (clj-&gt;js {"zoom" 9})
+        update  (fn [comp]
+                  (let [{:keys [latitude longitude]} (reagent/props comp)
+                        latlng (js/google.maps.LatLng. latitude longitude)]
+                    (.setPosition (:marker @gmap) latlng)
+                    (.panTo (:map @gmap) latlng)))]
 
-    <span class="p">(</span><span class="nf">reagent/create-class</span>
-      <span class="p">{</span><span class="ss">:reagent-render</span> <span class="p">(</span><span class="k">fn </span><span class="p">[]</span>
-                         <span class="p">[</span><span class="ss">:div</span>
-                          <span class="p">[</span><span class="ss">:h4</span> <span class="s">&quot;Map&quot;</span><span class="p">]</span>
-                          <span class="p">[</span><span class="ss">:div#map-canvas</span> <span class="p">{</span><span class="ss">:style</span> <span class="p">{</span><span class="ss">:height</span> <span class="s">&quot;400px&quot;</span><span class="p">}}]])</span>
+    (reagent/create-class
+      {:reagent-render (fn []
+                         [:div
+                          [:h4 "Map"]
+                          [:div#map-canvas {:style {:height "400px"}}]])
 
-       <span class="ss">:component-did-mount</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">comp</span><span class="p">]</span>
-                              <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">canvas</span>  <span class="p">(</span><span class="nf">.getElementById</span> <span class="nv">js/document</span> <span class="s">&quot;map-canvas&quot;</span><span class="p">)</span>
-                                    <span class="nv">gm</span>      <span class="p">(</span><span class="nf">js/google.maps.Map.</span> <span class="nv">canvas</span> <span class="nv">options</span><span class="p">)</span>
-                                    <span class="nv">marker</span>  <span class="p">(</span><span class="nf">js/google.maps.Marker.</span> <span class="p">(</span><span class="nf">clj-&gt;js</span> <span class="p">{</span><span class="ss">:map</span> <span class="nv">gm</span> <span class="ss">:title</span> <span class="s">&quot;Drone&quot;</span><span class="p">}))]</span>
-                                <span class="p">(</span><span class="nf">reset!</span> <span class="nv">gmap</span> <span class="p">{</span><span class="ss">:map</span> <span class="nv">gm</span> <span class="ss">:marker</span> <span class="nv">marker</span><span class="p">}))</span>
-                              <span class="p">(</span><span class="nf">update</span> <span class="nv">comp</span><span class="p">))</span>
+       :component-did-mount (fn [comp]
+                              (let [canvas  (.getElementById js/document "map-canvas")
+                                    gm      (js/google.maps.Map. canvas options)
+                                    marker  (js/google.maps.Marker. (clj-&gt;js {:map gm :title "Drone"}))]
+                                (reset! gmap {:map gm :marker marker}))
+                              (update comp))
 
-       <span class="ss">:component-did-update</span> <span class="nv">update</span>
-       <span class="ss">:display-name</span> <span class="s">&quot;gmap-inner&quot;</span><span class="p">})))</span>
+       :component-did-update update
+       :display-name "gmap-inner"})))
 
 
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">gmap-outer</span> <span class="p">[]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">pos</span> <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:current-position</span><span class="p">])]</span>   <span class="c1">;; obtain the data</span>
-    <span class="p">(</span><span class="k">fn </span><span class="p">[]</span>
-      <span class="c1">;; Note: @pos is a map here, so it gets passed as props.</span>
-      <span class="c1">;; Non-props values can be accessed via (reagent/argv comp)</span>
-      <span class="p">[</span><span class="nv">gmap-inner</span> <span class="o">@</span><span class="nv">pos</span><span class="p">])))</span>
-</code></pre></div>
-
+(defn gmap-outer []
+  (let [pos (subscribe [:current-position])]   ;; obtain the data
+    (fn []
+      ;; Note: @pos is a map here, so it gets passed as props.
+      ;; Non-props values can be accessed via (reagent/argv comp)
+      [gmap-inner @pos])))</code></pre>
 
 <p>Notes:</p>
 <ul>
@@ -1872,12 +1884,16 @@ is the first time it was written up.</p>
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

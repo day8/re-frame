@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1089,6 +1091,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1359,7 +1373,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1371,7 +1385,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1747,16 +1761,13 @@ collectively refer to them as the Component's <strong>I/O requirements</strong>.
 <p>You can create them from base HTML elements such as <code>&lt;input&gt;</code> or <code>&lt;select&gt;</code>
 using only <strong>Reagent</strong> (no re-frame) and,
 for that reason, they are referred to as <code>Reagent Components</code>. </p>
-<p>Here's an example:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">simple-text-input</span>
-  <span class="p">[</span><span class="nv">value</span> <span class="nv">callback-fn</span><span class="p">]</span>
-  <span class="p">[</span><span class="ss">:input</span> 
-   <span class="p">{</span><span class="ss">:type</span>      <span class="s">&quot;text&quot;</span>
-    <span class="ss">:value</span>     <span class="nv">value</span>                                     <span class="c1">;; initial value</span>
-    <span class="ss">:on-change</span> <span class="o">#</span><span class="p">(</span><span class="nf">callback-fn</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">%</span> <span class="nv">.-target</span> <span class="nv">.-value</span><span class="p">))}])</span> <span class="c1">;; callback with value</span>
-</code></pre></div>
-
-
+<p>Here's an example:
+<pre class="highlight"><code class="language-clj">(defn simple-text-input
+  [value callback-fn]
+  [:input 
+   {:type      "text"
+    :value     value                                     ;; initial value
+    :on-change #(callback-fn (-&gt; % .-target .-value))}]) ;; callback with value</code></pre></p>
 <p>You'll notice that both of this Component's <strong>I/O requirements</strong> are provided via two positional arguments:</p>
 <ol>
 <li>a value (input)</li>
@@ -1781,22 +1792,20 @@ because of how it satisfies its <strong>I/O requirements</strong>:</p>
 (not just a single, simple value) and they might involve a "complex of widgets"
 with a cohesive purpose.</p>
 <p>Here's an example:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">customer-names</span>
-  <span class="p">[]</span>                                                   
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">customer</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:customer</span><span class="p">])]</span>              <span class="c1">;; obtain the customer entity</span>
-    <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Name:&quot;</span>
+<pre class="highlight"><code class="language-clj">(defn customer-names
+  []                                                   
+  (let [customer @(subscribe [:customer])]              ;; obtain the customer entity
+    [:div "Name:"
 
-      <span class="c1">; first name</span>
-      <span class="p">[</span><span class="nv">simple-text-input</span> 
-        <span class="p">(</span><span class="ss">:first-name</span> <span class="nv">customer</span><span class="p">)</span>                          <span class="c1">;; first-name from entity</span>
-        <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:change-customer</span> <span class="ss">:first-name</span> <span class="nv">%</span><span class="p">])]</span>   <span class="c1">;; first name changed</span>
+      ; first name
+      [simple-text-input 
+        (:first-name customer)                          ;; first-name from entity
+        #(dispatch [:change-customer :first-name %])]   ;; first name changed
 
-       <span class="c1">;; last name</span>
-       <span class="p">[</span><span class="nv">simple-text-input</span> 
-        <span class="p">(</span><span class="ss">:last-name</span> <span class="nv">customer</span><span class="p">)</span>                           <span class="c1">;; last-name from entity</span>
-        <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:change-customer</span> <span class="ss">:last-name</span> <span class="nv">%</span><span class="p">])]]))</span> <span class="c1">;; last name changed</span>
-</code></pre></div>
-
+       ;; last name
+       [simple-text-input 
+        (:last-name customer)                           ;; last-name from entity
+        #(dispatch [:change-customer :last-name %])]])) ;; last name changed</code></pre>
 
 <p>Notes:</p>
 <ul>
@@ -1806,9 +1815,7 @@ with a cohesive purpose.</p>
 </ul>
 <h2 id="many-instances">Many Instances<a class="headerlink" href="#many-instances" title="Permanent link">&para;</a></h2>
 <p>But this re-frame Component only works when there is one <code>Customer</code> - you'll notice it contained the code:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:customer</span><span class="p">])</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(subscribe [:customer])</code></pre>
 
 <p>What if our application has many <code>Customers</code>? We'd want a Component that can represent 
 any one of them, or we might need to render many Customers in the UI at once
@@ -1825,24 +1832,21 @@ to the <code>value</code> representing <code>A</code>. And any events it dispatc
 <li>the subscription handler will use this <code>identity</code> to obtain the entity's value</li>
 <li>likewise, when events are <code>dispatched</code>, they too will include <code>identity</code>, so the <code>event handler</code> knows which entity to modify</li>
 </ul>
-<p>Here's the rewrite which implements this method:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">customer-names</span>
-  <span class="p">[</span><span class="nv">id</span><span class="p">]</span>                                                  <span class="c1">;; customer `id` as argument</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">customer</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:customer</span> <span class="nv">id</span><span class="p">])]</span>           <span class="c1">;; obtain the value using `id`</span>
-    <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Name:&quot;</span>
+<p>Here's the rewrite which implements this method:
+<pre class="highlight"><code class="language-clj">(defn customer-names
+  [id]                                                  ;; customer `id` as argument
+  (let [customer @(subscribe [:customer id])]           ;; obtain the value using `id`
+    [:div "Name:"
 
-      <span class="c1">; first name</span>
-      <span class="p">[</span><span class="nv">simple-text-input</span> 
-        <span class="p">(</span><span class="ss">:first-name</span> <span class="nv">customer</span><span class="p">)</span>                             
-        <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:change-customer</span> <span class="nv">id</span> <span class="ss">:first-name</span> <span class="nv">%</span><span class="p">])]</span>   <span class="c1">;;  include `id`</span>
+      ; first name
+      [simple-text-input 
+        (:first-name customer)                             
+        #(dispatch [:change-customer id :first-name %])]   ;;  include `id`
 
-       <span class="c1">;; last name</span>
-       <span class="p">[</span><span class="nv">simple-text-input</span> 
-        <span class="p">(</span><span class="ss">:last-name</span> <span class="nv">customer</span><span class="p">)</span>                              
-        <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:change-customer</span> <span class="nv">id</span> <span class="ss">:last-name</span> <span class="nv">%</span><span class="p">])]]))</span> <span class="c1">;; include `id`</span>
-</code></pre></div>
-
-
+       ;; last name
+       [simple-text-input 
+        (:last-name customer)                              
+        #(dispatch [:change-customer id :last-name %])]])) ;; include `id`</code></pre></p>
 <h2 id="what-is-identity">What Is Identity?<a class="headerlink" href="#what-is-identity" title="Permanent link">&para;</a></h2>
 <p>An <code>identity</code> distinguishes one entity from
 another - it is something that distinguishes the entity <code>A</code> from entity <code>B</code>. 
@@ -1852,12 +1856,9 @@ In a different technology context, it might be called "a pointer"
 and, consequently, one reliable <code>identity</code> is the  <strong>path</strong> to that
 entity's location within  <code>app-db</code>.  Such paths are vectors - paths are data. They are like a pointer to a place within <code>app-db</code>.</p>
 <p>So, the <code>identity</code> for entity <code>A</code> could be the path vector 
-to <code>A</code>'s location, for example <code>[:entities :customers 123]</code>.  In effect, if you did:</p>
-<div class="codehilite"><pre><span></span><code>   <span class="p">(</span><span class="nf">get-in</span> <span class="nv">db</span> <span class="p">[</span><span class="ss">:entities</span> <span class="ss">:customers</span> <span class="mi">123</span><span class="p">])</span>
-</code></pre></div>
-
-
-<p>you would get the entity. And the <code>identity</code> for <code>B</code> might be 
+to <code>A</code>'s location, for example <code>[:entities :customers 123]</code>.  In effect, if you did:
+<pre class="highlight"><code class="language-clj">   (get-in db [:entities :customers 123])</code></pre>
+you would get the entity. And the <code>identity</code> for <code>B</code> might be 
 the same other than for the last element, <code>[:entities :customers 456]</code>. In this fictional 
 scenario, the entities <code>A</code> and <code>B</code> are both stored in a map the location <code>[:entities :customers]</code> within <code>app-db</code>,
 but you would access them via different keys in that map (<code>123</code> vs <code>456</code>).</p>
@@ -1867,15 +1868,12 @@ subscription handlers and event handlers, so it doesn't have to be provided, and
 the path (a key in the map at that location) is needed to distinguish two identities.</p>
 <p>So, in summary, an <code>identity</code> is usually a path or a path segment.</p>
 <h2 id="using-identity">Using Identity<a class="headerlink" href="#using-identity" title="Permanent link">&para;</a></h2>
-<p>Here's how we could use our reusable Component multiple times on one page to show many customers:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">customer-list</span>
-  <span class="p">[]</span>
-  <span class="p">[</span><span class="ss">:div</span>
-   <span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">id</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:all-customer-ids</span><span class="p">])]</span>
-     <span class="o">^</span><span class="p">{</span><span class="ss">:key</span> <span class="nv">id</span><span class="p">}</span> <span class="p">[</span><span class="nv">customer-names</span> <span class="nv">id</span><span class="p">])])</span> 
-</code></pre></div>
-
-
+<p>Here's how we could use our reusable Component multiple times on one page to show many customers:
+<pre class="highlight"><code class="language-clj">(defn customer-list
+  []
+  [:div
+   (for [id @(subscribe [:all-customer-ids])]
+     ^{:key id} [customer-names id])]) </code></pre></p>
 <p>Notice that <code>id</code> is provided for each instance (see the code <code>[customer-names id]</code>). That's the entity identity.</p>
 <h2 id="multiple-identities">Multiple Identities<a class="headerlink" href="#multiple-identities" title="Permanent link">&para;</a></h2>
 <p>Sometimes we need to provide more than one <code>identity</code> to a Component.</p>
@@ -1916,22 +1914,20 @@ packaged up and put in your library if you want to reuse a Component across mult
 <p>Because a reusable <code>re-frame Component</code> has three parts, there is another level of abstraction possible.  </p>
 <p>Until now, I've said that a <code>re-frame Component</code> is defined by its use of <code>subscribe</code> and <code>dispatch</code>, but maybe it doesn't have to be that way. </p>
 <p>Here is a rewrite of that earlier Component:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">customer-names</span>
-  <span class="p">[</span><span class="nv">id</span> <span class="nv">get-customer-fn</span> <span class="nv">cust_change-fn</span><span class="p">]</span>       
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">customer</span> <span class="p">(</span><span class="nf">get-customer-fn</span> <span class="nv">id</span><span class="p">)]</span>      <span class="c1">;; obtain the value</span>
-    <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Name:&quot;</span>
+<pre class="highlight"><code class="language-Clojure">(defn customer-names
+  [id get-customer-fn cust_change-fn]       
+  (let [customer (get-customer-fn id)]      ;; obtain the value
+    [:div "Name:"
 
-      <span class="c1">;; first name</span>
-      <span class="p">[</span><span class="nv">simple-text-input</span> 
-        <span class="p">(</span><span class="ss">:first-name</span> <span class="nv">customer</span><span class="p">)</span>                <span class="c1">;; obtain first-name from the entity</span>
-        <span class="o">#</span><span class="p">(</span><span class="nf">cust_change-fn</span> <span class="nv">id</span> <span class="ss">:first-name</span> <span class="nv">%</span><span class="p">)]</span>   <span class="c1">;; first name has changed</span>
+      ;; first name
+      [simple-text-input 
+        (:first-name customer)                ;; obtain first-name from the entity
+        #(cust_change-fn id :first-name %)]   ;; first name has changed
 
-      <span class="c1">;; last name</span>
-      <span class="p">[</span><span class="nv">simple-text-input</span>
-        <span class="p">(</span><span class="ss">:last-name</span> <span class="nv">customer</span><span class="p">)</span>                 <span class="c1">;; obtain last-name from the entity</span>
-        <span class="o">#</span><span class="p">(</span><span class="nf">cust_change-fn</span> <span class="nv">id</span> <span class="ss">:last-name</span> <span class="nv">%</span><span class="p">)]]))</span> <span class="c1">;; last name has changed</span>
-</code></pre></div>
-
+      ;; last name
+      [simple-text-input
+        (:last-name customer)                 ;; obtain last-name from the entity
+        #(cust_change-fn id :last-name %)]])) ;; last name has changed</code></pre>
 
 <p>Notes:</p>
 <ul>
@@ -1945,18 +1941,15 @@ which looks like a Reagent Component.  Remember that one at the very top?<br />
 The I/O requirements were handled via arguments, which shifts "knowledge" about the 
 application context to the parent. </p>
 </blockquote>
-<p>Let's rewrite <code>customer-list</code> in terms of this new Component:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">customer-list</span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">get-customer</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span><span class="p">]</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:customer</span> <span class="nv">id</span><span class="p">]))</span>
-        <span class="nv">put-customer</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">field</span> <span class="nv">val</span><span class="p">]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:cust-change</span> <span class="nv">id</span> <span class="nv">field</span> <span class="nv">val</span><span class="p">]))])</span>
-  <span class="p">[</span><span class="ss">:div</span>
-   <span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">id</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:all-customer-ids</span><span class="p">])]</span>
-     <span class="o">^</span><span class="p">{</span><span class="ss">:key</span> <span class="nv">id</span><span class="p">}</span> <span class="p">[</span><span class="nv">customer-names</span> <span class="nv">id</span> <span class="nv">get-customer</span> <span class="nv">put-customer</span><span class="p">])])</span>
-</code></pre></div>
-
-
-<p>Notes:</p>
+<p>Let's rewrite <code>customer-list</code> in terms of this new Component:
+<pre class="highlight"><code class="language-Clojure">(defn customer-list
+  []
+  (let [get-customer (fn [id] @(subscribe [:customer id]))
+        put-customer (fn [id field val] (dispatch [:cust-change id field val]))])
+  [:div
+   (for [id @(subscribe [:all-customer-ids])]
+     ^{:key id} [customer-names id get-customer put-customer])])</code></pre>
+Notes:</p>
 <ul>
 <li>we create <code>I/O functions</code> which wrap <code>subscribe</code> and <code>dispatch</code></li>
 <li>these two functions are passed into the sub-component as arguments</li>
@@ -2149,12 +2142,16 @@ a process which starts off looking simple enough but which soon envelops your ar
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

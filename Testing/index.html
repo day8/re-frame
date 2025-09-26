@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1093,6 +1095,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1363,7 +1377,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1375,7 +1389,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1753,19 +1767,15 @@ tutorial.  Every unittest has 3 steps:</p>
 <h2 id="exposing-event-handlers-for-test">Exposing Event Handlers For Test<a class="headerlink" href="#exposing-event-handlers-for-test" title="Permanent link">&para;</a></h2>
 <p>Event Handlers are pure functions which should make them easy to test, right?</p>
 <p>First, create a named event handler using <code>defn</code> like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">select-triangle</span>
-  <span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">triangle-id</span><span class="p">]]</span>
-  <span class="nv">...</span> <span class="nv">return</span> <span class="nv">a</span> <span class="nv">modified</span> <span class="nv">version</span> <span class="nv">of</span> <span class="nv">db</span><span class="p">)</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(defn select-triangle
+  [db [_ triangle-id]]
+  ... return a modified version of db)</code></pre>
 
 <p>You'd register this handler in a separate step:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>     <span class="c1">;; this is a &quot;-db&quot; event handler, not &quot;-fx&quot;</span>
-  <span class="ss">:select-triangle</span>
-  <span class="p">[</span><span class="nv">some-interceptors</span><span class="p">]</span>
-  <span class="nv">select-triangle</span><span class="p">)</span>    <span class="c1">;; &lt;--- defn above. don&#39;t use an annonomous fn</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db     ;; this is a "-db" event handler, not "-fx"
+  :select-triangle
+  [some-interceptors]
+  select-triangle)    ;; &lt;--- defn above. don't use an annonomous fn</code></pre>
 
 <p>This arrangement means the event handler function
 <code>select-triangle</code> is readily available to be unittested.</p>
@@ -1776,19 +1786,17 @@ tutorial.  Every unittest has 3 steps:</p>
 <p><code>db</code> is a map of a certain structure, so one way would be to simply <code>assoc</code> values
 into a map at certain paths to simulate a real-world <code>db</code> value or, even easier, just use
 a map literal, like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">;; a test</span>
-<span class="p">(</span><span class="k">let </span><span class="p">[</span>
-      <span class="c1">;; setup - create db and event</span>
-      <span class="nv">db</span>      <span class="p">{</span><span class="ss">:some</span> <span class="mi">42</span>  <span class="ss">:thing</span> <span class="s">&quot;hello&quot;</span><span class="p">}</span>   <span class="c1">; a literal</span>
-      <span class="nv">event</span>   <span class="p">[</span><span class="ss">:select-triangle</span> <span class="ss">:other</span> <span class="ss">:event</span> <span class="ss">:args</span><span class="p">]</span>
+<pre class="highlight"><code class="language-clj">;; a test
+(let [
+      ;; setup - create db and event
+      db      {:some 42  :thing "hello"}   ; a literal
+      event   [:select-triangle :other :event :args]
 
-      <span class="c1">;; execute</span>
-      <span class="nv">result-db</span> <span class="p">(</span><span class="nf">select-triange</span> <span class="nv">db</span> <span class="nv">event</span><span class="p">)]</span>
+      ;; execute
+      result-db (select-triange db event)]
 
-      <span class="c1">;; validate that result-db is correct)</span>
-      <span class="p">(</span><span class="nf">is</span> <span class="nv">...</span><span class="p">)</span>
-</code></pre></div>
-
+      ;; validate that result-db is correct)
+      (is ...)</code></pre>
 
 <p>This certainly works in theory, but in practice,
 unless we are careful, constructing the <code>db</code>
@@ -1813,22 +1821,21 @@ of many event handlers running.</p>
 which cumulatively create the required initial state.  Tests then need
 know nothing about the internal structure of that <code>db</code>.</p>
 <p>Like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span>
-      <span class="c1">;; setup - cummulatively build up db</span>
-      <span class="nv">db</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="p">{}</span>    <span class="c1">;; empty db</span>
-             <span class="p">(</span><span class="nf">initialise-db</span> <span class="p">[</span><span class="ss">:initialise-db</span><span class="p">])</span>   <span class="c1">;; each event handler expects db and event</span>
-             <span class="p">(</span><span class="nf">clear-panel</span>   <span class="p">[</span><span class="ss">:clear-panel</span><span class="p">])</span>
-             <span class="p">(</span><span class="nf">draw-triangle</span> <span class="p">[</span><span class="ss">:draw-triangle</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]))</span>
+<pre class="highlight"><code class="language-clj">(let [
+      ;; setup - cummulatively build up db
+      db (-&gt; {}    ;; empty db
+             (initialise-db [:initialise-db])   ;; each event handler expects db and event
+             (clear-panel   [:clear-panel])
+             (draw-triangle [:draw-triangle 1 2 3]))
 
-      <span class="nv">event</span>  <span class="p">[</span><span class="ss">:select-triange</span> <span class="ss">:other</span> <span class="ss">:stuff</span><span class="p">]</span>
+      event  [:select-triange :other :stuff]
 
-      <span class="c1">;; now execute the event handler under test</span>
-      <span class="nv">db</span><span class="o">&#39;</span>    <span class="p">(</span><span class="nf">select-triange</span> <span class="nv">db</span> <span class="nv">event</span><span class="p">)]</span>
+      ;; now execute the event handler under test
+      db'    (select-triange db event)]
 
-      <span class="c1">;; validate that db&#39; is correct</span>
-      <span class="p">(</span><span class="nf">is</span> <span class="nv">...</span><span class="p">)</span>
-</code></pre></div>
-
+      ;; validate that db' is correct
+      (is ...)
+</code></pre>
 
 <p>This approach works so long as all the event handlers are
 of the <code>-db</code> kind, but the threading gets a little messy when some event
@@ -1842,18 +1849,16 @@ in the general case.</p>
 which would put <code>app-db</code> into the right state.</p>
 <p>Except, we'd have to use <code>dispatch-sync</code> rather <code>dispatch</code> to
 force immediate handling of events, rather than queuing.</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">;; setup - cummulatively build up db</span>
-<span class="p">(</span><span class="nf">dispatch-sync</span> <span class="p">[</span><span class="ss">:initialise-db</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">dispatch-sync</span> <span class="p">[</span><span class="ss">:clear-panel</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">dispatch-sync</span> <span class="p">[</span><span class="ss">:draw-triangle</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+<pre class="highlight"><code class="language-clj">;; setup - cummulatively build up db
+(dispatch-sync [:initialise-db])
+(dispatch-sync [:clear-panel])
+(dispatch-sync [:draw-triangle 1 2 3])
 
-<span class="c1">;; execute</span>
-<span class="p">(</span><span class="nf">dispatch-sync</span>  <span class="p">[</span><span class="ss">:select-triange</span> <span class="ss">:other</span> <span class="ss">:stuff</span><span class="p">])</span>
+;; execute
+(dispatch-sync  [:select-triange :other :stuff])
 
-<span class="c1">;; validate that the value in &#39;app-db&#39; is correct</span>
-<span class="c1">;; perhaps with subscriptions</span>
-</code></pre></div>
-
+;; validate that the value in 'app-db' is correct
+;; perhaps with subscriptions</code></pre>
 
 <p>Notes:</p>
 <ol>
@@ -1872,44 +1877,39 @@ part is the unittest "setup" where we need to establish an initial value for <co
 <h2 id="subscription-handlers">Subscription Handlers<a class="headerlink" href="#subscription-handlers" title="Permanent link">&para;</a></h2>
 <p>Here's a Subscription Handler from
 <a href="https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs">the todomvc example</a>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span>
-  <span class="ss">:visible-todos</span>
+<pre class="highlight"><code class="language-clj">(reg-sub
+  :visible-todos
 
-  <span class="c1">;; signal function</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">query-v</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">[(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:todos</span><span class="p">])</span>
-     <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:showing</span><span class="p">])])</span>
+  ;; signal function
+  (fn [query-v _]
+    [(subscribe [:todos])
+     (subscribe [:showing])])
 
-  <span class="c1">;; computation function</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[[</span><span class="nv">todos</span> <span class="nv">showing</span><span class="p">]</span> <span class="nv">_</span><span class="p">]</span>   <span class="c1">;; that 1st parameter is a 2-vector of values</span>
-    <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">filter-fn</span> <span class="p">(</span><span class="nf">case</span> <span class="nv">showing</span>
-                      <span class="ss">:active</span> <span class="p">(</span><span class="nb">complement </span><span class="ss">:done</span><span class="p">)</span>
-                      <span class="ss">:done</span>   <span class="ss">:done</span>
-                      <span class="ss">:all</span>    <span class="nv">identity</span><span class="p">)]</span>
-      <span class="p">(</span><span class="nb">filter </span><span class="nv">filter-fn</span> <span class="nv">todos</span><span class="p">))))</span>
-</code></pre></div>
-
+  ;; computation function
+  (fn [[todos showing] _]   ;; that 1st parameter is a 2-vector of values
+    (let [filter-fn (case showing
+                      :active (complement :done)
+                      :done   :done
+                      :all    identity)]
+      (filter filter-fn todos))))</code></pre>
 
 <p>How do we test this?</p>
-<p>First, we could split the computation function from its registration, like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">visible-todos</span>
-  <span class="p">[[</span><span class="nv">todos</span> <span class="nv">showing</span><span class="p">]</span> <span class="nv">_</span><span class="p">]</span>
+<p>First, we could split the computation function from its registration, like this:
+<pre class="highlight"><code class="language-clj">(defn visible-todos
+  [[todos showing] _]
 
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">filter-fn</span> <span class="p">(</span><span class="nf">case</span> <span class="nv">showing</span>
-                    <span class="ss">:active</span> <span class="p">(</span><span class="nb">complement </span><span class="ss">:done</span><span class="p">)</span>
-                    <span class="ss">:done</span>   <span class="ss">:done</span>
-                    <span class="ss">:all</span>    <span class="nv">identity</span><span class="p">)]</span>
-   <span class="p">(</span><span class="nb">filter </span><span class="nv">filter-fn</span> <span class="nv">todos</span><span class="p">)))</span>
+  (let [filter-fn (case showing
+                    :active (complement :done)
+                    :done   :done
+                    :all    identity)]
+   (filter filter-fn todos)))
 
-<span class="p">(</span><span class="nf">reg-sub</span>
-  <span class="ss">:visible-todos</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">query-v</span> <span class="nv">_</span><span class="p">]</span>
-      <span class="p">[(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:todos</span><span class="p">])</span>
-       <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:showing</span><span class="p">])])</span>
-  <span class="nv">visible-todos</span><span class="p">)</span>     <span class="c1">;; &lt;--- computation function used here</span>
-</code></pre></div>
-
-
+(reg-sub
+  :visible-todos
+  (fn [query-v _]
+      [(subscribe [:todos])
+       (subscribe [:showing])])
+  visible-todos)     ;; &lt;--- computation function used here</code></pre></p>
 <p>That makes <code>visible-todos</code> available for direct unit testing.  But, as we experienced
 with Event Handlers, the challenge is around constructing <code>db</code> values (first parameter)
 in a way which doesn't become fragile.</p>
@@ -1919,16 +1919,13 @@ in a way which doesn't become fragile.</p>
 <p>But here's how, theoretically, I'd write tests if I wasn't me ...</p>
 <p>If a View Function is <a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-1-a-simple-function">Form-1</a>,
 then it is fairly easy to test.</p>
-<p>A trivial example:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">greet</span>
-   <span class="p">[</span><span class="nv">name</span><span class="p">]</span>
-   <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Hello &quot;</span> <span class="nv">name</span><span class="p">])</span>
+<p>A trivial example:
+<pre class="highlight"><code class="language-clj">(defn greet
+   [name]
+   [:div "Hello " name])
 
-<span class="p">(</span><span class="nf">greet</span> <span class="s">&quot;Wiki&quot;</span><span class="p">)</span>
-<span class="c1">;;=&gt; [:div &quot;Hello &quot; &quot;Wiki&quot;]</span>
-</code></pre></div>
-
-
+(greet "Wiki")
+;;=&gt; [:div "Hello " "Wiki"]</code></pre></p>
 <p>So, here, testing involves passing values into the function and checking the data structure returned
 for correctness.</p>
 <p>What's returned is hiccup, of course. So how do you test hiccup for correctness?</p>
@@ -1937,12 +1934,10 @@ Perhaps you'd use https://github.com/nathanmarz/specter to declaratively check o
 of certain values and structures? Or do it more manually.</p>
 <h2 id="view-functions-part-2a">View Functions - Part 2A<a class="headerlink" href="#view-functions-part-2a" title="Permanent link">&para;</a></h2>
 <p>But what if the View Function has a subscription?</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-view</span>
-  <span class="p">[</span><span class="nv">something</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">val </span> <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:query-id</span><span class="p">])]</span>     <span class="c1">;; &lt;-- reactive subscription</span>
-    <span class="p">[</span><span class="ss">:div</span> <span class="nv">....</span> <span class="nv">using</span> <span class="o">@</span><span class="nb">val </span><span class="nv">in</span> <span class="nv">here</span><span class="p">]))</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(defn my-view
+  [something]
+  (let [val  (subscribe [:query-id])]     ;; &lt;-- reactive subscription
+    [:div .... using @val in here]))</code></pre>
 
 <p>The use of <code>subscribe</code> makes the function impure (it obtains data from places other than its args).</p>
 <p>A testing plan might be:</p>
@@ -1961,17 +1956,15 @@ of certain values and structures? Or do it more manually.</p>
 <h2 id="view-functions-part-2b">View Functions - Part 2B<a class="headerlink" href="#view-functions-part-2b" title="Permanent link">&para;</a></h2>
 <p>There is a pragmatic method available to handle the impurity: use <code>with-redefs</code>
 to stub out <code>subscribe</code>. Like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">subscription-stub</span> <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
-  <span class="p">(</span><span class="nf">atom</span>
-    <span class="p">(</span><span class="nf">case</span> <span class="nv">x</span>
-      <span class="p">[</span><span class="ss">:query-id</span><span class="p">]</span> <span class="mi">42</span><span class="p">)))</span>
+<pre class="highlight"><code class="language-clj">(defn subscription-stub [x]
+  (atom
+    (case x
+      [:query-id] 42)))
 
-<span class="p">(</span><span class="nf">deftest</span> <span class="nv">some-test</span>
-  <span class="p">(</span><span class="nf">with-redefs</span> <span class="p">[</span><span class="nv">re-frame/subscribe</span> <span class="p">(</span><span class="nf">subscription-stub</span><span class="p">)]</span>
-    <span class="p">(</span><span class="nf">testing</span> <span class="s">&quot;some some view which does a subscribe&quot;</span>
-      <span class="nv">.....</span> <span class="nv">call</span> <span class="nv">the</span> <span class="nv">view</span> <span class="nv">function</span> <span class="nb">and </span><span class="nv">the</span> <span class="nv">hiccup</span> <span class="nv">output</span><span class="p">)))</span>
-</code></pre></div>
-
+(deftest some-test
+  (with-redefs [re-frame/subscribe (subscription-stub)]
+    (testing "some some view which does a subscribe"
+      ..... call the view function and the hiccup output)))</code></pre>
 
 <p>For more integration level testing, you can use <code>with-mounted-component</code>
 from the <a href="https://github.com/reagent-project/reagent-template/blob/master/resources/leiningen/new/reagent/test/cljs/reagent/core_test.cljs">reagent-template</a>
@@ -2139,12 +2132,16 @@ it is called the <a href="https://medium.com/@learnreact/container-components-c0
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

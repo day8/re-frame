@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1067,6 +1069,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1337,7 +1351,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1349,7 +1363,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1692,51 +1706,40 @@
 but let's work our way through them ...</p>
 <h2 id="1-register-handlers">1. Register Handlers<a class="headerlink" href="#1-register-handlers" title="Permanent link">&para;</a></h2>
 <p>re-frame's various handlers all work in the same way.  You declare 
-and register your handlers in the one step, like this "event handler" example: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame/reg-event-db</span>       <span class="c1">;; event handler will be registered automatically</span>
-  <span class="ss">:some-id</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">value</span><span class="p">]]</span>
-    <span class="nv">...</span>  <span class="k">do </span><span class="nb">some </span><span class="nv">state</span> <span class="nv">change</span> <span class="nv">based</span> <span class="nv">on</span> <span class="nv">db</span> <span class="nb">and </span><span class="nv">value</span> <span class="p">))</span>
-</code></pre></div>
-
-
+and register your handlers in the one step, like this "event handler" example: 
+<pre class="highlight"><code class="language-clj">(re-frame/reg-event-db       ;; event handler will be registered automatically
+  :some-id
+  (fn [db [_ value]]
+    ...  do some state change based on db and value ))</code></pre></p>
 <p>As a result, there's nothing further you need to do because 
 handler registration happens as a direct result of loading the code 
 (presumably via a <code>&lt;script&gt;</code> tag in your HTML file).</p>
 <h2 id="2-kick-start-reagent">2. Kick Start Reagent<a class="headerlink" href="#2-kick-start-reagent" title="Permanent link">&para;</a></h2>
 <p>Create a function <code>main</code> which does a <code>reagent/render</code> of your root reagent component <code>main-panel</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">main-panel</span>       <span class="c1">;; my top level reagent component</span>
-  <span class="p">[]</span>
-  <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Hello DDATWD&quot;</span><span class="p">])</span>
+<pre class="highlight"><code class="language-clj">(defn main-panel       ;; my top level reagent component
+  []
+  [:div "Hello DDATWD"])
 
-<span class="p">(</span><span class="kd">defn </span><span class="o">^</span><span class="ss">:export</span> <span class="nv">main</span>     <span class="c1">;; call this to bootstrap your app</span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="nf">reagent.dom/render</span> <span class="p">[</span><span class="nv">main-panel</span><span class="p">]</span>
-                  <span class="p">(</span><span class="nf">js/document.getElementById</span> <span class="s">&quot;app&quot;</span><span class="p">)))</span>
-</code></pre></div>
-
+(defn ^:export main     ;; call this to bootstrap your app
+  []
+  (reagent.dom/render [main-panel]
+                  (js/document.getElementById "app")))</code></pre>
 
 <p>Mounting the top level component <code>main-panel</code> will trigger a cascade of child 
 component creation.  The full DOM tree will be rendered.</p>
 <h2 id="3-loading-initial-data">3. Loading Initial Data<a class="headerlink" href="#3-loading-initial-data" title="Permanent link">&para;</a></h2>
 <p>Let's rewrite our <code>main-panel</code> component to use a subscription. In effect, 
 we want it to source and render some data held in <code>app-db</code>.  </p>
-<p>First, we'll create the subscription handler:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-sub</span>     <span class="c1">;; a new subscription handler</span>
-  <span class="ss">:name</span>               <span class="c1">;; usage (subscribe [:name])</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">(</span><span class="ss">:display-name</span> <span class="nv">db</span><span class="p">)))</span>  <span class="c1">;; extracts `:display-name` from app-db</span>
-</code></pre></div>
-
-
-<p>And now we use that subscription:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">main-panel</span> 
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">name </span> <span class="p">(</span><span class="nf">re-frame.core/subscribe</span> <span class="p">[</span><span class="ss">:name</span><span class="p">])]</span>  <span class="c1">;; &lt;--- a subscription  &lt;---</span>
-      <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Hello &quot;</span> <span class="o">@</span><span class="nv">name</span><span class="p">])))</span>   <span class="c1">;; &lt;--- use the result of the subscription</span>
-</code></pre></div>
-
-
+<p>First, we'll create the subscription handler:
+<pre class="highlight"><code class="language-Clojure">(re-frame.core/reg-sub     ;; a new subscription handler
+  :name               ;; usage (subscribe [:name])
+  (fn [db _]
+    (:display-name db)))  ;; extracts `:display-name` from app-db</code></pre></p>
+<p>And now we use that subscription:
+<pre class="highlight"><code class="language-clj">(defn main-panel 
+  []
+  (let [name  (re-frame.core/subscribe [:name])]  ;; &lt;--- a subscription  &lt;---
+      [:div "Hello " @name])))   ;; &lt;--- use the result of the subscription</code></pre></p>
 <p>The user of our app will see funny things 
 if that <code>(subscribe [:name])</code> doesn't deliver good data. But how do we ensure "good data"?</p>
 <p>That will require: 
@@ -1747,26 +1750,20 @@ if that <code>(subscribe [:name])</code> doesn't deliver good data. But how do w
 <h3 id="getting-data-into-app-db">Getting Data Into <code>app-db</code><a class="headerlink" href="#getting-data-into-app-db" title="Permanent link">&para;</a></h3>
 <p>Only event handlers can change <code>app-db</code>. Those are the rules!! Indeed, even initial 
 values must be put in <code>app-db</code> via an event handler. </p>
-<p>Here's an event handler for that purpose:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-  <span class="ss">:initialise-db</span>                 <span class="c1">;; usage: (dispatch [:initialise-db])</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">_</span> <span class="nv">_</span><span class="p">]</span>                      <span class="c1">;; Ignore both params (db and event)</span>
-     <span class="p">{</span><span class="ss">:display-name</span> <span class="s">&quot;DDATWD&quot;</span>     <span class="c1">;; return a new value for app-db</span>
-      <span class="ss">:items</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">]}))</span>
-</code></pre></div>
-
-
+<p>Here's an event handler for that purpose:
+<pre class="highlight"><code class="language-Clojure">(re-frame.core/reg-event-db
+  :initialise-db                 ;; usage: (dispatch [:initialise-db])
+  (fn [_ _]                      ;; Ignore both params (db and event)
+     {:display-name "DDATWD"     ;; return a new value for app-db
+      :items [1 2 3 4]}))</code></pre></p>
 <p>You'll notice that this handler does nothing other than to return a <code>map</code>. That map 
 will become the new value within <code>app-db</code>.</p>
-<p>We'll need to dispatch an <code>:initialise-db</code> event to get it to execute. <code>main</code> seems like the natural place: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="o">^</span><span class="ss">:export</span> <span class="nv">main</span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="nf">re-frame.core/dispatch</span> <span class="p">[</span><span class="ss">:initialise-db</span><span class="p">])</span>   <span class="c1">;;  &lt;--- this is new </span>
-  <span class="p">(</span><span class="nf">reagent.dom/render</span> <span class="p">[</span><span class="nv">main-panel</span><span class="p">]</span>
-                  <span class="p">(</span><span class="nf">js/document.getElementById</span> <span class="s">&quot;app&quot;</span><span class="p">)))</span>
-</code></pre></div>
-
-
+<p>We'll need to dispatch an <code>:initialise-db</code> event to get it to execute. <code>main</code> seems like the natural place: 
+<pre class="highlight"><code class="language-Clojure">(defn ^:export main
+  []
+  (re-frame.core/dispatch [:initialise-db])   ;;  &lt;--- this is new 
+  (reagent.dom/render [main-panel]
+                  (js/document.getElementById "app")))</code></pre></p>
 <p>But remember, event handlers execute async. So although there's 
 a <code>dispatch</code> within <code>main</code>, the event is simply queued, and the 
 handler for <code>:initialise-db</code> 
@@ -1780,65 +1777,58 @@ has been correctly initialised. </p>
 <p>Okay, so that's enough of teasing-out the issues. Let's see a 
 quick sketch of the entire pattern. It is very straight-forward.</p>
 <h2 id="the-pattern">The Pattern<a class="headerlink" href="#the-pattern" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-sub</span>   <span class="c1">;; supplied main-panel with data</span>
-  <span class="ss">:name</span>                  <span class="c1">;; usage (subscribe [:name])</span>
-  <span class="p">(</span><span class="k">fn </span> <span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">(</span><span class="ss">:display-name</span> <span class="nv">db</span><span class="p">)))</span>
+<pre class="highlight"><code class="language-Clojure">(re-frame.core/reg-sub   ;; supplied main-panel with data
+  :name                  ;; usage (subscribe [:name])
+  (fn  [db _]
+    (:display-name db)))
 
-<span class="p">(</span><span class="nf">re-frame.core/reg-sub</span>   <span class="c1">;; we can check if there is data</span>
-  <span class="ss">:initialised?</span>          <span class="c1">;; usage (subscribe [:initialised?])</span>
-  <span class="p">(</span><span class="k">fn </span> <span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">(</span><span class="nb">not </span><span class="p">(</span><span class="nf">empty?</span> <span class="nv">db</span><span class="p">))))</span>  <span class="c1">;; do we have data</span>
+(re-frame.core/reg-sub   ;; we can check if there is data
+  :initialised?          ;; usage (subscribe [:initialised?])
+  (fn  [db _]
+    (not (empty? db))))  ;; do we have data
 
-<span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-   <span class="ss">:initialise-db</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:display-name</span> <span class="s">&quot;Jane Doe&quot;</span><span class="p">)))</span>
+(re-frame.core/reg-event-db
+   :initialise-db
+   (fn [db _]
+       (assoc db :display-name "Jane Doe")))
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">main-panel</span>    <span class="c1">;; the top level of our app </span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">name </span> <span class="p">(</span><span class="nf">re-frame.core/subscribe</span> <span class="p">[</span><span class="ss">:name</span><span class="p">])]</span>   <span class="c1">;; we need there to be good data</span>
-    <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Hello &quot;</span> <span class="o">@</span><span class="nv">name</span><span class="p">])))</span>
+(defn main-panel    ;; the top level of our app 
+  []
+  (let [name  (re-frame.core/subscribe [:name])]   ;; we need there to be good data
+    [:div "Hello " @name])))
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">top-panel</span>    <span class="c1">;; this is new</span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">ready?</span>  <span class="p">(</span><span class="nf">re-frame.core/subscribe</span> <span class="p">[</span><span class="ss">:initialised?</span><span class="p">])]</span>
-    <span class="p">(</span><span class="nb">if-not </span><span class="o">@</span><span class="nv">ready?</span>         <span class="c1">;; do we have good data?</span>
-      <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Initialising ...&quot;</span><span class="p">]</span>   <span class="c1">;; tell them we are working on it</span>
-      <span class="p">[</span><span class="nv">main-panel</span><span class="p">])))</span>      <span class="c1">;; all good, render this component</span>
+(defn top-panel    ;; this is new
+  []
+  (let [ready?  (re-frame.core/subscribe [:initialised?])]
+    (if-not @ready?         ;; do we have good data?
+      [:div "Initialising ..."]   ;; tell them we are working on it
+      [main-panel])))      ;; all good, render this component
 
-<span class="p">(</span><span class="kd">defn </span><span class="o">^</span><span class="ss">:export</span> <span class="nv">main</span>     <span class="c1">;; call this to bootstrap your app</span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="nf">re-frame.core/dispatch</span> <span class="p">[</span><span class="ss">:initialise-db</span><span class="p">])</span>
-  <span class="p">(</span><span class="nf">reagent.dom/render</span> <span class="p">[</span><span class="nv">top-panel</span><span class="p">]</span>
-                  <span class="p">(</span><span class="nf">js/document.getElementById</span> <span class="s">&quot;app&quot;</span><span class="p">)))</span>
-</code></pre></div>
-
+(defn ^:export main     ;; call this to bootstrap your app
+  []
+  (re-frame.core/dispatch [:initialise-db])
+  (reagent.dom/render [top-panel]
+                  (js/document.getElementById "app")))</code></pre>
 
 <h2 id="scales-up">Scales Up<a class="headerlink" href="#scales-up" title="Permanent link">&para;</a></h2>
 <p>This pattern scales up easily.</p>
 <p>For example, imagine a more complicated scenario in which your app 
 is not fully initialised until 2 backend services supply data.</p>
-<p>Your <code>main</code> might look like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="o">^</span><span class="ss">:export</span> <span class="nv">main</span>     <span class="c1">;; call this to bootstrap your app</span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="nf">re-frame.core/dispatch</span> <span class="p">[</span><span class="ss">:initialise-db</span><span class="p">])</span>           <span class="c1">;; basics</span>
-  <span class="p">(</span><span class="nf">re-frame.core/dispatch</span> <span class="p">[</span><span class="ss">:load-from-service-1</span><span class="p">])</span>     <span class="c1">;; ask for data from service-1</span>
-  <span class="p">(</span><span class="nf">re-frame.core/dispatch</span> <span class="p">[</span><span class="ss">:load-from-service-2</span><span class="p">])</span>     <span class="c1">;; ask for data from service-2</span>
-  <span class="p">(</span><span class="nf">reagent.dom/render</span> <span class="p">[</span><span class="nv">top-panel</span><span class="p">]</span>
-                  <span class="p">(</span><span class="nf">js/document.getElementById</span> <span class="s">&quot;app&quot;</span><span class="p">)))</span>
-</code></pre></div>
-
-
+<p>Your <code>main</code> might look like this:
+<pre class="highlight"><code class="language-Clojure">(defn ^:export main     ;; call this to bootstrap your app
+  []
+  (re-frame.core/dispatch [:initialise-db])           ;; basics
+  (re-frame.core/dispatch [:load-from-service-1])     ;; ask for data from service-1
+  (re-frame.core/dispatch [:load-from-service-2])     ;; ask for data from service-2
+  (reagent.dom/render [top-panel]
+                  (js/document.getElementById "app")))</code></pre></p>
 <p>Your <code>:initialised?</code> test then becomes more like this sketch: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-sub</span>
-  <span class="ss">:initialised?</span>          <span class="c1">;; usage (subscribe [:initialised?])</span>
-  <span class="p">(</span><span class="k">fn </span> <span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">(</span><span class="nb">and </span> <span class="p">(</span><span class="nb">not </span><span class="p">(</span><span class="nf">empty?</span> <span class="nv">db</span><span class="p">))</span>
-          <span class="p">(</span><span class="ss">:service1-answered?</span> <span class="nv">db</span><span class="p">)</span>
-          <span class="p">(</span><span class="ss">:service2-answered?</span> <span class="nv">db</span><span class="p">)))))</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-Clojure">(re-frame.core/reg-sub
+  :initialised?          ;; usage (subscribe [:initialised?])
+  (fn  [db _]
+    (and  (not (empty? db))
+          (:service1-answered? db)
+          (:service2-answered? db)))))</code></pre>
 
 <p>This assumes boolean flags are set in <code>app-db</code> when data was loaded from these services.</p>
 <h2 id="cheating-synchronous-dispatch">Cheating - Synchronous Dispatch<a class="headerlink" href="#cheating-synchronous-dispatch" title="Permanent link">&para;</a></h2>
@@ -2001,12 +1991,16 @@ from a backend services.  How would we write the handler for this event?</p>
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

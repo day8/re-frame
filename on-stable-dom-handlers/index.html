@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1054,6 +1056,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1324,7 +1338,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1336,7 +1350,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1651,59 +1665,47 @@ understanding it will deepen your knowledge about Reagent.</p>
 <li>and involve creating anonymous callback functions in re-renders </li>
 </ol>
 <h2 id="equality-tests">Equality Tests<a class="headerlink" href="#equality-tests" title="Permanent link">&para;</a></h2>
-<p>Equality tests are at the heart of the issue, so let's start by considering this one: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">= </span><span class="p">[</span><span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span><span class="p">]</span>
-   <span class="p">[</span><span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span><span class="p">])</span>
-</code></pre></div>
-
-
-<p><strong><em>Question</em></strong>: will it evaluate to <code>true</code> or <code>false</code>? <br/>
-<strong><em>Answer</em></strong>: <code>true</code>. Because the elements <code class="highlight"><span class="mi">1</span></code>, <code class="highlight"><span class="ss">:2</span></code> and <code class="highlight"><span class="s">&quot;3&quot;</span></code> are identities, so different instances test equal, and because vector equality is determined by element equality.</p>
+<p>Equality tests are at the heart of the issue, so let's start by considering this one: 
+<pre class="highlight"><code class="language-clojure">(= [1 :2 "3"]
+   [1 :2 "3"])</code></pre>
+<strong><em>Question</em></strong>: will it evaluate to <code>true</code> or <code>false</code>? <br/>
+<strong><em>Answer</em></strong>: <code>true</code>. Because the elements <code>1</code>, <code>:2</code> and <code>"3"</code> are identities, so different instances test equal, and because vector equality is determined by element equality.</p>
 <h2 id="implications-for-reagent">Implications For Reagent<a class="headerlink" href="#implications-for-reagent" title="Permanent link">&para;</a></h2>
 <p>Reagent uses equality checks on props to avoid doing unnecessary work. </p>
-<p>Consider this view: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
-  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
-  <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span><span class="p">])</span>
-</code></pre></div>
-
-
+<p>Consider this view: 
+<pre class="highlight"><code class="language-clj">(defn parent
+  [x]
+  [child 1 :2 "3"])</code></pre></p>
 <p>Imagine that <code>parent</code> has already rendered once. And then something causes
 it to re-render (perhaps its parent re-renders and supplies a different <code>x</code>).</p>
 <p>When <code>parent</code> re-renders, it will re-render <code>child</code> and supply three 
-props: <code class="highlight"><span class="mi">1</span></code>, <code class="highlight"><span class="ss">:2</span></code> and <code class="highlight"><span class="s">&quot;3&quot;</span></code>. But these props
+props: <code>1</code>, <code>:2</code> and <code>"3"</code>. But these props
 will be the same as the ones supplied with the "last render" and, as a result,
 Reagent calculates that it doesn't need to perform the re-render of <code>child</code>.</p>
 <p>Reagent assumes that <code>child</code> is rendered by a pure function and it deduces that giving a pure
 function the same props/args as last time, results in the same result (the same hiccup). 
 And so Reagent avoids doing this unnecessary work. It is an efficiency thing.</p>
 <p><strong><em>Question</em></strong>:  But how does Reagent check for this "sameness" between the props supplied "this render" vs the "last render"? <br/>
-<strong><em>Answer</em></strong>: by testing the props using <code class="highlight"><span class="nv">=</span></code> </p>
+<strong><em>Answer</em></strong>: by testing the props using <code>=</code> </p>
 <p>So:</p>
 <ul>
-<li><code class="highlight"><span class="mi">1</span></code> (last time) is <code class="highlight"><span class="nv">=</span></code> to <code class="highlight"><span class="mi">1</span></code> (this time)</li>
-<li><code class="highlight"><span class="ss">:2</span></code> is <code class="highlight"><span class="nv">=</span></code> to <code class="highlight"><span class="ss">:2</span></code></li>
-<li>and <code class="highlight"><span class="s">&quot;3&quot;</span></code> too is equal to last time</li>
+<li><code>1</code> (last time) is <code>=</code> to <code>1</code> (this time)</li>
+<li><code>:2</code> is <code>=</code> to <code>:2</code></li>
+<li>and <code>"3"</code> too is equal to last time</li>
 </ul>
 <p>All three props are <code>=</code> to last time, which allows Reagent to skip the re-render of <code>child</code>. </p>
 <h2 id="but-wait-functions">But Wait, Functions<a class="headerlink" href="#but-wait-functions" title="Permanent link">&para;</a></h2>
 <p>Next step: we introduce anonymous callback functions.</p>
-<p>Consider this test: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">n</span><span class="p">]</span> <span class="p">(</span><span class="nb">+ </span><span class="nv">n</span> <span class="mi">1</span><span class="p">))</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">n</span><span class="p">]</span> <span class="p">(</span><span class="nb">+ </span><span class="nv">n</span> <span class="mi">1</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p><strong><em>Question</em></strong>:  will it evaluate to <code>true</code> or <code>false</code>? <br/>
+<p>Consider this test: 
+<pre class="highlight"><code class="language-clj">(= (fn [n] (+ n 1))
+   (fn [n] (+ n 1)))</code></pre>
+<strong><em>Question</em></strong>:  will it evaluate to <code>true</code> or <code>false</code>? <br/>
 <strong><em>Answer</em></strong>: <code>false</code>. You might be able to see that the two anonymous functions are equal, 
-but <code>=</code> says "no". Anonymous functions are not like <code class="highlight"><span class="mi">1</span></code>  or <code class="highlight"><span class="ss">:2</span></code> </p>
-<p>Armed with this knowledge, what happens if we add a new prop for <code>child</code> and make it an anonymous callback function?  Like this: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
-  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
-  <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">]))])</span>
-</code></pre></div>
-
-
+but <code>=</code> says "no". Anonymous functions are not like <code>1</code>  or <code>:2</code> </p>
+<p>Armed with this knowledge, what happens if we add a new prop for <code>child</code> and make it an anonymous callback function?  Like this: 
+<pre class="highlight"><code class="language-clj">(defn parent
+  [x]
+  [child 1 :2 "3"  (fn [] (dispatch [:something]))])</code></pre></p>
 <p>So, that's now four props given to <code>child</code>. The first three of them are as before. But the new last one is 
 an anonymous function. </p>
 <p>What a difference that new one makes!! Now, every time <code>parent</code> is re-rendered, <code>child</code>
@@ -1712,65 +1714,47 @@ are broken when one prop is an anonymous function because the value "this time" 
 <code>=</code> to last time, even though we can see they are the same function.</p>
 <h2 id="fixing-it">Fixing It<a class="headerlink" href="#fixing-it" title="Permanent link">&para;</a></h2>
 <p>Surely the way to fix this is simple: don't use an anonymous function.</p>
-<p>First we create:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">callback</span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">]))</span>
-</code></pre></div>
-
-
-<p>Then we perform a test: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">= </span><span class="nv">callback</span> <span class="nv">callback</span><span class="p">)</span>
-</code></pre></div>
-
-
-<p><strong><em>Question</em></strong>: what will it evaluate to? <code>true</code> or <code>false</code>? <br/>
+<p>First we create:
+<pre class="highlight"><code class="language-clj">(defn callback
+  []
+  (dispatch [:something]))</code></pre></p>
+<p>Then we perform a test: 
+<pre class="highlight"><code class="language-clj">(= callback callback)</code></pre>
+<strong><em>Question</em></strong>: what will it evaluate to? <code>true</code> or <code>false</code>? <br/>
 <strong><em>Answer</em></strong>: <code>true</code>.  <code>callback</code> is a symbol which is bound to a function. So we are comparing the value bound to <code>callback</code> (a function), and that will test <code>=</code> because it is the same function on both sides of <code>=</code>.</p>
-<p>Let's use that; </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
-  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
-  <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="nv">callback</span><span class="p">])</span>   <span class="c1">;; &lt;--- used here</span>
-</code></pre></div>
-
-
+<p>Let's use that; 
+<pre class="highlight"><code class="language-clj">(defn parent
+  [x]
+  [child 1 :2 "3"  callback])   ;; &lt;--- used here</code></pre></p>
 <p>Now all four props for <code>child</code> will test <code>=</code> to last time. And <code>child</code> won't be re-rendered. </p>
-<p>In fact, we can make this simpler  by using a Form-2 function:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
-  <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>   <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span><span class="p">])]</span>   <span class="c1">;; &lt;-- create here</span>
-    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span>
-      <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="nv">callback</span><span class="p">])))</span>
-</code></pre></div>
-
-
+<p>In fact, we can make this simpler  by using a Form-2 function:
+<pre class="highlight"><code class="language-clj">(defn parent
+  [x]
+  (let [callback   #(dispatch [:something])]   ;; &lt;-- create here
+    (fn [x]
+      [child 1 :2 "3"  callback])))</code></pre></p>
 <p>The outside function creates the anonymous function, which means it doesn't get
 recreated and change on each render, and so <code>callback</code> will test <code>=</code> to "last time" in all renders.</p>
 <p>Problem fixed?  Yes, but unfortunately, only for the simple case. Which really means "no, not fixed enough".</p>
 <h2 id="where-it-breaks-down">Where It Breaks Down<a class="headerlink" href="#where-it-breaks-down" title="Permanent link">&para;</a></h2>
-<p>Say, <code>parent</code> has an argument <code>id</code>. And, say, we need to use that in the callback. </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
-  <span class="p">[</span><span class="nv">id</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span> <span class="nv">id</span><span class="p">]))]</span>
-    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span><span class="p">]</span>
-      <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span> <span class="nv">callback</span><span class="p">])))</span>
-</code></pre></div>
-
-
+<p>Say, <code>parent</code> has an argument <code>id</code>. And, say, we need to use that in the callback. 
+<pre class="highlight"><code class="language-clj">(defn parent
+  [id]
+  (let [callback  (fn [] (dispatch [:something id]))]
+    (fn [id]
+      [child 1 :2 "3" callback])))</code></pre></p>
 <p>Does this work?  Sadly, no. Can you spot the bug? </p>
 <p><code>callback</code> has closed over the original value for <code>id</code> - the one given to the outer function.
 <code>callback</code> will never dispatch the "latest" value of <code>id</code> provided to the re-render function
 (notice that <code>id</code> is an argument to both the outer and inner functions in the Form-2 Component).</p>
 <h2 id="the-technique">The Technique<a class="headerlink" href="#the-technique" title="Permanent link">&para;</a></h2>
-<p>So, enough preamble and explanation, here's the real solution - and it has three parts:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">parent</span>
-  <span class="p">[</span><span class="nv">id</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">callback</span>          <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">the-id</span><span class="p">]</span> <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:something</span> <span class="nv">the-id</span><span class="p">]))</span>   <span class="c1">;; &lt;-- Note 1</span>
-        <span class="nv">callback-factory</span>  <span class="p">(</span><span class="nf">callback-factory-factory</span> <span class="nv">callback</span><span class="p">)]</span>           <span class="c1">;; &lt;-- Note 2</span>
-    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span><span class="p">]</span>
-      <span class="p">[</span><span class="nv">child</span> <span class="mi">1</span> <span class="ss">:2</span> <span class="s">&quot;3&quot;</span>  <span class="p">(</span><span class="nf">callback-factory</span> <span class="nv">id</span><span class="p">)])</span>    <span class="c1">;; &lt;-- Note 3</span>
-</code></pre></div>
-
-
+<p>So, enough preamble and explanation, here's the real solution - and it has three parts:
+<pre class="highlight"><code class="language-clj">(defn parent
+  [id]
+  (let [callback          (fn [the-id] (dispatch [:something the-id]))   ;; &lt;-- Note 1
+        callback-factory  (callback-factory-factory callback)]           ;; &lt;-- Note 2
+    (fn [id]
+      [child 1 :2 "3"  (callback-factory id)])    ;; &lt;-- Note 3</code></pre></p>
 <p>Notes:</p>
 <ol>
 <li><code>callback</code> no longer tries to "close over' <code>id</code>. Instead, it takes <code>id</code> as an argument.</li>
@@ -1780,40 +1764,34 @@ recreated and change on each render, and so <code>callback</code> will test <cod
    <code>id</code> to vary on each render.</li>
 </ol>
 <p>Which only leaves me to show you the hero in our story, which I offer<br />
-without further explanation for you to read and understand: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">callback-factory-factory</span>
-  <span class="s">&quot;returns a function which will always return the `same-callback` every time </span>
-<span class="s">   it is called. </span>
-<span class="s">   `same-callback` is what actually calls your `callback` and, when it does,</span>
-<span class="s">   it supplies any necessary args, including those supplied at wrapper creation</span>
-<span class="s">   time and any supplied by the browser (a DOM event object?) at call time.&quot;</span> 
-  <span class="p">[</span><span class="nv">the-real-callback</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">*args1</span>        <span class="p">(</span><span class="nf">atom</span> <span class="nv">nil</span><span class="p">)</span>
-        <span class="nv">same-callback</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="o">&amp;</span> <span class="nv">args2</span><span class="p">]</span>
-                        <span class="p">(</span><span class="nb">apply </span><span class="nv">the-real-callback</span> <span class="p">(</span><span class="nb">concat </span><span class="o">@</span><span class="nv">*args1</span> <span class="nv">args2</span><span class="p">)))]</span>
-    <span class="p">(</span><span class="k">fn </span><span class="nv">callback-factory</span>
-      <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args1</span><span class="p">]</span>                   
-      <span class="p">(</span><span class="nf">reset!</span> <span class="nv">*args1</span> <span class="nv">args1</span><span class="p">)</span>
-      <span class="nv">same-callback</span><span class="p">)))</span>               <span class="c1">;; &lt;-- always returns the same function</span>
-</code></pre></div>
-
-
+without further explanation for you to read and understand: 
+<pre class="highlight"><code class="language-clj">(defn callback-factory-factory
+  "returns a function which will always return the `same-callback` every time 
+   it is called. 
+   `same-callback` is what actually calls your `callback` and, when it does,
+   it supplies any necessary args, including those supplied at wrapper creation
+   time and any supplied by the browser (a DOM event object?) at call time." 
+  [the-real-callback]
+  (let [*args1        (atom nil)
+        same-callback (fn [&amp; args2]
+                        (apply the-real-callback (concat @*args1 args2)))]
+    (fn callback-factory
+      [&amp; args1]                   
+      (reset! *args1 args1)
+      same-callback)))               ;; &lt;-- always returns the same function</code></pre></p>
 <h2 id="more-advanced-again">More Advanced Again<a class="headerlink" href="#more-advanced-again" title="Permanent link">&para;</a></h2>
-<p>Sometimes the callback will need to accept a DOM event argument. In the following code, notice <code>on-change</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">some-input-view</span> 
-  <span class="p">[</span><span class="nv">_</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">on-change</span>         <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">dom-event</span><span class="p">]</span>    <span class="c1">;; &lt;-- Note 1</span>
-                            <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:changed</span> <span class="nv">id</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">dom-event</span> <span class="nv">.-target</span> <span class="nv">.-value</span><span class="p">)]))</span>
-        <span class="nv">on-change-factory</span> <span class="p">(</span><span class="nf">callback-factory-factory</span> <span class="nv">on-change</span><span class="p">)]</span>
+<p>Sometimes the callback will need to accept a DOM event argument. In the following code, notice <code>on-change</code>:
+<pre class="highlight"><code class="language-clj">(defn some-input-view 
+  [_]
+  (let [on-change         (fn [id dom-event]    ;; &lt;-- Note 1
+                            (dispatch [:changed id (-&gt; dom-event .-target .-value)]))
+        on-change-factory (callback-factory-factory on-change)]
 
-    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">id</span> <span class="nv">text</span><span class="p">]</span>
-       <span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:type</span>      <span class="s">&quot;text&quot;</span> 
-                <span class="ss">:value</span>     <span class="nv">text</span>
-                <span class="ss">:on-change</span> <span class="p">(</span><span class="nf">on-change-factory</span> <span class="nv">id</span><span class="p">)}]</span> <span class="p">])))</span>   <span class="c1">;; &lt;-- Note 2</span>
-</code></pre></div>
-
-
-<p>Note:</p>
+    (fn [id text]
+       [:input {:type      "text" 
+                :value     text
+                :on-change (on-change-factory id)}] ])))   ;; &lt;-- Note 2</code></pre>
+Note:</p>
 <ol>
 <li>this time the callback, <code>on-change</code>, takes two arguments. The <code>id</code> and the DOM event <code>dom-event</code></li>
 <li>But, when we call the factory we only supply one of these two arguments, almost like this is a "partial".
@@ -1975,12 +1953,16 @@ comes at the cost of you having to write more code, and introduce an abstraction
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

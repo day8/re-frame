@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1156,6 +1158,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1426,7 +1440,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1438,7 +1452,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1888,36 +1902,24 @@ In the case of our <code>ns</code> form, it evaluates to <code>nil</code>, which
 for your application state, but here, we'll cut that corner to minimise cognitive load.</p>
 <p>But we can't cut it completely. You'll still need an
 informal description, and here it is ... <code>app-db</code> will contain
-a two-key map like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="ss">:time</span>       <span class="p">(</span><span class="nf">js/Date.</span><span class="p">)</span>  <span class="c1">;; current time for display</span>
- <span class="ss">:time-color</span> <span class="s">&quot;#f88&quot;</span><span class="p">}</span>     <span class="c1">;; the colour in which the time should be shown</span>
-</code></pre></div>
-
-
+a two-key map like this:
+<pre class="highlight"><code class="language-clj">{:time       (js/Date.)  ;; current time for display
+ :time-color "#f88"}     ;; the colour in which the time should be shown</code></pre></p>
 <h2 id="event-dispatch">Event Dispatch<a class="headerlink" href="#event-dispatch" title="Permanent link">&para;</a></h2>
 <p>Events are data.</p>
-<p>re-frame uses a vector format for events. For example:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:time-color-change</span> <span class="s">&quot;red&quot;</span><span class="p">]</span>
-</code></pre></div>
-
-
+<p>re-frame uses a vector format for events. For example:
+<pre class="highlight"><code class="language-clj">[:time-color-change "red"]</code></pre></p>
 <p>The first element in the vector is a keyword that identifies the <code>kind</code> of <code>event</code>.
 Further elements are optional and can provide additional data
 associated with the event. The additional value above, <code>"red"</code>, is
 presumably the colour.</p>
-<p>Here are some other example events:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:admit-to-being-satoshi</span> <span class="nv">false</span><span class="p">]</span>
-<span class="p">[</span><span class="ss">:dressing/put-pants-on</span>  <span class="s">&quot;velour flares&quot;</span> <span class="p">{</span><span class="ss">:method</span> <span class="ss">:left-leg-first</span> <span class="ss">:belt</span> <span class="nv">false</span><span class="p">}]</span>
-</code></pre></div>
-
-
+<p>Here are some other example events:
+<pre class="highlight"><code class="language-clj">[:admit-to-being-satoshi false]
+[:dressing/put-pants-on  "velour flares" {:method :left-leg-first :belt false}]</code></pre></p>
 <p>For non-trivial applications, the <code>kind</code> keyword will be namespaced, as it is in the 2nd example.</p>
 <h3 id="dispatch">dispatch<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h3>
-<p>To send an event, call <code>dispatch</code> with the event vector as the argument. </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:kind-of-event</span> <span class="nv">value1</span> <span class="nv">value2</span><span class="p">])</span>
-</code></pre></div>
-
-
+<p>To send an event, call <code>dispatch</code> with the event vector as the argument. 
+<pre class="highlight"><code class="language-clj">(dispatch [:kind-of-event value1 value2])</code></pre></p>
 <p>For our simple app, we do this ... 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (defn dispatch-timer-event        ;; &lt;-- defining a function
@@ -1989,13 +1991,10 @@ by the arriving event. They return (as data) how the world should be changed by 
 <p>Many vs One. Because of its simplicity, we'll be using the latter one here: <code>reg-event-db</code>.</p>
 <h3 id="reg-event-db">reg-event-db<a class="headerlink" href="#reg-event-db" title="Permanent link">&para;</a></h3>
 <p>We register event handlers using re-frame's API: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">rf/reg-event-db</span>           <span class="c1">;; &lt;-- the re-frame API function to use</span>
-  <span class="ss">:the-event-id</span>            <span class="c1">;; &lt;-- the event id </span>
-  <span class="nv">the-event-handler-fn</span><span class="p">)</span>    <span class="c1">;; &lt;-- the handler function</span>
-</code></pre></div>
-
-
-<p>The handler function you provide should expect two arguments:</p>
+<p><pre class="highlight"><code class="language-clj">(rf/reg-event-db           ;; &lt;-- the re-frame API function to use
+  :the-event-id            ;; &lt;-- the event id 
+  the-event-handler-fn)    ;; &lt;-- the handler function</code></pre>
+The handler function you provide should expect two arguments:</p>
 <ul>
 <li><code>db</code> - the current application state  (the map value contained in <code>app-db</code>)</li>
 <li><code>e</code> - the event vector  (given to <code>dispatch</code>)</li>
@@ -2037,16 +2036,13 @@ There's nothing in the <code>event</code> vector which it needs. Nor is the exis
      :time-color "orange"}))  ;; so the app state will be a map with two keys
 </div>
 
-<p>For comparison, here's how we could have written this if we <strong>did</strong> care about the existing value in <code>db</code>: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">rf/reg-event-db</span>
-  <span class="ss">:initialize</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>                 <span class="c1">;; we use db this time, so name it</span>
-    <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">db</span>                   <span class="c1">;; db is initially just {}</span>
-      <span class="p">(</span><span class="nb">assoc </span><span class="ss">:time</span> <span class="p">(</span><span class="nf">js/Date.</span><span class="p">))</span>
-      <span class="p">(</span><span class="nb">assoc </span><span class="ss">:time-color</span> <span class="s">&quot;orange&quot;</span><span class="p">)))</span>
-</code></pre></div>
-
-
+<p>For comparison, here's how we could have written this if we <strong>did</strong> care about the existing value in <code>db</code>: 
+<pre class="highlight"><code class="language-clj">(rf/reg-event-db
+  :initialize
+  (fn [db _]                 ;; we use db this time, so name it
+    (-&gt; db                   ;; db is initially just {}
+      (assoc :time (js/Date.))
+      (assoc :time-color "orange")))</code></pre></p>
 <h3 id="time-color-change">:time-color-change<a class="headerlink" href="#time-color-change" title="Permanent link">&para;</a></h3>
 <p>When the user enters a new colour value (into the input field) the view will <code>(dispatch [:time-color-change new-colour])</code> (more on this below). </p>
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
@@ -2089,14 +2085,11 @@ produce is the same as that stored in <code>app-db</code>. A more interesting tr
 of subscriptions, and more explanation, can be found in the todomvc example.</p>
 <h3 id="reg-sub">reg-sub<a class="headerlink" href="#reg-sub" title="Permanent link">&para;</a></h3>
 <p><code>reg-sub</code> associates a <code>query id</code> with a function that computes
- that query, like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">rf/reg-sub</span>
-  <span class="ss">:some-query-id</span>  <span class="c1">;; query id (used later in subscribe)</span>
-  <span class="nv">a-query-fn</span><span class="p">)</span>     <span class="c1">;; the function which will compute the query</span>
-</code></pre></div>
-
-
-<p>Later, a view function (domino 5) will subscribe to a query like this:
+ that query, like this:
+<pre class="highlight"><code class="language-clj">(rf/reg-sub
+  :some-query-id  ;; query id (used later in subscribe)
+  a-query-fn)     ;; the function which will compute the query</code></pre>
+Later, a view function (domino 5) will subscribe to a query like this:
 <code>(subscribe [:some-query-id])</code>, and <code>a-query-fn</code> will be used 
 to perform the query over the application state.</p>
 <p>Each time application state changes, <code>a-query-fn</code> will be
@@ -2129,19 +2122,13 @@ they render the app's UI.</p>
 <h2 id="subscribing">Subscribing<a class="headerlink" href="#subscribing" title="Permanent link">&para;</a></h2>
 <p>To render a hiccup representation of some part of the app state, view functions must query 
 for that part of <code>app-db</code>, by using <code>subscribe</code>.</p>
-<p><code>subscribe</code> is used like this:</p>
-<div class="codehilite"><pre><span></span><code>   <span class="p">(</span><span class="nf">rf/subscribe</span>  <span class="p">[</span><span class="nv">query-id</span> <span class="nb">some </span><span class="nv">optional</span> <span class="nv">query</span> <span class="nv">parameters</span><span class="p">])</span>
-</code></pre></div>
-
-
-<p>So <code>subscribe</code> takes one argument, assumed to be a vector.</p>
+<p><code>subscribe</code> is used like this:
+<pre class="highlight"><code class="language-clj">   (rf/subscribe  [query-id some optional query parameters])</code></pre>
+So <code>subscribe</code> takes one argument, assumed to be a vector.</p>
 <p>The first element in the vector identifies the query, 
 and the other elements are optional
-query parameters. With a traditional database, a query might be:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">customers</span> <span class="k">where</span> <span class="n">name</span><span class="o">=</span><span class="ss">&quot;blah&quot;</span>
-</code></pre></div>
-
-
+query parameters. With a traditional database, a query might be:
+<pre class="highlight"><code class="language-sql">select * from customers where name="blah"</code></pre></p>
 <p>In re-frame, that would look like:
    <code>(subscribe  [:customer-query "blah"])</code>,
 which would return a <code>ratom</code> holding the customer state (a value that might change over time!).</p>
@@ -2421,12 +2408,16 @@ repo issue with a suggestion.</p>
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

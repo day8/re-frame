@@ -25,7 +25,7 @@
      - examine this example: https://github.com/day8/re-frame/blob/master/src/re_frame/core.cljc
      - notice the docstrings are specifically written to be markdown-compatible.
      - notice the `:api-docs` hack (search for it) used to group vars under headings in the final output.
-     - the target for re-frame is `mkdocs`, so notice the use of `#!clj` ahead of code blocks. 
+     - the target for re-frame is `mkdocs`, so notice the use of `` ahead of code blocks. 
        Which exploits the `mkdocs` feature `pymdownx.inlinehilite`. But that's a choice - it isn't required.
    "
   (:require
@@ -123,7 +123,7 @@
   [name-without-ns arglists]
   (reduce
     (fn [markdown arglist]
-      (str markdown "\n" (format "`#!clj (%s%s)`\n" name-without-ns (arglist->markdown arglist))))
+      (str markdown "\n```clojure\n" (format "(%s%s)\n" name-without-ns (arglist->markdown arglist)) "```\n"))
     ""
     arglists))
 
@@ -139,6 +139,16 @@
   [{:keys [heading publics]}]
   (reduce str (format "## %s\n\n" heading) (map var->markdown publics)))
 
+(defn hook
+  {:shadow.build/stage :flush}
+  [build-state & {:as in-file->out-file}]
+  (doseq [[in-file out-file] in-file->out-file
+          :let               [ns-data (read-file in-file)
+                              out-str (str (ns->markdown ns-data)
+                                           (reduce str "" (map group->markdown
+                                                               (:publics ns-data))))]]
+    (spit out-file out-str))
+  build-state)
 
 (defn -main
   [& args]

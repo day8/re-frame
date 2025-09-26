@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1040,6 +1042,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1310,7 +1324,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1322,7 +1336,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1637,25 +1651,19 @@ before and after the handler ran, showing what changed. </p>
 <p>The output produced by <code>clojure.data/diff</code> can take some getting used to, 
 but you should stick with it -- your effort will be rewarded.</p>
 <h2 id="using-debug">Using <code>debug</code><a class="headerlink" href="#using-debug" title="Permanent link">&para;</a></h2>
-<p>So, you will add this Interceptor like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-   <span class="ss">:some-id</span>
-   <span class="p">[</span><span class="nv">re-frame.core/debug</span><span class="p">]</span>         <span class="c1">;;  &lt;----  added here! </span>
-   <span class="nv">some-handler-fn</span><span class="p">)</span>
-</code></pre></div>
-
-
+<p>So, you will add this Interceptor like this:
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db
+   :some-id
+   [re-frame.core/debug]         ;;  &lt;----  added here! 
+   some-handler-fn)</code></pre></p>
 <p>Except, of course, we need to be more deft - we only want 
 <code>debug</code> in development builds. We don't 
 want the overhead of those <code>clojure.data/diff</code> calculations in production.
-So, this is better: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-   <span class="ss">:some-id</span>
-   <span class="p">[(</span><span class="nb">when </span><span class="o">^</span><span class="nb">boolean </span><span class="nv">goog.DEBUG</span> <span class="nv">re-frame.core/debug</span><span class="p">)]</span>   <span class="c1">;;  &lt;----  conditional! </span>
-   <span class="nv">some-handler-fn</span><span class="p">)</span>
-</code></pre></div>
-
-
+So, this is better: 
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db
+   :some-id
+   [(when ^boolean goog.DEBUG re-frame.core/debug)]   ;;  &lt;----  conditional! 
+   some-handler-fn)</code></pre></p>
 <p><code>goog.DEBUG</code> is a compile time constant provided by the <code>Google Closure Compiler</code>. 
 It will be <code>true</code> when the build within <code>project.clj</code> is <code>:optimization :none</code> and <code>false</code>
 otherwise.</p>
@@ -1669,27 +1677,18 @@ Surely that's a problem?  </p>
 business on every single handler?  That would be very repetitive. </p>
 <p>Yes, you will have to put it on each handler.  And, yes, that could be repetitive,  unless 
 you take some steps.</p>
-<p>One thing you can do is to define standard interceptors at the top of the <code>event.cljs</code> namespace:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">standard-interceptors</span>  <span class="p">[(</span><span class="nb">when </span><span class="o">^</span><span class="nb">boolean </span><span class="nv">goog.DEBUG</span> <span class="nv">debug</span><span class="p">)</span>  <span class="nv">another-interceptor</span><span class="p">])</span>
-</code></pre></div>
-
-
-<p>And then, for any one event handler, the code would look like:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-   <span class="ss">:some-id</span>
-   <span class="nv">standard-interceptors</span>        <span class="c1">;; &lt;--- use the common definition</span>
-   <span class="nv">some-handler-fn</span><span class="p">)</span>
-</code></pre></div>
-
-
-<p>or perhaps:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-   <span class="ss">:some-id</span>
-   <span class="p">[</span><span class="nv">standard-interceptors</span> <span class="nv">specific-interceptor</span><span class="p">]</span>  <span class="c1">;; mix with something specific</span>
-   <span class="nv">some-handler-fn</span><span class="p">)</span>
-</code></pre></div>
-
-
+<p>One thing you can do is to define standard interceptors at the top of the <code>event.cljs</code> namespace:
+<pre class="highlight"><code class="language-clj">(def standard-interceptors  [(when ^boolean goog.DEBUG debug)  another-interceptor])</code></pre></p>
+<p>And then, for any one event handler, the code would look like:
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db
+   :some-id
+   standard-interceptors        ;; &lt;--- use the common definition
+   some-handler-fn)</code></pre></p>
+<p>or perhaps:
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db
+   :some-id
+   [standard-interceptors specific-interceptor]  ;; mix with something specific
+   some-handler-fn)</code></pre></p>
 <p>So that <code>specific-interceptor</code> could be something required for just this one
 event handler, and it can be combined with the standard ones.</p>
 <p>Wait on! "I see a problem", you say.  <code>standard-interceptors</code> is a <code>vector</code>, and it
@@ -1719,64 +1718,49 @@ after <em>every</em> event handler has run</strong>.</p>
 easily assigning blame (to the rogue event handler).</p>
 <p>Schemas are typically put into <code>db.cljs</code> (see the todomvc example in the re-frame repo). Here's 
 an example using Prismatic Schema
-(although a more modern choice would be to use <a href="http://clojure.org/about/spec">Clojure spec</a>):</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">my.namespace.db</span>
-  <span class="p">(</span><span class="ss">:require</span>
-    <span class="p">[</span><span class="nv">schema.core</span> <span class="ss">:as</span> <span class="nv">s</span><span class="p">]))</span>
+(although a more modern choice would be to use <a href="http://clojure.org/about/spec">Clojure spec</a>):
+<pre class="highlight"><code class="language-clj">(ns my.namespace.db
+  (:require
+    [schema.core :as s]))
 
-<span class="c1">;; As exactly as possible, describe the correct shape of app-db </span>
-<span class="c1">;; Add a lot of helpful comments. This will be an important resource</span>
-<span class="c1">;; for someone looking at your code for the first time.</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">schema</span>           
-  <span class="p">{</span><span class="ss">:a</span> <span class="p">{</span><span class="ss">:b</span> <span class="nv">s/Str</span>
-       <span class="ss">:c</span> <span class="nv">s/Int</span><span class="p">}</span>
-   <span class="ss">:d</span> <span class="p">[{</span><span class="ss">:e</span> <span class="nv">s/Keyword</span>
-        <span class="ss">:f</span> <span class="p">[</span><span class="nv">s/Num</span><span class="p">]}]})</span>
-</code></pre></div>
-
-
-<p>And a function which will check a db value against that schema:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">valid-schema?</span>
-  <span class="s">&quot;validate the given db, writing any problems to console.error&quot;</span>
-  <span class="p">[</span><span class="nv">db</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">res</span> <span class="p">(</span><span class="nf">s/check</span> <span class="nv">schema</span> <span class="nv">db</span><span class="p">)]</span>
-    <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">some?</span> <span class="nv">res</span><span class="p">)</span>
-      <span class="p">(</span><span class="nf">.error</span> <span class="nv">js/console</span> <span class="p">(</span><span class="nb">str </span><span class="s">&quot;schema problem: &quot;</span> <span class="nv">res</span><span class="p">)))))</span>
-</code></pre></div>
-
-
+;; As exactly as possible, describe the correct shape of app-db 
+;; Add a lot of helpful comments. This will be an important resource
+;; for someone looking at your code for the first time.
+(def schema           
+  {:a {:b s/Str
+       :c s/Int}
+   :d [{:e s/Keyword
+        :f [s/Num]}]})</code></pre></p>
+<p>And a function which will check a db value against that schema:
+<pre class="highlight"><code class="language-clj">(defn valid-schema?
+  "validate the given db, writing any problems to console.error"
+  [db]
+  (let [res (s/check schema db)]
+    (if (some? res)
+      (.error js/console (str "schema problem: " res)))))</code></pre></p>
 <p>Now, let's organise for <code>valid-schema?</code> to be run <strong>after</strong> every handler. 
-We'll use the built-in  <code>after</code> Interceptor factory function:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">standard-interceptors</span> <span class="p">[(</span><span class="nb">when </span><span class="o">^</span><span class="nb">boolean </span><span class="nv">goog.DEBUG</span> <span class="nv">debug</span><span class="p">)</span>
-                           <span class="p">(</span><span class="nb">when </span><span class="o">^</span><span class="nb">boolean </span><span class="nv">goog.DEBUG</span> <span class="p">(</span><span class="nf">after</span> <span class="nv">db/valid-schema?</span><span class="p">))])</span> <span class="c1">;; &lt;-- new</span>
-</code></pre></div>
-
-
+We'll use the built-in  <code>after</code> Interceptor factory function:
+<pre class="highlight"><code class="language-clj">(def standard-interceptors [(when ^boolean goog.DEBUG debug)
+                           (when ^boolean goog.DEBUG (after db/valid-schema?))]) ;; &lt;-- new</code></pre></p>
 <p>Now, the instant a handler messes up the structure of <code>app-db</code> you'll be alerted.
 But this overhead won't be there in production.</p>
 <h2 id="too-much-repetition-part-2">Too Much Repetition - Part 2<a class="headerlink" href="#too-much-repetition-part-2" title="Permanent link">&para;</a></h2>
 <p>Above, we discussed a way of "factoring out" common interceptors into <code>standard-interceptors</code>. </p>
 <p>There's an additional technique we can use to ensure that all event handlers get certain Interceptors: 
-you write a custom registration function -- a replacement for <code>reg-event-db</code> -- like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-reg-event-db</span>          <span class="c1">;; alternative to reg-event-db</span>
-  <span class="p">([</span><span class="nv">id</span> <span class="nv">handler-fn</span><span class="p">]</span>
-    <span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span> <span class="nv">id</span> <span class="nv">standard-interceptors</span> <span class="nv">handler-fn</span><span class="p">))</span>
-  <span class="p">([</span><span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler-fn</span><span class="p">]</span>
-    <span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-        <span class="nv">id</span>
-        <span class="p">[</span><span class="nv">standard-interceptors</span> <span class="nv">interceptors</span><span class="p">]</span>
-        <span class="nv">handler-fn</span><span class="p">)))</span>
-</code></pre></div>
-
-
+you write a custom registration function -- a replacement for <code>reg-event-db</code> -- like this:
+<pre class="highlight"><code class="language-clj">(defn my-reg-event-db          ;; alternative to reg-event-db
+  ([id handler-fn]
+    (re-frame.core/reg-event-db id standard-interceptors handler-fn))
+  ([id interceptors handler-fn]
+    (re-frame.core/reg-event-db
+        id
+        [standard-interceptors interceptors]
+        handler-fn)))</code></pre></p>
 <p>Notice how this registration function inserts our standard interceptors every time.</p>
-<p>From now on, you can register your event handlers like this and know that the two standard Interceptors have been inserted:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">my-reg-event-db</span>      <span class="c1">;; &lt;-- adds std interceptors automatically</span>
-  <span class="ss">:some-id</span> 
-  <span class="nv">some-handler-fn</span><span class="p">)</span>
-</code></pre></div>
-
-
+<p>From now on, you can register your event handlers like this and know that the two standard Interceptors have been inserted:
+<pre class="highlight"><code class="language-clj">(my-reg-event-db      ;; &lt;-- adds std interceptors automatically
+  :some-id 
+  some-handler-fn)</code></pre></p>
 <h2 id="what-about-the-fx-variation">What about the -fx variation?<a class="headerlink" href="#what-about-the-fx-variation" title="Permanent link">&para;</a></h2>
 <p>Above we created <code>my-reg-event-db</code> as a new registration function for <code>-db</code> handlers.
 Now, <code>-db</code> handlers take <code>db</code> and <code>event</code> arguments, and return a new <code>db</code>.
@@ -1785,23 +1769,19 @@ So, they MUST return a new <code>db</code> value.   </p>
 an <code>effects</code> map which may, or may not, contain a <code>:db</code>?  Our solution would 
 have to allow for the absence of a new <code>db</code> value (by doing no validity check, because nothing 
 was being changed). </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">debug?</span> <span class="o">^</span><span class="nb">boolean </span><span class="nv">goog.DEBUG</span><span class="p">)</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">standard-interceptors-fx</span>
-  <span class="p">[(</span><span class="nb">when </span><span class="nv">debug?</span>  <span class="nv">debug</span><span class="p">)</span>    <span class="c1">;; as before</span>
-   <span class="p">(</span><span class="nb">when </span><span class="nv">debug?</span> <span class="p">(</span><span class="nf">after</span> <span class="o">#</span><span class="p">(</span><span class="k">if </span><span class="nv">%</span> <span class="p">(</span><span class="nf">db/valid-schema?</span> <span class="nv">%</span><span class="p">)))])</span> <span class="c1">;; &lt;-- different after</span>
-</code></pre></div>
-
-
-<p>and then:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-reg-event-fx</span>          <span class="c1">;; alternative to reg-event-db</span>
-  <span class="p">([</span><span class="nv">id</span> <span class="nv">handler-fn</span><span class="p">]</span>
-    <span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span> <span class="nv">id</span> <span class="nv">standard-interceptors-fx</span> <span class="nv">handler-fn</span><span class="p">))</span>
-  <span class="p">([</span><span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler-fn</span><span class="p">]</span>
-    <span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
-        <span class="nv">id</span>
-        <span class="p">[</span><span class="nv">standard-interceptors-fx</span> <span class="nv">interceptors</span><span class="p">]</span>
-        <span class="nv">handler-fn</span><span class="p">)))</span>
-</code></pre></div>
+<p><pre class="highlight"><code class="language-clj">(def debug? ^boolean goog.DEBUG)
+(def standard-interceptors-fx
+  [(when debug?  debug)    ;; as before
+   (when debug? (after #(if % (db/valid-schema? %)))]) ;; &lt;-- different after</code></pre>
+and then:
+<pre class="highlight"><code class="language-clj">(defn my-reg-event-fx          ;; alternative to reg-event-db
+  ([id handler-fn]
+    (re-frame.core/reg-event-fx id standard-interceptors-fx handler-fn))
+  ([id interceptors handler-fn]
+    (re-frame.core/reg-event-fx
+        id
+        [standard-interceptors-fx interceptors]
+        handler-fn)))</code></pre></p>
                 
               
               
@@ -1946,12 +1926,16 @@ was being changed). </p>
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

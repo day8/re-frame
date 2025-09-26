@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1072,6 +1074,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1342,7 +1356,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1354,7 +1368,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1760,32 +1774,26 @@ the CPU intensive work in the <code>Layer 3</code> (materialised view) and <code
 <h2 id="reg-sub">reg-sub<a class="headerlink" href="#reg-sub" title="Permanent link">&para;</a></h2>
 <p>Subscription handlers are registered using <code>reg-sub</code>. These handlers are the functions which take 
 input values, flowing into the node, and calculate a derived value to be the node's output.</p>
-<p>Extractor subscriptions are registered like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-sub</span>  <span class="c1">;; a part of the re-frame API</span>
-  <span class="ss">:id</span>                   <span class="c1">;; usage: (subscribe [:id])</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">query-v</span><span class="p">]</span>      <span class="c1">;; `db` is the map out of `app-db`</span>
-    <span class="p">(</span><span class="ss">:something</span> <span class="nv">db</span><span class="p">)))</span>   <span class="c1">;; trivial extraction - no computation</span>
-</code></pre></div>
-
-
+<p>Extractor subscriptions are registered like this:
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-sub  ;; a part of the re-frame API
+  :id                   ;; usage: (subscribe [:id])
+  (fn [db query-v]      ;; `db` is the map out of `app-db`
+    (:something db)))   ;; trivial extraction - no computation</code></pre></p>
 <p>This registers a <code>computation function</code> - a pretty simple one which just does an extraction. The argument <code>query-v</code> 
 is the <code>query vector</code> supplied in the subscription. In our simple case here, we're not using it. But if the subscription was for
 <code>(subscribe [:id "blue" :yeah])</code> then the <code>query-v</code> given to the handler would be <code>[:id "blue" :yeah]</code>.</p>
-<p><code>Layer 3</code> (materialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> 
-  <span class="ss">:id</span>
+<p><code>Layer 3</code> (materialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:
+<pre class="highlight"><code class="language-clj">(reg-sub 
+  :id
 
-  <span class="c1">;; signals function</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">query-v</span><span class="p">]</span> 
-    <span class="p">[(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:a</span><span class="p">])</span> <span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:b</span> <span class="mi">2</span><span class="p">])])</span>     <span class="c1">;; &lt;-- these inputs are provided to the computation function </span>
+  ;; signals function
+  (fn [query-v] 
+    [(subscribe [:a]) (subscribe [:b 2])])     ;; &lt;-- these inputs are provided to the computation function 
 
-  <span class="c1">;; computation function</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[[</span><span class="nv">a</span> <span class="nv">b</span><span class="p">]</span> <span class="nv">query-v</span><span class="p">]</span>                  <span class="c1">;; input values supplied in a vector</span>
-      <span class="p">(</span><span class="nf">calculate-it</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p>You supply two functions: </p>
+  ;; computation function
+  (fn [[a b] query-v]                  ;; input values supplied in a vector
+      (calculate-it a b)))</code></pre>
+You supply two functions: </p>
 <ol>
 <li>
 <p>a <code>signals function</code> which returns the input signals for this kind of node. It 
@@ -1806,18 +1814,17 @@ At any one time, only those nodes required to service the needs of <strong>curre
 Registering a handler only says how to create a Signal Graph node when and if it is needed.</p>
 </div>
 <h2 id="syntactic-sugar">Syntactic Sugar<a class="headerlink" href="#syntactic-sugar" title="Permanent link">&para;</a></h2>
-<p>The <code>Layer 3</code> (materialized view) subscription above can be rewritten using some syntactic sugar:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> 
-  <span class="ss">:id</span>
+<p>The <code>Layer 3</code> (materialized view) subscription above can be rewritten using some syntactic sugar:
+<pre class="highlight"><code class="language-clj">(reg-sub 
+  :id
 
-  <span class="c1">;; input signals </span>
-  <span class="ss">:&lt;-</span> <span class="p">[</span><span class="ss">:a</span><span class="p">]</span>        <span class="c1">;; means (subscribe [:a] is an input)</span>
-  <span class="ss">:&lt;-</span> <span class="p">[</span><span class="ss">:b</span> <span class="mi">2</span><span class="p">]</span>      <span class="c1">;; means (subscribe [:b 2] is an input)</span>
+  ;; input signals 
+  :&lt;- [:a]        ;; means (subscribe [:a] is an input)
+  :&lt;- [:b 2]      ;; means (subscribe [:b 2] is an input)
 
-  <span class="c1">;; computation function</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[[</span><span class="nv">a</span> <span class="nv">b</span><span class="p">]</span> <span class="nv">query-v</span><span class="p">]</span>
-       <span class="p">(</span><span class="nf">calculate-it</span> <span class="nv">a</span> <span class="nv">b</span><span class="p">)))</span>
-</code></pre></div>
+  ;; computation function
+  (fn [[a b] query-v]
+       (calculate-it a b)))</code></pre></p>
                 
               
               
@@ -1962,12 +1969,16 @@ Registering a handler only says how to create a Signal Graph node when and if it
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

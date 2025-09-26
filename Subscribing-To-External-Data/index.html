@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1095,6 +1097,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1365,7 +1379,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1377,7 +1391,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1765,20 +1779,14 @@ when those items come from a remote database? </p>
  <code>select id, price, description from items where type="see through"</code>.</p>
 <h3 id="via-a-subscription">Via A Subscription<a class="headerlink" href="#via-a-subscription" title="Permanent link">&para;</a></h3>
 <p>In <code>re-frame</code>, Components always obtain data via a subscription. Always.  </p>
-<p>So, our Component which shows items is going to </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">items</span> <span class="p">(</span><span class="nf">re-frame/subscribe</span> <span class="p">[</span><span class="ss">:items</span> <span class="s">&quot;see through&quot;</span><span class="p">])</span> <span class="nv">...</span>
-</code></pre></div>
-
-
-<p>and the subscription handler will deliver them. </p>
-<p>Which, in turn, means our code must have a subscription handler defined:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame/reg-sub</span>
-  <span class="ss">:items</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">item-type</span><span class="p">]</span>
-    <span class="nv">...</span><span class="p">))</span>
-</code></pre></div>
-
-
+<p>So, our Component which shows items is going to 
+<pre class="highlight"><code class="language-clj">(let [items (re-frame/subscribe [:items "see through"]) ...</code></pre>
+and the subscription handler will deliver them. </p>
+<p>Which, in turn, means our code must have a subscription handler defined:
+<pre class="highlight"><code class="language-clj">(re-frame/reg-sub
+  :items
+  (fn [db [_ item-type]
+    ...))</code></pre></p>
 <p>Which is fine ... except we haven't really solved this problem yet, have we?<br />
 We've just transferred 
 the problem away from the Component and into the subscription handler? </p>
@@ -1822,20 +1830,17 @@ The subscription handler is organising for the right remote data to "flow" into 
 particular path, when it is needed by a Component. And, equally, for this data to be cleaned up when it 
 is no longer required.</p>
 <h3 id="some-code">Some Code<a class="headerlink" href="#some-code" title="Permanent link">&para;</a></h3>
-<p>Enough fluffing about with words, here's a code sketch for our subscription handler:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame/reg-sub-raw</span>
-  <span class="ss">:items</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">app-db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">type</span><span class="p">]]</span>
-       <span class="p">(</span><span class="k">let </span> <span class="p">[</span><span class="nv">query-token</span> <span class="p">(</span><span class="nf">issue-items-query!</span>
-                            <span class="nv">type</span>
-                            <span class="ss">:on-success</span> <span class="o">#</span><span class="p">(</span><span class="nf">re-frame/dispatch</span> <span class="p">[</span><span class="ss">:write-to</span>  <span class="p">[</span><span class="ss">:some</span> <span class="ss">:path</span><span class="p">]]))]</span>
-         <span class="p">(</span><span class="nf">reagent.ratom/make-reaction</span>
-           <span class="p">(</span><span class="k">fn </span><span class="p">[]</span> <span class="p">(</span><span class="nf">get-in</span> <span class="o">@</span><span class="nv">app-db</span> <span class="p">[</span><span class="ss">:some</span> <span class="ss">:path</span><span class="p">]))</span>
-           <span class="ss">:on-dispose</span> <span class="o">#</span><span class="p">(</span><span class="k">do </span><span class="p">(</span><span class="nf">terminate-items-query!</span> <span class="nv">query-token</span><span class="p">)</span>
-                            <span class="p">(</span><span class="nf">re-frame/dispatch</span> <span class="p">[</span><span class="ss">:cleanup</span> <span class="p">[</span><span class="ss">:some</span> <span class="ss">:path</span><span class="p">]]))))))</span>
-</code></pre></div>
-
-
+<p>Enough fluffing about with words, here's a code sketch for our subscription handler:
+<pre class="highlight"><code class="language-clj">(re-frame/reg-sub-raw
+  :items
+  (fn [app-db [_ type]]
+       (let  [query-token (issue-items-query!
+                            type
+                            :on-success #(re-frame/dispatch [:write-to  [:some :path]]))]
+         (reagent.ratom/make-reaction
+           (fn [] (get-in @app-db [:some :path]))
+           :on-dispose #(do (terminate-items-query! query-token)
+                            (re-frame/dispatch [:cleanup [:some :path]]))))))</code></pre></p>
 <p>A few things to notice:</p>
 <ol>
 <li>
@@ -2072,12 +2077,16 @@ data into HTML and nothing more. they absolutely do not do imperative stuff.</p>
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

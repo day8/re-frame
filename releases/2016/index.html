@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -963,6 +965,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1233,7 +1247,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1245,7 +1259,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1745,12 +1759,11 @@ story which has emerged in re-frame through this 0.8.0 release.</p>
 </li>
 <li>
 <p>You explicitly use <code>comp</code> to compose middleware like this:
-   <code>clj
-   (reg-event-db
-       :some-id
-       (comp debug tim-v)    ;; &lt;-- change to [debug trim-v]
-       (fn [db event]
-           ...))</code></p>
+   <pre class="highlight"><code class="language-clj">(reg-event-db
+    :some-id
+    (comp debug tim-v)    ;; &lt;-- change to [debug trim-v]
+    (fn [db event]
+        ...))</code></pre></p>
 </li>
 </ol>
 </li>
@@ -1768,12 +1781,11 @@ we are trying to maximise use of cljs-devtools and information is lost when stri
 output, instead of actual data.</p>
 <p>Of course, you need only worry about this if you are using <code>re-frame.core/set-loggers!</code> to
 hook in your own loggers.  If you are, then, to transition, you'll need to tweak like this:
-```
- ;; your old log function might have looked like this. Single string parameter.
-(defn my-logger [s]  (do-something-with s))</p>
-<p>;; your new version will have variadic params, and turn them into a string
-(defn my-logger [&amp; args] (do-something-with (apply str args))
-```</p>
+<pre class="highlight"><code> ;; your old log function might have looked like this. Single string parameter.
+(defn my-logger [s]  (do-something-with s))
+
+;; your new version will have variadic params, and turn them into a string
+(defn my-logger [&amp; args] (do-something-with (apply str args))</code></pre></p>
 </li>
 </ul>
 <h4>Improvements</h4>
@@ -1952,12 +1964,16 @@ hook in your own loggers.  If you are, then, to transition, you'll need to tweak
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

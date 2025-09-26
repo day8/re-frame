@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1053,6 +1055,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1323,7 +1337,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1335,7 +1349,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1675,32 +1689,29 @@ include something like the following: </p>
 <li>what chunk to do next. </li>
 </ol>
 <h2 id="a-sketch">A Sketch<a class="headerlink" href="#a-sketch" title="Permanent link">&para;</a></h2>
-<p>Here's an <code>-fx</code> handler which counts up to some number in chunks:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span> 
-  <span class="ss">:count-to</span>
-  <span class="p">(</span><span class="k">fn </span>
-    <span class="p">[{</span><span class="nv">db</span> <span class="ss">:db</span><span class="p">}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">first-time</span> <span class="nv">so-far</span> <span class="nv">finish-at</span><span class="p">]]</span>
-    <span class="p">(</span><span class="k">if </span><span class="nv">first-time</span>
-      <span class="c1">;; We are at the beginning, so:</span>
-      <span class="c1">;;     - modify db, causing popup of Modal saying &quot;Working ...&quot;</span>
-      <span class="c1">;;     - begin iterative dispatch. Give initial version of &quot;so-far&quot;</span>
-      <span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:count-to</span> <span class="nv">false</span> <span class="p">{</span><span class="ss">:counter</span> <span class="mi">0</span><span class="p">}</span> <span class="nv">finish-at</span><span class="p">]</span>  <span class="c1">;; dispatch to self</span>
-       <span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:we-are-working</span> <span class="nv">true</span><span class="p">)}</span>
-      <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="p">(</span><span class="ss">:counter</span> <span class="nv">so-far</span><span class="p">)</span> <span class="nv">finish-at</span><span class="p">)</span>
-        <span class="c1">;; We are finished:</span>
-        <span class="c1">;;  - take away the state which causes the modal to be up</span>
-        <span class="c1">;;  - store the result of the calculation</span>
-        <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">db</span>
-                 <span class="p">(</span><span class="nb">assoc </span><span class="ss">:fruits-of-labour</span> <span class="p">(</span><span class="ss">:counter</span> <span class="nv">so-far</span><span class="p">))</span> <span class="c1">;; remember the result</span>
-                 <span class="p">(</span><span class="nb">assoc </span><span class="ss">:we-are-working</span> <span class="nv">false</span><span class="p">))}</span>             <span class="c1">;; no more modal</span>
-        <span class="c1">;; Still more work to do</span>
-        <span class="c1">;;   - run the calculation</span>
-        <span class="c1">;;   - redispatch, passing in new running state</span>
-        <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">new-so-far</span>   <span class="p">(</span><span class="nf">update</span> <span class="nv">so-far</span> <span class="ss">:counter</span> <span class="nv">inc</span><span class="p">)]</span>
-          <span class="p">{</span><span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:count-to</span> <span class="nv">false</span> <span class="nv">new-so-far</span> <span class="nv">finish-at</span><span class="p">]}))))</span>                         
-</code></pre></div>
-
-
+<p>Here's an <code>-fx</code> handler which counts up to some number in chunks:
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx 
+  :count-to
+  (fn 
+    [{db :db} [_ first-time so-far finish-at]]
+    (if first-time
+      ;; We are at the beginning, so:
+      ;;     - modify db, causing popup of Modal saying "Working ..."
+      ;;     - begin iterative dispatch. Give initial version of "so-far"
+      {:dispatch [:count-to false {:counter 0} finish-at]  ;; dispatch to self
+       :db (assoc db :we-are-working true)}
+      (if (&gt; (:counter so-far) finish-at)
+        ;; We are finished:
+        ;;  - take away the state which causes the modal to be up
+        ;;  - store the result of the calculation
+        {:db (-&gt; db
+                 (assoc :fruits-of-labour (:counter so-far)) ;; remember the result
+                 (assoc :we-are-working false))}             ;; no more modal
+        ;; Still more work to do
+        ;;   - run the calculation
+        ;;   - redispatch, passing in new running state
+        (let [new-so-far   (update so-far :counter inc)]
+          {:dispatch [:count-to false new-so-far finish-at]}))))                         </code></pre></p>
 <h3 id="why-does-a-redispatch-work">Why Does A Redispatch Work?<a class="headerlink" href="#why-does-a-redispatch-work" title="Permanent link">&para;</a></h3>
 <p>A <code>dispatched</code> event is handled asynchronously. It is queued
 and not actioned straight away. </p>
@@ -1754,16 +1765,13 @@ function of the data in <code>app-db</code>. Only changes to <code>app-db</code>
 changes. </p>
 <p>So, to show that Modal, you’ll need to <code>assoc</code> some value into <code>app-db</code> 
 and have that new value change what is rendered in your reagent components.</p>
-<p>You might be tempted to do this: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-  <span class="ss">:process-x</span>
-  <span class="p">(</span><span class="nf">fn</span>
-   <span class="p">[</span><span class="nv">db</span> <span class="nv">event-v</span><span class="p">]</span>
-   <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:processing-X</span>  <span class="nv">true</span><span class="p">)</span> <span class="c1">;; update state, so reagent components render a modal </span>
-   <span class="p">(</span><span class="nf">do-long-process-x</span><span class="p">)))</span>          <span class="c1">;; hog the CPU</span>
-</code></pre></div>
-
-
+<p>You might be tempted to do this: 
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db
+  :process-x
+  (fn
+   [db event-v]
+   (assoc db :processing-X  true) ;; update state, so reagent components render a modal 
+   (do-long-process-x)))          ;; hog the CPU</code></pre></p>
 <p>But that is just plain wrong. 
 That <code>assoc</code> into <code>db</code> is not returned (and it must be for a <code>-db</code> handler).
 And, even if that did somehow work, 
@@ -1771,21 +1779,18 @@ then you continue hogging the thread with <code>do-long-process-x</code>.  There
 chance for any UI updates because the handler never gives up control. This 
 handler owns the thread right through.</p>
 <p>Ahhh, you think.  I know what to do!  I'll use that pattern I read 
-about in the Wiki, and <code>re-dispatch</code> within an<code>-fx</code> handler: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
-  <span class="ss">:process-x</span>
-  <span class="p">(</span><span class="k">fn </span>
-    <span class="p">[{</span><span class="nv">db</span> <span class="ss">:db</span><span class="p">}</span> <span class="nv">event-v</span><span class="p">]</span>
-    <span class="p">{</span><span class="ss">:dispatch</span>  <span class="p">[</span><span class="ss">:do-work-process-x</span><span class="p">]</span>   <span class="c1">;; do processing later, give CPU back to browser.     </span>
-     <span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span> <span class="nv">db</span>  <span class="ss">:processing-X</span> <span class="nv">true</span><span class="p">)}))</span> <span class="c1">;; so the modal gets rendered</span>
+about in the Wiki, and <code>re-dispatch</code> within an<code>-fx</code> handler: 
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx
+  :process-x
+  (fn 
+    [{db :db} event-v]
+    {:dispatch  [:do-work-process-x]   ;; do processing later, give CPU back to browser.     
+     :db (assoc  db  :processing-X true)})) ;; so the modal gets rendered
 
-<span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-  <span class="ss">:do-work-process-x</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">(</span><span class="nf">do-long-process-x</span> <span class="nv">db</span><span class="p">)))</span>   <span class="c1">;; return a new db, presumably containing work done</span>
-</code></pre></div>
-
-
+(re-frame.core/reg-event-db
+  :do-work-process-x
+  (fn [db _]
+    (do-long-process-x db)))   ;; return a new db, presumably containing work done</code></pre></p>
 <p>So close.  But it still won’t work. There's a little wrinkle.</p>
 <p>That event handler for <code>:process-x</code> will indeed give back control 
 to the browser. BUT, because of the way reagent works, that <code>assoc</code> on <code>db</code> 
@@ -1798,16 +1803,13 @@ action is being taken won't show.</p>
 <p>In these kinds of cases, where you are only going to give the UI 
 <strong>one chance to update</strong> (not a repeated chance every few milliseconds), 
 then you had better be sure the DOM is fully synced. </p>
-<p>To do this, you put metadata on the event being dispatched:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
-  <span class="ss">:process-x</span>
-  <span class="p">(</span><span class="k">fn </span>
-    <span class="p">[{</span><span class="nv">db</span> <span class="ss">:db</span><span class="p">}</span> <span class="nv">event-v</span><span class="p">]</span>
-    <span class="p">{</span><span class="ss">:dispatch</span>  <span class="o">^</span><span class="ss">:flush-dom</span> <span class="p">[</span><span class="ss">:do-work-process-x</span><span class="p">]</span>   <span class="c1">;; &lt;--- NOW WITH METADATA         </span>
-     <span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span> <span class="nv">db</span>  <span class="ss">:processing-X</span> <span class="nv">true</span><span class="p">)}))</span>  <span class="c1">;; so the modal gets rendered</span>
-</code></pre></div>
-
-
+<p>To do this, you put metadata on the event being dispatched:
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx
+  :process-x
+  (fn 
+    [{db :db} event-v]
+    {:dispatch  ^:flush-dom [:do-work-process-x]   ;; &lt;--- NOW WITH METADATA         
+     :db (assoc  db  :processing-X true)}))  ;; so the modal gets rendered</code></pre></p>
 <p>Notice the <code>^:flush-dom</code> metadata on the event being dispatched.  Use 
 that when you want the UI to be fully updated before the event dispatch 
 is handled. </p>
@@ -1963,12 +1965,16 @@ when you are going to tie up the CPU for a one, longish chunk. </p>
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

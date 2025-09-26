@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -230,7 +232,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -969,6 +971,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1239,7 +1253,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1251,7 +1265,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1488,23 +1502,17 @@ what does it even mean to talk about <strong>interconnections between functions?
 To answer that question, I'll rephrase it as:
 how are the domino functions <strong>composed</strong>?</p>
 <p>At the language level,
-Uncle Alonzo and Uncle John tell us how a function like <code>count</code> composes:   </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">str </span><span class="p">(</span><span class="nb">count </span><span class="p">(</span><span class="nb">filter </span><span class="nv">odd?</span>  <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span><span class="p">])))</span>
-</code></pre></div>
-
-
-<p>We know when <code>count</code> is called, and with what
+Uncle Alonzo and Uncle John tell us how a function like <code>count</code> composes: <br />
+<pre class="highlight"><code class="language-clj">(str (count (filter odd?  [1 2 3 4 5])))</code></pre>
+We know when <code>count</code> is called, and with what
 argument, and how the value it computes becomes the arg for a further function.
 We know how data "flows" into and out of the functions.</p>
-<p>Sometimes, we'd rewrite this code as:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">-&gt;&gt;</span>  <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span><span class="p">]</span>
-      <span class="p">(</span><span class="nb">filter </span><span class="nv">odd?</span><span class="p">)</span>
-      <span class="nv">count</span>
-      <span class="nv">str</span><span class="p">)</span>
-</code></pre></div>
-
-
-<p>With this arrangement, we talk of "threading" data
+<p>Sometimes, we'd rewrite this code as:
+<pre class="highlight"><code class="language-clj">(-&gt;&gt;  [1 2 3 4 5]
+      (filter odd?)
+      count
+      str)</code></pre>
+With this arrangement, we talk of "threading" data
 through functions. <strong>It seems to help our comprehension to conceive function
 composition in terms of data flow</strong>.</p>
 <p>re-frame delivers architecture
@@ -1659,12 +1667,16 @@ compelled by different kinds of forces at different times (gravity, convection, 
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

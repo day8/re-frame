@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1033,6 +1035,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1303,7 +1317,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1315,7 +1329,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1660,41 +1674,38 @@ which are both unique and descriptive.</p>
 <p>How do I switch between different panels of a larger app?</p>
 <p>Your <code>app-db</code> could have an <code>:active-panel</code> key containing an id for the panel being displayed.</p>
 <p>When the user does something navigation-ish (selects a tab, a dropdown or something which changes the active panel), then the associated event and dispatch look like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame/reg-event-db</span>
-  <span class="ss">:set-active-panel</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">value</span><span class="p">]]</span>
-    <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:active-panel</span> <span class="nv">value</span><span class="p">)))</span>
+<pre class="highlight"><code class="language-clj">(re-frame/reg-event-db
+  :set-active-panel
+  (fn [db [_ value]]
+    (assoc db :active-panel value)))
 
-<span class="p">(</span><span class="nf">re-frame/dispatch</span>
-  <span class="p">[</span><span class="ss">:set-active-panel</span> <span class="ss">:panel1</span><span class="p">])</span>
-</code></pre></div>
-
+(re-frame/dispatch
+  [:set-active-panel :panel1])</code></pre>
 
 <p>A high level reagent view has a subscription to :active-panel and will switch to the associated panel.</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame/reg-sub</span>
-  <span class="ss">:active-panel</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">(</span><span class="ss">:active-panel</span> <span class="nv">db</span><span class="p">)))</span>
+<pre class="highlight"><code class="language-clj">(re-frame/reg-sub
+  :active-panel
+  (fn [db _]
+    (:active-panel db)))
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">panel1</span>
- <span class="p">[]</span>
- <span class="p">[</span><span class="ss">:div</span>  <span class="p">{</span><span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nf">re-frame/dispatch</span> <span class="p">[</span><span class="ss">:set-active-panel</span> <span class="ss">:panel2</span><span class="p">])}</span>
-        <span class="s">&quot;Here&quot;</span> <span class="p">])</span>
+(defn panel1
+ []
+ [:div  {:on-click #(re-frame/dispatch [:set-active-panel :panel2])}
+        "Here" ])
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">panel2</span>
- <span class="p">[]</span>
- <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;There&quot;</span><span class="p">])</span>
+(defn panel2
+ []
+ [:div "There"])
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">high-level-view</span>
-  <span class="p">[]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">active</span>  <span class="p">(</span><span class="nf">re-frame/subscribe</span> <span class="p">[</span><span class="ss">:active-panel</span><span class="p">])]</span>
-    <span class="p">(</span><span class="k">fn </span><span class="p">[]</span>
-      <span class="p">[</span><span class="ss">:div</span>
-       <span class="p">[</span><span class="ss">:div.title</span>   <span class="s">&quot;Heading&quot;</span><span class="p">]</span>
-       <span class="p">(</span><span class="nf">condp</span> <span class="nb">= </span><span class="o">@</span><span class="nv">active</span>                <span class="c1">;; or you could look up in a map</span>
-         <span class="ss">:panel1</span>   <span class="p">[</span><span class="nv">panel1</span><span class="p">]</span>
-         <span class="ss">:panel2</span>   <span class="p">[</span><span class="nv">panel2</span><span class="p">])])))</span>
-</code></pre></div>
+(defn high-level-view
+  []
+  (let [active  (re-frame/subscribe [:active-panel])]
+    (fn []
+      [:div
+       [:div.title   "Heading"]
+       (condp = @active                ;; or you could look up in a map
+         :panel1   [panel1]
+         :panel2   [panel2])])))</code></pre>
                 
               
               
@@ -1839,12 +1850,16 @@ which are both unique and descriptive.</p>
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

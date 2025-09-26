@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -963,6 +965,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1233,7 +1247,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1245,7 +1259,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1769,48 +1783,29 @@
 <li>
 <p>Added an new <code>:fx</code> built-in effect handler.
     Previously, you might have returned effects like this:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span> 
-  <span class="ss">:token</span> 
-  <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">id</span><span class="p">]]</span>
-    <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:twirly</span> <span class="nv">true</span><span class="p">)</span> 
-     <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:blah</span><span class="p">]</span>
-     <span class="ss">:full-screen</span> <span class="nv">true</span>
-     <span class="ss">:http</span>  <span class="p">(</span><span class="nb">list </span>
-              <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span> <span class="ss">:url</span> <span class="s">&quot;http://abc.com/endpoint&quot;</span> <span class="nv">...</span><span class="p">}</span>
-              <span class="p">{</span><span class="ss">:method</span> <span class="ss">:POST</span> <span class="ss">:url</span> <span class="s">&quot;http://blah.com/endpoint&quot;</span> <span class="nv">...</span><span class="p">})}))</span>
-</code></pre></div>
-</td></tr></table>
+<pre class="highlight"><code>(reg-event-fx 
+  :token 
+  (fn [{:keys [db]} [_ id]]
+    {:db (assoc db :twirly true) 
+     :dispatch [:blah]
+     :full-screen true
+     :http  (list 
+              {:method :GET :url "http://abc.com/endpoint" ...}
+              {:method :POST :url "http://blah.com/endpoint" ...})}))
+</code></pre>
 
 <p>but now, using <code>:fx</code>:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span> 
-  <span class="ss">:token</span> 
-  <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">id</span><span class="p">]]</span>
-    <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:twirly</span> <span class="nv">true</span><span class="p">)</span> 
-     <span class="ss">:fx</span> <span class="p">[</span> <span class="p">[</span><span class="ss">:dispatch</span>     <span class="p">[</span><span class="ss">:blah</span><span class="p">]]</span> 
-           <span class="p">[</span><span class="ss">:full-screen</span>  <span class="nv">true</span><span class="p">]</span>
-           <span class="p">[</span><span class="ss">:http</span>         <span class="p">{</span><span class="ss">:method</span> <span class="ss">:GET</span> <span class="ss">:url</span> <span class="s">&quot;http://abc.com/endpoint&quot;</span> <span class="nv">...</span><span class="p">}]</span>
-           <span class="p">[</span><span class="ss">:http</span>         <span class="p">{</span><span class="ss">:method</span> <span class="ss">:POST</span> <span class="ss">:url</span> <span class="s">&quot;http://blah.com/endpoint&quot;</span> <span class="nv">...</span><span class="p">}]</span>
+<pre class="highlight"><code>(reg-event-fx 
+  :token 
+  (fn [{:keys [db]} [_ id]]
+    {:db (assoc db :twirly true) 
+     :fx [ [:dispatch     [:blah]] 
+           [:full-screen  true]
+           [:http         {:method :GET :url "http://abc.com/endpoint" ...}]
+           [:http         {:method :POST :url "http://blah.com/endpoint" ...}]
 
-           <span class="p">(</span><span class="nb">when </span><span class="nv">seventies?</span> <span class="p">[</span><span class="ss">:hair</span> <span class="s">&quot;side burns&quot;</span><span class="p">])]</span>     <span class="c1">;; nils are ignored</span>
-</code></pre></div>
-</td></tr></table>
+           (when seventies? [:hair "side burns"])]     ;; nils are ignored
+</code></pre>
 
 <p>Notes:</p>
 <ul>
@@ -1829,8 +1824,7 @@
 <p>this feature is a stepping stone towards making it easier to create an event handler which is a composition of 
   other functions. We imagine circumstances in the future in which event handlers might be written more 
   like this:</p>
-<p>#!clj
-  (reg-event-xxxx       ;; &lt;-- a new kind of registration function
+<p>(reg-event-xxxx       ;; &lt;-- a new kind of registration function
    :event-id<br />
    interceptors 
    [function1 function2 function3])</p>
@@ -2087,12 +2081,16 @@ Further discussion on its introduction can be found in issue <a href="https://gi
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

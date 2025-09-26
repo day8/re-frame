@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -233,7 +235,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -961,6 +963,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1231,7 +1245,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1243,7 +1257,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1570,75 +1584,62 @@
 </ul>
 <p>XXX searches up the DOM hierarchy looking for a <code>frame</code> context then extracts dispatch and subscribe.  Sounds inefficient. </p>
 <h3 id="code-doodle-1">Code Doodle #1<a class="headerlink" href="#code-doodle-1" title="Permanent link">&para;</a></h3>
-<p>Associate the keyword <code>:my-view-id</code> with a renderer using <code>def-view</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">def-view</span> 
-   <span class="ss">:my-view-id</span> 
+<p>Associate the keyword <code>:my-view-id</code> with a renderer using <code>def-view</code>:
+<pre class="highlight"><code class="language-clj">(def-view 
+   :my-view-id 
 
-   <span class="c1">;; indicate what `context` is required</span>
-   <span class="p">[</span><span class="ss">:dispatch</span> <span class="ss">:subscribe</span> <span class="ss">:context</span> <span class="nv">XXX</span><span class="p">]</span> 
+   ;; indicate what `context` is required
+   [:dispatch :subscribe :context XXX] 
 
-   <span class="c1">;; the renderer</span>
-   <span class="c1">;; last argument `context` is a map of:</span>
-   <span class="c1">;;    - `:subs` - a vector of subscription values? </span>
-   <span class="c1">;;    - :dispatch and :subscribe </span>
-   <span class="c1">;;    - :context - a vector of context values</span>
-   <span class="c1">;; </span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">a-str</span> <span class="nv">context</span><span class="p">]</span>
-     <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">XXXX</span><span class="p">]</span> 
-       <span class="p">)))</span>
-</code></pre></div>
-
-
-<p>Use of <code>:my-view-id</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:my-view-id</span>  <span class="s">&quot;Hello&quot;</span><span class="p">]</span> 
-</code></pre></div>
-
-
+   ;; the renderer
+   ;; last argument `context` is a map of:
+   ;;    - `:subs` - a vector of subscription values? 
+   ;;    - :dispatch and :subscribe 
+   ;;    - :context - a vector of context values
+   ;; 
+   (fn [a-str context]
+     (let [XXXX] 
+       )))</code></pre></p>
+<p>Use of <code>:my-view-id</code>:
+<pre class="highlight"><code class="language-clj">[:my-view-id  "Hello"] </code></pre></p>
 <h3 id="code-doodle-2">Code Doodle #2<a class="headerlink" href="#code-doodle-2" title="Permanent link">&para;</a></h3>
-<p>Associate the keyword <code>:my-view-id</code> with a renderer using <code>def-view</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">def-view</span> 
-   <span class="ss">:my-view-id</span> 
+<p>Associate the keyword <code>:my-view-id</code> with a renderer using <code>def-view</code>:
+<pre class="highlight"><code class="language-clj">(def-view 
+   :my-view-id 
 
-   <span class="c1">;; injection function</span>
-   <span class="c1">;; indicate what subscriptions we wish to obtain </span>
-   <span class="c1">;; obtain a dispatch for use </span>
-   <span class="c1">;; get the context id if you want to </span>
-   <span class="c1">;; </span>
-   <span class="ss">:subscriptions</span> 
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">_</span> <span class="nv">id</span><span class="p">]</span>
-      <span class="p">{</span><span class="ss">:subs</span> <span class="p">[[</span><span class="ss">:item</span> <span class="p">]]</span> 
-       <span class="ss">:context</span> <span class="p">[</span><span class="s">&quot;name1&quot;</span>, <span class="s">&quot;name2&quot;</span><span class="p">)})</span>
-
-
-   <span class="c1">;; the renderer</span>
-   <span class="c1">;; last argument `ins` is a map of:</span>
-   <span class="c1">;;    - `:subs` - a vector of subscription values? </span>
-   <span class="c1">;;    - :dispatch and :subscribe </span>
-   <span class="c1">;;    - :context - a vector of context values</span>
-   <span class="c1">;; </span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">a-str</span>  <span class="nv">ins</span><span class="p">]</span>
-     <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">XXXX</span><span class="p">]</span> 
-       <span class="p">)))</span>
-</code></pre></div>
+   ;; injection function
+   ;; indicate what subscriptions we wish to obtain 
+   ;; obtain a dispatch for use 
+   ;; get the context id if you want to 
+   ;; 
+   :subscriptions 
+   (fn [_ id]
+      {:subs [[:item ]] 
+       :context ["name1", "name2")})
 
 
-<p>Use of <code>:my-view-id</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:my-view-id</span>  <span class="s">&quot;Hello&quot;</span><span class="p">]</span> 
-</code></pre></div>
-
-
+   ;; the renderer
+   ;; last argument `ins` is a map of:
+   ;;    - `:subs` - a vector of subscription values? 
+   ;;    - :dispatch and :subscribe 
+   ;;    - :context - a vector of context values
+   ;; 
+   (fn [a-str  ins]
+     (let [XXXX] 
+       )))</code></pre></p>
+<p>Use of <code>:my-view-id</code>:
+<pre class="highlight"><code class="language-clj">[:my-view-id  "Hello"] </code></pre></p>
 <h3 id="code-doodle-3">Code Doodle #3<a class="headerlink" href="#code-doodle-3" title="Permanent link">&para;</a></h3>
 <p><code>[:something arg1 arg2]</code></p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">def-view</span> 
-   <span class="ss">:something</span> 
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">arg1</span> <span class="nv">arg2</span><span class="p">]</span> 
-      <span class="c1">;; obtain dispatch and subscription </span>
-      <span class="c1">;; obtain a subscription or two </span>
-      <span class="c1">;; add a key on the component </span>
-      <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">arg1</span> <span class="nv">arg2</span><span class="p">]</span> 
-          <span class="p">))</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(def-view 
+   :something 
+   (fn [arg1 arg2] 
+      ;; obtain dispatch and subscription 
+      ;; obtain a subscription or two 
+      ;; add a key on the component 
+      (fn [arg1 arg2] 
+          ))
+</code></pre>
 
 <h2 id="misc-notes">Misc Notes<a class="headerlink" href="#misc-notes" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1740,12 +1741,16 @@
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

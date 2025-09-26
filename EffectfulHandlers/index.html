@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1117,6 +1119,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1387,7 +1401,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1399,7 +1413,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1770,11 +1784,8 @@
 Yes, a surprising claim.</p>
 <h2 id="events-happen">Events Happen<a class="headerlink" href="#events-happen" title="Permanent link">&para;</a></h2>
 <p>Events "happen" when they are dispatched.</p>
-<p>So, this makes an event happen:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:repair-ming-vase</span> <span class="nv">true</span><span class="p">])</span>
-</code></pre></div>
-
-
+<p>So, this makes an event happen:
+<pre class="highlight"><code class="language-clj">(dispatch [:repair-ming-vase true])</code></pre></p>
 <p>Events are normally triggered by an external agent: the user clicks a button, or a server-pushed
 message arrives on a websocket.</p>
 <h2 id="handling-the-happening">Handling The Happening<a class="headerlink" href="#handling-the-happening" title="Permanent link">&para;</a></h2>
@@ -1791,14 +1802,11 @@ complex and error prone part of an app.</p>
 <p>To help wrangle this potential complexity, re-frame's introduction
 provided you with a simple programming model.</p>
 <p>It said you should call <code>reg-event-db</code> to associate an event id,
-with a function to do the handling:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>        <span class="c1">;; &lt;-- call this to register a handler</span>
-    <span class="ss">:set-flag</span>                      <span class="c1">;; this is an event id</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">new-value</span><span class="p">]]</span>          <span class="c1">;; this function does the handling</span>
-      <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">new-value</span><span class="p">)))</span>
-</code></pre></div>
-
-
+with a function to do the handling:
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db        ;; &lt;-- call this to register a handler
+    :set-flag                      ;; this is an event id
+   (fn [db [_ new-value]]          ;; this function does the handling
+      (assoc db :flag new-value)))</code></pre></p>
 <p>The function you register, handles events with a given <code>id</code>.</p>
 <p>And that handler <code>fn</code> is expected to be pure. Given the
 value in <code>app-db</code> as the first argument, and the event (vector)
@@ -1807,31 +1815,25 @@ as the second argument, it is expected to provide a new value for <code>app-db</
 <h2 id="90-solution">90% Solution<a class="headerlink" href="#90-solution" title="Permanent link">&para;</a></h2>
 <p>This paradigm provides a lovely solution 90% of the time, but there are times
 when it isn't enough.</p>
-<p>Here's an example from the messy 10%. To get its job done, this handler has to side effect:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">bool</span><span class="p">]]</span>
-       <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">])</span>    <span class="c1">;; oops, side-effect</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:send-spam</span> <span class="nv">new-val</span><span class="p">)))</span>
-</code></pre></div>
-
-
+<p>Here's an example from the messy 10%. To get its job done, this handler has to side effect:
+<pre class="highlight"><code class="language-clj">(reg-event-db
+   :my-event
+   (fn [db [_ bool]]
+       (dispatch [:do-something-else 3])    ;; oops, side-effect
+       (assoc db :send-spam new-val)))</code></pre></p>
 <p>That <code>dispatch</code> queues up another event to be processed. It changes the world.</p>
 <p>Just to be clear, this code works.  The handler returns a new version of <code>db</code>, so tick,
 and that <code>dispatch</code> will itself be "handled" asynchronously
 very shortly after this handler finishes, double tick.</p>
 <p>So, you can "get away with it".  But it ain't pure.</p>
-<p>And here's more carnage:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>
-       <span class="p">(</span><span class="nf">GET</span> <span class="s">&quot;http://json.my-endpoint.com/blah&quot;</span>   <span class="c1">;; dirty great big side-effect</span>
-            <span class="p">{</span><span class="ss">:handler</span>       <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:process-response</span> <span class="nv">%1</span><span class="p">])</span>
-             <span class="ss">:error-handler</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:bad-response</span> <span class="nv">%1</span><span class="p">])})</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)))</span>
-</code></pre></div>
-
-
+<p>And here's more carnage:
+<pre class="highlight"><code class="language-clj">(reg-event-db
+   :my-event
+   (fn [db [_ a]]
+       (GET "http://json.my-endpoint.com/blah"   ;; dirty great big side-effect
+            {:handler       #(dispatch [:process-response %1])
+             :error-handler #(dispatch [:bad-response %1])})
+       (assoc db :flag true)))</code></pre></p>
 <p>Again, this approach will work. But that dirty great big side-effect doesn't come
 for free. It's like a muddy monster truck has shown up in our field of white tulips.</p>
 <h2 id="bad-why">Bad, Why?<a class="headerlink" href="#bad-why" title="Permanent link">&para;</a></h2>
@@ -1853,15 +1855,12 @@ function for this reduce is the set of registered event handlers.</p>
 when all the handlers are pure. Handlers with side-effects (like that HTTP GET, or the <code>dispatch</code>) pollute the
 replay, inserting extra events into it, etc., which ruins the process.</p>
 <h2 id="the-2nd-kind-of-problem">The 2nd Kind Of Problem<a class="headerlink" href="#the-2nd-kind-of-problem" title="Permanent link">&para;</a></h2>
-<p>And there's the other kind of purity problem:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:load-localstore</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-     <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">val </span><span class="p">(</span><span class="nf">js-&gt;clj</span> <span class="p">(</span><span class="nf">.getItem</span> <span class="nv">js/localStorage</span> <span class="s">&quot;defaults-key&quot;</span><span class="p">))]</span>  <span class="c1">;; &lt;-- Problem</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:defaults</span> <span class="nv">val</span><span class="p">))))</span>
-</code></pre></div>
-
-
+<p>And there's the other kind of purity problem:
+<pre class="highlight"><code class="language-clj">(reg-event-db
+   :load-localstore
+   (fn [db _]
+     (let [val (js-&gt;clj (.getItem js/localStorage "defaults-key"))]  ;; &lt;-- Problem
+       (assoc db :defaults val))))</code></pre></p>
 <p>You'll notice the event handler obtains data from LocalStore.</p>
 <p>Although this handler has no side effect - it doesn't need to change the world - that action of
 obtaining data from somewhere other than its arguments, means it isn't pure.</p>
@@ -1883,14 +1882,11 @@ window.location, LocalStore, cookies, etc.</p>
 will look at side-effects first. Instead of creating event handlers
 which <em>do side-effects</em>, we'll instead get them to <em>cause side-effects</em>.</p>
 <h2 id="doing-vs-causing">Doing vs Causing<a class="headerlink" href="#doing-vs-causing" title="Permanent link">&para;</a></h2>
-<p>I proudly claim that this event handler is pure:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
-      <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)))</span>
-</code></pre></div>
-
-
+<p>I proudly claim that this event handler is pure:
+<pre class="highlight"><code class="language-clj">(reg-event-db
+   :my-event
+   (fn [db _]
+      (assoc db :flag true)))</code></pre></p>
 <p>Takes a <code>db</code> value, computes and returns a <code>db</code> value. No coeffects or effects. Yep, that's Pure!</p>
 <p>Yes, all true, but ... this purity is only possible because re-frame is doing
 the necessary side-effecting.</p>
@@ -1902,14 +1898,11 @@ value. Notice <code>reset!</code>.   That, right there, is the "necessary side e
 looking after the "necessary side-effects" on <code>app-db</code>.</p>
 <h2 id="et-tu-react">Et tu, React?<a class="headerlink" href="#et-tu-react" title="Permanent link">&para;</a></h2>
 <p>Turns out it's the same pattern with Reagent/React.</p>
-<p>We get to write a nice pure component, like:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">say-hi</span>
-  <span class="p">[</span><span class="nv">name</span><span class="p">]</span>
-  <span class="p">[</span><span class="ss">:div</span> <span class="s">&quot;Hello &quot;</span> <span class="nv">name</span><span class="p">])</span>
-</code></pre></div>
-
-
-<p>and Reagent/React mutates the DOM for us. The framework is looking
+<p>We get to write a nice pure component, like:
+<pre class="highlight"><code class="language-clj">(defn say-hi
+  [name]
+  [:div "Hello " name])</code></pre>
+and Reagent/React mutates the DOM for us. The framework is looking
 after the "necessary side-effects".</p>
 <h2 id="pattern-structure">Pattern Structure<a class="headerlink" href="#pattern-structure" title="Permanent link">&para;</a></h2>
 <p>Pause and look back at <code>say-hi</code>. I'd like you to view it through the
@@ -1929,24 +1922,18 @@ let the backing framework look after the "doing" of them. Efficiently. Discreetl
 </ol>
 <h2 id="step-1-of-plan">Step 1 Of Plan<a class="headerlink" href="#step-1-of-plan" title="Permanent link">&para;</a></h2>
 <p>So, how would it look if event handlers returned side-effects, declaratively, in data?</p>
-<p>Here is an impure, side effecting handler:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>
-       <span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">])</span>    <span class="c1">;; &lt;-- Eeek, side-effect</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p>Here it is re-written so as to be pure:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>                              <span class="c1">;; &lt;1&gt;</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>                <span class="c1">;; &lt;2&gt;</span>
-      <span class="p">{</span><span class="ss">:db</span>  <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)</span>          <span class="c1">;; &lt;3&gt;</span>
-       <span class="ss">:dispatch</span> <span class="p">[</span><span class="ss">:do-something-else</span> <span class="mi">3</span><span class="p">]}))</span>
-</code></pre></div>
-
-
+<p>Here is an impure, side effecting handler:
+<pre class="highlight"><code class="language-clj">(reg-event-db
+   :my-event
+   (fn [db [_ a]]
+       (dispatch [:do-something-else 3])    ;; &lt;-- Eeek, side-effect
+       (assoc db :flag true)))</code></pre></p>
+<p>Here it is re-written so as to be pure:
+<pre class="highlight"><code class="language-clj">(reg-event-fx                              ;; &lt;1&gt;
+   :my-event
+   (fn [{:keys [db]} [_ a]]                ;; &lt;2&gt;
+      {:db  (assoc db :flag true)          ;; &lt;3&gt;
+       :dispatch [:do-something-else 3]}))</code></pre></p>
 <p>Notes: <br>
 <em>&lt;1&gt;</em> we're using <code>reg-event-fx</code> instead of <code>reg-event-db</code> to register  (that's <code>-db</code> vs <code>-fx</code>) <br>
 <em>&lt;2&gt;</em> the first parameter is no longer just <code>db</code>.  It is a map from which
@@ -1960,49 +1947,37 @@ it is a map which contains a <code>:db</code> key. <br>
 <p>Above, the impure handler <strong>did</strong> a <code>dispatch</code> side-effect, while the pure handler <strong>described</strong>
 a <code>dispatch</code> side-effect.</p>
 <h2 id="another-example">Another Example<a class="headerlink" href="#another-example" title="Permanent link">&para;</a></h2>
-<p>The impure way:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>
-       <span class="p">(</span><span class="nf">GET</span> <span class="s">&quot;http://json.my-endpoint.com/blah&quot;</span>   <span class="c1">;; dirty great big side-effect</span>
-            <span class="p">{</span><span class="ss">:handler</span>       <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:process-response</span> <span class="nv">%1</span><span class="p">])</span>
-             <span class="ss">:error-handler</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:bad-response</span> <span class="nv">%1</span><span class="p">])})</span>
-       <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p>the pure, descriptive alternative:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">a</span><span class="p">]]</span>
-       <span class="p">{</span><span class="ss">:http</span> <span class="p">{</span><span class="ss">:method</span> <span class="ss">:get</span>
-               <span class="ss">:url</span>    <span class="s">&quot;http://json.my-endpoint.com/blah&quot;</span>
-               <span class="ss">:on-success</span>  <span class="p">[</span><span class="ss">:process-blah-response</span><span class="p">]</span>
-               <span class="ss">:on-fail</span>     <span class="p">[</span><span class="ss">:failed-blah</span><span class="p">]}</span>
-        <span class="ss">:db</span>   <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">true</span><span class="p">)}))</span>
-</code></pre></div>
-
-
+<p>The impure way:
+<pre class="highlight"><code class="language-clj">(reg-event-db
+   :my-event
+   (fn [db [_ a]]
+       (GET "http://json.my-endpoint.com/blah"   ;; dirty great big side-effect
+            {:handler       #(dispatch [:process-response %1])
+             :error-handler #(dispatch [:bad-response %1])})
+       (assoc db :flag true)))</code></pre></p>
+<p>the pure, descriptive alternative:
+<pre class="highlight"><code class="language-clj">(reg-event-fx
+   :my-event
+   (fn [{:keys [db]} [_ a]]
+       {:http {:method :get
+               :url    "http://json.my-endpoint.com/blah"
+               :on-success  [:process-blah-response]
+               :on-fail     [:failed-blah]}
+        :db   (assoc db :flag true)}))</code></pre></p>
 <p>Again, the old way <strong>did</strong> a side-effect (Booo!) and the new way <strong>describes</strong>, declaratively,
 in data, the side-effects required (Yaaa!).</p>
 <p>More on side effects in a minute, but let's double back to coeffects.</p>
 <h2 id="the-coeffects">The Coeffects<a class="headerlink" href="#the-coeffects" title="Permanent link">&para;</a></h2>
-<p>So far we've written our new style <code>-fx</code> handlers like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">event</span><span class="p">]</span>   <span class="c1">;; &lt;--  destructuring to get db</span>
-       <span class="p">{</span> <span class="nv">...</span> <span class="p">}))</span>
-</code></pre></div>
-
-
-<p>It is now time to name that first argument:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-   <span class="ss">:my-event</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="nv">event</span><span class="p">]</span>       <span class="c1">;;  &lt;--- thy name be cofx</span>
-       <span class="p">{</span> <span class="nv">...</span> <span class="p">}))</span>
-</code></pre></div>
-
-
+<p>So far we've written our new style <code>-fx</code> handlers like this:
+<pre class="highlight"><code class="language-clj">(reg-event-fx
+   :my-event
+   (fn [{:keys [db]} event]   ;; &lt;--  destructuring to get db
+       { ... }))</code></pre></p>
+<p>It is now time to name that first argument:
+<pre class="highlight"><code class="language-clj">(reg-event-fx
+   :my-event
+   (fn [cofx event]       ;;  &lt;--- thy name be cofx
+       { ... }))</code></pre></p>
 <p>When you use the <code>-fx</code> form of registration, the first argument
 of your handler will be a map of coeffects which we name <code>cofx</code>.</p>
 <p>In that map will be the complete set of "inputs" required by your function.  The complete
@@ -2010,25 +1985,19 @@ set of computational resources (data) needed to perform its computation. But how
 This will be explained in an upcoming tutorial, I promise, but for the moment,
 take it as a magical given.</p>
 <p>One of the keys in <code>cofx</code> will likely be <code>:db</code> and that will be the value of <code>app-db</code>.</p>
-<p>Remember this impure handler from before:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>            <span class="c1">;;  a -db registration</span>
- <span class="ss">:load-localstore</span>
- <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>              <span class="c1">;; db first argument</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">defaults</span> <span class="p">(</span><span class="nf">js-&gt;clj</span> <span class="p">(</span><span class="nf">.getItem</span> <span class="nv">js/localStorage</span> <span class="s">&quot;defaults-key&quot;</span><span class="p">))]</span>  <span class="c1">;; &lt;--  Eeek!!</span>
-    <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:defaults</span> <span class="nv">defaults</span><span class="p">))))</span>
-</code></pre></div>
-
-
+<p>Remember this impure handler from before:
+<pre class="highlight"><code class="language-clj">(reg-event-db            ;;  a -db registration
+ :load-localstore
+ (fn [db _]              ;; db first argument
+  (let [defaults (js-&gt;clj (.getItem js/localStorage "defaults-key"))]  ;; &lt;--  Eeek!!
+    (assoc db :defaults defaults))))</code></pre></p>
 <p>It was impure because it obtained an input from other than its arguments.
-We'd now rewrite it as a pure handler, like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>             <span class="c1">;; notice the -fx</span>
-   <span class="ss">:load-localstore</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span>  <span class="nv">_</span><span class="p">]</span>          <span class="c1">;; cofx is a map containing inputs</span>
-     <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">defaults</span> <span class="p">(</span><span class="ss">:local-store</span> <span class="nv">cofx</span><span class="p">)]</span>  <span class="c1">;; &lt;--  use it here</span>
-       <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="ss">:db</span> <span class="nv">cofx</span><span class="p">)</span> <span class="ss">:defaults</span> <span class="nv">defaults</span><span class="p">)})))</span>  <span class="c1">;; returns effects map</span>
-</code></pre></div>
-
-
+We'd now rewrite it as a pure handler, like this:
+<pre class="highlight"><code class="language-clj">(reg-event-fx             ;; notice the -fx
+   :load-localstore
+   (fn [cofx  _]          ;; cofx is a map containing inputs
+     (let [defaults (:local-store cofx)]  ;; &lt;--  use it here
+       {:db (assoc (:db cofx) :defaults defaults)})))  ;; returns effects map</code></pre></p>
 <p>So, by some magic, not yet revealed, LocalStore will be queried before
 this handler runs and the required value from it will be placed into
 <code>cofx</code> under the key <code>:local-store</code> for the handler to use.</p>
@@ -2039,22 +2008,16 @@ data from arguments.</p>
 <p><code>-db</code> handlers take <strong>one</strong> coeffect called <code>db</code>, and they return only <strong>one</strong>  effect (db again).</p>
 <p>Whereas <code>-fx</code> handlers take potentially <strong>many</strong> coeffects (a map of them) and they return
 potentially <strong>many</strong> effects (a map of them). So, One vs Many.</p>
-<p>Just to be clear, the following two handlers achieve the same thing:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>
-   <span class="ss">:set-flag</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">new-value</span><span class="p">]]</span>
-      <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:flag</span> <span class="nv">new-value</span><span class="p">)))</span>
-</code></pre></div>
-
-
-<p>vs</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span>
-   <span class="ss">:set-flag</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">new-value</span><span class="p">]]</span>
-      <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nb">assoc </span><span class="p">(</span><span class="ss">:db</span> <span class="nv">cofx</span><span class="p">)</span> <span class="ss">:flag</span> <span class="nv">new-value</span><span class="p">)}))</span>
-</code></pre></div>
-
-
+<p>Just to be clear, the following two handlers achieve the same thing:
+<pre class="highlight"><code class="language-clj">(reg-event-db
+   :set-flag
+   (fn [db [_ new-value]]
+      (assoc db :flag new-value)))</code></pre>
+vs
+<pre class="highlight"><code class="language-clj">(reg-event-fx
+   :set-flag
+   (fn [cofx [_ new-value]]
+      {:db (assoc (:db cofx) :flag new-value)}))</code></pre></p>
 <p>Obviously the <code>-db</code> variation is simpler and you'd use it whenever you
 can. The <code>-fx</code> version is more flexible, so it will sometimes have its place.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
@@ -2209,12 +2172,16 @@ to then, as a next step, better understand coeffects and effects. We'll soon be 
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

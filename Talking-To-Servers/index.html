@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1053,6 +1055,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1323,7 +1337,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1335,7 +1349,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1645,15 +1659,12 @@ at "http://json.my-endpoint.com/blah". We want to GET from that
 endpoint and put a processed version of the returned json into <code>app-db</code>. </p>
 <h2 id="triggering-the-request">Triggering The Request<a class="headerlink" href="#triggering-the-request" title="Permanent link">&para;</a></h2>
 <p>The user often does something to trigger the process. </p>
-<p>Here's a button which the user could click: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">request-it-button</span>
-  <span class="p">[]</span>
-  <span class="p">[</span><span class="ss">:div</span> <span class="p">{</span><span class="ss">:class</span> <span class="s">&quot;button-class&quot;</span>
-         <span class="ss">:on-click</span>  <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:request-it</span><span class="p">])}</span>  <span class="c1">;; get data from the server !!</span>
-         <span class="s">&quot;I want it, now!&quot;</span><span class="p">])</span>
-</code></pre></div>
-
-
+<p>Here's a button which the user could click: 
+<pre class="highlight"><code class="language-clj">(defn request-it-button
+  []
+  [:div {:class "button-class"
+         :on-click  #(dispatch [:request-it])}  ;; get data from the server !!
+         "I want it, now!"])</code></pre></p>
 <p>Notice the <code>on-click</code> handler - it <code>dispatch</code>es the event <code>[:request-it]</code>.</p>
 <h2 id="the-event-handler">The Event Handler<a class="headerlink" href="#the-event-handler" title="Permanent link">&para;</a></h2>
 <p>That <code>:request-it</code> event will need to be "handled", which means an event handler must be registered for it.</p>
@@ -1666,27 +1677,24 @@ a second version which is a soaring paragon of virtue. Both versions
 will teach us something.</p>
 <h3 id="version-1">Version 1<a class="headerlink" href="#version-1" title="Permanent link">&para;</a></h3>
 <p>We're going to use the <a href="https://github.com/JulianBirch/cljs-ajax">cljs-ajax library</a> as the HTTP workhorse.</p>
-<p>Here's the event handler: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">my.app.events</span>                   <span class="c1">;; &lt;1&gt;</span>
-   <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">ajax.core</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">GET</span><span class="p">]]</span>
-             <span class="p">[</span><span class="nv">re-frame.core</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">reg-event-db</span><span class="p">]))</span>
+<p>Here's the event handler: 
+<pre class="highlight"><code class="language-clj">(ns my.app.events                   ;; &lt;1&gt;
+   (:require [ajax.core :refer [GET]]
+             [re-frame.core :refer [reg-event-db]))
 
-<span class="p">(</span><span class="nf">reg-event-db</span>        <span class="c1">;; &lt;-- register an event handler</span>
-  <span class="ss">:request-it</span>        <span class="c1">;; &lt;-- the event id</span>
-  <span class="p">(</span><span class="k">fn </span>               <span class="c1">;; &lt;-- the handler function</span>
-    <span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span>
+(reg-event-db        ;; &lt;-- register an event handler
+  :request-it        ;; &lt;-- the event id
+  (fn                ;; &lt;-- the handler function
+    [db _]
 
-    <span class="c1">;; kick off the GET, making sure to supply a callback for success and failure</span>
-    <span class="p">(</span><span class="nf">GET</span>
-      <span class="s">&quot;http://json.my-endpoint.com/blah&quot;</span>
-      <span class="p">{</span><span class="ss">:handler</span>       <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:process-response</span> <span class="nv">%1</span><span class="p">])</span>   <span class="c1">;; &lt;2&gt; further dispatch !!</span>
-       <span class="ss">:error-handler</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:bad-response</span> <span class="nv">%1</span><span class="p">])})</span>     <span class="c1">;; &lt;2&gt; further dispatch !!</span>
+    ;; kick off the GET, making sure to supply a callback for success and failure
+    (GET
+      "http://json.my-endpoint.com/blah"
+      {:handler       #(dispatch [:process-response %1])   ;; &lt;2&gt; further dispatch !!
+       :error-handler #(dispatch [:bad-response %1])})     ;; &lt;2&gt; further dispatch !!
 
-     <span class="c1">;; update a flag in `app-db` ... presumably to cause a &quot;Loading...&quot; UI </span>
-     <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:loading?</span> <span class="nv">true</span><span class="p">)))</span>    <span class="c1">;; &lt;3&gt; return an updated db </span>
-</code></pre></div>
-
-
+     ;; update a flag in `app-db` ... presumably to cause a "Loading..." UI 
+     (assoc db :loading? true)))    ;; &lt;3&gt; return an updated db </code></pre></p>
 <p>Further Notes:
   1. Event handlers are normally put into an <code>events.cljs</code> namespace
   2. Notice that the GET callbacks issue a further <code>dispatch</code>. Such callbacks 
@@ -1701,17 +1709,14 @@ will teach us something.</p>
 <p>As we noted above, the on-success handler itself is just
 <code>#(dispatch [:process-response RESPONSE])</code>.  So we'll need to register a handler
 for this event too.</p>
-<p>Like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span>                   
-  <span class="ss">:process-response</span>             
-  <span class="p">(</span><span class="nf">fn</span>
-    <span class="p">[</span><span class="nv">db</span> <span class="p">[</span><span class="nv">_</span> <span class="nv">response</span><span class="p">]]</span>           <span class="c1">;; destructure the response from the event vector</span>
-    <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">db</span>
-        <span class="p">(</span><span class="nb">assoc </span><span class="ss">:loading?</span> <span class="nv">false</span><span class="p">)</span> <span class="c1">;; take away that &quot;Loading ...&quot; UI </span>
-        <span class="p">(</span><span class="nb">assoc </span><span class="ss">:data</span> <span class="p">(</span><span class="nf">js-&gt;clj</span> <span class="nv">response</span><span class="p">))))</span>  <span class="c1">;; fairly lame processing</span>
-</code></pre></div>
-
-
+<p>Like this:
+<pre class="highlight"><code class="language-clj">(reg-event-db                   
+  :process-response             
+  (fn
+    [db [_ response]]           ;; destructure the response from the event vector
+    (-&gt; db
+        (assoc :loading? false) ;; take away that "Loading ..." UI 
+        (assoc :data (js-&gt;clj response))))  ;; fairly lame processing</code></pre></p>
 <p>A normal handler would have more complex processing of the response. But we're 
 just sketching here, so we've left it easy.</p>
 <p>There'd also need to be a handler for the <code>:bad-response</code> event too.  Left as an exercise.</p>
@@ -1729,27 +1734,25 @@ and <a href="../Effects/">Effects</a>.  </p>
 <a href="https://github.com/day8/re-frame-http-fx">https://github.com/day8/re-frame-http-fx</a>.
 You may soon feel confident enough to write your own.</p>
 <p>Here's our rewrite:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">ns </span><span class="nv">my.app.events</span>                  
-   <span class="p">(</span><span class="ss">:require</span>
-      <span class="p">[</span><span class="nv">ajax.core</span> <span class="ss">:as</span> <span class="nv">ajax</span><span class="p">]</span>        
-      <span class="p">[</span><span class="nv">day8.re-frame.http-fx</span><span class="p">]</span>  
-      <span class="p">[</span><span class="nv">re-frame.core</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">reg-event-fx</span><span class="p">]))</span>
+<pre class="highlight"><code class="language-clj">(ns my.app.events                  
+   (:require
+      [ajax.core :as ajax]        
+      [day8.re-frame.http-fx]  
+      [re-frame.core :refer [reg-event-fx]))
 
-<span class="p">(</span><span class="nf">reg-event-fx</span>        <span class="c1">;; &lt;-- note the `-fx` extension</span>
-  <span class="ss">:request-it</span>        <span class="c1">;; &lt;-- the event id</span>
-  <span class="p">(</span><span class="k">fn </span>               <span class="c1">;; &lt;-- the handler function</span>
-    <span class="p">[{</span><span class="nv">db</span> <span class="ss">:db</span><span class="p">}</span> <span class="nv">_</span><span class="p">]</span>     <span class="c1">;; &lt;-- 1st argument is coeffect, from which we extract db </span>
+(reg-event-fx        ;; &lt;-- note the `-fx` extension
+  :request-it        ;; &lt;-- the event id
+  (fn                ;; &lt;-- the handler function
+    [{db :db} _]     ;; &lt;-- 1st argument is coeffect, from which we extract db 
 
-    <span class="c1">;; we return a map of (side) effects</span>
-    <span class="p">{</span><span class="ss">:http-xhrio</span> <span class="p">{</span><span class="ss">:method</span>          <span class="ss">:get</span>
-                  <span class="ss">:uri</span>             <span class="s">&quot;http://json.my-endpoint.com/blah&quot;</span>
-                  <span class="ss">:format</span>          <span class="p">(</span><span class="nf">ajax/json-request-format</span><span class="p">)</span>
-                  <span class="ss">:response-format</span> <span class="p">(</span><span class="nf">ajax/json-response-format</span> <span class="p">{</span><span class="ss">:keywords?</span> <span class="nv">true</span><span class="p">})</span> 
-                  <span class="ss">:on-success</span>      <span class="p">[</span><span class="ss">:process-response</span><span class="p">]</span>
-                  <span class="ss">:on-failure</span>      <span class="p">[</span><span class="ss">:bad-response</span><span class="p">]}</span>
-     <span class="ss">:db</span>  <span class="p">(</span><span class="nb">assoc </span><span class="nv">db</span> <span class="ss">:loading?</span> <span class="nv">true</span><span class="p">)}))</span>
-</code></pre></div>
-
+    ;; we return a map of (side) effects
+    {:http-xhrio {:method          :get
+                  :uri             "http://json.my-endpoint.com/blah"
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true}) 
+                  :on-success      [:process-response]
+                  :on-failure      [:bad-response]}
+     :db  (assoc db :loading? true)}))</code></pre>
 
 <p>Notes:
   1. Our event handler "describes" side effects, it does not "do" side effects
@@ -1898,12 +1901,16 @@ You may soon feel confident enough to write your own.</p>
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

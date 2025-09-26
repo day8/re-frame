@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../Inspecting-app-db/" class="md-tabs__link md-tabs__link--active">
+        <a href="../alpha/" class="md-tabs__link md-tabs__link--active">
           FAQs
         </a>
       
@@ -965,6 +967,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1284,7 +1298,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1296,7 +1310,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1569,19 +1583,18 @@
 <p>re-frame makes use of the logging functions: <code>warn</code>, <code>log</code>, <code>error</code>, <code>group</code> and <code>groupEnd</code>.  </p>
 <p>By default, these functions map directly to the js/console equivalents, but you can 
 override that by providing your own set or subset of these functions using 
-<code>re-frame.core/set-loggers!</code> like this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-warn</span>
-   <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>      
-   <span class="p">(</span><span class="nf">post-warning-somewhere</span> <span class="p">(</span><span class="nb">apply str </span><span class="nv">args</span><span class="p">)))</span>
+<code>re-frame.core/set-loggers!</code> like this:
+<pre class="highlight"><code class="language-clj">(defn my-warn
+   [&amp; args]      
+   (post-warning-somewhere (apply str args)))
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">my-log</span>
-   <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
-   <span class="p">(</span><span class="nf">write-to-datadog</span> <span class="p">(</span><span class="nb">apply str </span><span class="nv">args</span><span class="p">)))</span>
+(defn my-log
+   [&amp; args]
+   (write-to-datadog (apply str args)))
 
-<span class="p">(</span><span class="nf">re-frame.core/set-loggers!</span>  <span class="p">{</span><span class="ss">:warn</span>  <span class="nv">my-warn</span>   
-                              <span class="ss">:log</span>   <span class="nv">my-log</span> 
-                              <span class="nv">...</span><span class="p">})</span>
-</code></pre></div>
+(re-frame.core/set-loggers!  {:warn  my-warn   
+                              :log   my-log 
+                              ...})</code></pre></p>
                 
               
               
@@ -1726,12 +1739,16 @@ override that by providing your own set or subset of these functions using
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

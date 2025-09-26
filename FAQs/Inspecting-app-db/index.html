@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="./" class="md-tabs__link md-tabs__link--active">
+        <a href="../alpha/" class="md-tabs__link md-tabs__link--active">
           FAQs
         </a>
       
@@ -963,6 +965,18 @@
           
           
 
+
+  <li class="md-nav__item">
+    <a href="../alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
   
 
 
@@ -1298,7 +1312,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1310,7 +1324,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1606,33 +1620,18 @@ And, second, inspecting via a REPL might be clumsy. </p>
 <p>Instead, you probably want to inspect a part of <code>app-db</code>. <strong>And</strong> you probably want 
 to inspect it directly in the GUI itself, not off in a REPL. </p>
 <p>Here is a useful technique from @escherize. Add something like this to 
-the hiccup of your view ...</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:pre</span> <span class="p">(</span><span class="nb">with-out-str </span><span class="p">(</span><span class="nf">pprint</span> <span class="o">@</span><span class="nv">interesting</span><span class="p">))]</span> 
-</code></pre></div>
-
-
-<p>This assumes that <code>@interesting</code> is the value (ratom or subscription)
+the hiccup of your view ...
+<pre class="highlight"><code class="language-clj">[:pre (with-out-str (pprint @interesting))] </code></pre>
+This assumes that <code>@interesting</code> is the value (ratom or subscription)
 you want to observe (note the @ in front).</p>
-<p><code>pprint</code> output is nice to read, but not compact. For a more compact view, do this: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:pre</span> <span class="p">(</span><span class="nb">pr-str </span><span class="o">@</span><span class="nv">some-atom</span><span class="p">)]</span>   <span class="c1">;; NB: using pr-str instead of pprint</span>
-</code></pre></div>
-
-
-<p>If you choose to use <code>pprint</code> then you'll need to <code>require</code> it within the <code>ns</code> of your <code>view.cljs</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="nv">cljs.pprint</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">pprint</span><span class="p">]]</span>
-</code></pre></div>
-
-
-<p>Finally, combining the short and long answers, you could even do this:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:pre</span> <span class="p">(</span><span class="nb">with-out-str </span><span class="p">(</span><span class="nf">pprint</span> <span class="o">@</span><span class="nv">re-frame.db/app-db</span><span class="p">))]</span>    <span class="c1">;; see everything!</span>
-</code></pre></div>
-
-
-<p>or </p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:pre</span> <span class="p">(</span><span class="nb">with-out-str </span><span class="p">(</span><span class="nf">pprint</span> <span class="p">(</span><span class="ss">:part</span> <span class="o">@</span><span class="nv">re-frame.db/app-db</span><span class="p">)))]</span>    <span class="c1">;; see a part of it!</span>
-</code></pre></div>
-
-
+<p><code>pprint</code> output is nice to read, but not compact. For a more compact view, do this: 
+<pre class="highlight"><code class="language-clj">[:pre (pr-str @some-atom)]   ;; NB: using pr-str instead of pprint</code></pre></p>
+<p>If you choose to use <code>pprint</code> then you'll need to <code>require</code> it within the <code>ns</code> of your <code>view.cljs</code>:
+<pre class="highlight"><code class="language-clj">[cljs.pprint :refer [pprint]]</code></pre></p>
+<p>Finally, combining the short and long answers, you could even do this:
+<pre class="highlight"><code class="language-clj">[:pre (with-out-str (pprint @re-frame.db/app-db))]    ;; see everything!</code></pre>
+or 
+<pre class="highlight"><code class="language-clj">[:pre (with-out-str (pprint (:part @re-frame.db/app-db)))]    ;; see a part of it!</code></pre></p>
 <p>You definitely have <a href="https://github.com/binaryage/cljs-devtools">clj-devtools</a> installed now, right?</p>
 <h2 id="other-inspection-tools">Other Inspection Tools<a class="headerlink" href="#other-inspection-tools" title="Permanent link">&para;</a></h2>
 <p>Another very strong tool is <a href="https://github.com/flexsurfer/re-frisk">re-Frisk</a> which 
@@ -1690,8 +1689,8 @@ need to include specific CSS.</p>
         <!-- Link to previous page -->
         
           <a
-            href="../../The-re-frame-logo/"
-            title="The Logo Backstory"
+            href="../alpha/"
+            title="How can I use the alpha?"
             class="md-footer-nav__link md-footer-nav__link--prev"
             rel="prev"
           >
@@ -1703,7 +1702,7 @@ need to include specific CSS.</p>
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                The Logo Backstory
+                How can I use the alpha?
               </div>
             </div>
           </a>
@@ -1784,12 +1783,16 @@ need to include specific CSS.</p>
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

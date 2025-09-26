@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../Inspecting-app-db/" class="md-tabs__link md-tabs__link--active">
+        <a href="../alpha/" class="md-tabs__link md-tabs__link--active">
           FAQs
         </a>
       
@@ -965,6 +967,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1291,7 +1305,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1303,7 +1317,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1583,29 +1597,27 @@ for every event handler?</p>
 <h2 id="answer-v100-onwards">Answer (v1.0.0 onwards)<a class="headerlink" href="#answer-v100-onwards" title="Permanent link">&para;</a></h2>
 <p>Yes, re-frame provides an API for registering global interceptors. </p>
 <p>The following code creates a global interceptor to keep a track of all events:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1">;; We&#39;ll be recording events into this atom </span>
-<span class="c1">;; The most recent events will be at the front of the list. </span>
-<span class="p">(</span><span class="k">def </span><span class="nv">event-store</span> <span class="p">(</span><span class="nf">atom</span> <span class="p">(</span><span class="nf">list</span><span class="p">)))</span>
+<pre class="highlight"><code class="language-clj">;; We'll be recording events into this atom 
+;; The most recent events will be at the front of the list. 
+(def event-store (atom (list)))
 
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">keep-last-20</span>
-  <span class="p">[</span><span class="nv">existing</span> <span class="nv">new-one</span><span class="p">]</span>
-  <span class="p">(</span><span class="nb">take </span><span class="mi">20</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">existing</span> <span class="nv">new-one</span><span class="p">)))</span>
+(defn keep-last-20
+  [existing new-one]
+  (take 20 (conj existing new-one)))
 
 
-<span class="c1">;; this interceptor will collect events and add them to the atom above</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">event-collector</span>
-  <span class="p">(</span><span class="nf">re-frame.core/-&gt;interceptor</span>
-    <span class="ss">:id</span>      <span class="ss">:event-collector</span>
-    <span class="ss">:before</span>  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">context</span><span class="p">]</span>
-               <span class="p">(</span><span class="nf">swap!</span> <span class="nv">event-store</span> <span class="nv">keep-last-20</span> <span class="p">(</span><span class="nf">re-frame.core/get-coeffect</span> <span class="nv">context</span> <span class="ss">:event</span><span class="p">))</span>
-               <span class="nv">context</span><span class="p">)))</span>
+;; this interceptor will collect events and add them to the atom above
+(def event-collector
+  (re-frame.core/-&gt;interceptor
+    :id      :event-collector
+    :before  (fn [context]
+               (swap! event-store keep-last-20 (re-frame.core/get-coeffect context :event))
+               context)))
 
-<span class="c1">;; register this global interceptor early in program&#39;s boot process,</span>
-<span class="c1">;; using re-frame&#39;s API</span>
-<span class="p">(</span><span class="nf">re-frame.core/reg-global-interceptor</span> <span class="nv">event-collector</span><span class="p">)</span>
-</code></pre></div>
-
+;; register this global interceptor early in program's boot process,
+;; using re-frame's API
+(re-frame.core/reg-global-interceptor event-collector)</code></pre>
 
 <h2 id="answer-prior-to-v100">Answer (prior to v1.0.0)<a class="headerlink" href="#answer-prior-to-v100" title="Permanent link">&para;</a></h2>
 <p>Prior to v1.0.0, re-frame provided no API to directly support this feature,
@@ -1615,32 +1627,26 @@ automatically added to all your event handlers.</p>
 <p>You'd write a replacement for both <code>reg-event-db</code> and <code>reg-event-fx</code>, and get
 these replacements to automatically add <code>omni-ceptor</code> to the interceptor 
 chain at registration time. </p>
-<p>Here's how to write one of these auto-injecting replacements: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-reg-event-db</span>            <span class="c1">;; a replacement for reg-event-db</span>
+<p>Here's how to write one of these auto-injecting replacements: 
+<pre class="highlight"><code class="language-clj">(defn my-reg-event-db            ;; a replacement for reg-event-db
 
-   <span class="c1">;; 2-arity with no interceptors </span>
-   <span class="p">([</span><span class="nv">id</span> <span class="nv">handler</span><span class="p">]</span> 
-     <span class="p">(</span><span class="nf">my-reg-event-db</span> <span class="nv">id</span> <span class="nv">nil</span> <span class="nv">handler</span><span class="p">))</span>
+   ;; 2-arity with no interceptors 
+   ([id handler] 
+     (my-reg-event-db id nil handler))
 
-   <span class="c1">;; 3-arity with interceptors</span>
-   <span class="p">([</span><span class="nv">id</span> <span class="nv">interceptors</span> <span class="nv">handler</span><span class="p">]</span> 
-     <span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>   <span class="c1">;; which uses reg-event-db </span>
-       <span class="nv">id</span>
-       <span class="p">[</span><span class="nv">omni-ceptor</span> <span class="nv">interceptors</span><span class="p">]</span> <span class="c1">;; &lt;-- inject `omni-ceptor`</span>
-       <span class="nv">handler</span><span class="p">)))</span>
-</code></pre></div>
-
-
+   ;; 3-arity with interceptors
+   ([id interceptors handler] 
+     (re-frame.core/reg-event-db   ;; which uses reg-event-db 
+       id
+       [omni-ceptor interceptors] ;; &lt;-- inject `omni-ceptor`
+       handler)))</code></pre></p>
 <p>NB: did you know that interceptor chains are flattened and nils are removed?</p>
 <p>With this in place, you would always use <code>my-reg-event-db</code> 
-instead of the standard <code>reg-event-db</code>: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">my-reg-event-db</span> 
-   <span class="ss">:event-id</span>
-   <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">v</span><span class="p">]</span> 
-      <span class="nv">...</span><span class="p">))</span>
-</code></pre></div>
-
-
+instead of the standard <code>reg-event-db</code>: 
+<pre class="highlight"><code class="language-clj">(my-reg-event-db 
+   :event-id
+   (fn [db v] 
+      ...))</code></pre></p>
 <p>And, hey presto, you'd have your <code>omni-ceptor</code> "globally" injected.</p>
                 
               
@@ -1786,12 +1792,16 @@ instead of the standard <code>reg-event-db</code>: </p>
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

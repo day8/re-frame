@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../Inspecting-app-db/" class="md-tabs__link md-tabs__link--active">
+        <a href="../alpha/" class="md-tabs__link md-tabs__link--active">
           FAQs
         </a>
       
@@ -965,6 +967,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1291,7 +1305,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1303,7 +1317,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1583,25 +1597,19 @@
 <h2 id="answer">Answer<a class="headerlink" href="#answer" title="Permanent link">&para;</a></h2>
 <p>Effects simply aren't coeffects.</p>
 <p>To fix this warning, just declare a new map of effects. For instance:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span> <span class="ss">::cow-clicked</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]</span> <span class="ss">:as</span> <span class="nv">cofx</span><span class="p">}</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">{</span><span class="ss">:db</span> <span class="p">(</span><span class="nf">update</span> <span class="nv">db</span> <span class="ss">:clicks</span> <span class="nv">inc</span><span class="p">)}))</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(reg-event-fx ::cow-clicked
+  (fn [{:keys [db] :as cofx} _]
+    {:db (update db :clicks inc)}))</code></pre>
 
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>This seems like it would work, if you're used to using <code>reg-event-db</code> this way.
 Such a <code>db</code> handler behaves like a reducing function:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-db</span> <span class="ss">::cow-clicked-db</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span> <span class="p">(</span><span class="nf">update</span> <span class="nv">db</span> <span class="ss">:clicks</span> <span class="nv">inc</span><span class="p">)))</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(reg-event-db ::cow-clicked-db
+  (fn [db _] (update db :clicks inc)))</code></pre>
 
 <p>Doing a similar thing to a coeffect map causes the warning, however, not to mention possible unintended effects:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-event-fx</span> <span class="ss">::cow-clicked-bad</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">cofx</span> <span class="nv">_</span><span class="p">]</span> <span class="p">(</span><span class="nf">update-in</span> <span class="nv">cofx</span> <span class="p">[</span><span class="ss">:db</span> <span class="ss">:clicks</span><span class="p">]</span> <span class="nv">inc</span><span class="p">)))</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(reg-event-fx ::cow-clicked-bad
+  (fn [cofx _] (update-in cofx [:db :clicks] inc)))</code></pre>
 
 <p>With <code>reg-event-fx</code>, you receive a map of coeffect values, and you're expected to return a map of effect values. 
 It's a coincidence that <code>:db</code> identifies both an effect <em>and</em> a coeffect.
@@ -1754,12 +1762,16 @@ Coeffects which you declare, such as <code>your-other-coeffect</code>, may cause
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

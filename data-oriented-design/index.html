@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -976,6 +978,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1246,7 +1260,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1258,7 +1272,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1509,27 +1523,21 @@ can draw circles and triangles and add some text. </p>
 <p>And then imagine that we allowed a user to begin using our new drawing application 
 and that, as they did, we captured, into a collection, the events caused by that 
 user's actions (via their button clicks, drags, keypresses, etc).</p>
-<p>The collection of events they generate might look like this:  </p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">collected-events</span>
-  <span class="p">[</span>
-     <span class="p">[</span><span class="ss">:clear</span><span class="p">]</span>
-     <span class="p">[</span><span class="ss">:enter-draw-mode</span><span class="p">]</span>
-     <span class="p">[</span><span class="ss">:new-shape</span> <span class="ss">:triangle</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span>
-     <span class="p">[</span><span class="ss">:select-object</span> <span class="mi">23</span><span class="p">]</span>
-     <span class="p">[</span><span class="ss">:rename</span> <span class="s">&quot;a better name&quot;</span><span class="p">]</span>
-     <span class="p">[</span><span class="ss">:delete-selection</span><span class="p">]</span>
-     <span class="nv">....</span>
-  <span class="p">])</span>
-</code></pre></div>
-
-
-<p>Now, as an aside, consider the following assembly instructions:</p>
-<div class="codehilite"><pre><span></span><code><span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span> <span class="no">ebx</span>
-<span class="nf">sub</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">216</span>
-<span class="nf">mov</span> <span class="no">BYTE</span> <span class="no">PTR</span> <span class="p">[</span><span class="no">ebx</span><span class="p">],</span> <span class="mi">2</span>
-</code></pre></div>
-
-
+<p>The collection of events they generate might look like this:<br />
+<pre class="highlight"><code class="language-clj">(def collected-events
+  [
+     [:clear]
+     [:enter-draw-mode]
+     [:new-shape :triangle 1 2 3]
+     [:select-object 23]
+     [:rename "a better name"]
+     [:delete-selection]
+     ....
+  ])</code></pre></p>
+<p>Now, as an aside, consider the following assembly instructions:
+<pre class="highlight"><code class="language-asm">mov eax, ebx
+sub eax, 216
+mov BYTE PTR [ebx], 2</code></pre></p>
 <p>Assembly instructions are just data, right?  Data which 
 happens to be "executable" by the right machine - an x86 machine in this case.</p>
 <p>I'd like you to now look back at that collection of events. I'd like you to view it in the 
@@ -1548,22 +1556,13 @@ and that data is then seen as code by an interpreter which executes it.</p>
 arrange DOM. Make a data structure in the right format
 and Reagent will act as the "interpreter" which executes that "language" 
 creating the DOM you describe. Hiccup is code. (Data is code)</p>
-<p>We can use pure data literals:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:div</span> <span class="p">{</span><span class="ss">:font-size</span> <span class="mi">12</span><span class="p">}</span> <span class="s">&quot;Hello&quot;</span><span class="p">]</span> 
-</code></pre></div>
-
-
-<p>Or we can add a small bit of computation: </p>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:div</span> <span class="p">(</span><span class="k">if </span><span class="nv">friendly?</span> <span class="s">&quot;Hello&quot;</span> <span class="s">&quot;Go away&quot;</span><span class="p">)</span> <span class="s">&quot; world&quot;</span><span class="p">]</span>
-</code></pre></div>
-
-
-<p>Or, a lot more computation:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nb">into </span><span class="p">[</span><span class="ss">:div</span><span class="p">]</span> <span class="p">(</span><span class="nb">map </span><span class="nv">render-item</span> <span class="nv">items</span><span class="p">)]</span>
-</code></pre></div>
-
-
-<p>Irrespective of how we create the hiccup-formatted data, it acts as "instructions" for Reagent's hiccup interpreter.</p>
+<p>We can use pure data literals:
+<pre class="highlight"><code class="language-clj">[:div {:font-size 12} "Hello"] </code></pre></p>
+<p>Or we can add a small bit of computation: 
+<pre class="highlight"><code class="language-clj">[:div (if friendly? "Hello" "Go away") " world"]</code></pre></p>
+<p>Or, a lot more computation:
+<pre class="highlight"><code class="language-clj">(into [:div] (map render-item items)]</code></pre>
+Irrespective of how we create the hiccup-formatted data, it acts as "instructions" for Reagent's hiccup interpreter.</p>
 <p>Back to re-frame. </p>
 <p>It asks that <strong>you</strong> create a DSL for your app - the set of events are your DSL.
 (I wasn't kidding when I said events are the "language of your system".) 
@@ -1746,12 +1745,16 @@ is an optimisation technique which tries to layout data structures in a way that
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -1023,6 +1025,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1293,7 +1307,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1305,7 +1319,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1591,11 +1605,8 @@ spent your life breaking systems into pieces, organised around behaviour and try
 to hide state.  I still wake up in a sweat some nights thinking about all
 that Clojure data lying around exposed and passive.</p>
 <p>But, as Fogus reminds us above, data at rest is quite perfect.</p>
-<p>In re-frame, <code>app-db</code> is one of these:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="k">def </span><span class="nv">app-db</span>  <span class="p">(</span><span class="nf">reagent/atom</span> <span class="p">{}))</span>    <span class="c1">;; a Reagent atom, containing a map</span>
-</code></pre></div>
-
-
+<p>In re-frame, <code>app-db</code> is one of these:
+<pre class="highlight"><code class="language-clj">(def app-db  (reagent/atom {}))    ;; a Reagent atom, containing a map</code></pre></p>
 <p>Although it is a <code>Reagent atom</code> (hereafter <code>ratom</code>), I'd encourage
 you to think of it as an in-memory database. It will contain structured data.
 You will need to query that data. You will perform CRUD
@@ -1814,12 +1825,16 @@ get away without one. But not for long.  Promise me you'll write a <code>spec</c
       <script>
         app = initialize({
           base: "..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

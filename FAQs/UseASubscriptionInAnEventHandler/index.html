@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../Inspecting-app-db/" class="md-tabs__link md-tabs__link--active">
+        <a href="../alpha/" class="md-tabs__link md-tabs__link--active">
           FAQs
         </a>
       
@@ -965,6 +967,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1352,7 +1366,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1364,7 +1378,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1703,35 +1717,31 @@
 <p>How do I access the value of a subscription from within an event handler?</p>
 <h2 id="the-root-problem">The Root Problem<a class="headerlink" href="#the-root-problem" title="Permanent link">&para;</a></h2>
 <p>Subscriptions are stateful. That said, they offer a 90% solution where you don't have to worry about their state.
-But this comes with a caveat: <strong>the only safe place to call <code>subscribe</code> is within a reagent component function.</strong> </p>
+But this comes with a caveat: <strong>the only safe place to call <code>subscribe</code> is within a reagent render function.</strong></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>See <a href="/re-frame/flows-advanced-topics/#reactive-context">Flows - Reactive Context</a>
 for an in-depth explanation.</p>
 </div>
 <h3 id="dom-event-handlers">DOM event handlers<a class="headerlink" href="#dom-event-handlers" title="Permanent link">&para;</a></h3>
-<p>Inner functions, such as DOM event handlers, don't count. Consider this component:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">my-btn</span> <span class="p">[]</span>
-  <span class="p">[</span><span class="ss">:button</span> <span class="p">{</span><span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:some</span> <span class="p">(</span><span class="nf">gensym</span><span class="p">)])}])</span>
-</code></pre></div>
+<p>Callback functions, such as DOM event handlers, don't count. Consider this component:</p>
+<pre class="highlight"><code class="language-clj">(defn my-btn []
+  [:button {:on-click #(subscribe [:some (gensym)])}])</code></pre>
 
-
-<p>Our <code>:on-click</code> function isn't actually called when the component renders. Instead, we've given the function to the browser, expecting it to get called later. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If the browser calls your <code>:on-click</code> a thousand times, re-frame will "create" a thousand unique subscriptions, and there's no code in place to "dispose" them later.</p>
+<p>Our <code>:on-click</code> function isn't actually called when the component renders. Instead, we've given the function to the browser, expecting it to get called later. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If the browser calls your <code>:on-click</code> a thousand times, re-frame may "create" a thousand unique subscriptions, and there's no code in place to "dispose" them later.</p>
 <h3 id="re-frame-event-handlers">Re-frame event handlers<a class="headerlink" href="#re-frame-event-handlers" title="Permanent link">&para;</a></h3>
 <p>Re-frame event handlers don't count either. Re-frame calls your event handlers within its own loop, which runs in a totally separate context from reagent's render loop.</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-db</span>
-  <span class="ss">:event-id</span> 
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">v</span><span class="p">]</span>
-    <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">sub-val</span>  <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:something</span><span class="p">])]</span>   <span class="c1">;; &lt;--- Possible memory leak</span>
-       <span class="nv">....</span><span class="p">)))</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db
+  :event-id 
+  (fn [db v]
+    (let [sub-val  @(subscribe [:something])]   ;; &lt;--- Possible memory leak
+       ....)))</code></pre>
 
 <p>Furthermore, this is a conceptual issue.
 Your subscription handler may be pure, but <code>subscribe</code> always has a side-effect.
 Calling <code>subscribe</code> inside an event handler goes against re-frame's design, which is based on <a href="/re-frame/on-dynamics/#pure-functions">handlers being pure functions</a>.</p>
 <h3 id="incidental-safety">Incidental safety<a class="headerlink" href="#incidental-safety" title="Permanent link">&para;</a></h3>
-<p>Calling <code>subscribe</code> <em>outside</em> a component is somewhat safe, as long as you've also called it <em>inside</em> a component.
+<p>Calling <code>subscribe</code> <em>outside</em> a render-fn is somewhat safe, as long as you've also called it <em>inside</em> a render-fn.
 The <em>outside</em> one has no way to dispose, but the <em>inside</em> one might dispose later.</p>
 <p>Of course, that requires your component to be around while your other code runs.
 If that component unmounts and never comes back, then you're on your own again.</p>
@@ -1740,49 +1750,41 @@ If that component unmounts and never comes back, then you're on your own again.<
 <h3 id="restructure-your-app">Restructure your app<a class="headerlink" href="#restructure-your-app" title="Permanent link">&para;</a></h3>
 <p>Sometimes it's enough to factor out your calculations, so they can be shared between subscription and event handlers.</p>
 <h4><em>Don't</em> call <code>subscribe</code> in your event handler:</h4>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">reg-sub</span> <span class="ss">:areas</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span><span class="p">]</span> <span class="p">(</span><span class="nb">map </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">r</span><span class="p">]</span> <span class="p">(</span><span class="nb">* </span><span class="nv">Math/PI</span> <span class="nv">r</span> <span class="nv">r</span><span class="p">))</span> <span class="p">(</span><span class="ss">:circles</span> <span class="nv">db</span><span class="p">))))</span>
+<pre class="highlight"><code class="language-clj">(reg-sub :areas (fn [db] (map (fn [r] (* Math/PI r r)) (:circles db))))
 
-<span class="p">(</span><span class="nf">reg-event-fx</span> 
-  <span class="ss">:store-areas</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">{</span><span class="ss">:local-store</span> <span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:areas</span><span class="p">])}))</span>
-</code></pre></div>
-
+(reg-event-fx 
+  :store-areas
+  (fn [{:keys [db]} _]
+    {:local-store @(subscribe [:areas])}))</code></pre>
 
 <h4><em>Do</em> factor out calculation helpers:</h4>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="kd">defn </span><span class="nv">circle-area</span> <span class="p">[</span><span class="nv">r</span><span class="p">]</span> <span class="p">(</span><span class="nb">* </span><span class="nv">Math/PI</span> <span class="nv">r</span> <span class="nv">r</span><span class="p">))</span>
+<pre class="highlight"><code class="language-clj">(defn circle-area [r] (* Math/PI r r))
 
-<span class="p">(</span><span class="k">def </span><span class="nv">get-areas</span> <span class="p">(</span><span class="nb">comp </span><span class="nv">circle-area</span> <span class="ss">:circles</span><span class="p">))</span>
+(def get-areas (comp circle-area :circles))
 
-<span class="p">(</span><span class="nf">reg-sub</span> <span class="nv">areas</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">db</span> <span class="nv">_</span><span class="p">]</span> <span class="p">(</span><span class="nf">get-areas</span> <span class="nv">db</span><span class="p">)))</span>
+(reg-sub areas (fn [db _] (get-areas db)))
 
-<span class="p">(</span><span class="nf">reg-event-fx</span> 
-  <span class="ss">:store-areas</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">db</span><span class="p">]}</span> <span class="nv">_</span><span class="p">]</span>
-    <span class="p">{</span><span class="ss">:local-store</span> <span class="p">(</span><span class="nf">get-areas</span> <span class="nv">db</span><span class="p">)}))</span>
-</code></pre></div>
-
+(reg-event-fx 
+  :store-areas
+  (fn [{:keys [db]} _]
+    {:local-store (get-areas db)}))</code></pre>
 
 <h4><em>Don't</em> call <code>subscribe</code> in a callback:</h4>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:type</span> <span class="s">&quot;button&quot;</span> 
-         <span class="ss">:value</span> <span class="s">&quot;Click me!&quot;</span>
-         <span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nb">doto </span><span class="o">@</span><span class="p">(</span><span class="nf">subscribe</span> <span class="p">[</span><span class="ss">:circles</span><span class="p">])</span> <span class="nv">circle-effect!</span><span class="p">)}]</span>
-</code></pre></div>
-
+<pre class="highlight"><code class="language-clj">[:input {:type "button" 
+         :value "Click me!"
+         :on-click #(doto @(subscribe [:circles]) circle-effect!)}]</code></pre>
 
 <h4><em>Do</em> <code>dispatch</code> an event in a callback:</h4>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">rf/reg-fx</span> <span class="ss">:circle-effect</span> <span class="nv">circle-effect!</span><span class="p">)</span>
+<pre class="highlight"><code class="language-clj">(rf/reg-fx :circle-effect circle-effect!)
 
-<span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>
-  <span class="ss">:clicked-button</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[{{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">circles</span><span class="p">]}</span> <span class="ss">:db</span> <span class="ss">:as</span> <span class="nv">coeffects</span><span class="p">}</span> <span class="nv">event-v</span><span class="p">]</span>
-    <span class="p">{</span><span class="ss">:circle-effect</span> <span class="nv">circles</span><span class="p">}))</span>
+(re-frame.core/reg-event-fx
+  :clicked-button
+  (fn [{{:keys [circles]} :db :as coeffects} event-v]
+    {:circle-effect circles}))
 
-<span class="p">[</span><span class="ss">:input</span> <span class="p">{</span><span class="ss">:type</span> <span class="s">&quot;button&quot;</span> 
-        <span class="ss">:value</span> <span class="s">&quot;Click me!&quot;</span>
-        <span class="ss">:on-click</span> <span class="o">#</span><span class="p">(</span><span class="nf">dispatch</span> <span class="p">[</span><span class="ss">:clicked-button</span> <span class="nv">%</span><span class="p">])}]</span>
-</code></pre></div>
-
+[:input {:type "button" 
+        :value "Click me!"
+        :on-click #(dispatch [:clicked-button %])}]</code></pre>
 
 <h3 id="flows">Flows<a class="headerlink" href="#flows" title="Permanent link">&para;</a></h3>
 <p>Instead of a subscription, consider using <a href="/re-frame/Flows"><code>re-frame.flow</code></a>. 
@@ -1797,13 +1799,12 @@ It will recalculate every time you call <code>sub</code>, unless you've already 
 <p>The 3rd party library <code>re-frame-utils</code> provides an <a href="https://github.com/vimsical/re-frame-utils/blob/master/src/vimsical/re_frame/cofx/inject.cljc">inject coeffect</a>.
 This allows you to access a subscription's value within a re-frame event handler.</p>
 <p>This way, you declare an interceptor that resolves your subscription. Then, your event handler function can destructure the value from the coeffects:</p>
-<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="nf">re-frame.core/reg-event-fx</span>         <span class="c1">;; handler must access coeffects, so use -fx</span>
-  <span class="ss">:event-id</span> 
-  <span class="p">(</span><span class="nf">vimsical.re-frame.cofx.inject/inject</span> <span class="p">[</span><span class="ss">:query-id</span> <span class="ss">:param</span><span class="p">])</span>  <span class="c1">;; &lt;-- interceptor will inject subscription value into coeffects</span>
-  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">coeffects</span> <span class="nv">event</span><span class="p">]</span>
-    <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">sub-val</span> <span class="p">(</span><span class="ss">:something</span> <span class="nv">coeffects</span><span class="p">)]</span>  <span class="c1">;; obtain subscription value </span>
-       <span class="nv">....</span><span class="p">)))</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx         ;; handler must access coeffects, so use -fx
+  :event-id 
+  (vimsical.re-frame.cofx.inject/inject [:query-id :param])  ;; &lt;-- interceptor will inject subscription value into coeffects
+  (fn [coeffects event]
+    (let [sub-val (:something coeffects)]  ;; obtain subscription value 
+       ....)))</code></pre>
                 
               
               
@@ -1948,12 +1949,16 @@ This allows you to access a subscription's value within a re-frame event handler
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>

@@ -53,6 +53,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/mkdocs.css">
     
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    
     
       
     
@@ -235,7 +237,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../FAQs/Inspecting-app-db/" class="md-tabs__link">
+        <a href="../../FAQs/alpha/" class="md-tabs__link">
           FAQs
         </a>
       
@@ -963,6 +965,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../FAQs/alpha/" title="How can I use the alpha?" class="md-nav__link">
+      How can I use the alpha?
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../FAQs/Inspecting-app-db/" title="How can I Inspect app-db?" class="md-nav__link">
       How can I Inspect app-db?
     </a>
@@ -1233,7 +1247,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.core/" title="re-frame.core" class="md-nav__link">
+    <a href="../../api-re-frame.core.md" title="re-frame.core" class="md-nav__link">
       re-frame.core
     </a>
   </li>
@@ -1245,7 +1259,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../api-re-frame.alpha/" title="re-frame.alpha" class="md-nav__link">
+    <a href="../../api-re-frame.alpha.md" title="re-frame.alpha" class="md-nav__link">
       re-frame.alpha
     </a>
   </li>
@@ -1568,20 +1582,20 @@
 </blockquote>
 <h2 id="144-2024-06-24">1.4.4 (2024-06-24)<a class="headerlink" href="#144-2024-06-24" title="Permanent link">&para;</a></h2>
 <h4>Changed</h4>
-<div class="codehilite"><pre><span></span><code>- Changed flows to calculate the new app-db earlier in the chain.
+<pre class="highlight"><code>- Changed flows to calculate the new app-db earlier in the chain.
   - Benefit:  user-defined interceptors can access post-flow app-db value.
-  - Drawback: they can&#39;t access the value of app-db directly resulting from the event handler.
-  - Drawback: they can&#39;t access flow-related effects like `:reg-flow`.
+  - Drawback: they can't access the value of app-db directly resulting from the event handler.
+  - Drawback: they can't access flow-related effects like `:reg-flow`.
 
 - Added a :re-frame/pre-flow-db key to the context
   - This way, user-defined interceptors can still access the app-db value resulting directly from the event handler.
-</code></pre></div>
-
+</code></pre>
 
 <h2 id="143-2024-01-25">1.4.3 (2024-01-25)<a class="headerlink" href="#143-2024-01-25" title="Permanent link">&para;</a></h2>
 <h4>Fixed</h4>
-<div class="codehilite"><pre><span></span><code>- cljdoc analysis &amp; build errors (see https://github.com/cljdoc/cljdoc/issues/853)
-</code></pre></div>
+<pre class="highlight"><code>- cljdoc analysis &amp; build errors (see https://github.com/cljdoc/cljdoc/issues/853)
+
+</code></pre>
                 
               
               
@@ -1632,8 +1646,8 @@
         <!-- Link to previous page -->
         
           <a
-            href="../../api-re-frame.alpha/"
-            title="re-frame.alpha"
+            href="../../api-builtin-effects/"
+            title="Builtin Effects"
             class="md-footer-nav__link md-footer-nav__link--prev"
             rel="prev"
           >
@@ -1645,7 +1659,7 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                re-frame.alpha
+                Builtin Effects
               </div>
             </div>
           </a>
@@ -1726,12 +1740,16 @@
       <script>
         app = initialize({
           base: "../..",
-          features: ["tabs"],
+          features: ["tabs", "content.code.annotate", "content.code.copy"],
           search: Object.assign({
             worker: "../../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/clojure.min.js"></script>
       
     
   </body>
