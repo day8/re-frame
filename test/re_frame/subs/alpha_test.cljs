@@ -54,11 +54,9 @@
       (is (fn? (q/method q)))))
 
   (testing "Lifecycle"
-    (doseq [k [::map ::query-v ::vec]
-            :let [q (queries k)]]
-      (is (= :default (q/lifecycle q))))
-    (doseq [k [::map-reactive ::vec-reactive]
-            :let [q (queries k)]]
+    (doseq [q (map queries [::map ::query-v ::vec])]
+      (is (= :safe (q/lifecycle q))))
+    (doseq [q (map queries [::map-reactive ::vec-reactive])]
       (is (= :reactive (q/lifecycle q))))))
 
 (deftest test-subscription
