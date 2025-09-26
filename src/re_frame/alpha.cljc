@@ -328,7 +328,7 @@ converts to:
 
 ```clojure
 {:re-frame/q         ::items
- :re-frame/lifecycle :default
+ :re-frame/lifecycle :safe
  :re-frame/query-v   [::items 1 2 3]}
 ```
 
@@ -357,10 +357,9 @@ converts to:
 `(reg :sub-lifecycle lifecycle-id lifecycle-fn)`
 
 Registers a `lifecycle-fn` for a given `lifecycle-id`.
-This `lifecycle-fn` is called whenever `sub` is called.
 
-When `sub` is called, re-frame uses the `query` to look up the associated lifecycle.
-Map queries can declare this with a `:re-frame/lifecycle` key.
+When `sub` (or `subscribe`) is called, re-frame uses the `query` to look up the associated lifecycle.
+Map queries can optionally specify this with a `:re-frame/lifecycle` key.
 Vector queries can include the `:re-frame/lifecycle` key in the vector's metadata.
 
 When a `query` does not explicitly declare a lifecycle,
@@ -389,17 +388,65 @@ Accepts a `query`.
 Returns a new dataflow node.
 
 **`cache!`**
-Accepts a `query` and a dataflow-node.
+Accepts a `query` and a dataflow node.
 Adds the dataflow node to the signal graph.
 The node can be looked up later, using `cached`.
 
 **`clear!`**
 Accepts a `query`.
-Removes the associated `dataflow-node` from the signal graph.
+Removes the associated dataflow-node from the signal graph.
 
+##### `lifecycle-fn` example
+
+For demonstration, here is a \"sliding\" lifecycle-fn which caches the last three queries:
+
+```clojure
+(def history (atom []))
+(def size 3)
+(def overflow? #(> (count @history) size))
+(def slide! #(swap! history (comp vec rest)))
+
+(defn sub-sliding [q]
+  (if-let [cached-node (q/cached q)]
+    cached-node
+    (let [new-node (q/handle q)]
+      (q/cache! q new-node)
+      (swap! history conj q)
+      (when (overflow?)
+        (q/clear! (first @history))
+        (slide!))
+      new-node)))
+
+(reg :sub-lifecycle :sliding sub-sliding)
+```
+
+You can use your new lifecycle by declaring `:re-frame/lifecycle`:
+
+  `(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 1]})`
+
+After subscribing to more than three different queries, the sliding behavior will happen,
+clearing some of the corresponding dataflow nodes from the cache.
+
+  `(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 2]})`
+  `(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 3]})`
+  `(re-frame.alpha/sub ^{:re-frame/lifecycle :sliding} [:hi 4]})` ;; now [:hi 1] is cleared
+
+Note: Lifecycles are an alpha feature. Don't expect re-frame.core to work the same way.
+It's totally valid to add metadata to a query, but re-frame.core will ignore it.
+For instance, this subscription creates a dataflow node with the `:reactive` lifecycle,
+even though you've \"declared\" something else:
+
+`(re-frame.core/subscribe ^{:re-frame/lifecycle :sliding} [:hi 4]})`
+
+On the other hand, re-frame.alpha can make use of nodes created by re-frame.core.
+Specifically, the `:safe` lifecycle also checks for an equivalent query
+in the cache of `:reactive` nodes.
+That way, you can subscribe to a query using plain old `re-frame.core/subscribe` within a view function,
+and, elsewhere, subscribe to that same query using `re-frame.alpha/sub`, without needing to recalculate.
+  
 ##### Standard lifecycles
 
-Re-frame provides these lifecycles.
+Re-frame provides these lifecycles. The default lifecycle is `:safe`.
 
 **`:forever`**
 Looks up the node, creating it if necessary. It is never cleared.
@@ -1467,12 +1514,12 @@ Note: for more details on reactive context, see https://day8.github.io/re-frame/
      (fn [db input]
        (flow/resolve-input db input)))
 
-
-;; --  Deprecation ------------------------------------------------------------
-
 (def ^{:api-docs/heading "Legacy Compatibility"} subscribe
-  "Equivalent to `sub` (except with flows, which have their own lifecycle and are not cached).
+  "Equivalent to `sub`.
 
+  Uses a different the `:safe` lifecyle by default, compared with `re-frame.core`, which uses `:reactive`.
+
+  Flows each have their own lifecycle and are not cached using the same mechanism as subscriptions.
   Call `(subscribe [:flow {:id :your-flow-id}])` to subscribe to a flow."
   sub)
 
