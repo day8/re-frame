@@ -1,13 +1,21 @@
 (ns re-frame.alpha
   (:require
-   re-frame.core
    [re-frame.subs.alpha     :as subs.alpha]
+   [re-frame.subs           :as subs]
    [re-frame.register.alpha :as register.alpha]
    [re-frame.interceptor    :as interceptor]
    [re-frame.flow.alpha     :as flow]
    [re-frame.events           :as events]
    [re-frame.fx               :as fx]
    [re-frame.cofx             :as cofx]
+   [re-frame.registrar        :as registrar]
+   [re-frame.settings         :as settings]
+   [re-frame.utils            :as utils]
+   [re-frame.router           :as router]
+   [re-frame.loggers          :as loggers]
+   [re-frame.db               :as db]
+   [re-frame.interop          :as interop]
+   [clojure.set               :as set]
    [re-frame.std-interceptors :as std-interceptors :refer [db-handler->interceptor
                                                            fx-handler->interceptor
                                                            ctx-handler->interceptor]]))
@@ -679,8 +687,13 @@ A `flow` is a map, specifying one dataflow node. It has keys:
   [& args]
   (apply reg :legacy-sub args))
 
-(def ^:api-docs/hide dispatch re-frame.core/dispatch)
-(def ^:api-docs/hide dispatch-sync re-frame.core/dispatch-sync)
+(defn ^:api-docs/hide dispatch
+  [event]
+  (router/dispatch event))
+
+(defn ^:api-docs/hide dispatch-sync
+  [event]
+  (router/dispatch-sync event))
 
 (defn ^:api-docs/hide reg-event-db
   ([id handler]
@@ -693,6 +706,7 @@ A `flow` is a map, specifying one dataflow node. It has keys:
                         interceptors
                         flow/do-fx
                         (db-handler->interceptor handler)])))
+
 (defn ^:api-docs/hide reg-event-fx
   ([id handler]
    (reg-event-fx id nil handler))
@@ -717,42 +731,171 @@ A `flow` is a map, specifying one dataflow node. It has keys:
                         flow/do-fx
                         (ctx-handler->interceptor handler)])))
 
-(def ^:api-docs/hide clear-event re-frame.core/clear-event)
-(def ^:api-docs/hide reg-event-error-handler re-frame.core/reg-event-error-handler)
+(defn ^:api-docs/hide clear-event
+  ([]
+   (registrar/clear-handlers events/kind))
+  ([id]
+   (registrar/clear-handlers events/kind id)))
+
+(defn ^:api-docs/hide reg-event-error-handler
+  [handler]
+  (registrar/register-handler :error :event-handler handler))
+
 (reg-event-error-handler interceptor/default-error-handler)
-(def ^:api-docs/hide clear-sub re-frame.core/clear-sub)
-(def ^:api-docs/hide reg-sub-raw re-frame.core/reg-sub-raw)
-(def ^:api-docs/hide clear-subscription-cache! re-frame.core/clear-subscription-cache!)
+
+(defn ^:api-docs/hide clear-sub
+  ([]
+   (registrar/clear-handlers subs/kind))
+  ([query-id]
+   (registrar/clear-handlers subs/kind query-id)))
+
+(defn ^:api-docs/hide reg-sub-raw
+  [query-id handler-fn]
+  (registrar/register-handler subs/kind query-id handler-fn))
+
+(defn ^:api-docs/hide clear-subscription-cache!
+  []
+  (subs/clear-subscription-cache!))
 
 (defn ^:api-docs/hide reg-fx [id handler]
   (assert (not (#{:reg-flow :clear-flow} id))
           "The effect keys `:reg-flow` and `:clear-flow` are reserved for `re-frame.alpha`")
-  (re-frame.core/reg-fx id handler))
+  (fx/reg-fx id handler))
 
-(def ^:api-docs/hide clear-fx re-frame.core/clear-fx)
-(def ^:api-docs/hide reg-cofx re-frame.core/reg-cofx)
-(def ^:api-docs/hide inject-cofx re-frame.core/inject-cofx)
-(def ^:api-docs/hide clear-cofx re-frame.core/clear-cofx)
-(def ^:api-docs/hide debug re-frame.core/debug)
-(def ^:api-docs/hide path re-frame.core/path)
-(def ^:api-docs/hide enrich re-frame.core/enrich)
-(def ^:api-docs/hide unwrap re-frame.core/unwrap)
-(def ^:api-docs/hide trim-v re-frame.core/trim-v)
-(def ^:api-docs/hide after re-frame.core/after)
-(def ^:api-docs/hide on-changes re-frame.core/on-changes)
-(def ^:api-docs/hide reg-global-interceptor re-frame.core/reg-global-interceptor)
-(def ^:api-docs/hide clear-global-interceptor re-frame.core/clear-global-interceptor)
-(def ^:api-docs/hide ->interceptor re-frame.core/->interceptor)
-(def ^:api-docs/hide get-coeffect re-frame.core/get-coeffect)
-(def ^:api-docs/hide assoc-coeffect re-frame.core/assoc-coeffect)
-(def ^:api-docs/hide get-effect re-frame.core/get-effect)
-(def ^:api-docs/hide assoc-effect re-frame.core/assoc-effect)
-(def ^:api-docs/hide enqueue re-frame.core/enqueue)
-(def ^:api-docs/hide set-loggers! re-frame.core/set-loggers!)
-(def ^:api-docs/hide console re-frame.core/console)
-(def ^:api-docs/hide make-restore-fn re-frame.core/make-restore-fn)
-(def ^:api-docs/hide purge-event-queue re-frame.core/purge-event-queue)
-(def ^:api-docs/hide add-post-event-callback re-frame.core/add-post-event-callback)
-(def ^:api-docs/hide remove-post-event-callback re-frame.core/remove-post-event-callback)
-(def ^:api-docs/hide register-handler re-frame.core/register-handler)
-(def ^:api-docs/hide register-sub re-frame.core/register-sub)
+(defn ^:api-docs/hide clear-fx
+  ([]
+   (registrar/clear-handlers fx/kind))
+  ([id]
+   (registrar/clear-handlers fx/kind id)))
+
+(defn ^:api-docs/hide reg-cofx
+  [id handler]
+  (cofx/reg-cofx id handler))
+
+(defn ^:api-docs/hide inject-cofx
+  ([id]
+   (cofx/inject-cofx id))
+  ([id value]
+   (cofx/inject-cofx id value)))
+
+(defn ^:api-docs/hide clear-cofx
+  ([]
+   (registrar/clear-handlers cofx/kind))
+  ([id]
+   (registrar/clear-handlers cofx/kind id)))
+
+(def ^:api-docs/hide debug std-interceptors/debug)
+
+(defn ^:api-docs/hide path
+  [& args]
+  (apply std-interceptors/path args))
+
+(defn ^:api-docs/hide enrich
+  [f]
+  (std-interceptors/enrich f))
+
+(def ^:api-docs/hide unwrap std-interceptors/unwrap)
+
+(def ^:api-docs/hide trim-v std-interceptors/trim-v)
+
+(defn ^:api-docs/hide after
+  [f]
+  (std-interceptors/after f))
+
+(defn ^:api-docs/hide on-changes
+  [f out-path & in-paths]
+  (apply std-interceptors/on-changes f out-path in-paths))
+
+(defn ^:api-docs/hide reg-global-interceptor
+  [interceptor]
+  (settings/reg-global-interceptor interceptor))
+
+(defn ^:api-docs/hide clear-global-interceptor
+  ([]
+   (settings/clear-global-interceptors))
+  ([id]
+   (settings/clear-global-interceptors id)))
+
+(defn ^:api-docs/hide ->interceptor
+  [& {:as m :keys [id before after]}]
+  (utils/apply-kw interceptor/->interceptor m))
+
+(defn ^:api-docs/hide get-coeffect
+  ([context]
+   (interceptor/get-coeffect context))
+  ([context key]
+   (interceptor/get-coeffect context key))
+  ([context key not-found]
+   (interceptor/get-coeffect context key not-found)))
+
+(defn ^:api-docs/hide assoc-coeffect
+  [context key value]
+  (interceptor/assoc-coeffect context key value))
+
+(defn ^:api-docs/hide get-effect
+  ([context]
+   (interceptor/get-effect context))
+  ([context key]
+   (interceptor/get-effect context key))
+  ([context key not-found]
+   (interceptor/get-effect context key not-found)))
+
+(defn ^:api-docs/hide assoc-effect
+  [context key value]
+  (interceptor/assoc-effect context key value))
+
+(defn ^:api-docs/hide enqueue
+  [context interceptors]
+  (interceptor/enqueue context interceptors))
+
+(defn ^:api-docs/hide set-loggers!
+  [new-loggers]
+  (loggers/set-loggers! new-loggers))
+
+(defn ^:api-docs/hide console
+  [level & args]
+  (apply loggers/console level args))
+
+(defn ^:api-docs/hide make-restore-fn
+  []
+  (let [handlers @registrar/kind->id->handler
+        app-db   @db/app-db
+        subs-cache @subs/query->reaction]
+    (fn []
+      ;; call `dispose!` on all current subscriptions which
+      ;; didn't originally exist.
+      (let [original-subs (set (vals subs-cache))
+            current-subs  (set (vals @subs/query->reaction))]
+        (doseq [sub (set/difference current-subs original-subs)]
+          (interop/dispose! sub)))
+
+      ;; Reset the atoms
+      ;; We don't need to reset subs/query->reaction, as
+      ;; disposing of the subs removes them from the cache anyway
+      (reset! registrar/kind->id->handler handlers)
+      (reset! db/app-db app-db)
+      nil)))
+
+(defn ^:api-docs/hide purge-event-queue
+  []
+  (router/purge router/event-queue))
+
+(defn ^:api-docs/hide add-post-event-callback
+  ([f]
+   (add-post-event-callback f f))   ;; use f as its own identifier
+  ([id f]
+   (router/add-post-event-callback router/event-queue id f)))
+
+(defn ^:api-docs/hide remove-post-event-callback
+  [id]
+  (router/remove-post-event-callback router/event-queue id))
+
+(defn ^:api-docs/hide register-handler
+  [& args]
+  (console :warn  "re-frame: \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
+  (apply reg-event-db args))
+
+(defn ^:api-docs/hide register-sub
+  [& args]
+  (console :warn  "re-frame: \"register-sub\" is used to register the event " (str (first args)) " but it is a deprecated part of the API. Please use \"reg-sub-raw\" instead.")
+  (apply reg-sub-raw args))
