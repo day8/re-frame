@@ -11,7 +11,7 @@ How do I access the value of a subscription from within an event handler?
 ## The Root Problem
 
 Subscriptions are stateful. That said, they offer a 90% solution where you don't have to worry about their state.
-But this comes with a caveat: **the only safe place to call `subscribe` is within a reagent component function.** 
+But this comes with a caveat: **the only safe place to call `subscribe` is within a reagent render function.**
 
 !!! Note
     See [Flows - Reactive Context](/re-frame/flows-advanced-topics/#reactive-context)
@@ -19,14 +19,14 @@ But this comes with a caveat: **the only safe place to call `subscribe` is withi
 
 ### DOM event handlers
 
-Inner functions, such as DOM event handlers, don't count. Consider this component:
+Callback functions, such as DOM event handlers, don't count. Consider this component:
 
 ```clj
 (defn my-btn []
   [:button {:on-click #(subscribe [:some (gensym)])}])
 ```
 
-Our `:on-click` function isn't actually called when the component renders. Instead, we've given the function to the browser, expecting it to get called later. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If the browser calls your `:on-click` a thousand times, re-frame will "create" a thousand unique subscriptions, and there's no code in place to "dispose" them later.
+Our `:on-click` function isn't actually called when the component renders. Instead, we've given the function to the browser, expecting it to get called later. The problem is, reagent and re-frame have no way to safely manage your subscription at that time. The result is a memory leak. If the browser calls your `:on-click` a thousand times, re-frame may "create" a thousand unique subscriptions, and there's no code in place to "dispose" them later.
 
 ### Re-frame event handlers
 
@@ -46,7 +46,7 @@ Calling `subscribe` inside an event handler goes against re-frame's design, whic
 
 ### Incidental safety
 
-Calling `subscribe` *outside* a component is somewhat safe, as long as you've also called it *inside* a component.
+Calling `subscribe` *outside* a render-fn is somewhat safe, as long as you've also called it *inside* a render-fn.
 The *outside* one has no way to dispose, but the *inside* one might dispose later.
 
 Of course, that requires your component to be around while your other code runs.
