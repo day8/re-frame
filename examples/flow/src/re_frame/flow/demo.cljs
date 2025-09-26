@@ -64,11 +64,13 @@
 
 (rfa/reg-flow error-state-flow)
 
-(rf/reg-event-fx
+;; Note: this uses the version of `reg-event-fx` from `re-frame.alpha`, not core.
+;; This is necesssary for the `:clear-flow` and `:reg-flow` effects to work.
+(rfa/reg-event-fx
  ::clear-flow-button-pressed
  (fn [_ _] {:fx [[:clear-flow ::error-state]]}))
 
-(rf/reg-event-fx
+(rfa/reg-event-fx
  ::reg-flow-button-pressed
  (fn [_ _] {:fx [[:reg-flow error-state-flow]]}))
 
