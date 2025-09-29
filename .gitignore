@@ -36,3 +36,4 @@ build/
 .cpcache
 .lsp
 .clj-kondo
+.*
