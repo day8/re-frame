@@ -239,7 +239,9 @@
                                                   :op-type   :sub/run
                                                   :tags      {:query-v    query-vec
                                                               :reaction   @reaction-id}}
-                                 (let [subscription (computation-fn (deref-input-signals subscriptions query-id) query-vec)]
+                                 (let [subscription (computation-fn
+                                                     (deref-input-signals subscriptions query-id)
+                                                     query-vec)]
                                    (trace/merge-trace! {:tags {:value subscription}})
                                    subscription))))]
 

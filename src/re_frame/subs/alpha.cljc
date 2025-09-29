@@ -94,18 +94,18 @@
 (reg :sub-lifecycle :reactive sub-reactive)
 
 #?(:cljs
-   (def sync-watchers-and-compute! ratom/run))
+   (def sync-input-signals-and-compute! ratom/run))
 
 #?(:cljs
-   (defn cleanup-deps! [^js r]
+   (defn cleanup-input-signals! [^js r]
      (doseq [^js watch (.-watching r)]
        (when-not (seq (dissoc (.-watches watch) r))
          (dispose! watch)))))
 
 (defn sub-no-cache [q]
   (doto (q/handle q)
-    #?(:cljs sync-watchers-and-compute!)
-    #?(:cljs cleanup-deps!)))
+    #?(:cljs sync-input-signals-and-compute!)
+    #?(:cljs cleanup-input-signals!)))
 
 (reg :sub-lifecycle :no-cache sub-no-cache)
 
@@ -123,7 +123,7 @@
   (or (q/cached q)
       (q/cache!
        q (doto (q/handle q)
-           #?(:cljs sync-watchers-and-compute!)))))
+           #?(:cljs sync-input-signals-and-compute!)))))
 
 (reg :sub-lifecycle :forever sub-forever)
 

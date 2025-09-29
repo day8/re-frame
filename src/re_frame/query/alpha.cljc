@@ -37,27 +37,29 @@
 
 (defn cache-key [q] [q default-dynv])
 
-(defn cached [q] (if-some [r (get @cache (cache-key q))]
+(defn cached [q]
+  (if-some [r (get @cache (cache-key q))]
                    (do (trace/merge-trace! {:tags {:cached? true
                                                    :reaction (reagent-id r)}})
                        r)
                    (trace/merge-trace! {:tags {:cached? false}})))
 
-(defn cache! [q r] (swap! cache assoc (cache-key q) r) r)
+(defn cache! [q r]
+  (swap! cache assoc (cache-key q) r)
+  r)
 
 (defn clear!
   ([] (reset! cache {}))
   ([q] (swap! cache dissoc (cache-key q))))
 
 (defn handle [q]
-  (let [handler (get-handler :sub (id q))]
-    (if-not (nil? handler)
+  (if-some [handler (get-handler :sub (id q))]
       (handler app-db q)
       (do (trace/merge-trace! {:error true})
           (console :error
                    "re-frame: no subscription handler registered for: "
                    (id q)
-                   ". Returning a nil subscription.")))))
+                 ". Returning a nil subscription."))))
 
 (defn query? [q]
   (some? (and (id q)
