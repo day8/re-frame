@@ -1675,15 +1675,14 @@ the <code>let</code> bindings.</p>
 our development process - for instance, to declare some component-local state.
 But without a keen eye for reactivity, it's easy to break your components.</p>
 <h3 id="you-used-defmulti">You used <code>defmulti</code><a class="headerlink" href="#you-used-defmulti" title="Permanent link">&para;</a></h3>
-<p>The same issue as above can occur if you implement a form-2 component
+<p>A subtle but severe problem can occur if you implement a form-2 component
 using <code>defmulti</code>/<code>defmethod</code>:</p>
 <pre class="highlight"><code class="language-clojure">(defn which-fruit [k] k)
 
 (defmulti fruit-view which-fruit)
 
 (defmethod fruit-view :apple [_]
-  (fn render-apple []
-    [:li "🍎 I'm an apple!"]))
+  [:li "🍎 I'm an apple!"])
 
 (defmethod fruit-view :banana [_]
   (fn render-banana []
@@ -1704,13 +1703,27 @@ using <code>defmulti</code>/<code>defmethod</code>:</p>
 <p>When you click the button, the value of <code>fruit</code> should change, 
 and your <code>fruit-view</code> should display a different fruit. But in reality,
 it just shows "I'm an apple!" all the time. Why?</p>
-<p>As we explained before, reagent calls <code>fruit-view</code>
-<a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#appendix-a---lifting-the-lid-slightly">"once and once only"</a>.
-That means reagent invokes your dispatch function <code>which-fruit</code> once, 
-and looks up the corresponding method once. That method returns <code>render-apple</code>, 
-which reagent then calls "many, many times" as the value of <code>fruit</code> changes.</p>
-<p>Unfortunately, we haven't found a perfect way to use multimethods with reagent. 
-One workaround is to <strong>use <code>defmulti</code> to implement only form-1 components.</strong> 
+<p>On the first render, reagent invokes <code>fruit-view</code>.
+Clojure runs your dispatch function <code>which-fruit</code>, 
+looks up the method for <code>:apple</code>, and calls it, returning a hiccup. </p>
+<p>Since <code>fruit-view</code> returns a hiccup, reagent considers it to be a 
+<a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-1-a-simple-function">form-1</a> 
+component. It renders that hiccup directly. So far, so good.</p>
+<p>Then, you click the button. The value of <code>fruit</code> changes, causing reagent to invoke 
+<code>fruit-view</code> again. This time, we get the <code>:banana</code> method, which returns a <code>render-banana</code> (not a hiccup).
+Here's where the problem begins: since our <code>fruit-view</code> now returns a function, 
+reagent now considers it to be
+<a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-2--a-function-returning-a-function">form-2</a>
+!</p>
+<p>As explained above, reagent calls this new form-2 component function
+<a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#appendix-a---lifting-the-lid-slightly">"once and once only"</a>. 
+Subsequently, every time <code>fruit-view</code> re-renders, reagent will <em>not</em> call your multimethod, 
+and no dispatch will happen. Instead, reagent has stored <code>render-banana</code> in its cache,
+and it will always call <code>render-banana</code>, showing "I'm a banana!" forever.</p>
+<p>In effect, we've created a nasty dynamism where our component works perfectly well... until it doesn't.
+It could work for years, using only form-1 methods, until someone decides to add a form-2 to the codebase.</p>
+<p>Unfortunately, we haven't found a perfect way to use multimethods with reagent.
+One workaround is to <strong>use <code>defmulti</code> to implement only form-1 components.</strong>
 You may be able to extract your form-2 logic into a shared wrapper component,
 such as the new <code>fruit-view</code> below:</p>
 <pre class="highlight"><code class="language-clojure">(defmethod fruit-item :apple [_]
@@ -1729,7 +1742,7 @@ such as the new <code>fruit-view</code> below:</p>
 
 <p>If you truly need a polymorphic form-2 component, <strong>consider not using <code>defmulti</code></strong>.
 Though multimethods are elegant, our workaround for them can be clumsy.</p>
-<p>Consider using <code>case</code> or <code>cond</code>, instead. This can work as idiomatic Clojure,
+<p><strong>Consider using <code>case</code> or <code>cond</code></strong>, instead. This can work as idiomatic Clojure,
 providing explicit and foolproof dispatch without depending on 
 incidental indirections like <code>fruit-view</code> above:</p>
 <pre class="highlight"><code class="language-clojure">(defn fruit-item-apple []
