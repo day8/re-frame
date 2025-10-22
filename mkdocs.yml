@@ -86,6 +86,7 @@ nav:
     - "Reagent looks terrific. Why do I need re-frame?": FAQs/DoINeedReFrame.md
     - "How to focus on an HTML element": FAQs/FocusOnElement.md
     - "How do I register a global interceptor": FAQs/GlobalInterceptors.md
+    - "Why didn't my component update?": FAQs/why-didnt-my-component-update.md
     - "Why is my input field laggy?": FAQs/laggy-input.md
     - "How long after I do a dispatch does the event get handled?": FAQs/When-Does-Dispatch-Happen.md
     - "How can I use a subscription in an Event Handler": FAQs/UseASubscriptionInAnEventHandler.md
