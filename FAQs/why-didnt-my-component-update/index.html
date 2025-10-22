@@ -1702,8 +1702,8 @@ using <code>defmulti</code>/<code>defmethod</code>:</p>
 
 <p>On the first render, reagent invokes <code>fruit-view</code>.
 Clojure runs your dispatch function <code>which-fruit</code>, 
-looks up the method for <code>:apple</code>, and calls it, returning a hiccup. </p>
-<p>Since <code>fruit-view</code> returns a hiccup, reagent considers it to be a 
+looks up the method for <code>:apple</code>, and calls it, returning a hiccup.
+Since <code>fruit-view</code> returns a hiccup, reagent considers it to be a 
 <a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-1-a-simple-function">form-1</a> 
 component. It renders that hiccup directly. So far, so good.</p>
 <p>Then, you click the button. The value of <code>fruit</code> changes, causing reagent to invoke 
@@ -1720,9 +1720,21 @@ and it will always call <code>render-banana</code>, showing "I'm a banana!" fore
 <p>In effect, we've created a nasty dynamism where our component works perfectly well... until it doesn't.
 It could work for years, using only form-1 methods, until someone decides to add a form-2 to the codebase.</p>
 <p>Unfortunately, we haven't found a perfect way to use multimethods with reagent.
-One workaround is to <strong>use <code>defmulti</code> to implement only form-1 components.</strong>
-You may be able to extract your form-2 logic into a shared wrapper component,
-such as the new <code>fruit-view</code> below:</p>
+One workaround is to <strong>use <code>defmulti</code> to implement only form-1 components.</strong></p>
+<p>For instance, you could define your components using regular <code>defn</code>, and use <code>defmulti</code> only 
+as a wrapper to dispatch them:</p>
+<pre class="highlight"><code class="language-clojure">(defn fruit-item-apple [_]
+  (fn [_] [:li "🍎 I'm an apple!"]))
+
+(defmethod fruit-item :apple [props] [fruit-item-apple])
+
+(defn fruit-item-banana [_]
+  (fn [_] [:li "🍌 I'm a banana!"]))
+
+(defmethod fruit-item :banana [props] [fruit-item-banana props])</code></pre>
+
+<p>Or, you could extract your form-2 code into a single wrapper,
+and call your multimethod from there, making sure all your methods are form-1:</p>
 <pre class="highlight"><code class="language-clojure">(defmethod fruit-item :apple [_]
   [:li "🍎 I'm an apple!"])
 
@@ -1730,15 +1742,16 @@ such as the new <code>fruit-view</code> below:</p>
   [:li "🍌 I'm a banana!"])
 
 (defn fruit-view 
-  "We need this wrapper component to ensure reactivity. For details, refer to this article: 
-    https://day8.github.io/re-frame/FAQs/why-didnt-my-component-update"
+  "We need this wrapper component to ensure reactivity.
+  For details, refer to this article: 
+  https://day8.github.io/re-frame/FAQs/why-didnt-my-component-update"
   [k]
   (let [] ;; Do your form-2 stuff here.
     (fn []
       [fruit-item k])))</code></pre>
 
 <p>If you truly need a polymorphic form-2 component, <strong>consider not using <code>defmulti</code></strong>.
-Though multimethods are elegant, our workaround for them can be clumsy.</p>
+Though multimethods are elegant, our workarounds can be clumsy.</p>
 <p><strong>Consider using <code>case</code> or <code>cond</code></strong>, instead. This can work as idiomatic Clojure,
 providing explicit and foolproof dispatch without depending on 
 incidental indirections like <code>fruit-view</code> above:</p>
