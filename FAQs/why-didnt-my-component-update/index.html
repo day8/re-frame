@@ -1697,8 +1697,7 @@ using <code>defmulti</code>/<code>defmethod</code>:</p>
 
 (defn fruit-switcher []
   [:div
-   [:button {:on-click next-fruit!}
-    "Click me!"]
+   [:button {:on-click next-fruit!} "Click me!"]
    [:div "Showing " @fruit ":"]
    [fruit-view @fruit]])</code></pre>
 
@@ -1726,18 +1725,11 @@ such as the new <code>fruit-view</code> below:</p>
   [k]
   (let [] ;; Do your form-2 stuff here.
     (fn []
-      [fruit-item k])))
-
-(defn fruit-switcher []
-  [:div
-   [:button {:on-click next-fruit!}
-    "Click me!"]
-   [:div "Showing " @fruit ":"]
-   [fruit-view @fruit]])</code></pre>
+      [fruit-item k])))</code></pre>
 
 <p>If you truly need a polymorphic form-2 component, <strong>consider not using <code>defmulti</code></strong>.
 Though multimethods are elegant, our workaround for them can be clumsy.</p>
-<p>Consider using <code>cond</code> instead. This can work as idiomatic Clojure,
+<p>Consider using <code>case</code> or <code>cond</code>, instead. This can work as idiomatic Clojure,
 providing explicit and foolproof dispatch without depending on 
 incidental indirections like <code>fruit-view</code> above:</p>
 <pre class="highlight"><code class="language-clojure">(defn fruit-item-apple []
