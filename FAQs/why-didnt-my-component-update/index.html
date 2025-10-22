@@ -1700,9 +1700,6 @@ using <code>defmulti</code>/<code>defmethod</code>:</p>
    [:div "Showing " @fruit ":"]
    [fruit-view @fruit]])</code></pre>
 
-<p>When you click the button, the value of <code>fruit</code> should change, 
-and your <code>fruit-view</code> should display a different fruit. But in reality,
-it just shows "I'm an apple!" all the time. Why?</p>
 <p>On the first render, reagent invokes <code>fruit-view</code>.
 Clojure runs your dispatch function <code>which-fruit</code>, 
 looks up the method for <code>:apple</code>, and calls it, returning a hiccup. </p>
