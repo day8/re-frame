@@ -1707,7 +1707,7 @@ Since <code>fruit-view</code> returns a hiccup, reagent considers it to be a
 <a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-1-a-simple-function">form-1</a> 
 component. It renders that hiccup directly. So far, so good.</p>
 <p>Then, you click the button. The value of <code>fruit</code> changes, causing reagent to invoke 
-<code>fruit-view</code> again. This time, we get the <code>:banana</code> method, which returns a <code>render-banana</code> (not a hiccup).
+<code>fruit-view</code> again. This time, we get the <code>:banana</code> method, which returns <code>render-banana</code> (not a hiccup).
 Here's where the problem begins: since our <code>fruit-view</code> now returns a function, 
 reagent now considers it to be
 <a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-2--a-function-returning-a-function">form-2</a>
@@ -1717,11 +1717,14 @@ reagent now considers it to be
 Subsequently, every time <code>fruit-view</code> re-renders, reagent will <em>not</em> call your multimethod, 
 and no dispatch will happen. Instead, reagent has stored <code>render-banana</code> in its cache,
 and it will always call <code>render-banana</code>, showing "I'm a banana!" forever.</p>
-<p>In effect, we've created a nasty dynamism where our component works perfectly well... until it doesn't.
-It could work for years, using only form-1 methods, until someone decides to add a form-2 to the codebase.</p>
+<p>In effect, we've created a nasty dynamism where our component works perfectly well...
+until it doesn't.
+It could work for hours, until the user clicks that one button.
+Or it could work for years, if your codebase only contains form-1 methods,
+until someone decides to add a form-2 method.</p>
 <p>Unfortunately, we haven't found a perfect way to use multimethods with reagent.
-One workaround is to <strong>use <code>defmulti</code> to implement only form-1 components.</strong></p>
-<p>For instance, you could define your components using regular <code>defn</code>, and use <code>defmulti</code> only 
+One workaround is to <strong>use <code>defmulti</code> to implement only form-1 components.</strong>
+For instance, you could define your components using regular <code>defn</code>, and use <code>defmulti</code> only 
 as a wrapper to dispatch them:</p>
 <pre class="highlight"><code class="language-clojure">(defn fruit-item-apple [_]
   (fn [_] [:li "🍎 I'm an apple!"]))
@@ -1750,7 +1753,8 @@ and call your multimethod from there, making sure all your methods are form-1:</
     (fn []
       [fruit-item k])))</code></pre>
 
-<p>If you truly need a polymorphic form-2 component, <strong>consider not using <code>defmulti</code></strong>.
+<p>If you truly need a polymorphic form-2 component without caveats,
+<strong>consider not using <code>defmulti</code></strong>.
 Though multimethods are elegant, our workarounds can be clumsy.</p>
 <p><strong>Consider using <code>case</code> or <code>cond</code></strong>, instead. This can work as idiomatic Clojure,
 providing explicit and foolproof dispatch without depending on 
