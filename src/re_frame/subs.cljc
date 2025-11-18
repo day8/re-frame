@@ -83,7 +83,6 @@
 
 (defn subscribe
   ([query]
-   (warn-when-not-reactive)
    (trace/with-trace {:operation (first-in-vector query)
                       :op-type   :sub/create
                       :tags      {:query-v query}}
@@ -102,7 +101,6 @@
            (cache-and-return query [] (handler-fn app-db query)))))))
 
   ([query dynv]
-   (warn-when-not-reactive)
    (trace/with-trace {:operation (first-in-vector query)
                       :op-type   :sub/create
                       :tags      {:query-v query
