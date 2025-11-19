@@ -1,5 +1,5 @@
 > This is an experimental, proposed feature for re-frame.
-> You can use flows today, with the ["re-frame alpha"](/FAQs/alpha.md)
+> You can use flows today, with the [re-frame alpha](/re-frame/FAQs/alpha.md)
 > We'd love to hear your feedback!
 > Please join our discussions on [github](https://github.com/day8/re-frame/discussions/795) and [slack](https://clojurians.slack.com/archives/C073DKH9P/p1698792674379499).
 
@@ -414,7 +414,7 @@ Let's test it out:
 <div id="tabbed-app"></div>
 
 Try switching tabs.
-Notice how the path `[:kitchen :area]` only exists when you're in the `room-calculator` tab. What's happening here?
+Notice how the path `[:kitchen :area]` only exists when you're in the **kitchen** tab. What's happening here?
 
 ### Lifecycle
 

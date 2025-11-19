@@ -118,14 +118,14 @@ The lifecycles built into re-frame.alpha include:
 
 For example:
 
-`(sub ^{:re-frame/lifecycle :forever} [:the-answer 43])`
+`(subscribe ^{:re-frame/lifecycle :forever} [:the-answer 43])`
 
-Oops, we've created a node which calculates 43 as its "answer", forever.
+Oops, we've created a node which calculates the "answer," 43, forever.
 It will never leave the memory of your running app. On the bright side,
 we'll never need to recalculate its output value (as long as its inputs haven't changed),
 since re-frame will always look it up from the cache.
 
-`(sub ^{:re-frame/lifecycle :no-cache} [:the-answer 69])`
+`(subscribe ^{:re-frame/lifecycle :no-cache} [:the-answer 69])`
 
 Nice, we've created another node. Except it wasn't really "created", since re-frame didn't cache it.
 Instead, re-frame recalculates the node's output every time you call `sub`
