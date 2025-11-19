@@ -131,7 +131,7 @@
 
 (defn sub-flow [q]
   (or (some-> (:id (or (second (::rf/query-v q)) q))
-              flow/lookup meta :re-frame.flow.alpha/ref)
+              (#(get @flow/flows %)) meta :re-frame.flow.alpha/ref)
       nil-ref))
 
 (reg :sub-lifecycle :flow sub-flow)

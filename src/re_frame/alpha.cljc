@@ -658,7 +658,7 @@ A `flow` is a map, specifying one dataflow node. It has keys:
   "Returns the value within `db` at the `:path` given by the registered flow
   with an `:id` key equal to `id`, if it exists. Otherwise, returns nil."
   {:api-docs/heading "Flows"}
-  [db id] (flow/resolve-input db (flow/flow<- id)))
+  [db id] (flow/resolve-input db @flow/flows (flow/flow<- id)))
 
 (defn flow<-
   "Creates an input from a flow id."
@@ -668,11 +668,11 @@ A `flow` is a map, specifying one dataflow node. It has keys:
 
 (reg :sub :flow
      (fn [db input]
-       (flow/resolve-input db input)))
+       (flow/resolve-input db @flow/flows input)))
 
 (reg :sub :live?
      (fn [db input]
-       (flow/resolve-input db input)))
+       (flow/resolve-input db @flow/flows input)))
 
 (def ^{:api-docs/heading "Legacy Compatibility"} subscribe
   "Equivalent to `sub`.

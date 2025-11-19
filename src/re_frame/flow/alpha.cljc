@@ -20,8 +20,6 @@
 
 (def flow-states (atom {}))
 
-(defn lookup [id] (get @flows id))
-
 (defn input-ids [{:keys [inputs live-inputs]}]
   (vec (distinct (into []
                        (comp (remove db-path?)
@@ -106,7 +104,7 @@
    (swap! flows empty)
    (swap! flow-states update ::cleared into @flows))
   ([id]
-   (when-let [flow (lookup id)]
+   (when-let [flow (get @flows id)]
      (swap! flows dissoc id)
      (swap! flow-states update ::cleared assoc (:id flow) flow))))
 
@@ -134,13 +132,13 @@
                    (update-in [:effects :fx] remove-fx)
                    (update :effects dissoc-fx))))}))
 
-(defn resolve-input [db input]
+(defn resolve-input [db flows input]
   (if (vector? input)
     (get-in db input)
-    (some->> input ::flow<- lookup :path (resolve-input db))))
+    (some->> input ::flow<- flows :path (resolve-input db flows))))
 
-(defn resolve-inputs [db inputs]
-  (if (empty? inputs) db (u/map-vals (partial resolve-input db) inputs)))
+(defn resolve-inputs [db flows inputs]
+  (if (empty? inputs) db (u/map-vals (partial resolve-input db flows) inputs)))
 
 (defn run [ctx {:keys   [path cleanup live? inputs live-inputs output id]
                 flow-fx :fx
@@ -151,12 +149,12 @@
         db     (or (get-effect ctx :db) old-db)
         fx     (get-effect ctx :fx)
 
-        id->old-in (resolve-inputs old-db inputs)
-        id->in     (resolve-inputs db inputs)
+        id->old-in (resolve-inputs old-db (:flows ctx) inputs)
+        id->in     (resolve-inputs db (:flows ctx) inputs)
         dirty?     (not= id->in id->old-in)
 
-        id->old-live-in (resolve-inputs old-db live-inputs)
-        id->live-in     (resolve-inputs db live-inputs)
+        id->old-live-in (resolve-inputs old-db (:flows ctx) live-inputs)
+        id->live-in     (resolve-inputs db (:flows ctx) live-inputs)
 
         old-output (get-in old-db path)
 
@@ -193,10 +191,7 @@
         new-fx (assoc-effect :fx new-fx)))))
 
 (defn with-cleared [m]
-  (let [cleared-flow (fn [[k v]] [[::cleared k] (assoc v ::cleared? true)])]
-    (into m
-          (map cleared-flow)
-          (::cleared @flow-states))))
+  (merge (update-vals (::cleared @flow-states) #(assoc % ::cleared? true)) m))
 
 (def interceptor
   (->interceptor
@@ -204,6 +199,8 @@
     :after (comp (fn [ctx]
                    (let [all-flows (with-cleared @flows)]
                      (swap! flow-states dissoc ::cleared)
-                     (reduce run ctx (topsort* all-flows))))
+                     (reduce run
+                             (assoc ctx :flows all-flows)
+                             (topsort* all-flows))))
                  (fn [{{:keys [db]} :effects :as ctx}]
                    (assoc ctx :re-frame/pre-flow-db db)))}))
