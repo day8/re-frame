@@ -100,7 +100,8 @@
    (defn cleanup-input-signals! [^js r]
      (doseq [^js watch (.-watching r)]
        (when-not (seq (dissoc (.-watches watch) r))
-         (dispose! watch)))))
+         (when (satisfies? ratom/IDisposable watch)
+           (dispose! watch))))))
 
 (defn sub-no-cache [q]
   (doto (q/handle q)
