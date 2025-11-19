@@ -74,6 +74,19 @@
 
 ;; -- subscribe ---------------------------------------------------------------
 
+;; this duplicates re-frame.query.alpha/legacy-query-id.
+;; included here for forward compatibility, since an alpha sub can depend on a core sub.
+(defn legacy-query-id [q]
+  (when (vector? q) (first q)))
+
+;; this duplicates re-frame.query.alpha/id.
+;; included here for forward compatibility, since an alpha sub can depend on a core sub.
+(def q-id (some-fn legacy-query-id
+                 :re-frame/q
+                 #(console :error (str "re-frame: can't find the query id. "
+                                       "expected a vector with at least one item, "
+                                       "or a :re-frame/q key, but got:" %))))
+
 (defn warn-when-not-reactive
   []
   (when (and debug-enabled? (not (reactive?)))
@@ -235,7 +248,7 @@
               reaction-id   (atom nil)
               reaction      (make-reaction
                              (fn []
-                               (trace/with-trace {:operation (first-in-vector query-vec)
+                               (trace/with-trace {:operation (q-id query-vec)
                                                   :op-type   :sub/run
                                                   :tags      {:query-v    query-vec
                                                               :reaction   @reaction-id}}
@@ -252,7 +265,7 @@
               reaction-id   (atom nil)
               reaction      (make-reaction
                              (fn []
-                               (trace/with-trace {:operation (first-in-vector query-vec)
+                               (trace/with-trace {:operation (q-id query-vec)
                                                   :op-type   :sub/run
                                                   :tags      {:query-v   query-vec
                                                               :dyn-v     dyn-vec
