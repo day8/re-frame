@@ -37,7 +37,7 @@ Register a `signal-fn` and a `computation-fn` for a given `query-id`.
 `computation-fn` is a function of `[signals query-map]`.
 
 The two functions provide a \"mechanism\" for creating a node
-in the Signal Graph. When a node of type `query-id` is needed,
+in the signal graph. When a node of type `query-id` is needed,
 the two functions can be used to create it.
 
 - `query-id` - typically a namespaced keyword (later used in subscribe).
@@ -45,13 +45,13 @@ the two functions can be used to create it.
 - `computation-fn` - computes the value (output) of the node from the input signals and the query.
 
 Later, during app execution, a call to `(sub {:re-frame/q ::greet :name \"dave\"})`
-will trigger the need for a new `::greet` Signal Graph node (matching the
+will trigger the need for a new `::greet` signal graph node (matching the
 query `{:re-frame/q ::greet :name \"dave\"}`). Re-frame will look up the
 associated `signal-fn` and `computation-fn`, combining them to create the node.
 
 Just to be clear: calling `reg :sub` does not immediately create a node.
 It only registers a \"mechanism\" (the two functions) by which nodes
-can be created later, when a node is bought into existence by the
+can be created later, when a node is brought into existence by the
 use of `sub`.
 
 ##### Declaring the `computation-fn`
@@ -251,21 +251,21 @@ In this case, `::greet` is the `query-id`. Re-frame looks up the associated
 creating it if necessary. It passes the entire vector to your `computation-fn`
 as the second argument.
 
-##### Declaring the `computation-fn` (:sub-legacy)
+##### Declaring the `computation-fn` (:legacy-sub)
 
 Legacy subscriptions have another kind of syntactic sugar,
 in addition to those supported by `:sub`:
 
 The token `:=>`, followed by a multi-arity `computation-function`.
 
-`(reg :sub :query-id :=> computation-fn)`
+`(reg :legacy-sub :query-id :=> computation-fn)`
 
 A vector `query` can be broken into two components, `[query-id & optional-values]`.
 Some subscriptions require the `optional-values` for extra work within the subscription.
 Canonically, we'd need to destructure these `optional-values`:
 
 ```clojure
-(reg :sub :query-id
+(reg :legacy-sub :query-id
  (fn [db [_ foo]] [db foo]))
 ```
 
@@ -273,13 +273,13 @@ Again, we are writing boilerplate just to reach our values. Instead, we might pr
 have direct access through a parameter vector like `[input-values optional-values]`.
 That way, we could provide a multi-arity function directly as our `computation-fn`:
 
-`(reg :sub :query-id :=> vector)  ;; :<---- Could also be (fn [db foo] [db foo])`
+`(reg :legacy-sub :query-id :=> vector)  ;; Could also be (fn [db foo] [db foo])`
 
 ##### Compatibility:
 
 Query-maps are a more recent development for re-frame.
 They are implemented in a backwards-compatible way.
-That means you you can pass either a vector or a map to `sub`,
+That means you can pass either a vector or a map to `sub`,
   regardless of what kind of \"mechanism\" was registered for
 that `query-id` (whether via `:sub` or `:legacy-sub`).
 
@@ -392,7 +392,7 @@ The node can be looked up later, using `cached`.
 
 **`clear!`**
 Accepts a `query`.
-Removes the associated dataflow-node from the signal graph.
+Removes the associated dataflow node from the signal graph.
 
 ##### `lifecycle-fn` example
 
@@ -467,10 +467,10 @@ or `re-frame.alpha/subscribe` without declaring a lifecycle explicitly.
 
 There is one exception to this memory-safety, which should be negligible (see `:no-cache` for details).
 
-If your dataflow-node is already cached (for instance, by calling `sub` in the render-fn of a mounted component),
+If your dataflow node is already cached (for instance, by calling `sub` in the render-fn of a mounted component),
 then `:safe` will use the cached node, skipping the eager computation and cleanup.
 
-Re-frame also checks checks the cache for an equivalent node with the `:reactive` lifecycle.
+Re-frame also checks the cache for an equivalent node with the `:reactive` lifecycle.
 If such a node exists, re-frame uses it directly, without re-calculating or touching the cache.
 
 Consequently:
@@ -478,7 +478,7 @@ When there are no reagent components mounted which depend on the subscription,
 then the subscription will recalculate its output each time it's called,
 even when its inputs are the same.
 
-But, as long as there are reagent components, then cacheing and deduplication will
+But, as long as there are reagent components, then caching and deduplication will
 work as normal. In most cases, we expect `:safe` to be a reasonable tradeoff
 between performance and memory-safety.
 
@@ -588,32 +588,33 @@ evaluates the output function, putting the result in `app-db` at the `:path`.
 
 A `flow` is a map, specifying one dataflow node. It has keys:
 
-**`:id`**: uniquely identifies the node.
+**`:id`** - uniquely identifies the node.
 
 - When a `flow` is already registered with the same `:id`, replaces it.
 - You can provide an `id` argument to `reg-flow`, instead of including `:id`.
 
-**`:inputs`**: a map of `keyword->input`. An input can be one of two types:
+**`:inputs`** - a map of `keyword->input`. An input can be one of two types:
 
 - vector: expresses a path in `app-db`.
 - map: expresses the output of another flow, identified by a `::re-frame.flow.alpha/flow<-` key.
   Call the `re-frame.alpha/flow<-` function to construct this map.
 
-**`:output`**: a function of the `keyword->resolved-input` map returning the output value of the node.
+**`:output`** - a function of the `keyword->resolved-input` map returning the output value of the node.
 
 - A resolved vector input is the value in `app-db` at that path.
 - A resolved `flow<-` input is the value in `app-db` at the path of the named flow.
 - Re-frame topologically sorts the flows, to make sure any input flows always run first.
 - Re-frame throws an error at registration time if any flow inputs form a cycle.
 
-**`:path`**: specifies the `app-db` location where the `:output` value is stored.
+**`:path`** - specifies the `app-db` location where the `:output` value is stored.
 
-- `:live-inputs`: a map of `keyword->live-input` for the `:live?` function.
+**`:live-inputs`** - a map of `keyword->live-input` for the `:live?` function.
+
 - A `live-input` works the same way an `input`.
-- `:live?`: a predicate function of the `keyword->resolved-live-input` map,
-  returning the current lifecycle state of the node.
 
-**`:cleanup`**: a function of `app-db` and the `:path`.
+**`:live?`** - a predicate function of the `keyword->resolved-live-input` map, returning the current lifecycle state of the node.
+
+**`:cleanup`** - a function of `app-db` and the `:path`.
 
 - Returns a new `app-db`.
 - Runs the first time `:live?` returns `false`
@@ -668,7 +669,7 @@ The only required key is `:id`. All others have a default value:
 (def ^{:api-docs/heading "Legacy Compatibility"} subscribe
   "Equivalent to `sub`.
 
-  Uses a different the `:safe` lifecyle by default, compared with `re-frame.core`, which uses `:reactive`.
+  Uses the `:safe` lifecycle by default, compared with `re-frame.core`, which uses `:reactive`.
 
   Flows each have their own lifecycle and are not cached using the same mechanism as subscriptions.
   Call `(subscribe [:flow {:id :your-flow-id}])` to subscribe to a flow."
