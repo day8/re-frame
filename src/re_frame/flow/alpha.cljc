@@ -7,6 +7,7 @@
    [re-frame.interceptor :refer [->interceptor get-effect
                                  get-coeffect assoc-effect]]
    [re-frame.interop :as interop]
+   [re-frame.trace :as trace :include-macros true]
    #?(:cljs [reagent.core :as r])))
 
 (def db-path? vector?)
@@ -143,7 +144,8 @@
 
 (defn run [ctx {:keys   [path cleanup live? inputs live-inputs output id]
                 flow-fx :fx
-                ::keys  [cleared?]}]
+                ::keys  [cleared?]
+                :as     flow}]
   (let [new?   (contains? (::born @flow-states) id)
         old-db (get-coeffect ctx :db)
         db     (or (get-effect ctx :db) old-db)
@@ -176,9 +178,19 @@
                    [:dead :live] (concat fx (flow-fx id->in id->old-in old-output))
                    [:born :live] (concat fx (flow-fx id->in id->old-in old-output))
                    nil))]
-    (cond-> ctx
-      new-db (assoc-effect :db new-db)
-      new-fx (assoc-effect :fx new-fx))))
+    (trace/with-trace {:operation id
+                       :op-type   :flow
+                       :tags      {:flow-spec       flow
+                                   :transition      bardo
+                                   :db              db
+                                   :new-db          new-db
+                                   :id->in          id->in
+                                   :id->old-in      id->old-in
+                                   :id->live-in     id->live-in
+                                   :id->old-live-in id->old-live-in}}
+      (cond-> ctx
+        new-db (assoc-effect :db new-db)
+        new-fx (assoc-effect :fx new-fx)))))
 
 (defn with-cleared [m]
   (let [cleared-flow (fn [[k v]] [[::cleared k] (assoc v ::cleared? true)])]
