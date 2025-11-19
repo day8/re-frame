@@ -64,15 +64,31 @@
 
 (rfa/reg-flow error-state-flow)
 
+(def suggestion-flow
+  {:id          ::error-suggestion
+   :path        [::suggestion]
+   :inputs      {:items       [::items]
+                 :error-state (rfa/flow<- ::error-state)}
+   :output      (fn [{:keys [error-state items]}]
+                  (case error-state
+                    :none     [:add]
+                    :too-many [:remove (- (count items) 3)]))
+   :live-inputs {:error-state (rfa/flow<- ::error-state)}
+   :live?       :error-state})
+
+(rfa/reg-flow suggestion-flow)
+
 ;; Note: this uses the version of `reg-event-fx` from `re-frame.alpha`, not core.
 ;; This is necesssary for the `:clear-flow` and `:reg-flow` effects to work.
 (rfa/reg-event-fx
  ::clear-flow-button-pressed
- (fn [_ _] {:fx [[:clear-flow ::error-state]]}))
+ (fn [_ _] {:fx [[:clear-flow ::error-state]
+                 [:clear-flow ::error-suggestion]]}))
 
 (rfa/reg-event-fx
  ::reg-flow-button-pressed
- (fn [_ _] {:fx [[:reg-flow error-state-flow]]}))
+ (fn [_ _] {:fx [[:reg-flow error-state-flow]
+                 [:reg-flow suggestion-flow]]}))
 
 (defn flow-controls []
   [:div [:button {:on-click #(rf/dispatch [::clear-flow-button-pressed])}
@@ -81,14 +97,23 @@
     "Register flow"]])
 
 (defn warning []
-  (let [error-state (rfa/subscribe [:flow {:id ::error-state}])]
+  (let [error-state @(rfa/subscribe [:flow {:id ::error-state}])]
     [:div {:style {:color "red"}}
-     (->> @error-state
+     (->> error-state
           (get {:too-many "Warning: only the first 3 items will be used."
-                :none     "No items. Please add one."}))]))
+                :none     "No items."}))]))
+
+(defn suggestion []
+  (when-let [suggestion @(rfa/subscribe [:flow {:id ::error-suggestion}])]
+    (let [[idea n] suggestion]
+      [:div {:style {:color "lightblue"}}
+       (case idea
+         :add    "Try adding an item."
+         :remove (str "Try removing " n " item" (when (> n 1) "s") "."))])))
 
 (defn root []
-  [:div [controls] [flow-controls] [warning] [items] [debug-app-db]])
+  [:div [controls] [flow-controls] [warning] [suggestion] [items]
+   [debug-app-db]])
 
 (rf/reg-event-db
  ::init
