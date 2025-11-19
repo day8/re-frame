@@ -63,8 +63,7 @@ full declaration can be done in two ways:
 A function accepting two arguments, `input-values` and `query`:
 
 ```clojure
-(reg :sub
- :query-id
+(reg :sub :query-id
  (fn [input-values query]
    (:foo input-values)))
 ```
@@ -589,38 +588,38 @@ evaluates the output function, putting the result in `app-db` at the `:path`.
 
 A `flow` is a map, specifying one dataflow node. It has keys:
 
-  **`:id`**: uniquely identifies the node.
+**`:id`**: uniquely identifies the node.
 
 - When a `flow` is already registered with the same `:id`, replaces it.
 - You can provide an `id` argument to `reg-flow`, instead of including `:id`.
 
-  **`:inputs`**: a map of `keyword->input`. An input can be one of two types:
+**`:inputs`**: a map of `keyword->input`. An input can be one of two types:
 
 - vector: expresses a path in `app-db`.
 - map: expresses the output of another flow, identified by a `::re-frame.flow.alpha/flow<-` key.
   Call the `re-frame.alpha/flow<-` function to construct this map.
 
-  **`:output`**: a function of the `keyword->resolved-input` map returning the output value of the node.
+**`:output`**: a function of the `keyword->resolved-input` map returning the output value of the node.
 
 - A resolved vector input is the value in `app-db` at that path.
 - A resolved `flow<-` input is the value in `app-db` at the path of the named flow.
 - Re-frame topologically sorts the flows, to make sure any input flows always run first.
 - Re-frame throws an error at registration time if any flow inputs form a cycle.
 
-  **`:path`**: specifies the `app-db` location where the `:output` value is stored.
+**`:path`**: specifies the `app-db` location where the `:output` value is stored.
 
-  - `:live-inputs`: a map of `keyword->live-input` for the `:live?` function.
-  - A `live-input` works the same way an `input`.
-  - `:live?`: a predicate function of the `keyword->resolved-live-input` map,
-    returning the current lifecycle state of the node.
+- `:live-inputs`: a map of `keyword->live-input` for the `:live?` function.
+- A `live-input` works the same way an `input`.
+- `:live?`: a predicate function of the `keyword->resolved-live-input` map,
+  returning the current lifecycle state of the node.
 
-  **`:cleanup`**: a function of `app-db` and the `:path`.
+**`:cleanup`**: a function of `app-db` and the `:path`.
 
 - Returns a new `app-db`.
 - Runs the first time `:live?` returns `false`
 - Runs when the flow is cleared (see `re-frame.alpha/clear-flow`).
 
-  The only required key is `:id`. All others have a default value:
+The only required key is `:id`. All others have a default value:
 
 - `:path`: `id` if `id` is sequential, otherwise `[id]`.
 - `:inputs`: `{}`
