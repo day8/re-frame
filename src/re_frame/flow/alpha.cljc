@@ -93,7 +93,7 @@
   ([m]
    (validate-inputs m)
    (warn-stale-dependencies @flows m)
-   (swap! flow-states update ::born (fnil conj #{}) (:id m))
+   (swap! flow-states update ::registered (fnil conj #{}) (:id m))
    (swap! flows assoc (:id m)
           (-> (merge (default (:id m)) m)
               (with-meta #?(:cljs
@@ -144,7 +144,7 @@
                 flow-fx :fx
                 ::keys  [cleared?]
                 :as     flow}]
-  (let [new?   (contains? (::born @flow-states) id)
+  (let [new?   (contains? (::registered @flow-states) id)
         old-db (get-coeffect ctx :db)
         db     (or (get-effect ctx :db) old-db)
         fx     (get-effect ctx :fx)
@@ -158,23 +158,23 @@
 
         old-output (get-in old-db path)
 
-        bardo [(cond new? :born (live? (assoc id->old-live-in :db old-db)) :live :else :dead)
+        bardo [(cond new? :registered (live? (assoc id->old-live-in :db old-db)) :live :else :dead)
                (cond cleared? :cleared (live? (assoc id->live-in :db db)) :live :else :dead)]
 
         new-db (case bardo
-                 [:live :live]    (cond-> db dirty? (assoc-in path (output id->in id->old-in old-output)))
-                 [:live :dead]    (cleanup db path)
-                 [:dead :live]    (assoc-in db path (output id->in id->old-in old-output))
-                 [:born :live]    (do (swap! flow-states update ::born disj id)
-                                      (assoc-in db path (output id->in id->old-in old-output)))
-                 [:live :cleared] (cleanup db path)
+                 [:live :live]       (cond-> db dirty? (assoc-in path (output id->in id->old-in old-output)))
+                 [:live :dead]       (cleanup db path)
+                 [:dead :live]       (assoc-in db path (output id->in id->old-in old-output))
+                 [:registered :live] (do (swap! flow-states update ::registered disj id)
+                                            (assoc-in db path (output id->in id->old-in old-output)))
+                 [:live :cleared]    (cleanup db path)
                  nil)
 
         new-fx (when flow-fx
                  (case bardo
-                   [:live :live] (when dirty? (concat fx (flow-fx id->in id->old-in old-output)))
-                   [:dead :live] (concat fx (flow-fx id->in id->old-in old-output))
-                   [:born :live] (concat fx (flow-fx id->in id->old-in old-output))
+                   [:live :live]       (when dirty? (concat fx (flow-fx id->in id->old-in old-output)))
+                   [:dead :live]       (concat fx (flow-fx id->in id->old-in old-output))
+                   [:registered :live] (concat fx (flow-fx id->in id->old-in old-output))
                    nil))]
     (trace/with-trace {:operation id
                        :op-type   :flow
