@@ -63,7 +63,7 @@ full declaration can be done in two ways:
 A function accepting two arguments, `input-values` and `query`:
 
 ```clojure
-(reg-sub
+(reg :sub
  :query-id
  (fn [input-values query]
    (:foo input-values)))
@@ -72,7 +72,7 @@ A function accepting two arguments, `input-values` and `query`:
 2. Syntactic sugar:
 The keyword `:->`, followed by a 1-arity `computation-function`:
 
-`(reg-sub :query-id :-> computation-fn)`
+`(reg :sub :query-id :-> computation-fn)`
 
 This sugary variation allows you to pass a function that will expect only one argument,
 namely the `input-values`, and entirely omit the `query`. A typical `computation-function`
@@ -84,7 +84,7 @@ from the `input-values`. As shown below, this subscription will simply retrieve
 the value associated with the `:foo` key in our db:
 
 ```clojure
-(reg-sub
+(reg :sub
  :query-id
  (fn [db _] (:foo db))) ;; :<---- boilerplate
 ```
@@ -92,7 +92,7 @@ the value associated with the `:foo` key in our db:
 This is slightly more boilerplate than we might want. 
 Instead, we could use a keyword directly as a function:
 
-`(reg-sub :query-id :foo)`
+`(reg :sub :query-id :foo)`
 
 However, this could be dangerous. Remember that re-frame passes 
 two arguments to the `computation-fn`: `input-values` and `query`. 
@@ -103,7 +103,7 @@ getter will use its second argument as a default value, returning the
 In other words, the computation should have no default output.
 To achieve that, we use the token `:->`.
 
-`(reg-sub :query-id :-> :foo)`
+`(reg :sub :query-id :-> :foo)`
 
 This form tells re-frame to pass only one argument to your `computation-fn`,
 the `input-values`. Thus, your `:foo` getter will safely return `nil`
@@ -127,8 +127,7 @@ instructive. The other two are really just sugary variations.
 **First Variation**: No input signal function given:
 
 ```clojure
-(reg-sub
- :query-id
+(reg :sub :query-id
  computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)
 ```
 
@@ -139,8 +138,7 @@ given as the 1st argument when `a-computation-fn` is called.
 **Second Variation**: A signal function is explicitly supplied.
 
 ```clojure
-(reg-sub
- :query-id
+(reg :sub :query-id
  signal-fn     ;; <-- here
  computation-fn)
 ```
@@ -189,8 +187,7 @@ as the 1st argument:
 Further Note: variation #1 above, in which an `signal-fn` was not supplied, like this:
 
 ```clojure
-(reg-sub
- :query-id
+(reg :sub :query-id
  computation-fn)   ;; has signature:  (fn [db query]  ... ret-value)
 ```
 
@@ -198,8 +195,7 @@ is the equivalent of using this
 2nd variation and explicitly supplying a `signal-fn` which returns `app-db`:
 
 ```clojure
-(reg-sub
- :query-id
+(reg :sub :query-id
  (fn [_ _] re-frame/app-db)   ;; <-- explicit signal-fn
  a-computation-fn)             ;; has signature:  (fn [db query-vec]  ... ret-value)
 ```
@@ -207,8 +203,7 @@ is the equivalent of using this
 **Third variation**: Syntactic sugar
 
 ```clojure
-(reg-sub
- :a-b-sub
+(reg :sub :a-b-sub
  :<- [:a-sub]
  :<- [:b-sub]
  (fn [[a b] query]    ;; 1st argument is a seq of two values
@@ -222,8 +217,7 @@ If you supply only one pair, a singleton will be supplied to the computation fun
 as if you had supplied a `signal-fn` returning only a single value:
 
 ```clojure
-(reg-sub
- :a-sub
+(reg :sub :a-sub
  :<- [:a-sub]
  (fn [a query]      ;; only one pair, so 1st argument is a single value
    ...))
@@ -234,8 +228,7 @@ and the direction of arrows shows the flow of data and functions. The example fr
 directly above is reproduced here:
 
 ```clojure
-(reg-sub
- :a-b-sub
+(reg :sub :a-b-sub
  :<- [:a-sub]
  :<- [:b-sub]
  :-> (partial zipmap [:a :b]))
@@ -266,15 +259,14 @@ in addition to those supported by `:sub`:
 
 The token `:=>`, followed by a multi-arity `computation-function`.
 
-`(reg-sub :query-id :=> computation-fn)`
+`(reg :sub :query-id :=> computation-fn)`
 
 A vector `query` can be broken into two components, `[query-id & optional-values]`.
 Some subscriptions require the `optional-values` for extra work within the subscription.
 Canonically, we'd need to destructure these `optional-values`:
 
 ```clojure
-(reg-sub
- :query-id
+(reg :sub :query-id
  (fn [db [_ foo]] [db foo]))
 ```
 
@@ -282,7 +274,7 @@ Again, we are writing boilerplate just to reach our values. Instead, we might pr
 have direct access through a parameter vector like `[input-values optional-values]`.
 That way, we could provide a multi-arity function directly as our `computation-fn`:
 
-`(reg-sub :query-id :=> vector)  ;; :<---- Could also be (fn [db foo] [db foo])`
+`(reg :sub :query-id :=> vector)  ;; :<---- Could also be (fn [db foo] [db foo])`
 
 ##### Compatibility:
 
