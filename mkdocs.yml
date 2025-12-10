@@ -122,15 +122,9 @@ markdown_extensions:
   - meta
   - admonition
   - footnotes
-  - pymdownx.inlinehilite
-  - pymdownx.tilde
   - toc:
       permalink: true
       toc_depth: 3
-  - pymdownx.highlight:
-      use_pygments: false
-  - pymdownx.inlinehilite
-  - pymdownx.superfences
 
 extra_css:
   - "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,500;1,400&display=swap"
