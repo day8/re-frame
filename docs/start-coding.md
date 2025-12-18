@@ -9,7 +9,8 @@ Install Clojure and Leiningen (a build tool) by following [these instructions](h
 
 Create a scaffold for your first project:
 
-  - Client only:  <https://github.com/day8/re-frame-template>
+  - Client only: <https://github.com/day8/re-frame-template>
+  - Client only: <https://github.com/pitch-io/uix-starter> through `--re-frame` option 
   - Full Stack: <http://www.luminusweb.net/>
 
 
