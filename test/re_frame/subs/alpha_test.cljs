@@ -1,17 +1,20 @@
 (ns re-frame.subs.alpha-test
-  (:require [cljs.test         :as test :refer-macros [is deftest testing]]
-            [reagent.ratom     :as r :refer-macros [reaction]]
-            [re-frame.db       :as db]
-            [re-frame.interop  :refer [reactive?]]
-            [re-frame :as-alias rf]
-            [re-frame.alpha :refer [reg sub]]
-            [re-frame.query.alpha :as q]
-            [re-frame.register.alpha :as reg]
-            [re-frame.core :refer [reg-sub-raw]]
-            [re-frame.subs :refer [clear-all-handlers!]]))
+  (:require
+   [cljs.test         :as test :refer-macros [is deftest testing]]
+   [reagent.ratom     :as r :refer-macros [reaction]]
+   [re-frame.db       :as db]
+   [re-frame.interop  :refer [reactive?]]
+   [re-frame :as-alias rf]
+   [re-frame.alpha :refer [reg sub]]
+   [re-frame.query.alpha :as q]
+   [re-frame.register.alpha :as reg]
+   [re-frame.core :refer [reg-sub-raw]]
+   [re-frame.subs :as subs :refer [clear-all-handlers!]]))
 
-(test/use-fixtures :each {:before #(do (clear-all-handlers!)
-                                       (q/clear!))})
+(test/use-fixtures :each
+  {:before #(do (clear-all-handlers!)
+                (subs/clear-subscription-cache!)
+                (q/clear!))})
 
 (def queries
   {::map
@@ -68,6 +71,106 @@
       (is (= (:lifecycle result) (q/lifecycle q)))
       (is (= (:query-id result) qid))
       (is (= (:method result) (q/method q))))))
+
+(def stub (constantly nil))
+
+(deftest signal--old-reg--core-sub--is-vector ;000
+  (let [!arg      (atom nil)
+        _         (reg :sub :stub stub)
+        signal-fn (fn [q] (reset! !arg q) (sub :stub))]
+    (reg :legacy-sub :test signal-fn stub)
+    @(re-frame.core/subscribe [:test])
+    (is (vector? @!arg))))
+
+;001: can't pass a map to core/subscribe
+
+(deftest signal--old-reg--new-sub--is-vector ;010
+  (let [!arg      (atom nil)
+        _         (reg :sub :stub stub)
+        signal-fn (fn [q] (reset! !arg q) (sub :stub))]
+    (reg :legacy-sub :test signal-fn stub)
+    @(sub [:test])
+    (is (vector? @!arg))))
+
+(deftest signal--old-reg--new-sub--map->vector-q ;011
+  (let [!arg      (atom nil)
+        _         (reg :sub :stub stub)
+        signal-fn (fn [q] (reset! !arg q) (sub :stub))]
+    (reg :legacy-sub :test signal-fn stub)
+    @(sub {:re-frame/q :test})
+    (is (vector? @!arg))))
+
+(deftest signal--new-reg--core-sub--vector->map-q ;100
+  (let [!arg      (atom nil)
+        _         (reg :sub :stub stub)
+        signal-fn (fn [q] (reset! !arg q) (sub :stub))]
+    (reg :sub :test signal-fn stub)
+    @(re-frame.core/subscribe [:test])
+    (is (map? @!arg))))
+
+;101: can't pass a map to core/subscribe
+
+(deftest signal--new-reg--new-sub--vector->map-q ;110
+  (let [!arg      (atom nil)
+        _         (reg :sub :stub stub)
+        signal-fn (fn [q] (reset! !arg q) (sub :stub))]
+    (reg :sub :test signal-fn stub)
+    @(sub [:test])
+    (is (map? @!arg))))
+
+(deftest signal--new-reg--new-sub--is-map-q ;111
+  (let [!arg      (atom nil)
+        _         (reg :sub :stub stub)
+        signal-fn (fn [q] (reset! !arg q) (sub :stub))]
+    (reg :sub :test signal-fn stub)
+    @(sub {:re-frame/q :test})
+    (is (map? @!arg))))
+
+(deftest old-reg--core-sub--is-vector-q ;000
+  (let [!arg    (atom nil)
+        calc-fn (fn [_ q] (reset! !arg q))]
+    (reg :legacy-sub :test calc-fn)
+    @(re-frame.core/subscribe [:test])
+    (is (vector? @!arg))))
+
+;001: can't pass a map to core/subscribe
+
+(deftest old-reg--new-sub--is-vector-q ;010
+  (let [!arg    (atom nil)
+        calc-fn (fn [_ q] (reset! !arg q))]
+    (reg :legacy-sub :test calc-fn)
+    @(sub [:test])
+    (is (vector? @!arg))))
+
+(deftest old-reg--new-sub--map-q->vector-q ;011
+  (let [!arg    (atom nil)
+        calc-fn (fn [_ q] (reset! !arg q))]
+    (reg :legacy-sub :test calc-fn)
+    @(sub {:re-frame/q :test})
+    (is (vector? @!arg))))
+
+(deftest new-reg--core-sub--vector-q->map-q ;100
+  (let [!arg    (atom nil)
+        calc-fn (fn [_ q] (reset! !arg q))]
+    (reg :sub :test calc-fn)
+    @(re-frame.core/subscribe [:test])
+    (is (map? @!arg))))
+
+;101: can't pass a map to core/subscribe
+
+(deftest new-reg--new-sub--vector-q->map-q ;110
+  (let [!arg    (atom nil)
+        calc-fn (fn [_ q] (reset! !arg q))]
+    (reg :sub :test calc-fn)
+    @(sub [:test])
+    (is (map? @!arg))))
+
+(deftest new-reg--new-sub--is-map-q ;111
+  (let [!arg    (atom nil)
+        calc-fn (fn [_ q] (reset! !arg q))]
+    (reg :sub :test calc-fn)
+    @(sub {:re-frame/q :test})
+    (is (map? @!arg))))
 
 (deftest test-legacy-subscription
   (testing "Legacy Subscription"
