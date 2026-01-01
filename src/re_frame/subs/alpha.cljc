@@ -35,7 +35,8 @@
      kind
      id
      (fn subs-handler-fn [_ q]
-       (let [subscriptions (inputs-fn q nil)
+       (let [q (cond-> q (vector? q) q/legacy->map)
+             subscriptions (inputs-fn q nil)
              rid (atom nil)
              r (make-reaction
                 #(trace/with-trace {:operation (q/id q)
