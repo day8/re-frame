@@ -96,50 +96,56 @@
 
 (defn subscribe
   ([query]
-   (warn-when-not-reactive)
-   (trace/with-trace {:operation (first-in-vector query)
-                      :op-type   :sub/create
-                      :tags      {:query-v query}}
-     (if-let [cached (cache-lookup query)]
-       (do
-         (trace/merge-trace! {:tags {:cached?  true
-                                     :reaction (reagent-id cached)}})
-         cached)
+   (if (map? query)
+     (console :error "re-frame: can't pass a map to subscribe. Did you mean to use re-frame.alpha/sub?")
+     (do
+       (warn-when-not-reactive)
+       (trace/with-trace {:operation (first-in-vector query)
+                          :op-type   :sub/create
+                          :tags      {:query-v query}}
+         (if-let [cached (cache-lookup query)]
+           (do
+             (trace/merge-trace! {:tags {:cached?  true
+                                         :reaction (reagent-id cached)}})
+             cached)
 
-       (let [query-id   (first-in-vector query)
-             handler-fn (get-handler kind query-id)]
-         (trace/merge-trace! {:tags {:cached? false}})
-         (if (nil? handler-fn)
-           (do (trace/merge-trace! {:error true})
-               (console :error (str "re-frame: no subscription handler registered for: " query-id ". Returning a nil subscription.")))
-           (cache-and-return query [] (handler-fn app-db query)))))))
+           (let [query-id   (first-in-vector query)
+                 handler-fn (get-handler kind query-id)]
+             (trace/merge-trace! {:tags {:cached? false}})
+             (if (nil? handler-fn)
+               (do (trace/merge-trace! {:error true})
+                   (console :error (str "re-frame: no subscription handler registered for: " query-id ". Returning a nil subscription.")))
+               (cache-and-return query [] (handler-fn app-db query)))))))))
 
   ([query dynv]
-   (warn-when-not-reactive)
-   (trace/with-trace {:operation (first-in-vector query)
-                      :op-type   :sub/create
-                      :tags      {:query-v query
-                                  :dyn-v   dynv}}
-     (if-let [cached (cache-lookup query dynv)]
-       (do
-         (trace/merge-trace! {:tags {:cached?  true
-                                     :reaction (reagent-id cached)}})
-         cached)
-       (let [query-id   (first-in-vector query)
-             handler-fn (get-handler kind query-id)]
-         (trace/merge-trace! {:tags {:cached? false}})
-         (when debug-enabled?
-           (when-let [not-reactive (not-empty (remove ratom? dynv))]
-             (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom:" not-reactive)))
-         (if (nil? handler-fn)
-           (do (trace/merge-trace! {:error true})
-               (console :error (str "re-frame: no subscription handler registered for: " query-id ". Returning a nil subscription.")))
-           (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
-                 sub      (make-reaction (fn [] (handler-fn app-db query @dyn-vals)))]
-             ;; handler-fn returns a reaction which is then wrapped in the sub reaction
-             ;; need to double deref it to get to the actual value.
-             ;(console :log "Subscription created: " v dynv)
-             (cache-and-return query dynv (make-reaction (fn [] @@sub))))))))))
+   (if (map? query)
+     (console :error "re-frame: can't pass a map to subscribe. Did you mean to use re-frame.alpha/sub?")
+     (do
+       (warn-when-not-reactive)
+       (trace/with-trace {:operation (first-in-vector query)
+                          :op-type   :sub/create
+                          :tags      {:query-v query
+                                      :dyn-v   dynv}}
+         (if-let [cached (cache-lookup query dynv)]
+           (do
+             (trace/merge-trace! {:tags {:cached?  true
+                                         :reaction (reagent-id cached)}})
+             cached)
+           (let [query-id   (first-in-vector query)
+                 handler-fn (get-handler kind query-id)]
+             (trace/merge-trace! {:tags {:cached? false}})
+             (when debug-enabled?
+               (when-let [not-reactive (not-empty (remove ratom? dynv))]
+                 (console :warn "re-frame: your subscription's dynamic parameters that don't implement IReactiveAtom:" not-reactive)))
+             (if (nil? handler-fn)
+               (do (trace/merge-trace! {:error true})
+                   (console :error (str "re-frame: no subscription handler registered for: " query-id ". Returning a nil subscription.")))
+               (let [dyn-vals (make-reaction (fn [] (mapv deref dynv)))
+                     sub      (make-reaction (fn [] (handler-fn app-db query @dyn-vals)))]
+                 ;; handler-fn returns a reaction which is then wrapped in the sub reaction
+                 ;; need to double deref it to get to the actual value.
+                                        ;(console :log "Subscription created: " v dynv)
+                 (cache-and-return query dynv (make-reaction (fn [] @@sub))))))))))))
 
 ;; -- reg-sub -----------------------------------------------------------------
 
