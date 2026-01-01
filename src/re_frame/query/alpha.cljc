@@ -1,5 +1,6 @@
 (ns re-frame.query.alpha
   (:require
+   [re-frame :as-alias rf]
    [re-frame.subs :as subs]
    [re-frame.db :refer [app-db]]
    [re-frame.interop :refer [reagent-id]]
@@ -26,6 +27,13 @@
                         legacy-lifecycle
                         :re-frame/lifecycle
                         (constantly :safe)))
+
+(defn legacy->map [q]
+  (merge
+   {::rf/q         (id q)
+    ::rf/query-v   q
+    ::rf/lifecycle (lifecycle q)}
+   (::rf/query-m (meta q))))
 
 (defn method [q] (@lifecycle->method (lifecycle q)))
 
