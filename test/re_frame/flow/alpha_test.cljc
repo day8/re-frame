@@ -24,7 +24,7 @@
     (rf/reg-flow {:id :a})
     (rf/reg-flow {:id :b})
     (testing "registration"
-      (is (= :a (:id (f/lookup :a)))))
+      (is (= :a (:id (@f/flows :a)))))
     (testing "topological sort"
       (is (= #{:a :b} (set (f/input-ids c))))
       (is (= :c (last (map :id (f/topsort @f/flows))))))
@@ -39,16 +39,16 @@
 (deftest registry
   (testing "reg-flow"
     (rf/reg-flow {:id :a})
-    (is (some? (f/lookup :a)))
+    (is (some? (@f/flows :a)))
     (rf/reg-flow :b {})
-    (is (some? (f/lookup :b))))
+    (is (some? (@f/flows :b))))
   (testing "clear-flow"
     (rf/clear-flow :a)
-    (is (nil? (f/lookup :a)))
+    (is (nil? (@f/flows :a)))
     (rf/reg-flow {:id :c})
     (rf/clear-flow)
-    (is (nil? (f/lookup :b)))
-    (is (nil? (f/lookup :c)))))
+    (is (nil? (@f/flows :b)))
+    (is (nil? (@f/flows :c)))))
 
 (deftest get-flow
   (rf/reg-flow {:id :x :path [:a :b]})
