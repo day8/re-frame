@@ -203,14 +203,16 @@
         
           
 
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
   <li class="md-tabs__item">
     
-      <a href="../.." class="md-tabs__link md-tabs__link--active">
+      <a href="../.." class="md-tabs__link">
         Home
       </a>
     
@@ -261,7 +263,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../2024/" class="md-tabs__link">
+        <a href="./" class="md-tabs__link md-tabs__link--active">
           Releases
         </a>
       
@@ -1284,10 +1286,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
     
     <label class="md-nav__link" for="nav-5">
       Releases
@@ -1304,6 +1308,60 @@
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        2026
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="2026" class="md-nav__link md-nav__link--active">
+      2026
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#144-2026-01-03" class="md-nav__link">
+    1.4.4 (2026-01-03)
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
         
           
           
@@ -1539,11 +1597,33 @@
 </ul>
 <h4>Fixed</h4>
 <ul>
-<li>Flows (alpha) now run in response to (non-alpha) re-frame.core events</li>
+<li>
+<p>Flows (alpha) now run in response to (non-alpha) re-frame.core events</p>
+</li>
+<li>
+<p>Subscription (alpha) signal &amp; calculation functions always receive a map as the query,
+  even when invoked with a vector query, or invoked with <code>re-frame.core/subscribe</code>.
+  This is meant to provide stability, so users can write <code>reg :sub</code> handlers wtihout needing to
+  think about whether the callsite is alpha, legacy, map or vector.</p>
+</li>
 </ul>
 <h4>Changed</h4>
 <ul>
-<li>Subscriptions (alpha) are more careful to ensure the memory-safety of their input signals. See: https://day8.github.io/re-frame/FAQs/alpha/#benefit-safe-subscriptions</li>
+<li>
+<p>Subscriptions (alpha) are more careful to ensure the memory-safety of their input signals. See: https://day8.github.io/re-frame/FAQs/alpha/#benefit-safe-subscriptions</p>
+</li>
+<li>
+<p>Changed flows to calculate the new app-db earlier in the chain.</p>
+</li>
+<li>Benefit:  user-defined interceptors can access post-flow app-db value.</li>
+<li>Drawback: they can't access the value of app-db directly resulting from the event handler.</li>
+<li>
+<p>Drawback: they can't access flow-related effects like <code>:reg-flow</code>.</p>
+</li>
+<li>
+<p>Added a :re-frame/pre-flow-db key to the context</p>
+</li>
+<li>This way, user-defined interceptors can still access the app-db value resulting directly from the event handler.</li>
 </ul>
                 
               
@@ -1585,6 +1665,58 @@
 <footer class="md-footer">
 
   <!-- Link to previous and/or next page -->
+  
+    <div class="md-footer-nav">
+      <nav
+        class="md-footer-nav__inner md-grid"
+        aria-label="Footer"
+      >
+
+        <!-- Link to previous page -->
+        
+          <a
+            href="../../api-re-frame.alpha/"
+            title="re-frame.alpha"
+            class="md-footer-nav__link md-footer-nav__link--prev"
+            rel="prev"
+          >
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                re-frame.alpha
+              </div>
+            </div>
+          </a>
+        
+
+        <!-- Link to next page -->
+        
+          <a
+            href="../2024/"
+            title="2024"
+            class="md-footer-nav__link md-footer-nav__link--next"
+            rel="next"
+          >
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                2024
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
 
   <!-- Further information -->
