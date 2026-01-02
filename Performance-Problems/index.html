@@ -1728,19 +1728,23 @@ row-data changes; they only generate hiccup when something really has changed?</
 <li><a href="https://groups.google.com/d/msg/reagent-project/J1ELaLV20MU/iutebA-JEgAJ">https://groups.google.com/d/msg/reagent-project/J1ELaLV20MU/iutebA-JEgAJ</a></li>
 </ol>
 <h2 id="4-callback-functions">4. Callback Functions<a class="headerlink" href="#4-callback-functions" title="Permanent link">&para;</a></h2>
-<p>Consider this <code>div</code>:
-<pre class="highlight"><code class="language-clj">[:div  {:on-mouse-over  (fn [event] ....)  }   "hello"]</code></pre></p>
+<p>Consider this <code>div</code>:</p>
+<pre><code class="clj">[:div  {:on-mouse-over  (fn [event] ....)  }   &quot;hello&quot;]
+</code></pre>
+
 <p>On every render, that <code>:on-mouse-over</code> function will be regenerated, 
 and the one generated "this time" will NOT test <code>=</code> to the one generated "last time". 
 It will appear to be a new function. React will conclude that it must replace this event handler. </p>
 <p>Most of the time, this is not an issue.  But if you are generating a LOT of DOM
 this small inefficiency can add up.  </p>
-<p>To work around the problem, lift the function generation out of the render.  Use a <code>Form-2</code> function like this:
-<pre class="highlight"><code class="language-clj">(defn my-component 
+<p>To work around the problem, lift the function generation out of the render.  Use a <code>Form-2</code> function like this:</p>
+<pre><code class="clj">(defn my-component 
    []
    (let [mouse-over-cb  (fn [event] ....)  ]      ;; created once 
       (fn []                                      ;; rendered many times
-         [:div {:on-mouse-over  mouse-over-cb}]))</code></pre></p>
+         [:div {:on-mouse-over  mouse-over-cb}]))
+</code></pre>
+
 <p>Now, React will see that <code>mouse-over-cb</code> is the same as last time. It won't think 
 the event handler has been replaced. </p>
 <p>But like I say, don't be too paranoid about this, it is unlikely

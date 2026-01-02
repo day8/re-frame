@@ -1671,12 +1671,14 @@ at "http://json.my-endpoint.com/blah". We want to GET from that
 endpoint and put a processed version of the returned json into <code>app-db</code>. </p>
 <h2 id="triggering-the-request">Triggering The Request<a class="headerlink" href="#triggering-the-request" title="Permanent link">&para;</a></h2>
 <p>The user often does something to trigger the process. </p>
-<p>Here's a button which the user could click: 
-<pre class="highlight"><code class="language-clj">(defn request-it-button
+<p>Here's a button which the user could click: </p>
+<pre><code class="clj">(defn request-it-button
   []
-  [:div {:class "button-class"
+  [:div {:class &quot;button-class&quot;
          :on-click  #(dispatch [:request-it])}  ;; get data from the server !!
-         "I want it, now!"])</code></pre></p>
+         &quot;I want it, now!&quot;])
+</code></pre>
+
 <p>Notice the <code>on-click</code> handler - it <code>dispatch</code>es the event <code>[:request-it]</code>.</p>
 <h2 id="the-event-handler">The Event Handler<a class="headerlink" href="#the-event-handler" title="Permanent link">&para;</a></h2>
 <p>That <code>:request-it</code> event will need to be "handled", which means an event handler must be registered for it.</p>
@@ -1689,8 +1691,8 @@ a second version which is a soaring paragon of virtue. Both versions
 will teach us something.</p>
 <h3 id="version-1">Version 1<a class="headerlink" href="#version-1" title="Permanent link">&para;</a></h3>
 <p>We're going to use the <a href="https://github.com/JulianBirch/cljs-ajax">cljs-ajax library</a> as the HTTP workhorse.</p>
-<p>Here's the event handler: 
-<pre class="highlight"><code class="language-clj">(ns my.app.events                   ;; &lt;1&gt;
+<p>Here's the event handler: </p>
+<pre><code class="clj">(ns my.app.events                   ;; &lt;1&gt;
    (:require [ajax.core :refer [GET]]
              [re-frame.core :refer [reg-event-db]))
 
@@ -1701,12 +1703,14 @@ will teach us something.</p>
 
     ;; kick off the GET, making sure to supply a callback for success and failure
     (GET
-      "http://json.my-endpoint.com/blah"
+      &quot;http://json.my-endpoint.com/blah&quot;
       {:handler       #(dispatch [:process-response %1])   ;; &lt;2&gt; further dispatch !!
        :error-handler #(dispatch [:bad-response %1])})     ;; &lt;2&gt; further dispatch !!
 
-     ;; update a flag in `app-db` ... presumably to cause a "Loading..." UI 
-     (assoc db :loading? true)))    ;; &lt;3&gt; return an updated db </code></pre></p>
+     ;; update a flag in `app-db` ... presumably to cause a &quot;Loading...&quot; UI 
+     (assoc db :loading? true)))    ;; &lt;3&gt; return an updated db 
+</code></pre>
+
 <p>Further Notes:
   1. Event handlers are normally put into an <code>events.cljs</code> namespace
   2. Notice that the GET callbacks issue a further <code>dispatch</code>. Such callbacks 
@@ -1721,14 +1725,16 @@ will teach us something.</p>
 <p>As we noted above, the on-success handler itself is just
 <code>#(dispatch [:process-response RESPONSE])</code>.  So we'll need to register a handler
 for this event too.</p>
-<p>Like this:
-<pre class="highlight"><code class="language-clj">(reg-event-db                   
+<p>Like this:</p>
+<pre><code class="clj">(reg-event-db                   
   :process-response             
   (fn
     [db [_ response]]           ;; destructure the response from the event vector
     (-&gt; db
-        (assoc :loading? false) ;; take away that "Loading ..." UI 
-        (assoc :data (js-&gt;clj response))))  ;; fairly lame processing</code></pre></p>
+        (assoc :loading? false) ;; take away that &quot;Loading ...&quot; UI 
+        (assoc :data (js-&gt;clj response))))  ;; fairly lame processing
+</code></pre>
+
 <p>A normal handler would have more complex processing of the response. But we're 
 just sketching here, so we've left it easy.</p>
 <p>There'd also need to be a handler for the <code>:bad-response</code> event too.  Left as an exercise.</p>
@@ -1746,7 +1752,7 @@ and <a href="../Effects/">Effects</a>.  </p>
 <a href="https://github.com/day8/re-frame-http-fx">https://github.com/day8/re-frame-http-fx</a>.
 You may soon feel confident enough to write your own.</p>
 <p>Here's our rewrite:</p>
-<pre class="highlight"><code class="language-clj">(ns my.app.events                  
+<pre><code class="clj">(ns my.app.events                  
    (:require
       [ajax.core :as ajax]        
       [day8.re-frame.http-fx]  
@@ -1759,12 +1765,13 @@ You may soon feel confident enough to write your own.</p>
 
     ;; we return a map of (side) effects
     {:http-xhrio {:method          :get
-                  :uri             "http://json.my-endpoint.com/blah"
+                  :uri             &quot;http://json.my-endpoint.com/blah&quot;
                   :format          (ajax/json-request-format)
                   :response-format (ajax/json-response-format {:keywords? true}) 
                   :on-success      [:process-response]
                   :on-failure      [:bad-response]}
-     :db  (assoc db :loading? true)}))</code></pre>
+     :db  (assoc db :loading? true)}))
+</code></pre>
 
 <p>Notes:
   1. Our event handler "describes" side effects, it does not "do" side effects

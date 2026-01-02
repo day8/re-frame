@@ -1594,7 +1594,7 @@
 </blockquote>
 <h2 id="144-2024-06-24">1.4.4 (2024-06-24)<a class="headerlink" href="#144-2024-06-24" title="Permanent link">&para;</a></h2>
 <h4>Changed</h4>
-<pre class="highlight"><code>- Changed flows to calculate the new app-db earlier in the chain.
+<pre><code>- Changed flows to calculate the new app-db earlier in the chain.
   - Benefit:  user-defined interceptors can access post-flow app-db value.
   - Drawback: they can't access the value of app-db directly resulting from the event handler.
   - Drawback: they can't access flow-related effects like `:reg-flow`.
@@ -1602,11 +1602,9 @@
 - Added a :re-frame/pre-flow-db key to the context
   - This way, user-defined interceptors can still access the app-db value resulting directly from the event handler.
 </code></pre>
-
 <h2 id="143-2024-01-25">1.4.3 (2024-01-25)<a class="headerlink" href="#143-2024-01-25" title="Permanent link">&para;</a></h2>
 <h4>Fixed</h4>
-<pre class="highlight"><code>- cljdoc analysis &amp; build errors (see https://github.com/cljdoc/cljdoc/issues/853)
-
+<pre><code>- cljdoc analysis &amp; build errors (see https://github.com/cljdoc/cljdoc/issues/853)
 </code></pre>
                 
               

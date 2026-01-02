@@ -1606,13 +1606,15 @@
 <h2 id="question">Question<a class="headerlink" href="#question" title="Permanent link">&para;</a></h2>
 <p>How do I switch "focus" to a particular HTML element?</p>
 <h2 id="html-autofocus">HTML autofocus<a class="headerlink" href="#html-autofocus" title="Permanent link">&para;</a></h2>
-<p>Perhaps you can use the <code>autofocus</code> HTML element attribute like this:
-<pre class="highlight"><code class="language-cljs">(defn view 
+<p>Perhaps you can use the <code>autofocus</code> HTML element attribute like this:</p>
+<pre><code class="cljs">(defn view 
   []
-  [:input {:type "text" :id "my-id" :auto-focus true])</code></pre></p>
+  [:input {:type &quot;text&quot; :id &quot;my-id&quot; :auto-focus true])
+</code></pre>
+
 <p>But this might not work in Safari these days (Safari is the new IE 6 of browsers). </p>
-<p>Instead, you could use a more portable (but more complicated) version of this approach, which uses React <code>refs</code> with a Form-3 component:
-<pre class="highlight"><code class="language-clj">(defn my-input []
+<p>Instead, you could use a more portable (but more complicated) version of this approach, which uses React <code>refs</code> with a Form-3 component:</p>
+<pre><code class="clj">(defn my-input []
   (let [ref (atom nil)]
     (r/create-class
      {:component-did-mount
@@ -1620,26 +1622,34 @@
         (.focus @ref))
       :reagent-render
       (fn [_]
-        [:input {:ref #(reset! ref %)}])})))</code></pre></p>
-<p>A terse way of achieving the same outcome is: 
-<pre class="highlight"><code class="language-clj">[:input {:ref #(when % (.focus %)}]</code></pre></p>
+        [:input {:ref #(reset! ref %)}])})))
+</code></pre>
+
+<p>A terse way of achieving the same outcome is: </p>
+<pre><code class="clj">[:input {:ref #(when % (.focus %)}]
+</code></pre>
+
 <p>But all these approaches only cause focus once, when the widget is first rendered. You may need to have more control than that. </p>
 <h2 id="reagent-after-render">Reagent after-render<a class="headerlink" href="#reagent-after-render" title="Permanent link">&para;</a></h2>
 <p>If you want to switch focus between elements after they have first rendered,
 you can create an <code>effect handler</code> which uses Reagent's <code>after-render</code> API to 
-register a function that will imperatively set focus:
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-fx 
+register a function that will imperatively set focus:</p>
+<pre><code class="clj">(re-frame.core/reg-fx 
   :focus-to-element
   (fn [element-id] 
-    (reagent/after-render  #(some-&gt; js/document (.getElementById element-id) .focus))))</code></pre>
-<em>WARNING</em>: as written, this code will fail silently if <code>element-id</code> is not found. If you use this 
+    (reagent/after-render  #(some-&gt; js/document (.getElementById element-id) .focus))))
+</code></pre>
+
+<p><em>WARNING</em>: as written, this code will fail silently if <code>element-id</code> is not found. If you use this 
 code fragment, you may want to detect and report that problem.</p>
-<p>You can then use this effect within your event handler: 
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx
+<p>You can then use this effect within your event handler: </p>
+<pre><code class="clj">(re-frame.core/reg-event-fx
   :something
   (fn [cofx event]
     {:db ....
-     :focus-to-element some-element-id}))</code></pre></p>
+     :focus-to-element some-element-id}))
+</code></pre>
+
 <p>This assumes you can compute or obtain the <code>some-element-id</code> value 
 for the HTML element on which you want focus.</p>
 <p>One small trick: we perform the imperative focus using 

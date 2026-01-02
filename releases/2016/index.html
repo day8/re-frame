@@ -1771,11 +1771,12 @@ story which has emerged in re-frame through this 0.8.0 release.</p>
 </li>
 <li>
 <p>You explicitly use <code>comp</code> to compose middleware like this:
-   <pre class="highlight"><code class="language-clj">(reg-event-db
-    :some-id
-    (comp debug tim-v)    ;; &lt;-- change to [debug trim-v]
-    (fn [db event]
-        ...))</code></pre></p>
+   <code>clj
+   (reg-event-db
+       :some-id
+       (comp debug tim-v)    ;; &lt;-- change to [debug trim-v]
+       (fn [db event]
+           ...))</code></p>
 </li>
 </ol>
 </li>
@@ -1793,11 +1794,12 @@ we are trying to maximise use of cljs-devtools and information is lost when stri
 output, instead of actual data.</p>
 <p>Of course, you need only worry about this if you are using <code>re-frame.core/set-loggers!</code> to
 hook in your own loggers.  If you are, then, to transition, you'll need to tweak like this:
-<pre class="highlight"><code> ;; your old log function might have looked like this. Single string parameter.
-(defn my-logger [s]  (do-something-with s))
-
-;; your new version will have variadic params, and turn them into a string
-(defn my-logger [&amp; args] (do-something-with (apply str args))</code></pre></p>
+```
+ ;; your old log function might have looked like this. Single string parameter.
+(defn my-logger [s]  (do-something-with s))</p>
+<p>;; your new version will have variadic params, and turn them into a string
+(defn my-logger [&amp; args] (do-something-with (apply str args))
+```</p>
 </li>
 </ul>
 <h4>Improvements</h4>

@@ -1914,24 +1914,32 @@ In the case of our <code>ns</code> form, it evaluates to <code>nil</code>, which
 for your application state, but here, we'll cut that corner to minimise cognitive load.</p>
 <p>But we can't cut it completely. You'll still need an
 informal description, and here it is ... <code>app-db</code> will contain
-a two-key map like this:
-<pre class="highlight"><code class="language-clj">{:time       (js/Date.)  ;; current time for display
- :time-color "#f88"}     ;; the colour in which the time should be shown</code></pre></p>
+a two-key map like this:</p>
+<pre><code class="clj">{:time       (js/Date.)  ;; current time for display
+ :time-color &quot;#f88&quot;}     ;; the colour in which the time should be shown
+</code></pre>
+
 <h2 id="event-dispatch">Event Dispatch<a class="headerlink" href="#event-dispatch" title="Permanent link">&para;</a></h2>
 <p>Events are data.</p>
-<p>re-frame uses a vector format for events. For example:
-<pre class="highlight"><code class="language-clj">[:time-color-change "red"]</code></pre></p>
+<p>re-frame uses a vector format for events. For example:</p>
+<pre><code class="clj">[:time-color-change &quot;red&quot;]
+</code></pre>
+
 <p>The first element in the vector is a keyword that identifies the <code>kind</code> of <code>event</code>.
 Further elements are optional and can provide additional data
 associated with the event. The additional value above, <code>"red"</code>, is
 presumably the colour.</p>
-<p>Here are some other example events:
-<pre class="highlight"><code class="language-clj">[:admit-to-being-satoshi false]
-[:dressing/put-pants-on  "velour flares" {:method :left-leg-first :belt false}]</code></pre></p>
+<p>Here are some other example events:</p>
+<pre><code class="clj">[:admit-to-being-satoshi false]
+[:dressing/put-pants-on  &quot;velour flares&quot; {:method :left-leg-first :belt false}]
+</code></pre>
+
 <p>For non-trivial applications, the <code>kind</code> keyword will be namespaced, as it is in the 2nd example.</p>
 <h3 id="dispatch">dispatch<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h3>
-<p>To send an event, call <code>dispatch</code> with the event vector as the argument. 
-<pre class="highlight"><code class="language-clj">(dispatch [:kind-of-event value1 value2])</code></pre></p>
+<p>To send an event, call <code>dispatch</code> with the event vector as the argument. </p>
+<pre><code class="clj">(dispatch [:kind-of-event value1 value2])
+</code></pre>
+
 <p>For our simple app, we do this ... 
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
 (defn dispatch-timer-event        ;; &lt;-- defining a function
@@ -2003,10 +2011,12 @@ by the arriving event. They return (as data) how the world should be changed by 
 <p>Many vs One. Because of its simplicity, we'll be using the latter one here: <code>reg-event-db</code>.</p>
 <h3 id="reg-event-db">reg-event-db<a class="headerlink" href="#reg-event-db" title="Permanent link">&para;</a></h3>
 <p>We register event handlers using re-frame's API: </p>
-<p><pre class="highlight"><code class="language-clj">(rf/reg-event-db           ;; &lt;-- the re-frame API function to use
+<pre><code class="clj">(rf/reg-event-db           ;; &lt;-- the re-frame API function to use
   :the-event-id            ;; &lt;-- the event id 
-  the-event-handler-fn)    ;; &lt;-- the handler function</code></pre>
-The handler function you provide should expect two arguments:</p>
+  the-event-handler-fn)    ;; &lt;-- the handler function
+</code></pre>
+
+<p>The handler function you provide should expect two arguments:</p>
 <ul>
 <li><code>db</code> - the current application state  (the map value contained in <code>app-db</code>)</li>
 <li><code>e</code> - the event vector  (given to <code>dispatch</code>)</li>
@@ -2048,13 +2058,15 @@ There's nothing in the <code>event</code> vector which it needs. Nor is the exis
      :time-color "orange"}))  ;; so the app state will be a map with two keys
 </div>
 
-<p>For comparison, here's how we could have written this if we <strong>did</strong> care about the existing value in <code>db</code>: 
-<pre class="highlight"><code class="language-clj">(rf/reg-event-db
+<p>For comparison, here's how we could have written this if we <strong>did</strong> care about the existing value in <code>db</code>: </p>
+<pre><code class="clj">(rf/reg-event-db
   :initialize
   (fn [db _]                 ;; we use db this time, so name it
     (-&gt; db                   ;; db is initially just {}
       (assoc :time (js/Date.))
-      (assoc :time-color "orange")))</code></pre></p>
+      (assoc :time-color &quot;orange&quot;)))
+</code></pre>
+
 <h3 id="time-color-change">:time-color-change<a class="headerlink" href="#time-color-change" title="Permanent link">&para;</a></h3>
 <p>When the user enters a new colour value (into the input field) the view will <code>(dispatch [:time-color-change new-colour])</code> (more on this below). </p>
 <div class="cm-doc" data-cm-doc-result-format="pass-fail">
@@ -2097,11 +2109,13 @@ produce is the same as that stored in <code>app-db</code>. A more interesting tr
 of subscriptions, and more explanation, can be found in the todomvc example.</p>
 <h3 id="reg-sub">reg-sub<a class="headerlink" href="#reg-sub" title="Permanent link">&para;</a></h3>
 <p><code>reg-sub</code> associates a <code>query id</code> with a function that computes
- that query, like this:
-<pre class="highlight"><code class="language-clj">(rf/reg-sub
+ that query, like this:</p>
+<pre><code class="clj">(rf/reg-sub
   :some-query-id  ;; query id (used later in subscribe)
-  a-query-fn)     ;; the function which will compute the query</code></pre>
-Later, a view function (domino 5) will subscribe to a query like this:
+  a-query-fn)     ;; the function which will compute the query
+</code></pre>
+
+<p>Later, a view function (domino 5) will subscribe to a query like this:
 <code>(subscribe [:some-query-id])</code>, and <code>a-query-fn</code> will be used 
 to perform the query over the application state.</p>
 <p>Each time application state changes, <code>a-query-fn</code> will be
@@ -2134,13 +2148,17 @@ they render the app's UI.</p>
 <h2 id="subscribing">Subscribing<a class="headerlink" href="#subscribing" title="Permanent link">&para;</a></h2>
 <p>To render a hiccup representation of some part of the app state, view functions must query 
 for that part of <code>app-db</code>, by using <code>subscribe</code>.</p>
-<p><code>subscribe</code> is used like this:
-<pre class="highlight"><code class="language-clj">   (rf/subscribe  [query-id some optional query parameters])</code></pre>
-So <code>subscribe</code> takes one argument, assumed to be a vector.</p>
+<p><code>subscribe</code> is used like this:</p>
+<pre><code class="clj">   (rf/subscribe  [query-id some optional query parameters])
+</code></pre>
+
+<p>So <code>subscribe</code> takes one argument, assumed to be a vector.</p>
 <p>The first element in the vector identifies the query, 
 and the other elements are optional
-query parameters. With a traditional database, a query might be:
-<pre class="highlight"><code class="language-sql">select * from customers where name="blah"</code></pre></p>
+query parameters. With a traditional database, a query might be:</p>
+<pre><code class="sql">select * from customers where name=&quot;blah&quot;
+</code></pre>
+
 <p>In re-frame, that would look like:
    <code>(subscribe  [:customer-query "blah"])</code>,
 which would return a <code>ratom</code> holding the customer state (a value that might change over time!).</p>

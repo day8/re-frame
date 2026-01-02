@@ -1779,15 +1779,17 @@ tutorial.  Every unittest has 3 steps:</p>
 <h2 id="exposing-event-handlers-for-test">Exposing Event Handlers For Test<a class="headerlink" href="#exposing-event-handlers-for-test" title="Permanent link">&para;</a></h2>
 <p>Event Handlers are pure functions which should make them easy to test, right?</p>
 <p>First, create a named event handler using <code>defn</code> like this:</p>
-<pre class="highlight"><code class="language-clj">(defn select-triangle
+<pre><code class="clj">(defn select-triangle
   [db [_ triangle-id]]
-  ... return a modified version of db)</code></pre>
+  ... return a modified version of db)
+</code></pre>
 
 <p>You'd register this handler in a separate step:</p>
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db     ;; this is a "-db" event handler, not "-fx"
+<pre><code class="clj">(re-frame.core/reg-event-db     ;; this is a &quot;-db&quot; event handler, not &quot;-fx&quot;
   :select-triangle
   [some-interceptors]
-  select-triangle)    ;; &lt;--- defn above. don't use an annonomous fn</code></pre>
+  select-triangle)    ;; &lt;--- defn above. don't use an annonomous fn
+</code></pre>
 
 <p>This arrangement means the event handler function
 <code>select-triangle</code> is readily available to be unittested.</p>
@@ -1798,17 +1800,18 @@ tutorial.  Every unittest has 3 steps:</p>
 <p><code>db</code> is a map of a certain structure, so one way would be to simply <code>assoc</code> values
 into a map at certain paths to simulate a real-world <code>db</code> value or, even easier, just use
 a map literal, like this:</p>
-<pre class="highlight"><code class="language-clj">;; a test
+<pre><code class="clj">;; a test
 (let [
       ;; setup - create db and event
-      db      {:some 42  :thing "hello"}   ; a literal
+      db      {:some 42  :thing &quot;hello&quot;}   ; a literal
       event   [:select-triangle :other :event :args]
 
       ;; execute
       result-db (select-triange db event)]
 
       ;; validate that result-db is correct)
-      (is ...)</code></pre>
+      (is ...)
+</code></pre>
 
 <p>This certainly works in theory, but in practice,
 unless we are careful, constructing the <code>db</code>
@@ -1833,7 +1836,7 @@ of many event handlers running.</p>
 which cumulatively create the required initial state.  Tests then need
 know nothing about the internal structure of that <code>db</code>.</p>
 <p>Like this:</p>
-<pre class="highlight"><code class="language-clj">(let [
+<pre><code class="clj">(let [
       ;; setup - cummulatively build up db
       db (-&gt; {}    ;; empty db
              (initialise-db [:initialise-db])   ;; each event handler expects db and event
@@ -1847,6 +1850,7 @@ know nothing about the internal structure of that <code>db</code>.</p>
 
       ;; validate that db' is correct
       (is ...)
+
 </code></pre>
 
 <p>This approach works so long as all the event handlers are
@@ -1861,7 +1865,7 @@ in the general case.</p>
 which would put <code>app-db</code> into the right state.</p>
 <p>Except, we'd have to use <code>dispatch-sync</code> rather <code>dispatch</code> to
 force immediate handling of events, rather than queuing.</p>
-<pre class="highlight"><code class="language-clj">;; setup - cummulatively build up db
+<pre><code class="clj">;; setup - cummulatively build up db
 (dispatch-sync [:initialise-db])
 (dispatch-sync [:clear-panel])
 (dispatch-sync [:draw-triangle 1 2 3])
@@ -1870,7 +1874,8 @@ force immediate handling of events, rather than queuing.</p>
 (dispatch-sync  [:select-triange :other :stuff])
 
 ;; validate that the value in 'app-db' is correct
-;; perhaps with subscriptions</code></pre>
+;; perhaps with subscriptions
+</code></pre>
 
 <p>Notes:</p>
 <ol>
@@ -1889,7 +1894,7 @@ part is the unittest "setup" where we need to establish an initial value for <co
 <h2 id="subscription-handlers">Subscription Handlers<a class="headerlink" href="#subscription-handlers" title="Permanent link">&para;</a></h2>
 <p>Here's a Subscription Handler from
 <a href="https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs">the todomvc example</a>:</p>
-<pre class="highlight"><code class="language-clj">(reg-sub
+<pre><code class="clj">(reg-sub
   :visible-todos
 
   ;; signal function
@@ -1903,11 +1908,12 @@ part is the unittest "setup" where we need to establish an initial value for <co
                       :active (complement :done)
                       :done   :done
                       :all    identity)]
-      (filter filter-fn todos))))</code></pre>
+      (filter filter-fn todos))))
+</code></pre>
 
 <p>How do we test this?</p>
-<p>First, we could split the computation function from its registration, like this:
-<pre class="highlight"><code class="language-clj">(defn visible-todos
+<p>First, we could split the computation function from its registration, like this:</p>
+<pre><code class="clj">(defn visible-todos
   [[todos showing] _]
 
   (let [filter-fn (case showing
@@ -1921,7 +1927,9 @@ part is the unittest "setup" where we need to establish an initial value for <co
   (fn [query-v _]
       [(subscribe [:todos])
        (subscribe [:showing])])
-  visible-todos)     ;; &lt;--- computation function used here</code></pre></p>
+  visible-todos)     ;; &lt;--- computation function used here
+</code></pre>
+
 <p>That makes <code>visible-todos</code> available for direct unit testing.  But, as we experienced
 with Event Handlers, the challenge is around constructing <code>db</code> values (first parameter)
 in a way which doesn't become fragile.</p>
@@ -1931,13 +1939,15 @@ in a way which doesn't become fragile.</p>
 <p>But here's how, theoretically, I'd write tests if I wasn't me ...</p>
 <p>If a View Function is <a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-1-a-simple-function">Form-1</a>,
 then it is fairly easy to test.</p>
-<p>A trivial example:
-<pre class="highlight"><code class="language-clj">(defn greet
+<p>A trivial example:</p>
+<pre><code class="clj">(defn greet
    [name]
-   [:div "Hello " name])
+   [:div &quot;Hello &quot; name])
 
-(greet "Wiki")
-;;=&gt; [:div "Hello " "Wiki"]</code></pre></p>
+(greet &quot;Wiki&quot;)
+;;=&gt; [:div &quot;Hello &quot; &quot;Wiki&quot;]
+</code></pre>
+
 <p>So, here, testing involves passing values into the function and checking the data structure returned
 for correctness.</p>
 <p>What's returned is hiccup, of course. So how do you test hiccup for correctness?</p>
@@ -1946,10 +1956,11 @@ Perhaps you'd use https://github.com/nathanmarz/specter to declaratively check o
 of certain values and structures? Or do it more manually.</p>
 <h2 id="view-functions-part-2a">View Functions - Part 2A<a class="headerlink" href="#view-functions-part-2a" title="Permanent link">&para;</a></h2>
 <p>But what if the View Function has a subscription?</p>
-<pre class="highlight"><code class="language-clj">(defn my-view
+<pre><code class="clj">(defn my-view
   [something]
   (let [val  (subscribe [:query-id])]     ;; &lt;-- reactive subscription
-    [:div .... using @val in here]))</code></pre>
+    [:div .... using @val in here]))
+</code></pre>
 
 <p>The use of <code>subscribe</code> makes the function impure (it obtains data from places other than its args).</p>
 <p>A testing plan might be:</p>
@@ -1968,15 +1979,16 @@ of certain values and structures? Or do it more manually.</p>
 <h2 id="view-functions-part-2b">View Functions - Part 2B<a class="headerlink" href="#view-functions-part-2b" title="Permanent link">&para;</a></h2>
 <p>There is a pragmatic method available to handle the impurity: use <code>with-redefs</code>
 to stub out <code>subscribe</code>. Like this:</p>
-<pre class="highlight"><code class="language-clj">(defn subscription-stub [x]
+<pre><code class="clj">(defn subscription-stub [x]
   (atom
     (case x
       [:query-id] 42)))
 
 (deftest some-test
   (with-redefs [re-frame/subscribe (subscription-stub)]
-    (testing "some some view which does a subscribe"
-      ..... call the view function and the hiccup output)))</code></pre>
+    (testing &quot;some some view which does a subscribe&quot;
+      ..... call the view function and the hiccup output)))
+</code></pre>
 
 <p>For more integration level testing, you can use <code>with-mounted-component</code>
 from the <a href="https://github.com/reagent-project/reagent-template/blob/master/resources/leiningen/new/reagent/test/cljs/reagent/core_test.cljs">reagent-template</a>

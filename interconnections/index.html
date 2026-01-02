@@ -1514,17 +1514,21 @@ what does it even mean to talk about <strong>interconnections between functions?
 To answer that question, I'll rephrase it as:
 how are the domino functions <strong>composed</strong>?</p>
 <p>At the language level,
-Uncle Alonzo and Uncle John tell us how a function like <code>count</code> composes: <br />
-<pre class="highlight"><code class="language-clj">(str (count (filter odd?  [1 2 3 4 5])))</code></pre>
-We know when <code>count</code> is called, and with what
+Uncle Alonzo and Uncle John tell us how a function like <code>count</code> composes:   </p>
+<pre><code class="clj">(str (count (filter odd?  [1 2 3 4 5])))
+</code></pre>
+
+<p>We know when <code>count</code> is called, and with what
 argument, and how the value it computes becomes the arg for a further function.
 We know how data "flows" into and out of the functions.</p>
-<p>Sometimes, we'd rewrite this code as:
-<pre class="highlight"><code class="language-clj">(-&gt;&gt;  [1 2 3 4 5]
+<p>Sometimes, we'd rewrite this code as:</p>
+<pre><code class="clj">(-&gt;&gt;  [1 2 3 4 5]
       (filter odd?)
       count
-      str)</code></pre>
-With this arrangement, we talk of "threading" data
+      str)
+</code></pre>
+
+<p>With this arrangement, we talk of "threading" data
 through functions. <strong>It seems to help our comprehension to conceive function
 composition in terms of data flow</strong>.</p>
 <p>re-frame delivers architecture

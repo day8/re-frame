@@ -1844,12 +1844,14 @@ sweep, it progressively produces a <code>response</code>.</p>
 concept, right there.</p>
 <h2 id="show-me">Show Me<a class="headerlink" href="#show-me" title="Permanent link">&para;</a></h2>
 <p>At the time when you register an event handler, you can provide a chain of interceptors too.</p>
-<p>Using a 3-arity registration function:
-<pre class="highlight"><code class="language-clj">(reg-event-db
+<p>Using a 3-arity registration function:</p>
+<pre><code class="clj">(reg-event-db
    :some-id
    [in1 in2]       ;; &lt;-- a chain of 2 interceptors (a vector of 2 interceptors)
    (fn [db v]      ;; &lt;-- the handler here, as before
-      ....)))</code></pre></p>
+      ....)))
+</code></pre>
+
 <div class="admonition note">
 <p>Each Event Handler can have its own tailored interceptor chain, provided at registration-time.</p>
 </div>
@@ -1873,11 +1875,13 @@ with <strong>just</strong> a chain of interceptors. Nothing more.</p>
 <p>Later, when a <code>(dispatch [:some-id ...])</code> happens, that 5-chain of
 interceptors will be "executed".  And that's how an event gets handled.</p>
 <h2 id="the-links-of-the-chain">The Links Of The Chain<a class="headerlink" href="#the-links-of-the-chain" title="Permanent link">&para;</a></h2>
-<p>Each interceptor has this form:
-<pre class="highlight"><code class="language-clj">{:id      :something             ;; decorative only - can be ignored
+<p>Each interceptor has this form:</p>
+<pre><code class="clj">{:id      :something             ;; decorative only - can be ignored
  :comment {...}                  ;; also decorative, optional
  :before  (fn [context] ...)     ;; returns a possibly modified `context`
- :after   (fn [context] ...)}    ;; returns a possibly modified `context`</code></pre></p>
+ :after   (fn [context] ...)}    ;; returns a possibly modified `context`
+</code></pre>
+
 <p>That's essentially a map of two functions (a before function and an after function). Now imagine a vector of these maps - that's an interceptor chain.</p>
 <p>Above we imagined an interceptor chain of <code>[std1 std2 in1 in2 ih]</code>. Now we know that this is really
 a vector of 5 maps: <code>[{...} {...} {...} {...} {...}]</code>  where each of the 5 maps have
@@ -1895,15 +1899,17 @@ a <code>:before</code> and <code>:after</code> fn.</p>
 <p>Some data called a <code>context</code> is threaded through all the calls.</p>
 <p>This value is passed as the argument to every <code>:before</code> and <code>:after</code>
 function and it is returned by each function, possibly modified.</p>
-<p>A <code>context</code> is a map with this structure:
-<pre class="highlight"><code class="language-clj">{:coeffects {:event [:some-id :some-param]
+<p>A <code>context</code> is a map with this structure:</p>
+<pre><code class="clj">{:coeffects {:event [:some-id :some-param]
              :db    &lt;original contents of app-db&gt;}
 
  :effects   {:db    &lt;new value for app-db&gt;
              :dispatch  [:an-event-id :param1]}
 
  :queue     &lt;a collection of further interceptors&gt;
- :stack     &lt;a collection of interceptors already walked&gt;}</code></pre></p>
+ :stack     &lt;a collection of interceptors already walked&gt;}
+</code></pre>
+
 <p><code>context</code> has a <code>:coeffects</code> key and an <code>:effects</code> key which, if this was a web
 server, would be somewhat analogous to <code>request</code> and <code>response</code>
 respectively.</p>
@@ -1925,7 +1931,7 @@ including, but not limited to, updates to <code>app-db</code>.</p>
 <h2 id="threading-the-context">Threading the Context<a class="headerlink" href="#threading-the-context" title="Permanent link">&para;</a></h2>
 <p>Above, we imagined an interceptor chain like: <code>[std1 std2 in1 in2 ih]</code>.
 One way to imagine the whole event handling process would be to see it written like this:</p>
-<pre class="highlight"><code class="language-clj"> ;; start by creating a context map 
+<pre><code class="clj"> ;; start by creating a context map 
 (let [context {:coeffects {}  :effects {} ...}]
 
   (-&gt; context              
@@ -1944,7 +1950,8 @@ One way to imagine the whole event handling process would be to see it written l
     ((:after  in2) )
     ((:after  in1) )
     ((:after  std2) )    ;; noop
-    ((:after  std1) )    ;; Domino 3 - all the `:effects` are processed </code></pre>
+    ((:after  std1) )    ;; Domino 3 - all the `:effects` are processed 
+</code></pre>
 
 <h2 id="infographics">Infographics<a class="headerlink" href="#infographics" title="Permanent link">&para;</a></h2>
 <p><a href="../images/interceptors.png">
@@ -1976,39 +1983,47 @@ adapted for Clojure by the <a href="https://github.com/pedestal/pedestal/blob/ma
 <p>Pre-Clojure work on interceptors can be found in <a href="https://tomcatbook.sourceforge.net/book/defaulthtml/ch04.html">Tomcat's interceptors</a>, Netty's ChannelPipeline handlers, and the <a href="https://tomcatbook.sourceforge.net/book/defaulthtml/ch04.html">J2EE InterceptingFilter pattern</a> from <em>Pattern-Oriented Software Architecture, 2nd ed</em>.</p>
 <h2 id="lets-write-an-interceptor">Let's Write An Interceptor<a class="headerlink" href="#lets-write-an-interceptor" title="Permanent link">&para;</a></h2>
 <p>Dunno about you, but I'm easily offended by underscores.</p>
-<p>Imagine we had a view which did this:
-<pre class="highlight"><code class="language-clj">(dispatch [:delete-item 42])</code></pre></p>
-<p>We'd have to write this event handler:
-<pre class="highlight"><code class="language-clj">(reg-event-db
+<p>Imagine we had a view which did this:</p>
+<pre><code class="clj">(dispatch [:delete-item 42])
+</code></pre>
+
+<p>We'd have to write this event handler:</p>
+<pre><code class="clj">(reg-event-db
   :delete-item
   (fn
      [db [_ key-to-delete]]     ;;  &lt;---- Arrgggghhh underscore
-     (dissoc db key-to-delete)))</code></pre></p>
+     (dissoc db key-to-delete)))
+</code></pre>
+
 <p>Do you see it there? That <code>_</code> in the event destructuring!!! Almost mocking us with that
 passive aggressive, understated thing it has going on!! Co-workers
 have said I'm "being overly sensitive", perhaps even pixel-ist, but
 you can see it too, right? Of course you can.</p>
 <p>What a relief it would be to not have it there, but how? We'll write an interceptor: <code>trim-event</code></p>
-<p>Once we have written <code>trim-event</code>, our registration will change to look like this:
-<pre class="highlight"><code class="language-clj">(reg-event-db
+<p>Once we have written <code>trim-event</code>, our registration will change to look like this:</p>
+<pre><code class="clj">(reg-event-db
   :delete-item
   [trim-event]                ;;  &lt;--- interceptor added
   (fn
      [db [key-to-delete]]     ;;  &lt;---yaaah!  no leading underscore
-     (dissoc db key-to-delete)))</code></pre></p>
+     (dissoc db key-to-delete)))
+</code></pre>
+
 <p><code>trim-event</code> will need to change the <code>:coeffects</code> map (within <code>context</code>).  Specifically, it will be
 changing the <code>:event</code> value within the <code>:coeffects</code>.</p>
 <p><code>:event</code> will start off as <code>[:delete-item 42]</code>, but will end up <code>[42]</code> by the time it is supplied to the handler.
 <code>trim-event</code>  will remove that
 leading <code>:delete-item</code> because, by the time the event is
 being processed, we already know what <code>id</code> it has.</p>
-<p>And, so here it is:
-<pre class="highlight"><code class="language-clj">(def trim-event
+<p>And, so here it is:</p>
+<pre><code class="clj">(def trim-event
   (re-frame.core/-&gt;interceptor
     :id      :trim-event
     :before  (fn [context]
                (let [trim-fn (fn [event] (-&gt; event rest vec))]
-                 (update-in context [:coeffects :event] trim-fn)))))</code></pre></p>
+                 (update-in context [:coeffects :event] trim-fn)))))
+</code></pre>
+
 <p>As you read this, look back to what a <code>context</code> looks like.</p>
 <p>Notes:</p>
 <ol>
@@ -2031,19 +2046,23 @@ whole <code>[std1 std2 in1 in2 ih]</code> thing?</p>
 <li>the <code>-fx</code> variety registered by <code>reg-event-fx</code></li>
 </ul>
 <p>I'll now show how to wrap the <code>-db</code> variety.</p>
-<p>Reminder: here's what a <code>-db</code> handler looks like:
-<pre class="highlight"><code class="language-clj">(fn [db event]               ;; takes two params
-  (assoc db :flag true))     ;; returns a new db</code></pre></p>
+<p>Reminder: here's what a <code>-db</code> handler looks like:</p>
+<pre><code class="clj">(fn [db event]               ;; takes two params
+  (assoc db :flag true))     ;; returns a new db
+</code></pre>
+
 <p>So, we'll be writing a function which takes a <code>-db</code> handler as an argument, and returns an
-Interceptor which wraps that handler:
-<pre class="highlight"><code class="language-clj">(defn db-handler-&gt;interceptor
+Interceptor which wraps that handler:</p>
+<pre><code class="clj">(defn db-handler-&gt;interceptor
   [db-handler-fn]
   (re-frame.core/-&gt;interceptor     ;; an API function supplied by re-frame
     :id     :db-handler            ;; ids are decorative only
     :before (fn [context]          ;; this interceptor only has a `:before
               (let [{:keys [db event]} (:coeffects context)    ;; extract db and event from coeffects
                     new-db (db-handler-fn db event)]           ;; call the event handler
-                 (assoc-in context [:effects :db] new-db)))))) ;; put db back into :effects, as `:db` effect</code></pre></p>
+                 (assoc-in context [:effects :db] new-db)))))) ;; put db back into :effects, as `:db` effect
+</code></pre>
+
 <p>Notes:</p>
 <ol>
 <li>Notice how this wrapper extracts data from the <code>context's</code> <code>:coeffects</code>
@@ -2058,12 +2077,14 @@ Interceptor which wraps that handler:
 <p>Feeling confident?  Try writing the wrapper for <code>-fx</code> handlers - it is just a small variation.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>In this tutorial, we've learned:</p>
-<p><strong>1.</strong> When you register an event handler, you can supply a collection of <code>Interceptors</code>:
-<pre class="highlight"><code class="language-clj"> (reg-event-db
+<p><strong>1.</strong> When you register an event handler, you can supply a collection of <code>Interceptors</code>:</p>
+<pre><code class="clj"> (reg-event-db
     :some-id
     [in1 in2]       ;; &lt;-- a chain of 2 interceptors
     (fn [db v]      ;; &lt;-- real handler here
-       ....)))</code></pre></p>
+       ....)))
+</code></pre>
+
 <p><strong>2.</strong> When you are registering an event handler, you are associating an event id with a chain of interceptors including:</p>
 <ul>
 <li>the ones you supply (optional)  <code>in1</code> and <code>in2</code></li>
@@ -2097,10 +2118,11 @@ Interceptor which wraps that handler:
 </ul>
 <p>In addition, <a href="https://github.com/day8/re-frame-undo">a Library like re-frame-undo</a> provides an Interceptor
 factory called <code>undoable</code> which checkpoints app state.</p>
-<p>To use them, first require them:
-<pre class="highlight"><code class="language-Clojure">(ns my.core
+<p>To use them, first require them:</p>
+<pre><code class="Clojure">(ns my.core
   (:require
-    [re-frame.core :refer [debug path]])</code></pre></p>
+    [re-frame.core :refer [debug path]])
+</code></pre>
                 
               
               

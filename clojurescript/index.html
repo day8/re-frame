@@ -2072,12 +2072,14 @@ Well, in your mind's eye, see this nested example as <code>(f arg1 arg2)</code> 
 </tr>
 </tbody>
 </table>
-<p>To give you a taste of where this can go, here they are used as the keys in a hashmap:
-<pre class="highlight"><code class="language-clj">{:user/id      1
- :user/name    "Barry"
+<p>To give you a taste of where this can go, here they are used as the keys in a hashmap:</p>
+<pre><code class="clj">{:user/id      1
+ :user/name    &quot;Barry&quot;
  :user/age     28
- :user/company "SpaceX"
- :role/name    "Rocket Sharpener"}</code></pre></p>
+ :user/company &quot;SpaceX&quot;
+ :role/name    &quot;Rocket Sharpener&quot;}
+</code></pre>
+
 <p>Evaluate these experiments yourself (any surprises?):</p>
 <div class="cm-doc" data-cm-doc-no-eval-on-init>(namespace :a)</div>
 
@@ -2234,16 +2236,20 @@ is evaluated depending on the result of that <code>test</code>. One element rema
 <li>and, if we called this function with the argument <code>[:a :b]</code>, it would return <code>[:a :b]</code></li>
 </ul>
 <p><strong><em>Question</em></strong>: so, how do we call this function?</p>
-<p><strong><em>Answer</em></strong>: easy, we already know how, just place it as the first element in a form. Then add a 2nd element in that form, which is the actual argument. Like this:
-<pre class="highlight"><code class="language-clj">; Aside: a line which starts with a semi-colon is a comment
+<p><strong><em>Answer</em></strong>: easy, we already know how, just place it as the first element in a form. Then add a 2nd element in that form, which is the actual argument. Like this:</p>
+<pre><code class="clj">; Aside: a line which starts with a semi-colon is a comment
 
 ; The following is a two element list:
 ;   - the 1st is (fn [x] x) and that's a function (created by an `fn` form)
-;   - the 2nd element is a string "the actual arg"  
-((fn [x] x) "the actual arg")</code></pre></p>
-<p>I'd like you to see this two element list as more like, say:
-<pre class="highlight"><code class="language-clj">(count "the actual arg")</code></pre>
-Except, in place of the symbol  <code>count</code> there is a form <code>(fn [x] x)</code>.  <code>count</code> is symbol which evaluates to a builtin function. Whereas <code>(fn [x] x)</code> is a form which evaluates to a function. Either way, the first element of the list evaluates to a function and the 2nd element to the list will be the actual argument in this function call.</p>
+;   - the 2nd element is a string &quot;the actual arg&quot;  
+((fn [x] x) &quot;the actual arg&quot;)
+</code></pre>
+
+<p>I'd like you to see this two element list as more like, say:</p>
+<pre><code class="clj">(count &quot;the actual arg&quot;)
+</code></pre>
+
+<p>Except, in place of the symbol  <code>count</code> there is a form <code>(fn [x] x)</code>.  <code>count</code> is symbol which evaluates to a builtin function. Whereas <code>(fn [x] x)</code> is a form which evaluates to a function. Either way, the first element of the list evaluates to a function and the 2nd element to the list will be the actual argument in this function call.</p>
 <p>Let's work through it in more detail: </p>
 <ol>
 <li>This is a two element list, so it will evaluate to a function call, in the two step process described above</li>
@@ -2263,12 +2269,16 @@ Except, in place of the symbol  <code>count</code> there is a form <code>(fn [x]
 <li>The functions return value will be <code>"the actual arg"</code></li>
 <li>And that then is the evaluation of the entire form</li>
 </ol>
-<p>Here's another call to the same function:
-<pre class="highlight"><code class="language-clj">((fn [x] x) [:a :b])</code></pre>
-The actual argument is <code>[:a :b]</code>, and the form (function call) will evaluate to <code>[:a :b]</code>.</p>
-<p>Let's create a different function and evaluate it: 
-<pre class="highlight"><code class="language-clj">((fn [num] (+ num 1)) 4)</code></pre>
-The body of the function, <code>(+ num 1)</code>, will be evaluated with the <code>num</code> symbol bound to the actual parameter <code>4</code>.  The return value is <code>5</code>.</p>
+<p>Here's another call to the same function:</p>
+<pre><code class="clj">((fn [x] x) [:a :b])
+</code></pre>
+
+<p>The actual argument is <code>[:a :b]</code>, and the form (function call) will evaluate to <code>[:a :b]</code>.</p>
+<p>Let's create a different function and evaluate it: </p>
+<pre><code class="clj">((fn [num] (+ num 1)) 4)
+</code></pre>
+
+<p>The body of the function, <code>(+ num 1)</code>, will be evaluated with the <code>num</code> symbol bound to the actual parameter <code>4</code>.  The return value is <code>5</code>.</p>
 <p>Try these experiments:</p>
 <div class="cm-doc" data-cm-doc-no-eval-on-init>((fn [x] [x x]) 4)</div>
 
@@ -2286,90 +2296,128 @@ The body of the function, <code>(+ num 1)</code>, will be evaluated with the <co
 <hr />
 <h2 id="def"><code>def</code><a class="headerlink" href="#def" title="Permanent link">&para;</a></h2>
 <p>The <code>def</code> form creates a symbol and binds it to a value. </p>
-<p><pre class="highlight"><code class="language-clj">(def gurus 2)</code></pre>
-This defines the symbol <code>gurus</code> and binds it to the value <code>2</code>. If, later, we used this symbol in other code, it would evaluate to <code>2</code>.</p>
+<pre><code class="clj">(def gurus 2)
+</code></pre>
+
+<p>This defines the symbol <code>gurus</code> and binds it to the value <code>2</code>. If, later, we used this symbol in other code, it would evaluate to <code>2</code>.</p>
 <p><code>def</code> is a "special form" in two ways:</p>
 <ul>
 <li>when evaluated, it adds to the global set of defined symbols. Such mutation is known as a side-effect.
 Functions don't normally cause side effect - they are normally pure.</li>
 <li>in a normal Clojure form, like say <code>(f gurus 2)</code>, the <code>gurus</code> element would be evaluated before the call. But the evaluation rules in a <code>def</code> form are different because, instead, <code>gurus</code> is the symbol to define. It doesn't get evaluated. But the 3rd element certainly does.</li>
 </ul>
-<p>The 3rd element of a <code>def</code> is evaluated: 
-<pre class="highlight"><code class="language-clj">(def saints (inc gurus))    ;; look, using the symbol `gurus` !!</code></pre>
-<code>saints</code> is now also a defined symbol and it is bound to the evaluation of  <code>(inc gurus)</code>, which is  <code>(inc 2)</code>,  which is <code>3</code>. </p>
-<p>Consider these two:
-<pre class="highlight"><code class="language-clj">(def beach-list [:hat :sunglasses :towel])
-(def beach-items (count beach-list))     ;; count is a builtin function</code></pre>
-<code>beach-items</code> is a symbol bound to <code>3</code></p>
-<p>Now, consider what is happening here:
-<pre class="highlight"><code class="language-clj">(def my-inc (fn [a] (+ a 1))</code></pre>
-That <code>fn</code> form will create a function, and then the <code>def</code> will bind it to the symbol  <code>my-inc</code>. Two steps. Hey, we've just created our own <code>inc</code>.
-<pre class="highlight"><code class="language-clj">(my-inc 4) </code></pre>
-evaluates to <code>5</code></p>
-<p>And again:
-<pre class="highlight"><code class="language-clj">(def square-it (fn [x] (* x x)))</code></pre>
-We can use this symbol <code>square-it</code> in a form (it is now bound to a function), like this:
-<pre class="highlight"><code class="language-clj">(square-it 5)</code></pre>
-evaluates to  <code>25</code></p>
+<p>The 3rd element of a <code>def</code> is evaluated: </p>
+<pre><code class="clj">(def saints (inc gurus))    ;; look, using the symbol `gurus` !!
+</code></pre>
+
+<p><code>saints</code> is now also a defined symbol and it is bound to the evaluation of  <code>(inc gurus)</code>, which is  <code>(inc 2)</code>,  which is <code>3</code>. </p>
+<p>Consider these two:</p>
+<pre><code class="clj">(def beach-list [:hat :sunglasses :towel])
+(def beach-items (count beach-list))     ;; count is a builtin function
+</code></pre>
+
+<p><code>beach-items</code> is a symbol bound to <code>3</code></p>
+<p>Now, consider what is happening here:</p>
+<pre><code class="clj">(def my-inc (fn [a] (+ a 1))
+</code></pre>
+
+<p>That <code>fn</code> form will create a function, and then the <code>def</code> will bind it to the symbol  <code>my-inc</code>. Two steps. Hey, we've just created our own <code>inc</code>.</p>
+<pre><code class="clj">(my-inc 4) 
+</code></pre>
+
+<p>evaluates to <code>5</code></p>
+<p>And again:</p>
+<pre><code class="clj">(def square-it (fn [x] (* x x)))
+</code></pre>
+
+<p>We can use this symbol <code>square-it</code> in a form (it is now bound to a function), like this:</p>
+<pre><code class="clj">(square-it 5)
+</code></pre>
+
+<p>evaluates to  <code>25</code></p>
 <hr />
 <h2 id="defn"><code>defn</code><a class="headerlink" href="#defn" title="Permanent link">&para;</a></h2>
 <p>A ClojureScript program typically contains a lot of function definitions, and combining
 <code>def</code> and <code>fn</code> each time would be verbose. So, there is a shorter way 
 which combines the two, called <code>defn</code>.</p>
-<p>You use it like this:
-<pre class="highlight"><code class="language-clj">(defn dec      ; `dec` is the symbol being defined
+<p>You use it like this:</p>
+<pre><code class="clj">(defn dec      ; `dec` is the symbol being defined
   [n]          ; a vector of symbols for the actual arguments 
-  (- n 1))     ; function body - evaluated when function is called - uses `n`</code></pre>
-So, this binds a symbol to a function. All of the "builtin functions" mentioned previously in this tutorial are defined this way: <code>str</code>, <code>count</code>, <code>inc</code>, <code>namespace</code>, <code>+</code> etc. </p>
-<p>To use the symbol/function just defined: 
-<pre class="highlight"><code class="language-clj">(dec 4) </code></pre>
-evaluates to <code>3</code></p>
-<p>Define another function:
-<pre class="highlight"><code class="language-clj">(defn square-it  ; `square-it` is the symbol being defined
+  (- n 1))     ; function body - evaluated when function is called - uses `n`
+</code></pre>
+
+<p>So, this binds a symbol to a function. All of the "builtin functions" mentioned previously in this tutorial are defined this way: <code>str</code>, <code>count</code>, <code>inc</code>, <code>namespace</code>, <code>+</code> etc. </p>
+<p>To use the symbol/function just defined: </p>
+<pre><code class="clj">(dec 4) 
+</code></pre>
+
+<p>evaluates to <code>3</code></p>
+<p>Define another function:</p>
+<pre><code class="clj">(defn square-it  ; `square-it` is the symbol being defined
   [n]            ; a vector of symbols for the actual arguments 
-  (* n n))       ; function body - evaluated when function is called - uses `n`</code></pre></p>
-<p>use it: 
-<pre class="highlight"><code class="language-clj">(square-it 3)</code></pre>
-evaluates to <code>9</code>. </p>
-<p>Or use it like this:
-<pre class="highlight"><code class="language-clj">(square-it (inc 3))</code></pre>
-evaluates to <code>16</code> .</p>
-<p>Define another: 
-<pre class="highlight"><code class="language-clj">(defn greet
+  (* n n))       ; function body - evaluated when function is called - uses `n`
+</code></pre>
+
+<p>use it: </p>
+<pre><code class="clj">(square-it 3)
+</code></pre>
+
+<p>evaluates to <code>9</code>. </p>
+<p>Or use it like this:</p>
+<pre><code class="clj">(square-it (inc 3))
+</code></pre>
+
+<p>evaluates to <code>16</code> .</p>
+<p>Define another: </p>
+<pre><code class="clj">(defn greet
   [username]
-  (str "Hello " username))) </code></pre>
-<code>str</code> is a builtin function which turns each of its arguments into a string and concatenates them.</p>
-<p>use it: 
-<pre class="highlight"><code class="language-clj">(greet "world")   </code></pre>
-evaluates to <code>"Hello world"</code>.</p>
+  (str &quot;Hello &quot; username))) 
+</code></pre>
+
+<p><code>str</code> is a builtin function which turns each of its arguments into a string and concatenates them.</p>
+<p>use it: </p>
+<pre><code class="clj">(greet &quot;world&quot;)   
+</code></pre>
+
+<p>evaluates to <code>"Hello world"</code>.</p>
 <p>In a functional language, creating functions is a big deal. You'll be using <code>defn</code> a lot.</p>
 <hr />
 <h2 id="let"><code>let</code><a class="headerlink" href="#let" title="Permanent link">&para;</a></h2>
 <p>This is another special form you'll be using <em>a lot</em>. </p>
-<p><pre class="highlight"><code class="language-clj">; a let form has two parts: 
-;   - 1st a vector of "binding pairs"
-;   - 2nd a "body" 
-(let [a "pen"]   ; a pair - binds the symbol `a` to the value "pen"
-  a)             ; the body is evaluated with the bindings</code></pre>
-This <code>let</code> form evaluates to <code>"pen"</code> </p>
-<p>Another one: 
-<pre class="highlight"><code class="language-clj">(let [a "pen"]   
-  :foo)         ; odd. The body doesn't use `a`. But this still works. </code></pre>
-This <code>let</code> form evaluates to <code>:foo</code> </p>
-<p>Notice the way this <code>let</code> form  is formatted:
-<pre class="highlight"><code class="language-clj">(let [a  "pen"         ; this pair means `a` is bound to "pen" 
-      b  "sword"]      ; this pair means `b` is bound to "sword"
-  (&gt; a b))             ; is "pen" greater than "sword" ??</code></pre>
-evaluates to <code>false</code>. Wait, no. That isn't conventional wisdom. Damn you lexicographic comparisons!!</p>
-<p>We need to make some changes:
-<pre class="highlight"><code class="language-clj">(let [a  "the pen"
-      b  "a sword"]   
-  (if (&gt; a b) a b)) </code></pre>
-evaluates to <code>"the pen"</code>. Phew! </p>
-<p><pre class="highlight"><code class="language-clj">(let [a  "the pen"
-      b  "a sword"]   
-  {:winner-is (if (&gt; a b) a b)}) </code></pre>
-evaluates to <code>{:winner-is "the pen"}</code></p>
+<pre><code class="clj">; a let form has two parts: 
+;   - 1st a vector of &quot;binding pairs&quot;
+;   - 2nd a &quot;body&quot; 
+(let [a &quot;pen&quot;]   ; a pair - binds the symbol `a` to the value &quot;pen&quot;
+  a)             ; the body is evaluated with the bindings
+</code></pre>
+
+<p>This <code>let</code> form evaluates to <code>"pen"</code> </p>
+<p>Another one: </p>
+<pre><code class="clj">(let [a &quot;pen&quot;]   
+  :foo)         ; odd. The body doesn't use `a`. But this still works. 
+</code></pre>
+
+<p>This <code>let</code> form evaluates to <code>:foo</code> </p>
+<p>Notice the way this <code>let</code> form  is formatted:</p>
+<pre><code class="clj">(let [a  &quot;pen&quot;         ; this pair means `a` is bound to &quot;pen&quot; 
+      b  &quot;sword&quot;]      ; this pair means `b` is bound to &quot;sword&quot;
+  (&gt; a b))             ; is &quot;pen&quot; greater than &quot;sword&quot; ??
+</code></pre>
+
+<p>evaluates to <code>false</code>. Wait, no. That isn't conventional wisdom. Damn you lexicographic comparisons!!</p>
+<p>We need to make some changes:</p>
+<pre><code class="clj">(let [a  &quot;the pen&quot;
+      b  &quot;a sword&quot;]   
+  (if (&gt; a b) a b)) 
+</code></pre>
+
+<p>evaluates to <code>"the pen"</code>. Phew! </p>
+<pre><code class="clj">(let [a  &quot;the pen&quot;
+      b  &quot;a sword&quot;]   
+  {:winner-is (if (&gt; a b) a b)}) 
+</code></pre>
+
+<p>evaluates to <code>{:winner-is "the pen"}</code></p>
 <p><code>let</code> is often used within a <code>defn</code>: 
 <div class="cm-doc">
 (defn greet
@@ -2382,21 +2430,30 @@ evaluates to <code>{:winner-is "the pen"}</code></p>
 
 <div class="cm-doc" data-cm-doc-no-eval-on-init>(greet "Noisy Neighbours" false)</div>
 
-<p>In this particular, we could have got away with no using a <code>let</code>, like this: 
-<pre class="highlight"><code class="language-clj">(defn greet
+<p>In this particular, we could have got away with no using a <code>let</code>, like this: </p>
+<pre><code class="clj">(defn greet
   [name friendly?]
-  [:div (if friendly? "Hello " "Go away ") name)</code></pre></p>
-<pre class="highlight"><code class="language-clj">(defn items-text 
+  [:div (if friendly? &quot;Hello &quot; &quot;Go away &quot;) name)
+</code></pre>
+
+<pre><code class="clj">(defn items-text 
   [items] 
   (let [num    (count items)
-        plural (if (= num 1) "" "s")
-        verb   (if (&gt; num 1) "are " "is ")]
-    (str "There " verb num " item" plural)))</code></pre>
+        plural (if (= num 1) &quot;&quot; &quot;s&quot;)
+        verb   (if (&gt; num 1) &quot;are &quot; &quot;is &quot;)]
+    (str &quot;There &quot; verb num &quot; item&quot; plural)))
+</code></pre>
 
-<p>Check on the output in these cases:
-<pre class="highlight"><code class="language-clj">(items-text [:towel :sunglasses])</code></pre></p>
-<p><pre class="highlight"><code class="language-clj">(items-text [:towel])</code></pre>
-<pre class="highlight"><code class="language-clj">(items-text [])</code></pre></p>
+<p>Check on the output in these cases:</p>
+<pre><code class="clj">(items-text [:towel :sunglasses])
+</code></pre>
+
+<pre><code class="clj">(items-text [:towel])
+</code></pre>
+
+<pre><code class="clj">(items-text [])
+</code></pre>
+
 <p>Exercise: </p>
 <ul>
 <li>when there are no items make the text "there are no items"  (and not "there is 0 items")</li>
@@ -2412,24 +2469,40 @@ evaluates to <code>{:winner-is "the pen"}</code></p>
 </ul>
 <h2 id="data-functions">Data Functions<a class="headerlink" href="#data-functions" title="Permanent link">&para;</a></h2>
 <p>Sometimes data can act as a function - it can appear as the first element in a form. </p>
-<p>For example, a hashmap can act as a function. This is easiest to explain via code:
-<pre class="highlight"><code class="language-clj">({:a 11} :a)</code></pre>
-Here, a hashmap <code>{:a 11}</code> is used as the 1st element in a <code>form</code>. The actual argument,  <code>:a</code>,  will be looked up in that hashmap, and the associated value,  <code>11</code>, is the return value of the function call. So  <code>11</code> is the evaluation.</p>
-<p><pre class="highlight"><code class="language-clj">({:a 11 :b 21} :b)</code></pre>
-evaluates to <code>21</code>. We are looking up the key <code>:b</code> in the hashmap  <code>{:a 11 :b 21}</code> and obtaining the associated value <code>21</code></p>
-<p><pre class="highlight"><code class="language-clj">({:a 11 :b 21} :c)</code></pre>
-evaluates to <code>nil</code>. There's no key <code>:c</code> in the hashmap.</p>
-<p><pre class="highlight"><code class="language-clj">({:a 11 :b 21} :c :not-found)</code></pre>
-evaluates to <code>:not-found</code>. The key was not found in the hashmap, but we supplied a default value as the 2nd actual argument (the 3rd element of the list).</p>
-<p>This can be reversed. A <code>keyword</code> can also be used as the 1st element in a form, provided the actual argument is a hashmap.
-<pre class="highlight"><code class="language-clj">(:a {:a 11})</code></pre>
-evaluates to <code>11</code></p>
-<p><pre class="highlight"><code class="language-clj">(:b {:a 11 :b 21})</code></pre>
-evaluates to <code>21</code></p>
-<p><pre class="highlight"><code class="language-clj">(:c {:a 11 :b 21})</code></pre>
-evaluates to <code>nil</code></p>
-<p><pre class="highlight"><code class="language-clj">(:c {:a 11 :b 21} :not-found)</code></pre>
-evaluates to <code>:not-found</code></p>
+<p>For example, a hashmap can act as a function. This is easiest to explain via code:</p>
+<pre><code class="clj">({:a 11} :a)
+</code></pre>
+
+<p>Here, a hashmap <code>{:a 11}</code> is used as the 1st element in a <code>form</code>. The actual argument,  <code>:a</code>,  will be looked up in that hashmap, and the associated value,  <code>11</code>, is the return value of the function call. So  <code>11</code> is the evaluation.</p>
+<pre><code class="clj">({:a 11 :b 21} :b)
+</code></pre>
+
+<p>evaluates to <code>21</code>. We are looking up the key <code>:b</code> in the hashmap  <code>{:a 11 :b 21}</code> and obtaining the associated value <code>21</code></p>
+<pre><code class="clj">({:a 11 :b 21} :c)
+</code></pre>
+
+<p>evaluates to <code>nil</code>. There's no key <code>:c</code> in the hashmap.</p>
+<pre><code class="clj">({:a 11 :b 21} :c :not-found)
+</code></pre>
+
+<p>evaluates to <code>:not-found</code>. The key was not found in the hashmap, but we supplied a default value as the 2nd actual argument (the 3rd element of the list).</p>
+<p>This can be reversed. A <code>keyword</code> can also be used as the 1st element in a form, provided the actual argument is a hashmap.</p>
+<pre><code class="clj">(:a {:a 11})
+</code></pre>
+
+<p>evaluates to <code>11</code></p>
+<pre><code class="clj">(:b {:a 11 :b 21})
+</code></pre>
+
+<p>evaluates to <code>21</code></p>
+<pre><code class="clj">(:c {:a 11 :b 21})
+</code></pre>
+
+<p>evaluates to <code>nil</code></p>
+<pre><code class="clj">(:c {:a 11 :b 21} :not-found)
+</code></pre>
+
+<p>evaluates to <code>:not-found</code></p>
 <p>This approach of using a keyword as the function, with a hashmap argument happens <strong><em>a lot</em></strong> in ClojureScript Code.</p>
 <hr />
 <h2 id="builtin-functions">BuiltIn Functions<a class="headerlink" href="#builtin-functions" title="Permanent link">&para;</a></h2>
@@ -2470,11 +2543,13 @@ are used all the time, and to read Clojure code (our aim here), you must know th
 </table>
 <h2 id="map"><code>map</code><a class="headerlink" href="#map" title="Permanent link">&para;</a></h2>
 <p>Applies a function to all the elements of a collection. </p>
-<p>First, we create a function called  <code>plus-one</code>
-<pre class="highlight"><code class="language-clj">(defn plus-one 
+<p>First, we create a function called  <code>plus-one</code></p>
+<pre><code class="clj">(defn plus-one 
   [it]
-  (+ 1 it))</code></pre>
-Now use it with <code>map</code>:</p>
+  (+ 1 it))
+</code></pre>
+
+<p>Now use it with <code>map</code>:</p>
 <table>
 <thead>
 <tr>
@@ -2519,18 +2594,41 @@ Now use it with <code>map</code>:</p>
 <blockquote>
 <p>Note: <code>map</code> always returns a <code>list</code>, even if you give it a vector, set, list, etc.</p>
 </blockquote>
-<p>Create <code>add</code> for use with  <code>map</code> below:
-<pre class="highlight"><code class="language-clj">(defn add
+<p>Create <code>add</code> for use with  <code>map</code> below:</p>
+<pre><code class="clj">(defn add
   [a b]
-  (+ a b))</code></pre>
-|   Example                    |  Evaluates To               |  Comments                                     |
-|------------------------------|-----------------------------|-----------------------------------------------|
-| <code>(map add [1 2 3] [4 5 6])</code> | <code>(5 7 9)</code>          |  Applies  <code>add</code> to pairs of elements.<br>Think <code>[(add 1 4) (add 2 5) (add 3 6)]</code>, except<br>result is a list
-| <code>(map + [1 2 3] [4 5 6])</code> | <code>(5 7 9)</code>          |  Same as above. But using the builtin function  <code>+</code></p>
-<p>Exercises:
-<pre class="highlight"><code class="language-clj">(map {:a 1 :b 2 :c 3} [:a :b :c :d])</code></pre>
-What would this evaluate to:
-<pre class="highlight"><code class="language-clj">(map count (map str (map inc [9 99 999])))</code></pre></p>
+  (+ a b))
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Evaluates To</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>(map add [1 2 3] [4 5 6])</code></td>
+<td><code>(5 7 9)</code></td>
+<td>Applies  <code>add</code> to pairs of elements.<br>Think <code>[(add 1 4) (add 2 5) (add 3 6)]</code>, except<br>result is a list</td>
+</tr>
+<tr>
+<td><code>(map + [1 2 3] [4 5 6])</code></td>
+<td><code>(5 7 9)</code></td>
+<td>Same as above. But using the builtin function  <code>+</code></td>
+</tr>
+</tbody>
+</table>
+<p>Exercises:</p>
+<pre><code class="clj">(map {:a 1 :b 2 :c 3} [:a :b :c :d])
+</code></pre>
+
+<p>What would this evaluate to:</p>
+<pre><code class="clj">(map count (map str (map inc [9 99 999])))
+</code></pre>
+
 <p>XXX Live coding here.</p>
 <h2 id="reduce"><code>reduce</code><a class="headerlink" href="#reduce" title="Permanent link">&para;</a></h2>
 <p>In the functional world, <code>reduce</code> is part 600 pound gorilla, part swiss arm knife. </p>
@@ -2540,9 +2638,10 @@ What would this evaluate to:
 <li>the initial state of the accumulation</li>
 <li>a collection to accumulate "across"</li>
 </ul>
-<pre class="highlight"><code class="language-clj">(reduce +          ;; accumulating with `+` 
+<pre><code class="clj">(reduce +          ;; accumulating with `+` 
         0          ;; initial state of accumulation 
-        [1 2 4])   ;; the collection to accumulate across, element by element</code></pre>
+        [1 2 4])   ;; the collection to accumulate across, element by element
+</code></pre>
 
 <p>The accumulation function, <code>+</code> in the example above, must accept two arguments: </p>
 <ul>
@@ -2551,9 +2650,11 @@ What would this evaluate to:
 </ul>
 <p>The accumulation function should combine the current, running accumulation, with the new element, and return an updated accumulation. <code>+</code> works because it can take two arguments and it will return a new accumulation of the two.</p>
 <p>Because there are three elements in our example collection  <code>[1 2 4]</code>, there are three steps in the reduction. If our collection had 100 elements, there would be 100 steps in the reduction.</p>
-<p>This is effectively what reduce will compute for the example above: 
-<pre class="highlight"><code class="language-clj">(+ (+ (+ 0 1) 2) 4)</code></pre>
-evaluates to <code>7</code> and, in this case <code>reduce</code>, is effectively summing the collection </p>
+<p>This is effectively what reduce will compute for the example above: </p>
+<pre><code class="clj">(+ (+ (+ 0 1) 2) 4)
+</code></pre>
+
+<p>evaluates to <code>7</code> and, in this case <code>reduce</code>, is effectively summing the collection </p>
 <p>Or, to explain the three steps another way: </p>
 <table>
 <thead>
@@ -2589,27 +2690,37 @@ evaluates to <code>7</code> and, in this case <code>reduce</code>, is effectivel
 </tr>
 </tbody>
 </table>
-<p>Next example: we create this accumulation function:
-<pre class="highlight"><code class="language-clj">(defn max
+<p>Next example: we create this accumulation function:</p>
+<pre><code class="clj">(defn max
   [a b]
-  (if (&gt; a b) a b))</code></pre>
-Then we use that function with a reduce:
-<pre class="highlight"><code class="language-clj">(reduce max        ;; accumulating with `max` 
+  (if (&gt; a b) a b))
+</code></pre>
+
+<p>Then we use that function with a reduce:</p>
+<pre><code class="clj">(reduce max        ;; accumulating with `max` 
         0          ;; initial accumulation  (maximum)
-        [1 2 4])   ;; the collection to process</code></pre></p>
-<p>Effectively, what gets evaluated:
-<pre class="highlight"><code class="language-clj">(max (max (max 0 1) 2) 4)</code></pre></p>
-<p>How about this one:
-<pre class="highlight"><code class="language-clj">(reduce str        ;; accumulating with the builtin `str` 
+        [1 2 4])   ;; the collection to process
+</code></pre>
+
+<p>Effectively, what gets evaluated:</p>
+<pre><code class="clj">(max (max (max 0 1) 2) 4)
+</code></pre>
+
+<p>How about this one:</p>
+<pre><code class="clj">(reduce str        ;; accumulating with the builtin `str` 
         0          
-        [1 2 4])   </code></pre>
-We "accumulate" a string</p>
-<p>How about this one:
-<pre class="highlight"><code class="language-clj">(reduce conj        ;; &lt;--- `conj` is a builtin too
+        [1 2 4])   
+</code></pre>
+
+<p>We "accumulate" a string</p>
+<p>How about this one:</p>
+<pre><code class="clj">(reduce conj        ;; &lt;--- `conj` is a builtin too
         []          ;; &lt;--- empty vector
-        [1 2 4])   </code></pre></p>
-<p>Or this one: 
-<pre class="highlight"><code class="language-clj">(defn only-odd
+        [1 2 4])   
+</code></pre>
+
+<p>Or this one: </p>
+<pre><code class="clj">(defn only-odd
   [accumulation val]            ;; &lt;-- accumulated value, new value
   (if (even? val) 
     accumulation 
@@ -2617,7 +2728,9 @@ We "accumulate" a string</p>
 
 (reduce only-odd  
         []             ;; &lt;--- start with an empty vector
-        [1 2 3 4 5 6])   </code></pre></p>
+        [1 2 3 4 5 6])   
+</code></pre>
+
 <h2 id="the-arrow-macros">The Arrow Macros<a class="headerlink" href="#the-arrow-macros" title="Permanent link">&para;</a></h2>
 <p>Clojure has an advanced feature called <code>macros</code> which we'll review now,
 because you need to understand their impact.</p>
@@ -2631,13 +2744,17 @@ This property means a function can take your code (which is just data, remember)
 And <strong>that</strong> is how a macro rewrites your code - it is a function that runs at compile time.</p>
 <p>The key takeaway is that macros rewrite your code in useful ways.</p>
 <h2 id="thread-first-macro-">Thread First Macro <code>-&gt;</code><a class="headerlink" href="#thread-first-macro-" title="Permanent link">&para;</a></h2>
-<p>Let's talk examples ... here's a deeply nested arrangement of forms we talked about earlier: 
-<pre class="highlight"><code class="language-clj">(+ (+ (+ 0 1) 2) 4)</code></pre>
-Deeply nested forms, like this, are often rewritten using the <code>thread first</code> macro <code>-&gt;</code>:
-<pre class="highlight"><code class="language-clj">(-&gt; (+ 0 1)   ; (+ 0 1)
+<p>Let's talk examples ... here's a deeply nested arrangement of forms we talked about earlier: </p>
+<pre><code class="clj">(+ (+ (+ 0 1) 2) 4)
+</code></pre>
+
+<p>Deeply nested forms, like this, are often rewritten using the <code>thread first</code> macro <code>-&gt;</code>:</p>
+<pre><code class="clj">(-&gt; (+ 0 1)   ; (+ 0 1)
     (+ 2)     ; (+ (+ 0 1) 2)
-    (+ 4)))   ; (+ (+ (+ 0 1) 2) 4)</code></pre>
-<code>-&gt;</code> is a symbol and it is the first element in a form  <code>(-&gt; ...)</code>. 
+    (+ 4)))   ; (+ (+ (+ 0 1) 2) 4)
+</code></pre>
+
+<p><code>-&gt;</code> is a symbol and it is the first element in a form  <code>(-&gt; ...)</code>. 
 So, this is a function call and the symbol <code>-&gt;</code> is bound to the function to be called, a bit 
 like <code>(+ ...)</code>. And, in this example, the function call has three actual arguments - I can see three forms. 
 But this <code>-&gt;</code> function is <strong><em>actually</em></strong> getting called at compile time, not run time. 
@@ -2652,11 +2769,13 @@ And this <code>thread first</code> function (marco) will rewrite/reorganise the 
 <p>Notice how the value for the previous form's evaluation is always "threaded" into the form below as the 1st argument. Hence the name "thread first macro".</p>
 <p>Deeply nested forms can be a bit hard to read, so the <code>thread first</code> macro arrangement allows you to visualise the computation as a cascading data flow.
 It is as if the evaluation of the higher form is "flowing down" and into the form underneath. That's a useful mental model for many. </p>
-<p>How about this use of <code>-&gt;</code>:
-<pre class="highlight"><code class="language-clj">(-&gt; {}
+<p>How about this use of <code>-&gt;</code>:</p>
+<pre><code class="clj">(-&gt; {}
     (assoc :a 1)    ; (assoc {} :a 1)
-    (assoc :b 2))   ; (assoc (assoc {} :a 1) :b 2)</code></pre>
-Read that as:</p>
+    (assoc :b 2))   ; (assoc (assoc {} :a 1) :b 2)
+</code></pre>
+
+<p>Read that as:</p>
 <ol>
 <li>First, <code>{}</code> is evaluated to  <code>{}</code> </li>
 <li>Then that value becomes the 1st argument to the next form down creating  <code>(assoc {} :a 1)</code> </li>
@@ -2664,24 +2783,32 @@ Read that as:</p>
 <li>The entire form evaluates to <code>{:a 1 :b 2}</code> </li>
 </ol>
 <p>Now, we could choose to simply write it the deeply nested way ourselves, of course, but humans seem to better understand the "data flow" version more than the nested forms version. </p>
-<p>Work out the evaluation of:
-<pre class="highlight"><code class="language-clj">(-&gt; {:a {:aa 11}} 
+<p>Work out the evaluation of:</p>
+<pre><code class="clj">(-&gt; {:a {:aa 11}} 
     :a               ;; same as (:a)
-    :aa)             ;; same as (:aa)</code></pre></p>
+    :aa)             ;; same as (:aa)
+</code></pre>
+
 <p><code>-&gt;</code> belongs to a small family of marcos. Another one is the <code>thread last</code> macro <code>-&gt;&gt;</code>.  It operates the same way except it threads the value as the argument in the last position, not the first.</p>
 <h2 id="thread-last-macro-">Thread Last Macro <code>-&gt;&gt;</code><a class="headerlink" href="#thread-last-macro-" title="Permanent link">&para;</a></h2>
-<p>Do you remember this nested form example from earlier:
-<pre class="highlight"><code class="language-clj">(map count (map str (map inc [9 99 999])))</code></pre></p>
-<p>This can be rewritten using the "thread last" macro <code>-&gt;&gt;</code>:
-<pre class="highlight"><code class="language-clj">(-&gt;&gt; [9 99 999]
+<p>Do you remember this nested form example from earlier:</p>
+<pre><code class="clj">(map count (map str (map inc [9 99 999])))
+</code></pre>
+
+<p>This can be rewritten using the "thread last" macro <code>-&gt;&gt;</code>:</p>
+<pre><code class="clj">(-&gt;&gt; [9 99 999]
     (map inc)      ; (map inc [9 99 999])    
     (map str)      ; (map str (map inc [9 99 999]))
-    (map count))   ; (map count (map str (map inc [9 99 999])))</code></pre>
-With <code>thread last</code> the evaluation of the previous form is threaded into the next form as the <strong>last</strong> argument (not the first). </p>
-<p>Work out the evaluation of:
-<pre class="highlight"><code class="language-clj">(-&gt;&gt; (range 10)      ; (range 10)
+    (map count))   ; (map count (map str (map inc [9 99 999])))
+</code></pre>
+
+<p>With <code>thread last</code> the evaluation of the previous form is threaded into the next form as the <strong>last</strong> argument (not the first). </p>
+<p>Work out the evaluation of:</p>
+<pre><code class="clj">(-&gt;&gt; (range 10)      ; (range 10)
      (map inc)       ; (map inc (range 10))
-     (filter odd?))  ; (filter odd? (map inc (range 10))</code></pre></p>
+     (filter odd?))  ; (filter odd? (map inc (range 10))
+</code></pre>
+
 <h2 id="the-hard-bit">The Hard Bit<a class="headerlink" href="#the-hard-bit" title="Permanent link">&para;</a></h2>
 <p>The learning curve so far as been gentle. Clojure has simple syntax and simple evaluation semantics. </p>
 <p>The steeper part of the Clojure learning curve, and the part that takes most of the time to master,
@@ -2695,17 +2822,21 @@ this paradigm change takes time to click.</p>
 <p>But you can create a revision (a copy) of that data, which is modified in some way. 
 The original data is untouched. But, then, you 
 can't change this revision either. But, you can create a further revision (copy) of the revision, etc. </p>
-<p>Let's see this in action. Evaluate the following: 
-<pre class="highlight"><code class="language-clj">(let [car1  {:doors 2}                 ; an original hashmap 
+<p>Let's see this in action. Evaluate the following: </p>
+<pre><code class="clj">(let [car1  {:doors 2}                 ; an original hashmap 
       car2  (assoc car1 :seats 4)      ; add a key/value pair, a new revision is created
       car3  (assoc car2 :engine :big)] ; add a key/value pair, a new revision is created
-  [car1 car2 car3])                    ; the value associated with car1 is untouched</code></pre>
-you'll see a vector of three values <code>[{:doors 2} {:doors 2, :seats 4}  {:doors 2, :seats 4, :engine :big} ]</code>. </p>
+  [car1 car2 car3])                    ; the value associated with car1 is untouched
+</code></pre>
+
+<p>you'll see a vector of three values <code>[{:doors 2} {:doors 2, :seats 4}  {:doors 2, :seats 4, :engine :big} ]</code>. </p>
 <p>Notice how <code>car1</code> is unchanged, even though we did an <code>assoc</code> into <code>car1</code> . Same with XXXXXXXXX</p>
 <p>When you are used to imperative, in-place modification of data, it can initially be mysterfying as to how you can achieve anything. Rest assured, you can. </p>
-<p>More experiments. If we evaluate this:
-<pre class="highlight"><code class="language-cljs">(assoc (assoc score :c 3) :d 4)</code></pre>
-there will be three revisions of a hashmap. The original one bound to  <code>score</code> which is  <code>{:a 1 :b 2}</code>. Then there's the one which results from <code>(assoc score :c 3)</code>. And then there is the final one <code>{:a 1 :b 2 :c 3 :d 4}</code>. </p>
+<p>More experiments. If we evaluate this:</p>
+<pre><code class="cljs">(assoc (assoc score :c 3) :d 4)
+</code></pre>
+
+<p>there will be three revisions of a hashmap. The original one bound to  <code>score</code> which is  <code>{:a 1 :b 2}</code>. Then there's the one which results from <code>(assoc score :c 3)</code>. And then there is the final one <code>{:a 1 :b 2 :c 3 :d 4}</code>. </p>
 <p>If you are new to Immutable Data, you probably have two concerns:</p>
 <ol>
 <li>Surely this is inefficient?  Don't worry, via clever algorithms, efficiency is seldom an issue.</li>
@@ -2713,15 +2844,19 @@ there will be three revisions of a hashmap. The original one bound to  <code>sco
 </ol>
 <p>Using Immutable data dovetails with pure functions, to reduce cognitive load and bring a great simplicity to your programming. </p>
 <p>All grand claims. We'll need to see how this plays out in bigger programs. </p>
-<p>Evaluate the following: 
-<pre class="highlight"><code class="language-clj">(let [car1   {:doors 2}                 ;; original hashmap
+<p>Evaluate the following: </p>
+<pre><code class="clj">(let [car1   {:doors 2}                 ;; original hashmap
       car2   (assoc car1 :doors 4)      ;; new value for :doors 
       car3   (assoc car2 :doors 2)]     ;; back to the original value of 2
-  [(= car1 car3) (identical? car1 car3)])   ;; identical? tests if two pieces of data at the same piece</code></pre></p>
-<p>Evaluate the following: 
-<pre class="highlight"><code class="language-clj">(let [car1   {:doors 2}                 ;; this hashmap can't be changed
+  [(= car1 car3) (identical? car1 car3)])   ;; identical? tests if two pieces of data at the same piece
+</code></pre>
+
+<p>Evaluate the following: </p>
+<pre><code class="clj">(let [car1   {:doors 2}                 ;; this hashmap can't be changed
       car2   (assoc car1 :doors 2)]     ;; wait on, same values!!! 
-  (identical? car1 car2))               ;; identical? tests if two pieces of data at the same</code></pre></p>
+  (identical? car1 car2))               ;; identical? tests if two pieces of data at the same
+</code></pre>
+
 <p>XXX boolean and and or ???  https://j19sch.github.io/blog/clj3-and-or-being-weird/</p>
 <p>XXX destructuring ??  Later</p>
 <p>XXX interop ?? Mention ??</p>

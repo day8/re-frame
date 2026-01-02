@@ -1632,18 +1632,28 @@ And, second, inspecting via a REPL might be clumsy. </p>
 <p>Instead, you probably want to inspect a part of <code>app-db</code>. <strong>And</strong> you probably want 
 to inspect it directly in the GUI itself, not off in a REPL. </p>
 <p>Here is a useful technique from @escherize. Add something like this to 
-the hiccup of your view ...
-<pre class="highlight"><code class="language-clj">[:pre (with-out-str (pprint @interesting))] </code></pre>
-This assumes that <code>@interesting</code> is the value (ratom or subscription)
+the hiccup of your view ...</p>
+<pre><code class="clj">[:pre (with-out-str (pprint @interesting))] 
+</code></pre>
+
+<p>This assumes that <code>@interesting</code> is the value (ratom or subscription)
 you want to observe (note the @ in front).</p>
-<p><code>pprint</code> output is nice to read, but not compact. For a more compact view, do this: 
-<pre class="highlight"><code class="language-clj">[:pre (pr-str @some-atom)]   ;; NB: using pr-str instead of pprint</code></pre></p>
-<p>If you choose to use <code>pprint</code> then you'll need to <code>require</code> it within the <code>ns</code> of your <code>view.cljs</code>:
-<pre class="highlight"><code class="language-clj">[cljs.pprint :refer [pprint]]</code></pre></p>
-<p>Finally, combining the short and long answers, you could even do this:
-<pre class="highlight"><code class="language-clj">[:pre (with-out-str (pprint @re-frame.db/app-db))]    ;; see everything!</code></pre>
-or 
-<pre class="highlight"><code class="language-clj">[:pre (with-out-str (pprint (:part @re-frame.db/app-db)))]    ;; see a part of it!</code></pre></p>
+<p><code>pprint</code> output is nice to read, but not compact. For a more compact view, do this: </p>
+<pre><code class="clj">[:pre (pr-str @some-atom)]   ;; NB: using pr-str instead of pprint
+</code></pre>
+
+<p>If you choose to use <code>pprint</code> then you'll need to <code>require</code> it within the <code>ns</code> of your <code>view.cljs</code>:</p>
+<pre><code class="clj">[cljs.pprint :refer [pprint]]
+</code></pre>
+
+<p>Finally, combining the short and long answers, you could even do this:</p>
+<pre><code class="clj">[:pre (with-out-str (pprint @re-frame.db/app-db))]    ;; see everything!
+</code></pre>
+
+<p>or </p>
+<pre><code class="clj">[:pre (with-out-str (pprint (:part @re-frame.db/app-db)))]    ;; see a part of it!
+</code></pre>
+
 <p>You definitely have <a href="https://github.com/binaryage/cljs-devtools">clj-devtools</a> installed now, right?</p>
 <h2 id="other-inspection-tools">Other Inspection Tools<a class="headerlink" href="#other-inspection-tools" title="Permanent link">&para;</a></h2>
 <p>Another very strong tool is <a href="https://github.com/flexsurfer/re-frisk">re-Frisk</a> which 

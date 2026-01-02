@@ -1752,30 +1752,36 @@ they need to first know the current state of the world. </p>
 as they need to know about. To make this common case easy to program, 
 there's a specific registration function, called <code>reg-event-db</code>,
 which delivers ONLY the coeffect <code>db</code> to the event handler  (and <code>event</code> of course). </p>
-<p>Such an event handler will have this signature:
-<pre class="highlight"><code class="language-clj">(fn [db event] 
-   ... return updated db)</code></pre></p>
+<p>Such an event handler will have this signature:</p>
+<pre><code class="clj">(fn [db event] 
+   ... return updated db)
+</code></pre>
+
 <p>But event handlers sometimes need to know more about the world OR have more inputs 
 than just application state. Sometimes they need "inputs" like a random number, or a GUID,
 or the current datetime. Perhaps they need access to LocalStore, or Cookies, or a
 DataScript connection.</p>
 <p>We refer to these inputs collectively as the event handler's <code>coeffects</code>.  When more than
 application state is needed, we use the registration function <code>reg-event-fx</code> and the event handler has
-a signature like this:
-<pre class="highlight"><code class="language-clj">(fn [coeffects event]     ;; first arg is often abbreviated to cofx 
-    ... return a map of effects)</code></pre></p>
+a signature like this:</p>
+<pre><code class="clj">(fn [coeffects event]     ;; first arg is often abbreviated to cofx 
+    ... return a map of effects)
+</code></pre>
+
 <p>Notice how previously the first arg was <code>db</code> and now it is <code>coeffects</code>.  <code>coeffects</code> is a map, and it contains a 
 <code>:db</code> key which is the current application state. But it can contain other keys holding data about other aspects of 
 the world. So <code>coeffects</code> is a superset of <code>db</code>. It is a bigger world to compute against. </p>
 <h2 id="a-motivating-example">A Motivating Example<a class="headerlink" href="#a-motivating-example" title="Permanent link">&para;</a></h2>
 <p>Imagine you had an event handler which needed to "know" a value in LocalStore, in order to
 compute an event's effect. </p>
-<p>It could be written to access data directly from LocalStore:
-<pre class="highlight"><code class="language-clj">(reg-event-db
+<p>It could be written to access data directly from LocalStore:</p>
+<pre><code class="clj">(reg-event-db
    :load-defaults
    (fn [db _]
-     (let [val (js-&gt;clj (.getItem js/localStorage "defaults-key"))]  ;; &lt;-- Problem
-       (assoc db :defaults val))))</code></pre></p>
+     (let [val (js-&gt;clj (.getItem js/localStorage &quot;defaults-key&quot;))]  ;; &lt;-- Problem
+       (assoc db :defaults val))))
+</code></pre>
+
 <p>This works, but there's a cost.</p>
 <p>Because it has directly accessed LocalStore, this event handler is not
 pure, and impure functions cause well-documented paper cuts, and paper cuts
@@ -1791,13 +1797,15 @@ get two arguments, but the first is not <code>db</code>. Instead it
 is an argument which we will call <code>cofx</code> (that's a nice distinct
 name which will aid communication).</p>
 <p>Previous tutorials showed there's a <code>:db</code> key in <code>cofx</code>.  We
-now want <code>cofx</code> to have other keys and values, like this:
-<pre class="highlight"><code class="language-clj">(reg-event-fx                     ;; note: -fx
+now want <code>cofx</code> to have other keys and values, like this:</p>
+<pre><code class="clj">(reg-event-fx                     ;; note: -fx
    :load-defaults
    (fn [cofx event]                 ;; cofx means coeffects
      (let [val (:local-store cofx)  ;; &lt;-- get data from cofx
            db  (:db cofx)]          ;; &lt;-- more data from cofx
-       {:db (assoc db :defaults val)}))) ;; returns an effect</code></pre></p>
+       {:db (assoc db :defaults val)}))) ;; returns an effect
+</code></pre>
+
 <p>Notice how <code>cofx</code> magically contains a <code>:local-store</code> key with the
 right value. Nice! But how do we make this magic happen?</p>
 <h2 id="abracadabra">Abracadabra<a class="headerlink" href="#abracadabra" title="Permanent link">&para;</a></h2>
@@ -1817,14 +1825,16 @@ So, it is the event handler's Interceptor chain which can add to the "world" eve
 <h2 id="which-interceptors">Which Interceptors?<a class="headerlink" href="#which-interceptors" title="Permanent link">&para;</a></h2>
 <p>If Interceptors put data in <code>:coeffects</code>, then we'll need to add the right ones
 when we register our event handler.</p>
-<p>Something like this (this handler is the same as before, except for one detail):
-<pre class="highlight"><code class="language-clj">(reg-event-fx
+<p>Something like this (this handler is the same as before, except for one detail):</p>
+<pre><code class="clj">(reg-event-fx
    :load-defaults
-   [ (inject-cofx :local-store "defaults-key") ]     ;; &lt;-- this is new
+   [ (inject-cofx :local-store &quot;defaults-key&quot;) ]     ;; &lt;-- this is new
    (fn [cofx event]
      (let [val (:local-store cofx)
            db  (:db cofx)]
-       {:db (assoc db :defaults val)})))</code></pre></p>
+       {:db (assoc db :defaults val)})))
+</code></pre>
+
 <p>Look at that - my event handler now has a new Interceptor which will inject (assoc) the
 right key/value pair (<code>:local-store</code>)
 into <code>context's</code> <code>:coeffects</code>, which itself is the map which goes on to be the first argument
@@ -1844,12 +1854,14 @@ was "defaults-key" which was presumably the LocalStore key.</p>
 <li><code>(inject-cofx :guid)</code></li>
 <li><code>(inject-cofx :now)</code></li>
 </ul>
-<p>I could create an event handler which has access to 3 coeffects:
-<pre class="highlight"><code class="language-clj">(reg-event-fx
+<p>I could create an event handler which has access to 3 coeffects:</p>
+<pre><code class="clj">(reg-event-fx
     :some-id
-    [(inject-cofx :random-int 10) (inject-cofx :now)  (inject-cofx :local-store "blah")]  ;; 3
+    [(inject-cofx :random-int 10) (inject-cofx :now)  (inject-cofx :local-store &quot;blah&quot;)]  ;; 3
     (fn [cofx _]
-       ... in here I can access cofx's keys :now :local-store and :random-int))</code></pre></p>
+       ... in here I can access cofx's keys :now :local-store and :random-int))
+</code></pre>
+
 <p>But that's probably just greedy. </p>
 <p>And so, to the final piece in the puzzle: how does <code>inject-cofx</code>
 know what to do when it is given <code>:now</code> or <code>:local-store</code>?
@@ -1866,11 +1878,13 @@ handler function that injects the right key/value pair.</p>
 <p>and it is expected to return a modified <code>:coeffects</code> map.</p>
 <h2 id="example-of-reg-cofx">Example Of <code>reg-cofx</code><a class="headerlink" href="#example-of-reg-cofx" title="Permanent link">&para;</a></h2>
 <p>Above, we wrote an event handler that wanted <code>:now</code> data to be available.  Here
-is how a handler could be registered for <code>:now</code>:
-<pre class="highlight"><code class="language-clj">(reg-cofx               ;; registration function
+is how a handler could be registered for <code>:now</code>:</p>
+<pre><code class="clj">(reg-cofx               ;; registration function
    :now                 ;; what cofx-id are we registering
    (fn [coeffects _]    ;; second parameter not used in this case
-      (assoc coeffects :now (js.Date.))))   ;; add :now key, with value</code></pre></p>
+      (assoc coeffects :now (js.Date.))))   ;; add :now key, with value
+</code></pre>
+
 <p>The outcome is:</p>
 <ol>
 <li>because that cofx handler above is now registered for <code>:now</code>, I can</li>
@@ -1880,13 +1894,15 @@ is how a handler could be registered for <code>:now</code>:
 </ol>
 <p>As a result, my event handler is pure.</p>
 <h2 id="another-example-of-reg-cofx">Another Example Of <code>reg-cofx</code><a class="headerlink" href="#another-example-of-reg-cofx" title="Permanent link">&para;</a></h2>
-<p>This:
-<pre class="highlight"><code class="language-clj">(reg-cofx               ;; new registration function
+<p>This:</p>
+<pre><code class="clj">(reg-cofx               ;; new registration function
    :local-store
    (fn [coeffects local-store-key]
       (assoc coeffects
              :local-store
-             (js-&gt;clj (.getItem js/localStorage local-store-key)))))</code></pre></p>
+             (js-&gt;clj (.getItem js/localStorage local-store-key)))))
+</code></pre>
+
 <p>With these two registrations in place, I could now use both <code>(inject-cofx :now)</code> and
 <code>(inject-cofx :local-store "blah")</code> in an event handler's interceptor chain.</p>
 <p>To put this another way:  I can't use <code>(inject-cofx :blah)</code> UNLESS I have previously
@@ -1908,20 +1924,24 @@ registration functions and have them auto insert the DataScript connection.</p>
 <p>During testing, you may want to stub out certain coeffects.</p>
 <p>You may, for example, want to test that an event handler works
 using a specific <code>now</code>.</p>
-<p>In your test, you'd mock out the cofx handler:
-<pre class="highlight"><code class="language-clj">(reg-cofx
+<p>In your test, you'd mock out the cofx handler:</p>
+<pre><code class="clj">(reg-cofx
    :now
    (fn [coeffects _]
-      (assoc coeffects :now (js/Date. 2016 1 1)))   ;; then is `:now`</code></pre></p>
+      (assoc coeffects :now (js/Date. 2016 1 1)))   ;; then is `:now`
+</code></pre>
+
 <p>If your test does alter registered coeffect handlers, and you are using <code>cljs.test</code>,
-then you can use a <code>fixture</code> to restore all coeffects at the end of your test:
-<pre class="highlight"><code class="language-clj">(defn fixture-re-frame
+then you can use a <code>fixture</code> to restore all coeffects at the end of your test:</p>
+<pre><code class="clj">(defn fixture-re-frame
   []
   (let [restore-re-frame (atom nil)]
     {:before #(reset! restore-re-frame (re-frame.core/make-restore-fn))
      :after  #(@restore-re-frame)}))
 
-(use-fixtures :each (fixture-re-frame))</code></pre></p>
+(use-fixtures :each (fixture-re-frame))
+</code></pre>
+
 <p><code>re-frame.core/make-restore-fn</code> creates a checkpoint for re-frame state (including
 registered handlers) to which you can return.</p>
 <h2 id="the-5-point-summary">The 5 Point Summary<a class="headerlink" href="#the-5-point-summary" title="Permanent link">&para;</a></h2>

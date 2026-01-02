@@ -1564,15 +1564,16 @@
   </div>
 </div>
 
-<pre class="highlight"><code>(defn square 
+<pre><code>(defn square 
    [colour size]
    [:div {:style 
-            {:width (str (or size "20") "px")
-             :height (str (or size "20") "px")
-             :display "inline-block"
+            {:width (str (or size &quot;20&quot;) &quot;px&quot;)
+             :height (str (or size &quot;20&quot;) &quot;px&quot;)
+             :display &quot;inline-block&quot;
              :background-color colour}}])
 
-[:div [square "blue" 40] [square "green"]]</code></pre>
+[:div [square &quot;blue&quot; 40] [square &quot;green&quot;]]
+</code></pre>
 
 <p>XXX work from </p>
 <h2 id="atoms">Atoms<a class="headerlink" href="#atoms" title="Permanent link">&para;</a></h2>

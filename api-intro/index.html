@@ -1623,11 +1623,13 @@
 <p>Please review both the <a href="http://day8.github.io/re-frame/releases/2022">releases page</a> and the <a href="https://clojars.org/re-frame/">Clojars page</a> to discover the version you should be using. </p>
 <h2 id="using-re-frame">Using re-frame<a class="headerlink" href="#using-re-frame" title="Permanent link">&para;</a></h2>
 <p>To use the re-frame API within your namespace, you'll 
-need to <code>require</code> it, perhaps like this:
-<pre class="highlight"><code class="language-clj">(ns my-app.some-namespace
+need to <code>require</code> it, perhaps like this:</p>
+<pre><code class="clj">(ns my-app.some-namespace
   (:require [re-frame.core :as rf]))
 
-;; your code here</code></pre></p>
+;; your code here
+</code></pre>
+
 <p>You'll then be able to use the functions in the API, perhaps like this: <code>rf/dispatch</code>.</p>
 <h2 id="the-most-commonly-used-part-of-the-api">The Most Commonly Used Part Of The API<a class="headerlink" href="#the-most-commonly-used-part-of-the-api" title="Permanent link">&para;</a></h2>
 <p>When you are writing <code>View Functions</code>: </p>

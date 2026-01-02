@@ -1670,29 +1670,33 @@
 <p>Views should only compute hiccup. A view shouldn't process input data. The subscriptions it uses should 
 deliver the data already in the right structure, ready for use in hiccup generation.</p>
 </div>
-<p>The "simple" app contained this code:
-<pre class="highlight"><code class="language-clj">(defn clock
+<p>The "simple" app contained this code:</p>
+<pre><code class="clj">(defn clock
   []
   (let [colour @(rf/subscribe [:time-color])
         time   (-&gt; @(rf/subscribe [:time])
                  .toTimeString
-                 (clojure.string/split " ")
+                 (clojure.string/split &quot; &quot;)
                  first)]
-    [:div.example-clock {:style {:color colour}} time]))</code></pre></p>
+    [:div.example-clock {:style {:color colour}} time]))
+</code></pre>
+
 <p>That view obtains data from a <code>[:time]</code> subscription and then it 
 further processes that data into the form it needs for use in the hiccup.
 We don't like that. </p>
 <h2 id="the-solution">The Solution<a class="headerlink" href="#the-solution" title="Permanent link">&para;</a></h2>
 <p>We're going to rewrite this slightly. </p>
 <p>We will create a new <code>[:time-str]</code> subscription which will deliver the right data to the view, ready to go, so 
-the view is 100% concerned with hiccup generation only. Maybe, like this:
-<pre class="highlight"><code class="language-clj">(defn clock
+the view is 100% concerned with hiccup generation only. Maybe, like this:</p>
+<pre><code class="clj">(defn clock
   []
   [:div.example-clock
    {:style {:color @(rf/subscribe [:time-color])}}
-   @(rf/subscribe [:time-str])])</code></pre></p>
-<p>So, we'll add this <code>time-str</code> subscription handler:
-<pre class="highlight"><code class="language-clj">(reg-sub 
+   @(rf/subscribe [:time-str])])
+</code></pre>
+
+<p>So, we'll add this <code>time-str</code> subscription handler:</p>
+<pre><code class="clj">(reg-sub 
   :time-str 
 
   ;; signals function 
@@ -1703,12 +1707,14 @@ the view is 100% concerned with hiccup generation only. Maybe, like this:
   (fn [t _] 
     (-&gt; t
        .toTimeString
-       (clojure.string/split " ")
-       first)))</code></pre></p>
+       (clojure.string/split &quot; &quot;)
+       first)))
+</code></pre>
+
 <p>Now the subscription does the computation, not the view. Much better. </p>
 <p>You'll notice this new subscription handler belongs to <code>Layer 3</code> (Materialised View) of the <code>Signal Graph</code>. </p>
-<p>We could rewrite it to use the <code>:&lt;-</code> syntactic sugar:
-<pre class="highlight"><code class="language-clj">(reg-sub 
+<p>We could rewrite it to use the <code>:&lt;-</code> syntactic sugar:</p>
+<pre><code class="clj">(reg-sub 
   :time-str 
 
   :&lt;- [:time]    ;; &lt;-- this is syntactic sugar for signals function
@@ -1716,62 +1722,77 @@ the view is 100% concerned with hiccup generation only. Maybe, like this:
   (fn [t _] 
     (-&gt; t
        .toTimeString
-       (clojure.string/split " ")
-       first)))</code></pre></p>
+       (clojure.string/split &quot; &quot;)
+       first)))
+</code></pre>
+
 <h3 id="another-technique">Another Technique<a class="headerlink" href="#another-technique" title="Permanent link">&para;</a></h3>
-<p>Above, I suggested this:
-<pre class="highlight"><code class="language-clj">(defn clock
+<p>Above, I suggested this:</p>
+<pre><code class="clj">(defn clock
   []
   [:div.example-clock
    {:style {:color @(rf/subscribe [:time-color])}}
-   @(rf/subscribe [:time-str])])</code></pre></p>
+   @(rf/subscribe [:time-str])])
+</code></pre>
+
 <p>But that may offend your finely tuned aesthetics. Too much noise with those two <code>@</code>? </p>
-<p>To clean this up, we could define a new <code>listen</code> function: 
-<pre class="highlight"><code class="language-clj">(defn listen 
+<p>To clean this up, we could define a new <code>listen</code> function: </p>
+<pre><code class="clj">(defn listen 
   [query-v]
-  @(rf/subscribe query-v))</code></pre></p>
-<p>And then rewrite: 
-<pre class="highlight"><code class="language-clj">(defn clock
+  @(rf/subscribe query-v))
+</code></pre>
+
+<p>And then rewrite: </p>
+<pre><code class="clj">(defn clock
   []
   [:div.example-clock
    {:style {:color (listen [:time-color])}}
-   (listen [:time-str])])</code></pre>
-So, at the cost of writing your own function, <code>listen</code>, the code is now less noisy 
+   (listen [:time-str])])
+</code></pre>
+
+<p>So, at the cost of writing your own function, <code>listen</code>, the code is now less noisy 
 AND there's less chance of us forgetting an <code>@</code> (which can lead to odd problems).</p>
 <p><code>listen</code> would obviously be useful in every View, not just this one. </p>
 <h2 id="lambdaisland-naming-lin">LambdaIsland Naming  (LIN)<a class="headerlink" href="#lambdaisland-naming-lin" title="Permanent link">&para;</a></h2>
 <p>I ended up quite liking <a href="https://lambdaisland.com/blog/11-02-2017-re-frame-form-1-subscriptions">the alternative names</a> 
 suggested by <a href="https://lambdaisland.com/">Lambda Island Videos</a>:</p>
-<pre class="highlight"><code class="language-clj">(def &lt;sub (comp deref re-frame.core/subscribe))   ;; same as `listen` (above)
-(def &gt;evt re-frame.core/dispatch)</code></pre>
+<pre><code class="clj">(def &lt;sub (comp deref re-frame.core/subscribe))   ;; same as `listen` (above)
+(def &gt;evt re-frame.core/dispatch)
+</code></pre>
 
 <h2 id="say-it-again">Say It Again<a class="headerlink" href="#say-it-again" title="Permanent link">&para;</a></h2>
-<p>So, using your new-found knowledge, if, in code review, you saw this view function:
-<pre class="highlight"><code class="language-clj">(defn show-items
+<p>So, using your new-found knowledge, if, in code review, you saw this view function:</p>
+<pre><code class="clj">(defn show-items
   []
   (let [sorted-items (sort @(subscribe [:items]))]  
-    (into [:div] (for [i sorted-items] [item-view i]))))</code></pre>
-What would you <s>leap on with a banshee scream</s> supportively object to?</p>
+    (into [:div] (for [i sorted-items] [item-view i]))))
+</code></pre>
+
+<p>What would you <s>leap on with a banshee scream</s> supportively object to?</p>
 <p>That <code>sort</code>, right?  Computation in the view. Instead, we want exactly the right data 
 delivered to the view - no further computation required - the view's job is to simply make <code>hiccup</code>. </p>
-<p>The solution is to create a subscription that delivers items already sorted. 
-<pre class="highlight"><code class="language-clj">(reg-sub 
+<p>The solution is to create a subscription that delivers items already sorted. </p>
+<pre><code class="clj">(reg-sub 
    :sorted-items 
    (fn [_ _]  (subscribe [:items]))
    (fn [items _]
-      (sort items))</code></pre></p>
+      (sort items))
+</code></pre>
+
 <p>Now, in this case the computation is a bit trivial, but the moment it is
 a little tricky, you'll want to test it.  So separating it out from the 
 view will make that easier. </p>
-<p>To make it testable, you may structure like this:
-<pre class="highlight"><code class="language-clj">(defn item-sorter
+<p>To make it testable, you may structure like this:</p>
+<pre><code class="clj">(defn item-sorter
   [items _]
   (sort items))
 
 (reg-sub 
    :sorted-items 
    (fn [_ _]  (subscribe [:items]))
-   item-sorter)</code></pre></p>
+   item-sorter)
+</code></pre>
+
 <p>Now it is easy to test <code>item-sorter</code> independently.  </p>
 <h2 id="the-other-benefit">The Other Benefit<a class="headerlink" href="#the-other-benefit" title="Permanent link">&para;</a></h2>
 <p>re-frame de-duplicates signal graph nodes.</p>
@@ -1791,26 +1812,31 @@ though they involve the same event id, <code>:some-event</code>, the query vecto
 <h2 id="a-final-faq">A Final FAQ<a class="headerlink" href="#a-final-faq" title="Permanent link">&para;</a></h2>
 <p>The following issue comes up a bit.</p>
 <p>You will end up with a bunch of <code>Layer 2</code> (extractor) <code>reg-sub</code>s which
-look the same (they all extract a path from <code>app-db</code>):
-<pre class="highlight"><code class="language-clj">(reg-sub 
+look the same (they all extract a path from <code>app-db</code>):</p>
+<pre><code class="clj">(reg-sub 
    :a 
    (fn [db _] 
-     (:a db)))</code></pre></p>
-<pre class="highlight"><code class="language-clj">(reg-sub 
+     (:a db)))
+</code></pre>
+
+<pre><code class="clj">(reg-sub 
    :b 
    (fn [db _] 
-     (-&gt; db :top :b)))</code></pre>
+     (-&gt; db :top :b)))
+</code></pre>
 
 <p>Now, you think and design abstractly for a living, and that repetition will feel uncomfortable. It will
 call to you like a Siren: "refaaaaactoooor meeeee". "Maaaake it DRYYYY".
 So here's my tip:  tie yourself to the mast and sail on. That repetition is good. It is serving a purpose.
 Just sail on.</p>
 <p>The WORST thing you can do is to flex your magnificent abstraction muscles 
-and create something like this:
-<pre class="highlight"><code class="language-clj">(reg-sub 
+and create something like this:</p>
+<pre><code class="clj">(reg-sub 
    :extract-any-path
    (fn [db path]
-     (get-in db path))</code></pre></p>
+     (get-in db path))
+</code></pre>
+
 <p>"Genius!", you think to yourself.  "Now I only need one direct <code>reg-sub</code> and I supply a path to it. 
 A read-only cursor of sorts.  Look at the code I can delete."</p>
 <p>Neat and minimal it most certainly is, yes, but genius it isn't, IMHO. You are now asking the 

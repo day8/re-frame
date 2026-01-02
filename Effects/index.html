@@ -1727,21 +1727,25 @@
 how you can create your own side effects, and how you can
 make side effects a noop in testing and event replays.</p>
 <h2 id="where-effects-come-from">Where Effects Come From<a class="headerlink" href="#where-effects-come-from" title="Permanent link">&para;</a></h2>
-<p>When an event handler is registered via <code>reg-event-fx</code>, it must return effects. Like this:
-<pre class="highlight"><code class="language-clj">(reg-event-fx              ;; -fx registration, not -db registration
+<p>When an event handler is registered via <code>reg-event-fx</code>, it must return effects. Like this:</p>
+<pre><code class="clj">(reg-event-fx              ;; -fx registration, not -db registration
   :my-event
   (fn [cofx [_ a]]        ;; 1st argument is coeffects, instead of db
     {:db       (assoc (:db cofx) :flag  a)
-     :fx       [[:dispatch [:do-something-else 3]]]})) ;; return effects</code></pre></p>
+     :fx       [[:dispatch [:do-something-else 3]]]})) ;; return effects
+</code></pre>
+
 <p><code>-fx</code> handlers return a description of the side-effects required, and that description is a map.</p>
 <h2 id="the-effects-map">The Effects Map<a class="headerlink" href="#the-effects-map" title="Permanent link">&para;</a></h2>
 <p>An effects map contains instructions.</p>
 <p>Each key/value pair in the map is one instruction - the key uniquely identifies
 the particular side effect required, and the value for that key provides
 further data. The type of value depends on the specific side-effect.</p>
-<p>Here's the two instructions from the example above:
-<pre class="highlight"><code class="language-clj">{:db       (assoc db :flag  a)         ;; side effect on app-db
- :fx       [[:dispatch [:do-something-else 3]]]}     ;; dispatch this event</code></pre></p>
+<p>Here's the two instructions from the example above:</p>
+<pre><code class="clj">{:db       (assoc db :flag  a)         ;; side effect on app-db
+ :fx       [[:dispatch [:do-something-else 3]]]}     ;; dispatch this event
+</code></pre>
+
 <p>The <code>:db</code> key instructs that "app-db" should be <code>reset!</code> to the
 value supplied.</p>
 <p>And the <code>:fx</code> key instructs that an ordered list of other effects should be
@@ -1762,19 +1766,23 @@ different combination.</p>
 your own side effects.</p>
 <h2 id="extensible-side-effects">Extensible Side Effects<a class="headerlink" href="#extensible-side-effects" title="Permanent link">&para;</a></h2>
 <p>re-frame provides a function <code>reg-fx</code> through which you can register
-your own <code>Effect Handlers</code>. Use it like this:
-<pre class="highlight"><code class="language-clj">(reg-fx         ;; &lt;-- registration function
+your own <code>Effect Handlers</code>. Use it like this:</p>
+<pre><code class="clj">(reg-fx         ;; &lt;-- registration function
    :butterfly   ;;  &lt;1&gt; effect key
    (fn [value]  ;;  &lt;2&gt; effect handler
       ...
-      ))</code></pre></p>
+      ))
+</code></pre>
+
 <p><strong>&lt;1&gt;</strong>  <strong>Effect Key</strong>  Later, when an effects map contains
 the key <code>:butterfly</code>, the function we are registering will be used to action it.</p>
 <p><strong>&lt;2&gt;</strong>  <strong>Effect handler</strong> The function which actions the side effect. Later, it will be called
 with one argument - the value associated with the key in the effects map.</p>
-<p>So, if an event handler returned these two effects:
-<pre class="highlight"><code class="language-clj">{:dispatch   [:save-maiden 42]
- :butterfly  "Flapping"}         ;; butterfly effect, but no chaos !!</code></pre></p>
+<p>So, if an event handler returned these two effects:</p>
+<pre><code class="clj">{:dispatch   [:save-maiden 42]
+ :butterfly  &quot;Flapping&quot;}         ;; butterfly effect, but no chaos !!
+</code></pre>
+
 <p>Then the function we registered for <code>:butterfly</code> would be called to handle
 that effect. And it would be called with the parameter "Flapping".</p>
 <p>So, terminology:</p>
@@ -1798,11 +1806,13 @@ make that design simple too. If you resist being terse and smart, and instead, f
 verbose and obvious, your future self will thank you. Create as little
 cognitive overhead as possible for the eventual readers of your effectful code.</p>
 <p>Right. So, this advice coming from the guy who named effects <code>fx</code> ... Oh, the hypocrisy.</p>
-<p>In my defence, here's the built-in effect handler for <code>:db</code>:
-<pre class="highlight"><code class="language-clj">(reg-fx
+<p>In my defence, here's the built-in effect handler for <code>:db</code>:</p>
+<pre><code class="clj">(reg-fx
   :db
   (fn [value]
-    (reset! re-frame.db/app-db value)))</code></pre></p>
+    (reset! re-frame.db/app-db value)))
+</code></pre>
+
 <p>So, yeah, simple ... and, because of it, I can almost guarantee there's no bug in ... bang, crash, smoke, flames.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1819,15 +1829,19 @@ an effects map of <code>{}</code>.  Slightly puzzling, but not a problem.</p>
 <p>Whenever you register an event handler via <strong>either</strong> <code>reg-event-db</code>
 or <code>reg-event-fx</code>, an interceptor, cunningly named <code>do-fx</code>,
 is inserted at the beginning of the chain.</p>
-<p>Example: if your event handler registration looked like this:
-<pre class="highlight"><code class="language-clj">(reg-event-fx
+<p>Example: if your event handler registration looked like this:</p>
+<pre><code class="clj">(reg-event-fx
   :some-id
   [debug (path :right)]     ;; &lt;-- two interceptors, apparently
   (fn [cofx _]
-     {})                    ;; &lt;-- imagine returned effects here</code></pre></p>
+     {})                    ;; &lt;-- imagine returned effects here
+</code></pre>
+
 <p>While it might look like you have registered with 2 interceptors,
-<code>reg-event-fx</code> will make it 3:
-<pre class="highlight"><code class="language-clj">[do-fx debug (path :right)]</code></pre></p>
+<code>reg-event-fx</code> will make it 3:</p>
+<pre><code class="clj">[do-fx debug (path :right)]
+</code></pre>
+
 <p>It silently inserts <code>do-fx</code> at the front, and this is a good thing.</p>
 <p>The placement of <code>do-fx</code> at the beginning of the interceptor chain means
 its <code>:after</code> function would be the final act when the chain is executed
@@ -1855,34 +1869,42 @@ of the interceptor chain.  It is only a few lines of code.</p>
 </ul>
 <p>In fact, with v1.1.0 <strong><em>best practice changed</em></strong> to event handlers should only return two effects <code>:db</code> and <code>:fx</code>, in which case <code>:db</code> was always done first and then <code>:fx</code>, and within <code>:fx</code> the ordering is sequential. This new approach is more about making it easier to compose event handlers from many smaller functions, but more specificity around ordering was  a consequence. </p>
 <h2 id="effects-with-no-data">Effects With No Data<a class="headerlink" href="#effects-with-no-data" title="Permanent link">&para;</a></h2>
-<p>Some effects have no associated data:
-<pre class="highlight"><code class="language-clj">(reg-event-fx
+<p>Some effects have no associated data:</p>
+<pre><code class="clj">(reg-event-fx
   :some-id
   (fn [coeffect _]
-     {:exit-fullscreen nil}))    ;;   &lt;--- no data, use a nil</code></pre></p>
+     {:exit-fullscreen nil}))    ;;   &lt;--- no data, use a nil
+</code></pre>
+
 <p>In these cases, although it looks odd, just supply <code>nil</code> as the value for this key.</p>
-<p>The associated effect handler would look like:
-<pre class="highlight"><code class="language-clj">(reg-fx
+<p>The associated effect handler would look like:</p>
+<pre><code class="clj">(reg-fx
   :exit-fullscreen
   (fn [_]             ;; we don't bother with that nil value
-     (.exitFullscreen js/document)))</code></pre></p>
+     (.exitFullscreen js/document)))
+</code></pre>
+
 <h2 id="testing-and-noops">Testing And Noops<a class="headerlink" href="#testing-and-noops" title="Permanent link">&para;</a></h2>
 <p>When you are running tests or replaying events, it is sometimes
 useful to stub out effects.</p>
 <p>This is easily done - you simply register a noop effect handler.</p>
-<p>Want to stub out the <code>:dispatch</code> effect?  Do this:
-<pre class="highlight"><code class="language-clj">(reg-fx
+<p>Want to stub out the <code>:dispatch</code> effect?  Do this:</p>
+<pre><code class="clj">(reg-fx
   :dispatch
-  (fn [_] ))    ;; a noop</code></pre></p>
+  (fn [_] ))    ;; a noop
+</code></pre>
+
 <p>If your test does alter registered effect handlers, and you are using <code>cljs.test</code>,
-then you can use a <code>fixture</code> to restore all effect handlers at the end of your test:
-<pre class="highlight"><code class="language-clj">(defn fixture-re-frame
+then you can use a <code>fixture</code> to restore all effect handlers at the end of your test:</p>
+<pre><code class="clj">(defn fixture-re-frame
   []
   (let [restore-re-frame (atom nil)]
     {:before #(reset! restore-re-frame (re-frame.core/make-restore-fn))
      :after  #(@restore-re-frame)}))
 
-(use-fixtures :each (fixture-re-frame))</code></pre></p>
+(use-fixtures :each (fixture-re-frame))
+</code></pre>
+
 <p><code>re-frame.core/make-restore-fn</code> creates a checkpoint for re-frame state (including
 registered handlers) to which you can return.</p>
 <h2 id="existing-effect-handlers">Existing Effect Handlers<a class="headerlink" href="#existing-effect-handlers" title="Permanent link">&para;</a></h2>

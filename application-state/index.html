@@ -1617,8 +1617,10 @@ spent your life breaking systems into pieces, organised around behaviour and try
 to hide state.  I still wake up in a sweat some nights thinking about all
 that Clojure data lying around exposed and passive.</p>
 <p>But, as Fogus reminds us above, data at rest is quite perfect.</p>
-<p>In re-frame, <code>app-db</code> is one of these:
-<pre class="highlight"><code class="language-clj">(def app-db  (reagent/atom {}))    ;; a Reagent atom, containing a map</code></pre></p>
+<p>In re-frame, <code>app-db</code> is one of these:</p>
+<pre><code class="clj">(def app-db  (reagent/atom {}))    ;; a Reagent atom, containing a map
+</code></pre>
+
 <p>Although it is a <code>Reagent atom</code> (hereafter <code>ratom</code>), I'd encourage
 you to think of it as an in-memory database. It will contain structured data.
 You will need to query that data. You will perform CRUD

@@ -1786,16 +1786,18 @@ the CPU intensive work in the <code>Layer 3</code> (materialised view) and <code
 <h2 id="reg-sub">reg-sub<a class="headerlink" href="#reg-sub" title="Permanent link">&para;</a></h2>
 <p>Subscription handlers are registered using <code>reg-sub</code>. These handlers are the functions which take 
 input values, flowing into the node, and calculate a derived value to be the node's output.</p>
-<p>Extractor subscriptions are registered like this:
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-sub  ;; a part of the re-frame API
+<p>Extractor subscriptions are registered like this:</p>
+<pre><code class="clj">(re-frame.core/reg-sub  ;; a part of the re-frame API
   :id                   ;; usage: (subscribe [:id])
   (fn [db query-v]      ;; `db` is the map out of `app-db`
-    (:something db)))   ;; trivial extraction - no computation</code></pre></p>
+    (:something db)))   ;; trivial extraction - no computation
+</code></pre>
+
 <p>This registers a <code>computation function</code> - a pretty simple one which just does an extraction. The argument <code>query-v</code> 
 is the <code>query vector</code> supplied in the subscription. In our simple case here, we're not using it. But if the subscription was for
 <code>(subscribe [:id "blue" :yeah])</code> then the <code>query-v</code> given to the handler would be <code>[:id "blue" :yeah]</code>.</p>
-<p><code>Layer 3</code> (materialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:
-<pre class="highlight"><code class="language-clj">(reg-sub 
+<p><code>Layer 3</code> (materialised view) subscriptions depend on other subscriptions for their inputs, and they are registered like this:</p>
+<pre><code class="clj">(reg-sub 
   :id
 
   ;; signals function
@@ -1804,8 +1806,10 @@ is the <code>query vector</code> supplied in the subscription. In our simple cas
 
   ;; computation function
   (fn [[a b] query-v]                  ;; input values supplied in a vector
-      (calculate-it a b)))</code></pre>
-You supply two functions: </p>
+      (calculate-it a b)))
+</code></pre>
+
+<p>You supply two functions: </p>
 <ol>
 <li>
 <p>a <code>signals function</code> which returns the input signals for this kind of node. It 
@@ -1826,8 +1830,8 @@ At any one time, only those nodes required to service the needs of <strong>curre
 Registering a handler only says how to create a Signal Graph node when and if it is needed.</p>
 </div>
 <h2 id="syntactic-sugar">Syntactic Sugar<a class="headerlink" href="#syntactic-sugar" title="Permanent link">&para;</a></h2>
-<p>The <code>Layer 3</code> (materialized view) subscription above can be rewritten using some syntactic sugar:
-<pre class="highlight"><code class="language-clj">(reg-sub 
+<p>The <code>Layer 3</code> (materialized view) subscription above can be rewritten using some syntactic sugar:</p>
+<pre><code class="clj">(reg-sub 
   :id
 
   ;; input signals 
@@ -1836,7 +1840,8 @@ Registering a handler only says how to create a Signal Graph node when and if it
 
   ;; computation function
   (fn [[a b] query-v]
-       (calculate-it a b)))</code></pre></p>
+       (calculate-it a b)))
+</code></pre>
                 
               
               

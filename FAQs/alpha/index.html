@@ -1683,21 +1683,23 @@ This being a Clojure project, the "experimental" features should actually be qui
 We just don't guarantee that they'll become part of <code>re-frame.core</code>, or that their API won't change.</p>
 <h3 id="get-started">Get started<a class="headerlink" href="#get-started" title="Permanent link">&para;</a></h3>
 <p>Simply require <code>re-frame.alpha</code>. It can be used alongside <code>re-frame.core</code>:</p>
-<pre class="highlight"><code class="language-clojure">(ns my-app
+<pre><code class="clojure">(ns my-app
   (:require
     [re-frame.core :as rf]
-    [re-frame.alpha :as rfa]))</code></pre>
+    [re-frame.alpha :as rfa]))
+</code></pre>
 
 <h4>Drop-in replacement</h4>
 <p>You can also completely replace <em>core</em> with <em>alpha</em>. Every function offered by <em>core</em> is replicated in <em>alpha</em>.
 Either use <code>(:require [re-frame.alpha :as rf])</code>, or use an alias in your tooling.
 For instance, if you use shadow-cljs, merge this into your config:</p>
-<pre class="highlight"><code class="language-clojure">{...
+<pre><code class="clojure">{...
  :builds
  {:my-app
   {...
    :build-options
-   {:ns-aliases {re-frame.core re-frame.alpha}}}}}</code></pre>
+   {:ns-aliases {re-frame.core re-frame.alpha}}}}}
+</code></pre>
 
 <p>After setting up the alpha, see the <a href="/re-frame/api-re-frame.alpha">api docs</a> for full documentation of the new (or updated) functions.
 These are summarized below:</p>
@@ -1712,15 +1714,17 @@ These are summarized below:</p>
 In other words, you pass a vector as the <code>query</code>.
 Re-frame uses the first item (e.g. <code>:my-subscription</code>) to look up the corresponding subscription handler-fn.</p>
 <p>In <em>alpha</em>, passing a vector is still supported, but the <code>query</code> can also be a map:</p>
-<pre class="highlight"><code class="language-clojure">(sub {:re-frame/q :the-answer
-      :x          42})</code></pre>
+<pre><code class="clojure">(sub {:re-frame/q :the-answer
+      :x          42})
+</code></pre>
 
 <p>Re-frame uses the <code>:re-frame/q</code> key to look up the subscription handler.
 To register that handler, use <code>reg :sub</code>. For instance:</p>
-<pre class="highlight"><code class="language-clojure">(reg :sub :the-answer
+<pre><code class="clojure">(reg :sub :the-answer
     (fn empty-inputs [])
     (fn [_ {:keys [x]}]
-        (str "The answer is: " x)))</code></pre>
+        (str &quot;The answer is: &quot; x)))
+</code></pre>
 
 <p>For details, see the API docs for
 <a href="/re-frame/api-re-frame.alpha/#sub">sub</a>
@@ -1770,12 +1774,12 @@ When that view unmounts, re-frame destroys the node, freeing memory
 <li><code>:reactive</code> - Re-frame's old behavior. Only use this lifecycle when calling <code>subscribe</code> in a render-fn.</li>
 </ul>
 <p>For example:</p>
-<p><code>(sub ^{:re-frame/lifecycle :forever} [:the-answer 43])</code></p>
-<p>Oops, we've created a node which calculates 43 as its "answer", forever.
+<p><code>(subscribe ^{:re-frame/lifecycle :forever} [:the-answer 43])</code></p>
+<p>Oops, we've created a node which calculates the "answer," 43, forever.
 It will never leave the memory of your running app. On the bright side,
 we'll never need to recalculate its output value (as long as its inputs haven't changed),
 since re-frame will always look it up from the cache.</p>
-<p><code>(sub ^{:re-frame/lifecycle :no-cache} [:the-answer 69])</code></p>
+<p><code>(subscribe ^{:re-frame/lifecycle :no-cache} [:the-answer 69])</code></p>
 <p>Nice, we've created another node. Except it wasn't really "created", since re-frame didn't cache it.
 Instead, re-frame recalculates the node's output every time you call <code>sub</code>
 (even when the input signals haven't changed).</p>
@@ -1787,16 +1791,18 @@ Instead, re-frame recalculates the node's output every time you call <code>sub</
 <p>To use the <code>:reg-flow</code> and <code>:clear-flow</code> effects, you must register your event handler
 using a registration functions from <code>re-frame.alpha</code>. Otherwise, re-frame will handle these
 as normal (unregistered) effects. For instance, this works:</p>
-<pre class="highlight"><code class="language-clojure">(re-frame.alpha/reg-sub-fx
+<pre><code class="clojure">(re-frame.alpha/reg-sub-fx
  :flow-fx-test
  (fn [_ _]
-   {:fx [[:reg-flow {:id :my-flow}]]}))</code></pre>
+   {:fx [[:reg-flow {:id :my-flow}]]}))
+</code></pre>
 
 <p>However, this will throw an error (that <code>:reg-flow</code> is an unregistered effect):</p>
-<pre class="highlight"><code class="language-clojure">(re-frame.core/reg-sub-fx
+<pre><code class="clojure">(re-frame.core/reg-sub-fx
  :flow-fx-test
  (fn [_ _]
-   {:fx [[:reg-flow {:id :my-flow}]]}))</code></pre>
+   {:fx [[:reg-flow {:id :my-flow}]]}))
+</code></pre>
                 
               
               

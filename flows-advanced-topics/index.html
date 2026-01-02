@@ -1781,8 +1781,9 @@ I'll react if you do! Can't run me if I unmount you first! Can't unmount me if I
 <p>When a view calls <code>subscribe</code>, it creates a reaction. When that view unmounts, it frees the reaction. 
 These are side-effects on the signal graph
 (that is, the graph of all subscriptions which are actively re-calculating their output when their inputs change, and storing that value).</p>
-<pre class="highlight"><code>event -&gt; app-db -&gt; signals -&gt; view -&gt; event
-                                  ∟-&gt; signal graph -&gt; signals -&gt; view</code></pre>
+<pre><code>event -&gt; app-db -&gt; signals -&gt; view -&gt; event
+                                  ∟-&gt; signal graph -&gt; signals -&gt; view
+</code></pre>
 
 <p>Something is looping in on itself here:</p>
 <ul>

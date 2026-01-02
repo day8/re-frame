@@ -1711,7 +1711,7 @@ again, and then into further computations, etc.  "Values" flow (propagate) throu
 <p>But this Signal graph must be without cycles, because cycles cause mayhem!  re-frame achieves
 a unidirectional flow.</p>
 <p>Right, so that was a lot of words. Some code to clarify:</p>
-<pre class="highlight"><code class="language-Clojure">(ns example1
+<pre><code class="Clojure">(ns example1
  (:require-macros [reagent.ratom :refer [reaction]])  ;; reaction is a macro
  (:require        [reagent.core  :as    reagent]))
 
@@ -1719,8 +1719,8 @@ a unidirectional flow.</p>
 
 (def ratom2  (reaction {:b (:a @app-db)}))    ;; reaction wraps a computation, returns a signal
 (def ratom3  (reaction (condp = (:b @ratom2)  ;; reaction wraps another computation
-                             0 "World"
-                             1 "Hello")))
+                             0 &quot;World&quot;
+                             1 &quot;Hello&quot;)))
 
 ;; Notice that both computations above involve de-referencing a ratom:
 ;;   - app-db in one case
@@ -1729,14 +1729,15 @@ a unidirectional flow.</p>
 ;; Those returned ratoms hold the (time varying) value of the computations.
 
 (println @ratom2)    ;; ==&gt;  {:b 1}       ;; a computed result, involving @app-db
-(println @ratom3)    ;; ==&gt; "Hello"       ;; a computed result, involving @ratom2
+(println @ratom3)    ;; ==&gt; &quot;Hello&quot;       ;; a computed result, involving @ratom2
 
 (reset!  app-db  {:a 0})       ;; this change to app-db, triggers re-computation
                                ;; of ratom2
                                ;; which, in turn, causes a re-computation of ratom3
 
 (println @ratom2)    ;; ==&gt;  {:b 0}    ;; ratom2 is result of {:b (:a @app-db)}
-(println @ratom3)    ;; ==&gt; "World"    ;; ratom3 is automatically updated too.</code></pre>
+(println @ratom3)    ;; ==&gt; &quot;World&quot;    ;; ratom3 is automatically updated too.
+</code></pre>
 
 <p>So, in FRP-ish terms, a <code>reaction</code> will produce a "stream" of values over time (it is a Signal),
 accessible via the <code>ratom</code> it returns.</p>
@@ -1745,26 +1746,31 @@ accessible via the <code>ratom</code> it returns.</p>
 This is the view layer.</p>
 <p>Think about <code>components</code> as <code>pure functions</code> - data in, Hiccup out.  <code>Hiccup</code> is
 ClojureScript data structures which represent DOM. Here's a trivial component:</p>
-<pre class="highlight"><code class="language-Clojure">(defn greet
+<pre><code class="Clojure">(defn greet
   []
-  [:div "Hello ratoms and reactions"])</code></pre>
+  [:div &quot;Hello ratoms and reactions&quot;])
+</code></pre>
 
-<p>And if we call it:
-<pre class="highlight"><code class="language-Clojure">(greet)
-;; ==&gt;  [:div "Hello ratoms and reactions"]</code></pre></p>
+<p>And if we call it:</p>
+<pre><code class="Clojure">(greet)
+;; ==&gt;  [:div &quot;Hello ratoms and reactions&quot;]
+</code></pre>
+
 <p>You'll notice that our component is a regular Clojure function, nothing special. In this case, it takes
 no parameters and it returns a ClojureScript vector (formatted as Hiccup).</p>
-<p>Here is a slightly more interesting (parameterised) component (function):
-<pre class="highlight"><code class="language-Clojure">(defn greet                    ;; greet has a parameter now
+<p>Here is a slightly more interesting (parameterised) component (function):</p>
+<pre><code class="Clojure">(defn greet                    ;; greet has a parameter now
   [name]                       ;; 'name' is a ratom  holding a string
-  [:div "Hello "  @name])      ;; dereference 'name' to extract the contained value
+  [:div &quot;Hello &quot;  @name])      ;; dereference 'name' to extract the contained value
 
 ;; create a ratom, containing a string
-(def fw (reagent/atom "re-frame"))
+(def fw (reagent/atom &quot;re-frame&quot;))
 
 ;; call our `component` function, passing in a ratom
 (greet fw)
-;; ==&gt;  [:div "Hello " "re-frame"]    returns a vector</code></pre></p>
+;; ==&gt;  [:div &quot;Hello &quot; &quot;re-frame&quot;]    returns a vector
+</code></pre>
+
 <p>So components are easy - at core they are a render function which turns data into
 Hiccup (which will later become DOM).</p>
 <p>Now, let's introduce <code>reaction</code> into this mix.  On the one hand, I'm complicating things
@@ -1772,18 +1778,18 @@ by doing this, because Reagent allows you to be ignorant of the mechanics I'm ab
 you. (It invisibly wraps your components in a <code>reaction</code> allowing you to be blissfully
 ignorant of how the magic happens.)</p>
 <p>On the other hand, it is useful to understand exactly how the Reagent Signal graph is wired.</p>
-<pre class="highlight"><code class="language-Clojure">(defn greet                ;; a component - data in, Hiccup out.
+<pre><code class="Clojure">(defn greet                ;; a component - data in, Hiccup out.
   [name]                   ;; name is a ratom
-  [:div "Hello "  @name])  ;; dereference name here, to extract the value within
+  [:div &quot;Hello &quot;  @name])  ;; dereference name here, to extract the value within
 
-(def fw (reagent/atom "re-frame"))
+(def fw (reagent/atom &quot;re-frame&quot;))
 
 ;; The computation '(greet fw)' returns Hiccup which is stored into 'hiccup-ratom'
 (def hiccup-ratom  (reaction (greet fw)))    ;; &lt;-- use of reaction !!!
 
 ;; what is the result of the initial computation ?
 (println @hiccup-ratom)
-;; ==&gt;  [:div "Hello " "re-frame"]    ;; returns hiccup  (a vector of stuff)
+;; ==&gt;  [:div &quot;Hello &quot; &quot;re-frame&quot;]    ;; returns hiccup  (a vector of stuff)
 
 ;; now change 'fw'
 ;; 'fw' is an input Signal for the reaction above.
@@ -1791,14 +1797,15 @@ ignorant of how the magic happens.)</p>
 ;; because 'fw' is dereferenced within the execution of the reaction's computation.
 ;; reaction notices what ratoms are dereferenced in its computation, and watches
 ;; them for changes.
-(reset! fw "blah")            ;;    fw changes
+(reset! fw &quot;blah&quot;)            ;;    fw changes
 
 ;; The reaction above will notice the change to 'fw' ...
 ;; ... and will re-run its computation ...
-;; ... which will have a new "return value"...
-;; ... which will be "reset!" into "hiccup-ratom"
+;; ... which will have a new &quot;return value&quot;...
+;; ... which will be &quot;reset!&quot; into &quot;hiccup-ratom&quot;
 (println @hiccup-ratom)
-;; ==&gt;   [:div "Hello " "blah"]    ;; yep, there's the new value</code></pre>
+;; ==&gt;   [:div &quot;Hello &quot; &quot;blah&quot;]    ;; yep, there's the new value
+</code></pre>
 
 <p>So, as <code>fw</code> changes value over time (via a <code>reset!</code>), the output of the computation <code>(greet fw)</code>
 changes, which in turn means that the value in <code>hiccup-ratom</code> changes. Both <code>fw</code> and
@@ -1826,15 +1833,19 @@ ratom-nature, so we'll happily continue believing it is a <code>ratom</code> and
 <h3 id="reg-sub-raw">reg-sub-raw<a class="headerlink" href="#reg-sub-raw" title="Permanent link">&para;</a></h3>
 <p>This low level part of the API provides a way to register a subscription handler - so
 the intent is similar to <code>reg-sub</code>.</p>
-<p>You use it like other registration functions:
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-sub-raw   ;; it is part of the API
+<p>You use it like other registration functions:</p>
+<pre><code class="clj">(re-frame.core/reg-sub-raw   ;; it is part of the API
   :query-id     ;; later use (subscribe [:query-id])
-  some-fn)      ;; this function provides the reactive stream</code></pre></p>
-<p>The interesting bit is how <code>some-fn</code> is written. Here's an example:
-<pre class="highlight"><code class="language-clj">(defn some-fn
+  some-fn)      ;; this function provides the reactive stream
+</code></pre>
+
+<p>The interesting bit is how <code>some-fn</code> is written. Here's an example:</p>
+<pre><code class="clj">(defn some-fn
   [app-db query-v]    ;; app-db is not a value, it is a reagent/atom
-  (reaction (get-in @app-db [:some :path])))  ;; returns a reaction</code></pre>
-Notice:</p>
+  (reaction (get-in @app-db [:some :path])))  ;; returns a reaction
+</code></pre>
+
+<p>Notice:</p>
 <ol>
 <li><code>app-db</code> is a reagent/atom. It is not a value like <code>reg-sub</code> gets.</li>
 <li>it returns a <code>reaction</code> which does a computation. It does not return a value like <code>reg-sub</code> does.</li>
@@ -1843,13 +1854,15 @@ Notice:</p>
 <p>As a result of point 3, each time <code>app-db</code> changes, the wrapped <code>reaction</code> will rerun.
 <code>app-db</code> is an input signal to that <code>reaction</code>.</p>
 <p>Unlike <code>reg-sub</code>, there is no 3-arity version of <code>reg-sub-raw</code>, so there's no way for you to provide an input signals function.
-Instead, even simpler, you can just use <code>subscribe</code> within the <code>reaction</code> itself. For example:
-<pre class="highlight"><code class="language-clj">(defn some-fn
+Instead, even simpler, you can just use <code>subscribe</code> within the <code>reaction</code> itself. For example:</p>
+<pre><code class="clj">(defn some-fn
    [app-db query-v]
    (reaction
      (let [a-path-element @(subscribe [:get-path-part])]   ;; &lt;-- subscribe used here
-       (get-in @app-db [:some a-path-element]))))</code></pre>
-As you can see, this <code>reaction</code> has two input signals: <code>app-db</code> and <code>(subscribe [:get-path-part])</code>.  If either changes,
+       (get-in @app-db [:some a-path-element]))))
+</code></pre>
+
+<p>As you can see, this <code>reaction</code> has two input signals: <code>app-db</code> and <code>(subscribe [:get-path-part])</code>.  If either changes,
 the <code>reaction</code> will rerun.</p>
 <p>In some cases, the returned <code>reaction</code> might not even
 use <code>app-db</code> and, instead, it might only use <code>subscribe</code> to provide input signals. In that case, the
@@ -1859,8 +1872,8 @@ registered subscription would belong to "Layer 3" of the signal graph (discussed
 ability to attach an <code>:on-dispose</code> handler to the returned reaction, allowing you to do cleanup work when the subscription is no longer needed.
 <a href="../Subscribing-To-External-Data/">See an example of using <code>:on-dispose</code> here</a></p>
 <h3 id="example-reg-sub-raw">Example reg-sub-raw<a class="headerlink" href="#example-reg-sub-raw" title="Permanent link">&para;</a></h3>
-<p>The following use of <code>reg-sub</code> can be found in <a href="https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs">the todomvc example</a>:
-<pre class="highlight"><code class="language-clj">(reg-sub
+<p>The following use of <code>reg-sub</code> can be found in <a href="https://github.com/day8/re-frame/blob/master/examples/todomvc/src/todomvc/subs.cljs">the todomvc example</a>:</p>
+<pre><code class="clj">(reg-sub
   :visible-todos
 
   ;; signal function - returns a vector of two input signals
@@ -1874,9 +1887,11 @@ ability to attach an <code>:on-dispose</code> handler to the returned reaction, 
                       :active (complement :done)
                       :done   :done
                       :all    identity)]
-      (filter filter-fn todos))))</code></pre></p>
-<p>we could rewrite this use of <code>reg-sub</code> using <code>reg-sub-raw</code> like this:
-<pre class="highlight"><code class="language-clj">(reg-sub-raw
+      (filter filter-fn todos))))
+</code></pre>
+
+<p>we could rewrite this use of <code>reg-sub</code> using <code>reg-sub-raw</code> like this:</p>
+<pre><code class="clj">(reg-sub-raw
   :visible-todos
   (fn [app-db query-v]  ;; app-db not used, name shown for clarity
     (reaction         ;; wrap the computation in a reaction
@@ -1886,7 +1901,9 @@ ability to attach an <code>:on-dispose</code> handler to the returned reaction, 
                         :active (complement :done)
                         :done   :done
                         :all    identity)]
-        (filter filter-fn todos))))</code></pre></p>
+        (filter filter-fn todos))))
+</code></pre>
+
 <p>A view could do <code>(subscribe [:visible-todos])</code> and never know which of
 the two variations above was used. Same result delivered.</p>
                 

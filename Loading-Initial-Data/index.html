@@ -1718,40 +1718,47 @@
 but let's work our way through them ...</p>
 <h2 id="1-register-handlers">1. Register Handlers<a class="headerlink" href="#1-register-handlers" title="Permanent link">&para;</a></h2>
 <p>re-frame's various handlers all work in the same way.  You declare 
-and register your handlers in the one step, like this "event handler" example: 
-<pre class="highlight"><code class="language-clj">(re-frame/reg-event-db       ;; event handler will be registered automatically
+and register your handlers in the one step, like this "event handler" example: </p>
+<pre><code class="clj">(re-frame/reg-event-db       ;; event handler will be registered automatically
   :some-id
   (fn [db [_ value]]
-    ...  do some state change based on db and value ))</code></pre></p>
+    ...  do some state change based on db and value ))
+</code></pre>
+
 <p>As a result, there's nothing further you need to do because 
 handler registration happens as a direct result of loading the code 
 (presumably via a <code>&lt;script&gt;</code> tag in your HTML file).</p>
 <h2 id="2-kick-start-reagent">2. Kick Start Reagent<a class="headerlink" href="#2-kick-start-reagent" title="Permanent link">&para;</a></h2>
 <p>Create a function <code>main</code> which does a <code>reagent/render</code> of your root reagent component <code>main-panel</code>:</p>
-<pre class="highlight"><code class="language-clj">(defn main-panel       ;; my top level reagent component
+<pre><code class="clj">(defn main-panel       ;; my top level reagent component
   []
-  [:div "Hello DDATWD"])
+  [:div &quot;Hello DDATWD&quot;])
 
 (defn ^:export main     ;; call this to bootstrap your app
   []
   (reagent.dom/render [main-panel]
-                  (js/document.getElementById "app")))</code></pre>
+                  (js/document.getElementById &quot;app&quot;)))
+</code></pre>
 
 <p>Mounting the top level component <code>main-panel</code> will trigger a cascade of child 
 component creation.  The full DOM tree will be rendered.</p>
 <h2 id="3-loading-initial-data">3. Loading Initial Data<a class="headerlink" href="#3-loading-initial-data" title="Permanent link">&para;</a></h2>
 <p>Let's rewrite our <code>main-panel</code> component to use a subscription. In effect, 
 we want it to source and render some data held in <code>app-db</code>.  </p>
-<p>First, we'll create the subscription handler:
-<pre class="highlight"><code class="language-Clojure">(re-frame.core/reg-sub     ;; a new subscription handler
+<p>First, we'll create the subscription handler:</p>
+<pre><code class="Clojure">(re-frame.core/reg-sub     ;; a new subscription handler
   :name               ;; usage (subscribe [:name])
   (fn [db _]
-    (:display-name db)))  ;; extracts `:display-name` from app-db</code></pre></p>
-<p>And now we use that subscription:
-<pre class="highlight"><code class="language-clj">(defn main-panel 
+    (:display-name db)))  ;; extracts `:display-name` from app-db
+</code></pre>
+
+<p>And now we use that subscription:</p>
+<pre><code class="clj">(defn main-panel 
   []
   (let [name  (re-frame.core/subscribe [:name])]  ;; &lt;--- a subscription  &lt;---
-      [:div "Hello " @name])))   ;; &lt;--- use the result of the subscription</code></pre></p>
+      [:div &quot;Hello &quot; @name])))   ;; &lt;--- use the result of the subscription
+</code></pre>
+
 <p>The user of our app will see funny things 
 if that <code>(subscribe [:name])</code> doesn't deliver good data. But how do we ensure "good data"?</p>
 <p>That will require: 
@@ -1762,20 +1769,24 @@ if that <code>(subscribe [:name])</code> doesn't deliver good data. But how do w
 <h3 id="getting-data-into-app-db">Getting Data Into <code>app-db</code><a class="headerlink" href="#getting-data-into-app-db" title="Permanent link">&para;</a></h3>
 <p>Only event handlers can change <code>app-db</code>. Those are the rules!! Indeed, even initial 
 values must be put in <code>app-db</code> via an event handler. </p>
-<p>Here's an event handler for that purpose:
-<pre class="highlight"><code class="language-Clojure">(re-frame.core/reg-event-db
+<p>Here's an event handler for that purpose:</p>
+<pre><code class="Clojure">(re-frame.core/reg-event-db
   :initialise-db                 ;; usage: (dispatch [:initialise-db])
   (fn [_ _]                      ;; Ignore both params (db and event)
-     {:display-name "DDATWD"     ;; return a new value for app-db
-      :items [1 2 3 4]}))</code></pre></p>
+     {:display-name &quot;DDATWD&quot;     ;; return a new value for app-db
+      :items [1 2 3 4]}))
+</code></pre>
+
 <p>You'll notice that this handler does nothing other than to return a <code>map</code>. That map 
 will become the new value within <code>app-db</code>.</p>
-<p>We'll need to dispatch an <code>:initialise-db</code> event to get it to execute. <code>main</code> seems like the natural place: 
-<pre class="highlight"><code class="language-Clojure">(defn ^:export main
+<p>We'll need to dispatch an <code>:initialise-db</code> event to get it to execute. <code>main</code> seems like the natural place: </p>
+<pre><code class="Clojure">(defn ^:export main
   []
   (re-frame.core/dispatch [:initialise-db])   ;;  &lt;--- this is new 
   (reagent.dom/render [main-panel]
-                  (js/document.getElementById "app")))</code></pre></p>
+                  (js/document.getElementById &quot;app&quot;)))
+</code></pre>
+
 <p>But remember, event handlers execute async. So although there's 
 a <code>dispatch</code> within <code>main</code>, the event is simply queued, and the 
 handler for <code>:initialise-db</code> 
@@ -1789,7 +1800,7 @@ has been correctly initialised. </p>
 <p>Okay, so that's enough of teasing-out the issues. Let's see a 
 quick sketch of the entire pattern. It is very straight-forward.</p>
 <h2 id="the-pattern">The Pattern<a class="headerlink" href="#the-pattern" title="Permanent link">&para;</a></h2>
-<pre class="highlight"><code class="language-Clojure">(re-frame.core/reg-sub   ;; supplied main-panel with data
+<pre><code class="Clojure">(re-frame.core/reg-sub   ;; supplied main-panel with data
   :name                  ;; usage (subscribe [:name])
   (fn  [db _]
     (:display-name db)))
@@ -1802,45 +1813,49 @@ quick sketch of the entire pattern. It is very straight-forward.</p>
 (re-frame.core/reg-event-db
    :initialise-db
    (fn [db _]
-       (assoc db :display-name "Jane Doe")))
+       (assoc db :display-name &quot;Jane Doe&quot;)))
 
 (defn main-panel    ;; the top level of our app 
   []
   (let [name  (re-frame.core/subscribe [:name])]   ;; we need there to be good data
-    [:div "Hello " @name])))
+    [:div &quot;Hello &quot; @name])))
 
 (defn top-panel    ;; this is new
   []
   (let [ready?  (re-frame.core/subscribe [:initialised?])]
     (if-not @ready?         ;; do we have good data?
-      [:div "Initialising ..."]   ;; tell them we are working on it
+      [:div &quot;Initialising ...&quot;]   ;; tell them we are working on it
       [main-panel])))      ;; all good, render this component
 
 (defn ^:export main     ;; call this to bootstrap your app
   []
   (re-frame.core/dispatch [:initialise-db])
   (reagent.dom/render [top-panel]
-                  (js/document.getElementById "app")))</code></pre>
+                  (js/document.getElementById &quot;app&quot;)))
+</code></pre>
 
 <h2 id="scales-up">Scales Up<a class="headerlink" href="#scales-up" title="Permanent link">&para;</a></h2>
 <p>This pattern scales up easily.</p>
 <p>For example, imagine a more complicated scenario in which your app 
 is not fully initialised until 2 backend services supply data.</p>
-<p>Your <code>main</code> might look like this:
-<pre class="highlight"><code class="language-Clojure">(defn ^:export main     ;; call this to bootstrap your app
+<p>Your <code>main</code> might look like this:</p>
+<pre><code class="Clojure">(defn ^:export main     ;; call this to bootstrap your app
   []
   (re-frame.core/dispatch [:initialise-db])           ;; basics
   (re-frame.core/dispatch [:load-from-service-1])     ;; ask for data from service-1
   (re-frame.core/dispatch [:load-from-service-2])     ;; ask for data from service-2
   (reagent.dom/render [top-panel]
-                  (js/document.getElementById "app")))</code></pre></p>
+                  (js/document.getElementById &quot;app&quot;)))
+</code></pre>
+
 <p>Your <code>:initialised?</code> test then becomes more like this sketch: </p>
-<pre class="highlight"><code class="language-Clojure">(re-frame.core/reg-sub
+<pre><code class="Clojure">(re-frame.core/reg-sub
   :initialised?          ;; usage (subscribe [:initialised?])
   (fn  [db _]
     (and  (not (empty? db))
           (:service1-answered? db)
-          (:service2-answered? db)))))</code></pre>
+          (:service2-answered? db)))))
+</code></pre>
 
 <p>This assumes boolean flags are set in <code>app-db</code> when data was loaded from these services.</p>
 <h2 id="cheating-synchronous-dispatch">Cheating - Synchronous Dispatch<a class="headerlink" href="#cheating-synchronous-dispatch" title="Permanent link">&para;</a></h2>

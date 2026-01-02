@@ -1668,17 +1668,21 @@ will ultimately be deprecated.</p>
 <p><code>reg</code> will take one argument, a map, which captures all aspects of 
 the handler. </p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
-<p>Previously, <code>reg-event-db</code> was used like this:
-<pre class="highlight"><code class="language-clj">(rf/reg-event-db 
+<p>Previously, <code>reg-event-db</code> was used like this:</p>
+<pre><code class="clj">(rf/reg-event-db 
    :event-id 
    (fn [db event]
-     (assoc db :some :thing)))</code></pre></p>
-<p>now, use <code>reg</code> would be used like this:
-<pre class="highlight"><code class="language-clj">(rf/reg
+     (assoc db :some :thing)))
+</code></pre>
+
+<p>now, use <code>reg</code> would be used like this:</p>
+<pre><code class="clj">(rf/reg
   {:kind  :event-db
    :id    :event-id 
    :fn    (fn [db event]
-            (assoc db :some :thing))})</code></pre></p>
+            (assoc db :some :thing))})
+</code></pre>
+
 <p>The map argument must contain the keys <code>:kind</code>, <code>:id</code> and <code>:fn</code>, 
 with other valid keys being dependent on the <code>kind</code> of 
 handler being registered.</p>
@@ -1710,18 +1714,20 @@ again, there's the aesthetics of formatting the code and lining things up.  </p>
 <h3 id="multiple-registrations">Multiple Registrations<a class="headerlink" href="#multiple-registrations" title="Permanent link">&para;</a></h3>
 <p>The argument to <code>reg</code> can also be a vector of maps to allow
 for multiple handlers to be registered at once:</p>
-<pre class="highlight"><code class="language-clj">(rf/reg
+<pre><code class="clj">(rf/reg
   [{:kind :event-db ...}
    {:kind :event-db ...}
    {:kind :event-fx ...}
-   {:kind :sub ...])</code></pre>
+   {:kind :sub ...])
+</code></pre>
 
 <p>Or maybe move the registration keyword outside the map, to avoid repetition. </p>
-<pre class="highlight"><code class="language-clj">(rf/reg :event-db 
+<pre><code class="clj">(rf/reg :event-db 
   [{...}
    {...}
    {...}
-   {...])</code></pre>
+   {...])
+</code></pre>
 
 <p>XXX maybe not needed. Provide the most minimal API? Then let towers of abstraction be built on top.</p>
 <h3 id="registrar">Registrar<a class="headerlink" href="#registrar" title="Permanent link">&para;</a></h3>

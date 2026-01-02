@@ -1535,21 +1535,25 @@ can draw circles and triangles and add some text. </p>
 <p>And then imagine that we allowed a user to begin using our new drawing application 
 and that, as they did, we captured, into a collection, the events caused by that 
 user's actions (via their button clicks, drags, keypresses, etc).</p>
-<p>The collection of events they generate might look like this:<br />
-<pre class="highlight"><code class="language-clj">(def collected-events
+<p>The collection of events they generate might look like this:  </p>
+<pre><code class="clj">(def collected-events
   [
      [:clear]
      [:enter-draw-mode]
      [:new-shape :triangle 1 2 3]
      [:select-object 23]
-     [:rename "a better name"]
+     [:rename &quot;a better name&quot;]
      [:delete-selection]
      ....
-  ])</code></pre></p>
-<p>Now, as an aside, consider the following assembly instructions:
-<pre class="highlight"><code class="language-asm">mov eax, ebx
+  ])
+</code></pre>
+
+<p>Now, as an aside, consider the following assembly instructions:</p>
+<pre><code class="asm">mov eax, ebx
 sub eax, 216
-mov BYTE PTR [ebx], 2</code></pre></p>
+mov BYTE PTR [ebx], 2
+</code></pre>
+
 <p>Assembly instructions are just data, right?  Data which 
 happens to be "executable" by the right machine - an x86 machine in this case.</p>
 <p>I'd like you to now look back at that collection of events. I'd like you to view it in the 
@@ -1568,13 +1572,19 @@ and that data is then seen as code by an interpreter which executes it.</p>
 arrange DOM. Make a data structure in the right format
 and Reagent will act as the "interpreter" which executes that "language" 
 creating the DOM you describe. Hiccup is code. (Data is code)</p>
-<p>We can use pure data literals:
-<pre class="highlight"><code class="language-clj">[:div {:font-size 12} "Hello"] </code></pre></p>
-<p>Or we can add a small bit of computation: 
-<pre class="highlight"><code class="language-clj">[:div (if friendly? "Hello" "Go away") " world"]</code></pre></p>
-<p>Or, a lot more computation:
-<pre class="highlight"><code class="language-clj">(into [:div] (map render-item items)]</code></pre>
-Irrespective of how we create the hiccup-formatted data, it acts as "instructions" for Reagent's hiccup interpreter.</p>
+<p>We can use pure data literals:</p>
+<pre><code class="clj">[:div {:font-size 12} &quot;Hello&quot;] 
+</code></pre>
+
+<p>Or we can add a small bit of computation: </p>
+<pre><code class="clj">[:div (if friendly? &quot;Hello&quot; &quot;Go away&quot;) &quot; world&quot;]
+</code></pre>
+
+<p>Or, a lot more computation:</p>
+<pre><code class="clj">(into [:div] (map render-item items)]
+</code></pre>
+
+<p>Irrespective of how we create the hiccup-formatted data, it acts as "instructions" for Reagent's hiccup interpreter.</p>
 <p>Back to re-frame. </p>
 <p>It asks that <strong>you</strong> create a DSL for your app - the set of events are your DSL.
 (I wasn't kidding when I said events are the "language of your system".) 

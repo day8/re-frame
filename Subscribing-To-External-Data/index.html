@@ -1791,14 +1791,18 @@ when those items come from a remote database? </p>
  <code>select id, price, description from items where type="see through"</code>.</p>
 <h3 id="via-a-subscription">Via A Subscription<a class="headerlink" href="#via-a-subscription" title="Permanent link">&para;</a></h3>
 <p>In <code>re-frame</code>, Components always obtain data via a subscription. Always.  </p>
-<p>So, our Component which shows items is going to 
-<pre class="highlight"><code class="language-clj">(let [items (re-frame/subscribe [:items "see through"]) ...</code></pre>
-and the subscription handler will deliver them. </p>
-<p>Which, in turn, means our code must have a subscription handler defined:
-<pre class="highlight"><code class="language-clj">(re-frame/reg-sub
+<p>So, our Component which shows items is going to </p>
+<pre><code class="clj">(let [items (re-frame/subscribe [:items &quot;see through&quot;]) ...
+</code></pre>
+
+<p>and the subscription handler will deliver them. </p>
+<p>Which, in turn, means our code must have a subscription handler defined:</p>
+<pre><code class="clj">(re-frame/reg-sub
   :items
   (fn [db [_ item-type]
-    ...))</code></pre></p>
+    ...))
+</code></pre>
+
 <p>Which is fine ... except we haven't really solved this problem yet, have we?<br />
 We've just transferred 
 the problem away from the Component and into the subscription handler? </p>
@@ -1842,8 +1846,8 @@ The subscription handler is organising for the right remote data to "flow" into 
 particular path, when it is needed by a Component. And, equally, for this data to be cleaned up when it 
 is no longer required.</p>
 <h3 id="some-code">Some Code<a class="headerlink" href="#some-code" title="Permanent link">&para;</a></h3>
-<p>Enough fluffing about with words, here's a code sketch for our subscription handler:
-<pre class="highlight"><code class="language-clj">(re-frame/reg-sub-raw
+<p>Enough fluffing about with words, here's a code sketch for our subscription handler:</p>
+<pre><code class="clj">(re-frame/reg-sub-raw
   :items
   (fn [app-db [_ type]]
        (let  [query-token (issue-items-query!
@@ -1852,7 +1856,9 @@ is no longer required.</p>
          (reagent.ratom/make-reaction
            (fn [] (get-in @app-db [:some :path]))
            :on-dispose #(do (terminate-items-query! query-token)
-                            (re-frame/dispatch [:cleanup [:some :path]]))))))</code></pre></p>
+                            (re-frame/dispatch [:cleanup [:some :path]]))))))
+</code></pre>
+
 <p>A few things to notice:</p>
 <ol>
 <li>

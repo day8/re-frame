@@ -1708,17 +1708,23 @@ to completely grok the terse code presented below. We're still at 30,000 feet. M
 </div>
 <h2 id="domino-1-event-dispatch">Domino 1 - Event Dispatch<a class="headerlink" href="#domino-1-event-dispatch" title="Permanent link">&para;</a></h2>
 <p>In order for it to be clicked, that 3rd delete button must have already been rendered. And rendering 
-in re-frame is done by a <code>ViewFunction</code>. Perhaps it was rendered like this: 
-<pre class="highlight"><code class="language-clj">(defn delete-button 
+in re-frame is done by a <code>ViewFunction</code>. Perhaps it was rendered like this: </p>
+<pre><code class="clj">(defn delete-button 
   [item-id]
   [:div.garbage-bin 
-    {:on-click #(re-frame.core/dispatch [:delete-item item-id])}])</code></pre></p>
-<p>It is that <code>on-click</code> handler (function) which interests us. When the user clicks on the garbage-bin icon, that function is called. 
-<pre class="highlight"><code class="language-clj">#(re-frame.core/dispatch [:delete-item item-id])</code></pre>
-This function calls re-frame's <code>dispatch</code> to emit an <code>event</code>.</p>
-<p>Every re-frame <code>event</code> is a vector and, in this case, the dispatched <code>event</code> has two elements: 
-<pre class="highlight"><code class="language-clj">[:delete-item 2486]</code></pre>
-where <code>2486</code> is an <code>id</code> I just made up for that 3rd item.  </p>
+    {:on-click #(re-frame.core/dispatch [:delete-item item-id])}])
+</code></pre>
+
+<p>It is that <code>on-click</code> handler (function) which interests us. When the user clicks on the garbage-bin icon, that function is called. </p>
+<pre><code class="clj">#(re-frame.core/dispatch [:delete-item item-id])
+</code></pre>
+
+<p>This function calls re-frame's <code>dispatch</code> to emit an <code>event</code>.</p>
+<p>Every re-frame <code>event</code> is a vector and, in this case, the dispatched <code>event</code> has two elements: </p>
+<pre><code class="clj">[:delete-item 2486]
+</code></pre>
+
+<p>where <code>2486</code> is an <code>id</code> I just made up for that 3rd item.  </p>
 <p>The first element of an event vector,
 <code>:delete-item</code>, is the kind of event. The rest is optional data, salient to the 
 <code>event</code>.</p>
@@ -1729,10 +1735,12 @@ They are the language of your re-frame system. </p>
 compute the <code>effect</code> of the event <code>[:delete-item 2486]</code>.</p>
 <p>On startup, re-frame apps register handlers for events using <code>reg-event-fx</code>. So,
 in our imaginary app, because <code>h</code> is the handler function for <code>:delete-item</code> events, 
-it must have been registered like this:
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx   ;; a part of the re-frame API
+it must have been registered like this:</p>
+<pre><code class="clj">(re-frame.core/reg-event-fx   ;; a part of the re-frame API
   :delete-item                ;; the kind of event
-  h)                          ;; the handler function for this kind of event</code></pre></p>
+  h)                          ;; the handler function for this kind of event
+</code></pre>
+
 <p>Because <code>h</code> is an event handler, it is written to take two arguments:</p>
 <ol>
 <li>a <code>coeffects</code> map. This data describes the current state of "the world". In the simplest case, it is a trivial map like this: <code>{:db a-value}</code> where <code>a-value</code> is the current application state held in <code>app-db</code>. </li>
@@ -1740,22 +1748,26 @@ it must have been registered like this:
 </ol>
 <p><code>h</code> will compute effects as data. That means: it computes how the world should be changed 
 by the event, and it returns a map of <code>effects</code> which describe the necessary changes.</p>
-<p>Here's a sketch (we are at 30,000 feet):
-<pre class="highlight"><code class="language-clj">(defn h                          ;; maybe choose a better name like `delete-item`
+<p>Here's a sketch (we are at 30,000 feet):</p>
+<pre><code class="clj">(defn h                          ;; maybe choose a better name like `delete-item`
  [coeffects event]               ;; `coeffects` holds the current state of the world
  (let [item-id  (second event)   ;; extract id from event vector
        db       (:db coeffects)  ;; extract the current application state
        new-db   (dissoc-in db [:items item-id])]   ;; new app state
-   {:db new-db}))                ;; a map of the necessary effects </code></pre></p>
+   {:db new-db}))                ;; a map of the necessary effects 
+</code></pre>
+
 <p>There are ways (described in later tutorials) for you to inject necessary aspects
 of "the world" into that first <code>coeffects</code> argument (map). Different
 event handlers need to know different "things" about the world to do their job. But 
 current "application state" is one aspect of the world which is 
 invariably needed, and it is available by default in the <code>:db</code> key. So 
 the current value in <code>app-db</code> is available via the expression <code>(:db coeffects)</code>.</p>
-<p>The value returned by <code>h</code> is a map with only one key, like this:
-<pre class="highlight"><code class="language-clj">{:db new-db}     ;; `new-db` is the newly computed application state</code></pre>
-So, <code>h</code> computes one effect, and returns it. And that effect says to make a change to 
+<p>The value returned by <code>h</code> is a map with only one key, like this:</p>
+<pre><code class="clj">{:db new-db}     ;; `new-db` is the newly computed application state
+</code></pre>
+
+<p>So, <code>h</code> computes one effect, and returns it. And that effect says to make a change to 
 application state.</p>
 <p>Please pay particular attention to this overall flow, within <code>h</code>:</p>
 <ol>
@@ -1763,40 +1775,50 @@ application state.</p>
 <li>it computes a modified application state via <code>(dissoc-in db [:items item-id])</code></li>
 <li>it returns this modified application state in an effects map <code>{:db new-db}</code></li>
 </ol>
-<p>BTW, here is a more idiomatic (and terser) rewrite of <code>h</code> using <a href="https://clojure.org/guides/destructuring">destructuring</a> of the args: 
-<pre class="highlight"><code class="language-clj">(defn h 
+<p>BTW, here is a more idiomatic (and terser) rewrite of <code>h</code> using <a href="https://clojure.org/guides/destructuring">destructuring</a> of the args: </p>
+<pre><code class="clj">(defn h 
   [{:keys [db]} [_ item-id]]    ;; &lt;--- new: obtain db and item-id directly
-  {:db  (dissoc-in db [:items item-id])})    ;; </code></pre></p>
+  {:db  (dissoc-in db [:items item-id])})    ;; 
+</code></pre>
+
 <h2 id="domino-3-effect-handling">Domino 3 - Effect Handling<a class="headerlink" href="#domino-3-effect-handling" title="Permanent link">&para;</a></h2>
 <p><code>effect handler</code> functions action the <code>effects</code> returned by <code>h</code>.</p>
-<p>In Domino 2, <code>h</code> returned: 
-<pre class="highlight"><code class="language-clj">{:db  new-db}   ;; `new-db` is the new, computed application state</code></pre></p>
+<p>In Domino 2, <code>h</code> returned: </p>
+<pre><code class="clj">{:db  new-db}   ;; `new-db` is the new, computed application state
+</code></pre>
+
 <p>Each key of this returned map identifies one kind 
 of <code>effect</code>, and the value for that key supplies further details. 
 The map returned by <code>h</code> only has one key, <code>:db</code>, so it is specifying only one effect.</p>
 <p>On startup, a re-frame app can register <code>effects handlers</code> using <code>reg-fx</code>. For example, 
-the effect handler function for the <code>:db</code> effect could be registered like this: 
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-fx       ;; part of the re-frame API
+the effect handler function for the <code>:db</code> effect could be registered like this: </p>
+<pre><code class="clj">(re-frame.core/reg-fx       ;; part of the re-frame API
   :db                       ;; the effects key 
   (fn [val]                 ;; the handler function for the effect
-    (reset! app-db val)))   ;; put the new value into the ratom app-db</code></pre></p>
+    (reset! app-db val)))   ;; put the new value into the ratom app-db
+</code></pre>
+
 <p>Just to be clear, this <code>reset!</code> of <code>app-db</code> is a mutative, effectful action. That's
 what effect handlers do. They change the world. They are not pure functions.</p>
 <p>Now, you don't need to ever register an effects handler for <code>:db</code>
 because re-frame supplies one built in. re-frame manages <code>app-db</code> and so it 
 will look for any changes (effects) to it.</p>
-<p>But if, instead, <code>h</code> had returned: 
-<pre class="highlight"><code class="language-clj">{:wear  {:pants "velour flares"  :belt false}
- :tweet "Okay, yes, I am Satoshi. #coverblown"}</code></pre>
-Then, the two effects handlers registered for <code>:wear</code> and <code>:tweet</code> would 
+<p>But if, instead, <code>h</code> had returned: </p>
+<pre><code class="clj">{:wear  {:pants &quot;velour flares&quot;  :belt false}
+ :tweet &quot;Okay, yes, I am Satoshi. #coverblown&quot;}
+</code></pre>
+
+<p>Then, the two effects handlers registered for <code>:wear</code> and <code>:tweet</code> would 
 be called to action those two effects. And, no, re-frame 
 does not supply standard effect handlers for either, so you would need to have
 written them yourself, and then registered them. </p>
-<p>For example:
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-fx    ;; re-frame API
+<p>For example:</p>
+<pre><code class="clj">(re-frame.core/reg-fx    ;; re-frame API
   :wear        ;; the effects key which this handler can action
-  (fn [val]    ;; val would be, eg, {:pants "velour flares"  :belt false}
-    ...))      ;; do what's necessary to action the side effect</code></pre></p>
+  (fn [val]    ;; val would be, eg, {:pants &quot;velour flares&quot;  :belt false}
+    ...))      ;; do what's necessary to action the side effect
+</code></pre>
+
 <h2 id="domino-4-query">Domino 4 - Query<a class="headerlink" href="#domino-4-query" title="Permanent link">&para;</a></h2>
 <p>The action of updating <code>app-db</code> (in Domino 3) will trigger the <code>v = f(s)</code> part of the flow. </p>
 <p>The application state
@@ -1809,17 +1831,21 @@ data which is useful to the view functions in domino, 5.</p>
 <p>Now, in this particular case, the query function is pretty trivial.
 Because the items are stored in app state, there's not a lot 
 to compute and, instead, it acts like a simple extractor or accessor,
-just plucking the list of items out of application state:
-<pre class="highlight"><code class="language-clj">(defn query-fn
+just plucking the list of items out of application state:</p>
+<pre><code class="clj">(defn query-fn
   [db v]         ;; db is the current value in app-db, v the query vector
-  (:items db))   ;; not much of a materialised view</code></pre></p>
+  (:items db))   ;; not much of a materialised view
+</code></pre>
+
 <p>On program startup, such a <code>query-fn</code> must be associated with a <code>query-id</code>, 
 (so it can be used via <code>subscribe</code> in domino 5) using <code>re-frame.core/reg-sub</code>, 
-like this:
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-sub  ;; part of the re-frame API
+like this:</p>
+<pre><code class="clj">(re-frame.core/reg-sub  ;; part of the re-frame API
    :query-items         ;; query id  
-   query-fn)            ;; function to perform the query </code></pre>
-Which says "if, in domino 5, you see a <code>(subscribe [:query-items])</code>, then 
+   query-fn)            ;; function to perform the query 
+</code></pre>
+
+<p>Which says "if, in domino 5, you see a <code>(subscribe [:query-items])</code>, then 
 call <code>query-fn</code> to compute it".</p>
 <h2 id="domino-5-view">Domino 5 - View<a class="headerlink" href="#domino-5-view" title="Permanent link">&para;</a></h2>
 <p>Because the query function for <code>:query-items</code> just re-computed a new value, 
@@ -1829,10 +1855,11 @@ is called automatically (reactively) to re-compute new DOM (in response to a cha
 the DOM nodes required. In this "items" case, the view functions will <em>not</em> be generating 
 hiccup for the just-deleted item obviously but, other than this, 
 the hiccup computed "this time" will be the same as "last time".</p>
-<pre class="highlight"><code class="language-clj">(defn items-view
+<pre><code class="clj">(defn items-view
   []
   (let [items  (subscribe [:query-items])]  ;; source items from app state
-    [:div (map item-render @items)]))   ;; assume item-render already written</code></pre>
+    [:div (map item-render @items)]))   ;; assume item-render already written
+</code></pre>
 
 <p>Notice how <code>items</code> is "sourced" from "app state" via <code>re-frame.core/subscribe</code>.
 It is called with a vector argument, and the first element of that vector is

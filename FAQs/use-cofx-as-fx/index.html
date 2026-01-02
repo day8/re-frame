@@ -1609,19 +1609,22 @@
 <h2 id="answer">Answer<a class="headerlink" href="#answer" title="Permanent link">&para;</a></h2>
 <p>Effects simply aren't coeffects.</p>
 <p>To fix this warning, just declare a new map of effects. For instance:</p>
-<pre class="highlight"><code class="language-clj">(reg-event-fx ::cow-clicked
+<pre><code class="clj">(reg-event-fx ::cow-clicked
   (fn [{:keys [db] :as cofx} _]
-    {:db (update db :clicks inc)}))</code></pre>
+    {:db (update db :clicks inc)}))
+</code></pre>
 
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>This seems like it would work, if you're used to using <code>reg-event-db</code> this way.
 Such a <code>db</code> handler behaves like a reducing function:</p>
-<pre class="highlight"><code class="language-clj">(reg-event-db ::cow-clicked-db
-  (fn [db _] (update db :clicks inc)))</code></pre>
+<pre><code class="clj">(reg-event-db ::cow-clicked-db
+  (fn [db _] (update db :clicks inc)))
+</code></pre>
 
 <p>Doing a similar thing to a coeffect map causes the warning, however, not to mention possible unintended effects:</p>
-<pre class="highlight"><code class="language-clj">(reg-event-fx ::cow-clicked-bad
-  (fn [cofx _] (update-in cofx [:db :clicks] inc)))</code></pre>
+<pre><code class="clj">(reg-event-fx ::cow-clicked-bad
+  (fn [cofx _] (update-in cofx [:db :clicks] inc)))
+</code></pre>
 
 <p>With <code>reg-event-fx</code>, you receive a map of coeffect values, and you're expected to return a map of effect values. 
 It's a coincidence that <code>:db</code> identifies both an effect <em>and</em> a coeffect.

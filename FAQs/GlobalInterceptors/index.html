@@ -1609,7 +1609,7 @@ for every event handler?</p>
 <h2 id="answer-v100-onwards">Answer (v1.0.0 onwards)<a class="headerlink" href="#answer-v100-onwards" title="Permanent link">&para;</a></h2>
 <p>Yes, re-frame provides an API for registering global interceptors. </p>
 <p>The following code creates a global interceptor to keep a track of all events:</p>
-<pre class="highlight"><code class="language-clj">;; We'll be recording events into this atom 
+<pre><code class="clj">;; We'll be recording events into this atom 
 ;; The most recent events will be at the front of the list. 
 (def event-store (atom (list)))
 
@@ -1629,7 +1629,8 @@ for every event handler?</p>
 
 ;; register this global interceptor early in program's boot process,
 ;; using re-frame's API
-(re-frame.core/reg-global-interceptor event-collector)</code></pre>
+(re-frame.core/reg-global-interceptor event-collector)
+</code></pre>
 
 <h2 id="answer-prior-to-v100">Answer (prior to v1.0.0)<a class="headerlink" href="#answer-prior-to-v100" title="Permanent link">&para;</a></h2>
 <p>Prior to v1.0.0, re-frame provided no API to directly support this feature,
@@ -1639,8 +1640,8 @@ automatically added to all your event handlers.</p>
 <p>You'd write a replacement for both <code>reg-event-db</code> and <code>reg-event-fx</code>, and get
 these replacements to automatically add <code>omni-ceptor</code> to the interceptor 
 chain at registration time. </p>
-<p>Here's how to write one of these auto-injecting replacements: 
-<pre class="highlight"><code class="language-clj">(defn my-reg-event-db            ;; a replacement for reg-event-db
+<p>Here's how to write one of these auto-injecting replacements: </p>
+<pre><code class="clj">(defn my-reg-event-db            ;; a replacement for reg-event-db
 
    ;; 2-arity with no interceptors 
    ([id handler] 
@@ -1651,14 +1652,18 @@ chain at registration time. </p>
      (re-frame.core/reg-event-db   ;; which uses reg-event-db 
        id
        [omni-ceptor interceptors] ;; &lt;-- inject `omni-ceptor`
-       handler)))</code></pre></p>
+       handler)))
+</code></pre>
+
 <p>NB: did you know that interceptor chains are flattened and nils are removed?</p>
 <p>With this in place, you would always use <code>my-reg-event-db</code> 
-instead of the standard <code>reg-event-db</code>: 
-<pre class="highlight"><code class="language-clj">(my-reg-event-db 
+instead of the standard <code>reg-event-db</code>: </p>
+<pre><code class="clj">(my-reg-event-db 
    :event-id
    (fn [db v] 
-      ...))</code></pre></p>
+      ...))
+</code></pre>
+
 <p>And, hey presto, you'd have your <code>omni-ceptor</code> "globally" injected.</p>
                 
               

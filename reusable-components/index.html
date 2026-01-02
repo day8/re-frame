@@ -1773,13 +1773,15 @@ collectively refer to them as the Component's <strong>I/O requirements</strong>.
 <p>You can create them from base HTML elements such as <code>&lt;input&gt;</code> or <code>&lt;select&gt;</code>
 using only <strong>Reagent</strong> (no re-frame) and,
 for that reason, they are referred to as <code>Reagent Components</code>. </p>
-<p>Here's an example:
-<pre class="highlight"><code class="language-clj">(defn simple-text-input
+<p>Here's an example:</p>
+<pre><code class="clj">(defn simple-text-input
   [value callback-fn]
   [:input 
-   {:type      "text"
+   {:type      &quot;text&quot;
     :value     value                                     ;; initial value
-    :on-change #(callback-fn (-&gt; % .-target .-value))}]) ;; callback with value</code></pre></p>
+    :on-change #(callback-fn (-&gt; % .-target .-value))}]) ;; callback with value
+</code></pre>
+
 <p>You'll notice that both of this Component's <strong>I/O requirements</strong> are provided via two positional arguments:</p>
 <ol>
 <li>a value (input)</li>
@@ -1804,10 +1806,10 @@ because of how it satisfies its <strong>I/O requirements</strong>:</p>
 (not just a single, simple value) and they might involve a "complex of widgets"
 with a cohesive purpose.</p>
 <p>Here's an example:</p>
-<pre class="highlight"><code class="language-clj">(defn customer-names
+<pre><code class="clj">(defn customer-names
   []                                                   
   (let [customer @(subscribe [:customer])]              ;; obtain the customer entity
-    [:div "Name:"
+    [:div &quot;Name:&quot;
 
       ; first name
       [simple-text-input 
@@ -1817,7 +1819,8 @@ with a cohesive purpose.</p>
        ;; last name
        [simple-text-input 
         (:last-name customer)                           ;; last-name from entity
-        #(dispatch [:change-customer :last-name %])]])) ;; last name changed</code></pre>
+        #(dispatch [:change-customer :last-name %])]])) ;; last name changed
+</code></pre>
 
 <p>Notes:</p>
 <ul>
@@ -1827,7 +1830,8 @@ with a cohesive purpose.</p>
 </ul>
 <h2 id="many-instances">Many Instances<a class="headerlink" href="#many-instances" title="Permanent link">&para;</a></h2>
 <p>But this re-frame Component only works when there is one <code>Customer</code> - you'll notice it contained the code:</p>
-<pre class="highlight"><code class="language-clj">(subscribe [:customer])</code></pre>
+<pre><code class="clj">(subscribe [:customer])
+</code></pre>
 
 <p>What if our application has many <code>Customers</code>? We'd want a Component that can represent 
 any one of them, or we might need to render many Customers in the UI at once
@@ -1844,11 +1848,11 @@ to the <code>value</code> representing <code>A</code>. And any events it dispatc
 <li>the subscription handler will use this <code>identity</code> to obtain the entity's value</li>
 <li>likewise, when events are <code>dispatched</code>, they too will include <code>identity</code>, so the <code>event handler</code> knows which entity to modify</li>
 </ul>
-<p>Here's the rewrite which implements this method:
-<pre class="highlight"><code class="language-clj">(defn customer-names
+<p>Here's the rewrite which implements this method:</p>
+<pre><code class="clj">(defn customer-names
   [id]                                                  ;; customer `id` as argument
   (let [customer @(subscribe [:customer id])]           ;; obtain the value using `id`
-    [:div "Name:"
+    [:div &quot;Name:&quot;
 
       ; first name
       [simple-text-input 
@@ -1858,7 +1862,9 @@ to the <code>value</code> representing <code>A</code>. And any events it dispatc
        ;; last name
        [simple-text-input 
         (:last-name customer)                              
-        #(dispatch [:change-customer id :last-name %])]])) ;; include `id`</code></pre></p>
+        #(dispatch [:change-customer id :last-name %])]])) ;; include `id`
+</code></pre>
+
 <h2 id="what-is-identity">What Is Identity?<a class="headerlink" href="#what-is-identity" title="Permanent link">&para;</a></h2>
 <p>An <code>identity</code> distinguishes one entity from
 another - it is something that distinguishes the entity <code>A</code> from entity <code>B</code>. 
@@ -1868,9 +1874,11 @@ In a different technology context, it might be called "a pointer"
 and, consequently, one reliable <code>identity</code> is the  <strong>path</strong> to that
 entity's location within  <code>app-db</code>.  Such paths are vectors - paths are data. They are like a pointer to a place within <code>app-db</code>.</p>
 <p>So, the <code>identity</code> for entity <code>A</code> could be the path vector 
-to <code>A</code>'s location, for example <code>[:entities :customers 123]</code>.  In effect, if you did:
-<pre class="highlight"><code class="language-clj">   (get-in db [:entities :customers 123])</code></pre>
-you would get the entity. And the <code>identity</code> for <code>B</code> might be 
+to <code>A</code>'s location, for example <code>[:entities :customers 123]</code>.  In effect, if you did:</p>
+<pre><code class="clj">   (get-in db [:entities :customers 123])
+</code></pre>
+
+<p>you would get the entity. And the <code>identity</code> for <code>B</code> might be 
 the same other than for the last element, <code>[:entities :customers 456]</code>. In this fictional 
 scenario, the entities <code>A</code> and <code>B</code> are both stored in a map the location <code>[:entities :customers]</code> within <code>app-db</code>,
 but you would access them via different keys in that map (<code>123</code> vs <code>456</code>).</p>
@@ -1880,12 +1888,14 @@ subscription handlers and event handlers, so it doesn't have to be provided, and
 the path (a key in the map at that location) is needed to distinguish two identities.</p>
 <p>So, in summary, an <code>identity</code> is usually a path or a path segment.</p>
 <h2 id="using-identity">Using Identity<a class="headerlink" href="#using-identity" title="Permanent link">&para;</a></h2>
-<p>Here's how we could use our reusable Component multiple times on one page to show many customers:
-<pre class="highlight"><code class="language-clj">(defn customer-list
+<p>Here's how we could use our reusable Component multiple times on one page to show many customers:</p>
+<pre><code class="clj">(defn customer-list
   []
   [:div
    (for [id @(subscribe [:all-customer-ids])]
-     ^{:key id} [customer-names id])]) </code></pre></p>
+     ^{:key id} [customer-names id])]) 
+</code></pre>
+
 <p>Notice that <code>id</code> is provided for each instance (see the code <code>[customer-names id]</code>). That's the entity identity.</p>
 <h2 id="multiple-identities">Multiple Identities<a class="headerlink" href="#multiple-identities" title="Permanent link">&para;</a></h2>
 <p>Sometimes we need to provide more than one <code>identity</code> to a Component.</p>
@@ -1926,10 +1936,10 @@ packaged up and put in your library if you want to reuse a Component across mult
 <p>Because a reusable <code>re-frame Component</code> has three parts, there is another level of abstraction possible.  </p>
 <p>Until now, I've said that a <code>re-frame Component</code> is defined by its use of <code>subscribe</code> and <code>dispatch</code>, but maybe it doesn't have to be that way. </p>
 <p>Here is a rewrite of that earlier Component:</p>
-<pre class="highlight"><code class="language-Clojure">(defn customer-names
+<pre><code class="Clojure">(defn customer-names
   [id get-customer-fn cust_change-fn]       
   (let [customer (get-customer-fn id)]      ;; obtain the value
-    [:div "Name:"
+    [:div &quot;Name:&quot;
 
       ;; first name
       [simple-text-input 
@@ -1939,7 +1949,8 @@ packaged up and put in your library if you want to reuse a Component across mult
       ;; last name
       [simple-text-input
         (:last-name customer)                 ;; obtain last-name from the entity
-        #(cust_change-fn id :last-name %)]])) ;; last name has changed</code></pre>
+        #(cust_change-fn id :last-name %)]])) ;; last name has changed
+</code></pre>
 
 <p>Notes:</p>
 <ul>
@@ -1953,15 +1964,17 @@ which looks like a Reagent Component.  Remember that one at the very top?<br />
 The I/O requirements were handled via arguments, which shifts "knowledge" about the 
 application context to the parent. </p>
 </blockquote>
-<p>Let's rewrite <code>customer-list</code> in terms of this new Component:
-<pre class="highlight"><code class="language-Clojure">(defn customer-list
+<p>Let's rewrite <code>customer-list</code> in terms of this new Component:</p>
+<pre><code class="Clojure">(defn customer-list
   []
   (let [get-customer (fn [id] @(subscribe [:customer id]))
         put-customer (fn [id field val] (dispatch [:cust-change id field val]))])
   [:div
    (for [id @(subscribe [:all-customer-ids])]
-     ^{:key id} [customer-names id get-customer put-customer])])</code></pre>
-Notes:</p>
+     ^{:key id} [customer-names id get-customer put-customer])])
+</code></pre>
+
+<p>Notes:</p>
 <ul>
 <li>we create <code>I/O functions</code> which wrap <code>subscribe</code> and <code>dispatch</code></li>
 <li>these two functions are passed into the sub-component as arguments</li>

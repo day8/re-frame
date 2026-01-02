@@ -1795,7 +1795,7 @@
 <li>
 <p>Added an new <code>:fx</code> built-in effect handler.
     Previously, you might have returned effects like this:</p>
-<pre class="highlight"><code>(reg-event-fx 
+<pre><code>(reg-event-fx 
   :token 
   (fn [{:keys [db]} [_ id]]
     {:db (assoc db :twirly true) 
@@ -1805,9 +1805,8 @@
               {:method :GET :url "http://abc.com/endpoint" ...}
               {:method :POST :url "http://blah.com/endpoint" ...})}))
 </code></pre>
-
 <p>but now, using <code>:fx</code>:</p>
-<pre class="highlight"><code>(reg-event-fx 
+<pre><code>(reg-event-fx 
   :token 
   (fn [{:keys [db]} [_ id]]
     {:db (assoc db :twirly true) 
@@ -1818,7 +1817,6 @@
 
            (when seventies? [:hair "side burns"])]     ;; nils are ignored
 </code></pre>
-
 <p>Notes:</p>
 <ul>
 <li>the effect <code>:fx</code> will be associated with a <code>seq</code>, typically a vector</li>

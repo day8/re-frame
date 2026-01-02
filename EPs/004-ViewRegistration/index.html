@@ -1596,8 +1596,8 @@
 </ul>
 <p>XXX searches up the DOM hierarchy looking for a <code>frame</code> context then extracts dispatch and subscribe.  Sounds inefficient. </p>
 <h3 id="code-doodle-1">Code Doodle #1<a class="headerlink" href="#code-doodle-1" title="Permanent link">&para;</a></h3>
-<p>Associate the keyword <code>:my-view-id</code> with a renderer using <code>def-view</code>:
-<pre class="highlight"><code class="language-clj">(def-view 
+<p>Associate the keyword <code>:my-view-id</code> with a renderer using <code>def-view</code>:</p>
+<pre><code class="clj">(def-view 
    :my-view-id 
 
    ;; indicate what `context` is required
@@ -1611,12 +1611,16 @@
    ;; 
    (fn [a-str context]
      (let [XXXX] 
-       )))</code></pre></p>
-<p>Use of <code>:my-view-id</code>:
-<pre class="highlight"><code class="language-clj">[:my-view-id  "Hello"] </code></pre></p>
+       )))
+</code></pre>
+
+<p>Use of <code>:my-view-id</code>:</p>
+<pre><code class="clj">[:my-view-id  &quot;Hello&quot;] 
+</code></pre>
+
 <h3 id="code-doodle-2">Code Doodle #2<a class="headerlink" href="#code-doodle-2" title="Permanent link">&para;</a></h3>
-<p>Associate the keyword <code>:my-view-id</code> with a renderer using <code>def-view</code>:
-<pre class="highlight"><code class="language-clj">(def-view 
+<p>Associate the keyword <code>:my-view-id</code> with a renderer using <code>def-view</code>:</p>
+<pre><code class="clj">(def-view 
    :my-view-id 
 
    ;; injection function
@@ -1627,7 +1631,7 @@
    :subscriptions 
    (fn [_ id]
       {:subs [[:item ]] 
-       :context ["name1", "name2")})
+       :context [&quot;name1&quot;, &quot;name2&quot;)})
 
 
    ;; the renderer
@@ -1638,12 +1642,16 @@
    ;; 
    (fn [a-str  ins]
      (let [XXXX] 
-       )))</code></pre></p>
-<p>Use of <code>:my-view-id</code>:
-<pre class="highlight"><code class="language-clj">[:my-view-id  "Hello"] </code></pre></p>
+       )))
+</code></pre>
+
+<p>Use of <code>:my-view-id</code>:</p>
+<pre><code class="clj">[:my-view-id  &quot;Hello&quot;] 
+</code></pre>
+
 <h3 id="code-doodle-3">Code Doodle #3<a class="headerlink" href="#code-doodle-3" title="Permanent link">&para;</a></h3>
 <p><code>[:something arg1 arg2]</code></p>
-<pre class="highlight"><code class="language-clj">(def-view 
+<pre><code class="clj">(def-view 
    :something 
    (fn [arg1 arg2] 
       ;; obtain dispatch and subscription 
@@ -1651,6 +1659,7 @@
       ;; add a key on the component 
       (fn [arg1 arg2] 
           ))
+
 </code></pre>
 
 <h2 id="misc-notes">Misc Notes<a class="headerlink" href="#misc-notes" title="Permanent link">&para;</a></h2>

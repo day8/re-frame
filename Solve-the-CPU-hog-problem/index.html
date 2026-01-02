@@ -1701,15 +1701,15 @@ include something like the following: </p>
 <li>what chunk to do next. </li>
 </ol>
 <h2 id="a-sketch">A Sketch<a class="headerlink" href="#a-sketch" title="Permanent link">&para;</a></h2>
-<p>Here's an <code>-fx</code> handler which counts up to some number in chunks:
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx 
+<p>Here's an <code>-fx</code> handler which counts up to some number in chunks:</p>
+<pre><code class="clj">(re-frame.core/reg-event-fx 
   :count-to
   (fn 
     [{db :db} [_ first-time so-far finish-at]]
     (if first-time
       ;; We are at the beginning, so:
-      ;;     - modify db, causing popup of Modal saying "Working ..."
-      ;;     - begin iterative dispatch. Give initial version of "so-far"
+      ;;     - modify db, causing popup of Modal saying &quot;Working ...&quot;
+      ;;     - begin iterative dispatch. Give initial version of &quot;so-far&quot;
       {:dispatch [:count-to false {:counter 0} finish-at]  ;; dispatch to self
        :db (assoc db :we-are-working true)}
       (if (&gt; (:counter so-far) finish-at)
@@ -1723,7 +1723,9 @@ include something like the following: </p>
         ;;   - run the calculation
         ;;   - redispatch, passing in new running state
         (let [new-so-far   (update so-far :counter inc)]
-          {:dispatch [:count-to false new-so-far finish-at]}))))                         </code></pre></p>
+          {:dispatch [:count-to false new-so-far finish-at]}))))                         
+</code></pre>
+
 <h3 id="why-does-a-redispatch-work">Why Does A Redispatch Work?<a class="headerlink" href="#why-does-a-redispatch-work" title="Permanent link">&para;</a></h3>
 <p>A <code>dispatched</code> event is handled asynchronously. It is queued
 and not actioned straight away. </p>
@@ -1777,13 +1779,15 @@ function of the data in <code>app-db</code>. Only changes to <code>app-db</code>
 changes. </p>
 <p>So, to show that Modal, you’ll need to <code>assoc</code> some value into <code>app-db</code> 
 and have that new value change what is rendered in your reagent components.</p>
-<p>You might be tempted to do this: 
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-db
+<p>You might be tempted to do this: </p>
+<pre><code class="clj">(re-frame.core/reg-event-db
   :process-x
   (fn
    [db event-v]
    (assoc db :processing-X  true) ;; update state, so reagent components render a modal 
-   (do-long-process-x)))          ;; hog the CPU</code></pre></p>
+   (do-long-process-x)))          ;; hog the CPU
+</code></pre>
+
 <p>But that is just plain wrong. 
 That <code>assoc</code> into <code>db</code> is not returned (and it must be for a <code>-db</code> handler).
 And, even if that did somehow work, 
@@ -1791,8 +1795,8 @@ then you continue hogging the thread with <code>do-long-process-x</code>.  There
 chance for any UI updates because the handler never gives up control. This 
 handler owns the thread right through.</p>
 <p>Ahhh, you think.  I know what to do!  I'll use that pattern I read 
-about in the Wiki, and <code>re-dispatch</code> within an<code>-fx</code> handler: 
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx
+about in the Wiki, and <code>re-dispatch</code> within an<code>-fx</code> handler: </p>
+<pre><code class="clj">(re-frame.core/reg-event-fx
   :process-x
   (fn 
     [{db :db} event-v]
@@ -1802,7 +1806,9 @@ about in the Wiki, and <code>re-dispatch</code> within an<code>-fx</code> handle
 (re-frame.core/reg-event-db
   :do-work-process-x
   (fn [db _]
-    (do-long-process-x db)))   ;; return a new db, presumably containing work done</code></pre></p>
+    (do-long-process-x db)))   ;; return a new db, presumably containing work done
+</code></pre>
+
 <p>So close.  But it still won’t work. There's a little wrinkle.</p>
 <p>That event handler for <code>:process-x</code> will indeed give back control 
 to the browser. BUT, because of the way reagent works, that <code>assoc</code> on <code>db</code> 
@@ -1815,13 +1821,15 @@ action is being taken won't show.</p>
 <p>In these kinds of cases, where you are only going to give the UI 
 <strong>one chance to update</strong> (not a repeated chance every few milliseconds), 
 then you had better be sure the DOM is fully synced. </p>
-<p>To do this, you put metadata on the event being dispatched:
-<pre class="highlight"><code class="language-clj">(re-frame.core/reg-event-fx
+<p>To do this, you put metadata on the event being dispatched:</p>
+<pre><code class="clj">(re-frame.core/reg-event-fx
   :process-x
   (fn 
     [{db :db} event-v]
     {:dispatch  ^:flush-dom [:do-work-process-x]   ;; &lt;--- NOW WITH METADATA         
-     :db (assoc  db  :processing-X true)}))  ;; so the modal gets rendered</code></pre></p>
+     :db (assoc  db  :processing-X true)}))  ;; so the modal gets rendered
+</code></pre>
+
 <p>Notice the <code>^:flush-dom</code> metadata on the event being dispatched.  Use 
 that when you want the UI to be fully updated before the event dispatch 
 is handled. </p>

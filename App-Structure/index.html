@@ -1686,16 +1686,17 @@ which are both unique and descriptive.</p>
 <p>How do I switch between different panels of a larger app?</p>
 <p>Your <code>app-db</code> could have an <code>:active-panel</code> key containing an id for the panel being displayed.</p>
 <p>When the user does something navigation-ish (selects a tab, a dropdown or something which changes the active panel), then the associated event and dispatch look like this:</p>
-<pre class="highlight"><code class="language-clj">(re-frame/reg-event-db
+<pre><code class="clj">(re-frame/reg-event-db
   :set-active-panel
   (fn [db [_ value]]
     (assoc db :active-panel value)))
 
 (re-frame/dispatch
-  [:set-active-panel :panel1])</code></pre>
+  [:set-active-panel :panel1])
+</code></pre>
 
 <p>A high level reagent view has a subscription to :active-panel and will switch to the associated panel.</p>
-<pre class="highlight"><code class="language-clj">(re-frame/reg-sub
+<pre><code class="clj">(re-frame/reg-sub
   :active-panel
   (fn [db _]
     (:active-panel db)))
@@ -1703,21 +1704,22 @@ which are both unique and descriptive.</p>
 (defn panel1
  []
  [:div  {:on-click #(re-frame/dispatch [:set-active-panel :panel2])}
-        "Here" ])
+        &quot;Here&quot; ])
 
 (defn panel2
  []
- [:div "There"])
+ [:div &quot;There&quot;])
 
 (defn high-level-view
   []
   (let [active  (re-frame/subscribe [:active-panel])]
     (fn []
       [:div
-       [:div.title   "Heading"]
+       [:div.title   &quot;Heading&quot;]
        (condp = @active                ;; or you could look up in a map
          :panel1   [panel1]
-         :panel2   [panel2])])))</code></pre>
+         :panel2   [panel2])])))
+</code></pre>
                 
               
               

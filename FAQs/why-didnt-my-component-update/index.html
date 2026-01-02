@@ -1635,18 +1635,20 @@ But sometimes this fails to happen, for non-obvious reasons.</p>
 <h3 id="you-dereferenced-a-subscription-outside-the-render-fn">You dereferenced a subscription outside the render-fn<a class="headerlink" href="#you-dereferenced-a-subscription-outside-the-render-fn" title="Permanent link">&para;</a></h3>
 <p>Consider this reagent component. When the value for <code>:some-data</code> changes within app-db, 
 will the component update?</p>
-<pre class="highlight"><code class="language-clojure">(reg-sub :my-data (fn [db] (get db :my-data)))
+<pre><code class="clojure">(reg-sub :my-data (fn [db] (get db :my-data)))
 
 (defn my-component []
   (let [current-data @(rf/subscribe [:my-data])]
-    (str current-data)))</code></pre>
+    (str current-data)))
+</code></pre>
 
 <p>Yes, this works as you'd expect. But here's another component - 
 it appears deceptively similar, but technically it is now a 
 <a href="https://github.com/reagent-project/reagent/blob/master/doc/CreatingReagentComponents.md#form-2--a-function-returning-a-function">form-2 component</a>.</p>
-<pre class="highlight"><code class="language-clojure">(defn my-component []
+<pre><code class="clojure">(defn my-component []
   (let [current-data @(rf/subscribe [:my-data])]
-    (fn my-render-fn [] (str current-data))))</code></pre>
+    (fn my-render-fn [] (str current-data))))
+</code></pre>
 
 <p>Here, <code>current-data</code> really <em>isn't</em> current!
 When this component mounts, you'll see the correct value within app-db.
@@ -1663,9 +1665,10 @@ back to that first dereferenced value.</p>
 <p>Put simply, <strong>the solution is to dereference subscriptions within the actual render function</strong>, not 
 this constructor-like outer function. And, if it feels helpful, try using <code>*</code> to suggest 
 that your symbol is bound to a derefable:</p>
-<pre class="highlight"><code class="language-clojure">(defn my-component []
+<pre><code class="clojure">(defn my-component []
   (let [current-data* (rf/subscribe [:my-data])]
-    (fn my-render-fn [] (str @current-data*))))</code></pre>
+    (fn my-render-fn [] (str @current-data*))))
+</code></pre>
 
 <p>Now, <code>my-render-fn</code> can get called "many, many times," and new values for <code>current-data*</code> will
 flow in, even as the lexical scope stays the same. It doesn't hurt to structure your original 
@@ -1677,16 +1680,16 @@ But without a keen eye for reactivity, it's easy to break your components.</p>
 <h3 id="you-used-defmulti">You used <code>defmulti</code><a class="headerlink" href="#you-used-defmulti" title="Permanent link">&para;</a></h3>
 <p>A subtle but severe problem can occur if you implement a form-2 component
 using <code>defmulti</code>/<code>defmethod</code>:</p>
-<pre class="highlight"><code class="language-clojure">(defn which-fruit [k] k)
+<pre><code class="clojure">(defn which-fruit [k] k)
 
 (defmulti fruit-view which-fruit)
 
 (defmethod fruit-view :apple [_]
-  [:li "🍎 I'm an apple!"])
+  [:li &quot;🍎 I'm an apple!&quot;])
 
 (defmethod fruit-view :banana [_]
   (fn render-banana []
-    [:li "🍌 I'm a banana!"]))
+    [:li &quot;🍌 I'm a banana!&quot;]))
 
 (def fruit (r/atom :apple))
 
@@ -1696,9 +1699,10 @@ using <code>defmulti</code>/<code>defmethod</code>:</p>
 
 (defn fruit-switcher []
   [:div
-   [:button {:on-click next-fruit!} "Click me!"]
-   [:div "Showing " @fruit ":"]
-   [fruit-view @fruit]])</code></pre>
+   [:button {:on-click next-fruit!} &quot;Click me!&quot;]
+   [:div &quot;Showing &quot; @fruit &quot;:&quot;]
+   [fruit-view @fruit]])
+</code></pre>
 
 <p>On the first render, reagent invokes <code>fruit-view</code>.
 Clojure runs your dispatch function <code>which-fruit</code>, 
@@ -1726,32 +1730,34 @@ until someone decides to add a form-2 method.</p>
 One workaround is to <strong>use <code>defmulti</code> to implement only form-1 components.</strong>
 For instance, you could define your components using regular <code>defn</code>, and use <code>defmulti</code> only 
 as a wrapper to dispatch them:</p>
-<pre class="highlight"><code class="language-clojure">(defn fruit-item-apple [_]
-  (fn [_] [:li "🍎 I'm an apple!"]))
+<pre><code class="clojure">(defn fruit-item-apple [_]
+  (fn [_] [:li &quot;🍎 I'm an apple!&quot;]))
 
 (defmethod fruit-item :apple [props] [fruit-item-apple])
 
 (defn fruit-item-banana [_]
-  (fn [_] [:li "🍌 I'm a banana!"]))
+  (fn [_] [:li &quot;🍌 I'm a banana!&quot;]))
 
-(defmethod fruit-item :banana [props] [fruit-item-banana props])</code></pre>
+(defmethod fruit-item :banana [props] [fruit-item-banana props])
+</code></pre>
 
 <p>Or, you could extract your form-2 code into a single wrapper,
 and call your multimethod from there, making sure all your methods are form-1:</p>
-<pre class="highlight"><code class="language-clojure">(defmethod fruit-item :apple [_]
-  [:li "🍎 I'm an apple!"])
+<pre><code class="clojure">(defmethod fruit-item :apple [_]
+  [:li &quot;🍎 I'm an apple!&quot;])
 
 (defmethod fruit-item :banana [_]
-  [:li "🍌 I'm a banana!"])
+  [:li &quot;🍌 I'm a banana!&quot;])
 
 (defn fruit-view 
-  "We need this wrapper component to ensure reactivity.
+  &quot;We need this wrapper component to ensure reactivity.
   For details, refer to this article: 
-  https://day8.github.io/re-frame/FAQs/why-didnt-my-component-update"
+  https://day8.github.io/re-frame/FAQs/why-didnt-my-component-update&quot;
   [k]
   (let [] ;; Do your form-2 stuff here.
     (fn []
-      [fruit-item k])))</code></pre>
+      [fruit-item k])))
+</code></pre>
 
 <p>If you truly need a polymorphic form-2 component without caveats,
 <strong>consider not using <code>defmulti</code></strong>.
@@ -1759,17 +1765,18 @@ Though multimethods are elegant, our workarounds can be clumsy.</p>
 <p><strong>Consider using <code>case</code> or <code>cond</code></strong>, instead. This can work as idiomatic Clojure,
 providing explicit and foolproof dispatch without depending on 
 incidental indirections like <code>fruit-view</code> above:</p>
-<pre class="highlight"><code class="language-clojure">(defn fruit-item-apple []
+<pre><code class="clojure">(defn fruit-item-apple []
   (fn [] ;; No problem using form-2
-    [:li "🍎 I'm an apple!"]))
+    [:li &quot;🍎 I'm an apple!&quot;]))
 
 (defn fruit-item-banana []
-  [:li "🍌 I'm a banana!"])
+  [:li &quot;🍌 I'm a banana!&quot;])
 
 (defn fruit-view [k]
   (case k
     :apple  [fruit-item-apple]
-    :banana [fruit-item-banana]))</code></pre>
+    :banana [fruit-item-banana]))
+</code></pre>
                 
               
               

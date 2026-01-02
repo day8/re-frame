@@ -1681,9 +1681,9 @@ thrill of that forbidden fruit. </p>
 </ul>
 <p>The pattern involves the outer component, which sources data, supplying this data to the inner component <strong>via props</strong>. </p>
 <h2 id="example-using-google-maps">Example Using Google Maps<a class="headerlink" href="#example-using-google-maps" title="Permanent link">&para;</a></h2>
-<pre class="highlight"><code class="language-clj">(defn gmap-inner []
+<pre><code class="clj">(defn gmap-inner []
   (let [gmap    (atom nil)
-        options (clj-&gt;js {"zoom" 9})
+        options (clj-&gt;js {&quot;zoom&quot; 9})
         update  (fn [comp]
                   (let [{:keys [latitude longitude]} (reagent/props comp)
                         latlng (js/google.maps.LatLng. latitude longitude)]
@@ -1693,18 +1693,18 @@ thrill of that forbidden fruit. </p>
     (reagent/create-class
       {:reagent-render (fn []
                          [:div
-                          [:h4 "Map"]
-                          [:div#map-canvas {:style {:height "400px"}}]])
+                          [:h4 &quot;Map&quot;]
+                          [:div#map-canvas {:style {:height &quot;400px&quot;}}]])
 
        :component-did-mount (fn [comp]
-                              (let [canvas  (.getElementById js/document "map-canvas")
+                              (let [canvas  (.getElementById js/document &quot;map-canvas&quot;)
                                     gm      (js/google.maps.Map. canvas options)
-                                    marker  (js/google.maps.Marker. (clj-&gt;js {:map gm :title "Drone"}))]
+                                    marker  (js/google.maps.Marker. (clj-&gt;js {:map gm :title &quot;Drone&quot;}))]
                                 (reset! gmap {:map gm :marker marker}))
                               (update comp))
 
        :component-did-update update
-       :display-name "gmap-inner"})))
+       :display-name &quot;gmap-inner&quot;})))
 
 
 
@@ -1713,7 +1713,8 @@ thrill of that forbidden fruit. </p>
     (fn []
       ;; Note: @pos is a map here, so it gets passed as props.
       ;; Non-props values can be accessed via (reagent/argv comp)
-      [gmap-inner @pos])))</code></pre>
+      [gmap-inner @pos])))
+</code></pre>
 
 <p>Notes:</p>
 <ul>
