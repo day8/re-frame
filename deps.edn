@@ -30,9 +30,9 @@
                                                                    :git/sha "f7617846597f411fd646a46b283777584a1a02bb"}}
                          :main-opts  ["-m" "noahtheduke.clein"]}
            :clein/build {:extra-deps {}
-                         :lib        re-com/re-com
-                         :main       re-com.core
-                         :url        "https://github.com/day8/re-com"
+                         :lib        re-frame/re-frame
+                         :main       re-frame.core
+                         :url        "https://github.com/day8/re-frame"
                          :version    day8.dev/git-app-version!
                          :license    {:name "MIT"
                                       :url  "https://opensource.org/licenses/MIT"}
