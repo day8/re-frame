@@ -13,6 +13,18 @@ jobs:
 
       - run: git config --global --add safe.directory /__w/re-frame/re-frame
 
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli:  'latest'
+          bb:   'latest'
+
       - name: Maven cache
         id: maven-cache
         uses: actions/cache@v4
@@ -38,6 +50,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-shadow-cljs-
 
+      - uses: browser-actions/setup-chrome@v1
+        id: setup-chrome
+        with:
+          chrome-version: 811961
+
       - name: Test todomvc example
         working-directory: examples/todomvc
         run: |
@@ -50,19 +67,7 @@ jobs:
           npm install
           npm run release
 
-      - name: Setup java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '24'
-
-      - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@12.5
-        with:
-          cli:  'latest'
-          bb:   'latest'
-
-      - run: bb test
+      - run: bb test :chrome-path '"${{ steps.setup-chrome.outputs.chrome-path }}"'
 
       - name: Slack notification
         uses: homoluctus/slatify@v2.0.1
