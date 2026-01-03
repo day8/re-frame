@@ -118,7 +118,7 @@ jobs:
           cli:  'latest'
           bb:   'latest'
 
-      - run: bb clojars
+      - run: clojure -M:clein deploy
         env:
           CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
           CLOJARS_TOKEN: ${{ secrets.CLOJARS_TOKEN }}
