@@ -122,6 +122,7 @@ jobs:
         env:
           CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
           CLOJARS_TOKEN: ${{ secrets.CLOJARS_TOKEN }}
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_TOKEN }}
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
