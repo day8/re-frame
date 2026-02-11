@@ -1527,7 +1527,7 @@
 <li>What worked well for you. What puzzled you. What jarred.  What is overexplained. What is underexplained. etc. </li>
 </ol>
 <p>It is not yet completely polished, but it is getting close. It does not yet have an integrated inline/on-page REPL yet. But it will soon. <br></p>
-<p>Please open an issue with your thoughts <a href="https://github.com/day8/re-frame/">at the re-freame repo</a> or via twitter <a href="https://twitter.com/wazound">here</a></p>
+<p>Please open an issue with your thoughts <a href="https://github.com/day8/re-frame/">at the re-frame repo</a> or via twitter <a href="https://twitter.com/wazound">here</a></p>
 <p>Many Thanks!</p>
 </blockquote>
 <p>Are you new to ClojureScript?  This page will teach you to <strong><em>read Clojure</em></strong> in 40 minutes.</p>
@@ -1537,7 +1537,7 @@ learning to <em>write ClojureScript</em> but that's a larger skill, which will r
 <p>Clojure is a modern LISP.</p>
 <p>Alan Kay once described LISP as "Maxwell's equations of software".
 Paul Graham believes LISP was a competitive advantage for his startup.
-Eric Raymmond said that learning LISP was profoundly enligtening and that knowing it would make you a better programmer for the rest of your days.</p>
+Eric Raymond said that learning LISP was profoundly enlightening and that knowing it would make you a better programmer for the rest of your days.</p>
 <p>In the 70s, 80s and 90s, the LISP community went through a washing machine phase of evolutionary churn. 
 Innovation flourished, experiments happened, prototype ideas were tested and knowledge foliated.
 Later, in about 2010, Rich Hickey took that knowledge and created Clojure, introducing key innovations. 
@@ -1903,7 +1903,7 @@ is a function. And it is <strong><em>that</em></strong> function which is called
 <tr>
 <td><code>(+ 1 2)</code></td>
 <td><code>3</code></td>
-<td>The symbol <code>+</code> is bound to a builin function.<br>And that function adds together its arguments</td>
+<td>The symbol <code>+</code> is bound to a builtin function.<br>And that function adds together its arguments</td>
 </tr>
 <tr>
 <td><code>(+ 1 2 3)</code></td>
@@ -1949,7 +1949,7 @@ Well, in your mind's eye, see this nested example as <code>(f arg1 arg2)</code> 
 <li><code>arg1</code> is <code>1</code></li>
 <li><code>arg2</code> is <code>(inc 10)</code>  &lt;-- a nested form</li>
 </ul>
-<p>To evaluate this form, you'll remember from the last section that it is a two step process. First, evaluate each of the three elements. So the execution trace will be: </p>
+<p>To evaluate this form, you'll remember from the last section that it is a two-step process. First, evaluate each of the three elements. So the execution trace will be: </p>
 <ul>
 <li><code>+</code> will evaluate to the builtin function bound to that symbol </li>
 <li><code>1</code> evaluates to  <code>1</code></li>
@@ -1981,7 +1981,7 @@ Well, in your mind's eye, see this nested example as <code>(f arg1 arg2)</code> 
 <tr>
 <td><code>(= (inc 1) (dec 3))</code></td>
 <td><code>true</code></td>
-<td><code>dec</code> is bound to a bultin, and it decrements its arg by one</td>
+<td><code>dec</code> is bound to a builtin, and it decrements its arg by one</td>
 </tr>
 </tbody>
 </table>
@@ -2330,7 +2330,7 @@ Functions don't normally cause side effect - they are normally pure.</li>
 
 <p><code>beach-items</code> is a symbol bound to <code>3</code></p>
 <p>Now, consider what is happening here:</p>
-<pre><code class="clj">(def my-inc (fn [a] (+ a 1))
+<pre><code class="clj">(def my-inc (fn [a] (+ a 1)))
 </code></pre>
 
 <p>That <code>fn</code> form will create a function, and then the <code>def</code> will bind it to the symbol  <code>my-inc</code>. Two steps. Hey, we've just created our own <code>inc</code>.</p>
@@ -2383,7 +2383,7 @@ which combines the two, called <code>defn</code>.</p>
 <p>Define another: </p>
 <pre><code class="clj">(defn greet
   [username]
-  (str &quot;Hello &quot; username))) 
+  (str &quot;Hello &quot; username))
 </code></pre>
 
 <p><code>str</code> is a builtin function which turns each of its arguments into a string and concatenates them.</p>
@@ -2442,10 +2442,10 @@ which combines the two, called <code>defn</code>.</p>
 
 <div class="cm-doc" data-cm-doc-no-eval-on-init>(greet "Noisy Neighbours" false)</div>
 
-<p>In this particular, we could have got away with no using a <code>let</code>, like this: </p>
+<p>In this particular, we could have got away with not using a <code>let</code>, like this: </p>
 <pre><code class="clj">(defn greet
   [name friendly?]
-  [:div (if friendly? &quot;Hello &quot; &quot;Go away &quot;) name)
+  [:div (if friendly? &quot;Hello &quot; &quot;Go away &quot;) name])
 </code></pre>
 
 <pre><code class="clj">(defn items-text 
@@ -2643,7 +2643,7 @@ are used all the time, and to read Clojure code (our aim here), you must know th
 
 <p>XXX Live coding here.</p>
 <h2 id="reduce"><code>reduce</code><a class="headerlink" href="#reduce" title="Permanent link">&para;</a></h2>
-<p>In the functional world, <code>reduce</code> is part 600 pound gorilla, part swiss arm knife. </p>
+<p>In the functional world, <code>reduce</code> is part 600 pound gorilla, part swiss army knife. </p>
 <p>It takes three arguments:</p>
 <ul>
 <li>a function which "accumulates"</li>
@@ -2763,7 +2763,7 @@ And <strong>that</strong> is how a macro rewrites your code - it is a function t
 <p>Deeply nested forms, like this, are often rewritten using the <code>thread first</code> macro <code>-&gt;</code>:</p>
 <pre><code class="clj">(-&gt; (+ 0 1)   ; (+ 0 1)
     (+ 2)     ; (+ (+ 0 1) 2)
-    (+ 4)))   ; (+ (+ (+ 0 1) 2) 4)
+    (+ 4))   ; (+ (+ (+ 0 1) 2) 4)
 </code></pre>
 
 <p><code>-&gt;</code> is a symbol and it is the first element in a form  <code>(-&gt; ...)</code>. 
@@ -2801,7 +2801,7 @@ It is as if the evaluation of the higher form is "flowing down" and into the for
     :aa)             ;; same as (:aa)
 </code></pre>
 
-<p><code>-&gt;</code> belongs to a small family of marcos. Another one is the <code>thread last</code> macro <code>-&gt;&gt;</code>.  It operates the same way except it threads the value as the argument in the last position, not the first.</p>
+<p><code>-&gt;</code> belongs to a small family of macros. Another one is the <code>thread last</code> macro <code>-&gt;&gt;</code>.  It operates the same way except it threads the value as the argument in the last position, not the first.</p>
 <h2 id="thread-last-macro-">Thread Last Macro <code>-&gt;&gt;</code><a class="headerlink" href="#thread-last-macro-" title="Permanent link">&para;</a></h2>
 <p>Do you remember this nested form example from earlier:</p>
 <pre><code class="clj">(map count (map str (map inc [9 99 999])))
@@ -2843,7 +2843,7 @@ can't change this revision either. But, you can create a further revision (copy)
 
 <p>you'll see a vector of three values <code>[{:doors 2} {:doors 2, :seats 4}  {:doors 2, :seats 4, :engine :big} ]</code>. </p>
 <p>Notice how <code>car1</code> is unchanged, even though we did an <code>assoc</code> into <code>car1</code> . Same with XXXXXXXXX</p>
-<p>When you are used to imperative, in-place modification of data, it can initially be mysterfying as to how you can achieve anything. Rest assured, you can. </p>
+<p>When you are used to imperative, in-place modification of data, it can initially be mystifying as to how you can achieve anything. Rest assured, you can. </p>
 <p>More experiments. If we evaluate this:</p>
 <pre><code class="cljs">(assoc (assoc score :c 3) :d 4)
 </code></pre>
