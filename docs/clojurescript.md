@@ -113,8 +113,8 @@ A symbol is a `name` that is bound to a `value`. Here, we mean "bound" in the se
 We've now covered most of Clojure's syntax.
 
 But, how can that be?  Haven't we only looked at data literals? Well, yes, but 
-Clojure is `Homoiconic` which means "code is data" - you write Clojure code 
-using Clojure's data literals and we've covered data literals. 
+Clojure is `Homoiconic`, which means "code is data" - you write Clojure code 
+using Clojure's data literals, and we've just covered data literals. 
 
 ---
 ## Evaluation
