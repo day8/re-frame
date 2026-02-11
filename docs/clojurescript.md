@@ -7,7 +7,7 @@
 >
 > It is not yet completely polished, but it is getting close. It does not yet have an integrated inline/on-page REPL yet. But it will soon. <br>
 > 
-> Please open an issue with your thoughts [at the re-freame repo](https://github.com/day8/re-frame/) or via twitter [here](https://twitter.com/wazound)
+> Please open an issue with your thoughts [at the re-frame repo](https://github.com/day8/re-frame/) or via twitter [here](https://twitter.com/wazound)
 >
 > Many Thanks!
 
@@ -23,7 +23,7 @@ Clojure is a modern LISP.
 
 Alan Kay once described LISP as "Maxwell's equations of software".
 Paul Graham believes LISP was a competitive advantage for his startup.
-Eric Raymmond said that learning LISP was profoundly enligtening and that knowing it would make you a better programmer for the rest of your days.
+Eric Raymond said that learning LISP was profoundly enlightening and that knowing it would make you a better programmer for the rest of your days.
 
 In the 70s, 80s and 90s, the LISP community went through a washing machine phase of evolutionary churn. 
 Innovation flourished, experiments happened, prototype ideas were tested and knowledge foliated.
@@ -255,7 +255,7 @@ Example list evaluations, involving symbols:
 |-------------------------|------------------------|--------------------------------------------------------|
 | `(inc 3)`         | `4`              | Step 1: evaluate each element of the list (there are two):<br>&nbsp;&nbsp;• the symbol  `inc` is bound to a builtin function<br>&nbsp;&nbsp;• and `3` evaluates to `3`<br>Step 2: call the function with `3` as the argument.<br>The return value `4`         | 
 | `[5 (inc 6)]`     | `[5 7]`          | Evaluate each element of the vector.  `5` evaluates to  `5`.<br>Then, evaluating that 2nd element is a function call.  |        
-| `(+ 1 2)`         | `3`              | The symbol `+` is bound to a builin function.<br>And that function adds together its arguments |      
+| `(+ 1 2)`         | `3`              | The symbol `+` is bound to a builtin function.<br>And that function adds together its arguments |      
 | `(+ 1 2 3)`       | `6`              | Surprise! Turns out this function can handle a variable<br>number of arguments.          |       
 | `[1 (+ 1 2 3)]`   | `[1 6]`          |  |
 
@@ -293,7 +293,7 @@ Well, in your mind's eye, see this nested example as `(f arg1 arg2)` where:
   - `arg1` is `1`
   - `arg2` is `(inc 10)`  <-- a nested form
 
-To evaluate this form, you'll remember from the last section that it is a two step process. First, evaluate each of the three elements. So the execution trace will be: 
+To evaluate this form, you'll remember from the last section that it is a two-step process. First, evaluate each of the three elements. So the execution trace will be: 
 
   - `+` will evaluate to the builtin function bound to that symbol 
   - `1` evaluates to  `1`
@@ -308,7 +308,7 @@ More:
 |------------------------|------------------------|-----------------------------------------------|
 | `(+ 3 (count [1 2]))`  | `5`        | Evaluation trace:<br>&nbsp;&nbsp;• `+` is evaluated to a function<br>&nbsp;&nbsp;• `3` is evaluated to `3`<br>&nbsp;&nbsp;• `(count [1 2])` is evaluated as a function call which returns `2`<br>&nbsp;&nbsp;• call function with args `3` and `2`, which  returns `5`   |            
 | `(= 2 (inc 1))`  | `true`           | `=` is a symbol which is bound to a builtin function.<br>You can guess what it does. |                 
-| `(= (inc 1) (dec 3))`  | `true`     |  `dec` is bound to a bultin, and it decrements its arg by one |          
+| `(= (inc 1) (dec 3))`  | `true`     |  `dec` is bound to a builtin, and it decrements its arg by one |          
 
 
 Evaluate these experiments yourself (any surprises?):
@@ -570,7 +570,7 @@ Consider these two:
 
 Now, consider what is happening here:
 ```clj
-(def my-inc (fn [a] (+ a 1))
+(def my-inc (fn [a] (+ a 1)))
 ```
 That `fn` form will create a function, and then the `def` will bind it to the symbol  `my-inc`. Two steps. Hey, we've just created our own `inc`.
 ```clj
@@ -635,7 +635,7 @@ Define another:
 ```clj
 (defn greet
   [username]
-  (str "Hello " username))) 
+  (str "Hello " username))
 ```
 `str` is a builtin function which turns each of its arguments into a string and concatenates them.
 
@@ -705,11 +705,11 @@ XXX experiment with greet
 
 <div class="cm-doc" data-cm-doc-no-eval-on-init>(greet "Noisy Neighbours" false)</div>
 
-In this particular, we could have got away with no using a `let`, like this: 
+In this particular, we could have got away with not using a `let`, like this: 
 ``` clj
 (defn greet
   [name friendly?]
-  [:div (if friendly? "Hello " "Go away ") name)
+  [:div (if friendly? "Hello " "Go away ") name])
 ```
 
 ```clj
@@ -872,7 +872,7 @@ XXX Live coding here.
 
 ## `reduce`
 
-In the functional world, `reduce` is part 600 pound gorilla, part swiss arm knife. 
+In the functional world, `reduce` is part 600 pound gorilla, part swiss army knife. 
 
 It takes three arguments:
 
@@ -988,7 +988,7 @@ Deeply nested forms, like this, are often rewritten using the `thread first` mac
 ```clj
 (-> (+ 0 1)   ; (+ 0 1)
     (+ 2)     ; (+ (+ 0 1) 2)
-    (+ 4)))   ; (+ (+ (+ 0 1) 2) 4)
+    (+ 4))   ; (+ (+ (+ 0 1) 2) 4)
 ```
 `->` is a symbol and it is the first element in a form  `(-> ...)`. 
 So, this is a function call and the symbol `->` is bound to the function to be called, a bit 
@@ -1031,7 +1031,7 @@ Work out the evaluation of:
     :aa)             ;; same as (:aa)
 ```
 
-`->` belongs to a small family of marcos. Another one is the `thread last` macro `->>`.  It operates the same way except it threads the value as the argument in the last position, not the first.
+`->` belongs to a small family of macros. Another one is the `thread last` macro `->>`.  It operates the same way except it threads the value as the argument in the last position, not the first.
 
 ## Thread Last Macro `->>`
 
@@ -1089,7 +1089,7 @@ you'll see a vector of three values ` [{:doors 2} {:doors 2, :seats 4}  {:doors 
 
 Notice how `car1` is unchanged, even though we did an `assoc` into `car1` . Same with XXXXXXXXX
 
-When you are used to imperative, in-place modification of data, it can initially be mysterfying as to how you can achieve anything. Rest assured, you can. 
+When you are used to imperative, in-place modification of data, it can initially be mystifying as to how you can achieve anything. Rest assured, you can. 
 
 More experiments. If we evaluate this:
 ```cljs
