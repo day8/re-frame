@@ -190,3 +190,274 @@ looking it up.
 
 if we `subscribe` in a view, and that subscription needs to causes other subscriptions to be created, how to get at the associated frame at the point when we want to create the further subscriptions?
 
+
+---
+
+## Appendix: Multi-frame ergonomic model and implementation sketch (2026 update)
+
+# Multi-frame re-frame: ergonomic programmer model + implementation sketch
+
+This document answers two questions:
+
+1. What should multi-frame re-frame feel like to a programmer?
+2. How can that be implemented without violating React/Reagent constraints?
+
+---
+
+## Programmer model (target UX)
+
+**Mental model:** each `[rf/frame-provider {:frame f} ...]` subtree runs against its own runtime world.
+
+Inside that subtree:
+
+- plain `rf/subscribe` should just work,
+- plain `rf/dispatch` should work during render-time flows,
+- `rf/use-dispatch` is the ergonomic default for event handlers (`:on-click`, async callbacks),
+- explicit `*-to` APIs are available for tests/integration/non-UI code.
+
+No prop drilling of frame values.
+
+---
+
+## Public API surface (small + memorable)
+
+```clojure
+;; lifecycle
+(rf/make-frame opts?)                ;; => frame
+(rf/destroy-frame frame)
+
+;; view ergonomics
+(rf/frame-provider {:frame f} & children)
+(rf/use-dispatch)                    ;; => (fn [event])
+(rf/use-subscribe query-v)           ;; optional convenience hook
+
+;; dynamic binding helper (tests/REPL/setup)
+(rf/with-frame frame & body)         ;; macro
+
+;; explicit integration path
+(rf/dispatch-to frame event)
+(rf/dispatch-sync-to frame event)
+(rf/subscribe-to frame query-v)
+
+;; ergonomic plain API (frame resolved from current context/binding)
+(rf/dispatch event)
+(rf/dispatch-sync event)
+(rf/subscribe query-v)
+```
+
+---
+
+## Usage examples
+
+## 1) Two isolated widgets on one page
+
+```clojure
+(defonce left-frame  (rf/make-frame {:id :left}))
+(defonce right-frame (rf/make-frame {:id :right}))
+
+(defn page []
+  [:div
+   [rf/frame-provider {:frame left-frame}
+    [counter-widget "Left"]]
+   [rf/frame-provider {:frame right-frame}
+    [counter-widget "Right"]]])
+```
+
+Child components stay close to normal re-frame style:
+
+```clojure
+(defn counter-widget [label]
+  (let [dispatch! (rf/use-dispatch)                 ;; one hook for callbacks
+        count     @(rf/subscribe [:counter/value])] ;; plain subscribe remains
+    [:div
+     [:h3 label]
+     [:button {:on-click #(dispatch! [:counter/inc])}
+      (str "Count: " count)]]))
+```
+
+## 2) Two different apps embedded in one host page
+
+```clojure
+(defonce todo-frame
+  (rf/make-frame {:id :todo
+                  :handler-scope {:mode :namespaces
+                                  :allow #{"todo" "shared"}}}))
+
+(defonce meme-frame
+  (rf/make-frame {:id :meme
+                  :handler-scope {:mode :namespaces
+                                  :allow #{"meme" "shared"}}}))
+
+(defn host-page []
+  [:main
+   [rf/frame-provider {:frame todo-frame} [todo/root]]
+   [rf/frame-provider {:frame meme-frame} [meme/root]]])
+```
+
+## 3) Reusable isolated widget pattern
+
+```clojure
+(defn make-counter-frame []
+  (rf/make-frame {:db {:count 0}}))
+
+(defn counter-widget [label]
+  (let [frame (make-counter-frame)]
+    [rf/frame-provider {:frame frame}
+     [counter-widget-init frame]
+     [counter-widget-ui label]]))
+
+(defn counter-widget-init [frame]
+  ;; register once for this frame (not on every render)
+  (r/with-let [_ (rf/with-frame frame
+                   (rf/reg-event-db :inc (fn [db _] (update db :count inc)))
+                   (rf/reg-sub :count (fn [db _] (:count db))))]
+    [:<>]))
+
+(defn counter-widget-ui [label]
+  (let [dispatch! (rf/use-dispatch)
+        count     @(rf/subscribe [:count])]
+    [:div.widget
+     [:h3 label]
+     [:p "Count: " count]
+     [:button {:on-click #(dispatch! [:inc])} "+"]]))
+```
+
+## 4) Explicit path for tests and non-UI code
+
+```clojure
+(let [frame (rf/make-frame {:id :batch})]
+  (rf/dispatch-sync-to frame [:init])
+  @(rf/subscribe-to frame [:status]))
+
+(rf/with-frame (rf/make-frame {:db {:count 0}})
+  (rf/dispatch-sync [:counter/inc])
+  @(rf/subscribe [:counter/value]))
+```
+
+---
+
+## Internal architecture
+
+## 1) Frame runtime object
+
+Each frame owns mutable runtime state:
+
+```clojure
+{:id           :todo
+ :app-db       (reagent/atom {})
+ :registrar    ...     ;; visible handlers for this frame
+ :router       ...     ;; queue/scheduler state
+ :sub-cache    ...     ;; reactions/sub graph
+ :lifecycle    {:destroyed? false}
+ :config       {...}}
+```
+
+Anything mutable that can affect behavior is frame-scoped.
+
+## 2) Parameterize internals by frame
+
+Core internals become explicit:
+
+```clojure
+(dispatch* frame event)
+(dispatch-sync* frame event)
+(subscribe* frame query-v)
+(invoke-handler* frame event)
+(cache-lookup* frame query-v)
+```
+
+Public APIs are wrappers around frame resolution + these internals.
+
+## 3) Registration strategy
+
+Pragmatic approach:
+
+- keep handler definitions globally registered (good hot reload + ecosystem compatibility),
+- derive frame-local resolver/filter at `make-frame`,
+- enforce scope via `:handler-scope` (`:all`, namespace allow-list, package allow-list).
+
+---
+
+## Frame resolution design (hook-safe + ergonomic)
+
+The critical design point: **never call React hooks from general utility functions**.
+
+### 1) Core primitives
+
+```clojure
+(def ^:dynamic *current-frame* nil)
+(defonce frame-context (js/React.createContext nil))
+(def default-frame (make-frame {:id :default}))
+
+(defn current-frame* []
+  ;; non-hook path, safe everywhere
+  (or *current-frame* default-frame))
+
+(defn use-frame []
+  ;; hook path, valid only in component/hook call sites
+  (or (js/React.useContext frame-context)
+      *current-frame*
+      default-frame))
+```
+
+### 2) Provider implementation
+
+Provider sets React context and also dynamic binding for render-time code paths.
+
+```clojure
+(defn frame-provider [{:keys [frame]} & children]
+  [:> (.-Provider frame-context) {:value frame}
+   [frame-render-binding frame children]])
+
+(defn- frame-render-binding [frame children]
+  (binding [*current-frame* frame]
+    (into [:<>] children)))
+```
+
+This is what allows plain `rf/subscribe` to work unchanged inside provider subtrees.
+
+### 3) Plain APIs
+
+```clojure
+(defn subscribe [query-v]
+  (subscribe* (current-frame*) query-v))
+
+(defn dispatch [event]
+  (dispatch* (current-frame*) event))
+```
+
+### 4) Hook convenience APIs
+
+```clojure
+(defn use-dispatch []
+  (let [frame (use-frame)]
+    ;; stable closure per mounted component instance
+    (r/with-let [f (fn [event] (dispatch* frame event))]
+      f)))
+
+(defn use-subscribe [query-v]
+  (let [frame (use-frame)]
+    (subscribe* frame query-v)))
+```
+
+---
+
+## Correctness notes
+
+1. **Why plain `subscribe` works ergonomically:** subscription creation happens during render; provider render binding supplies `*current-frame*`.
+2. **Why `use-dispatch` is still recommended:** event handlers/async callbacks run after render; dynamic binding no longer applies.
+3. **Subscription chaining:** nested `subscribe*` inherits the same frame context; cache keys include frame identity + query.
+4. **Async effects:** deferred callbacks should capture frame explicitly (`use-dispatch`, `dispatch-to`, or closure with frame).
+5. **Destroyed frame behavior:** dispatch/subscribe against destroyed frames should throw clear errors.
+
+---
+
+## Minimal implementation slice
+
+1. `make-frame`, `dispatch-to`, `subscribe-to`
+2. `frame-provider` with context + render-time binding
+3. plain `dispatch`/`subscribe` via `current-frame*`
+4. `use-dispatch`
+5. two counters on one page proving isolation and ergonomics
+
+This slice demonstrates the intended UX while staying technically sound.
