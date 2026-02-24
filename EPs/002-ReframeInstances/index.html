@@ -1498,6 +1498,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon">
@@ -1508,98 +1510,9 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#ep-002-multiple-re-frame-instances" class="md-nav__link">
-    EP 002 - Multiple re-frame Instances
-  </a>
-  
-    <nav class="md-nav" aria-label="EP 002 - Multiple re-frame Instances">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#abstract" class="md-nav__link">
     Abstract
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" class="md-nav__link">
-    Introduction
-  </a>
-  
-    <nav class="md-nav" aria-label="Introduction">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#global-state-as-a-frame" class="md-nav__link">
-    Global State As A Frame
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#the-two-problems" class="md-nav__link">
-    The Two Problems
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#on-mutating-registrars" class="md-nav__link">
-    On Mutating registrars
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#problem-1-frames-and-registrars" class="md-nav__link">
-    Problem 1:  Frames And Registrars
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#problem-1-solutions" class="md-nav__link">
-    Problem 1 - Solutions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#problem-2-views-dispatch-and-subscription" class="md-nav__link">
-    Problem 2: Views, dispatch and subscription
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#problem-2-minimal-design-solution" class="md-nav__link">
-    Problem 2: Minimal Design Solution
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#problem-2-better-design-solution" class="md-nav__link">
-    Problem 2: Better Design Solution
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#problem" class="md-nav__link">
-    Problem
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1622,8 +1535,6 @@
                 
                   
                 
-                
-                  <h1>002 ReframeInstances</h1>
                 
                 <h2 id="ep-002-multiple-re-frame-instances">EP 002 - Multiple re-frame Instances<a class="headerlink" href="#ep-002-multiple-re-frame-instances" title="Permanent link">&para;</a></h2>
 <blockquote>
@@ -1761,6 +1672,228 @@ this path would passing down the <code>id</code> of the frame, and then
 looking it up.</p>
 <h3 id="problem">Problem<a class="headerlink" href="#problem" title="Permanent link">&para;</a></h3>
 <p>if we <code>subscribe</code> in a view, and that subscription needs to causes other subscriptions to be created, how to get at the associated frame at the point when we want to create the further subscriptions?</p>
+<hr />
+<h2 id="appendix-multi-frame-ergonomic-model-and-implementation-sketch-2026-update">Appendix: Multi-frame ergonomic model and implementation sketch (2026 update)<a class="headerlink" href="#appendix-multi-frame-ergonomic-model-and-implementation-sketch-2026-update" title="Permanent link">&para;</a></h2>
+<h1 id="multi-frame-re-frame-ergonomic-programmer-model-implementation-sketch">Multi-frame re-frame: ergonomic programmer model + implementation sketch<a class="headerlink" href="#multi-frame-re-frame-ergonomic-programmer-model-implementation-sketch" title="Permanent link">&para;</a></h1>
+<p>This document answers two questions:</p>
+<ol>
+<li>What should multi-frame re-frame feel like to a programmer?</li>
+<li>How can that be implemented without violating React/Reagent constraints?</li>
+</ol>
+<hr />
+<h2 id="programmer-model-target-ux">Programmer model (target UX)<a class="headerlink" href="#programmer-model-target-ux" title="Permanent link">&para;</a></h2>
+<p><strong>Mental model:</strong> each <code>[rf/frame-provider {:frame f} ...]</code> subtree runs against its own runtime world.</p>
+<p>Inside that subtree:</p>
+<ul>
+<li>plain <code>rf/subscribe</code> should just work,</li>
+<li>plain <code>rf/dispatch</code> should work during render-time flows,</li>
+<li><code>rf/use-dispatch</code> is the ergonomic default for event handlers (<code>:on-click</code>, async callbacks),</li>
+<li>explicit <code>*-to</code> APIs are available for tests/integration/non-UI code.</li>
+</ul>
+<p>No prop drilling of frame values.</p>
+<hr />
+<h2 id="public-api-surface-small-memorable">Public API surface (small + memorable)<a class="headerlink" href="#public-api-surface-small-memorable" title="Permanent link">&para;</a></h2>
+<pre><code class="clojure">;; lifecycle
+(rf/make-frame opts?)                ;; =&gt; frame
+(rf/destroy-frame frame)
+
+;; view ergonomics
+(rf/frame-provider {:frame f} &amp; children)
+(rf/use-dispatch)                    ;; =&gt; (fn [event])
+(rf/use-subscribe query-v)           ;; optional convenience hook
+
+;; dynamic binding helper (tests/REPL/setup)
+(rf/with-frame frame &amp; body)         ;; macro
+
+;; explicit integration path
+(rf/dispatch-to frame event)
+(rf/dispatch-sync-to frame event)
+(rf/subscribe-to frame query-v)
+
+;; ergonomic plain API (frame resolved from current context/binding)
+(rf/dispatch event)
+(rf/dispatch-sync event)
+(rf/subscribe query-v)
+</code></pre>
+
+<hr />
+<h2 id="usage-examples">Usage examples<a class="headerlink" href="#usage-examples" title="Permanent link">&para;</a></h2>
+<h2 id="1-two-isolated-widgets-on-one-page">1) Two isolated widgets on one page<a class="headerlink" href="#1-two-isolated-widgets-on-one-page" title="Permanent link">&para;</a></h2>
+<pre><code class="clojure">(defonce left-frame  (rf/make-frame {:id :left}))
+(defonce right-frame (rf/make-frame {:id :right}))
+
+(defn page []
+  [:div
+   [rf/frame-provider {:frame left-frame}
+    [counter-widget &quot;Left&quot;]]
+   [rf/frame-provider {:frame right-frame}
+    [counter-widget &quot;Right&quot;]]])
+</code></pre>
+
+<p>Child components stay close to normal re-frame style:</p>
+<pre><code class="clojure">(defn counter-widget [label]
+  (let [dispatch! (rf/use-dispatch)                 ;; one hook for callbacks
+        count     @(rf/subscribe [:counter/value])] ;; plain subscribe remains
+    [:div
+     [:h3 label]
+     [:button {:on-click #(dispatch! [:counter/inc])}
+      (str &quot;Count: &quot; count)]]))
+</code></pre>
+
+<h2 id="2-two-different-apps-embedded-in-one-host-page">2) Two different apps embedded in one host page<a class="headerlink" href="#2-two-different-apps-embedded-in-one-host-page" title="Permanent link">&para;</a></h2>
+<pre><code class="clojure">(defonce todo-frame
+  (rf/make-frame {:id :todo
+                  :handler-scope {:mode :namespaces
+                                  :allow #{&quot;todo&quot; &quot;shared&quot;}}}))
+
+(defonce meme-frame
+  (rf/make-frame {:id :meme
+                  :handler-scope {:mode :namespaces
+                                  :allow #{&quot;meme&quot; &quot;shared&quot;}}}))
+
+(defn host-page []
+  [:main
+   [rf/frame-provider {:frame todo-frame} [todo/root]]
+   [rf/frame-provider {:frame meme-frame} [meme/root]]])
+</code></pre>
+
+<h2 id="3-reusable-isolated-widget-pattern">3) Reusable isolated widget pattern<a class="headerlink" href="#3-reusable-isolated-widget-pattern" title="Permanent link">&para;</a></h2>
+<pre><code class="clojure">(defn make-counter-frame []
+  (rf/make-frame {:db {:count 0}}))
+
+(defn counter-widget [label]
+  (let [frame (make-counter-frame)]
+    [rf/frame-provider {:frame frame}
+     [counter-widget-init frame]
+     [counter-widget-ui label]]))
+
+(defn counter-widget-init [frame]
+  ;; register once for this frame (not on every render)
+  (r/with-let [_ (rf/with-frame frame
+                   (rf/reg-event-db :inc (fn [db _] (update db :count inc)))
+                   (rf/reg-sub :count (fn [db _] (:count db))))]
+    [:&lt;&gt;]))
+
+(defn counter-widget-ui [label]
+  (let [dispatch! (rf/use-dispatch)
+        count     @(rf/subscribe [:count])]
+    [:div.widget
+     [:h3 label]
+     [:p &quot;Count: &quot; count]
+     [:button {:on-click #(dispatch! [:inc])} &quot;+&quot;]]))
+</code></pre>
+
+<h2 id="4-explicit-path-for-tests-and-non-ui-code">4) Explicit path for tests and non-UI code<a class="headerlink" href="#4-explicit-path-for-tests-and-non-ui-code" title="Permanent link">&para;</a></h2>
+<pre><code class="clojure">(let [frame (rf/make-frame {:id :batch})]
+  (rf/dispatch-sync-to frame [:init])
+  @(rf/subscribe-to frame [:status]))
+
+(rf/with-frame (rf/make-frame {:db {:count 0}})
+  (rf/dispatch-sync [:counter/inc])
+  @(rf/subscribe [:counter/value]))
+</code></pre>
+
+<hr />
+<h2 id="internal-architecture">Internal architecture<a class="headerlink" href="#internal-architecture" title="Permanent link">&para;</a></h2>
+<h2 id="1-frame-runtime-object">1) Frame runtime object<a class="headerlink" href="#1-frame-runtime-object" title="Permanent link">&para;</a></h2>
+<p>Each frame owns mutable runtime state:</p>
+<pre><code class="clojure">{:id           :todo
+ :app-db       (reagent/atom {})
+ :registrar    ...     ;; visible handlers for this frame
+ :router       ...     ;; queue/scheduler state
+ :sub-cache    ...     ;; reactions/sub graph
+ :lifecycle    {:destroyed? false}
+ :config       {...}}
+</code></pre>
+
+<p>Anything mutable that can affect behavior is frame-scoped.</p>
+<h2 id="2-parameterize-internals-by-frame">2) Parameterize internals by frame<a class="headerlink" href="#2-parameterize-internals-by-frame" title="Permanent link">&para;</a></h2>
+<p>Core internals become explicit:</p>
+<pre><code class="clojure">(dispatch* frame event)
+(dispatch-sync* frame event)
+(subscribe* frame query-v)
+(invoke-handler* frame event)
+(cache-lookup* frame query-v)
+</code></pre>
+
+<p>Public APIs are wrappers around frame resolution + these internals.</p>
+<h2 id="3-registration-strategy">3) Registration strategy<a class="headerlink" href="#3-registration-strategy" title="Permanent link">&para;</a></h2>
+<p>Pragmatic approach:</p>
+<ul>
+<li>keep handler definitions globally registered (good hot reload + ecosystem compatibility),</li>
+<li>derive frame-local resolver/filter at <code>make-frame</code>,</li>
+<li>enforce scope via <code>:handler-scope</code> (<code>:all</code>, namespace allow-list, package allow-list).</li>
+</ul>
+<hr />
+<h2 id="frame-resolution-design-hook-safe-ergonomic">Frame resolution design (hook-safe + ergonomic)<a class="headerlink" href="#frame-resolution-design-hook-safe-ergonomic" title="Permanent link">&para;</a></h2>
+<p>The critical design point: <strong>never call React hooks from general utility functions</strong>.</p>
+<h3 id="1-core-primitives">1) Core primitives<a class="headerlink" href="#1-core-primitives" title="Permanent link">&para;</a></h3>
+<pre><code class="clojure">(def ^:dynamic *current-frame* nil)
+(defonce frame-context (js/React.createContext nil))
+(def default-frame (make-frame {:id :default}))
+
+(defn current-frame* []
+  ;; non-hook path, safe everywhere
+  (or *current-frame* default-frame))
+
+(defn use-frame []
+  ;; hook path, valid only in component/hook call sites
+  (or (js/React.useContext frame-context)
+      *current-frame*
+      default-frame))
+</code></pre>
+
+<h3 id="2-provider-implementation">2) Provider implementation<a class="headerlink" href="#2-provider-implementation" title="Permanent link">&para;</a></h3>
+<p>Provider sets React context and also dynamic binding for render-time code paths.</p>
+<pre><code class="clojure">(defn frame-provider [{:keys [frame]} &amp; children]
+  [:&gt; (.-Provider frame-context) {:value frame}
+   [frame-render-binding frame children]])
+
+(defn- frame-render-binding [frame children]
+  (binding [*current-frame* frame]
+    (into [:&lt;&gt;] children)))
+</code></pre>
+
+<p>This is what allows plain <code>rf/subscribe</code> to work unchanged inside provider subtrees.</p>
+<h3 id="3-plain-apis">3) Plain APIs<a class="headerlink" href="#3-plain-apis" title="Permanent link">&para;</a></h3>
+<pre><code class="clojure">(defn subscribe [query-v]
+  (subscribe* (current-frame*) query-v))
+
+(defn dispatch [event]
+  (dispatch* (current-frame*) event))
+</code></pre>
+
+<h3 id="4-hook-convenience-apis">4) Hook convenience APIs<a class="headerlink" href="#4-hook-convenience-apis" title="Permanent link">&para;</a></h3>
+<pre><code class="clojure">(defn use-dispatch []
+  (let [frame (use-frame)]
+    ;; stable closure per mounted component instance
+    (r/with-let [f (fn [event] (dispatch* frame event))]
+      f)))
+
+(defn use-subscribe [query-v]
+  (let [frame (use-frame)]
+    (subscribe* frame query-v)))
+</code></pre>
+
+<hr />
+<h2 id="correctness-notes">Correctness notes<a class="headerlink" href="#correctness-notes" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Why plain <code>subscribe</code> works ergonomically:</strong> subscription creation happens during render; provider render binding supplies <code>*current-frame*</code>.</li>
+<li><strong>Why <code>use-dispatch</code> is still recommended:</strong> event handlers/async callbacks run after render; dynamic binding no longer applies.</li>
+<li><strong>Subscription chaining:</strong> nested <code>subscribe*</code> inherits the same frame context; cache keys include frame identity + query.</li>
+<li><strong>Async effects:</strong> deferred callbacks should capture frame explicitly (<code>use-dispatch</code>, <code>dispatch-to</code>, or closure with frame).</li>
+<li><strong>Destroyed frame behavior:</strong> dispatch/subscribe against destroyed frames should throw clear errors.</li>
+</ol>
+<hr />
+<h2 id="minimal-implementation-slice">Minimal implementation slice<a class="headerlink" href="#minimal-implementation-slice" title="Permanent link">&para;</a></h2>
+<ol>
+<li><code>make-frame</code>, <code>dispatch-to</code>, <code>subscribe-to</code></li>
+<li><code>frame-provider</code> with context + render-time binding</li>
+<li>plain <code>dispatch</code>/<code>subscribe</code> via <code>current-frame*</code></li>
+<li><code>use-dispatch</code></li>
+<li>two counters on one page proving isolation and ergonomics</li>
+</ol>
+<p>This slice demonstrates the intended UX while staying technically sound.</p>
                 
               
               
