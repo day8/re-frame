@@ -143,13 +143,34 @@ Contract:
 5. Resolve `db` coeffects and effects against the target frame's state.
 6. Return `nil`.
 
-Sketch:
+Reference implementation:
 
 ```clojure
+(defn- frame-id [frame]
+  (or (:id frame) :unknown-frame))
+
+(defn- frame-destroyed? [frame]
+  (let [v (:destroyed? frame)]
+    (if (satisfies? IDeref v) @v (boolean v))))
+
+(defn- assert-live-frame! [op frame]
+  (when-not (map? frame)
+    (throw (ex-info (str "re-frame: " op " expected frame map, got: " (type frame))
+                    {:op op :frame frame})))
+  (when (frame-destroyed? frame)
+    (throw (ex-info (str "re-frame: " op " called on destroyed frame " (frame-id frame))
+                    {:op op :frame-id (frame-id frame)}))))
+
+(defn- assert-event! [op event]
+  (when-not (and (vector? event) (seq event))
+    (throw (ex-info (str "re-frame: " op " expected non-empty event vector, got: " event)
+                    {:op op :event event}))))
+
 (defn dispatch-to [frame event]
-  (assert-live-frame! frame `dispatch-to`)
-  (assert-event! event)
-  (router/enqueue! (:router frame) event)
+  (assert-live-frame! "dispatch-to" frame)
+  (assert-event! "dispatch-to" event)
+  ;; Router is frame-local, so queued work stays within this app instance.
+  (router/push! (:router frame) event)
   nil)
 ```
 
@@ -166,13 +187,41 @@ Contract:
 4. Build or reuse a cached reaction keyed by `(frame-id, query-v)`.
 5. Return the derefable reaction.
 
-Sketch:
+Reference implementation:
 
 ```clojure
-(defn subscribe-to [frame query-v]
-  (assert-live-frame! frame `subscribe-to`)
-  (assert-query! query-v)
-  (subs/cache-lookup-or-create! frame query-v))
+(defn- assert-query! [op query-v]
+  (when-not (vector? query-v)
+    (throw (ex-info (str "re-frame: " op " expected query vector, got: " query-v)
+                    {:op op :query query-v}))))
+
+(defn- cache-key [frame query-v dyn-v]
+  [[:frame (frame-id frame)] query-v dyn-v])
+
+(defn subscribe-to
+  ([frame query-v]
+   (subscribe-to frame query-v []))
+  ([frame query-v dyn-v]
+   (assert-live-frame! "subscribe-to" frame)
+   (assert-query! "subscribe-to" query-v)
+   (let [k      (cache-key frame query-v dyn-v)
+         cache  (:sub-cache frame)
+         app-db (:app-db frame)]
+     (if-let [cached (get @cache k)]
+       cached
+       (let [query-id (first query-v)
+             handler  (registrar/get-handler :sub query-id)]
+         (when-not handler
+           (throw (ex-info (str "re-frame: no subscription handler for " query-id)
+                           {:op "subscribe-to"
+                            :frame-id (frame-id frame)
+                            :query-id query-id})))
+         (let [rxn (if (seq dyn-v)
+                     (let [dyn-vals (r/reaction (fn [] (mapv deref dyn-v)))]
+                       (r/reaction (fn [] (handler app-db query-v @dyn-vals))))
+                     (handler app-db query-v))]
+           (swap! cache assoc k rxn)
+           rxn))))))
 ```
 
 ### Error behavior
