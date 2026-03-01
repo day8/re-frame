@@ -124,6 +124,77 @@ Registration remains global (`reg-event-*`, `reg-sub`, interceptor setup), just
 as in current `re-frame`. Frame isolation applies to runtime state and event
 processing context, not to registration ownership.
 
+## Explicit API semantics (`dispatch-to`, `subscribe-to`)
+
+These APIs are the unambiguous, non-UI path: the caller provides the target
+frame directly.
+
+### `dispatch-to`
+
+`dispatch-to` must behave exactly like `dispatch`, except frame selection is
+explicit.
+
+Contract:
+
+1. Validate `frame` is a live frame instance.
+2. Validate `event` is a non-empty event vector.
+3. Enqueue the event onto that frame's event router/queue.
+4. Run the normal interceptor chain for the event.
+5. Resolve `db` coeffects and effects against the target frame's state.
+6. Return `nil`.
+
+Sketch:
+
+```clojure
+(defn dispatch-to [frame event]
+  (assert-live-frame! frame `dispatch-to`)
+  (assert-event! event)
+  (router/enqueue! (:router frame) event)
+  nil)
+```
+
+### `subscribe-to`
+
+`subscribe-to` must behave exactly like `subscribe`, except frame selection is
+explicit.
+
+Contract:
+
+1. Validate `frame` is a live frame instance.
+2. Validate `query-v` is a query vector.
+3. Resolve the subscription handler from global registration.
+4. Build or reuse a cached reaction keyed by `(frame-id, query-v)`.
+5. Return the derefable reaction.
+
+Sketch:
+
+```clojure
+(defn subscribe-to [frame query-v]
+  (assert-live-frame! frame `subscribe-to`)
+  (assert-query! query-v)
+  (subs/cache-lookup-or-create! frame query-v))
+```
+
+### Error behavior
+
+Both functions should throw clear errors when given:
+
+1. Unknown/invalid frame value.
+2. Destroyed frame.
+3. Invalid event or query shape.
+4. Missing handler/subscription registrations.
+
+Error messages should include operation name and frame id (when available).
+
+### Chaining and isolation guarantees
+
+1. If a subscription causes further subscriptions, they must resolve within the
+   same frame context.
+2. If an event handler dispatches additional events, they must target the same
+   frame unless explicitly redirected via another `*-to` call.
+3. No cache entries, event queues, or `app-db` reads/writes may cross frame
+   boundaries.
+
 ## Behavioral expectations
 
 1. Isolation: state, event processing, and subscriptions are frame-local.
