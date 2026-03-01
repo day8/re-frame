@@ -14,7 +14,7 @@ Today, `re-frame` effectively behaves as one runtime per page. That is simple,
 but it blocks important scenarios:
 
 1. Multiple instances of the same app side-by-side (`devcards`, embedded widgets).
-2. Multiple different apps in one host page.
+2. Multiple instances of the same app embedded in different areas of a host page.
 3. Test and REPL flows that create and discard isolated app worlds.
 
 The design question is ergonomic first: how should this feel to a programmer?
@@ -31,6 +31,8 @@ The design question is ergonomic first: how should this feel to a programmer?
 
 1. This EP does not prescribe timelines, rollout steps, or migration plans.
 2. This EP does not lock in internal implementation details.
+3. This EP does not attempt to support multiple different application types
+   on one page.
 
 ## Programmer mental model
 
@@ -91,23 +93,18 @@ perform routine subscriptions and dispatches.
       (str "Count: " count)]]))
 ```
 
-### 2) Two different apps in one host page
+### 2) Same app mounted in two host-page regions
 
 ```clojure
-(defonce todo-frame
-  (rf/make-frame {:id :todo
-                  :handler-scope {:mode :namespaces
-                                  :allow #{"todo" "shared"}}}))
-
-(defonce meme-frame
-  (rf/make-frame {:id :meme
-                  :handler-scope {:mode :namespaces
-                                  :allow #{"meme" "shared"}}}))
+(defonce top-frame    (rf/make-frame {:id :top}))
+(defonce sidebar-frame (rf/make-frame {:id :sidebar}))
 
 (defn host-page []
   [:main
-   [rf/frame-provider {:frame todo-frame} [todo/root]]
-   [rf/frame-provider {:frame meme-frame} [meme/root]]])
+   [rf/frame-provider {:frame top-frame}
+    [dashboard/root]]
+   [rf/frame-provider {:frame sidebar-frame}
+    [dashboard/root]]])
 ```
 
 ### 3) Explicit frame control outside UI code
@@ -118,14 +115,14 @@ perform routine subscriptions and dispatches.
   @(rf/subscribe-to frame [:status]))
 ```
 
-## Handler visibility ergonomics
+## Handler and interceptor model
 
-When creating a frame, programmers may optionally limit which handlers are
-visible to that frame (for example by namespace or package). This supports host
-pages that embed different apps without accidental cross-talk.
+All frames in this EP are instances of the same application type and therefore
+share the same registered handlers and interceptors.
 
-The default remains ergonomic: if no scope is supplied, a frame can use the
-standard handler universe.
+Registration remains global (`reg-event-*`, `reg-sub`, interceptor setup), just
+as in current `re-frame`. Frame isolation applies to runtime state and event
+processing context, not to registration ownership.
 
 ## Behavioral expectations
 
@@ -155,7 +152,5 @@ coexisting app instances.
 
 1. Should `rf/use-subscribe` exist as an optional convenience, or is plain
    `rf/subscribe` sufficient?
-2. What is the cleanest user-facing vocabulary for handler scoping (`:package`,
-   namespace allow-lists, or both)?
-3. Should the default behavior outside any provider always target a designated
+2. Should the default behavior outside any provider always target a designated
    default frame, or should this be configurable?
