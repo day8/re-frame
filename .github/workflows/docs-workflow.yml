@@ -4,11 +4,24 @@
 #
 # More about the build process are documented at
 # https://github.com/day8/re-frame/blob/feature/mkdocs/docs/developer-notes.md
+#
+# PREREQUISITE: the repository's Pages source must be set to "GitHub Actions"
+# (Settings -> Pages -> Build and deployment -> Source). If it is still set
+# to "Deploy from a branch" then the deploy-pages step in the github-pages
+# job below will fail and https://day8.github.io/re-frame/ will continue to
+# serve the last commit on the (now-unused) gh-pages branch until the
+# setting is corrected.
 
 name: docs
 on:
   push:
     branches: 'master'
+
+# Allow only one concurrent deployment, but do not cancel in-progress runs
+# so that an in-flight Pages deployment can complete before the next starts.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   re-frame-docs-app:
@@ -103,34 +116,26 @@ jobs:
     name: GitHub Pages
     needs: mkdocs
     runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout GitHub Pages Branch
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
-        with:
-          ref: "gh-pages"
-          path: "gh-pages"
-
       - name: Download MkDocs Artifact
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: mkdocs
 
       - name: Extract MkDocs Artifact
-        run: |
-          tar zxf mkdocs.tar.gz
-          rm -rf gh-pages/*
-          cp -Rv site/* gh-pages/
+        run: tar zxf mkdocs.tar.gz
 
-      - name: Commit
-        working-directory: ./gh-pages
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "Update docs"
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: site/
 
-      - name: Push
-        working-directory: ./gh-pages
-        run: |
-          REMOTE="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push "${REMOTE}" HEAD:gh-pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
