@@ -170,13 +170,13 @@ The 4-5-6 domino cascade implements the formula made famous by Facebook's ground
 
 A view, `v`, is a function, `f`, of the app state, `s`.
 
-Said another way, there are functions `f` that compute which DOM nodes, `v`,
+Said another way, there are functions `f` that compute which DOM nodes, `v`, which
 should be displayed to the user when the application is in a given app state, `s`.
 
-Or, to capture the dynamics we'd say: **over time**, as `s` changes, `f`
-will be re-run each time to compute new `v`, forever keeping `v` up to date with the current `s`.
+Or, to capture the dynamics, we'd say: **over time**, as `s` changes, `f`
+will be re-run each time to compute a new `v` (what the user sees), forever keeping `v` up to date with the current `s`.
 
-Or, with yet another emphasis: **over time** what is presented to the user changes in response to application state changes. 
+Or, with yet another emphasis: **over time** what is presented to the user changes in response to changes in application state.
 
 In our case, domino 3 changes `s`, the application state,
 and, in response, dominoes 4-5-6 are concerned with re-running `f` to compute the new `v` 
