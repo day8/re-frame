@@ -207,17 +207,3 @@
      (reduce #(assoc-in %1 [%2 :done] new-done)
              todos
              (keys todos)))))
-
-;; TODO: I'd like to do this.
-;; I think it requires the :alpha subscription to have a :set method.
-#_(reg :event :toggle-alpha :<- :alpha? :-> not)
-
-(reg-event-db
- :toggle-alpha
- (fn [db _]
-   ;; don't need to know the path any more.
-   ;; can compute the sub instead.
-   ;; it's memory-safe.
-   (let [alpha? @(sub :alpha?)]
-     ;; still need to know the path to update the value.
-     (update-in db [:very :long :path :alpha?] not))))

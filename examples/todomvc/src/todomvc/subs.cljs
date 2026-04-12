@@ -160,5 +160,3 @@
  :<- [:completed-count]
  (fn [[todos completed] _]
    [(- (count todos) completed) completed]))
-
-(reg :sub :alpha? :-> (comp :alpha? :path :long :very))
