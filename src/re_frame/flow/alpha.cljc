@@ -60,8 +60,9 @@
              flows))
 
 (defn validate-inputs [{:keys [inputs]}]
-  (doseq [[_ input] inputs
-          :when (not ((some-fn db-path? flow<-?) input))]
+  (when (some (fn [[_ input]]
+                (not ((some-fn db-path? flow<-?) input)))
+              inputs)
     (throw (#?(:clj Exception. :cljs js/Error.) "bad input"))))
 
 (defn warn-stale-dependencies [flows new-flow]
