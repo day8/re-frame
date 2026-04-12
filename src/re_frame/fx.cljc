@@ -62,7 +62,7 @@
                              ". Ignoring."
                              (when (= :event effect-key)
                                (str "You may be trying to return a coeffect map from an event-fx handler. "
-                                    "See https://day8.github.io/re-frame/use-cofx-as-fx/"))))))))))
+                                    "See https://day8.github.io/re-frame/FAQs/use-cofx-as-fx/"))))))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 
