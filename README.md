@@ -28,7 +28,7 @@ It has a data-oriented, functional design. Its primary focus is on high programm
 
 Developed in late 2014, and released in 2015, it is mature and stable. It is used by both small startups and companies with over 500 developers, and it has delivered into production applications which are 40K lines of code and beyond. 
 
-Across the last 6 years, it has outlasted multiple generations of Javascript churn - just imagine your team's productivity if you didn't have to contend with technical churn, and have new magic burn your fingers every two years. Brand new, exciting concepts like recoiljs (in the React world), have been a regular part of re-frame from the beginning. 
+Across the last 10 years, it has outlasted multiple generations of Javascript churn - just imagine your team's productivity if you didn't have to contend with technical churn, and have new magic burn your fingers every two years. Brand new, exciting concepts like recoiljs (in the React world), have been a regular part of re-frame from the beginning. 
 
 re-frame is lucky enough to enjoy an unfair advantage - ClojureScript is a Lisp. Alan Kay
 once described Lisp as "Maxwell's equations of software". Paul Graham 
