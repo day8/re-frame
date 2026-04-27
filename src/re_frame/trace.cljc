@@ -180,6 +180,82 @@
   (swap! trace-cbs dissoc key)
   nil)
 
+;; rf-ybv — register-epoch-cb (companion-re-frame.md A4). Higher-
+;; level callback that delivers ASSEMBLED EPOCH records — one per
+;; `:event` trace — instead of the raw trace stream that
+;; `register-trace-cb` exposes. Downstream consumers (re-frame-pair,
+;; re-frame-10x, custom devtools) want the "this dispatch's full
+;; cascade is here, partitioned for me" surface; shipping it once
+;; in re-frame core means each tool stops re-implementing the
+;; partition logic.
+;;
+;; The epoch shape mirrors re-frame-pair's §4.3a /
+;; companion-re-frame.md A4 sketch:
+;;
+;;   {:id                 <int>      ; the :event trace's id
+;;    :event              [<kw> ...] ; dispatched event vector
+;;    :dispatch-id        <uuid>     ; rf-3p7 item 2 (commit af024c3)
+;;    :parent-dispatch-id <uuid|nil> ; nil for user-fired top-level
+;;    :app-db/before      {...}      ; pulled from the :event trace's :tags
+;;    :app-db/after       {...}
+;;    :coeffects          {...}
+;;    :effects            {...}
+;;    :interceptors       [<map> ...] ; full records (Q2: callers can project to ids)
+;;    :sub-runs           [<trace> ...] ; child traces by op-type
+;;    :sub-creates        [<trace> ...]
+;;    :event-handler      <trace>
+;;    :event-do-fx        <trace>
+;;    :start :end :duration            ; from the :event trace}
+;;
+;; CASCADE SEMANTICS (Q1)
+;;
+;; Fires once per `:event` trace — i.e. one cb invocation per
+;; `re-frame.events/handle` entry, regardless of whether the event
+;; was user-fired or queued by a parent's `:fx [:dispatch ...]`.
+;; Each record carries its own `:dispatch-id` and
+;; `:parent-dispatch-id`; consumers that want a tree-shaped view
+;; of "this user-fired event + all chained children" build it
+;; post-delivery by walking parent-id pointers. A tree-shaped
+;; primitive that WAITED for the cascade to settle would force
+;; this layer to depend on async-settle infrastructure (tracked
+;; separately as rf-4mr / dispatch-and-settle); decoupling them
+;; keeps register-epoch-cb deliverable today.
+;;
+;; ASSEMBLY LOCATION (Q4)
+;;
+;; Lives in `re-frame.trace` alongside `register-trace-cb` —
+;; same author, same delivery mechanism (the existing
+;; debounce-based `schedule-debounce`), same gating
+;; (`is-trace-enabled?` + `trace-enabled?`).
+;;
+;; ASYNC SETTLE (Q3)
+;;
+;; Out of scope. A separate `register-epoch-settled-cb` would fire
+;; after all cascaded dispatches resolve (HTTP returned, etc.) —
+;; tracked as rf-4mr / `dispatch-and-settle`. Today the cb fires
+;; per :event trace as the trace stream is delivered (debounced
+;; ~50ms after the last trace).
+
+(def epoch-cbs (atom {}))
+
+(defn register-epoch-cb
+  "Register a callback `f` keyed on `key` that will receive a
+   collection of one or more assembled EPOCH records — one per
+   `:event` trace in each delivery batch. See the namespace docstring
+   above `epoch-cbs` for the epoch shape and the four cascade /
+   assembly-location decisions.
+
+   Like `register-trace-cb`: gated on `trace-enabled?`; replaces an
+   existing cb sharing the same key; warns when tracing is disabled."
+  [key f]
+  (if trace-enabled?
+    (swap! epoch-cbs assoc key f)
+    (console :warn "re-frame.trace: register-epoch-cb skipped — tracing is not enabled. Set {\"re_frame.trace.trace_enabled_QMARK_\" true} in :closure-defines.")))
+
+(defn remove-epoch-cb [key]
+  (swap! epoch-cbs dissoc key)
+  nil)
+
 (defn next-id [] (swap! id inc))
 
 (defn start-trace [{:keys [operation op-type tags child-of]}]
@@ -208,15 +284,75 @@
   #?(:cljs (goog.functions/debounce f interval)
      :clj  (f)))
 
+(defn assemble-epochs
+  "Walk a batch of finished traces; emit one epoch record per
+   `:event` trace. Child traces are partitioned via the
+   `:child-of` link `start-trace` already populates from
+   `*current-trace*`.
+
+   KNOWN LIMITATIONS
+
+   - `:render` traces fire on a later RAF tick (after the user's
+     event handler has returned), with `*current-trace*` either
+     unbound or in some outer scope. They typically have
+     `:child-of` nil, so this assembly DOESN'T attach them to the
+     parent epoch. Consumers that want renders should subscribe
+     to `register-trace-cb` and correlate by time / op-type — same
+     as 10x does today via its own batching patch.
+
+   - Only direct `:child-of` children are picked up. Grandchildren
+     (e.g. a `:sub/run` whose ratom-deref triggers another
+     `:sub/run`) live as separate `:sub/run` entries on this same
+     epoch — flat, not nested. The trace tree's full shape is in
+     the underlying trace stream for callers that want it."
+  [batch]
+  (let [by-parent (group-by :child-of batch)
+        events    (filter #(= :event (:op-type %)) batch)]
+    (mapv (fn [event-tr]
+            (let [event-id (:id event-tr)
+                  children (get by-parent event-id [])
+                  tags     (or (:tags event-tr) {})
+                  pick-one (fn [op] (some #(when (= op (:op-type %)) %) children))
+                  pick-all (fn [op] (filterv #(= op (:op-type %)) children))]
+              {:id                 event-id
+               :event              (:event tags)
+               :dispatch-id        (:dispatch-id tags)
+               :parent-dispatch-id (:parent-dispatch-id tags)
+               :app-db/before      (:app-db-before tags)
+               :app-db/after       (:app-db-after tags)
+               :coeffects          (:coeffects tags)
+               :effects            (:effects tags)
+               :interceptors       (:interceptors tags)
+               :sub-runs           (pick-all :sub/run)
+               :sub-creates        (pick-all :sub/create)
+               :event-handler      (pick-one :event/handler)
+               :event-do-fx        (pick-one :event/do-fx)
+               :start              (:start event-tr)
+               :end                (:end event-tr)
+               :duration           (:duration event-tr)}))
+          events)))
+
 (def schedule-debounce
   (debounce
    (fn tracing-cb-debounced []
-     (doseq [[k cb] @trace-cbs]
-       (try (cb @traces)
-            #?(:clj (catch Exception e
-                      (console :error "Error thrown from trace cb" k "while storing" @traces e)))
-            #?(:cljs (catch :default e
-                       (console :error "Error thrown from trace cb" k "while storing" @traces e)))))
+     (let [batch @traces]
+       (doseq [[k cb] @trace-cbs]
+         (try (cb batch)
+              #?(:clj (catch Exception e
+                        (console :error "Error thrown from trace cb" k "while storing" batch e)))
+              #?(:cljs (catch :default e
+                         (console :error "Error thrown from trace cb" k "while storing" batch e)))))
+       ;; rf-ybv — also deliver assembled epochs to register-epoch-cb
+       ;; consumers. Only assemble when at least one cb is registered;
+       ;; otherwise skip the per-batch group-by walk entirely.
+       (when (seq @epoch-cbs)
+         (let [epochs (assemble-epochs batch)]
+           (doseq [[k cb] @epoch-cbs]
+             (try (cb epochs)
+                  #?(:clj (catch Exception e
+                            (console :error "Error thrown from epoch cb" k "while delivering" (count epochs) "epoch(s)" e)))
+                  #?(:cljs (catch :default e
+                             (console :error "Error thrown from epoch cb" k "while delivering" (count epochs) "epoch(s)" e))))))))
      (reset! traces []))
    debounce-time))
 
