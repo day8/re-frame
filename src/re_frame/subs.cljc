@@ -43,27 +43,41 @@
     :re-frame/lifecycle :reactive}
    dynv])
 
+;; rf-3p7 item 3 — reverse lookup powering :input-query-vs on
+;; :sub/run traces. `query->reaction` is keyed by cache-key (which
+;; embeds query-v); going the other way (reagent-id → query-v) was
+;; previously not possible without scanning the whole map. Keeping
+;; this parallel atom lets `deref-input-signals` emit the query-vs
+;; of input signals at zero per-sub-run cost (one O(1) lookup per
+;; signal). Sync'd alongside `query->reaction` in cache-and-return
+;; (insert) and the on-dispose cb (remove); see "Why did X
+;; re-render?" recipes in re-frame-pair docs/inspirations doc.
+(def ^:private reaction-id->query-v (atom {}))
+
 (defn cache-and-return
   "cache the reaction r"
   [query-v dynv r]
-  (let [k (cache-key query-v dynv)]
+  (let [k    (cache-key query-v dynv)
+        rid  (reagent-id r)]
     ;; when this reaction is no longer being used, remove it from the cache
     (add-on-dispose! r #(trace/with-trace {:operation (first-in-vector query-v)
                                            :op-type   :sub/dispose
                                            :tags      {:query-v  query-v
-                                                       :reaction (reagent-id r)}}
+                                                       :reaction rid}}
                           (swap! query->reaction
                                  (fn [query-cache]
                                    (if (and (contains? query-cache k) (identical? r (get query-cache k)))
                                      (dissoc query-cache k)
-                                     query-cache)))))
+                                     query-cache)))
+                          (swap! reaction-id->query-v dissoc rid)))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction (fn [query-cache]
                              (when debug-enabled?
                                (when (contains? query-cache k)
                                  (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" k)))
                              (assoc query-cache k r)))
-    (trace/merge-trace! {:tags {:reaction (reagent-id r)}})
+    (swap! reaction-id->query-v assoc rid query-v)
+    (trace/merge-trace! {:tags {:reaction rid}})
     r)) ;; return the actual reaction
 
 (defn cache-lookup
@@ -182,7 +196,17 @@
       (map? signals) (map-vals deref signals)
       (deref? signals) (deref signals)
       :else (console :error "re-frame: in the reg-sub for" query-id ", the input-signals function returns:" signals))
-    (trace/merge-trace! {:tags {:input-signals (doall (to-seq (map-signals reagent-id signals)))}})
+    ;; rf-3p7 item 3 — emit :input-query-vs alongside :input-signals.
+    ;; :input-signals is the reagent-id of each input (cheap, opaque);
+    ;; :input-query-vs is the query-v of each (expensive to recover
+    ;; without `reaction-id->query-v` — cache-and-return keeps that
+    ;; map in sync). Powers "why did X re-render?" recipes without
+    ;; downstream tooling reverse-engineering the dep graph from
+    ;; :sub/run execution order.
+    (let [input-ids (doall (to-seq (map-signals reagent-id signals)))
+          input-qvs (mapv #(get @reaction-id->query-v %) input-ids)]
+      (trace/merge-trace! {:tags {:input-signals  input-ids
+                                  :input-query-vs input-qvs}}))
     dereffed-signals))
 
 (defn sugar [query-id sub-fn query? & args]
