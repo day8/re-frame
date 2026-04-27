@@ -355,13 +355,17 @@
 
 ;; -- subscriptions -----------------------------------------------------------
 
-(comment "Detailed reg-sub docstring lives on the defmacro below; this
-  block previously held a (defn reg-sub ...) form. The macro carries
-  the full surface and forwards to reg-sub-fn for the runtime path.
+(defn reg-sub-fn
+  "Run-time variant of `reg-sub`. The `reg-sub` macro expands to a
+   call to this fn plus a side-table update that attaches the
+   call-site source meta to the registered handler. Use this fn
+   directly when you need to register a sub programmatically (e.g.
+   `(apply reg-sub-fn ...)`)."
+  [query-id & args]
+  (apply subs/reg-sub query-id args))
 
-  Original docstring follows for cross-reference:
-
-  A call to `reg-sub` associates a `query-id` WITH two functions.
+(defmacro reg-sub
+  "A call to `reg-sub` associates a `query-id` WITH two functions.
 
   The two functions provide 'a mechanism' for creating a node
   in the Signal Graph. When a node of type `query-id` is needed,
@@ -397,7 +401,7 @@
   1. A function that will accept two parameters, the `input-values` and `query-vector`. This is the
      standard way to provide a `computation-function`
 
-          
+
           (reg-sub
             :query-id
             (fn [input-values query-vector]
@@ -405,7 +409,7 @@
 
   2. A single sugary tuple of `:->` and a 1-arity `computation-function`:
 
-          
+
           (reg-sub
             :query-id
             :-> computation-fn)
@@ -419,7 +423,7 @@
       from the `input-values`. As shown below, this subscription will simply retrieve
       the value associated with the `:foo` key in our db:
 
-          
+
           (reg-sub
             :query-id
             (fn [db _]    ;; :<---- trivial boilerplate we might want to skip over
@@ -428,7 +432,7 @@
       This is slightly more boilerplate than we might like to do,
       as we can use a keyword directly as a function, and we might like to do this:
 
-          
+
           (reg-sub
             :query-id
             :foo)  ;; :<---- This could be dangerous. If `:foo` is not in db, we get the `query-vector` instead of `nil`.
@@ -436,7 +440,7 @@
       By using `:->` our function would not contain the `query-vector`, and any
       missing keys would be represented as such:
 
-          
+
           (reg-sub
             :query-id
             :-> :foo)
@@ -447,7 +451,7 @@
 
   3. A single sugary tuple of `:=>` and a multi-arity `computation-function`
 
-          
+
           (reg-sub
             :query-id
             :=> computation-fn)
@@ -457,7 +461,7 @@
       To use them in variation #1, we need to destructure our `computation-function` parameters
       in order to use them.
 
-          
+
           (reg-sub
             :query-id
             (fn [db [_ foo]]
@@ -468,7 +472,7 @@
       instead, so we might be able to use a multi-arity function directly as our `computation-function`.
       A rewrite of the above sub using this sugary syntax would look like this:
 
-          
+
           (reg-sub
             :query-id
             :=> vector)  ;; :<---- Could also be `(fn [db foo] [db foo])`
@@ -496,7 +500,7 @@
 
   **First variation** - no input signal function given:
 
-      
+
       (reg-sub
         :query-id
         a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
@@ -508,7 +512,7 @@
 
   **Second variation** - a signal function is explicitly supplied:
 
-      
+
       (reg-sub
         :query-id
         signal-fn     ;; <-- here
@@ -527,7 +531,7 @@
 
   This example `signal function` returns a 2-vector of input signals.
 
-      
+
       (fn [query-vec dynamic-vec]
          [(subscribe [:a-sub])
           (subscribe [:b-sub])])
@@ -535,26 +539,26 @@
   The associated computation function must be written
   to expect a 2-vector of values for its first argument:
 
-      
+
       (fn [[a b] query-vec]     ;; 1st argument is a seq of two values
         ....)
 
   If, on the other hand, the signal function was simpler and returned a singleton, like this:
 
-      
+
       (fn [query-vec dynamic-vec]
         (subscribe [:a-sub]))      ;; <-- returning a singleton
 
   then the associated computation function must be written to expect a single value
   as the 1st argument:
 
-      
+
       (fn [a query-vec]       ;; 1st argument is a single value
          ...)
 
   Further Note: variation #1 above, in which an `signal-fn` was not supplied, like this:
 
-      
+
       (reg-sub
         :query-id
         a-computation-fn)   ;; has signature:  (fn [db query-vec]  ... ret-value)
@@ -562,7 +566,7 @@
   is the equivalent of using this
   2nd variation and explicitly supplying a `signal-fn` which returns `app-db`:
 
-      
+
       (reg-sub
         :query-id
         (fn [_ _]  re-frame/app-db)   ;; <--- explicit signal-fn
@@ -570,7 +574,7 @@
 
   **Third variation** - syntax Sugar
 
-      
+
       (reg-sub
         :a-b-sub
         :<- [:a-sub]
@@ -584,7 +588,7 @@
   If you supply only one pair a singleton will be supplied to the computation function,
   as if you had supplied a `signal-fn` returning only a single value:
 
-      
+
       (reg-sub
         :a-sub
         :<- [:a-sub]
@@ -595,36 +599,24 @@
   and the direction of arrows shows the flow of data and functions. The example from
   directly above is reproduced here:
 
-      
+
       (reg-sub
         :a-b-sub
         :<- [:a-sub]
         :<- [:b-sub]
         :-> (partial zipmap [:a :b]))
 
+  Captures the call-site `{:file :line}` at macro-expansion time and
+  attaches it as metadata on the registered handler so
+  `(meta (re-frame.registrar/get-handler :sub query-id))` returns the
+  source location. For programmatic registration (e.g. `(apply ...)`),
+  use the run-time variant `reg-sub-fn`.
+
   For further understanding, read the tutorials, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs.
 
   See also: `subscribe`
   "
-  {:api-docs/heading "Subscriptions"
-   :arglists '([query-id & args])})
-
-(defn reg-sub-fn
-  "Run-time variant of `reg-sub`. The `reg-sub` macro expands to a
-   call to this fn plus a side-table update that attaches the
-   call-site source meta to the registered handler. Use this fn
-   directly when you need to register a sub programmatically (e.g.
-   `(apply reg-sub-fn ...)`)."
-  [query-id & args]
-  (apply subs/reg-sub query-id args))
-
-(defmacro reg-sub
-  "Register a subscription handler. See the docstring on `reg-sub-fn`'s
-   sibling no-meta var for the run-time entry-point. This macro form
-   captures the call-site `{:file :line}` and attaches it as metadata
-   on the registered handler so `(meta (re-frame.registrar/get-handler
-   :sub query-id))` returns the source location."
   {:api-docs/heading "Subscriptions"
    :arglists '([query-id & args])}
   [query-id & args]
