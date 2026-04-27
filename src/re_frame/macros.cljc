@@ -1,19 +1,24 @@
 (ns re-frame.macros
-  "Compile-time `dispatch` / `dispatch-sync` macros that capture the
-   call-site `{:file :line}` and attach it to the event vector as
-   `:re-frame/source` metadata — for 'why did this event fire?'
-   diagnostics that don't depend on stack traces or source maps.
+  "Compile-time `dispatch` / `dispatch-sync` / `subscribe` macros that
+   capture the call-site `{:file :line}` and attach it as
+   `:re-frame/source` metadata on the event-vector or query-vector
+   — for 'why did this event fire?' / 'which view asked for this
+   sub?' diagnostics that don't depend on stack traces or source
+   maps.
 
-   Read inside handlers via `(:re-frame/source (meta event))`. Trace
+   Read inside event handlers via `(:re-frame/source (meta event))`.
+   For subscriptions, recover the meta'd query-v via
+   `(re-frame.subs/query-v-for-reaction r)` and read its meta. Trace
    consumers (re-frame-10x, re-frame-pair, custom devtools) see the
-   meta automatically because the `:event` trace tag IS the dispatched
-   vector — `(-> trace :tags :event meta :re-frame/source)` works
+   meta automatically because the `:event` and `:query-v` /
+   `:input-query-vs` trace tags ARE the dispatched / subscribed
+   vectors — `(-> trace :tags :event meta :re-frame/source)` works
    without any new emission machinery.
 
    In CLJS production builds (`goog.DEBUG=false`), the meta-wrapping
    branch is eliminated by Closure dead-code elimination: the macro
-   reduces to a bare `re-frame.core/dispatch` call with zero
-   allocation overhead. The runtime gate is the same one
+   reduces to a bare `re-frame.core/dispatch` (or `subscribe`) call
+   with zero allocation overhead. The runtime gate is the same one
    `re-frame.registrar` uses for its DCE-friendly debug warnings —
    `re-frame.interop/debug-enabled?`, aliased to `goog/DEBUG` under
    CLJS and hardcoded `true` under CLJ.
@@ -57,3 +62,27 @@
        (re-frame.core/dispatch-sync
          (vary-meta ~event-v assoc :re-frame/source ~src-meta))
        (re-frame.core/dispatch-sync ~event-v))))
+
+(defmacro subscribe
+  "Like `re-frame.core/subscribe` but in DEBUG builds attaches
+   `{:file :line}` on the query vector as `:re-frame/source`
+   metadata before lookup. Production CLJS builds
+   (`goog.DEBUG=false`) emit a bare `re-frame.core/subscribe` call
+   after Closure DCE.
+
+   Cache identity is unaffected: vector and map equality in CLJ/CLJS
+   ignore metadata, and `re-frame.subs/cache-key` keys on plain `=`
+   so `^{:re-frame/source ...} [:foo]` and bare `[:foo]` resolve to
+   the same cached reaction.
+
+   Recover the meta'd query-v via `re-frame.subs/query-v-for-reaction`
+   on the returned reaction, or read the `:input-query-vs` tag on
+   `:sub/run` traces (downstream consumers see the meta'd vectors
+   without any new emission)."
+  {:arglists '([query-v])}
+  [query-v]
+  (let [src-meta {:file *file* :line (:line (meta &form))}]
+    `(if re-frame.interop/debug-enabled?
+       (re-frame.core/subscribe
+         (vary-meta ~query-v assoc :re-frame/source ~src-meta))
+       (re-frame.core/subscribe ~query-v))))
