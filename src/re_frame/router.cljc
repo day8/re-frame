@@ -365,17 +365,6 @@
        {:value    p
         :resolve! (fn [v] (when-not (realized? p) (deliver p v)))})))
 
-(defn- recent-event-trace-by-event
-  "Given an event vector, find the most-recent :event trace in
-   `re-frame.trace/traces` whose tags match. Used right after
-   dispatch-sync to pick up the auto-generated :dispatch-id."
-  [event-v]
-  (->> @trace/traces
-       reverse
-       (some (fn [t] (when (and (= :event (:op-type t))
-                                (= event-v (-> t :tags :event)))
-                       t)))))
-
 (defn dispatch-and-settle
   "Dispatch `event` synchronously, then await the cascade of
    `:fx [:dispatch ...]` children. See the long comment above for
@@ -409,27 +398,23 @@
                              settle-window-ms)))]
      (trace/register-epoch-cb cb-key
                               (fn [epochs]
-                                ;; Match an epoch to our cascade by either
-                                ;; (a) :dispatch-id == root-id (set lazily —
-                                ;; the cb often fires inside dispatch-sync
-                                ;; before we get control back to set root-id),
-                                ;; or (b) :parent-dispatch-id ∈ cascade-ids
-                                ;; (already-matched ancestor), or (c) before
-                                ;; root-id is set, by event-vec match on a
-                                ;; top-level epoch (no :parent-dispatch-id).
+                                ;; Match by dispatch-id only:
+                                ;; (a) :dispatch-id == root-id (root, set
+                                ;; inside `handle` via *dispatch-id-capture*
+                                ;; before any cb fires), or
+                                ;; (b) :parent-dispatch-id ∈ cascade-ids
+                                ;; (already-matched ancestor).
+                                ;; No event-vector fallback: when two
+                                ;; callers dispatch the same vector,
+                                ;; vector equality is ambiguous and would
+                                ;; mis-attribute one caller's epoch to the
+                                ;; other.
                                 (let [our (filter (fn [e]
                                                     (or (= @root-id (:dispatch-id e))
-                                                        (contains? @cascade-ids (:parent-dispatch-id e))
-                                                        (and (nil? @root-id)
-                                                             (= event (:event e))
-                                                             (nil? (:parent-dispatch-id e)))))
+                                                        (contains? @cascade-ids (:parent-dispatch-id e))))
                                                   epochs)]
                                   (when (seq our)
                                     (doseq [e our]
-                                      ;; First match adopts root-id from
-                                      ;; the matching epoch.
-                                      (when (and (nil? @root-id) (= event (:event e)))
-                                        (reset! root-id (:dispatch-id e)))
                                       (swap! cascade-ids conj (:dispatch-id e))
                                       (swap! cascade-epochs conj e))
                                     (swap! settle-tick inc)
@@ -442,19 +427,19 @@
                   :event            event
                   :captured-epochs  @cascade-epochs}))
       timeout-ms)
-     ;; Dispatch the root synchronously so we can capture its
-     ;; :dispatch-id from re-frame.trace/traces immediately. Children
-     ;; queued via :fx [:dispatch ...] fire later via the router queue;
-     ;; epoch-cb picks them up as they land.
-     (dispatch-sync event)
-     ;; Capture root's :dispatch-id post-dispatch. Earliest moment
-     ;; possible — finish-trace just ran inside `handle`'s with-trace
-     ;; finally, so the trace is in `traces` even though the cb
-     ;; hasn't delivered yet.
-     (when-let [evt-trace (recent-event-trace-by-event event)]
-       (let [id (-> evt-trace :tags :dispatch-id)]
-         (reset! root-id id)
-         (swap! cascade-ids conj id)))
+     ;; Dispatch the root synchronously, binding `*dispatch-id-capture*`
+     ;; so `handle` writes the freshly-allocated dispatch-id directly
+     ;; into `root-id` BEFORE the trace fires the cb. Children queued
+     ;; via :fx [:dispatch ...] fire later via the router queue;
+     ;; epoch-cb picks them up as they land and matches them by
+     ;; :parent-dispatch-id ∈ cascade-ids.
+     (binding [events/*dispatch-id-capture* root-id]
+       (dispatch-sync event))
+     ;; Seed cascade-ids with the root so descendants whose
+     ;; :parent-dispatch-id == root match on first cb fire. (Idempotent
+     ;; with the cb's own swap! when the root epoch arrives.)
+     (when-let [id @root-id]
+       (swap! cascade-ids conj id))
      ;; Even with no children queued, schedule an initial settle
      ;; check so the root-only case resolves promptly.
      (schedule-settle-check)
