@@ -730,6 +730,18 @@
   [reaction]
   (subs/query-v-for-reaction reaction))
 
+(defn live-query-vs
+  "Returns a sequence of all currently-live query-vectors — one entry
+   per active cached subscription.
+
+   A snapshot of the subscription cache at call time; does not update
+   reactively. Useful for devtools and diagnostic tools that need to
+   enumerate active subscriptions without relying on internal cache
+   structure details."
+  {:api-docs/heading "Subscriptions"}
+  []
+  (subs/live-query-vs))
+
 ;; XXX
 (defn clear-subscription-cache!
   "Removes all subscriptions from the cache.

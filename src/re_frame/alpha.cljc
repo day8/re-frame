@@ -737,6 +737,14 @@ The only required key is `:id`. All others have a default value:
 
 (reg-event-error-handler interceptor/default-error-handler)
 
+(defn ^:api-docs/hide query-v-for-reaction
+  [reaction]
+  (subs/query-v-for-reaction reaction))
+
+(defn ^:api-docs/hide live-query-vs
+  []
+  (subs/live-query-vs))
+
 (defn ^:api-docs/hide clear-sub
   ([]
    (registrar/clear-handlers subs/kind))

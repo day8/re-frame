@@ -115,6 +115,21 @@
   [reaction]
   (get @reaction->query-v reaction))
 
+(defn live-query-vs
+  "Returns a sequence of all currently-live query-vectors — one entry
+   per active cached subscription, in unspecified order.
+
+   The sequence is a snapshot of the cache at call time; it does not
+   update reactively. Query-vectors carry any metadata that was on
+   them at subscription time (e.g. `:re-frame/source` from the
+   `re-frame.macros/subscribe` macro).
+
+   Useful for devtools and diagnostic tools that need to enumerate
+   what is currently subscribed without walking internal cache
+   structures whose shape is not a public contract."
+  []
+  (keep #(:re-frame/query-v (first %)) (keys @query->reaction)))
+
 ;; -- subscribe ---------------------------------------------------------------
 
 ;; this duplicates re-frame.query.alpha/legacy-query-id.
