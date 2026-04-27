@@ -1,5 +1,6 @@
 (ns re-frame.alpha
   (:require
+   [re-frame.config         :as config]
    [re-frame.subs.alpha     :as subs.alpha]
    [re-frame.subs           :as subs]
    [re-frame.register.alpha :as register.alpha]
@@ -886,6 +887,8 @@ The only required key is `:id`. All others have a default value:
 (defn ^:api-docs/hide remove-post-event-callback
   [id]
   (router/remove-post-event-callback router/event-queue id))
+
+(def ^:api-docs/hide version config/version)
 
 (defn ^:api-docs/hide register-handler
   [& args]

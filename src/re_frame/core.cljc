@@ -6,6 +6,7 @@
   ;; etc. and `(rf/reg-event-db ...)` would fail to resolve as a macro.
   #?(:cljs (:require-macros [re-frame.core]))
   (:require
+   [re-frame.config           :as config]
    [re-frame.events           :as events]
    [re-frame.subs             :as subs]
    [re-frame.interop          :as interop]
@@ -1401,6 +1402,16 @@
   {:api-docs/heading "Miscellaneous"}
   [id]
   (router/remove-post-event-callback re-frame.router/event-queue id))
+
+(def ^{:api-docs/heading "Miscellaneous"} version
+  "Runtime-readable string identifying the deployed re-frame artifact —
+   useful for devtools, instrumentation, and version-floor probes that
+   need to know which re-frame they're running against without parsing
+   pom.xml.
+
+   Re-exported from `re-frame.config/version`; see that namespace for
+   the build-time override hook (`:closure-defines` in shadow-cljs)."
+  config/version)
 
 ;; --  Deprecation ------------------------------------------------------------
 ;; Assisting the v0.7.x ->  v0.8.x transition.
