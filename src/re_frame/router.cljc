@@ -242,11 +242,28 @@
     (vary-meta event assoc :re-frame/parent-dispatch-id parent-id)
     event))
 
+;; rf-ge8 — fx-overrides cascade propagation. When a child is
+;; dispatched from inside a handler whose root carried
+;; `:re-frame/fx-overrides` meta (set by `dispatch-with`), copy
+;; the override map to the child so the cascade inherits the
+;; substitutions. The currently-handling event is reachable via
+;; `re-frame.events/*handling*`; we read its meta and pass it
+;; through. Idempotent — if the child already has overrides set
+;; (multi-level dispatch-with), we keep the existing one.
+(defn- tag-with-fx-overrides [event]
+  (if (some-> event meta :re-frame/fx-overrides)
+    event
+    (if-let [overrides (some-> events/*handling* meta :re-frame/fx-overrides)]
+      (vary-meta event assoc :re-frame/fx-overrides overrides)
+      event)))
+
 (defn dispatch
   [event]
   (if (nil? event)
     (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
-    (push event-queue (tag-with-parent-dispatch-id event)))
+    (push event-queue (-> event
+                          tag-with-parent-dispatch-id
+                          tag-with-fx-overrides)))
   nil)                                           ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
 
 (defn dispatch-sync

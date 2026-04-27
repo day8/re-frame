@@ -68,6 +68,56 @@
   [event]
   (router/dispatch-sync event))
 
+(defn dispatch-with
+  "Dispatch `event` with selected fx handlers temporarily
+   substituted for the duration of the dispatch (and any
+   `:fx [:dispatch ...]` cascade).
+
+   `overrides` is a `{fx-id stub-fn}` map. For each fx-id present,
+   `stub-fn` is invoked instead of the registered handler when an
+   effect of that id fires. Stub fns must mirror the contract of
+   the original — same return shape, same callback / promise
+   lifecycle.
+
+   Use cases (rf-ge8):
+   - Dry-run dispatches in dev: fire an event, observe its
+     `:effects` and the `app-db` change, but stub `:http-xhrio`
+     / navigation / local-storage so probing is safe.
+   - Test scenarios that don't want to install global stubs.
+   - REPL exploration with reversible side-effects.
+
+   Cascade: overrides apply to ALL events fired in the cascade —
+   children queued via `:fx [:dispatch ...]` inherit the
+   substitution map (via event metadata; see
+   `re-frame.fx` for the propagation mechanism).
+
+   Restore: no try/finally needed. The override is carried as
+   event metadata, not via a global state mutation; it expires
+   when the event finishes processing. Two overlapping
+   `dispatch-with` calls each carry their own meta and don't
+   interfere.
+
+   Returns nil (matches `dispatch`).
+
+       (dispatch-with [:user/login {:email \"...\" :password \"...\"}]
+                      {:http-xhrio (fn [req]
+                                     ;; mimic xhrio's on-success contract:
+                                     (re-frame.core/dispatch
+                                       (conj (:on-success req) {:stubbed true})))})
+  "
+  {:api-docs/heading "Dispatching Events"}
+  [event overrides]
+  (router/dispatch (vary-meta event assoc :re-frame/fx-overrides overrides)))
+
+(defn dispatch-sync-with
+  "Like `dispatch-with`, but processes the event synchronously
+   (matching the difference between `dispatch` and
+   `dispatch-sync`). See `dispatch-with` for the override
+   semantics + cascade behaviour."
+  {:api-docs/heading "Dispatching Events"}
+  [event overrides]
+  (router/dispatch-sync (vary-meta event assoc :re-frame/fx-overrides overrides)))
+
 (defn dispatch-and-settle
   "Dispatch `event` and return a deferred value that resolves once
    the event AND its synchronous cascade of `:fx [:dispatch ...]`
