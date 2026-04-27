@@ -416,6 +416,8 @@
          cb-key         (new-uuid)
          post-cb-key    (new-uuid)
          cleaned?       (atom false)
+         overall-timer  (atom nil)              ;; handle for the :timeout-ms timer
+         settle-timers  (atom [])               ;; handles for in-flight settle-checks
          ;; Cleanup is single-shot: settle-check and the overall
          ;; timeout both call `finish!`, but only the first wins
          ;; (deliver/resolve! is idempotent). Without the guard, the
@@ -423,39 +425,64 @@
          ;; harmless on the trace-on path where remove-epoch-cb is a
          ;; bare `swap! ... dissoc`, but `remove-post-event-callback`
          ;; warns if the id is already gone.
+         ;;
+         ;; On cleanup we cancel the still-pending scheduled tasks
+         ;; (overall :timeout-ms timer + any in-flight settle-checks)
+         ;; AND empty the cascade-* atoms. The cancel keeps the
+         ;; scheduler queue clean — pre-fix, every successful
+         ;; `dispatch-and-settle` left an orphan timer pending up to
+         ;; :timeout-ms (default 5s) past resolve. The reset! is
+         ;; defence-in-depth: if a task fires concurrently with cancel
+         ;; (or `clear-timeout!` is no-op for an already-running
+         ;; task), it observes empty atoms instead of stale state.
          finish!        (fn [result]
                           (when (compare-and-set! cleaned? false true)
                             (if tracing?
                               (trace/remove-epoch-cb cb-key)
-                              (remove-post-event-callback event-queue post-cb-key)))
+                              (remove-post-event-callback event-queue post-cb-key))
+                            (interop/clear-timeout! @overall-timer)
+                            (doseq [h @settle-timers]
+                              (interop/clear-timeout! h))
+                            (reset! cascade-epochs [])
+                            (reset! cascade-events [])
+                            (reset! cascade-ids #{})
+                            (reset! root-id nil)
+                            (reset! settle-timers []))
                           (resolve! result))
          schedule-settle-check
                         (fn schedule-settle-check []
-                          (let [tick @settle-tick]
-                            (interop/set-timeout!
-                             (fn []
-                               (when (= tick @settle-tick)
-                                 (if tracing?
-                                   (when (some? @root-id)
-                                     (let [eps     @cascade-epochs
-                                           root-ep (some #(when (= @root-id (:dispatch-id %)) %) eps)
-                                           cascaded (filterv #(not= @root-id (:dispatch-id %)) eps)]
-                                       (finish! (cond-> {:ok?        true
-                                                         :root-epoch root-ep}
-                                                  include-cascaded?
-                                                  (assoc :cascaded-epochs cascaded)))))
-                                   ;; Trace-off: synthesise minimal records.
-                                   ;; cascade-events is in handled-order, so its
-                                   ;; head is the root we just dispatch-sync'd.
-                                   (let [evs @cascade-events]
-                                     (when (seq evs)
-                                       (let [root-ep  {:event (first evs)}
-                                             cascaded (mapv (fn [ev] {:event ev}) (rest evs))]
-                                         (finish! (cond-> {:ok?        true
-                                                           :root-epoch root-ep}
-                                                    include-cascaded?
-                                                    (assoc :cascaded-epochs cascaded)))))))))
-                             settle-window-ms)))]
+                          (let [tick @settle-tick
+                                handle (interop/set-timeout!
+                                        (fn []
+                                          ;; Belt-and-suspenders gate: `finish!`
+                                          ;; cancels in-flight settle-checks, but a
+                                          ;; task already mid-execution when cancel
+                                          ;; lands still runs — `(not @cleaned?)`
+                                          ;; keeps it from working off cleared atoms.
+                                          (when (and (not @cleaned?)
+                                                     (= tick @settle-tick))
+                                            (if tracing?
+                                              (when (some? @root-id)
+                                                (let [eps     @cascade-epochs
+                                                      root-ep (some #(when (= @root-id (:dispatch-id %)) %) eps)
+                                                      cascaded (filterv #(not= @root-id (:dispatch-id %)) eps)]
+                                                  (finish! (cond-> {:ok?        true
+                                                                    :root-epoch root-ep}
+                                                             include-cascaded?
+                                                             (assoc :cascaded-epochs cascaded)))))
+                                              ;; Trace-off: synthesise minimal records.
+                                              ;; cascade-events is in handled-order, so its
+                                              ;; head is the root we just dispatch-sync'd.
+                                              (let [evs @cascade-events]
+                                                (when (seq evs)
+                                                  (let [root-ep  {:event (first evs)}
+                                                        cascaded (mapv (fn [ev] {:event ev}) (rest evs))]
+                                                    (finish! (cond-> {:ok?        true
+                                                                      :root-epoch root-ep}
+                                                               include-cascaded?
+                                                               (assoc :cascaded-epochs cascaded)))))))))
+                                        settle-window-ms)]
+                            (swap! settle-timers conj handle)))]
      (if tracing?
        (trace/register-epoch-cb cb-key
                                 (fn [epochs]
@@ -488,13 +515,15 @@
                                   (swap! settle-tick inc)
                                   (schedule-settle-check))))
      ;; Overall timeout — fires regardless of cascade activity.
-     (interop/set-timeout!
-      (fn []
-        (finish! {:ok?              false
-                  :reason           :timeout
-                  :event            event
-                  :captured-epochs  @cascade-epochs}))
-      timeout-ms)
+     ;; Capture the handle so `finish!` can cancel it on the success path.
+     (reset! overall-timer
+             (interop/set-timeout!
+              (fn []
+                (finish! {:ok?              false
+                          :reason           :timeout
+                          :event            event
+                          :captured-epochs  @cascade-epochs}))
+              timeout-ms))
      ;; Dispatch the root synchronously, binding `*dispatch-id-capture*`
      ;; so `handle` writes the freshly-allocated dispatch-id directly
      ;; into `root-id` BEFORE the trace fires the cb. Children queued

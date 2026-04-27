@@ -85,6 +85,9 @@
 (defn set-timeout!
   "Run `f` after `ms` milliseconds on a single-threaded daemon scheduler.
 
+  Returns a handle that can be passed to `clear-timeout!` to cancel
+  before it fires.
+
   Honors the requested delay so CLJ-side primitives that schedule
   competing timers (e.g. `dispatch-and-settle`'s overall-timeout vs.
   settle-window) preserve the same ordering they get on CLJS.
@@ -96,7 +99,17 @@
     (.schedule ^ScheduledExecutorService scheduler
                ^Runnable bound-f
                ^long ms
-               TimeUnit/MILLISECONDS))
+               TimeUnit/MILLISECONDS)))
+
+(defn clear-timeout!
+  "Cancel a pending timeout previously scheduled with `set-timeout!`.
+  No-op if `handle` is nil or the timeout has already fired/cancelled.
+  Passes `false` for `mayInterruptIfRunning` — a task already executing
+  is allowed to finish, since `dispatch-and-settle`'s callbacks rely on
+  `compare-and-set!` for idempotency."
+  [handle]
+  (when (some? handle)
+    (.cancel ^java.util.concurrent.Future handle false))
   nil)
 
 (defn now []

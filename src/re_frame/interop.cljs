@@ -45,8 +45,19 @@
 (defn dispose! [a-ratom]
   (reagent.ratom/dispose! a-ratom))
 
-(defn set-timeout! [f ms]
+(defn set-timeout!
+  "Schedule `f` to run after `ms` milliseconds. Returns a handle that
+  can be passed to `clear-timeout!` to cancel before it fires."
+  [f ms]
   (js/setTimeout f ms))
+
+(defn clear-timeout!
+  "Cancel a pending timeout previously scheduled with `set-timeout!`.
+  No-op if `handle` is nil or the timeout has already fired."
+  [handle]
+  (when (some? handle)
+    (js/clearTimeout handle))
+  nil)
 
 (defn now []
   (if (and

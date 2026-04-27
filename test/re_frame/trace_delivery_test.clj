@@ -200,6 +200,47 @@
           "include-cascaded? false suppresses the key on the fallback path
            the same way it does on the trace-on path"))))
 
+(deftest dispatch-and-settle-cancels-pending-timeouts-on-success
+  (testing "Pre-fix, a successful dispatch-and-settle left its overall
+            :timeout-ms timer (default 5s) sitting in the scheduler queue
+            until expiry — one orphan per call. Post-fix, finish! cancels
+            both the overall timer and any in-flight settle-checks via
+            `interop/clear-timeout!` so the scheduler queue empties
+            promptly after resolve.
+
+            We instrument `interop/set-timeout!` and
+            `interop/clear-timeout!` to count scheduled vs. cancelled
+            tasks, then assert that the success path actually exercises
+            the cancel API. Pre-fix this count was zero (no cancel API
+            existed); post-fix it's at least one (the overall timer)."
+    (let [scheduled  (atom 0)
+          cancelled  (atom 0)
+          orig-set   re-frame.interop/set-timeout!
+          orig-clear re-frame.interop/clear-timeout!]
+      (with-redefs [re-frame.interop/set-timeout!
+                    (fn [f ms]
+                      (swap! scheduled inc)
+                      (orig-set f ms))
+                    re-frame.interop/clear-timeout!
+                    (fn [h]
+                      (when (some? h)
+                        (swap! cancelled inc))
+                      (orig-clear h))]
+        (rf/reg-event-db :leak-check/touch
+                         (fn [db _] (assoc db :touched true)))
+        (let [p      (router/dispatch-and-settle
+                      [:leak-check/touch]
+                      {:timeout-ms       5000
+                       :settle-window-ms 50})
+              result (deref p 3000 ::timed-out)]
+          (is (true? (:ok? result))
+              "dispatch-and-settle resolves on the success path (not :timeout)")
+          (is (>= @scheduled 2)
+              "at minimum the overall timer + the initial settle-check were scheduled")
+          (is (>= @cancelled 1)
+              "finish! cancels at least the overall :timeout-ms timer on success
+               — pre-fix this was zero because no cancel API existed"))))))
+
 ;; ---------------------------------------------------------------------------
 ;; *dispatch-id-capture* — deterministic root-id capture
 ;; ---------------------------------------------------------------------------
