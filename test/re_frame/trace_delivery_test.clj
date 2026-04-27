@@ -242,6 +242,73 @@
                — pre-fix this was zero because no cancel API existed"))))))
 
 ;; ---------------------------------------------------------------------------
+;; re-frame.core public re-exports
+;; ---------------------------------------------------------------------------
+
+(deftest core-dispatch-and-settle-default-arity-resolves-ok
+  (testing "the public re-frame.core/dispatch-and-settle 1-arg arity
+            delegates to the router implementation and returns the
+            documented result shape"
+    (rf/reg-event-db :core-public/settle-default
+                     (fn [db _] (assoc db :settled true)))
+    (let [p      (rf/dispatch-and-settle [:core-public/settle-default])
+          result (deref p 6000 ::timed-out)]
+      (is (not= ::timed-out result)
+          "promise resolved before the public arity's default 5s timeout")
+      (is (true? (:ok? result)))
+      (is (= [:core-public/settle-default] (-> result :root-epoch :event)))
+      (is (vector? (:cascaded-epochs result)))
+      (is (empty? (:cascaded-epochs result))))))
+
+(deftest core-dispatch-and-settle-two-arg-matches-router
+  (testing "the public 2-arg re-export behaves like router/dispatch-and-settle
+            for the same event and opts"
+    (rf/reg-event-db :core-public/settle-explicit
+                     (fn [db _] (update db :settle-count (fnil inc 0))))
+    (let [opts          {:timeout-ms       2000
+                         :settle-window-ms 50}
+          public-result (deref (rf/dispatch-and-settle [:core-public/settle-explicit] opts)
+                               3000
+                               ::timed-out)
+          router-result (deref (router/dispatch-and-settle [:core-public/settle-explicit] opts)
+                               3000
+                               ::timed-out)]
+      (is (not= ::timed-out public-result))
+      (is (not= ::timed-out router-result))
+      (is (= {:ok? true
+              :event [:core-public/settle-explicit]
+              :cascaded-epochs []}
+             {:ok? (:ok? public-result)
+              :event (-> public-result :root-epoch :event)
+              :cascaded-epochs (:cascaded-epochs public-result)})
+          "public re-export returns the expected trace-off shape")
+      (is (= {:ok? (:ok? router-result)
+              :event (-> router-result :root-epoch :event)
+              :cascaded-epochs (:cascaded-epochs router-result)}
+             {:ok? (:ok? public-result)
+              :event (-> public-result :root-epoch :event)
+              :cascaded-epochs (:cascaded-epochs public-result)})
+          "public wrapper and router implementation agree on observable result shape"))))
+
+(deftest core-public-dispatch-with-symbols-are-callable
+  (testing "the public dispatch-with APIs are reachable from re-frame.core"
+    (let [async-delivered (promise)
+          rf-ns           (get (ns-aliases 're-frame.trace-delivery-test) 'rf)]
+      (rf/reg-event-db :core-public/override-smoke
+                       (fn [db _]
+                         (deliver async-delivered :handled)
+                         (assoc db :override-smoke true)))
+      (is (= #'rf/dispatch-and-settle
+             (some-> rf-ns (ns-resolve 'dispatch-and-settle)))
+          "alias target resolve catches public symbol drift")
+      (is (nil? (rf/dispatch-with [:core-public/override-smoke] {}))
+          "dispatch-with is callable through re-frame.core and matches dispatch's nil return")
+      (is (= :handled (deref async-delivered 1000 ::timed-out))
+          "the dispatch-with smoke event ran before fixture cleanup")
+      (is (nil? (rf/dispatch-sync-with [:core-public/override-smoke] {}))
+          "dispatch-sync-with is callable through re-frame.core and matches dispatch-sync's nil return"))))
+
+;; ---------------------------------------------------------------------------
 ;; *dispatch-id-capture* — deterministic root-id capture
 ;; ---------------------------------------------------------------------------
 
