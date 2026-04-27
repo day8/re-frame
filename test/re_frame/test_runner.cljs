@@ -6,6 +6,7 @@
    [re-frame.interceptor-test]
    [re-frame.subs-test]
    [re-frame.fx-test]
+   [re-frame.registrar-test]
    [re-frame.trace-test]
    [re-frame.restore-test]))
 
@@ -20,6 +21,6 @@
    're-frame.interceptor-test
    're-frame.subs-test
    're-frame.fx-test
+   're-frame.registrar-test
    're-frame.trace-test
    're-frame.restore-test))
-
