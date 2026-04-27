@@ -1,6 +1,8 @@
 (ns re-frame.trace-test
-  (:require [cljs.test :as test :refer-macros [is deftest testing]]
+  (:require [cljs.test :as test :refer-macros [async is deftest testing]]
+            [clojure.string :as str]
             [re-frame.trace :as trace :include-macros true]
+            [re-frame.loggers :as log]
             [re-frame.core :as rf]))
 
 (def test-traces (atom []))
@@ -15,7 +17,19 @@
 
 (test/use-fixtures :each {:before (fn []
                                     (reset! test-traces [])
-                                    (trace/reset-tracing!))})
+                                    (reset! trace/traces [])
+                                    (reset! trace/epoch-cbs {})
+                                    (reset! trace/next-delivery 0)
+                                    (set! trace/trace-enabled? false)
+                                    (trace/reset-tracing!))
+                          :after  (fn []
+                                    (reset! trace/traces [])
+                                    (reset! trace/epoch-cbs {})
+                                    (reset! trace/next-delivery 0)
+                                    (set! trace/trace-enabled? false))})
+
+(def delivery-wait-ms
+  (+ trace/debounce-time 75))
 
 ; Disabled, as goog-define doesn't work in optimizations :whitespace
 ;(deftest trace-cb-test
@@ -180,6 +194,111 @@
         (rf/clear-event :event-orig-test/sink)
         (reset! trace/traces [])
         (set! trace/trace-enabled? false)))))
+
+;; ---------------------------------------------------------------------------
+;; register-epoch-cb end-to-end delivery on CLJS
+;; ---------------------------------------------------------------------------
+
+(deftest register-epoch-cb-fires-after-dispatch-sync
+  (testing "register-epoch-cb receives assembled epochs from the debounced
+            CLJS trace delivery path"
+    (async done
+      (let [received (atom [])
+            cb-key   :epoch-delivery/fires]
+        (set! trace/trace-enabled? true)
+        (rf/reg-event-db :epoch-delivery/touch
+                         (fn [db _] (assoc db :touched true)))
+        (trace/register-epoch-cb cb-key (fn [epochs] (swap! received conj epochs)))
+        (rf/dispatch-sync [:epoch-delivery/touch])
+        (js/setTimeout
+         (fn []
+           (try
+             (is (= 1 (count @received))
+                 "one debounced delivery for one dispatch-sync burst")
+             (let [epochs (first @received)
+                   epoch  (first epochs)]
+               (is (= 1 (count epochs)))
+               (is (= [:epoch-delivery/touch] (:event epoch))))
+             (finally
+               (trace/remove-epoch-cb cb-key)
+               (rf/clear-event :epoch-delivery/touch)
+               (reset! trace/traces [])
+               (set! trace/trace-enabled? false)
+               (done))))
+         delivery-wait-ms)))))
+
+(deftest remove-epoch-cb-stops-delivery
+  (testing "remove-epoch-cb removes the callback before the debounce tick"
+    (async done
+      (let [received (atom [])
+            cb-key   :epoch-delivery/removed]
+        (set! trace/trace-enabled? true)
+        (rf/reg-event-db :epoch-delivery/removed
+                         (fn [db _] (assoc db :removed true)))
+        (trace/register-epoch-cb cb-key (fn [epochs] (swap! received conj epochs)))
+        (trace/remove-epoch-cb cb-key)
+        (rf/dispatch-sync [:epoch-delivery/removed])
+        (js/setTimeout
+         (fn []
+           (try
+             (is (empty? @received)
+                 "removed epoch callback did not receive the debounced batch")
+             (finally
+               (rf/clear-event :epoch-delivery/removed)
+               (reset! trace/traces [])
+               (set! trace/trace-enabled? false)
+               (done))))
+         delivery-wait-ms)))))
+
+(deftest schedule-debounce-skips-epoch-assembly-without-epoch-cbs
+  (testing "schedule-debounce does not call assemble-epochs when no
+            epoch callbacks are registered"
+    (async done
+      (let [assemble-calls (atom 0)
+            trace-batches  (atom [])
+            original       trace/assemble-epochs
+            trace-cb-key   :epoch-delivery/trace-only]
+        (set! trace/trace-enabled? true)
+        (set! trace/assemble-epochs
+              (fn [batch]
+                (swap! assemble-calls inc)
+                (original batch)))
+        (rf/reg-event-db :epoch-delivery/no-epoch-cbs
+                         (fn [db _] (assoc db :no-epoch-cbs true)))
+        (trace/register-trace-cb trace-cb-key (fn [batch] (swap! trace-batches conj batch)))
+        (rf/dispatch-sync [:epoch-delivery/no-epoch-cbs])
+        (js/setTimeout
+         (fn []
+           (try
+             (is (= 1 (count @trace-batches))
+                 "sanity: the normal trace callback received the debounced batch")
+             (is (zero? @assemble-calls)
+                 "no epoch callbacks registered, so assemble-epochs was not called")
+             (finally
+               (set! trace/assemble-epochs original)
+               (trace/remove-trace-cb trace-cb-key)
+               (rf/clear-event :epoch-delivery/no-epoch-cbs)
+               (reset! trace/traces [])
+               (set! trace/trace-enabled? false)
+               (done))))
+         delivery-wait-ms)))))
+
+(deftest register-epoch-cb-warns-when-tracing-disabled
+  (testing "register-epoch-cb warns instead of registering when tracing is disabled"
+    (let [warns            (atom [])
+          original-loggers (log/get-loggers)]
+      (try
+        (set! trace/trace-enabled? false)
+        (log/set-loggers! {:warn (fn [& args]
+                                   (swap! warns conj (str/join " " args)))})
+        (trace/register-epoch-cb :epoch-delivery/disabled (fn [_]))
+        (is (= {} @trace/epoch-cbs)
+            "disabled tracing leaves epoch-cbs unchanged")
+        (is (= 1 (count @warns)))
+        (is (str/includes? (first @warns) "register-epoch-cb skipped"))
+        (finally
+          (log/set-loggers! original-loggers)
+          (trace/remove-epoch-cb :epoch-delivery/disabled))))))
 
 (deftest assemble-epochs-partitions-child-traces-by-op-type
   (testing "child traces are bucketed by op-type via :child-of links"
