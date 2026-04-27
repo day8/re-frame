@@ -1,5 +1,5 @@
 (ns re-frame.interop
-  (:import [java.util.concurrent Executor Executors]))
+  (:import [java.util.concurrent Executor Executors ScheduledExecutorService ThreadFactory TimeUnit]))
 
 ;; The purpose of this file is to provide JVM-runnable implementations of the
 ;; CLJS equivalents in interop.cljs.
@@ -75,11 +75,29 @@
     (swap! on-dispose-callbacks dissoc a-ratom)
     (doseq [f callbacks] (f))))
 
+(defonce ^:private scheduler
+  (Executors/newSingleThreadScheduledExecutor
+   (reify ThreadFactory
+     (newThread [_ r]
+       (doto (Thread. r "re-frame-set-timeout-scheduler")
+         (.setDaemon true))))))
+
 (defn set-timeout!
-  "Note that we ignore the `ms` value and just invoke the function, because
-  there isn't often much point firing a timed event in a test."
+  "Run `f` after `ms` milliseconds on a single-threaded daemon scheduler.
+
+  Honors the requested delay so CLJ-side primitives that schedule
+  competing timers (e.g. `dispatch-and-settle`'s overall-timeout vs.
+  settle-window) preserve the same ordering they get on CLJS.
+  Pre-fix this ignored `ms` and fired via `next-tick` immediately,
+  which broke any caller that relied on the gap between two scheduled
+  callbacks."
   [f ms]
-  (next-tick f))
+  (let [bound-f (bound-fn [] (f))]
+    (.schedule ^ScheduledExecutorService scheduler
+               ^Runnable bound-f
+               ^long ms
+               TimeUnit/MILLISECONDS))
+  nil)
 
 (defn now []
   ;; currentTimeMillis may count backwards in some scenarios, but as this is used for tracing

@@ -280,23 +280,34 @@
    :child-of  (or child-of (:id *current-trace*))
    :start     (interop/now)})
 
-;; On debouncing
+;; On delivering traces to registered cbs
 ;;
-;; We debounce delivering traces to registered cbs so that
-;; we can deliver them in batches. This aids us in efficiency
-;; but also importantly lets us avoid slowing down the host
-;; application by running any trace code in the critical path.
+;; CLJS: debounced batches. `goog.functions/debounce` coalesces a
+;; burst of trace fires (event + sub/runs + handler + do-fx) and
+;; delivers them all at once 10–50 ms after the LAST trace lands.
+;; Batches efficiently and keeps cb work off the critical path.
+;; A lightweight `next-delivery` gate sits on top of the debouncer
+;; to avoid constant set/cancel of timeouts.
 ;;
-;; We add a lightweight check on top of goog.functions/debounce
-;; to avoid constant setting and cancelling of timeouts. This
-;; means that we will deliver traces between 10-50 ms from the
-;; last trace being created, which still achieves our goals.
+;; CLJ: synchronous on the outermost trace's finish. There is no
+;; goog.functions on JVM and no event loop to schedule a debounced
+;; deliver against. `*current-trace*` is the trace whose
+;; `finish-trace` is firing; if its `:child-of` is nil, no enclosing
+;; trace remains on the stack — the burst is complete and we deliver
+;; the accumulated batch then. Same delivery boundary as CLJS (one
+;; dispatch-sync's worth of traces, end-to-end), no timer dependency.
+;;
+;; History: the CLJ branch of `debounce` previously read `(f)` —
+;; INVOKING f at namespace load and binding `schedule-debounce` to
+;; `(reset! traces [])`'s return value (`[]`). Every subsequent
+;; `(schedule-debounce)` call threw ArityException, silently breaking
+;; CLJ-side `register-epoch-cb` and `dispatch-and-settle`.
 
 (def debounce-time 50)
 
 (defn debounce [f interval]
   #?(:cljs (goog.functions/debounce f interval)
-     :clj  (f)))
+     :clj  f))
 
 (defn assemble-epochs
   "Walk a batch of finished traces; emit one epoch record per
@@ -371,19 +382,26 @@
      (reset! traces []))
    debounce-time))
 
-(defn run-tracing-callbacks! [now]
-  ;; Optimised debounce, we only re-debounce
-  ;; if we are close to delivery time
-  ;; to avoid constant setting and cancelling
-  ;; timeouts.
+#?(:cljs
+   (defn run-tracing-callbacks! [now]
+     ;; Optimised debounce — only re-arm when we're close to the next
+     ;; delivery, to avoid constant set/cancel of timeouts. The actual
+     ;; deliver happens debounce-time ms after the LAST call, batching
+     ;; the whole burst.
+     (when (< (- @next-delivery 25) now)
+       (schedule-debounce)
+       ;; next-delivery is not perfectly accurate (scheduling itself
+       ;; takes time) but good enough for the gate.
+       (reset! next-delivery (+ now debounce-time))))
 
-  ;; If we are within 25 ms of next delivery
-  (when (< (- @next-delivery 25) now)
-    (schedule-debounce)
-    ;; The next-delivery time is not perfectly accurate
-    ;; as scheduling the debounce takes some time, but
-    ;; it's good enough for our purposes here.
-    (reset! next-delivery (+ now debounce-time))))
+   :clj
+   (defn run-tracing-callbacks! [_now]
+     ;; Sync delivery on the outermost trace's finish — `:child-of` nil
+     ;; means no enclosing trace remains on the stack, so the burst is
+     ;; complete. Inner trace finishes accumulate into `traces` and
+     ;; skip delivery; the outermost finish ships the whole batch.
+     (when (nil? (:child-of *current-trace*))
+       (schedule-debounce))))
 
 (macros/deftime
   (defmacro finish-trace [trace]

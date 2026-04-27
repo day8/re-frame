@@ -35,16 +35,9 @@
 (use-fixtures :each fixture-clean-state)
 
 (defmacro ^:private with-tracing-on
-  "Flip trace-enabled? true and stub run-tracing-callbacks! to a
-   no-op for the body. The stub is unrelated to rf-556 — it works
-   around a separate latent bug in CLJ-mode `trace/schedule-debounce`
-   (the `debounce` helper's CLJ branch returns the value of `(f)`
-   instead of a fn, so `(schedule-debounce)` throws ArityException
-   the first time tracing fires on JVM). The gating contract this
-   test asserts is independent of trace delivery, so stubbing the
-   delivery side is fine for this purpose."
+  "Flip trace-enabled? true for the body, restore on exit."
   [& body]
-  `(with-redefs [trace/run-tracing-callbacks! (fn [_#] nil)]
+  `(do
      (alter-var-root #'trace/trace-enabled? (constantly true))
      (try
        ~@body
