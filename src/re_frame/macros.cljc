@@ -24,12 +24,18 @@
    CLJS and hardcoded `true` under CLJ.
 
    Opt-in via `(:require [re-frame.macros :as rf.m])` — the namespace
-   self-requires its macros so a CLJS `:require` is sufficient.
+   self-requires its macros so a CLJS `:require` is sufficient, and
+   transitively pulls in `re-frame.core` / `re-frame.interop` so the
+   fully-qualified symbols emitted by the macro expansions resolve
+   without the user needing to require those namespaces themselves.
 
    Sibling pattern to `reg-event-*` source-meta capture in
-   `re-frame.core` — same mechanism (`*file*` + `(:line (meta &form))`
-   at expansion time), different surface."
-  #?(:cljs (:require-macros [re-frame.macros])))
+   `re-frame.core` — same mechanism (`(:file &env)` with `*file*`
+   fallback, plus `(:line (meta &form))` at expansion time), different
+   surface."
+  #?(:cljs (:require-macros [re-frame.macros]))
+  (:require [re-frame.core]
+            [re-frame.interop]))
 
 (defmacro dispatch
   "Like `re-frame.core/dispatch` but in DEBUG builds attaches
@@ -45,7 +51,7 @@
    metadata survives the merge."
   {:arglists '([event-v])}
   [event-v]
-  (let [src-meta {:file *file* :line (:line (meta &form))}]
+  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
     `(if re-frame.interop/debug-enabled?
        (re-frame.core/dispatch
          (vary-meta ~event-v assoc :re-frame/source ~src-meta))
@@ -57,7 +63,7 @@
    behaviour."
   {:arglists '([event-v])}
   [event-v]
-  (let [src-meta {:file *file* :line (:line (meta &form))}]
+  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
     `(if re-frame.interop/debug-enabled?
        (re-frame.core/dispatch-sync
          (vary-meta ~event-v assoc :re-frame/source ~src-meta))
@@ -81,7 +87,7 @@
    without any new emission)."
   {:arglists '([query-v])}
   [query-v]
-  (let [src-meta {:file *file* :line (:line (meta &form))}]
+  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
     `(if re-frame.interop/debug-enabled?
        (re-frame.core/subscribe
          (vary-meta ~query-v assoc :re-frame/source ~src-meta))

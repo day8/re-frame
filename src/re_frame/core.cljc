@@ -220,12 +220,12 @@
   {:api-docs/heading "Event Handlers"
    :arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file *file* :line (:line (meta &form))}]
+   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
      `(let [r# (re-frame.core/reg-event-db-fn ~id ~handler)]
         (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
         r#)))
   ([id interceptors handler]
-   (let [src-meta {:file *file* :line (:line (meta &form))}]
+   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
      `(let [r# (re-frame.core/reg-event-db-fn ~id ~interceptors ~handler)]
         (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
         r#))))
@@ -276,12 +276,12 @@
   {:api-docs/heading "Event Handlers"
    :arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file *file* :line (:line (meta &form))}]
+   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
      `(let [r# (re-frame.core/reg-event-fx-fn ~id ~handler)]
         (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
         r#)))
   ([id interceptors handler]
-   (let [src-meta {:file *file* :line (:line (meta &form))}]
+   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
      `(let [r# (re-frame.core/reg-event-fx-fn ~id ~interceptors ~handler)]
         (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
         r#))))
@@ -329,12 +329,12 @@
   {:api-docs/heading "Event Handlers"
    :arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file *file* :line (:line (meta &form))}]
+   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
      `(let [r# (re-frame.core/reg-event-ctx-fn ~id ~handler)]
         (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
         r#)))
   ([id interceptors handler]
-   (let [src-meta {:file *file* :line (:line (meta &form))}]
+   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
      `(let [r# (re-frame.core/reg-event-ctx-fn ~id ~interceptors ~handler)]
         (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
         r#))))
@@ -620,7 +620,7 @@
   {:api-docs/heading "Subscriptions"
    :arglists '([query-id & args])}
   [query-id & args]
-  (let [src-meta {:file *file* :line (:line (meta &form))}]
+  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
     `(let [r# (re-frame.core/reg-sub-fn ~query-id ~@args)]
        (re-frame.registrar/-decorate-handler-meta! :sub ~query-id ~src-meta)
        r#)))
@@ -782,7 +782,7 @@
   {:api-docs/heading "Effect Handlers"
    :arglists '([id handler])}
   [id handler]
-  (let [src-meta {:file *file* :line (:line (meta &form))}]
+  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
     `(let [r# (re-frame.core/reg-fx-fn ~id ~handler)]
        (re-frame.registrar/-decorate-handler-meta! :fx ~id ~src-meta)
        r#)))
