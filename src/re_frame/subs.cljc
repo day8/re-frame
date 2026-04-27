@@ -228,10 +228,18 @@
     ;; map in sync). Powers "why did X re-render?" recipes without
     ;; downstream tooling reverse-engineering the dep graph from
     ;; :sub/run execution order.
-    (let [input-ids (doall (to-seq (map-signals reagent-id signals)))
-          input-qvs (mapv #(get @reaction-id->query-v %) input-ids)]
-      (trace/merge-trace! {:tags {:input-signals  input-ids
-                                  :input-query-vs input-qvs}}))
+    ;;
+    ;; Gated on `(trace/is-trace-enabled?)` so production builds with
+    ;; tracing off pay zero per-sub-run cost. The `merge-trace!` macro
+    ;; itself short-circuits on the same flag, but the surrounding
+    ;; `let` would still allocate the input-ids seq and deref
+    ;; `reaction-id->query-v` once per sub-run. Subs re-run on every
+    ;; transitive deref change, so this is the hot loop.
+    (when (trace/is-trace-enabled?)
+      (let [input-ids (doall (to-seq (map-signals reagent-id signals)))
+            input-qvs (mapv #(get @reaction-id->query-v %) input-ids)]
+        (trace/merge-trace! {:tags {:input-signals  input-ids
+                                    :input-query-vs input-qvs}})))
     dereffed-signals))
 
 (defn sugar [query-id sub-fn query? & args]
