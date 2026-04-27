@@ -63,7 +63,11 @@ jobs:
           cli:  'latest'
           bb:   'latest'
 
-      - run: bb test :chrome-path '"${{ steps.setup-chrome.outputs.chrome-path }}"'
+      - name: Test (JVM — CLJ test namespaces)
+        run: bb test-jvm
+
+      - name: Test (CLJS — browser target via Chrome)
+        run: bb test :chrome-path '"${{ steps.setup-chrome.outputs.chrome-path }}"'
 
       - name: Test simple example
         working-directory: examples/simple

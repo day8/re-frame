@@ -15,6 +15,12 @@
                                        thheller/shadow-cljs {:mvn/version "3.2.0"}
                                        binaryage/devtools   {:mvn/version "1.0.3"}
                                        reagent/reagent      {:mvn/version "1.2.0"}}}
+           :jvm-test    {:extra-paths ["test"]
+                         :exec-fn     cognitect.test-runner.api/test
+                         :exec-args   {:dirs     ["test"]
+                                       :patterns ["re-frame\\.(?!flow\\.alpha-).*-test$"]}
+                         :extra-deps  {io.github.cognitect-labs/test-runner {:git/tag "v0.5.1"
+                                                                             :git/sha "dfb30dd"}}}
            :docs        {:extra-paths ["docs/src"]
                          :extra-deps  {org.babashka/sci        {:mvn/version "0.8.40"}
                                        funcool/promesa         {:mvn/version "10.0.575"}

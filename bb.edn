@@ -6,6 +6,7 @@
  {:requires    ([day8.dev :as dev])
   test         (do (clojure "-M:test" "compile" "browser-test")
                    (clojure "-X:test"))
+  test-jvm     (clojure "-X:jvm-test")
   watch-test   (clojure "-M:test watch browser-test")
   watch-docs   (clojure "-M:docs" "watch" "docs")
   release-docs (clojure "-M:docs" "release" "docs")
