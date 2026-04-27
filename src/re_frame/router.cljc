@@ -1,8 +1,9 @@
 (ns re-frame.router
   (:require [re-frame.events  :as events :refer [handle]]
-            [re-frame.interop :refer [after-render empty-queue next-tick]]
+            [re-frame.interop :as interop :refer [after-render empty-queue next-tick]]
             [re-frame.loggers :refer [console]]
-            [re-frame.trace   :as trace :include-macros true]))
+            [re-frame.trace   :as trace :include-macros true])
+  #?(:clj (:import [java.util UUID])))
 
 ;; -- Router Loop ------------------------------------------------------------
 ;;
@@ -254,3 +255,191 @@
   (-call-post-event-callbacks event-queue event-v)  ;; slightly ugly hack. Run the registered post event callbacks.
   (trace/with-trace {:op-type :sync})
   nil)                                              ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
+
+;; ---------------------------------------------------------------------------
+;; rf-4mr — dispatch-and-settle
+;; ---------------------------------------------------------------------------
+;;
+;; Fire-and-await primitive for tests, devtools, and AI-driven
+;; experiment loops. Dispatches `event` and returns a deferred value
+;; that resolves once the event AND its synchronous cascade of
+;; `:fx [:dispatch ...]` children settle.
+;;
+;; SHAPE
+;;
+;;   (dispatch-and-settle event)
+;;   (dispatch-and-settle event opts)
+;;     opts:
+;;       :timeout-ms       int  ; default 5000 — overall budget;
+;;                              ; rejects with :reason :timeout if exceeded
+;;       :settle-window-ms int  ; default 100 — quiet period before
+;;                              ; declaring the cascade settled (i.e.
+;;                              ; how long to wait after the latest
+;;                              ; cascade epoch landed before resolving)
+;;       :include-cascaded? bool ; default true — emit :cascaded-epochs
+;;                               ; (children fired via :fx [:dispatch ...])
+;;
+;; Resolves to:
+;;   {:ok? true :root-epoch <epoch> :cascaded-epochs [<epoch> ...]}
+;;   {:ok? false :reason :timeout :event ev :captured-epochs [...]}
+;;
+;; CLJS returns a JS Promise; CLJ returns a `clojure.core/promise`
+;; (deref-able). Avoids a core.async dep on either platform.
+;;
+;; Q1 — settle definition (operator default): SYNC chain only for
+;; v1. The cascade tracker waits for all children whose
+;; `:parent-dispatch-id` chains back to root via rf-3p7 item 2's
+;; correlation. In-flight async effects (`:http-xhrio` returning
+;; later, etc.) are NOT awaited — their downstream `:dispatch`
+;; callbacks fire whenever, and don't appear in this cascade.
+;; Apps that want to await async effects should compose:
+;; `(dispatch-and-settle [:my/event])` then a separate await on
+;; whatever signal their async fx fires.
+;;
+;; Q2 — cascade depth (operator default): RECURSIVE through any
+;; depth. Children of children of children all chain back via
+;; :parent-dispatch-id (rf-3p7 item 2 propagates it across
+;; queue-pushes via event metadata). The tracker walks the full
+;; subtree.
+;;
+;; Q3 — promise vs channel (operator default): JS Promise on CLJS,
+;; clojure.core/promise on CLJ. No core.async dep.
+;;
+;; Q4 — leverage register-epoch-cb (rf-ybv): YES. The settle signal
+;; rides on epoch-cb deliveries; we don't reimplement the assembly
+;; pipeline. Each cb delivery brings 0+ cascade epochs; once a
+;; quiet period (`:settle-window-ms`) elapses without a cascade
+;; epoch landing, we resolve.
+;;
+;; LIMITATIONS (documented for the v1 release)
+;;
+;; - Root must be dispatched via dispatch-sync internally so its
+;;   :dispatch-id is captured deterministically. dispatch-and-settle
+;;   inherits the dispatch-sync constraint — calling it from inside
+;;   an event handler is forbidden (re-frame.events/handle errors).
+;; - Async effects with no synchronous re-frame trace footprint
+;;   are invisible to the cascade tracker.
+;; - The quiet-period heuristic can mis-classify a cascade as
+;;   settled if a slow async chain pauses for longer than
+;;   `:settle-window-ms` before re-firing a child :dispatch.
+;;   Bump the window for those cases.
+
+(defn- new-uuid []
+  #?(:cljs (random-uuid)
+     :clj  (UUID/randomUUID)))
+
+(defn- mk-deferred []
+  ;; Cross-platform deferred: returns
+  ;;   {:value <promise/atom>      ; what we hand back to the caller
+  ;;    :resolve! (fn [v] ...)     ; idempotent, single-shot}
+  ;; CLJS uses a JS Promise (resolve! captured from the executor).
+  ;; CLJ uses clojure.core/promise (deliver is idempotent under guard).
+  #?(:cljs
+     (let [resolve-fn (volatile! nil)
+           p (js/Promise. (fn [resolve _reject]
+                            (vreset! resolve-fn resolve)))
+           done? (atom false)]
+       {:value     p
+        :resolve!  (fn [v]
+                     (when (compare-and-set! done? false true)
+                       (@resolve-fn (clj->js v :keyword-fn name))))})
+     :clj
+     (let [p (promise)]
+       {:value    p
+        :resolve! (fn [v] (when-not (realized? p) (deliver p v)))})))
+
+(defn- recent-event-trace-by-event
+  "Given an event vector, find the most-recent :event trace in
+   `re-frame.trace/traces` whose tags match. Used right after
+   dispatch-sync to pick up the auto-generated :dispatch-id
+   (rf-3p7 item 2)."
+  [event-v]
+  (->> @trace/traces
+       reverse
+       (some (fn [t] (when (and (= :event (:op-type t))
+                                (= event-v (-> t :tags :event)))
+                       t)))))
+
+(defn dispatch-and-settle
+  "Dispatch `event` synchronously, then await the cascade of
+   `:fx [:dispatch ...]` children. See the long comment above for
+   shape, semantics, and limitations."
+  ([event] (dispatch-and-settle event {}))
+  ([event {:keys [timeout-ms settle-window-ms include-cascaded?]
+           :or   {timeout-ms 5000 settle-window-ms 100 include-cascaded? true}}]
+   (let [{:keys [value resolve!]} (mk-deferred)
+         cascade-ids    (atom #{})
+         cascade-epochs (atom [])
+         root-id        (atom nil)
+         settle-tick    (atom 0) ;; bumped on each cascade-epoch arrival
+         cb-key         (new-uuid)
+         finish!        (fn [result]
+                          (trace/remove-epoch-cb cb-key)
+                          (resolve! result))
+         schedule-settle-check
+                        (fn schedule-settle-check []
+                          (let [tick @settle-tick]
+                            (interop/set-timeout!
+                             (fn []
+                               (when (and (= tick @settle-tick)
+                                          (some? @root-id))
+                                 (let [eps     @cascade-epochs
+                                       root-ep (some #(when (= @root-id (:dispatch-id %)) %) eps)
+                                       cascaded (filterv #(not= @root-id (:dispatch-id %)) eps)]
+                                   (finish! (cond-> {:ok?        true
+                                                     :root-epoch root-ep}
+                                              include-cascaded?
+                                              (assoc :cascaded-epochs cascaded))))))
+                             settle-window-ms)))]
+     (trace/register-epoch-cb cb-key
+                              (fn [epochs]
+                                ;; Match an epoch to our cascade by either
+                                ;; (a) :dispatch-id == root-id (set lazily —
+                                ;; the cb often fires inside dispatch-sync
+                                ;; before we get control back to set root-id),
+                                ;; or (b) :parent-dispatch-id ∈ cascade-ids
+                                ;; (already-matched ancestor), or (c) before
+                                ;; root-id is set, by event-vec match on a
+                                ;; top-level epoch (no :parent-dispatch-id).
+                                (let [our (filter (fn [e]
+                                                    (or (= @root-id (:dispatch-id e))
+                                                        (contains? @cascade-ids (:parent-dispatch-id e))
+                                                        (and (nil? @root-id)
+                                                             (= event (:event e))
+                                                             (nil? (:parent-dispatch-id e)))))
+                                                  epochs)]
+                                  (when (seq our)
+                                    (doseq [e our]
+                                      ;; First match adopts root-id from
+                                      ;; the matching epoch.
+                                      (when (and (nil? @root-id) (= event (:event e)))
+                                        (reset! root-id (:dispatch-id e)))
+                                      (swap! cascade-ids conj (:dispatch-id e))
+                                      (swap! cascade-epochs conj e))
+                                    (swap! settle-tick inc)
+                                    (schedule-settle-check)))))
+     ;; Overall timeout — fires regardless of cascade activity.
+     (interop/set-timeout!
+      (fn []
+        (finish! {:ok?              false
+                  :reason           :timeout
+                  :event            event
+                  :captured-epochs  @cascade-epochs}))
+      timeout-ms)
+     ;; Dispatch the root synchronously so we can capture its
+     ;; :dispatch-id from re-frame.trace/traces immediately. Children
+     ;; queued via :fx [:dispatch ...] fire later via the router queue;
+     ;; epoch-cb picks them up as they land.
+     (dispatch-sync event)
+     ;; Capture root's :dispatch-id post-dispatch. Earliest moment
+     ;; possible — finish-trace just ran inside `handle`'s with-trace
+     ;; finally, so the trace is in `traces` even though the cb
+     ;; hasn't delivered yet.
+     (when-let [evt-trace (recent-event-trace-by-event event)]
+       (let [id (-> evt-trace :tags :dispatch-id)]
+         (reset! root-id id)
+         (swap! cascade-ids conj id)))
+     ;; Even with no children queued, schedule an initial settle
+     ;; check so the root-only case resolves promptly.
+     (schedule-settle-check)
+     value)))

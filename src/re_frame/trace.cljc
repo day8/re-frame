@@ -131,10 +131,18 @@
   [enabled?]
   (reset! validate-trace?-flag (boolean enabled?)))
 
-(defn- check-trace-against-schema
+(defn check-trace-against-schema
   "Walk a finished trace map and warn about missing/unknown tag
    keys for its op-type. No-op when op-type isn't in the schema —
-   third-party op-types stay unconstrained."
+   third-party op-types stay unconstrained.
+
+   Public because `finish-trace` is a macro that expands in the
+   caller's namespace (`re-frame.events`, custom instrumentation,
+   etc.); a private var here would fail the var-resolution check
+   when the expansion's `(check-trace-against-schema ...)` form
+   compiles in the caller. Callers shouldn't invoke this directly
+   — it's part of the rf-3p7 item 1 validation flow gated by
+   `validate-trace?`."
   [trace]
   (when-let [{:keys [required optional doc]} (get tag-schema (:op-type trace))]
     (let [tags    (or (:tags trace) {})

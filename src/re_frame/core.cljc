@@ -68,6 +68,44 @@
   [event]
   (router/dispatch-sync event))
 
+(defn dispatch-and-settle
+  "Dispatch `event` and return a deferred value that resolves once
+   the event AND its synchronous cascade of `:fx [:dispatch ...]`
+   children settle.
+
+   Resolves to:
+     {:ok? true :root-epoch <epoch> :cascaded-epochs [<epoch> ...]}
+     {:ok? false :reason :timeout :event ev :captured-epochs [...]}
+
+   CLJS returns a JS Promise; CLJ returns a `clojure.core/promise`.
+
+   `opts` (all optional):
+     :timeout-ms        int  ; default 5000 — overall budget
+     :settle-window-ms  int  ; default 100  — quiet period before
+                             ;                declaring the cascade
+                             ;                settled
+     :include-cascaded? bool ; default true — include child epochs
+                             ;                fired via :fx [:dispatch ...]
+
+   USAGE
+
+     ;; CLJS — await the promise
+     (-> (dispatch-and-settle [:cart/checkout])
+         (.then (fn [result] (...))))
+
+     ;; CLJ — deref the promise (blocks until resolved)
+     @(dispatch-and-settle [:cart/checkout])
+
+   IMPLEMENTATION
+
+   See `re-frame.router/dispatch-and-settle` for the long comment
+   covering the four design questions resolved (settle definition,
+   cascade depth, promise vs channel, leverage of register-epoch-cb)
+   and the v1 limitations around async effects."
+  {:api-docs/heading "Dispatching Events"}
+  ([event]      (router/dispatch-and-settle event))
+  ([event opts] (router/dispatch-and-settle event opts)))
+
 ;; -- Events ------------------------------------------------------------------
 
 (defn reg-event-db
