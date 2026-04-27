@@ -277,3 +277,76 @@
           (is (not= id1 id2)
               "each call gets its OWN root epoch — vector-equality match
                would have collided here, since both event vectors are equal"))))))
+
+;; ---------------------------------------------------------------------------
+;; tag-schema key-presence pins
+;;
+;; The `tag-schema` map at re-frame.trace is the canonical contract
+;; third-party consumers (re-frame-10x, re-frame-pair, re-frame-debux,
+;; custom devtools) read as the answer to "what keys can I rely on
+;; for op-type X?". Several keys were added incrementally — the
+;; structural pins below catch the regression where a future cleanup
+;; commit silently drops a documented key from `:optional`, leaving
+;; consumers reading a key that no longer matches the schema.
+;;
+;; Companion to validate-trace-test (which exercises the validation
+;; FLOW behaviourally — set-validate-trace! true + dispatch + capture
+;; warns). These are structural — they read the schema map directly,
+;; so a regression in the validation flow itself can't mask them.
+;; ---------------------------------------------------------------------------
+
+(deftest tag-schema-pins-event-and-sub-run-optional-keys
+  (testing ":event :optional contains :event/original — the dispatched
+            event vector pinned at handle entry, before any
+            interceptor runs. Consumers walking the trace tree rely
+            on this being readable independently of any later
+            :event-tag rewrite."
+    (is (contains? (get-in trace/tag-schema [:event :optional]) :event/original)))
+
+  (testing ":event :optional contains :dispatch-id — auto-generated
+            UUID per `re-frame.events/handle` call. Documented as the
+            cascade-correlation channel third-party tooling reads."
+    (is (contains? (get-in trace/tag-schema [:event :optional]) :dispatch-id)))
+
+  (testing ":event :optional contains :parent-dispatch-id — set on
+            traces dispatched from inside an event handler (i.e. via
+            :fx [:dispatch ...]). Consumers cross-reference dispatch-
+            id ↔ parent-dispatch-id to rebuild the cascade tree."
+    (is (contains? (get-in trace/tag-schema [:event :optional]) :parent-dispatch-id)))
+
+  (testing ":sub/run :optional contains :input-query-vs — query-vs of
+            inputs alongside :input-signals (reagent-ids). Consumers
+            need both: the reagent-ids identify the reaction objects,
+            the query-vs identify the *subscription* the reaction was
+            built for (independent of any caching round-trips)."
+    (is (contains? (get-in trace/tag-schema [:sub/run :optional]) :input-query-vs))))
+
+(deftest event-trace-tags-stay-within-schema
+  (testing "for a normal dispatch-sync, every key emitted on the
+            :event trace's :tags map is in (union :required :optional)
+            of the :event op-type schema entry. The inverse drift to
+            the structural pins above: schema declares X but code
+            emits Y. Catches the case where a future commit attaches
+            a new tag at the emit site without registering it in the
+            schema."
+    (with-tracing-on
+      (let [received (atom [])
+            cb-key   (UUID/randomUUID)]
+        (rf/reg-event-db :tag-schema-pin/touch
+                         (fn [db _] (assoc db :touched true)))
+        (try
+          (trace/register-trace-cb cb-key (fn [batch] (swap! received into batch)))
+          (rf/dispatch-sync [:tag-schema-pin/touch])
+          (let [event-trace  (some #(when (= :event (:op-type %)) %) @received)
+                emitted-keys (set (keys (:tags event-trace)))
+                schema       (get trace/tag-schema :event)
+                allowed      (into (:required schema) (:optional schema))
+                undocumented (filterv (complement allowed) emitted-keys)]
+            (is (some? event-trace)
+                "sanity: an :event trace was actually delivered on the trace stream")
+            (is (empty? undocumented)
+                (str ":event trace emit must not carry keys absent from "
+                     "(union :required :optional) of (:event tag-schema). "
+                     "Undocumented keys: " undocumented)))
+          (finally
+            (trace/remove-trace-cb cb-key)))))))
