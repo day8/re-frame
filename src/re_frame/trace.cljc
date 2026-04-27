@@ -53,6 +53,12 @@
                 :interceptors :original-event
                 ;; Auto-generated dispatch correlation.
                 :dispatch-id :parent-dispatch-id
+                ;; Dispatched event vector pinned at `handle` entry,
+                ;; before any interceptor runs. Always present on
+                ;; re-frame core's `:event` traces; listed under
+                ;; `:optional` so third-party emitters of `:event`
+                ;; op-type aren't forced to set it.
+                :event/original
                 ;; debux's `:code` payload — written via merge-trace!
                 ;; from outside re-frame core (re-frame-debux's
                 ;; common/util.cljc). Documented here as the channel
@@ -200,7 +206,8 @@
 ;; The epoch shape:
 ;;
 ;;   {:id                 <int>      ; the :event trace's id
-;;    :event              [<kw> ...] ; dispatched event vector
+;;    :event              [<kw> ...] ; event vector as carried on the :event tag (may have been rewritten by an interceptor)
+;;    :event/original     [<kw> ...] ; dispatched event vector, pinned at handle entry — pre-interceptor
 ;;    :dispatch-id        <uuid>
 ;;    :parent-dispatch-id <uuid|nil> ; nil for user-fired top-level
 ;;    :app-db/before      {...}      ; pulled from the :event trace's :tags
@@ -323,6 +330,7 @@
                   pick-all (fn [op] (filterv #(= op (:op-type %)) children))]
               {:id                 event-id
                :event              (:event tags)
+               :event/original     (:event/original tags)
                :dispatch-id        (:dispatch-id tags)
                :parent-dispatch-id (:parent-dispatch-id tags)
                :app-db/before      (:app-db-before tags)

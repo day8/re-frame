@@ -80,8 +80,12 @@
                   *current-dispatch-id* dispatch-id]
           (trace/with-trace {:operation event-id
                              :op-type   kind
-                             :tags      (cond-> {:event       event-v
-                                                 :dispatch-id dispatch-id}
+                             ;; `:event/original` is the dispatched vector frozen at handle entry —
+                             ;; pinned here once so consumers can recover what the user dispatched
+                             ;; even if a future refactor lets interceptors rewrite the `:event` tag.
+                             :tags      (cond-> {:event          event-v
+                                                 :event/original event-v
+                                                 :dispatch-id    dispatch-id}
                                           parent-id (assoc :parent-dispatch-id parent-id))}
             (trace/merge-trace! {:tags {:app-db-before @app-db}})
             (interceptor/execute event-v interceptors)
