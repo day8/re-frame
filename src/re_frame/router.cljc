@@ -226,7 +226,7 @@
 ;; Dispatching
 ;;
 
-;; rf-3p7 item 2 — dispatch correlation. When `dispatch` is called
+;; Dispatch correlation. When `dispatch` is called
 ;; from within a handler (typically via the `:dispatch` fx), tag the
 ;; queued event with the parent's dispatch-id as metadata so
 ;; `re-frame.events/handle` can read it back when the event eventually
@@ -242,7 +242,7 @@
     (vary-meta event assoc :re-frame/parent-dispatch-id parent-id)
     event))
 
-;; rf-ge8 — fx-overrides cascade propagation. When a child is
+;; Fx-overrides cascade propagation. When a child is
 ;; dispatched from inside a handler whose root carried
 ;; `:re-frame/fx-overrides` meta (set by `dispatch-with`), copy
 ;; the override map to the child so the cascade inherits the
@@ -274,7 +274,7 @@
   nil)                                              ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
 
 ;; ---------------------------------------------------------------------------
-;; rf-4mr — dispatch-and-settle
+;; dispatch-and-settle
 ;; ---------------------------------------------------------------------------
 ;;
 ;; Fire-and-await primitive for tests, devtools, and AI-driven
@@ -305,7 +305,7 @@
 ;;
 ;; Q1 — settle definition (operator default): SYNC chain only for
 ;; v1. The cascade tracker waits for all children whose
-;; `:parent-dispatch-id` chains back to root via rf-3p7 item 2's
+;; `:parent-dispatch-id` chains back to root via the dispatch-id
 ;; correlation. In-flight async effects (`:http-xhrio` returning
 ;; later, etc.) are NOT awaited — their downstream `:dispatch`
 ;; callbacks fire whenever, and don't appear in this cascade.
@@ -315,14 +315,14 @@
 ;;
 ;; Q2 — cascade depth (operator default): RECURSIVE through any
 ;; depth. Children of children of children all chain back via
-;; :parent-dispatch-id (rf-3p7 item 2 propagates it across
+;; :parent-dispatch-id (propagated across
 ;; queue-pushes via event metadata). The tracker walks the full
 ;; subtree.
 ;;
 ;; Q3 — promise vs channel (operator default): JS Promise on CLJS,
 ;; clojure.core/promise on CLJ. No core.async dep.
 ;;
-;; Q4 — leverage register-epoch-cb (rf-ybv): YES. The settle signal
+;; Q4 — leverage register-epoch-cb: YES. The settle signal
 ;; rides on epoch-cb deliveries; we don't reimplement the assembly
 ;; pipeline. Each cb delivery brings 0+ cascade epochs; once a
 ;; quiet period (`:settle-window-ms`) elapses without a cascade
@@ -368,8 +368,7 @@
 (defn- recent-event-trace-by-event
   "Given an event vector, find the most-recent :event trace in
    `re-frame.trace/traces` whose tags match. Used right after
-   dispatch-sync to pick up the auto-generated :dispatch-id
-   (rf-3p7 item 2)."
+   dispatch-sync to pick up the auto-generated :dispatch-id."
   [event-v]
   (->> @trace/traces
        reverse

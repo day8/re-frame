@@ -47,7 +47,7 @@
 
 (def ^:dynamic *handling* nil)    ;; remember what event we are currently handling
 
-;; rf-3p7 item 2 — auto-generated dispatch correlation. Bound by
+;; Auto-generated dispatch correlation. Bound by
 ;; `handle` for the duration of the interceptor chain so any
 ;; `:fx [:dispatch ...]` (or other downstream `dispatch` call)
 ;; fired from within can read it and tag its queued event with
@@ -67,7 +67,7 @@
   "Given an event vector `event-v`, look up the associated interceptor chain, and execute it."
   [event-v]
   (let [event-id    (first-in-vector event-v)
-        ;; rf-3p7 item 2 — read parent-id from event metadata
+        ;; Read parent-id from event metadata
         ;; (set by `re-frame.router/dispatch` when the event was
         ;; queued from within another handler) and generate a
         ;; fresh id for this dispatch.

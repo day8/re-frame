@@ -15,7 +15,7 @@
 (defn reset-tracing! []
   (reset! id 0))
 
-;; rf-3p7 item 1 — trace-tag schema. The shape of `:tags` for each
+;; Trace-tag schema. The shape of `:tags` for each
 ;; `:op-type` is, today, a contract by inspection: every downstream
 ;; consumer (re-frame-10x, re-frame-debux, re-frame-pair, custom
 ;; devtools) reads these keys, but the trace ns docstring still
@@ -51,7 +51,7 @@
    {:required #{:event}
     :optional #{:app-db-before :app-db-after :coeffects :effects
                 :interceptors :original-event
-                ;; rf-3p7 item 2 — auto-generated dispatch correlation.
+                ;; Auto-generated dispatch correlation.
                 :dispatch-id :parent-dispatch-id
                 ;; debux's `:code` payload — written via merge-trace!
                 ;; from outside re-frame core (re-frame-debux's
@@ -78,7 +78,7 @@
    :sub/run
    {:required #{:query-v :reaction}
     :optional #{:value :input-signals
-                ;; rf-3p7 item 3 — query-vs of inputs, alongside :input-signals (reagent-ids).
+                ;; Query-vs of inputs, alongside :input-signals (reagent-ids).
                 :input-query-vs}
     :doc "Subscription compute fn ran. Result is in :value."}
 
@@ -141,7 +141,7 @@
    etc.); a private var here would fail the var-resolution check
    when the expansion's `(check-trace-against-schema ...)` form
    compiles in the caller. Callers shouldn't invoke this directly
-   — it's part of the rf-3p7 item 1 validation flow gated by
+   — it's part of the validation flow gated by
    `validate-trace?`."
   [trace]
   (when-let [{:keys [required optional doc]} (get tag-schema (:op-type trace))]
@@ -188,7 +188,7 @@
   (swap! trace-cbs dissoc key)
   nil)
 
-;; rf-ybv — register-epoch-cb (companion-re-frame.md A4). Higher-
+;; register-epoch-cb. Higher-
 ;; level callback that delivers ASSEMBLED EPOCH records — one per
 ;; `:event` trace — instead of the raw trace stream that
 ;; `register-trace-cb` exposes. Downstream consumers (re-frame-pair,
@@ -197,12 +197,11 @@
 ;; in re-frame core means each tool stops re-implementing the
 ;; partition logic.
 ;;
-;; The epoch shape mirrors re-frame-pair's §4.3a /
-;; companion-re-frame.md A4 sketch:
+;; The epoch shape:
 ;;
 ;;   {:id                 <int>      ; the :event trace's id
 ;;    :event              [<kw> ...] ; dispatched event vector
-;;    :dispatch-id        <uuid>     ; rf-3p7 item 2 (commit af024c3)
+;;    :dispatch-id        <uuid>
 ;;    :parent-dispatch-id <uuid|nil> ; nil for user-fired top-level
 ;;    :app-db/before      {...}      ; pulled from the :event trace's :tags
 ;;    :app-db/after       {...}
@@ -226,7 +225,7 @@
 ;; post-delivery by walking parent-id pointers. A tree-shaped
 ;; primitive that WAITED for the cascade to settle would force
 ;; this layer to depend on async-settle infrastructure (tracked
-;; separately as rf-4mr / dispatch-and-settle); decoupling them
+;; separately under `dispatch-and-settle`); decoupling them
 ;; keeps register-epoch-cb deliverable today.
 ;;
 ;; ASSEMBLY LOCATION (Q4)
@@ -240,7 +239,7 @@
 ;;
 ;; Out of scope. A separate `register-epoch-settled-cb` would fire
 ;; after all cascaded dispatches resolve (HTTP returned, etc.) —
-;; tracked as rf-4mr / `dispatch-and-settle`. Today the cb fires
+;; tracked separately under `dispatch-and-settle`. Today the cb fires
 ;; per :event trace as the trace stream is delivered (debounced
 ;; ~50ms after the last trace).
 
@@ -350,7 +349,7 @@
                         (console :error "Error thrown from trace cb" k "while storing" batch e)))
               #?(:cljs (catch :default e
                          (console :error "Error thrown from trace cb" k "while storing" batch e)))))
-       ;; rf-ybv — also deliver assembled epochs to register-epoch-cb
+       ;; Also deliver assembled epochs to register-epoch-cb
        ;; consumers. Only assemble when at least one cb is registered;
        ;; otherwise skip the per-batch group-by walk entirely.
        (when (seq @epoch-cbs)

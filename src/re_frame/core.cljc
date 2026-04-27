@@ -79,7 +79,7 @@
    the original — same return shape, same callback / promise
    lifecycle.
 
-   Use cases (rf-ge8):
+   Use cases:
    - Dry-run dispatches in dev: fire an event, observe its
      `:effects` and the `app-db` change, but stub `:http-xhrio`
      / navigation / local-storage so probing is safe.

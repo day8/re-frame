@@ -34,7 +34,7 @@
 ;         {:id 1 :op-type :sub/create :operation :non-existence :error true})))
 
 ;; ---------------------------------------------------------------------------
-;; rf-ybv — assemble-epochs unit tests
+;; assemble-epochs unit tests
 ;; ---------------------------------------------------------------------------
 ;;
 ;; assemble-epochs is a pure fn over a vec of finished traces — no
@@ -121,7 +121,7 @@
             child-e  (first (filter #(= "uuid-CHILD" (:dispatch-id %)) epochs))]
         (is (nil? (:parent-dispatch-id parent-e)))
         (is (= "uuid-PARENT" (:parent-dispatch-id child-e))
-            "rf-3p7 item 2 — child carries parent's id")
+            "child carries parent's id")
         (is (= [4] (mapv :id (:sub-runs parent-e)))
             "sub-run :child-of pointed at the parent's event id")
         (is (empty? (:sub-runs child-e))

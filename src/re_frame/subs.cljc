@@ -43,7 +43,7 @@
     :re-frame/lifecycle :reactive}
    dynv])
 
-;; rf-3p7 item 3 — reverse lookup powering :input-query-vs on
+;; Reverse lookup powering :input-query-vs on
 ;; :sub/run traces. `query->reaction` is keyed by cache-key (which
 ;; embeds query-v); going the other way (reagent-id → query-v) was
 ;; previously not possible without scanning the whole map. Keeping
@@ -196,7 +196,7 @@
       (map? signals) (map-vals deref signals)
       (deref? signals) (deref signals)
       :else (console :error "re-frame: in the reg-sub for" query-id ", the input-signals function returns:" signals))
-    ;; rf-3p7 item 3 — emit :input-query-vs alongside :input-signals.
+    ;; Emit :input-query-vs alongside :input-signals.
     ;; :input-signals is the reagent-id of each input (cheap, opaque);
     ;; :input-query-vs is the query-v of each (expensive to recover
     ;; without `reaction-id->query-v` — cache-and-return keeps that

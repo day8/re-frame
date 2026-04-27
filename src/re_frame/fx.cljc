@@ -18,7 +18,7 @@
   [id handler]
   (register-handler kind id handler))
 
-;; rf-ge8 — effect substitution (companion-re-frame.md A9).
+;; Effect substitution.
 ;;
 ;; Per-dispatch override channel for fx handlers, carried as event
 ;; metadata rather than via a dynamic binding or a mutated global
@@ -32,8 +32,8 @@
 ;;
 ;; `re-frame.router/dispatch` reads the CURRENTLY-handling event's
 ;; `:re-frame/fx-overrides` meta (via `re-frame.events/*handling*`)
-;; and tags queued children with the same map — parallel to rf-3p7
-;; item 2's `:re-frame/parent-dispatch-id` propagation. Result:
+;; and tags queued children with the same map — parallel to the
+;; `:re-frame/parent-dispatch-id` propagation. Result:
 ;; overrides propagate transitively through any depth of
 ;; `:fx [:dispatch ...]` cascade.
 ;;
@@ -123,7 +123,7 @@
               {:op-type :event/do-fx}
               (let [effects            (:effects context)
                     effects-without-db (dissoc effects :db)
-                    ;; rf-ge8 — read the original event's
+                    ;; Read the original event's
                     ;; `:re-frame/fx-overrides` meta (set by
                     ;; `dispatch-with` and propagated by
                     ;; router/dispatch through cascades) and bind
@@ -137,13 +137,13 @@
                 (binding [*current-overrides* (or overrides *current-overrides*)]
                   ;; :db effect is guaranteed to be handled before all other effects.
                   (when-let [new-db (:db effects)]
-                    ;; rf-ge8 — :db override is also honoured (a stub
+                    ;; :db override is also honoured (a stub
                     ;; for :db lets a probe dispatch see "what the
                     ;; effect would have done to app-db" without
                     ;; actually mutating the global ratom).
                     ((effect-handler :db) new-db))
                   (doseq [[effect-key effect-value] effects-without-db]
-                    ;; rf-ge8 — consult per-dispatch override first;
+                    ;; Consult per-dispatch override first;
                     ;; fall back to the global registrar.
                     (if-let [effect-fn (effect-handler effect-key)]
                       (effect-fn effect-value)
@@ -208,7 +208,7 @@
      (doseq [[effect-key effect-value] (remove nil? seq-of-effects)]
        (when (= :db effect-key)
          (console :warn "re-frame: \":fx\" effect should not contain a :db effect"))
-       ;; rf-ge8 — go through `effect-handler` so the inner effects
+       ;; Go through `effect-handler` so the inner effects
        ;; of an `{:fx [...]}` value also honour `*current-overrides*`
        ;; (bound by do-fx-after for this dispatch's fx-execution frame).
        (if-let [effect-fn (effect-handler effect-key)]
