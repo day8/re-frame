@@ -37,21 +37,55 @@
 (deftest reaction-id->query-v-distinguishes-live-subs
   (testing "two live subscriptions register distinct entries in the
             internal reaction-id->query-v map (the table backing the
-            :input-query-vs trace tag)"
+            :input-query-vs trace tag).
+
+            Trace flag flipped on for the duration: cache-and-return
+            gates the reverse-map assoc on `(trace/is-trace-enabled?)`
+            so production builds don't pay the swap! cost. With trace
+            off the map stays empty by design — see
+            `cache-and-return-skips-reaction-id-reverse-map-when-tracing-off`
+            in trace_zero_cost_test."
     (rf/reg-sub :rid/echo (fn [db [_ x]] [(:n db) x]))
     (reset! db/app-db {:n 1})
-    (let [r1 (rf/subscribe [:rid/echo :a])
-          r2 (rf/subscribe [:rid/echo :b])
-          id1 (interop/reagent-id r1)
-          id2 (interop/reagent-id r2)
-          rev @#'subs/reaction-id->query-v]
-      (is (not= id1 id2)
-          "the two subscribe-produced reactions must have distinct ids")
-      (is (= [:rid/echo :a] (get @rev id1))
-          "first reaction's id maps to its own query-v")
-      (is (= [:rid/echo :b] (get @rev id2))
-          "second reaction's id maps to its own query-v — pre-fix this
-           was overwritten because every JVM reaction shared id 'rx-clj'"))))
+    (let [before trace/trace-enabled?]
+      (alter-var-root #'trace/trace-enabled? (constantly true))
+      (try
+        (let [r1 (rf/subscribe [:rid/echo :a])
+              r2 (rf/subscribe [:rid/echo :b])
+              id1 (interop/reagent-id r1)
+              id2 (interop/reagent-id r2)
+              rev @#'subs/reaction-id->query-v]
+          (is (not= id1 id2)
+              "the two subscribe-produced reactions must have distinct ids")
+          (is (= [:rid/echo :a] (get @rev id1))
+              "first reaction's id maps to its own query-v")
+          (is (= [:rid/echo :b] (get @rev id2))
+              "second reaction's id maps to its own query-v — pre-fix this
+               was overwritten because every JVM reaction shared id 'rx-clj'"))
+        (finally
+          (alter-var-root #'trace/trace-enabled? (constantly before)))))))
+
+(deftest disposed-reaction-drops-from-reaction-id-reverse-map
+  (testing "after dispose, the reaction's entry is removed from
+            reaction-id->query-v — without this the trace-only reverse
+            map would grow unbounded across the app's lifetime even
+            with tracing enabled"
+    (rf/reg-sub :rid/leaf (fn [db _] (:n db)))
+    (reset! db/app-db {:n 1})
+    (let [before trace/trace-enabled?]
+      (alter-var-root #'trace/trace-enabled? (constantly true))
+      (try
+        (let [r   (rf/subscribe [:rid/leaf])
+              id  (interop/reagent-id r)
+              rev @#'subs/reaction-id->query-v]
+          (is (= [:rid/leaf] (get @rev id))
+              "subscribed → entry present in reaction-id->query-v")
+          (rf/clear-subscription-cache!)
+          (is (nil? (get @rev id))
+              "clear-subscription-cache! invokes on-dispose which
+               dissocs the entry"))
+        (finally
+          (alter-var-root #'trace/trace-enabled? (constantly before)))))))
 
 (deftest input-query-vs-trace-tag-captures-distinct-inputs
   (testing "with tracing on, :sub/run trace for a derived sub records the

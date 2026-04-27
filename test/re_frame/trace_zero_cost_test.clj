@@ -160,6 +160,32 @@
            confirms the gate flips back on (test isn't trivially
            always-false)."))))
 
+(deftest cache-and-return-skips-reaction-id-reverse-map-when-tracing-off
+  (testing "cache-and-return MUST NOT swap! into reaction-id->query-v
+            when tracing is disabled — that reverse map is read only
+            by deref-input-signals (also gated on is-trace-enabled?),
+            so populating it in production is wasted work AND the map
+            grows unbounded in apps that never enable tracing"
+    (rf/reg-sub :trace-zero/leaf (fn [db _] (:n db)))
+    (reset! db/app-db {:n 1})
+    (alter-var-root #'trace/trace-enabled? (constantly false))
+    (let [rev @#'subs/reaction-id->query-v]
+      (is (empty? @rev)
+          "fixture-clean-state restored a fresh subs cache; the reverse
+           map starts empty")
+      (rf/subscribe [:trace-zero/leaf])
+      (is (empty? @rev)
+          "trace off → cache-and-return skipped the reaction-id->query-v
+           assoc; no entry leaked into the reverse map")
+
+      (with-tracing-on
+        (rf/reg-sub :trace-zero/leaf-on (fn [db _] (:n db)))
+        (rf/subscribe [:trace-zero/leaf-on])
+        (is (some #{[:trace-zero/leaf-on]} (vals @rev))
+            "trace on → cache-and-return DID swap! into the reverse map;
+             confirms the gate flips back on (the test isn't trivially
+             always-empty)")))))
+
 (deftest deref-input-signals-skips-input-query-vs-work-when-tracing-off
   (testing "deref-input-signals MUST NOT walk reaction-id->query-v when
             tracing is disabled — subs re-run on every transitive deref

@@ -50,8 +50,12 @@
 ;; this parallel atom lets `deref-input-signals` emit the query-vs
 ;; of input signals at zero per-sub-run cost (one O(1) lookup per
 ;; signal). Sync'd alongside `query->reaction` in cache-and-return
-;; (insert) and the on-dispose cb (remove); see "Why did X
-;; re-render?" recipes in re-frame-pair docs/inspirations doc.
+;; (insert, gated on `(trace/is-trace-enabled?)` so the swap! is
+;; elided in production builds where the data is never read) and
+;; the on-dispose cb (remove, unconditional so flipping the trace
+;; flag mid-session can't leak entries that landed while it was on);
+;; see "Why did X re-render?" recipes in re-frame-pair
+;; docs/inspirations doc.
 (def ^:private reaction-id->query-v (atom {}))
 
 ;; Reverse lookup keyed by the reaction object itself. Powers
@@ -87,7 +91,8 @@
                                (when (contains? query-cache k)
                                  (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" k)))
                              (assoc query-cache k r)))
-    (swap! reaction-id->query-v assoc rid query-v)
+    (when (trace/is-trace-enabled?)
+      (swap! reaction-id->query-v assoc rid query-v))
     (swap! reaction->query-v assoc r query-v)
     (trace/merge-trace! {:tags {:reaction rid}})
     r)) ;; return the actual reaction
