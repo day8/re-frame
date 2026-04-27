@@ -725,6 +725,19 @@
   [query-id handler-fn]
   (registrar/register-handler subs/kind query-id handler-fn))
 
+(defn query-v-for-reaction
+  "Returns the query-v that produced `reaction`, or nil if the reaction
+   is unknown to re-frame's subscription cache.
+
+   The inverse of `subscribe`: given a reaction held by tooling or a
+   diagnostic recipe, recover the query-v that originally produced it.
+   Backed by an object-identity-keyed reverse map maintained alongside
+   the subscription cache; entries are cleared when the reaction is
+   disposed."
+  {:api-docs/heading "Subscriptions"}
+  [reaction]
+  (subs/query-v-for-reaction reaction))
+
 ;; XXX
 (defn clear-subscription-cache!
   "Removes all subscriptions from the cache.

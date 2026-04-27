@@ -54,6 +54,17 @@
 ;; re-render?" recipes in re-frame-pair docs/inspirations doc.
 (def ^:private reaction-id->query-v (atom {}))
 
+;; Reverse lookup keyed by the reaction object itself. Powers
+;; `query-v-for-reaction`: tools holding a reaction (e.g. devtools
+;; surfacing a reaction's value) can recover the query-v that
+;; produced it without walking trace history. Distinct from
+;; `reaction-id->query-v` (keyed by reagent-id, used internally for
+;; trace tags) because reagent-id collides on JVM (every reaction
+;; gets the constant "rx-clj"), so object-identity keying is the
+;; only correct option for a public lookup that works in both
+;; environments.
+(def ^:private reaction->query-v (atom {}))
+
 (defn cache-and-return
   "cache the reaction r"
   [query-v dynv r]
@@ -69,7 +80,8 @@
                                    (if (and (contains? query-cache k) (identical? r (get query-cache k)))
                                      (dissoc query-cache k)
                                      query-cache)))
-                          (swap! reaction-id->query-v dissoc rid)))
+                          (swap! reaction-id->query-v dissoc rid)
+                          (swap! reaction->query-v dissoc r)))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction (fn [query-cache]
                              (when debug-enabled?
@@ -77,6 +89,7 @@
                                  (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" k)))
                              (assoc query-cache k r)))
     (swap! reaction-id->query-v assoc rid query-v)
+    (swap! reaction->query-v assoc r query-v)
     (trace/merge-trace! {:tags {:reaction rid}})
     r)) ;; return the actual reaction
 
@@ -85,6 +98,18 @@
    (cache-lookup query-v []))
   ([query-v dyn-v]
    (get @query->reaction (cache-key query-v dyn-v))))
+
+(defn query-v-for-reaction
+  "Returns the query-v that produced `reaction`, or nil if the reaction
+   is unknown to re-frame's subscription cache (e.g. it was created
+   directly via `reagent.ratom/make-reaction` rather than via
+   `subscribe`, or it has already been disposed).
+
+   Useful for devtools and diagnostic recipes that hold a reaction
+   value and need to recover its provenance — \"which sub produced
+   this?\" — without walking trace history."
+  [reaction]
+  (get @reaction->query-v reaction))
 
 ;; -- subscribe ---------------------------------------------------------------
 
