@@ -5,7 +5,8 @@
             [re-frame.registrar   :refer [get-handler register-handler]]
             [re-frame.loggers     :refer [console]]
             [re-frame.interceptor :as  interceptor]
-            [re-frame.trace       :as trace :include-macros true]))
+            [re-frame.trace       :as trace :include-macros true])
+  #?(:clj (:import [java.util UUID])))
 
 (def kind :event)
 (assert (re-frame.registrar/kinds kind))
@@ -46,17 +47,42 @@
 
 (def ^:dynamic *handling* nil)    ;; remember what event we are currently handling
 
+;; rf-3p7 item 2 — auto-generated dispatch correlation. Bound by
+;; `handle` for the duration of the interceptor chain so any
+;; `:fx [:dispatch ...]` (or other downstream `dispatch` call)
+;; fired from within can read it and tag its queued event with
+;; this id as `:re-frame/parent-dispatch-id` metadata. See
+;; `re-frame.router/dispatch` for the propagation half. Downstream
+;; consumers (re-frame-pair's tagged-dispatch-sync! etc.) get the
+;; "is this the user-fired event or a chained child?" answer for
+;; free via the new `:dispatch-id` / `:parent-dispatch-id` trace
+;; tags — no wrapper API needed.
+(def ^:dynamic *current-dispatch-id* nil)
+
+(defn- new-dispatch-id []
+  #?(:cljs (random-uuid)
+     :clj  (UUID/randomUUID)))
+
 (defn handle
   "Given an event vector `event-v`, look up the associated interceptor chain, and execute it."
   [event-v]
-  (let [event-id  (first-in-vector event-v)]
+  (let [event-id    (first-in-vector event-v)
+        ;; rf-3p7 item 2 — read parent-id from event metadata
+        ;; (set by `re-frame.router/dispatch` when the event was
+        ;; queued from within another handler) and generate a
+        ;; fresh id for this dispatch.
+        parent-id   (:re-frame/parent-dispatch-id (meta event-v))
+        dispatch-id (new-dispatch-id)]
     (if-let [interceptors  (get-handler kind event-id true)]
       (if *handling*
         (console :error "re-frame: while handling" *handling* ", dispatch-sync was called for" event-v ". You can't call dispatch-sync within an event handler.")
-        (binding [*handling*  event-v]
+        (binding [*handling*           event-v
+                  *current-dispatch-id* dispatch-id]
           (trace/with-trace {:operation event-id
                              :op-type   kind
-                             :tags      {:event event-v}}
+                             :tags      (cond-> {:event       event-v
+                                                 :dispatch-id dispatch-id}
+                                          parent-id (assoc :parent-dispatch-id parent-id))}
             (trace/merge-trace! {:tags {:app-db-before @app-db}})
             (interceptor/execute event-v interceptors)
             (trace/merge-trace! {:tags {:app-db-after @app-db}})))))))

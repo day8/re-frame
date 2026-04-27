@@ -1,5 +1,5 @@
 (ns re-frame.router
-  (:require [re-frame.events  :refer [handle]]
+  (:require [re-frame.events  :as events :refer [handle]]
             [re-frame.interop :refer [after-render empty-queue next-tick]]
             [re-frame.loggers :refer [console]]
             [re-frame.trace   :as trace :include-macros true]))
@@ -225,11 +225,27 @@
 ;; Dispatching
 ;;
 
+;; rf-3p7 item 2 — dispatch correlation. When `dispatch` is called
+;; from within a handler (typically via the `:dispatch` fx), tag the
+;; queued event with the parent's dispatch-id as metadata so
+;; `re-frame.events/handle` can read it back when the event eventually
+;; runs and emit `:parent-dispatch-id` on the new event's trace. The
+;; metadata key is namespaced (`:re-frame/parent-dispatch-id`) so
+;; user-supplied event metadata can't collide. dispatch-sync doesn't
+;; need this — it calls `handle` synchronously, so binding flows
+;; (and re-frame already forbids dispatch-sync from within an event
+;; handler anyway, so the parent-chain across dispatch-sync is
+;; structurally a non-issue).
+(defn- tag-with-parent-dispatch-id [event]
+  (if-let [parent-id events/*current-dispatch-id*]
+    (vary-meta event assoc :re-frame/parent-dispatch-id parent-id)
+    event))
+
 (defn dispatch
   [event]
   (if (nil? event)
     (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
-    (push event-queue event))
+    (push event-queue (tag-with-parent-dispatch-id event)))
   nil)                                           ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
 
 (defn dispatch-sync
