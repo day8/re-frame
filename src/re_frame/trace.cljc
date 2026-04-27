@@ -67,8 +67,15 @@
     :doc "Top-level dispatch — fired by re-frame.router/dispatch / dispatch-sync."}
 
    :event/handler
-   {:required #{:event}
-    :optional #{:dispatch-id :parent-dispatch-id}
+   {:required #{}
+    ;; Core re-frame's std_interceptors open `:event/handler` with no
+    ;; `:tags` map — `:effects` / `:coeffects` are merged onto the
+    ;; PARENT `:event` trace by the immediately-following
+    ;; `merge-trace!` (the comment at the emit site documents the
+    ;; intent). `:event` listed under `:optional` so third-party
+    ;; emitters that DO attach the dispatched vector at handler
+    ;; scope aren't flagged as unknown.
+    :optional #{:event :dispatch-id :parent-dispatch-id}
     :doc "The user's reg-event-* fn body, fired inside the event interceptor chain."}
 
    :event/do-fx
@@ -78,14 +85,21 @@
 
    :sub/create
    {:required #{:query-v}
-    :optional #{:cached? :reaction}
+    :optional #{:cached? :reaction
+                ;; Legacy 2-arity (dynv) path: `(subscribe [::sub]
+                ;; [reagent-atom ...])` opens `:sub/create` with the
+                ;; dynv vector attached. Documented here so the lint
+                ;; doesn't fire on every dynv subscribe.
+                :dyn-v}
     :doc "Subscribe call — either resolves from the reaction cache (`:cached? true`) or builds a new reaction."}
 
    :sub/run
    {:required #{:query-v :reaction}
     :optional #{:value :input-signals
                 ;; Query-vs of inputs, alongside :input-signals (reagent-ids).
-                :input-query-vs}
+                :input-query-vs
+                ;; Set on the dynv path — see `:sub/create` above.
+                :dyn-v}
     :doc "Subscription compute fn ran. Result is in :value."}
 
    :sub/dispose
