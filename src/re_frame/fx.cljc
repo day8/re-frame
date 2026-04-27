@@ -91,6 +91,30 @@
   (or (get *current-overrides* effect-key)
       (get-handler kind effect-key false)))
 
+(defn- run-effects!
+  "Apply the `:db` effect first, then every other effect via
+   `effect-handler`. Extracted so `do-fx-after` can call it with OR
+   without a `*current-overrides*` binding pushed — the no-overrides
+   hot path skips the binding entirely."
+  [effects effects-without-db]
+  ;; :db effect is guaranteed to be handled before all other effects.
+  (when-let [new-db (:db effects)]
+    ;; :db override is also honoured (a stub for :db lets a probe
+    ;; dispatch see "what the effect would have done to app-db"
+    ;; without actually mutating the global ratom).
+    ((effect-handler :db) new-db))
+  (doseq [[effect-key effect-value] effects-without-db]
+    ;; Consult per-dispatch override first; fall back to the global registrar.
+    (if-let [effect-fn (effect-handler effect-key)]
+      (effect-fn effect-value)
+      (console :warn
+               "re-frame: no handler registered for effect:"
+               effect-key
+               ". Ignoring."
+               (when (= :event effect-key)
+                 (str "You may be trying to return a coeffect map from an event-fx handler. "
+                      "See https://day8.github.io/re-frame/FAQs/use-cofx-as-fx/"))))))
+
 ;; -- Interceptor -------------------------------------------------------------
 
 (def do-fx
@@ -126,34 +150,20 @@
                     ;; Read the original event's
                     ;; `:re-frame/fx-overrides` meta (set by
                     ;; `dispatch-with` and propagated by
-                    ;; router/dispatch through cascades) and bind
-                    ;; `*current-overrides*` for the fx execution
-                    ;; frame so both this loop AND the registered
-                    ;; `:fx` handler (which dispatches the inner
-                    ;; effects of `{:fx [...]}` values) see the
-                    ;; same overrides.
-                    event      (get-in context [:coeffects :event])
-                    overrides  (:re-frame/fx-overrides (meta event))]
-                (binding [*current-overrides* (or overrides *current-overrides*)]
-                  ;; :db effect is guaranteed to be handled before all other effects.
-                  (when-let [new-db (:db effects)]
-                    ;; :db override is also honoured (a stub
-                    ;; for :db lets a probe dispatch see "what the
-                    ;; effect would have done to app-db" without
-                    ;; actually mutating the global ratom).
-                    ((effect-handler :db) new-db))
-                  (doseq [[effect-key effect-value] effects-without-db]
-                    ;; Consult per-dispatch override first;
-                    ;; fall back to the global registrar.
-                    (if-let [effect-fn (effect-handler effect-key)]
-                      (effect-fn effect-value)
-                      (console :warn
-                               "re-frame: no handler registered for effect:"
-                               effect-key
-                               ". Ignoring."
-                               (when (= :event effect-key)
-                                 (str "You may be trying to return a coeffect map from an event-fx handler. "
-                                      "See https://day8.github.io/re-frame/FAQs/use-cofx-as-fx/")))))))))))
+                    ;; router/dispatch through cascades). Only push a
+                    ;; `*current-overrides*` binding when the event
+                    ;; carries one — the production hot path (no
+                    ;; dispatch-with in use) skips the binding's
+                    ;; ~50–100ns push/pop cost entirely. When pushed,
+                    ;; both this loop AND the registered `:fx` handler
+                    ;; (which dispatches the inner effects of
+                    ;; `{:fx [...]}` values) see the same overrides.
+                    event     (get-in context [:coeffects :event])
+                    overrides (:re-frame/fx-overrides (meta event))]
+                (if overrides
+                  (binding [*current-overrides* overrides]
+                    (run-effects! effects effects-without-db))
+                  (run-effects! effects effects-without-db)))))))
 
 ;; -- Builtin Effect Handlers  ------------------------------------------------
 

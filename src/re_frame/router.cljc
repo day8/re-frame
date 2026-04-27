@@ -261,9 +261,20 @@
   [event]
   (if (nil? event)
     (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
-    (push event-queue (-> event
-                          tag-with-parent-dispatch-id
-                          tag-with-fx-overrides)))
+    ;; Both helpers only do useful work when there is a parent context
+    ;; to propagate FROM. `tag-with-parent-dispatch-id` reads
+    ;; `*current-dispatch-id*`, only bound by `events/handle` when
+    ;; tracing is enabled. `tag-with-fx-overrides` reads the
+    ;; currently-handling event's `:re-frame/fx-overrides` meta, set
+    ;; only by `dispatch-with`. Production hot path: tracing off + no
+    ;; dispatch-with in use → both `cond->` clauses are false and
+    ;; neither helper runs. Cascade hot path (dispatched from inside a
+    ;; handler): `*handling*` is bound, so tag-with-fx-overrides fires
+    ;; — but a single nil meta-lookup, not a full propagation, when
+    ;; dispatch-with isn't in play.
+    (push event-queue (cond-> event
+                        events/*current-dispatch-id* tag-with-parent-dispatch-id
+                        events/*handling*            tag-with-fx-overrides)))
   nil)                                           ;; Ensure nil return. See https://github.com/day8/re-frame/wiki/Beware-Returning-False
 
 (defn dispatch-sync

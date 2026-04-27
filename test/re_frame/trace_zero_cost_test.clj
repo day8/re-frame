@@ -17,6 +17,8 @@
             [re-frame.core   :as rf]
             [re-frame.db     :as db]
             [re-frame.events :as events]
+            [re-frame.fx     :as fx]
+            [re-frame.router :as router]
             [re-frame.subs   :as subs]
             [re-frame.trace  :as trace]))
 
@@ -91,6 +93,72 @@
         (is (uuid? @observed)
             "tracing on → handle binds *current-dispatch-id* to the
              generated UUID; the handler observes a real id")))))
+
+(deftest dispatch-skips-tag-with-fx-overrides-when-no-handling-event
+  (testing "router/dispatch MUST NOT call tag-with-fx-overrides on the
+            top-level path (no event handler currently running). The
+            dispatch-with override propagation is only meaningful when
+            cascading from a parent that carries `:re-frame/fx-overrides`
+            meta — apps that never call dispatch-with (i.e. ~all
+            production apps) must not pay the meta-walk on every dispatch."
+    (let [calls (atom 0)
+          orig  @#'router/tag-with-fx-overrides]
+      (rf/reg-event-db :overrides-zero/sink
+                       (fn [db _] (assoc db :touched true)))
+      (rf/reg-event-fx :overrides-zero/parent
+                       (fn [_ _] {:fx [[:dispatch [:overrides-zero/sink]]]}))
+      (with-redefs-fn
+        {#'router/tag-with-fx-overrides
+         (fn [event] (swap! calls inc) (orig event))}
+        (fn []
+          (reset! calls 0)
+          (rf/dispatch [:overrides-zero/sink])
+          (is (zero? @calls)
+              "*handling* nil at top-level dispatch → tag-with-fx-overrides
+               skipped via the cond-> gate; no per-call meta-walk.")
+
+          (reset! calls 0)
+          (rf/dispatch-sync [:overrides-zero/parent])
+          (is (pos? @calls)
+              "dispatch from inside a handler (*handling* bound) → the
+               cond-> gate flips back on; tag-with-fx-overrides DOES fire
+               so cascade propagation still works (test isn't trivially
+               always-zero)."))))))
+
+(deftest do-fx-after-skips-current-overrides-binding-when-no-event-meta
+  (testing "do-fx-after MUST NOT push `*current-overrides*` into the
+            thread bindings when the event carries no
+            `:re-frame/fx-overrides` meta. Binding push/pop is
+            ~50–100ns per event; dispatch-with is dev/test/REPL-only,
+            so the production hot path must skip it entirely.
+
+            White-box check: `(get-thread-bindings)` returns the map of
+            currently-bound dynamic vars on this thread; a var is
+            present only when a `binding` frame has been pushed for
+            it. We probe from inside an fx-handler, which runs WITHIN
+            do-fx-after's body — so the observation reflects whether
+            the binding was pushed."
+    (let [observed (atom ::unset)]
+      (rf/reg-fx :overrides-zero/peek-bindings
+                 (fn [_]
+                   (reset! observed
+                           (contains? (get-thread-bindings)
+                                      #'fx/*current-overrides*))))
+      (rf/reg-event-fx :overrides-zero/touch
+                       (fn [_ _] {:overrides-zero/peek-bindings nil}))
+
+      (reset! observed ::unset)
+      (rf/dispatch-sync [:overrides-zero/touch])
+      (is (false? @observed)
+          "no fx-overrides meta on event → fast path; *current-overrides*
+           is at root, NOT in thread-bindings — no binding push happened.")
+
+      (reset! observed ::unset)
+      (rf/dispatch-sync-with [:overrides-zero/touch] {})
+      (is (true? @observed)
+          "with fx-overrides meta (even an empty map) → binding IS pushed;
+           confirms the gate flips back on (test isn't trivially
+           always-false)."))))
 
 (deftest deref-input-signals-skips-input-query-vs-work-when-tracing-off
   (testing "deref-input-signals MUST NOT walk reaction-id->query-v when
