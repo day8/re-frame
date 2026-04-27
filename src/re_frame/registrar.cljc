@@ -32,9 +32,15 @@
 
 (defn register-handler
   [kind id handler-fn]
-  (when debug-enabled?                                       ;; This is in a separate when so Closure DCE can run
-    (when (and (not (settings/loaded?)) (get-handler kind id false))
-      (console :warn "re-frame: overwriting" (str kind) "handler for:" id)))   ;; allow it, but warn. Happens on figwheel reloads.
+  ;; Warn on duplicate registration. The figwheel/shadow-cljs hot-reload
+  ;; path repeats registrations after page-load — silent there via the
+  ;; `loaded?` gate. In production builds there is no hot-reload and a
+  ;; repeat almost always indicates a real bug (typo, copy-paste, ns
+  ;; load-order); warn unconditionally so it shows up in console.
+  (when (and (get-handler kind id false)
+             (or (not debug-enabled?)
+                 (not (settings/loaded?))))
+    (console :warn "re-frame: overwriting" (str kind) "handler for:" id))
   (swap! kind->id->handler assoc-in [kind id] handler-fn)
   handler-fn)    ;; note: returns the just registered handler
 
