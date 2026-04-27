@@ -3,7 +3,8 @@
   Alpha quality, subject to change/break at any time."
   #?(:cljs (:require-macros [net.cgrand.macrovich :as macros]
                             [re-frame.trace :refer [finish-trace with-trace merge-trace!]]))
-  (:require [re-frame.interop :as interop]
+  (:require [clojure.set]
+            [re-frame.interop :as interop]
             [re-frame.loggers :refer [console]]
             #?(:clj [net.cgrand.macrovich :as macros])
             #?(:cljs [goog.functions])))
@@ -13,6 +14,143 @@
 
 (defn reset-tracing! []
   (reset! id 0))
+
+;; rf-3p7 item 1 — trace-tag schema. The shape of `:tags` for each
+;; `:op-type` is, today, a contract by inspection: every downstream
+;; consumer (re-frame-10x, re-frame-debux, re-frame-pair, custom
+;; devtools) reads these keys, but the trace ns docstring still
+;; self-labels as "Alpha quality". This var is the doc-only
+;; contract — the canonical answer to "what keys can I rely on?".
+;;
+;; Doc-only by default. With `validate-trace?` true (a runtime atom
+;; flag, opt-in for dev), `finish-trace` will assert that emitted
+;; tags conform — required keys present, no unknown keys without
+;; explicit allowance. Production builds leave the flag false; the
+;; whole machinery is gated on `(is-trace-enabled?)` which itself
+;; defaults false.
+
+(def tag-schema
+  "Schema for `:tags` of every op-type re-frame emits. Entries:
+
+       <op-type> {:required #{<key> ...}    ; tags every emit MUST carry
+                  :optional #{<key> ...}    ; tags an emit MAY carry
+                  :doc      \"...\"}        ; one-liner — what the trace marks
+
+   `:tags` is a map; keys not listed under `:required` or `:optional`
+   for the matching op-type are 'unknown' and (when
+   `(validate-trace?)` is true) raise a console warning so consumers
+   can spot drift early.
+
+   This schema is the load-bearing contract for downstream tooling.
+   Adding a key = additive, no version bump. Renaming or removing a
+   key = breaking, must be staged with a deprecation cycle. The
+   doc-only / opt-in posture means production builds pay zero cost
+   for the contract — the schema lives here as a reference, and
+   only flips on under explicit dev opt-in."
+  {:event
+   {:required #{:event}
+    :optional #{:app-db-before :app-db-after :coeffects :effects
+                :interceptors :original-event
+                ;; rf-3p7 item 2 — auto-generated dispatch correlation.
+                :dispatch-id :parent-dispatch-id
+                ;; debux's `:code` payload — written via merge-trace!
+                ;; from outside re-frame core (re-frame-debux's
+                ;; common/util.cljc). Documented here as the channel
+                ;; downstream consumers can rely on.
+                :code}
+    :doc "Top-level dispatch — fired by re-frame.router/dispatch / dispatch-sync."}
+
+   :event/handler
+   {:required #{:event}
+    :optional #{:dispatch-id :parent-dispatch-id}
+    :doc "The user's reg-event-* fn body, fired inside the event interceptor chain."}
+
+   :event/do-fx
+   {:required #{}
+    :optional #{:dispatch-id :parent-dispatch-id}
+    :doc "do-fx interceptor — fires registered fx handlers for the event's :effects map."}
+
+   :sub/create
+   {:required #{:query-v}
+    :optional #{:cached? :reaction}
+    :doc "Subscribe call — either resolves from the reaction cache (`:cached? true`) or builds a new reaction."}
+
+   :sub/run
+   {:required #{:query-v :reaction}
+    :optional #{:value :input-signals
+                ;; rf-3p7 item 3 — query-vs of inputs, alongside :input-signals (reagent-ids).
+                :input-query-vs}
+    :doc "Subscription compute fn ran. Result is in :value."}
+
+   :sub/dispose
+   {:required #{:query-v :reaction}
+    :optional #{}
+    :doc "Reaction garbage-collected (Reagent on-dispose)."}
+
+   :render
+   {:required #{}
+    :optional #{:component-name :reaction}
+    :doc "Component render — emitted by re-frame-10x's reagent patch (NOT by re-frame core); included here so the schema covers what consumers actually read."}
+
+   :raf
+   {:required #{}
+    :optional #{}
+    :doc "Reagent next-tick boundary — emitted by re-frame-10x's batching patch."}
+
+   :raf-end
+   {:required #{}
+    :optional #{}
+    :doc "End of the reagent next-tick batch — emitted by re-frame-10x's batching patch."}
+
+   :reagent/quiescent
+   {:required #{}
+    :optional #{}
+    :doc "Reagent render queue is idle — emitted by re-frame-10x's batching patch."}
+
+   :sync
+   {:required #{}
+    :optional #{}
+    :doc "End-of-`dispatch-sync` marker."}})
+
+(def ^:private validate-trace?-flag (atom false))
+
+(defn validate-trace?
+  "True iff the runtime should validate that emitted trace `:tags`
+   conform to `tag-schema`. Off by default; toggle with
+   `set-validate-trace!`. Intended for dev / CI; production builds
+   should leave it off (the trace machinery is itself gated on
+   `is-trace-enabled?`, but validation adds a per-trace map-walk
+   that's not free)."
+  []
+  @validate-trace?-flag)
+
+(defn set-validate-trace!
+  "Enable / disable trace-tag validation. When true, every
+   `finish-trace` checks `:tags` against `tag-schema` and warns via
+   `console :warn` on missing required keys or unknown keys."
+  [enabled?]
+  (reset! validate-trace?-flag (boolean enabled?)))
+
+(defn- check-trace-against-schema
+  "Walk a finished trace map and warn about missing/unknown tag
+   keys for its op-type. No-op when op-type isn't in the schema —
+   third-party op-types stay unconstrained."
+  [trace]
+  (when-let [{:keys [required optional doc]} (get tag-schema (:op-type trace))]
+    (let [tags    (or (:tags trace) {})
+          present (set (keys tags))
+          missing (clojure.set/difference required present)
+          allowed (clojure.set/union required optional)
+          unknown (clojure.set/difference present allowed)]
+      (when (seq missing)
+        (console :warn "re-frame.trace: trace" (:id trace) "of op-type"
+                 (:op-type trace) "is missing required tag key(s)"
+                 missing "— see re-frame.trace/tag-schema."))
+      (when (seq unknown)
+        (console :warn "re-frame.trace: trace" (:id trace) "of op-type"
+                 (:op-type trace) "carries unknown tag key(s)" unknown
+                 "— either register them in re-frame.trace/tag-schema"
+                 "or treat them as not-part-of-the-public-contract.")))))
 
 #?(:cljs (goog-define trace-enabled? false)
    :clj  (def ^boolean trace-enabled? false))
@@ -100,10 +238,13 @@
   (defmacro finish-trace [trace]
     `(when (is-trace-enabled?)
        (let [end#      (interop/now)
-             duration# (- end# (:start ~trace))]
-         (swap! traces conj (assoc ~trace
-                                   :duration duration#
-                                   :end (interop/now)))
+             duration# (- end# (:start ~trace))
+             finished# (assoc ~trace
+                              :duration duration#
+                              :end (interop/now))]
+         (when (validate-trace?)
+           (check-trace-against-schema finished#))
+         (swap! traces conj finished#)
          (run-tracing-callbacks! end#))))
 
   (defmacro with-trace
