@@ -333,11 +333,28 @@
 ;; Q3 — promise vs channel (operator default): JS Promise on CLJS,
 ;; clojure.core/promise on CLJ. No core.async dep.
 ;;
-;; Q4 — leverage register-epoch-cb: YES. The settle signal
-;; rides on epoch-cb deliveries; we don't reimplement the assembly
-;; pipeline. Each cb delivery brings 0+ cascade epochs; once a
-;; quiet period (`:settle-window-ms`) elapses without a cascade
+;; Q4 — leverage register-epoch-cb: WHEN TRACING IS ON. The settle
+;; signal rides on epoch-cb deliveries; we don't reimplement the
+;; assembly pipeline. Each cb delivery brings 0+ cascade epochs; once
+;; a quiet period (`:settle-window-ms`) elapses without a cascade
 ;; epoch landing, we resolve.
+;;
+;; When `(trace/is-trace-enabled?)` is false, the epoch-cb pipeline is
+;; inert (no `:event` traces are recorded, so no epochs assemble). To
+;; keep dispatch-and-settle working in the default-off configuration
+;; (CLJ tests, CLJS production, any caller that hasn't opted into
+;; tracing), the settle signal falls back to
+;; `add-post-event-callback` on `event-queue`, which fires on every
+;; handled event regardless of tracing. Cascade attribution on this
+;; fallback path is by-window — every event handled inside the settle
+;; window counts. This is less precise than the dispatch-id-chain
+;; matching used on the trace-on path (concurrent unrelated dispatches
+;; in the same JVM/JS isolate would be conflated), but it's the
+;; correct behaviour for the common test/REPL case where
+;; dispatch-and-settle is the sole dispatcher. The result records on
+;; the fallback path carry only `{:event ev}` per epoch — the
+;; trace-derived `:dispatch-id`, `:app-db/before`, etc. are
+;; trace-machinery-only.
 ;;
 ;; LIMITATIONS (documented for the v1 release)
 ;;
@@ -384,52 +401,92 @@
   ([event {:keys [timeout-ms settle-window-ms include-cascaded?]
            :or   {timeout-ms 5000 settle-window-ms 100 include-cascaded? true}}]
    (let [{:keys [value resolve!]} (mk-deferred)
+         ;; Snapshot once. The `when` form returns a truthy keyword or
+         ;; nil — both are Object, never the primitive boolean that
+         ;; `^boolean is-trace-enabled?` propagates into the closures
+         ;; below. The JVM compiler otherwise rejects a let-bound
+         ;; primitive being closed over with `Unable to resolve
+         ;; classname: clojure.core$boolean`.
+         tracing?       (when (trace/is-trace-enabled?) :on)
          cascade-ids    (atom #{})
          cascade-epochs (atom [])
+         cascade-events (atom [])           ;; trace-off bookkeeping
          root-id        (atom nil)
-         settle-tick    (atom 0) ;; bumped on each cascade-epoch arrival
+         settle-tick    (atom 0)            ;; bumped on each cascade signal
          cb-key         (new-uuid)
+         post-cb-key    (new-uuid)
+         cleaned?       (atom false)
+         ;; Cleanup is single-shot: settle-check and the overall
+         ;; timeout both call `finish!`, but only the first wins
+         ;; (deliver/resolve! is idempotent). Without the guard, the
+         ;; second finish! re-removes the post-event-callback —
+         ;; harmless on the trace-on path where remove-epoch-cb is a
+         ;; bare `swap! ... dissoc`, but `remove-post-event-callback`
+         ;; warns if the id is already gone.
          finish!        (fn [result]
-                          (trace/remove-epoch-cb cb-key)
+                          (when (compare-and-set! cleaned? false true)
+                            (if tracing?
+                              (trace/remove-epoch-cb cb-key)
+                              (remove-post-event-callback event-queue post-cb-key)))
                           (resolve! result))
          schedule-settle-check
                         (fn schedule-settle-check []
                           (let [tick @settle-tick]
                             (interop/set-timeout!
                              (fn []
-                               (when (and (= tick @settle-tick)
-                                          (some? @root-id))
-                                 (let [eps     @cascade-epochs
-                                       root-ep (some #(when (= @root-id (:dispatch-id %)) %) eps)
-                                       cascaded (filterv #(not= @root-id (:dispatch-id %)) eps)]
-                                   (finish! (cond-> {:ok?        true
-                                                     :root-epoch root-ep}
-                                              include-cascaded?
-                                              (assoc :cascaded-epochs cascaded))))))
+                               (when (= tick @settle-tick)
+                                 (if tracing?
+                                   (when (some? @root-id)
+                                     (let [eps     @cascade-epochs
+                                           root-ep (some #(when (= @root-id (:dispatch-id %)) %) eps)
+                                           cascaded (filterv #(not= @root-id (:dispatch-id %)) eps)]
+                                       (finish! (cond-> {:ok?        true
+                                                         :root-epoch root-ep}
+                                                  include-cascaded?
+                                                  (assoc :cascaded-epochs cascaded)))))
+                                   ;; Trace-off: synthesise minimal records.
+                                   ;; cascade-events is in handled-order, so its
+                                   ;; head is the root we just dispatch-sync'd.
+                                   (let [evs @cascade-events]
+                                     (when (seq evs)
+                                       (let [root-ep  {:event (first evs)}
+                                             cascaded (mapv (fn [ev] {:event ev}) (rest evs))]
+                                         (finish! (cond-> {:ok?        true
+                                                           :root-epoch root-ep}
+                                                    include-cascaded?
+                                                    (assoc :cascaded-epochs cascaded)))))))))
                              settle-window-ms)))]
-     (trace/register-epoch-cb cb-key
-                              (fn [epochs]
-                                ;; Match by dispatch-id only:
-                                ;; (a) :dispatch-id == root-id (root, set
-                                ;; inside `handle` via *dispatch-id-capture*
-                                ;; before any cb fires), or
-                                ;; (b) :parent-dispatch-id ∈ cascade-ids
-                                ;; (already-matched ancestor).
-                                ;; No event-vector fallback: when two
-                                ;; callers dispatch the same vector,
-                                ;; vector equality is ambiguous and would
-                                ;; mis-attribute one caller's epoch to the
-                                ;; other.
-                                (let [our (filter (fn [e]
-                                                    (or (= @root-id (:dispatch-id e))
-                                                        (contains? @cascade-ids (:parent-dispatch-id e))))
-                                                  epochs)]
-                                  (when (seq our)
-                                    (doseq [e our]
-                                      (swap! cascade-ids conj (:dispatch-id e))
-                                      (swap! cascade-epochs conj e))
-                                    (swap! settle-tick inc)
-                                    (schedule-settle-check)))))
+     (if tracing?
+       (trace/register-epoch-cb cb-key
+                                (fn [epochs]
+                                  ;; Match by dispatch-id only:
+                                  ;; (a) :dispatch-id == root-id (root, set
+                                  ;; inside `handle` via *dispatch-id-capture*
+                                  ;; before any cb fires), or
+                                  ;; (b) :parent-dispatch-id ∈ cascade-ids
+                                  ;; (already-matched ancestor).
+                                  ;; No event-vector fallback: when two
+                                  ;; callers dispatch the same vector,
+                                  ;; vector equality is ambiguous and would
+                                  ;; mis-attribute one caller's epoch to the
+                                  ;; other.
+                                  (let [our (filter (fn [e]
+                                                      (or (= @root-id (:dispatch-id e))
+                                                          (contains? @cascade-ids (:parent-dispatch-id e))))
+                                                    epochs)]
+                                    (when (seq our)
+                                      (doseq [e our]
+                                        (swap! cascade-ids conj (:dispatch-id e))
+                                        (swap! cascade-epochs conj e))
+                                      (swap! settle-tick inc)
+                                      (schedule-settle-check)))))
+       ;; Trace-off: ride on add-post-event-callback, which fires on every
+       ;; handled event regardless of trace state. Window-based attribution.
+       (add-post-event-callback event-queue post-cb-key
+                                (fn [event-v _queue]
+                                  (swap! cascade-events conj event-v)
+                                  (swap! settle-tick inc)
+                                  (schedule-settle-check))))
      ;; Overall timeout — fires regardless of cascade activity.
      (interop/set-timeout!
       (fn []
@@ -443,7 +500,11 @@
      ;; into `root-id` BEFORE the trace fires the cb. Children queued
      ;; via :fx [:dispatch ...] fire later via the router queue;
      ;; epoch-cb picks them up as they land and matches them by
-     ;; :parent-dispatch-id ∈ cascade-ids.
+     ;; :parent-dispatch-id ∈ cascade-ids. With tracing off, the
+     ;; binding is inert (handle's trace-off branch doesn't read
+     ;; *dispatch-id-capture*) and root-id stays nil — the
+     ;; post-event-callback fallback path picks up events by ordering
+     ;; instead.
      (binding [events/*dispatch-id-capture* root-id]
        (dispatch-sync event))
      ;; Seed cascade-ids with the root so descendants whose

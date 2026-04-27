@@ -154,6 +154,52 @@
         (is (empty? (:cascaded-epochs result))
             "no children dispatched — :cascaded-epochs is empty")))))
 
+(deftest dispatch-and-settle-resolves-ok-with-tracing-off
+  (testing "dispatch-and-settle resolves {:ok? true} when tracing is
+            DISABLED. Pre-fix, the only resolution path was the
+            register-epoch-cb branch, which is gated on trace-enabled?
+            and thus never fired in the default-off configuration —
+            every call sat for the full :timeout-ms before returning
+            {:ok? false :reason :timeout}. Post-fix, dispatch-and-settle
+            falls back to add-post-event-callback when tracing is off
+            so it works in the configuration most CLJ test suites
+            actually run in."
+    ;; trace-enabled? defaults to false; the fixture restores it after.
+    (rf/reg-event-db :settle-traceless/touch
+                     (fn [db _] (assoc db :touched true)))
+    (let [p      (router/dispatch-and-settle [:settle-traceless/touch]
+                                              {:timeout-ms       2000
+                                               :settle-window-ms 50})
+          result (deref p 3000 ::timed-out)]
+      (is (false? trace/trace-enabled?)
+          "sanity: this test runs with tracing off (the bug path)")
+      (is (not= ::timed-out result)
+          "promise resolved before the deref's 3s wall-clock timeout")
+      (is (true? (:ok? result))
+          ":ok? true — dispatch-and-settle now works when tracing is off")
+      (is (= [:settle-traceless/touch] (-> result :root-epoch :event))
+          ":root-epoch carries the dispatched event vector even on the
+           trace-off fallback path (built from add-post-event-callback,
+           not from the trace stream)")
+      (is (vector? (:cascaded-epochs result))
+          ":cascaded-epochs is present (default include-cascaded? true)")
+      (is (empty? (:cascaded-epochs result))
+          "no children dispatched — :cascaded-epochs is empty"))))
+
+(deftest dispatch-and-settle-omits-cascaded-when-disabled-with-tracing-off
+  (testing "the include-cascaded? false opt-out works on the trace-off path"
+    (rf/reg-event-db :settle-traceless/quiet
+                     (fn [db _] db))
+    (let [p      (router/dispatch-and-settle [:settle-traceless/quiet]
+                                              {:timeout-ms        2000
+                                               :settle-window-ms  50
+                                               :include-cascaded? false})
+          result (deref p 3000 ::timed-out)]
+      (is (true? (:ok? result)))
+      (is (not (contains? result :cascaded-epochs))
+          "include-cascaded? false suppresses the key on the fallback path
+           the same way it does on the trace-on path"))))
+
 ;; ---------------------------------------------------------------------------
 ;; *dispatch-id-capture* — deterministic root-id capture
 ;; ---------------------------------------------------------------------------
