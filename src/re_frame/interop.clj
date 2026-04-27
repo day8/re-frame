@@ -105,9 +105,14 @@
   (System/currentTimeMillis))
 
 (defn reagent-id
-  "Doesn't make sense in a Clojure context currently."
+  "A stable per-instance id for a reactive value, used as a trace tag
+  and as a key in `re-frame.subs/reaction-id->query-v`. Mirrors the
+  CLJS implementation, which prefixes a type tag onto a hash; on JVM
+  there is no Reagent, so we use `System/identityHashCode` — stable
+  for the lifetime of the object, with the same hash-collision floor
+  as the CLJS path."
   [reactive-val]
-  "rx-clj")
+  (str "rx-clj-" (System/identityHashCode reactive-val)))
 
 (defn reactive?
   []

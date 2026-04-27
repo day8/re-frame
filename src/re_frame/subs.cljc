@@ -59,10 +59,9 @@
 ;; surfacing a reaction's value) can recover the query-v that
 ;; produced it without walking trace history. Distinct from
 ;; `reaction-id->query-v` (keyed by reagent-id, used internally for
-;; trace tags) because reagent-id collides on JVM (every reaction
-;; gets the constant "rx-clj"), so object-identity keying is the
-;; only correct option for a public lookup that works in both
-;; environments.
+;; trace tags) because reagent-id is hash-derived on both runtimes
+;; and not guaranteed collision-free; a public lookup needs object
+;; identity to be reliable.
 (def ^:private reaction->query-v (atom {}))
 
 (defn cache-and-return

@@ -4,9 +4,9 @@
    returns the query-v that produced it.
 
    Runs CLJ-side under cognitect.test-runner. The reverse map is keyed
-   by reaction object identity (not reagent-id), so the lookup works
-   on the JVM where `reagent-id` collapses every reaction to the same
-   constant string."
+   by reaction object identity (not reagent-id) because reagent-id is
+   hash-derived on both runtimes; a public lookup that must never
+   conflate two distinct reactions needs identity-based keying."
   (:require [clojure.test  :refer [deftest is testing use-fixtures]]
             [re-frame.core :as rf]
             [re-frame.subs :as subs]
