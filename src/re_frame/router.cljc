@@ -248,15 +248,20 @@
   #?(:clj  (instance? clojure.lang.IObj x)
      :cljs (satisfies? IWithMeta x)))
 
-(defn- assoc-meta-if-possible [event k v]
-  (if (can-carry-meta? event)
-    (vary-meta event assoc k v)
-    event))
+(defn- inherit-event-meta
+  ([event k v]
+   (inherit-event-meta event k v true))
+  ([event k v overwrite?]
+   (if (or (nil? v)
+           (and (not overwrite?) (some-> event meta k))
+           (not (can-carry-meta? event)))
+     event
+     (vary-meta event assoc k v))))
 
 (defn- tag-with-parent-dispatch-id [event]
-  (if-let [parent-id events/*current-dispatch-id*]
-    (assoc-meta-if-possible event :re-frame/parent-dispatch-id parent-id)
-    event))
+  (inherit-event-meta event
+                      :re-frame/parent-dispatch-id
+                      events/*current-dispatch-id*))
 
 ;; Fx-overrides cascade propagation. When a child is
 ;; dispatched from inside a handler whose root carried
@@ -267,11 +272,10 @@
 ;; through. Idempotent — if the child already has overrides set
 ;; (multi-level dispatch-with), we keep the existing one.
 (defn- tag-with-fx-overrides [event]
-  (if (some-> event meta :re-frame/fx-overrides)
-    event
-    (if-let [overrides (some-> events/*handling* meta :re-frame/fx-overrides)]
-      (assoc-meta-if-possible event :re-frame/fx-overrides overrides)
-      event)))
+  (inherit-event-meta event
+                      :re-frame/fx-overrides
+                      (some-> events/*handling* meta :re-frame/fx-overrides)
+                      false))
 
 (defn dispatch
   [event]
