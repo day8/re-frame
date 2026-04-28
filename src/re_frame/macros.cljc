@@ -65,6 +65,33 @@
             [re-frame.interop]
             [re-frame.registrar]))
 
+;; -- dispatch / dispatch-sync / subscribe ------------------------------------
+;;
+;; All three forward a single user-supplied vector to a `re-frame.core` fn
+;; and, in DEBUG builds, attach a `{:file :line}` `:re-frame/source` meta
+;; first. The shape is identical across the three; only the target fn
+;; differs — so `-source-meta-call` builds the expansion form and the
+;; public macros are 1-line delegates.
+
+#?(:clj
+(defn- -source-meta-call
+  "Emit the macroexpansion form for a single-arg call to `target-sym`,
+   wrapping the user-supplied value `v` with `:re-frame/source` meta in
+   DEBUG builds and passing it through bare in non-DEBUG builds. The
+   user expression is bound once so both branches reuse the same value
+   without re-evaluating side-effects.
+
+   `target-sym` is the fully-qualified `re-frame.core/...` symbol;
+   `form`/`env` are the calling macro's `&form` / `&env`. `(:file env)`
+   is preferred over `*file*` so CLJS expansion picks up the call-site
+   file from `&env` rather than the macros.cljc compile context."
+  [target-sym v form env]
+  (let [src-meta {:file (or (:file env) *file*) :line (:line (meta form))}]
+    `(let [v# ~v]
+       (if re-frame.interop/debug-enabled?
+         (~target-sym (vary-meta v# assoc :re-frame/source ~src-meta))
+         (~target-sym v#))))))
+
 (defmacro dispatch
   "Like `re-frame.core/dispatch` but in DEBUG builds attaches
    `{:file :line}` on the event vector as `:re-frame/source`
@@ -79,12 +106,7 @@
    metadata survives the merge."
   {:arglists '([event-v])}
   [event-v]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(let [ev# ~event-v]
-       (if re-frame.interop/debug-enabled?
-         (re-frame.core/dispatch
-           (vary-meta ev# assoc :re-frame/source ~src-meta))
-         (re-frame.core/dispatch ev#)))))
+  (-source-meta-call 're-frame.core/dispatch event-v &form &env))
 
 (defmacro dispatch-sync
   "Like `re-frame.core/dispatch-sync` but attaches call-site source
@@ -92,12 +114,7 @@
    behaviour."
   {:arglists '([event-v])}
   [event-v]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(let [ev# ~event-v]
-       (if re-frame.interop/debug-enabled?
-         (re-frame.core/dispatch-sync
-           (vary-meta ev# assoc :re-frame/source ~src-meta))
-         (re-frame.core/dispatch-sync ev#)))))
+  (-source-meta-call 're-frame.core/dispatch-sync event-v &form &env))
 
 (defmacro subscribe
   "Like `re-frame.core/subscribe` but in DEBUG builds attaches
@@ -117,12 +134,7 @@
    without any new emission)."
   {:arglists '([query-v])}
   [query-v]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(let [qv# ~query-v]
-       (if re-frame.interop/debug-enabled?
-         (re-frame.core/subscribe
-           (vary-meta qv# assoc :re-frame/source ~src-meta))
-         (re-frame.core/subscribe qv#)))))
+  (-source-meta-call 're-frame.core/subscribe query-v &form &env))
 
 ;; -- registration macros -----------------------------------------------------
 ;;
