@@ -16,17 +16,9 @@
    when the outermost trace finishes (`:child-of` nil). Same delivery
    boundary as one dispatch-sync's worth of traces, no timer dependency.
 
-   COVERAGE LIMITATION
-
-   These tests cover only the no-cascade case: a single dispatch-sync
-   with no `:fx [:dispatch ...]` children. The cascade case
-   (parent dispatched via dispatch-sync triggers child via :fx [:dispatch])
-   is currently broken on JVM by an unrelated pre-existing issue —
-   `re-frame.interop/next-tick` uses `bound-fn`, which over-captures the
-   parent's `re-frame.events/*handling*` binding onto the executor
-   thread; when the executor runs `handle :child`, the spurious
-   *handling* trips re-frame's reentry check and the child silently
-   never runs. Tracked separately under rf-9wg."
+   The dispatch-and-settle tests cover both root-only dispatches and
+   `:fx [:dispatch ...]` cascades so the JVM queue boundary stays honest
+   when `re-frame.interop/next-tick` captures dynamic bindings."
   (:require [clojure.test    :refer [deftest is testing use-fixtures]]
             [re-frame.alpha  :as rfa]
             [re-frame.core   :as rf]
@@ -155,6 +147,34 @@
         (is (empty? (:cascaded-epochs result))
             "no children dispatched — :cascaded-epochs is empty")))))
 
+(deftest dispatch-and-settle-captures-fx-dispatch-cascade-on-jvm
+  (testing "with tracing on, a child queued from a dispatch-sync root is
+            handled as a fresh queue event while retaining explicit
+            parent-dispatch-id metadata for cascade attribution"
+    (with-tracing-on
+      (let [child-ran? (atom false)]
+        (rf/reg-event-fx :trace-cascade/parent
+                         (fn [_ _]
+                           {:fx [[:dispatch [:trace-cascade/child]]]}))
+        (rf/reg-event-db :trace-cascade/child
+                         (fn [db _]
+                           (reset! child-ran? true)
+                           db))
+        (let [p           (router/dispatch-and-settle [:trace-cascade/parent]
+                                                      {:timeout-ms       2000
+                                                       :settle-window-ms 1000})
+              result      (deref p 3000 ::timed-out)
+              root-id     (-> result :root-epoch :dispatch-id)
+              child-epoch (first (:cascaded-epochs result))]
+          (is (not= ::timed-out result))
+          (is (true? (:ok? result)))
+          (is (= [:trace-cascade/parent] (-> result :root-epoch :event)))
+          (is (some? root-id))
+          (is (= [:trace-cascade/child] (:event child-epoch)))
+          (is (= root-id (:parent-dispatch-id child-epoch))
+              "the child remains attributed to the dispatch-sync root")
+          (is (true? @child-ran?)))))))
+
 (deftest dispatch-and-settle-resolves-ok-with-tracing-off
   (testing "dispatch-and-settle resolves {:ok? true} when tracing is
             DISABLED. Pre-fix, the only resolution path was the
@@ -186,6 +206,30 @@
           ":cascaded-epochs is present (default include-cascaded? true)")
       (is (empty? (:cascaded-epochs result))
           "no children dispatched — :cascaded-epochs is empty"))))
+
+(deftest dispatch-and-settle-captures-fx-dispatch-cascade-with-tracing-off
+  (testing "with tracing off, add-post-event-callback observes the root
+            dispatch-sync event and its queued :fx dispatch child"
+    (let [child-ran? (atom false)]
+      (rf/reg-event-fx :settle-cascade/parent
+                       (fn [_ _]
+                         {:fx [[:dispatch [:settle-cascade/child]]]}))
+      (rf/reg-event-db :settle-cascade/child
+                       (fn [db _]
+                         (reset! child-ran? true)
+                         db))
+      (let [p      (router/dispatch-and-settle [:settle-cascade/parent]
+                                               {:timeout-ms       2000
+                                                :settle-window-ms 1000})
+            result (deref p 3000 ::timed-out)]
+        (is (false? trace/trace-enabled?)
+            "sanity: this test runs through the trace-off fallback")
+        (is (not= ::timed-out result))
+        (is (true? (:ok? result)))
+        (is (= [:settle-cascade/parent] (-> result :root-epoch :event)))
+        (is (= [[:settle-cascade/child]]
+               (mapv :event (:cascaded-epochs result))))
+        (is (true? @child-ran?))))))
 
 (deftest dispatch-and-settle-omits-cascaded-when-disabled-with-tracing-off
   (testing "the include-cascaded? false opt-out works on the trace-off path"

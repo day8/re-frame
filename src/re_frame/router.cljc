@@ -174,7 +174,15 @@
     [this]
     (let [event-v (peek queue)]
       (try
-        (handle event-v)
+        ;; On the JVM, `next-tick` uses `bound-fn`, so a queued run can
+        ;; inherit dynamic event/trace bindings from the handler that scheduled it.
+        ;; Each queue entry is handled as a fresh top-level event; cascade
+        ;; relationships are carried explicitly on event metadata.
+        (binding [events/*handling* nil
+                  events/*current-dispatch-id* nil
+                  events/*dispatch-id-capture* nil
+                  trace/*current-trace* nil]
+          (handle event-v))
         (set! queue (pop queue))
         (-call-post-event-callbacks this event-v)
         (catch #?(:cljs :default :clj Exception) ex

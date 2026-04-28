@@ -36,3 +36,25 @@
       (is (= ::done val)))
     (is (= (::test @db/app-db)
            (range 1000)))))
+
+(deftest dispatch-sync-fx-dispatch-cascade-test
+  (let [p      (promise)
+        cb-key ::cascade-child-callback]
+    (try
+      (rf/add-post-event-callback cb-key
+                                  (fn [event-v _queue]
+                                    (when (= ::cascade-child (first event-v))
+                                      (deliver p ::child-ran))))
+      (rf/reg-event-fx
+       ::cascade-parent
+       (fn [_ _]
+         {:fx [[:dispatch [::cascade-child]]]}))
+      (rf/reg-event-db
+       ::cascade-child
+       (fn [db _]
+         (assoc db ::child-ran? true)))
+      (is (nil? (rf/dispatch-sync [::cascade-parent])))
+      (is (= ::child-ran (deref p 1000 ::timed-out)))
+      (is (true? (::child-ran? @db/app-db)))
+      (finally
+        (rf/remove-post-event-callback cb-key)))))
