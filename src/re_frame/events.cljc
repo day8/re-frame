@@ -1,12 +1,11 @@
 (ns re-frame.events
   (:require [re-frame.db          :refer [app-db]]
             [re-frame.utils       :refer [first-in-vector]]
-            [re-frame.interop     :refer [empty-queue debug-enabled?]]
+            [re-frame.interop     :refer [empty-queue debug-enabled? new-uuid]]
             [re-frame.registrar   :refer [get-handler register-handler]]
             [re-frame.loggers     :refer [console]]
             [re-frame.interceptor :as  interceptor]
-            [re-frame.trace       :as trace :include-macros true])
-  #?(:clj (:import [java.util UUID])))
+            [re-frame.trace       :as trace :include-macros true]))
 
 (def kind :event)
 (assert (re-frame.registrar/kinds kind))
@@ -70,10 +69,6 @@
 ;; this var.
 (def ^:dynamic *dispatch-id-capture* nil)
 
-(defn- new-dispatch-id []
-  #?(:cljs (random-uuid)
-     :clj  (UUID/randomUUID)))
-
 (defn handle
   "Given an event vector `event-v`, look up the associated interceptor chain, and execute it."
   [event-v]
@@ -82,7 +77,7 @@
       (if *handling*
         (console :error "re-frame: while handling" *handling* ", dispatch-sync was called for" event-v ". You can't call dispatch-sync within an event handler.")
         (let [dispatch-id (when (trace/is-trace-enabled?)
-                            (new-dispatch-id))
+                            (new-uuid))
               parent-id   (when dispatch-id
                             (:re-frame/parent-dispatch-id (meta event-v)))]
           (when (and dispatch-id *dispatch-id-capture*)

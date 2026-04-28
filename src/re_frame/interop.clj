@@ -1,5 +1,6 @@
 (ns re-frame.interop
-  (:import [java.util.concurrent Executor Executors ScheduledExecutorService ThreadFactory TimeUnit]))
+  (:import [java.util UUID]
+           [java.util.concurrent Executor Executors ScheduledExecutorService ThreadFactory TimeUnit]))
 
 ;; The purpose of this file is to provide JVM-runnable implementations of the
 ;; CLJS equivalents in interop.cljs.
@@ -36,6 +37,9 @@
 (def after-render next-tick)
 
 (def debug-enabled? true)
+
+(defn new-uuid []
+  (UUID/randomUUID))
 
 (defn ratom [x]
   (atom x))

@@ -1,9 +1,8 @@
 (ns re-frame.router
   (:require [re-frame.events  :as events :refer [handle]]
-            [re-frame.interop :as interop :refer [after-render empty-queue next-tick]]
+            [re-frame.interop :as interop :refer [after-render empty-queue new-uuid next-tick]]
             [re-frame.loggers :refer [console]]
-            [re-frame.trace   :as trace :include-macros true])
-  #?(:clj (:import [java.util UUID])))
+            [re-frame.trace   :as trace :include-macros true]))
 
 ;; -- Router Loop ------------------------------------------------------------
 ;;
@@ -360,10 +359,6 @@
 ;;   settled if a slow async chain pauses for longer than
 ;;   `:settle-window-ms` before re-firing a child :dispatch.
 ;;   Bump the window for those cases.
-
-(defn- new-uuid []
-  #?(:cljs (random-uuid)
-     :clj  (UUID/randomUUID)))
 
 (defn- mk-deferred []
   ;; Cross-platform deferred: returns

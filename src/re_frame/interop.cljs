@@ -23,6 +23,9 @@
 ;; https://developers.google.com/closure/compiler/docs/js-for-compiler
 (def ^boolean debug-enabled? "@define {boolean}" ^boolean goog/DEBUG)
 
+(defn new-uuid []
+  (random-uuid))
+
 (defn ratom [x]
   (reagent.core/atom x))
 

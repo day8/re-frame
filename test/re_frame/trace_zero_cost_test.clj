@@ -10,7 +10,7 @@
    fire on every user action, so even a few microseconds per call shows
    up under profiling.
 
-   Strategy: redefine the per-call work (`new-dispatch-id`, `to-seq`)
+   Strategy: redefine the per-call work (`new-uuid`, `to-seq`)
    to counter functions, exercise the hot path with `trace-enabled?`
    in both states, and assert the call count is 0 when off."
   (:require [clojure.test    :refer [deftest is testing use-fixtures]]
@@ -47,8 +47,8 @@
        (finally
          (alter-var-root #'trace/trace-enabled? (constantly false))))))
 
-(deftest handle-skips-new-dispatch-id-when-tracing-off
-  (testing "re-frame.events/handle MUST NOT call (new-dispatch-id) when
+(deftest handle-skips-new-uuid-when-tracing-off
+  (testing "re-frame.events/handle MUST NOT call (new-uuid) when
             tracing is disabled — UUID generation is cryptographically
             expensive (SecureRandom on JVM) and must not run on every
             dispatch in production"
@@ -56,18 +56,18 @@
       (rf/reg-event-db
         :trace-zero/sink
         (fn [db _] (assoc db :touched true)))
-      (with-redefs [events/new-dispatch-id (fn [] (swap! calls inc) (java.util.UUID/randomUUID))]
+      (with-redefs [interop/new-uuid (fn [] (swap! calls inc) (java.util.UUID/randomUUID))]
         (alter-var-root #'trace/trace-enabled? (constantly false))
         (rf/dispatch-sync [:trace-zero/sink])
         (is (zero? @calls)
-            "with tracing off, (new-dispatch-id) is not called — the cost
+            "with tracing off, (new-uuid) is not called — the cost
              of trace-tag UUID generation belongs only on the trace path")
 
         (with-tracing-on
           (reset! calls 0)
           (rf/dispatch-sync [:trace-zero/sink])
           (is (= 1 @calls)
-              "with tracing on, (new-dispatch-id) IS called exactly once
+              "with tracing on, (new-uuid) IS called exactly once
                per handle — confirms the gate flips work back on (the
                test is meaningful, not always-zero by accident)"))))))
 
