@@ -43,6 +43,13 @@
       (is (some #(= 're-frame.core/subscribe %) flat)
           "expanded form targets re-frame.core/subscribe"))))
 
+(deftest subscribe-macroexpand-binds-user-query-expression-once
+  (testing "subscribe binds the user query expression once, then reuses it in both debug-gate branches"
+    (let [expanded (macroexpand-1 '(re-frame.macros/subscribe (build-query)))
+          flat     (tree-seq coll? seq expanded)]
+      (is (= 1 (count (filter #(= '(build-query) %) flat)))
+          "subscribe expansion contains the user query expression once"))))
+
 (deftest subscribe-attaches-source-meta-on-query-v
   (testing "rf.m/subscribe attaches {:file :line} as :re-frame/source on the query-v stored against the reaction"
     (rf/reg-sub :sub-test/echo (fn [db _] (:val db)))

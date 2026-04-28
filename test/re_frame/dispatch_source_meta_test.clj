@@ -41,6 +41,15 @@
       (is (some #(= 'clojure.core/vary-meta %) flat)
           "expanded form uses vary-meta to merge meta onto the event"))))
 
+(deftest dispatch-macroexpand-binds-user-event-expression-once
+  (testing "dispatch macros bind the user event expression once, then reuse it in both debug-gate branches"
+    (doseq [[label form] {"dispatch"      '(re-frame.macros/dispatch (build-event))
+                          "dispatch-sync" '(re-frame.macros/dispatch-sync (build-event))}]
+      (let [expanded (macroexpand-1 form)
+            flat     (tree-seq coll? seq expanded)]
+        (is (= 1 (count (filter #(= '(build-event) %) flat)))
+            (str label " expansion contains the user event expression once"))))))
+
 (deftest dispatch-sync-attaches-source-meta-on-event-vector
   (testing "rf.m/dispatch-sync attaches {:file :line} as :re-frame/source on the dispatched event"
     (let [captured (atom nil)]

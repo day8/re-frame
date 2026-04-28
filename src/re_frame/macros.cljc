@@ -80,10 +80,11 @@
   {:arglists '([event-v])}
   [event-v]
   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(if re-frame.interop/debug-enabled?
-       (re-frame.core/dispatch
-         (vary-meta ~event-v assoc :re-frame/source ~src-meta))
-       (re-frame.core/dispatch ~event-v))))
+    `(let [ev# ~event-v]
+       (if re-frame.interop/debug-enabled?
+         (re-frame.core/dispatch
+           (vary-meta ev# assoc :re-frame/source ~src-meta))
+         (re-frame.core/dispatch ev#)))))
 
 (defmacro dispatch-sync
   "Like `re-frame.core/dispatch-sync` but attaches call-site source
@@ -92,10 +93,11 @@
   {:arglists '([event-v])}
   [event-v]
   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(if re-frame.interop/debug-enabled?
-       (re-frame.core/dispatch-sync
-         (vary-meta ~event-v assoc :re-frame/source ~src-meta))
-       (re-frame.core/dispatch-sync ~event-v))))
+    `(let [ev# ~event-v]
+       (if re-frame.interop/debug-enabled?
+         (re-frame.core/dispatch-sync
+           (vary-meta ev# assoc :re-frame/source ~src-meta))
+         (re-frame.core/dispatch-sync ev#)))))
 
 (defmacro subscribe
   "Like `re-frame.core/subscribe` but in DEBUG builds attaches
@@ -116,10 +118,11 @@
   {:arglists '([query-v])}
   [query-v]
   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(if re-frame.interop/debug-enabled?
-       (re-frame.core/subscribe
-         (vary-meta ~query-v assoc :re-frame/source ~src-meta))
-       (re-frame.core/subscribe ~query-v))))
+    `(let [qv# ~query-v]
+       (if re-frame.interop/debug-enabled?
+         (re-frame.core/subscribe
+           (vary-meta qv# assoc :re-frame/source ~src-meta))
+         (re-frame.core/subscribe qv#)))))
 
 ;; -- registration macros -----------------------------------------------------
 ;;
