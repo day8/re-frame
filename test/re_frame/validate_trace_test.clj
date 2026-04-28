@@ -19,6 +19,7 @@
    empty."
   (:require [clojure.test     :refer [deftest is testing use-fixtures]]
             [re-frame.core    :as rf]
+            [re-frame.interop :as interop]
             [re-frame.loggers :as loggers]
             [re-frame.trace   :as trace]))
 
@@ -53,6 +54,22 @@
      (try ~@body
           (finally
             (alter-var-root #'trace/trace-enabled? (constantly false))))))
+
+(deftest finish-trace-end-and-duration-use-same-clock-read
+  (testing "finished traces keep :end, :start, and :duration self-consistent"
+    (let [ticks (atom [100 125 999])]
+      (with-redefs [interop/now (fn []
+                                  (let [n (first @ticks)]
+                                    (swap! ticks rest)
+                                    n))
+                    trace/run-tracing-callbacks! (fn [_])]
+        (with-tracing-on
+          (trace/with-trace {:operation ::timed :op-type :sync})
+          (let [{:keys [start end duration]} (last @trace/traces)]
+            (is (= 100 start))
+            (is (= 125 end))
+            (is (= 25 duration))
+            (is (= duration (- end start)))))))))
 
 (defn- capture-trace-warns
   "Run `f` with `:warn` redirected to a collector that keeps only

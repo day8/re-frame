@@ -409,7 +409,7 @@
              duration# (- end# (:start ~trace))
              finished# (assoc ~trace
                               :duration duration#
-                              :end (interop/now))]
+                              :end end#)]
          (when (validate-trace?)
            (check-trace-against-schema finished#))
          (swap! traces conj finished#)
