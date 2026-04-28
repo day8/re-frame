@@ -79,7 +79,7 @@ implementation details:
     provide opt-in trace tag validation for development and CI.
 
 See [Debugging & Instrumentation](Debugging.md) and
-[re-frame.tooling](Tooling.md) for the longer-form story.
+[re-frame.tooling](api-re-frame.tooling.md) for the longer-form story.
 
 ## Source-meta Macros
 
