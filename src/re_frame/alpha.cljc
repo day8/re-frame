@@ -1,4 +1,9 @@
 (ns re-frame.alpha
+  ;; Self-require-macros — mirrors re-frame.core. Without this, CLJS
+  ;; callers using `(:require [re-frame.alpha :as rf])` would only see
+  ;; the run-time `-fn` variants and the reg-* macros below would fail
+  ;; to resolve.
+  #?(:cljs (:require-macros [re-frame.alpha]))
   (:require
    [re-frame.config         :as config]
    [re-frame.subs.alpha     :as subs.alpha]
@@ -676,10 +681,29 @@ The only required key is `:id`. All others have a default value:
   Call `(subscribe [:flow {:id :your-flow-id}])` to subscribe to a flow."
   sub)
 
-(defn ^:api-docs/hide reg-sub
-  "Equivalent to `reg` `:legacy-sub`."
+(defn ^:api-docs/hide reg-sub-fn
+  "Run-time variant of `reg-sub`. The macro of that name expands to a
+   call to this fn plus a side-table update that attaches the
+   call-site source meta to the registered handler. Use this fn
+   directly when you need to register a sub programmatically (e.g.
+   `(apply reg-sub-fn ...)`)."
   [& args]
   (apply reg :legacy-sub args))
+
+#?(:clj
+   (defmacro ^:api-docs/hide reg-sub
+     "Equivalent to `reg` `:legacy-sub`.
+
+     Captures the call-site `{:file :line}` at macro-expansion time and
+     attaches it as metadata on the registered handler so
+     `(meta (re-frame.registrar/get-handler :sub query-id))` returns the
+     source location. For programmatic registration, use `reg-sub-fn`."
+     {:arglists '([query-id & args])}
+     [query-id & args]
+     (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+       `(let [r# (re-frame.alpha/reg-sub-fn ~query-id ~@args)]
+          (re-frame.registrar/-decorate-handler-meta! :sub ~query-id ~src-meta)
+          r#))))
 
 (defn ^:api-docs/hide dispatch
   [event]
@@ -689,9 +713,16 @@ The only required key is `:id`. All others have a default value:
   [event]
   (router/dispatch-sync event))
 
-(defn ^:api-docs/hide reg-event-db
+(defn ^:api-docs/hide reg-event-db-fn
+  "Run-time variant of `reg-event-db`. The macro of that name expands
+   to a call to this fn plus a side-table update that attaches the
+   call-site source meta to the registered interceptor chain. Callers
+   needing programmatic registration (e.g. `(apply reg-event-db-fn ...)`,
+   `(map reg-event-db-fn ...)`) should use this fn — registration
+   semantics are identical, but no source meta is attached (no `&form`
+   available at run time)."
   ([id handler]
-   (reg-event-db id nil handler))
+   (reg-event-db-fn id nil handler))
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
@@ -701,9 +732,28 @@ The only required key is `:id`. All others have a default value:
                         flow/do-fx
                         (db-handler->interceptor handler)])))
 
-(defn ^:api-docs/hide reg-event-fx
+#?(:clj
+   (defmacro ^:api-docs/hide reg-event-db
+     "Captures the call-site `{:file :line}` at macro-expansion time and
+     attaches it as metadata on the registered interceptor chain so
+     `(meta (re-frame.registrar/get-handler :event id))` returns the
+     source location. For programmatic registration, use `reg-event-db-fn`."
+     {:arglists '([id handler] [id interceptors handler])}
+     ([id handler]
+      (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+        `(let [r# (re-frame.alpha/reg-event-db-fn ~id ~handler)]
+           (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
+           r#)))
+     ([id interceptors handler]
+      (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+        `(let [r# (re-frame.alpha/reg-event-db-fn ~id ~interceptors ~handler)]
+           (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
+           r#)))))
+
+(defn ^:api-docs/hide reg-event-fx-fn
+  "Run-time variant of `reg-event-fx`. See `reg-event-db-fn`."
   ([id handler]
-   (reg-event-fx id nil handler))
+   (reg-event-fx-fn id nil handler))
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
@@ -713,9 +763,25 @@ The only required key is `:id`. All others have a default value:
                         flow/do-fx
                         (fx-handler->interceptor handler)])))
 
-(defn ^:api-docs/hide reg-event-ctx
+#?(:clj
+   (defmacro ^:api-docs/hide reg-event-fx
+     "Captures the call-site `{:file :line}` — see `reg-event-db`."
+     {:arglists '([id handler] [id interceptors handler])}
+     ([id handler]
+      (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+        `(let [r# (re-frame.alpha/reg-event-fx-fn ~id ~handler)]
+           (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
+           r#)))
+     ([id interceptors handler]
+      (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+        `(let [r# (re-frame.alpha/reg-event-fx-fn ~id ~interceptors ~handler)]
+           (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
+           r#)))))
+
+(defn ^:api-docs/hide reg-event-ctx-fn
+  "Run-time variant of `reg-event-ctx`. See `reg-event-db-fn`."
   ([id handler]
-   (reg-event-ctx id nil handler))
+   (reg-event-ctx-fn id nil handler))
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
@@ -724,6 +790,21 @@ The only required key is `:id`. All others have a default value:
                         interceptors
                         flow/do-fx
                         (ctx-handler->interceptor handler)])))
+
+#?(:clj
+   (defmacro ^:api-docs/hide reg-event-ctx
+     "Captures the call-site `{:file :line}` — see `reg-event-db`."
+     {:arglists '([id handler] [id interceptors handler])}
+     ([id handler]
+      (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+        `(let [r# (re-frame.alpha/reg-event-ctx-fn ~id ~handler)]
+           (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
+           r#)))
+     ([id interceptors handler]
+      (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+        `(let [r# (re-frame.alpha/reg-event-ctx-fn ~id ~interceptors ~handler)]
+           (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
+           r#)))))
 
 (defn ^:api-docs/hide clear-event
   ([]
@@ -763,10 +844,22 @@ The only required key is `:id`. All others have a default value:
   []
   (subs/clear-subscription-cache!))
 
-(defn ^:api-docs/hide reg-fx [id handler]
+(defn ^:api-docs/hide reg-fx-fn
+  "Run-time variant of `reg-fx`. See `reg-event-db-fn`."
+  [id handler]
   (assert (not (#{:reg-flow :clear-flow} id))
           "The effect keys `:reg-flow` and `:clear-flow` are reserved for `re-frame.alpha`")
   (fx/reg-fx id handler))
+
+#?(:clj
+   (defmacro ^:api-docs/hide reg-fx
+     "Captures the call-site `{:file :line}` — see `reg-event-db`."
+     {:arglists '([id handler])}
+     [id handler]
+     (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+       `(let [r# (re-frame.alpha/reg-fx-fn ~id ~handler)]
+          (re-frame.registrar/-decorate-handler-meta! :fx ~id ~src-meta)
+          r#))))
 
 (defn ^:api-docs/hide clear-fx
   ([]
@@ -901,7 +994,7 @@ The only required key is `:id`. All others have a default value:
 (defn ^:api-docs/hide register-handler
   [& args]
   (console :warn  "re-frame: \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
-  (apply reg-event-db args))
+  (apply reg-event-db-fn args))
 
 (defn ^:api-docs/hide register-sub
   [& args]
