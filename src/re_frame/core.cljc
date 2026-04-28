@@ -177,10 +177,11 @@
          (.then (fn [result] (...))))
 
      ;; CLJ — deref the promise (blocks until resolved)
-     @(dispatch-and-settle [:cart/checkout])
+     (deref (dispatch-and-settle [:cart/checkout]))
 
      ;; Override selected fx handlers while awaiting the cascade
-     @(dispatch-and-settle [:cart/checkout] {:overrides {:http-xhrio stub-success}})
+     (deref (dispatch-and-settle [:cart/checkout]
+                                  {:overrides {:http-xhrio stub-success}}))
 
    IMPLEMENTATION
 

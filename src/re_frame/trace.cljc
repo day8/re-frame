@@ -143,7 +143,7 @@
     :optional #{}
     :doc "Reagent render queue is idle — emitted by re-frame-10x's batching patch."}})
 
-#?(:cljs (goog-define validate-trace-enabled? false)
+#?(:cljs (def ^boolean validate-trace-enabled? false)
    :clj  (def ^boolean validate-trace-enabled? false))
 
 (defn validate-trace?
