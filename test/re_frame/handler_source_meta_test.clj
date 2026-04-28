@@ -259,3 +259,63 @@
             (str form " passes :" (name expected-kind) " as the handler kind"))
         (is (some #(= expected-fn %) flat)
             (str form " delegates to " expected-fn))))))
+
+;; -- form-meta :file regression -----------------------------------------------
+;;
+;; Pins the contract that `:file` is sourced from `(meta &form)` first —
+;; the reader attaches `{:file :line}` to the form being read; in CLJS
+;; under shadow-cljs `(:file &env)` is not populated and `*file*` is the
+;; placeholder `"NO_SOURCE_PATH"`, so a macro that only reaches for those
+;; two emits a useless `:file` value at every consumer call site. Pattern
+;; mirrors `re-com.core/at`, which has captured CLJS call-site file/line
+;; this way for years.
+;;
+;; CLJ test runner can exercise the same path by macroexpand-1'ing a
+;; form with explicit reader-style `:file :line` metadata and walking
+;; the expansion for the `:re-frame/source` map literal.
+
+(defn- find-source-meta-map
+  "Walk an expanded macro form looking for the literal map carrying
+   `:file` and `:line` (the captured src-meta argument to
+   `-decorate-handler-meta!` / `vary-meta`)."
+  [expanded]
+  (some #(when (and (map? %)
+                    (contains? % :file)
+                    (contains? % :line))
+           %)
+        (tree-seq coll? seq expanded)))
+
+(deftest macros-source-meta-prefers-form-meta-over-star-file
+  (testing "form-meta :file wins over (:file &env) and *file* — required
+            for CLJS under shadow-cljs where the latter two are useless"
+    (doseq [form ['(re-frame.macros/reg-event-db :test-meta/site (fn [d _] d))
+                  '(re-frame.macros/reg-event-fx :test-meta/site (fn [_ _] {}))
+                  '(re-frame.macros/reg-event-ctx :test-meta/site identity)
+                  '(re-frame.macros/reg-sub       :test-meta/site (fn [d _] d))
+                  '(re-frame.macros/reg-fx        :test-meta/site (fn [_] nil))
+                  '(re-frame.macros/dispatch      [:test-meta/site])
+                  '(re-frame.macros/dispatch-sync [:test-meta/site])
+                  '(re-frame.macros/subscribe     [:test-meta/site])]]
+      (let [tagged   (with-meta form {:file "src/app/synthetic.cljs" :line 99})
+            expanded (macroexpand-1 tagged)
+            src-meta (find-source-meta-map expanded)]
+        (is (some? src-meta)
+            (str form " expands to a form containing the :re-frame/source map literal"))
+        (is (= "src/app/synthetic.cljs" (:file src-meta))
+            (str form " captures :file from form-meta, NOT *file*"))
+        (is (= 99 (:line src-meta))
+            (str form " captures :line from form-meta")))))
+
+  (testing "form-meta drives the emitted literal for every source-meta macro"
+    (let [files (->> ['(re-frame.macros/reg-event-db :test-meta/a (fn [d _] d))
+                      '(re-frame.macros/reg-event-db :test-meta/b (fn [d _] d))]
+                     (map-indexed
+                      (fn [i form]
+                        (-> form
+                            (with-meta {:file (str "src/app/site" i ".cljs")
+                                        :line (+ 40 i)})
+                            macroexpand-1
+                            find-source-meta-map
+                            :file))))]
+      (is (= ["src/app/site0.cljs" "src/app/site1.cljs"] files)
+          "macroexpansion embeds the file from each individual form's metadata"))))

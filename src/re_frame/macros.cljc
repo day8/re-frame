@@ -74,6 +74,20 @@
 ;; public macros are 1-line delegates.
 
 #?(:clj
+   (defn- -source-meta
+     "Return call-site source metadata for a macro invocation.
+
+      In CLJS builds, shadow-cljs does not reliably populate `:file`
+      in `&env`, while the reader does attach `:file` and `:line` to
+      the invocation form. Prefer form metadata for both fields, then
+      fall back to `&env` / `*file*` for macro-generated forms that
+      lack reader metadata."
+     [form env]
+     (let [form-meta (meta form)]
+       {:file (or (:file form-meta) (:file env) *file*)
+        :line (:line form-meta)})))
+
+#?(:clj
    (defn- -source-meta-call
      "Emit the macroexpansion form for a call to `target-sym`, wrapping
       the first user-supplied value `v` with `:re-frame/source` meta in
@@ -83,11 +97,17 @@
       through unchanged after that first value.
 
    `target-sym` is the fully-qualified `re-frame.core/...` symbol;
-   `form`/`env` are the calling macro's `&form` / `&env`. `(:file env)`
-   is preferred over `*file*` so CLJS expansion picks up the call-site
-   file from `&env` rather than the macros.cljc compile context."
+   `form`/`env` are the calling macro's `&form` / `&env`. `:file` and
+   `:line` both come from `(meta form)` — that's the metadata the
+   CLJS reader attaches to the macro-invocation form when reading
+   from a source file (mirrors `re-com.core/at`, which has captured
+   call-site file/line in CLJS this way for years). `:file env` is
+   tried as a secondary fallback in case form-meta is missing (e.g.
+   macro called from inside another macro's expansion); `*file*` is
+   the JVM-side last-resort, useful only when the CLJS reader didn't
+   reach this form (rare)."
      [target-sym v form env & args]
-     (let [src-meta {:file (or (:file env) *file*) :line (:line (meta form))}]
+     (let [src-meta (-source-meta form env)]
        `(let [v# ~v]
           (if re-frame.interop/debug-enabled?
             (~target-sym (vary-meta v# assoc :re-frame/source ~src-meta) ~@args)
@@ -185,7 +205,7 @@
    the call (handler, or interceptors + handler). `form` / `env` are
    the calling macro's `&form` / `&env`."
   [target-sym id args form env]
-  (let [src-meta {:file (or (:file env) *file*) :line (:line (meta form))}]
+  (let [src-meta (-source-meta form env)]
     `(if re-frame.interop/debug-enabled?
        (let [r# (~target-sym ~id ~@args)]
          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
@@ -243,7 +263,7 @@
    sibling registration source-meta macros."
   {:arglists '([query-id & args])}
   [query-id & args]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+  (let [src-meta (-source-meta &form &env)]
     `(if re-frame.interop/debug-enabled?
        (let [r# (re-frame.core/reg-sub ~query-id ~@args)]
          (re-frame.registrar/-decorate-handler-meta! :sub ~query-id ~src-meta)
@@ -261,7 +281,7 @@
    sibling registration source-meta macros."
   {:arglists '([id handler])}
   [id handler]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+  (let [src-meta (-source-meta &form &env)]
     `(if re-frame.interop/debug-enabled?
        (let [r# (re-frame.core/reg-fx ~id ~handler)]
          (re-frame.registrar/-decorate-handler-meta! :fx ~id ~src-meta)
