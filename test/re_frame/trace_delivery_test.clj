@@ -486,7 +486,7 @@
             (trace/remove-trace-cb cb-key)))))))
 
 ;; ---------------------------------------------------------------------------
-;; dispatch-and-settle — concurrent same-vector regression (rf-6q6)
+;; dispatch-and-settle — concurrent same-vector regression
 ;; ---------------------------------------------------------------------------
 
 (deftest dispatch-and-settle-distinguishes-concurrent-same-vector

@@ -1,10 +1,10 @@
 (ns re-frame.trace-zero-cost-test
-  "Asserts that the trace machinery added by rf-3p7 (auto :dispatch-id +
+  "Asserts that trace-only bookkeeping (auto :dispatch-id +
    :input-query-vs) is INERT when tracing is disabled.
 
-   The af024c3 commit introduced a fresh UUID per `re-frame.events/handle`
-   call; the fa90f70 commit added an atom deref + `mapv` per
-   `deref-input-signals` call. Both were initially unconditional —
+   Dispatch tracing allocates a fresh UUID per `re-frame.events/handle`
+   call; subscription tracing walks input signals in
+   `deref-input-signals`. Both were initially unconditional —
    contradicting re-frame's load-bearing guarantee that tracing-off ==
    zero cost. Subs re-run on every transitive deref change and dispatches
    fire on every user action, so even a few microseconds per call shows

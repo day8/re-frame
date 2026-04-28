@@ -208,8 +208,9 @@
   (swap! trace-cbs dissoc key)
   nil)
 
-;; register-epoch-cb. Higher-
-;; level callback that delivers ASSEMBLED EPOCH records — one per
+;; register-epoch-cb.
+;;
+;; Higher-level callback that delivers ASSEMBLED EPOCH records — one per
 ;; `:event` trace — instead of the raw trace stream that
 ;; `register-trace-cb` exposes. Downstream consumers (re-frame-pair,
 ;; re-frame-10x, custom devtools) want the "this dispatch's full

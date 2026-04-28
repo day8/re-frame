@@ -108,7 +108,7 @@
       (is (= {} (:app-db/before e)))
       (is (= {:n 1} (:app-db/after e)))
       (is (= [{:id :coeffects} {:id :db-handler}] (:interceptors e))
-          "Q2 default — interceptor records, not just ids"))))
+          "interceptor records, not just ids"))))
 
 (deftest assemble-epochs-event-original-divergence
   (testing ":event/original surfaces on the epoch independently of :event —
