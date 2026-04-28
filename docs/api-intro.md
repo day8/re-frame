@@ -2,7 +2,8 @@
 
 The re-frame API consists of: 
 
-  - the namespace `re-frame.core`
+  - the namespace `re-frame.core` — the stable, value-position-safe function API. All registration entry points (`reg-event-*`, `reg-sub`, `reg-fx`, `reg-cofx`) and dispatch / subscribe are `defn`s, so `(map reg-event-db ...)`, `(apply reg-sub ...)`, `(partial reg-fx ...)` work as written.
+  - the namespace `re-frame.macros` — opt-in macro mirror with the same call shape, plus call-site `{:file :line}` source-meta captured at macro-expansion time. Use this in dev / devtools when you want handler provenance on the registered values; switch back to `re-frame.core` for production builds where you need higher-order use.
   - a set of built-in effects
 
 In the navigation to the left, you'll see a link to both. 

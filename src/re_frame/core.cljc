@@ -1,12 +1,18 @@
 (ns re-frame.core
-  "re-frame's primary public API. For programmatic / tooling / agent
-   consumption see `re-frame.tooling`."
-  ;; Self-require-macros so CLJS callers using
-  ;;   (:require [re-frame.core :as rf])
-  ;; pick up the reg-* defmacros below alongside the runtime fns —
-  ;; without this, CLJS would only see the run-time `reg-event-db-fn`
-  ;; etc. and `(rf/reg-event-db ...)` would fail to resolve as a macro.
-  #?(:cljs (:require-macros [re-frame.core]))
+  "re-frame's primary public API. Stable function surface — every
+   registration entry point (`reg-event-db` / `-fx` / `-ctx`,
+   `reg-sub`, `reg-fx`, `reg-cofx`, ...) is a `defn`, so values like
+   `(map reg-event-db ...)`, `(apply reg-sub ...)` and
+   `(partial reg-fx ...)` work as written.
+
+   For call-site `{:file :line}` source-metadata capture in dev /
+   devtools, see `re-frame.macros` — drop-in macro replacements for
+   `dispatch` / `dispatch-sync` / `subscribe` and the reg-* family
+   that emit calls to this namespace's functions plus a
+   meta-attach. Migration is alias-only.
+
+   For programmatic / tooling / agent consumption see
+   `re-frame.tooling`."
   (:require
    [re-frame.config           :as config]
    [re-frame.events           :as events]
@@ -167,25 +173,7 @@
 
 ;; -- Events ------------------------------------------------------------------
 
-(defn reg-event-db-fn
-  "Run-time variant of `reg-event-db`. The macro of that name expands
-   to a call to this fn plus a side-table update that attaches the
-   call-site source meta to the registered interceptor chain. Callers
-   who need to register an event handler programmatically (e.g.
-   `(apply reg-event-db-fn ...)`, mapping over a coll of ids) should
-   use this fn directly — they won't get source meta but registration
-   works the same."
-  ([id handler]
-   (reg-event-db-fn id nil handler))
-  ([id interceptors handler]
-   (events/register id [cofx/inject-db
-                        fx/do-fx
-                        flow/interceptor
-                        std-interceptors/inject-global-interceptors
-                        interceptors
-                        (db-handler->interceptor handler)])))
-
-(defmacro reg-event-db
+(defn reg-event-db
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain:
 
@@ -193,12 +181,6 @@
     - `handler` is a function: (db event) -> db
     - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
-  Captures the call-site `{:file :line}` at macro-expansion time and
-  attaches it as metadata on the registered interceptor chain so
-  `(meta (re-frame.registrar/get-handler :event id))` returns the
-  source location — works against tooling that wants to jump from a
-  registered handler back to its source without an external side-table.
-  See `re-frame.registrar/-decorate-handler-meta!` for the mechanics.
 
   Example Usage:
 
@@ -219,33 +201,18 @@
             (dissoc arg1)
             (update :key + arg2))))   ;; return updated db
   "
-  {:api-docs/heading "Event Handlers"
-   :arglists '([id handler] [id interceptors handler])}
+  {:api-docs/heading "Event Handlers"}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(let [r# (re-frame.core/reg-event-db-fn ~id ~handler)]
-        (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-        r#)))
-  ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(let [r# (re-frame.core/reg-event-db-fn ~id ~interceptors ~handler)]
-        (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-        r#))))
-
-(defn reg-event-fx-fn
-  "Run-time variant of `reg-event-fx`. See `reg-event-db-fn` for the
-   programmatic-registration use case."
-  ([id handler]
-   (reg-event-fx-fn id nil handler))
+   (reg-event-db id nil handler))
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
                         flow/interceptor
                         std-interceptors/inject-global-interceptors
                         interceptors
-                        (fx-handler->interceptor handler)])))
+                        (db-handler->interceptor handler)])))
 
-(defmacro reg-event-fx
+(defn reg-event-fx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain:
 
@@ -253,8 +220,6 @@
     - `handler` is a function: (coeffects-map event-vector) -> effects-map
     - `interceptors` is a collection of interceptors. Will be flattened and nils removed.
 
-  Captures the call-site `{:file :line}` at macro-expansion time —
-  see `reg-event-db` for the rationale.
 
   Example Usage:
 
@@ -275,33 +240,18 @@
           {:db (assoc db :some-key arg1)          ;; return a map of effects
            :fx [[:dispatch [:some-event arg2]]]}))
   "
-  {:api-docs/heading "Event Handlers"
-   :arglists '([id handler] [id interceptors handler])}
+  {:api-docs/heading "Event Handlers"}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(let [r# (re-frame.core/reg-event-fx-fn ~id ~handler)]
-        (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-        r#)))
-  ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(let [r# (re-frame.core/reg-event-fx-fn ~id ~interceptors ~handler)]
-        (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-        r#))))
-
-(defn reg-event-ctx-fn
-  "Run-time variant of `reg-event-ctx`. See `reg-event-db-fn` for the
-   programmatic-registration use case."
-  ([id handler]
-   (reg-event-ctx-fn id nil handler))
+   (reg-event-fx id nil handler))
   ([id interceptors handler]
    (events/register id [cofx/inject-db
                         fx/do-fx
                         flow/interceptor
                         std-interceptors/inject-global-interceptors
                         interceptors
-                        (ctx-handler->interceptor handler)])))
+                        (fx-handler->interceptor handler)])))
 
-(defmacro reg-event-ctx
+(defn reg-event-ctx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain:
 
@@ -309,8 +259,6 @@
     - `handler` is a function: context-map -> context-map
 
   You can explore what is provided in `context` [here](https://day8.github.io/re-frame/Interceptors/#what-is-context).
-
-  Captures the call-site `{:file :line}` — see `reg-event-db`.
 
   Example Usage:
 
@@ -328,18 +276,16 @@
                 effects  (select-keys result [:db :fx])]
              (assoc context :effects effects))))
   "
-  {:api-docs/heading "Event Handlers"
-   :arglists '([id handler] [id interceptors handler])}
+  {:api-docs/heading "Event Handlers"}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(let [r# (re-frame.core/reg-event-ctx-fn ~id ~handler)]
-        (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-        r#)))
+   (reg-event-ctx id nil handler))
   ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(let [r# (re-frame.core/reg-event-ctx-fn ~id ~interceptors ~handler)]
-        (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-        r#))))
+   (events/register id [cofx/inject-db
+                        fx/do-fx
+                        flow/interceptor
+                        std-interceptors/inject-global-interceptors
+                        interceptors
+                        (ctx-handler->interceptor handler)])))
 
 (defn clear-event
   "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`).
@@ -357,16 +303,7 @@
 
 ;; -- subscriptions -----------------------------------------------------------
 
-(defn reg-sub-fn
-  "Run-time variant of `reg-sub`. The `reg-sub` macro expands to a
-   call to this fn plus a side-table update that attaches the
-   call-site source meta to the registered handler. Use this fn
-   directly when you need to register a sub programmatically (e.g.
-   `(apply reg-sub-fn ...)`)."
-  [query-id & args]
-  (apply subs/reg-sub query-id args))
-
-(defmacro reg-sub
+(defn reg-sub
   "A call to `reg-sub` associates a `query-id` WITH two functions.
 
   The two functions provide 'a mechanism' for creating a node
@@ -608,24 +545,15 @@
         :<- [:b-sub]
         :-> (partial zipmap [:a :b]))
 
-  Captures the call-site `{:file :line}` at macro-expansion time and
-  attaches it as metadata on the registered handler so
-  `(meta (re-frame.registrar/get-handler :sub query-id))` returns the
-  source location. For programmatic registration (e.g. `(apply ...)`),
-  use the run-time variant `reg-sub-fn`.
 
   For further understanding, read the tutorials, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs.
 
   See also: `subscribe`
   "
-  {:api-docs/heading "Subscriptions"
-   :arglists '([query-id & args])}
+  {:api-docs/heading "Subscriptions"}
   [query-id & args]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(let [r# (re-frame.core/reg-sub-fn ~query-id ~@args)]
-       (re-frame.registrar/-decorate-handler-meta! :sub ~query-id ~src-meta)
-       r#)))
+  (apply subs/reg-sub query-id args))
 
 (defn subscribe
   "Given a `query` vector, returns a Reagent `reaction` which will, over
@@ -760,22 +688,13 @@
 
 ;; -- effects -----------------------------------------------------------------
 
-(defn reg-fx-fn
-  "Run-time variant of `reg-fx`. The `reg-fx` macro expands to a call
-   to this fn plus a side-table update that attaches the call-site
-   source meta to the registered handler."
-  [id handler]
-  (fx/reg-fx id handler))
-
-(defmacro reg-fx
+(defn reg-fx
   "Register the given effect `handler` for the given `id`:
 
     - `id` is keyword, often namespaced.
     - `handler` is a side-effecting function which takes a single argument and whose return
       value is ignored.
 
-  Captures the call-site `{:file :line}` at macro-expansion time and
-  attaches it as metadata on the registered handler — see `reg-event-db`.
 
   To use, first, associate `:effect2` with a handler:
 
@@ -793,13 +712,9 @@
   then the `handler` `fn` we registered previously, using `reg-fx`, will be
   called with an argument of `[1 2]`.
   "
-  {:api-docs/heading "Effect Handlers"
-   :arglists '([id handler])}
+  {:api-docs/heading "Effect Handlers"}
   [id handler]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(let [r# (re-frame.core/reg-fx-fn ~id ~handler)]
-       (re-frame.registrar/-decorate-handler-meta! :fx ~id ~src-meta)
-       r#)))
+  (fx/reg-fx id handler))
 
 (defn clear-fx ;; think unreg-fx
   "Unregisters effect handlers (presumably registered previously via the use of `reg-fx`).
@@ -1440,9 +1355,7 @@
    :api-docs/heading "Deprecated"}
   [& args]
   (console :warn  "re-frame: \"register-handler\" has been renamed \"reg-event-db\" (look for registration of " (str (first args)) ")")
-  ;; reg-event-db is a defmacro (captures call-site source meta);
-  ;; use the run-time variant for the deprecated programmatic path.
-  (apply reg-event-db-fn args))
+  (apply reg-event-db args))
 
 (defn register-sub
   "Deprecated. Use `reg-sub-raw` instead."

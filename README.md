@@ -44,6 +44,26 @@ In re-frame, events are causal, and views are purely reactive.
 
 The re-frame documentation is [available here](https://day8.github.io/re-frame/).
 
+### Source-meta opt-in
+
+`re-frame.core` is the stable function API — `reg-event-db` /
+`reg-event-fx` / `reg-event-ctx` / `reg-sub` / `reg-fx` and the
+`dispatch` / `subscribe` family are `defn`s, so `(map reg-event-db
+...)`, `(apply reg-sub ...)`, `(partial reg-fx ...)` work as
+written.
+
+For call-site `{:file :line}` metadata in dev / devtools, alias
+`re-frame.macros` instead. Same call shape, source-meta captured at
+expansion time and DCE'd in production CLJS:
+
+```clojure
+;; function API — no source-meta
+(:require [re-frame.core   :as rf])
+
+;; macro API — same call shape, source-meta captured
+(:require [re-frame.macros :as rf])
+```
+
 
 ## The Current Version 
 
