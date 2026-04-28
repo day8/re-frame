@@ -51,6 +51,10 @@
 
       
       (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
+
+  See also: `dispatch-with` for per-dispatch fx substitution,
+  `dispatch-and-settle` for awaiting a dispatch cascade, and
+  `re-frame.macros/dispatch` for DEBUG call-site source metadata.
   "
   {:api-docs/heading "Dispatching Events"}
   [event]
@@ -79,6 +83,10 @@
 
       
       (dispatch-sync [:sing :falsetto \"piano accordion\"])
+
+  See also: `dispatch-sync-with` for synchronous fx substitution,
+  and `re-frame.macros/dispatch-sync` for DEBUG call-site source
+  metadata.
   "
   {:api-docs/heading "Dispatching Events"}
   [event]
@@ -128,8 +136,13 @@
 (defn dispatch-sync-with
   "Like `dispatch-with`, but processes the event synchronously
    (matching the difference between `dispatch` and
-   `dispatch-sync`). See `dispatch-with` for the override
-   semantics + cascade behaviour."
+   `dispatch-sync`). Overrides apply to the event and any
+   `:fx [:dispatch ...]` cascade it starts.
+
+       (dispatch-sync-with [:user/login {:email \"...\"}]
+                           {:http-xhrio (fn [req] ...)})
+
+   See `dispatch-with` for the full override semantics."
   {:api-docs/heading "Dispatching Events"}
   [event overrides]
   (router/dispatch-sync (vary-meta event assoc :re-frame/fx-overrides overrides)))
@@ -222,6 +235,9 @@
           (-> db
             (dissoc arg1)
             (update :key + arg2))))   ;; return updated db
+
+  See also: `re-frame.macros/reg-event-db` for DEBUG call-site source
+  metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
   ([id handler]
@@ -256,6 +272,9 @@
         (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
           {:db (assoc db :some-key arg1)          ;; return a map of effects
            :fx [[:dispatch [:some-event arg2]]]}))
+
+  See also: `re-frame.macros/reg-event-fx` for DEBUG call-site source
+  metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
   ([id handler]
@@ -287,6 +306,9 @@
                              function3)
                 effects  (select-keys result [:db :fx])]
              (assoc context :effects effects))))
+
+  See also: `re-frame.macros/reg-event-ctx` for DEBUG call-site source
+  metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
   ([id handler]
@@ -556,7 +578,8 @@
   For further understanding, read the tutorials, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs.
 
-  See also: `subscribe`
+  See also: `subscribe`, and `re-frame.macros/reg-sub` for DEBUG
+  call-site source metadata on registered subscription handlers.
   "
   {:api-docs/heading "Subscriptions"}
   [query-id & args]
@@ -620,7 +643,9 @@
   Two, or more, concurrent subscriptions for the same query will
   source reactive updates from the one executing handler.
 
-  See also: `reg-sub`
+  See also: `reg-sub`, `re-frame.macros/subscribe` for DEBUG
+  call-site source metadata, and `query-v-for-reaction` for recovering
+  the query vector from a held reaction.
   "
   {:api-docs/heading "Subscriptions"}
   ([query]
@@ -718,6 +743,9 @@
 
   then the `handler` `fn` we registered previously, using `reg-fx`, will be
   called with an argument of `[1 2]`.
+
+  See also: `re-frame.macros/reg-fx` for DEBUG call-site source
+  metadata on registered effect handlers.
   "
   {:api-docs/heading "Effect Handlers"}
   [id handler]

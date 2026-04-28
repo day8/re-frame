@@ -104,7 +104,10 @@
    the existing trace's `:event` tag.
 
    The macro uses standard `vary-meta` so any user-supplied event
-   metadata survives the merge."
+   metadata survives the merge.
+
+   See also: `dispatch-sync` and `subscribe` in this namespace for
+   the other DEBUG source-meta call-site macros."
   {:arglists '([event-v])}
   [event-v]
   (-source-meta-call 're-frame.core/dispatch event-v &form &env))
@@ -112,7 +115,10 @@
 (defmacro dispatch-sync
   "Like `re-frame.core/dispatch-sync` but attaches call-site source
    meta in DEBUG builds. See `dispatch` for the rationale and DCE
-   behaviour."
+   behaviour.
+
+   See also: `dispatch` and `subscribe` in this namespace for the
+   other DEBUG source-meta call-site macros."
   {:arglists '([event-v])}
   [event-v]
   (-source-meta-call 're-frame.core/dispatch-sync event-v &form &env))
@@ -136,7 +142,10 @@
 
    Supports the same arities as `re-frame.core/subscribe`, including
    the historical `[query-v dynv]` form. Source metadata is attached
-   to `query-v`; `dynv` is passed through unchanged."
+   to `query-v`; `dynv` is passed through unchanged.
+
+   See also: `dispatch` and `dispatch-sync` in this namespace for the
+   event-dispatch source-meta call-site macros."
   {:arglists '([query-v] [query-v dynv])}
   ([query-v]
    (-source-meta-call 're-frame.core/subscribe query-v &form &env))
@@ -228,7 +237,10 @@
 
    Variadic — supports the same `:<-` / `:->` / `:=>` sugar pairs as
    `re-frame.core/reg-sub`. Macro, so `(apply reg-sub ...)` won't
-   compile; use `re-frame.core/reg-sub` for that."
+   compile; use `re-frame.core/reg-sub` for that.
+
+   See also: `reg-event-db` and `reg-fx` in this namespace for the
+   sibling registration source-meta macros."
   {:arglists '([query-id & args])}
   [query-id & args]
   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
@@ -243,7 +255,10 @@
    `{:file :line}` as metadata on the registered effect handler so
    `(meta (re-frame.registrar/get-handler :fx id))` returns the
    call-site location. Production CLJS builds emit a bare
-   `re-frame.core/reg-fx` call after Closure DCE."
+   `re-frame.core/reg-fx` call after Closure DCE.
+
+   See also: `reg-event-db` and `reg-sub` in this namespace for the
+   sibling registration source-meta macros."
   {:arglists '([id handler])}
   [id handler]
   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]

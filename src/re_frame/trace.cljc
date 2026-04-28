@@ -209,7 +209,11 @@
 
 (defn register-trace-cb
   "Registers a tracing callback function which will receive a collection of one or more traces.
-  Will replace an existing callback function if it shares the same key."
+  Will replace an existing callback function if it shares the same key.
+
+  See also: `register-epoch-cb` for assembled per-dispatch epoch
+  records, and `tag-schema` for the documented `:tags` shape of
+  emitted traces."
   [key f]
   (if trace-enabled?
     (swap! trace-cbs assoc key f)
