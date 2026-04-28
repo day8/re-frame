@@ -7,6 +7,10 @@
    [re-frame.subs-test]
    [re-frame.fx-test]
    [re-frame.registrar-test]
+   [re-frame.dispatch-source-meta-test]
+   [re-frame.subscribe-source-meta-test]
+   [re-frame.query-v-for-reaction-test]
+   [re-frame.handler-source-meta-test]
    [re-frame.trace-test]
    [re-frame.restore-test]))
 
@@ -22,5 +26,9 @@
    're-frame.subs-test
    're-frame.fx-test
    're-frame.registrar-test
+   're-frame.dispatch-source-meta-test
+   're-frame.subscribe-source-meta-test
+   're-frame.query-v-for-reaction-test
+   're-frame.handler-source-meta-test
    're-frame.trace-test
    're-frame.restore-test))

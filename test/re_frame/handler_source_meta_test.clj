@@ -60,6 +60,18 @@
     (is (nil? (meta (registrar/get-handler :event :test-meta/plain-fn-path)))
         "no &form available to a defn — no meta on the registered chain")))
 
+(deftest decorate-handler-meta-skips-opaque-handler
+  (testing "-decorate-handler-meta! silently skips a handler value that can't carry metadata"
+    (let [opaque (Object.)]
+      (registrar/register-handler :fx :test-meta/opaque-handler opaque)
+      (is (nil? (registrar/-decorate-handler-meta!
+                 :fx :test-meta/opaque-handler {:file "opaque.clj" :line 1}))
+          "decorate returns nil and does not throw")
+      (is (identical? opaque (registrar/get-handler :fx :test-meta/opaque-handler))
+          "opaque handler remains registered")
+      (is (nil? (meta (registrar/get-handler :fx :test-meta/opaque-handler)))
+          "no metadata was attached"))))
+
 (deftest core-reg-event-fx-fn-form-dispatches
   (testing "calling re-frame.core/reg-event-fx as a function still works"
     (let [seen (atom nil)]
