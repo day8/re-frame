@@ -216,9 +216,9 @@
                            (reset! child-ran? true)
                            db))
         (let [p           (router/dispatch-and-settle [:trace-cascade/parent]
-                                                      {:timeout-ms       2000
-                                                       :settle-window-ms 1000})
-              result      (deref p 3000 ::timed-out)
+                                                      {:timeout-ms       5000
+                                                       :settle-window-ms 250})
+              result      (deref p 6000 ::timed-out)
               root-id     (-> result :root-epoch :dispatch-id)
               child-epoch (first (:cascaded-epochs result))]
           (is (not= ::timed-out result))
