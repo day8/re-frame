@@ -439,13 +439,13 @@
       (is (empty? (:cascaded-epochs result))))))
 
 ;; ---------------------------------------------------------------------------
-;; *dispatch-id-capture* — deterministic root-id capture
+;; *on-dispatch-id* — deterministic root-id capture
 ;; ---------------------------------------------------------------------------
 
-(deftest dispatch-id-capture-receives-handle-allocated-id
-  (testing "binding `events/*dispatch-id-capture*` to an atom causes
-            `handle` to reset! that atom with the freshly-allocated
-            dispatch-id BEFORE the trace fires. This is the hook
+(deftest on-dispatch-id-receives-handle-allocated-id
+  (testing "binding `events/*on-dispatch-id*` to a callback causes
+            `handle` to call it with the freshly-allocated dispatch-id
+            BEFORE the trace fires. This is the hook
             dispatch-and-settle uses to identify the root of its
             cascade WITHOUT relying on event-vector equality.
 
@@ -467,7 +467,7 @@
                                                         (= [:capture-test/touch]
                                                            (-> t :tags :event)))]
                                        (swap! seen-tags conj (:tags t)))))
-          (binding [events/*dispatch-id-capture* captured]
+          (binding [events/*on-dispatch-id* #(reset! captured %)]
             (rf/dispatch-sync [:capture-test/touch]))
           (is (uuid? @captured)
               "the captured value is the UUID handle allocated for this dispatch")
@@ -478,7 +478,7 @@
           (testing "two consecutive captures yield distinct ids — proves the hook
                     fires per-dispatch, not once-and-cached"
             (let [captured-2 (atom nil)]
-              (binding [events/*dispatch-id-capture* captured-2]
+              (binding [events/*on-dispatch-id* #(reset! captured-2 %)]
                 (rf/dispatch-sync [:capture-test/touch]))
               (is (uuid? @captured-2))
               (is (not= @captured @captured-2))))

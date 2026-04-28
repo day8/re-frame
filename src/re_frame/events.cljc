@@ -57,17 +57,17 @@
 (def ^:dynamic *current-dispatch-id* nil)
 
 ;; Hook for callers that need to learn the just-allocated dispatch-id
-;; deterministically. When `binding`-ed to an atom, `handle` `reset!`s
-;; that atom with the freshly-allocated dispatch-id BEFORE the trace
-;; runs, so downstream cb fires (sync on JVM, debounced on JS) can match
-;; by id from the start. Used by `re-frame.router/dispatch-and-settle`
-;; to identify the root of its cascade WITHOUT relying on event-vector
-;; equality against the trace stream — vector equality is ambiguous when
-;; two callers dispatch the same vector concurrently.
+;; deterministically. When bound to a function, `handle` calls it with
+;; the freshly-allocated dispatch-id BEFORE the trace runs, so
+;; downstream cb fires (sync on JVM, debounced on JS) can match by id
+;; from the start. Used by `re-frame.router/dispatch-and-settle` to
+;; identify the root of its cascade WITHOUT relying on event-vector
+;; equality against the trace stream — vector equality is ambiguous
+;; when two callers dispatch the same vector concurrently.
 ;; Gated on `(trace/is-trace-enabled?)` (same gate as dispatch-id
 ;; allocation itself); production trace-off paths read nothing from
 ;; this var.
-(def ^:dynamic *dispatch-id-capture* nil)
+(def ^:dynamic *on-dispatch-id* nil)
 
 (defn handle
   "Given an event vector `event-v`, look up the associated interceptor chain, and execute it."
@@ -80,8 +80,8 @@
                             (new-uuid))
               parent-id   (when dispatch-id
                             (:re-frame/parent-dispatch-id (meta event-v)))]
-          (when (and dispatch-id *dispatch-id-capture*)
-            (reset! *dispatch-id-capture* dispatch-id))
+          (when (and dispatch-id *on-dispatch-id*)
+            (*on-dispatch-id* dispatch-id))
           (binding [*handling*           event-v
                     *current-dispatch-id* dispatch-id]
             (trace/with-trace {:operation event-id

@@ -179,7 +179,7 @@
         ;; relationships are carried explicitly on event metadata.
         (binding [events/*handling* nil
                   events/*current-dispatch-id* nil
-                  events/*dispatch-id-capture* nil
+                  events/*on-dispatch-id* nil
                   trace/*current-trace* nil]
           (handle event-v))
         (set! queue (pop queue))
@@ -488,7 +488,7 @@
   ICascadeTracker
   (-register! [_ on-cascade]
     ;; Match by dispatch-id only: (a) :dispatch-id == root-id (root, set
-    ;; inside `handle` via *dispatch-id-capture* before any cb fires), or
+    ;; inside `handle` via *on-dispatch-id* before any cb fires), or
     ;; (b) :parent-dispatch-id ∈ cascade-ids (already-matched ancestor).
     ;; No event-vector fallback: when two callers dispatch the same vector,
     ;; vector equality is ambiguous and would mis-attribute one caller's
@@ -637,17 +637,17 @@
                           :event           event
                           :captured-epochs (-captured tracker)}))
               timeout-ms))
-     ;; Dispatch the root synchronously, binding `*dispatch-id-capture*`
-     ;; so `handle` writes the freshly-allocated dispatch-id directly
+     ;; Dispatch the root synchronously, binding `*on-dispatch-id*`
+     ;; so `handle` publishes the freshly-allocated dispatch-id directly
      ;; into `root-id` BEFORE the trace fires the cb. Children queued
      ;; via :fx [:dispatch ...] fire later via the router queue;
      ;; epoch-cb picks them up as they land and matches them by
      ;; :parent-dispatch-id ∈ cascade-ids. With tracing off, `handle`
-     ;; leaves root-id nil because it only reads *dispatch-id-capture*
+     ;; leaves root-id nil because it only reads *on-dispatch-id*
      ;; when tracing is enabled; the
      ;; post-event-callback fallback path picks up events by ordering
      ;; instead.
-     (binding [events/*dispatch-id-capture* root-id]
+     (binding [events/*on-dispatch-id* #(reset! root-id %)]
        (dispatch-sync dispatch-event))
      (-after-root-dispatched! tracker)
      ;; Even with no children queued, schedule an initial settle
