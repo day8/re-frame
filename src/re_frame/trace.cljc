@@ -350,9 +350,8 @@
     (mapv (fn [event-tr]
             (let [event-id (:id event-tr)
                   children (get by-parent event-id [])
-                  tags     (or (:tags event-tr) {})
-                  pick-one (fn [op] (some #(when (= op (:op-type %)) %) children))
-                  pick-all (fn [op] (filterv #(= op (:op-type %)) children))]
+                  by-op    (group-by :op-type children)
+                  tags     (:tags event-tr)]
               {:id                 event-id
                :event              (:event tags)
                :event/original     (:event/original tags)
@@ -363,10 +362,10 @@
                :coeffects          (:coeffects tags)
                :effects            (:effects tags)
                :interceptors       (:interceptors tags)
-               :sub-runs           (pick-all :sub/run)
-               :sub-creates        (pick-all :sub/create)
-               :event-handler      (pick-one :event/handler)
-               :event-do-fx        (pick-one :event/do-fx)
+               :sub-runs           (vec (:sub/run by-op))
+               :sub-creates        (vec (:sub/create by-op))
+               :event-handler      (first (:event/handler by-op))
+               :event-do-fx        (first (:event/do-fx by-op))
                :start              (:start event-tr)
                :end                (:end event-tr)
                :duration           (:duration event-tr)}))
