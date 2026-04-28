@@ -293,6 +293,8 @@
                     :dispatch-settle/par-two
                     :dispatch-settle/chi-a
                     :dispatch-settle/chi-b
+                    :dispatch-settle/override-root
+                    :dispatch-settle/override-child
                     :dispatch-settle/par-filter
                     :dispatch-settle/chi-filter
                     :dispatch-settle/other]]
@@ -396,6 +398,51 @@
                       (clear-dispatch-and-settle-events!)
                       (set! trace/trace-enabled? false)
                       (done))))))))
+
+(deftest dispatch-and-settle-applies-fx-overrides
+  (testing "dispatch-and-settle can override fx handlers for the root and its cascade"
+    (async done
+      (let [seen     (atom [])
+            fx-id    :dispatch-settle/spy-fx
+            cleanup! (fn []
+                       (clear-dispatch-and-settle-events!)
+                       (rf/clear-fx fx-id)
+                       (set! trace/trace-enabled? false))]
+        (clear-dispatch-and-settle-events!)
+        (set! trace/trace-enabled? true)
+        (rf/reg-fx fx-id
+                   (fn [value]
+                     (swap! seen conj [:registered value])))
+        (rf/reg-event-fx :dispatch-settle/override-root
+                         (fn [_ _]
+                           {:fx [[fx-id :root]
+                                 [:dispatch [:dispatch-settle/override-child]]]}))
+        (rf/reg-event-fx :dispatch-settle/override-child
+                         (fn [_ _]
+                           {fx-id :child}))
+        (-> (rf/dispatch-and-settle
+             [:dispatch-settle/override-root]
+             {:timeout-ms       1000
+              :settle-window-ms delivery-wait-ms
+              :overrides        {fx-id (fn [value]
+                                         (swap! seen conj [:override value]))}})
+            (.then
+             (fn [raw]
+               (let [result          (js-settle-result->clj raw)
+                     cascaded-events (set (map :event (:cascaded-epochs result)))]
+                 (is (true? (:ok? result)))
+                 (is (= ["override-root"] (-> result :root-epoch :event)))
+                 (is (= #{["override-child"]} cascaded-events)
+                     "the child event is still captured as part of the settled cascade")
+                 (is (= [[:override :root] [:override :child]] @seen)
+                     "the override handles root and cascaded fx; the registered handler is bypassed"))
+               (cleanup!)
+               (done)))
+            (.catch
+             (fn [err]
+               (is false (str "dispatch-and-settle-applies-fx-overrides failed: " err))
+               (cleanup!)
+               (done))))))))
 
 (deftest register-epoch-cb-warns-when-tracing-disabled
   (testing "register-epoch-cb warns instead of registering when tracing is disabled"

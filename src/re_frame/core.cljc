@@ -152,6 +152,8 @@
                              ;                settled
      :include-cascaded? bool ; default true — include child epochs
                              ;                fired via :fx [:dispatch ...]
+     :overrides         map  ; fx-id -> stub-fn, as in dispatch-with;
+                             ; inherited by the synchronous cascade
 
    USAGE
 
@@ -161,6 +163,9 @@
 
      ;; CLJ — deref the promise (blocks until resolved)
      @(dispatch-and-settle [:cart/checkout])
+
+     ;; Override selected fx handlers while awaiting the cascade
+     @(dispatch-and-settle [:cart/checkout] {:overrides {:http-xhrio stub-success}})
 
    IMPLEMENTATION
 

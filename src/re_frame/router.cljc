@@ -314,6 +314,8 @@
 ;;                              ; cascade epoch landed before resolving)
 ;;       :include-cascaded? bool ; default true — emit :cascaded-epochs
 ;;                               ; (children fired via :fx [:dispatch ...])
+;;       :overrides map         ; fx-id -> stub-fn, as in dispatch-with;
+;;                              ; inherited by the synchronous cascade
 ;;
 ;; Resolves to:
 ;;   {:ok? true :root-epoch <epoch> :cascaded-epochs [<epoch> ...]}
@@ -554,9 +556,14 @@
    `:fx [:dispatch ...]` children. See the long comment above for
    shape, semantics, and limitations."
   ([event] (dispatch-and-settle event {}))
-  ([event {:keys [timeout-ms settle-window-ms include-cascaded?]
-           :or   {timeout-ms 5000 settle-window-ms 100 include-cascaded? true}}]
-   (let [{:keys [value resolve!]} (mk-deferred)
+  ([event opts]
+   (let [opts (or opts {})
+         {:keys [timeout-ms settle-window-ms include-cascaded?]
+          :or   {timeout-ms 5000 settle-window-ms 100 include-cascaded? true}} opts
+         dispatch-event (if (contains? opts :overrides)
+                          (vary-meta event assoc :re-frame/fx-overrides (:overrides opts))
+                          event)
+         {:keys [value resolve!]} (mk-deferred)
          root-id        (atom nil)
          tracker        (mk-tracker root-id)
          settle-tick    (atom 0)            ;; bumped on each cascade signal
@@ -629,7 +636,7 @@
      ;; post-event-callback fallback path picks up events by ordering
      ;; instead.
      (binding [events/*dispatch-id-capture* root-id]
-       (dispatch-sync event))
+       (dispatch-sync dispatch-event))
      (-after-root-dispatched! tracker)
      ;; Even with no children queued, schedule an initial settle
      ;; check so the root-only case resolves promptly.
