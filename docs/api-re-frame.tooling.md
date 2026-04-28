@@ -1,21 +1,11 @@
 # re-frame.tooling
 
-Stable surface for tooling consumers — re-frame-pair, re-frame-10x, debux,
-AI agents, observability harnesses. Re-exports symbols defined in
-`re-frame.core`, `re-frame.trace`, `re-frame.subs`, and
+This namespace provides a Stable surface for tooling consumers such as `re-frame-pair`, `re-frame-10x`. 
+
+It re-exports symbols defined in `re-frame.core`, `re-frame.trace`, `re-frame.subs`, and
 `re-frame.registrar`. Source-of-truth lives in those namespaces; this page
 is the discoverability index, not a redirect or shim.
 
-## Stability Contract
-
-Every symbol listed here is a commitment to keep that name and shape stable
-across re-frame releases — within the same compatibility guarantees the
-source-of-truth namespace already gives.
-
-Internal callers should keep referencing the source-of-truth namespaces
-directly. Adding a symbol here is a public-API commitment: a re-export is
-not added until the underlying symbol's contract is itself public and
-stable.
 
 ## Usage
 
