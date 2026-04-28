@@ -322,7 +322,10 @@
 ;;   {:ok? false :reason :timeout :event ev :captured-epochs [...]}
 ;;
 ;; CLJS returns a JS Promise; CLJ returns a `clojure.core/promise`
-;; (deref-able). Avoids a core.async dep on either platform.
+;; (deref-able). Avoids a core.async dep on either platform. The
+;; resolved value is a Clojure map on both platforms — JS Promises
+;; carry opaque values, so CLJS callers receive the same map as CLJ
+;; callers without a lossy js->clj conversion.
 ;;
 ;; Settles when the synchronous cascade quietens — the root event
 ;; plus every descendant whose `:parent-dispatch-id` chains back to
@@ -366,7 +369,12 @@
   ;; Cross-platform deferred: returns
   ;;   {:value <promise/atom>      ; what we hand back to the caller
   ;;    :resolve! (fn [v] ...)     ; idempotent, single-shot}
-  ;; CLJS uses a JS Promise (resolve! captured from the executor).
+  ;; CLJS uses a JS Promise (resolve! captured from the executor); the
+  ;; resolved value is the raw Clojure map — JS Promises carry opaque
+  ;; values fine, and re-frame's CLJS callers want Clojure data without
+  ;; a lossy js->clj round-trip (clj->js's :keyword-fn name strips
+  ;; namespaces, collapsing keys like :app-db/before and :event/before
+  ;; into the same string).
   ;; CLJ uses clojure.core/promise (deliver is idempotent under guard).
   #?(:cljs
      (let [resolve-fn (volatile! nil)
@@ -376,7 +384,7 @@
        {:value     p
         :resolve!  (fn [v]
                      (when (compare-and-set! done? false true)
-                       (@resolve-fn (clj->js v :keyword-fn name))))})
+                       (@resolve-fn v)))})
      :clj
      (let [p (promise)]
        {:value    p

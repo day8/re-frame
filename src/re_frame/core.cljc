@@ -144,6 +144,8 @@
      {:ok? false :reason :timeout :event ev :captured-epochs [...]}
 
    CLJS returns a JS Promise; CLJ returns a `clojure.core/promise`.
+   In both cases the resolved value is a Clojure map — CLJS callers
+   should NOT `js->clj` it.
 
    `opts` (all optional):
      :timeout-ms        int  ; default 5000 — overall budget
