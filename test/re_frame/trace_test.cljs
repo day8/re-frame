@@ -3,6 +3,7 @@
             [clojure.string :as str]
             [re-frame.trace :as trace :include-macros true]
             [re-frame.loggers :as log]
+            [re-frame.router :as router]
             [re-frame.core :as rf]))
 
 (def test-traces (atom []))
@@ -282,6 +283,119 @@
                (set! trace/trace-enabled? false)
                (done))))
          delivery-wait-ms)))))
+
+(defn- js-settle-result->clj [raw]
+  (js->clj raw :keywordize-keys true))
+
+(defn- clear-dispatch-and-settle-events! []
+  (doseq [event-id [:dispatch-settle/par
+                    :dispatch-settle/chi
+                    :dispatch-settle/par-two
+                    :dispatch-settle/chi-a
+                    :dispatch-settle/chi-b
+                    :dispatch-settle/par-filter
+                    :dispatch-settle/chi-filter
+                    :dispatch-settle/other]]
+    (rf/clear-event event-id))
+  (rf/purge-event-queue)
+  (reset! trace/traces [])
+  (reset! trace/epoch-cbs {})
+  (reset! trace/next-delivery 0))
+
+(deftest dispatch-and-settle-cascades
+  (testing "dispatch-and-settle awaits and attributes :fx dispatch cascades"
+    (async done
+      (let [opts {:timeout-ms 1000 :settle-window-ms delivery-wait-ms}
+            single-level
+            (fn []
+              (clear-dispatch-and-settle-events!)
+              (set! trace/trace-enabled? true)
+              (rf/reg-event-fx :dispatch-settle/par
+                               (fn [_ _]
+                                 {:fx [[:dispatch [:dispatch-settle/chi]]]}))
+              (rf/reg-event-db :dispatch-settle/chi
+                               (fn [db _] (assoc db :chi true)))
+              (let [p (router/dispatch-and-settle [:dispatch-settle/par] opts)]
+                (is (instance? js/Promise p)
+                    "CLJS dispatch-and-settle returns a JS Promise")
+                (is (fn? (.-then p))
+                    "the returned JS Promise exposes .then")
+                (.then p
+                       (fn [raw]
+                         (let [result   (js-settle-result->clj raw)
+                               root     (:root-epoch result)
+                               cascaded (:cascaded-epochs result)
+                               child    (first cascaded)]
+                           (is (true? (:ok? result)))
+                           (is (= ["par"] (:event root))
+                               "keyword-fn converted the event keyword to its name")
+                           (is (= 1 (count cascaded)))
+                           (is (= ["chi"] (:event child)))
+                           (is (= (:dispatch-id root) (:parent-dispatch-id child))
+                               "the child epoch is attributed to the root dispatch-id"))
+                         (clear-dispatch-and-settle-events!)))))
+
+            two-children
+            (fn []
+              (clear-dispatch-and-settle-events!)
+              (set! trace/trace-enabled? true)
+              (rf/reg-event-fx :dispatch-settle/par-two
+                               (fn [_ _]
+                                 {:fx [[:dispatch [:dispatch-settle/chi-a]]
+                                       [:dispatch [:dispatch-settle/chi-b]]]}))
+              (rf/reg-event-db :dispatch-settle/chi-a
+                               (fn [db _] (assoc db :chi-a true)))
+              (rf/reg-event-db :dispatch-settle/chi-b
+                               (fn [db _] (assoc db :chi-b true)))
+              (.then (router/dispatch-and-settle [:dispatch-settle/par-two] opts)
+                     (fn [raw]
+                       (let [result   (js-settle-result->clj raw)
+                             root     (:root-epoch result)
+                             cascaded (:cascaded-epochs result)]
+                         (is (true? (:ok? result)))
+                         (is (= ["par-two"] (:event root)))
+                         (is (= #{["chi-a"] ["chi-b"]}
+                                (set (map :event cascaded))))
+                         (is (every? #(= (:dispatch-id root) (:parent-dispatch-id %))
+                                     cascaded)
+                             "both child epochs are attributed to the root dispatch-id"))
+                       (clear-dispatch-and-settle-events!))))
+
+            unrelated-in-flight
+            (fn []
+              (clear-dispatch-and-settle-events!)
+              (set! trace/trace-enabled? true)
+              (rf/reg-event-fx :dispatch-settle/par-filter
+                               (fn [_ _]
+                                 {:fx [[:dispatch [:dispatch-settle/chi-filter]]]}))
+              (rf/reg-event-db :dispatch-settle/chi-filter
+                               (fn [db _] (assoc db :chi-filter true)))
+              (rf/reg-event-db :dispatch-settle/other
+                               (fn [db _] (assoc db :other true)))
+              (let [p (router/dispatch-and-settle [:dispatch-settle/par-filter] opts)]
+                (rf/dispatch [:dispatch-settle/other])
+                (.then p
+                       (fn [raw]
+                         (let [result          (js-settle-result->clj raw)
+                               cascaded-events (set (map :event (:cascaded-epochs result)))]
+                           (is (true? (:ok? result)))
+                           (is (= ["par-filter"] (-> result :root-epoch :event)))
+                           (is (= #{["chi-filter"]} cascaded-events)
+                               "only the child with matching parent-dispatch-id is reported")
+                           (is (not (contains? cascaded-events ["other"]))
+                               "unrelated in-flight dispatch is excluded from cascaded-epochs"))
+                         (clear-dispatch-and-settle-events!)))))]
+        (-> (single-level)
+            (.then (fn [_] (two-children)))
+            (.then (fn [_] (unrelated-in-flight)))
+            (.then (fn []
+                     (set! trace/trace-enabled? false)
+                     (done)))
+            (.catch (fn [err]
+                      (is false (str "dispatch-and-settle-cascades failed: " err))
+                      (clear-dispatch-and-settle-events!)
+                      (set! trace/trace-enabled? false)
+                      (done))))))))
 
 (deftest register-epoch-cb-warns-when-tracing-disabled
   (testing "register-epoch-cb warns instead of registering when tracing is disabled"
