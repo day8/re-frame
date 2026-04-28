@@ -28,6 +28,7 @@
    *handling* trips re-frame's reentry check and the child silently
    never runs. Tracked separately under rf-9wg."
   (:require [clojure.test    :refer [deftest is testing use-fixtures]]
+            [re-frame.alpha  :as rfa]
             [re-frame.core   :as rf]
             [re-frame.events :as events]
             [re-frame.router :as router]
@@ -307,6 +308,49 @@
           "the dispatch-with smoke event ran before fixture cleanup")
       (is (nil? (rf/dispatch-sync-with [:core-public/override-smoke] {}))
           "dispatch-sync-with is callable through re-frame.core and matches dispatch-sync's nil return"))))
+
+;; ---------------------------------------------------------------------------
+;; re-frame.alpha public re-exports
+;; ---------------------------------------------------------------------------
+
+(deftest alpha-public-dispatch-with-symbols-are-callable
+  (testing "the public dispatch-with APIs are reachable from re-frame.alpha"
+    (let [async-delivered (promise)
+          rfa-ns          (get (ns-aliases 're-frame.trace-delivery-test) 'rfa)]
+      (rf/reg-event-db :alpha-public/override-smoke
+                       (fn [db _]
+                         (deliver async-delivered :handled)
+                         (assoc db :alpha-override-smoke true)))
+      (is (= #'rfa/dispatch-with
+             (some-> rfa-ns (ns-resolve 'dispatch-with)))
+          "alias target resolve catches dispatch-with symbol drift")
+      (is (= #'rfa/dispatch-sync-with
+             (some-> rfa-ns (ns-resolve 'dispatch-sync-with)))
+          "alias target resolve catches dispatch-sync-with symbol drift")
+      (is (= #'rfa/dispatch-and-settle
+             (some-> rfa-ns (ns-resolve 'dispatch-and-settle)))
+          "alias target resolve catches dispatch-and-settle symbol drift")
+      (is (nil? (rfa/dispatch-with [:alpha-public/override-smoke] {}))
+          "dispatch-with is callable through re-frame.alpha and matches dispatch's nil return")
+      (is (= :handled (deref async-delivered 1000 ::timed-out))
+          "the dispatch-with smoke event ran before fixture cleanup")
+      (is (nil? (rfa/dispatch-sync-with [:alpha-public/override-smoke] {}))
+          "dispatch-sync-with is callable through re-frame.alpha and matches dispatch-sync's nil return"))))
+
+(deftest alpha-dispatch-and-settle-default-arity-resolves-ok
+  (testing "the public re-frame.alpha/dispatch-and-settle 1-arg arity
+            delegates to the router implementation and returns the
+            documented result shape"
+    (rf/reg-event-db :alpha-public/settle-default
+                     (fn [db _] (assoc db :settled true)))
+    (let [p      (rfa/dispatch-and-settle [:alpha-public/settle-default])
+          result (deref p 6000 ::timed-out)]
+      (is (not= ::timed-out result)
+          "promise resolved before the public arity's default 5s timeout")
+      (is (true? (:ok? result)))
+      (is (= [:alpha-public/settle-default] (-> result :root-epoch :event)))
+      (is (vector? (:cascaded-epochs result)))
+      (is (empty? (:cascaded-epochs result))))))
 
 ;; ---------------------------------------------------------------------------
 ;; *dispatch-id-capture* — deterministic root-id capture

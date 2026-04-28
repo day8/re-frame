@@ -688,6 +688,18 @@ The only required key is `:id`. All others have a default value:
   [event]
   (router/dispatch-sync event))
 
+(defn ^:api-docs/hide dispatch-with
+  [event overrides]
+  (router/dispatch (vary-meta event assoc :re-frame/fx-overrides overrides)))
+
+(defn ^:api-docs/hide dispatch-sync-with
+  [event overrides]
+  (router/dispatch-sync (vary-meta event assoc :re-frame/fx-overrides overrides)))
+
+(defn ^:api-docs/hide dispatch-and-settle
+  ([event]      (router/dispatch-and-settle event))
+  ([event opts] (router/dispatch-and-settle event opts)))
+
 (defn ^:api-docs/hide reg-event-db
   ([id handler]
    (reg-event-db id nil handler))
