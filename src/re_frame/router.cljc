@@ -314,54 +314,33 @@
 ;; CLJS returns a JS Promise; CLJ returns a `clojure.core/promise`
 ;; (deref-able). Avoids a core.async dep on either platform.
 ;;
-;; Q1 — settle definition (operator default): SYNC chain only for
-;; v1. The cascade tracker waits for all children whose
-;; `:parent-dispatch-id` chains back to root via the dispatch-id
-;; correlation. In-flight async effects (`:http-xhrio` returning
-;; later, etc.) are NOT awaited — their downstream `:dispatch`
-;; callbacks fire whenever, and don't appear in this cascade.
-;; Apps that want to await async effects should compose:
-;; `(dispatch-and-settle [:my/event])` then a separate await on
-;; whatever signal their async fx fires.
+;; Settles when the synchronous cascade quietens — the root event
+;; plus every descendant whose `:parent-dispatch-id` chains back to
+;; it, recursive through any depth. In-flight async effects
+;; (`:http-xhrio`, etc.) are NOT awaited; their downstream
+;; `:dispatch` callbacks fire later and are invisible to the
+;; cascade. Callers that need to await async fx should compose a
+;; separate await on whatever signal those fx fire.
 ;;
-;; Q2 — cascade depth (operator default): RECURSIVE through any
-;; depth. Children of children of children all chain back via
-;; :parent-dispatch-id (propagated across
-;; queue-pushes via event metadata). The tracker walks the full
-;; subtree.
+;; With tracing enabled the settle signal rides on
+;; `register-epoch-cb` deliveries — attribution is exact, by
+;; dispatch-id chain. With tracing disabled (CLJ tests, CLJS
+;; production, any caller that hasn't opted in) the tracker falls
+;; back to `add-post-event-callback`, which fires on every handled
+;; event regardless of tracing; attribution there is by-window —
+;; every event handled inside `:settle-window-ms` counts. That is
+;; correct for the common test/REPL case where dispatch-and-settle
+;; is the sole dispatcher, and conflated by concurrent unrelated
+;; dispatches in the same isolate. Fallback-path epochs carry only
+;; `{:event ev}`; trace-only fields (`:dispatch-id`,
+;; `:app-db/before`, ...) are absent.
 ;;
-;; Q3 — promise vs channel (operator default): JS Promise on CLJS,
-;; clojure.core/promise on CLJ. No core.async dep.
+;; LIMITATIONS
 ;;
-;; Q4 — leverage register-epoch-cb: WHEN TRACING IS ON. The settle
-;; signal rides on epoch-cb deliveries; we don't reimplement the
-;; assembly pipeline. Each cb delivery brings 0+ cascade epochs; once
-;; a quiet period (`:settle-window-ms`) elapses without a cascade
-;; epoch landing, we resolve.
-;;
-;; When `(trace/is-trace-enabled?)` is false, the epoch-cb pipeline is
-;; inert (no `:event` traces are recorded, so no epochs assemble). To
-;; keep dispatch-and-settle working in the default-off configuration
-;; (CLJ tests, CLJS production, any caller that hasn't opted into
-;; tracing), the settle signal falls back to
-;; `add-post-event-callback` on `event-queue`, which fires on every
-;; handled event regardless of tracing. Cascade attribution on this
-;; fallback path is by-window — every event handled inside the settle
-;; window counts. This is less precise than the dispatch-id-chain
-;; matching used on the trace-on path (concurrent unrelated dispatches
-;; in the same JVM/JS isolate would be conflated), but it's the
-;; correct behaviour for the common test/REPL case where
-;; dispatch-and-settle is the sole dispatcher. The result records on
-;; the fallback path carry only `{:event ev}` per epoch — the
-;; trace-derived `:dispatch-id`, `:app-db/before`, etc. are
-;; trace-machinery-only.
-;;
-;; LIMITATIONS (documented for the v1 release)
-;;
-;; - Root must be dispatched via dispatch-sync internally so its
-;;   :dispatch-id is captured deterministically. dispatch-and-settle
-;;   inherits the dispatch-sync constraint — calling it from inside
-;;   an event handler is forbidden (re-frame.events/handle errors).
+;; - Root is dispatched via dispatch-sync internally so its
+;;   :dispatch-id is captured deterministically. Calling
+;;   dispatch-and-settle from inside an event handler is forbidden
+;;   (re-frame.events/handle errors).
 ;; - Async effects with no synchronous re-frame trace footprint
 ;;   are invisible to the cascade tracker.
 ;; - The quiet-period heuristic can mis-classify a cascade as

@@ -22,45 +22,32 @@
 ;;
 ;; Per-dispatch override channel for fx handlers, carried as event
 ;; metadata rather than via a dynamic binding or a mutated global
-;; registrar (Q4 "Approach 2" — no global state, no restore dance).
-;; `dispatch-with` (in re-frame.core) tags the event with
-;; `:re-frame/fx-overrides` metadata; `do-fx-after` reads it from the
-;; current event's meta and consults the map BEFORE falling back to
+;; registrar — no global state, no restore dance. `dispatch-with`
+;; (in re-frame.core) tags the event with `:re-frame/fx-overrides`
+;; metadata; `do-fx-after` reads it from the current event's meta
+;; and consults the map BEFORE falling back to
 ;; `(get-handler kind ...)`.
 ;;
-;; CASCADE PROPAGATION (Q1)
+;; Overrides propagate transitively through any depth of
+;; `:fx [:dispatch ...]` cascade. `re-frame.router/dispatch` reads
+;; the currently-handling event's `:re-frame/fx-overrides` meta (via
+;; `re-frame.events/*handling*`) and tags queued children with the
+;; same map — parallel to `:re-frame/parent-dispatch-id`.
 ;;
-;; `re-frame.router/dispatch` reads the CURRENTLY-handling event's
-;; `:re-frame/fx-overrides` meta (via `re-frame.events/*handling*`)
-;; and tags queued children with the same map — parallel to the
-;; `:re-frame/parent-dispatch-id` propagation. Result:
-;; overrides propagate transitively through any depth of
-;; `:fx [:dispatch ...]` cascade.
+;; The override expires when the event finishes processing, by
+;; virtue of the meta going out of scope with the event itself —
+;; no try/finally needed. Two overlapping `dispatch-with` calls each
+;; carry their own meta, no cross-contamination.
 ;;
-;; ASYNC EFFECT CONTRACT (Q2)
-;;
-;; A stub for an async effect (`:http-xhrio`, `:dispatch-later`,
-;; etc.) must mirror the contract the real handler exposes: same
-;; return shape, same callback / promise lifecycle. The override
-;; mechanism is purely a handler swap — no automatic
-;; "stub returns success-map" wrapping. Stub authors are
-;; responsible for matching the contract their callers depend on.
-;;
-;; INTEGRATION (Q3)
+;; A stub for an async effect (`:http-xhrio`, `:dispatch-later`)
+;; must mirror the real handler's return shape and callback /
+;; promise lifecycle. The override mechanism is purely a handler
+;; swap; no automatic "stub returns success-map" wrapping.
 ;;
 ;; Lives in re-frame.core (not re-frame.test) — runtime capability
 ;; for REPL exploration, dev-mode probing, agent-driven experiment
 ;; loops. Test utilities may use it without gating on a test
 ;; environment.
-;;
-;; RESTORE GUARANTEES (Q4)
-;;
-;; The override rides the event's metadata into `do-fx-after`,
-;; which reads it once per dispatch. Two overlapping
-;; `dispatch-with` calls each carry their own meta — no
-;; cross-contamination. The override "expires" when the event
-;; finishes processing, by virtue of the meta going out of scope
-;; with the event itself. No try/finally needed.
 
 ;; The override map is propagated TWO ways:
 ;;

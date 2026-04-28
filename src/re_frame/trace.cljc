@@ -228,41 +228,27 @@
 ;;    :app-db/after       {...}
 ;;    :coeffects          {...}
 ;;    :effects            {...}
-;;    :interceptors       [<map> ...] ; full records (Q2: callers can project to ids)
+;;    :interceptors       [<map> ...] ; full records (callers can project to ids)
 ;;    :sub-runs           [<trace> ...] ; child traces by op-type
 ;;    :sub-creates        [<trace> ...]
 ;;    :event-handler      <trace>
 ;;    :event-do-fx        <trace>
 ;;    :start :end :duration            ; from the :event trace}
 ;;
-;; CASCADE SEMANTICS (Q1)
+;; Fires once per `:event` trace — one cb invocation per
+;; `re-frame.events/handle` entry, whether the event was user-fired
+;; or queued by a parent's `:fx [:dispatch ...]`. Each record carries
+;; its own `:dispatch-id` and `:parent-dispatch-id`; consumers that
+;; want a tree-shaped view of "user-fired event + all chained
+;; children" build it post-delivery by walking parent-id pointers.
 ;;
-;; Fires once per `:event` trace — i.e. one cb invocation per
-;; `re-frame.events/handle` entry, regardless of whether the event
-;; was user-fired or queued by a parent's `:fx [:dispatch ...]`.
-;; Each record carries its own `:dispatch-id` and
-;; `:parent-dispatch-id`; consumers that want a tree-shaped view
-;; of "this user-fired event + all chained children" build it
-;; post-delivery by walking parent-id pointers. A tree-shaped
-;; primitive that WAITED for the cascade to settle would force
-;; this layer to depend on async-settle infrastructure (tracked
-;; separately under `dispatch-and-settle`); decoupling them
-;; keeps register-epoch-cb deliverable today.
-;;
-;; ASSEMBLY LOCATION (Q4)
-;;
-;; Lives in `re-frame.trace` alongside `register-trace-cb` —
-;; same author, same delivery mechanism (the existing
-;; debounce-based `schedule-debounce`), same gating
-;; (`is-trace-enabled?` + `trace-enabled?`).
-;;
-;; ASYNC SETTLE (Q3)
-;;
-;; Out of scope. A separate `register-epoch-settled-cb` would fire
-;; after all cascaded dispatches resolve (HTTP returned, etc.) —
-;; tracked separately under `dispatch-and-settle`. Today the cb fires
-;; per :event trace as the trace stream is delivered (debounced
-;; ~50ms after the last trace).
+;; Lives alongside `register-trace-cb` — same gating
+;; (`is-trace-enabled?` + `trace-enabled?`), same delivery
+;; (debounce-based `schedule-debounce`, ~50ms after the last trace).
+;; The cascade-settled signal that some consumers want (after async
+;; fx like HTTP return) lives separately under `dispatch-and-settle`
+;; — keeping the two decoupled is what lets register-epoch-cb ship
+;; without depending on async-settle infrastructure.
 
 (def epoch-cbs (atom {}))
 
