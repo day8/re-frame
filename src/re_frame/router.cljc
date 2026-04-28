@@ -470,23 +470,38 @@
   {:cascade-ids      #{}
    :seen-ids         #{}
    :cascade-epochs   []
-   :pending-children {}})
+   :pending-children {}
+   :unmatched-epochs []})
 
-(defn- accept-trace-epoch [root-id changed? state epoch]
+(defn- trace-epoch-accepted? [root-id state epoch]
   (let [id        (:dispatch-id epoch)
         parent-id (:parent-dispatch-id epoch)]
-    (if (and (not (contains? (:seen-ids state) id))
-             (or (= root-id id)
-                 (contains? (:cascade-ids state) parent-id)))
-      (let [expected (count (immediate-dispatch-events (:effects epoch)))]
-        (reset! changed? true)
-        (cond-> (-> state
-                    (update :seen-ids conj id)
-                    (update :pending-children decrement-pending-child parent-id)
-                    (update :cascade-epochs conj epoch))
-          (pos? expected) (update-in [:pending-children id] (fnil + 0) expected)
-          true            (update :cascade-ids conj id)))
-      state)))
+    (and (not (contains? (:seen-ids state) id))
+         (or (= root-id id)
+             (contains? (:cascade-ids state) parent-id)))))
+
+(defn- accept-trace-epoch [state epoch]
+  (let [id        (:dispatch-id epoch)
+        parent-id (:parent-dispatch-id epoch)
+        expected  (count (immediate-dispatch-events (:effects epoch)))]
+    (cond-> (-> state
+                (update :seen-ids conj id)
+                (update :pending-children decrement-pending-child parent-id)
+                (update :cascade-epochs conj epoch))
+      (pos? expected) (update-in [:pending-children id] (fnil + 0) expected)
+      true            (update :cascade-ids conj id))))
+
+(defn- process-trace-epochs [root-id changed? state epochs]
+  (loop [state (update state :unmatched-epochs into epochs)]
+    (let [{accepted true pending false}
+          (group-by #(trace-epoch-accepted? root-id state %)
+                    (:unmatched-epochs state))]
+      (if (seq accepted)
+        (do
+          (reset! changed? true)
+          (recur (assoc (reduce accept-trace-epoch state accepted)
+                        :unmatched-epochs (vec pending))))
+        (assoc state :unmatched-epochs (vec pending))))))
 
 (deftype TraceTracker [cb-key root-id state]
   ICascadeTracker
@@ -501,11 +516,7 @@
                              (fn [epochs]
                                (let [changed? (atom false)]
                                  (swap! state
-                                        (fn [s]
-                                          (reduce (fn [s e]
-                                                    (accept-trace-epoch @root-id changed? s e))
-                                                  s
-                                                  epochs)))
+                                        #(process-trace-epochs @root-id changed? % epochs))
                                  (when @changed?
                                    (on-cascade))))))
   (-unregister! [_]
