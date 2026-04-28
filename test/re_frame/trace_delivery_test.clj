@@ -122,6 +122,60 @@
             (trace/remove-epoch-cb cb-key)))))))
 
 ;; ---------------------------------------------------------------------------
+;; :input-query-vs — subscription input provenance
+;; ---------------------------------------------------------------------------
+
+(defn- capture-traces [f]
+  (let [received (atom [])
+        cb-key   (UUID/randomUUID)]
+    (try
+      (trace/register-trace-cb cb-key (fn [batch] (swap! received into batch)))
+      (f)
+      @received
+      (finally
+        (trace/remove-trace-cb cb-key)))))
+
+(deftest sub-run-trace-emits-input-query-vs
+  (testing "a single-input subscription emits the input subscription query-v"
+    (with-tracing-on
+      (rf/reg-sub :input-qvs/leaf (fn [db _] (:leaf db)))
+      (rf/reg-sub :input-qvs/derived
+                  (fn [_ _] (rf/subscribe [:input-qvs/leaf]))
+                  (fn [leaf _] leaf))
+      (let [traces  (capture-traces #(deref (rf/subscribe [:input-qvs/derived])))
+            sub-run (first (filter #(and (= :sub/run (:op-type %))
+                                         (= [:input-qvs/derived]
+                                            (-> % :tags :query-v)))
+                                   traces))]
+        (is (= [[:input-qvs/leaf]]
+               (-> sub-run :tags :input-query-vs)))
+        (is (= (count (-> sub-run :tags :input-signals))
+               (count (-> sub-run :tags :input-query-vs)))
+            ":input-query-vs stays aligned with :input-signals"))))
+
+  (testing "multi-input subscriptions preserve input order"
+    (with-tracing-on
+      (rf/reg-sub :input-qvs/a (fn [db _] (:a db)))
+      (rf/reg-sub :input-qvs/b (fn [db _] (:b db)))
+      (rf/reg-sub :input-qvs/c (fn [db _] (:c db)))
+      (rf/reg-sub :input-qvs/multi
+                  (fn [_ _]
+                    [(rf/subscribe [:input-qvs/a])
+                     (rf/subscribe [:input-qvs/b])
+                     (rf/subscribe [:input-qvs/c])])
+                  (fn [values _] values))
+      (let [traces  (capture-traces #(deref (rf/subscribe [:input-qvs/multi])))
+            sub-run (first (filter #(and (= :sub/run (:op-type %))
+                                         (= [:input-qvs/multi]
+                                            (-> % :tags :query-v)))
+                                   traces))]
+        (is (= [[:input-qvs/a] [:input-qvs/b] [:input-qvs/c]]
+               (-> sub-run :tags :input-query-vs)))
+        (is (= (count (-> sub-run :tags :input-signals))
+               (count (-> sub-run :tags :input-query-vs)))
+            ":input-query-vs stays aligned with :input-signals")))))
+
+;; ---------------------------------------------------------------------------
 ;; dispatch-and-settle — end-to-end {:ok? true} branch on JVM
 ;; ---------------------------------------------------------------------------
 
