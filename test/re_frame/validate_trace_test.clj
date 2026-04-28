@@ -17,7 +17,8 @@
    dispatch + 1-arity-subscribe + 2-arity-dynv-subscribe paths, filter
    the captured warns for the `re-frame.trace:` prefix, and assert
    empty."
-  (:require [clojure.test     :refer [deftest is testing use-fixtures]]
+  (:require [clojure.set      :as set]
+            [clojure.test     :refer [deftest is testing use-fixtures]]
             [re-frame.core    :as rf]
             [re-frame.interop :as interop]
             [re-frame.loggers :as loggers]
@@ -42,6 +43,20 @@
         (restore)))))
 
 (use-fixtures :each fixture-clean-state)
+
+(deftest tag-schema-covers-re-frame-emitted-op-types
+  (testing "tag-schema includes every op-type emitted by re-frame core"
+    (let [emitted #{:event
+                    :event/handler
+                    :event/do-fx
+                    :sync
+                    :re-frame.router/fsm-trigger
+                    :flow
+                    :sub/create
+                    :sub/run
+                    :sub/dispose
+                    :reagent/quiescent}]
+      (is (empty? (set/difference emitted (set (keys trace/tag-schema))))))))
 
 (defmacro ^:private with-tracing-on
   "Flip `trace-enabled?` true for the body and restore on exit. The

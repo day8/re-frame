@@ -83,6 +83,22 @@
     :optional #{:dispatch-id :parent-dispatch-id}
     :doc "do-fx interceptor — fires registered fx handlers for the event's :effects map."}
 
+   :sync
+   {:required #{}
+    :optional #{}
+    :doc "Synchronous dispatch boundary — emitted after dispatch-sync runs the event and post-event callbacks."}
+
+   :re-frame.router/fsm-trigger
+   {:required #{}
+    :optional #{:current-state :new-state}
+    :doc "Router queue state-machine transition. Fires as the dispatch queue changes state."}
+
+   :flow
+   {:required #{:flow-spec :transition :db :new-db :id->in :id->old-in
+                :id->live-in :id->old-live-in}
+    :optional #{}
+    :doc "Flow alpha transition — emitted when a registered flow updates its derived output."}
+
    :sub/create
    {:required #{:query-v}
     :optional #{:cached? :reaction
@@ -125,12 +141,7 @@
    :reagent/quiescent
    {:required #{}
     :optional #{}
-    :doc "Reagent render queue is idle — emitted by re-frame-10x's batching patch."}
-
-   :sync
-   {:required #{}
-    :optional #{}
-    :doc "End-of-`dispatch-sync` marker."}})
+    :doc "Reagent render queue is idle — emitted by re-frame-10x's batching patch."}})
 
 (defonce ^:private validate-trace?-flag (atom false))
 
