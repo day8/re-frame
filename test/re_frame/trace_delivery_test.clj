@@ -499,6 +499,11 @@
             :event-tag rewrite."
     (is (contains? (get-in trace/tag-schema [:event :optional]) :event/original)))
 
+  (testing ":event :optional does not contain the stale pre-trace
+            coeffect key :original-event. Trace consumers should read
+            the emitted :event/original tag instead."
+    (is (not (contains? (get-in trace/tag-schema [:event :optional]) :original-event))))
+
   (testing ":event :optional contains :dispatch-id — auto-generated
             UUID per `re-frame.events/handle` call. Documented as the
             cascade-correlation channel third-party tooling reads."

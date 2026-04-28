@@ -50,7 +50,7 @@
   {:event
    {:required #{:event}
     :optional #{:app-db-before :app-db-after :coeffects :effects
-                :interceptors :original-event
+                :interceptors
                 ;; Auto-generated dispatch correlation.
                 :dispatch-id :parent-dispatch-id
                 ;; Dispatched event vector pinned at `handle` entry,
