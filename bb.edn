@@ -5,7 +5,7 @@
  :tasks
  {:requires    ([day8.dev :as dev])
   test         (do (clojure "-M:test" "compile" "browser-test")
-                   (clojure "-X:test"))
+                   (apply clojure "-X:test" *command-line-args*))
   test-jvm     (clojure "-X:jvm-test")
   watch-test   (clojure "-M:test watch browser-test")
   watch-docs   (clojure "-M:docs" "watch" "docs")
