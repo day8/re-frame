@@ -414,7 +414,63 @@
     "Snapshot of collected records for the timeout result's
      `:captured-epochs` key."))
 
-(deftype TraceTracker [cb-key root-id cascade-ids cascade-epochs]
+(defn- immediate-dispatch-events
+  "Return event vectors synchronously queued by re-frame's built-in
+   dispatch effects. `:dispatch-later` is intentionally excluded: it is
+   timer-driven async work, not part of dispatch-and-settle's synchronous
+   cascade contract."
+  [effects]
+  (letfn [(event-vectors [effect-key effect-value]
+            (case effect-key
+              :dispatch
+              (if (vector? effect-value) [effect-value] [])
+
+              :dispatch-n
+              (if (sequential? effect-value)
+                (filterv vector? (remove nil? effect-value))
+                [])
+
+              :fx
+              (if (sequential? effect-value)
+                (mapcat (fn [[k v]] (event-vectors k v))
+                        (remove nil? effect-value))
+                [])
+
+              []))]
+    (vec (mapcat (fn [[k v]] (event-vectors k v)) effects))))
+
+(defn- decrement-pending-child [pending parent-id]
+  (if parent-id
+    (let [n (get pending parent-id 0)]
+      (cond
+        (> n 1) (assoc pending parent-id (dec n))
+        (= n 1) (dissoc pending parent-id)
+        :else pending))
+    pending))
+
+(defn- trace-tracker-initial-state []
+  {:cascade-ids      #{}
+   :seen-ids         #{}
+   :cascade-epochs   []
+   :pending-children {}})
+
+(defn- accept-trace-epoch [root-id changed? state epoch]
+  (let [id        (:dispatch-id epoch)
+        parent-id (:parent-dispatch-id epoch)]
+    (if (and (not (contains? (:seen-ids state) id))
+             (or (= root-id id)
+                 (contains? (:cascade-ids state) parent-id)))
+      (let [expected (count (immediate-dispatch-events (:effects epoch)))]
+        (reset! changed? true)
+        (cond-> (-> state
+                    (update :seen-ids conj id)
+                    (update :pending-children decrement-pending-child parent-id)
+                    (update :cascade-epochs conj epoch))
+          (pos? expected) (update-in [:pending-children id] (fnil + 0) expected)
+          true            (update :cascade-ids conj id)))
+      state)))
+
+(deftype TraceTracker [cb-key root-id state]
   ICascadeTracker
   (-register! [_ on-cascade]
     ;; Match by dispatch-id only: (a) :dispatch-id == root-id (root, set
@@ -425,35 +481,36 @@
     ;; epoch to the other.
     (trace/register-epoch-cb cb-key
                              (fn [epochs]
-                               (let [our (filter (fn [e]
-                                                   (or (= @root-id (:dispatch-id e))
-                                                       (contains? @cascade-ids (:parent-dispatch-id e))))
-                                                 epochs)]
-                                 (when (seq our)
-                                   (doseq [e our]
-                                     (swap! cascade-ids conj (:dispatch-id e))
-                                     (swap! cascade-epochs conj e))
+                               (let [changed? (atom false)]
+                                 (swap! state
+                                        (fn [s]
+                                          (reduce (fn [s e]
+                                                    (accept-trace-epoch @root-id changed? s e))
+                                                  s
+                                                  epochs)))
+                                 (when @changed?
                                    (on-cascade))))))
   (-unregister! [_]
     (trace/remove-epoch-cb cb-key)
-    (reset! cascade-epochs [])
-    (reset! cascade-ids #{})
+    (reset! state (trace-tracker-initial-state))
     (reset! root-id nil))
   (-after-root-dispatched! [_]
     ;; Seed cascade-ids with the root so descendants whose
     ;; :parent-dispatch-id == root match on first cb fire. Idempotent
     ;; with the cb's own swap! when the root epoch arrives.
     (when-let [id @root-id]
-      (swap! cascade-ids conj id)))
+      (swap! state update :cascade-ids conj id)))
   (-result [_ include-cascaded?]
     (when (some? @root-id)
-      (let [eps      @cascade-epochs
+      (let [{:keys [cascade-epochs pending-children]} @state
+            eps      cascade-epochs
             root-ep  (some #(when (= @root-id (:dispatch-id %)) %) eps)
             cascaded (filterv #(not= @root-id (:dispatch-id %)) eps)]
-        (cond-> {:ok?        true
-                 :root-epoch root-ep}
-          include-cascaded? (assoc :cascaded-epochs cascaded)))))
-  (-captured [_] @cascade-epochs))
+        (when (and root-ep (empty? pending-children))
+          (cond-> {:ok?        true
+                   :root-epoch root-ep}
+            include-cascaded? (assoc :cascaded-epochs cascaded))))))
+  (-captured [_] (:cascade-epochs @state)))
 
 (deftype PostEventTracker [post-cb-key cascade-events]
   ICascadeTracker
@@ -489,7 +546,7 @@
 
 (defn- mk-tracker [root-id]
   (if (trace/is-trace-enabled?)
-    (->TraceTracker (new-uuid) root-id (atom #{}) (atom []))
+    (->TraceTracker (new-uuid) root-id (atom (trace-tracker-initial-state)))
     (->PostEventTracker (new-uuid) (atom []))))
 
 (defn dispatch-and-settle

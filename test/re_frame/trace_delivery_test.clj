@@ -23,6 +23,7 @@
             [re-frame.alpha  :as rfa]
             [re-frame.core   :as rf]
             [re-frame.events :as events]
+            [re-frame.interop :as interop]
             [re-frame.router :as router]
             [re-frame.trace  :as trace])
   (:import [java.util UUID]))
@@ -174,6 +175,36 @@
           (is (= root-id (:parent-dispatch-id child-epoch))
               "the child remains attributed to the dispatch-sync root")
           (is (true? @child-ran?)))))))
+
+(deftest dispatch-and-settle-waits-for-declared-fx-dispatch-children-on-jvm
+  (testing "trace-on dispatch-and-settle does not resolve from the
+            root-only quiet window when the root epoch's effects declare
+            a child dispatch that has not reached the queue yet"
+    (with-tracing-on
+      (let [child-ran? (atom false)]
+        (rf/reg-event-fx :trace-cascade-delayed/parent
+                         (fn [_ _]
+                           {:fx [[:dispatch [:trace-cascade-delayed/child]]]}))
+        (rf/reg-event-db :trace-cascade-delayed/child
+                         (fn [db _]
+                           (reset! child-ran? true)
+                           db))
+        (with-redefs [interop/next-tick
+                      (fn [f]
+                        (interop/set-timeout! f 75)
+                        nil)]
+          (let [p           (router/dispatch-and-settle
+                             [:trace-cascade-delayed/parent]
+                             {:timeout-ms       1000
+                              :settle-window-ms 10})
+                result      (deref p 1500 ::timed-out)
+                root-id     (-> result :root-epoch :dispatch-id)
+                child-epoch (first (:cascaded-epochs result))]
+            (is (not= ::timed-out result))
+            (is (true? (:ok? result)))
+            (is (= [:trace-cascade-delayed/child] (:event child-epoch)))
+            (is (= root-id (:parent-dispatch-id child-epoch)))
+            (is (true? @child-ran?))))))))
 
 (deftest dispatch-and-settle-resolves-ok-with-tracing-off
   (testing "dispatch-and-settle resolves {:ok? true} when tracing is
