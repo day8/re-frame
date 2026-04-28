@@ -1,7 +1,9 @@
 (ns re-frame.router-test
   (:require [clojure.test :refer :all]
             [re-frame.core :as rf]
-            [re-frame.db :as db]))
+            [re-frame.db :as db]
+            [re-frame.events :as events]
+            [re-frame.router :as router]))
 
 (defn fixture-re-frame
   [f]
@@ -58,3 +60,20 @@
       (is (true? (::child-ran? @db/app-db)))
       (finally
         (rf/remove-post-event-callback cb-key)))))
+
+(deftest dispatch-metadata-tagging-is-best-effort
+  (testing "parent dispatch ids are attached when the event supports metadata"
+    (let [event [::child]]
+      (binding [events/*current-dispatch-id* ::parent-id]
+        (is (= ::parent-id
+               (-> (#'router/tag-with-parent-dispatch-id event)
+                   meta
+                   :re-frame/parent-dispatch-id))))))
+
+  (testing "non-IObj event values pass through instead of crashing"
+    (binding [events/*current-dispatch-id* ::parent-id
+              events/*handling* (vary-meta [::parent] assoc
+                                           :re-frame/fx-overrides
+                                           {::fx identity})]
+      (is (= ::opaque (#'router/tag-with-parent-dispatch-id ::opaque)))
+      (is (= ::opaque (#'router/tag-with-fx-overrides ::opaque))))))

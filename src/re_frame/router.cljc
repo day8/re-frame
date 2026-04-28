@@ -244,9 +244,18 @@
 ;; (and re-frame already forbids dispatch-sync from within an event
 ;; handler anyway, so the parent-chain across dispatch-sync is
 ;; structurally a non-issue).
+(defn- can-carry-meta? [x]
+  #?(:clj  (instance? clojure.lang.IObj x)
+     :cljs (satisfies? IWithMeta x)))
+
+(defn- assoc-meta-if-possible [event k v]
+  (if (can-carry-meta? event)
+    (vary-meta event assoc k v)
+    event))
+
 (defn- tag-with-parent-dispatch-id [event]
   (if-let [parent-id events/*current-dispatch-id*]
-    (vary-meta event assoc :re-frame/parent-dispatch-id parent-id)
+    (assoc-meta-if-possible event :re-frame/parent-dispatch-id parent-id)
     event))
 
 ;; Fx-overrides cascade propagation. When a child is
@@ -261,7 +270,7 @@
   (if (some-> event meta :re-frame/fx-overrides)
     event
     (if-let [overrides (some-> events/*handling* meta :re-frame/fx-overrides)]
-      (vary-meta event assoc :re-frame/fx-overrides overrides)
+      (assoc-meta-if-possible event :re-frame/fx-overrides overrides)
       event)))
 
 (defn dispatch
