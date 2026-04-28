@@ -384,6 +384,17 @@
       (is (nil? (rf/dispatch-sync-with [:core-public/override-smoke] {}))
           "dispatch-sync-with is callable through re-frame.core and matches dispatch-sync's nil return"))))
 
+(deftest core-tracing-re-exports-match-source-of-truth
+  (testing "the public tracing APIs are reachable from re-frame.core"
+    (is (= trace/tag-schema rf/tag-schema))
+    (is (identical? trace/validate-trace? rf/validate-trace?))
+    (is (identical? trace/set-validate-trace! rf/set-validate-trace!))
+    (is (identical? trace/register-trace-cb rf/register-trace-cb))
+    (is (identical? trace/remove-trace-cb rf/remove-trace-cb))
+    (is (identical? trace/register-epoch-cb rf/register-epoch-cb))
+    (is (identical? trace/remove-epoch-cb rf/remove-epoch-cb))
+    (is (identical? trace/assemble-epochs rf/assemble-epochs))))
+
 ;; ---------------------------------------------------------------------------
 ;; re-frame.alpha public re-exports
 ;; ---------------------------------------------------------------------------

@@ -30,6 +30,7 @@
                                                            fx-handler->interceptor
                                                            ctx-handler->interceptor]]
    [re-frame.flow.alpha       :as flow]
+   [re-frame.trace            :as trace]
    [re-frame.utils            :as utils]
    [clojure.set               :as set]))
 
@@ -1266,6 +1267,40 @@
   {:api-docs/heading "Logging"}
   [level & args]
   (apply loggers/console level args))
+
+;; -- tracing ----------------------------------------------------------------
+
+(def ^{:api-docs/heading "Tracing"} tag-schema
+  "Schema for `:tags` of every op-type re-frame emits."
+  trace/tag-schema)
+
+(def ^{:api-docs/heading "Tracing"} validate-trace?
+  "True iff runtime trace-tag validation is enabled."
+  trace/validate-trace?)
+
+(def ^{:api-docs/heading "Tracing"} set-validate-trace!
+  "Enable or disable runtime trace-tag validation."
+  trace/set-validate-trace!)
+
+(def ^{:api-docs/heading "Tracing"} register-trace-cb
+  "Register a callback that receives each batch of finished traces."
+  trace/register-trace-cb)
+
+(def ^{:api-docs/heading "Tracing"} remove-trace-cb
+  "Remove a trace callback by key."
+  trace/remove-trace-cb)
+
+(def ^{:api-docs/heading "Tracing"} register-epoch-cb
+  "Register a callback that receives assembled epoch records."
+  trace/register-epoch-cb)
+
+(def ^{:api-docs/heading "Tracing"} remove-epoch-cb
+  "Remove an epoch callback by key."
+  trace/remove-epoch-cb)
+
+(def ^{:api-docs/heading "Tracing"} assemble-epochs
+  "Partition a finished trace batch into event epoch records."
+  trace/assemble-epochs)
 
 ;; -- unit testing ------------------------------------------------------------
 
