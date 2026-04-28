@@ -230,6 +230,72 @@
               "the child remains attributed to the dispatch-sync root")
           (is (true? @child-ran?)))))))
 
+(deftest dispatch-and-settle-timeout-result-on-jvm
+  (testing "the overall timeout can win and returns the documented timeout shape"
+    (with-tracing-on
+      (rf/reg-event-db :trace-timeout/slow
+                       (fn [db _]
+                         (Thread/sleep 30)
+                         (assoc db :slow true)))
+      (let [p      (router/dispatch-and-settle [:trace-timeout/slow]
+                                               {:timeout-ms       1
+                                                :settle-window-ms 250})
+            result (deref p 1000 ::timed-out)]
+        (is (not= ::timed-out result))
+        (is (= {:ok? false
+                :reason :timeout
+                :event [:trace-timeout/slow]}
+               (select-keys result [:ok? :reason :event])))
+        (is (vector? (:captured-epochs result)))))))
+
+(deftest dispatch-and-settle-can-omit-cascaded-epochs-on-jvm
+  (testing ":include-cascaded? false elides the cascaded epoch key"
+    (with-tracing-on
+      (rf/reg-event-fx :trace-cascade-filter/parent
+                       (fn [_ _]
+                         {:fx [[:dispatch [:trace-cascade-filter/child]]]}))
+      (rf/reg-event-db :trace-cascade-filter/child
+                       (fn [db _] (assoc db :child true)))
+      (let [p      (router/dispatch-and-settle
+                    [:trace-cascade-filter/parent]
+                    {:timeout-ms        2000
+                     :settle-window-ms  100
+                     :include-cascaded? false})
+            result (deref p 3000 ::timed-out)]
+        (is (not= ::timed-out result))
+        (is (true? (:ok? result)))
+        (is (= [:trace-cascade-filter/parent] (-> result :root-epoch :event)))
+        (is (not (contains? result :cascaded-epochs)))))))
+
+(deftest dispatch-and-settle-captures-multi-level-cascade-on-jvm
+  (testing "descendant events are captured recursively through parent dispatch ids"
+    (with-tracing-on
+      (rf/reg-event-fx :trace-multilevel/parent
+                       (fn [_ _]
+                         {:fx [[:dispatch [:trace-multilevel/child]]]}))
+      (rf/reg-event-fx :trace-multilevel/child
+                       (fn [_ _]
+                         {:fx [[:dispatch [:trace-multilevel/grandchild]]]}))
+      (rf/reg-event-db :trace-multilevel/grandchild
+                       (fn [db _] (assoc db :grandchild true)))
+      (let [p          (router/dispatch-and-settle
+                        [:trace-multilevel/parent]
+                        {:timeout-ms       2000
+                         :settle-window-ms 100})
+            result     (deref p 3000 ::timed-out)
+            cascaded   (:cascaded-epochs result)
+            by-event   (into {} (map (juxt :event identity) cascaded))
+            child      (get by-event [:trace-multilevel/child])
+            grandchild (get by-event [:trace-multilevel/grandchild])]
+        (is (not= ::timed-out result))
+        (is (true? (:ok? result)))
+        (is (= #{[:trace-multilevel/child] [:trace-multilevel/grandchild]}
+               (set (map :event cascaded))))
+        (is (= (-> result :root-epoch :dispatch-id)
+               (:parent-dispatch-id child)))
+        (is (= (:dispatch-id child)
+               (:parent-dispatch-id grandchild)))))))
+
 (deftest dispatch-and-settle-waits-for-declared-fx-dispatch-children-on-jvm
   (testing "trace-on dispatch-and-settle does not resolve from the
             root-only quiet window when the root epoch's effects declare
