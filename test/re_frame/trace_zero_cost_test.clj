@@ -72,9 +72,8 @@
                test is meaningful, not always-zero by accident)"))))))
 
 (deftest current-dispatch-id-stays-nil-when-tracing-off
-  (testing "*current-dispatch-id* is NOT bound by handle when tracing is
-            off — confirms the binding (an extra thread-local push) is
-            elided on the fast path, not just the UUID"
+  (testing "*current-dispatch-id* stays nil when tracing is off — no
+            dispatch id is generated or propagated on the fast path"
     (let [observed (atom ::unset)]
       (rf/reg-event-db
         :trace-zero/peek-dispatch-id
@@ -84,8 +83,7 @@
       (alter-var-root #'trace/trace-enabled? (constantly false))
       (rf/dispatch-sync [:trace-zero/peek-dispatch-id])
       (is (nil? @observed)
-          "tracing off → handle takes the binding-free branch, so the
-           handler sees the var at its default nil — no parent-id
+          "tracing off → handle binds no dispatch id, so no parent-id
            propagation work happens at all")
 
       (with-tracing-on

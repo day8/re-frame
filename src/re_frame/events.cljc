@@ -47,10 +47,9 @@
 
 (def ^:dynamic *handling* nil)    ;; remember what event we are currently handling
 
-;; Auto-generated dispatch correlation. Bound by `handle`, but only
-;; when tracing is enabled (the binding, the parent-id read, and the
-;; UUID allocation are all gated on `(trace/is-trace-enabled?)` so
-;; production builds with tracing off pay zero per-dispatch cost).
+;; Auto-generated dispatch correlation. `handle` allocates and publishes
+;; a real id only when tracing is enabled (the parent-id read and UUID
+;; allocation are gated on `(trace/is-trace-enabled?)`).
 ;; Downstream `:fx [:dispatch ...]` calls read this var to tag their
 ;; queued events with `:re-frame/parent-dispatch-id` metadata; the
 ;; child's `handle` reads the meta back and emits
@@ -82,32 +81,23 @@
     (if-let [interceptors (get-handler kind event-id true)]
       (if *handling*
         (console :error "re-frame: while handling" *handling* ", dispatch-sync was called for" event-v ". You can't call dispatch-sync within an event handler.")
-        ;; Two paths so the trace-off path matches pre-trace-id cost
-        ;; exactly: no UUID allocation, no `*current-dispatch-id*`
-        ;; binding, no meta-read for parent-id. The `with-trace` and
-        ;; `merge-trace!` macros also short-circuit on
-        ;; `is-trace-enabled?`, so they're elided from the disabled
-        ;; branch entirely rather than re-checked at runtime.
-        (if (trace/is-trace-enabled?)
-          (let [parent-id   (:re-frame/parent-dispatch-id (meta event-v))
-                dispatch-id (new-dispatch-id)]
-            (when *dispatch-id-capture*
-              (reset! *dispatch-id-capture* dispatch-id))
-            (binding [*handling*           event-v
-                      *current-dispatch-id* dispatch-id]
-              (trace/with-trace {:operation event-id
-                                 :op-type   kind
-                                 ;; `:event/original` is the dispatched vector frozen at handle entry —
-                                 ;; pinned here once so consumers can recover what the user dispatched
-                                 ;; even if a future refactor lets interceptors rewrite the `:event` tag.
-                                 :tags      (cond-> {:event          event-v
-                                                     :event/original event-v
-                                                     :dispatch-id    dispatch-id}
-                                              parent-id (assoc :parent-dispatch-id parent-id))}
-                (trace/merge-trace! {:tags {:app-db-before @app-db}})
-                (interceptor/execute event-v interceptors)
-                (trace/merge-trace! {:tags {:app-db-after @app-db}}))))
-          (binding [*handling* event-v]
-            (interceptor/execute event-v interceptors)))))))
-
-
+        (let [dispatch-id (when (trace/is-trace-enabled?)
+                            (new-dispatch-id))
+              parent-id   (when dispatch-id
+                            (:re-frame/parent-dispatch-id (meta event-v)))]
+          (when (and dispatch-id *dispatch-id-capture*)
+            (reset! *dispatch-id-capture* dispatch-id))
+          (binding [*handling*           event-v
+                    *current-dispatch-id* dispatch-id]
+            (trace/with-trace {:operation event-id
+                               :op-type   kind
+                               ;; `:event/original` is the dispatched vector frozen at handle entry —
+                               ;; pinned here once so consumers can recover what the user dispatched
+                               ;; even if a future refactor lets interceptors rewrite the `:event` tag.
+                               :tags      (cond-> {:event event-v}
+                                            dispatch-id (assoc :event/original event-v
+                                                               :dispatch-id    dispatch-id)
+                                            parent-id (assoc :parent-dispatch-id parent-id))}
+              (trace/merge-trace! {:tags {:app-db-before @app-db}})
+              (interceptor/execute event-v interceptors)
+              (trace/merge-trace! {:tags {:app-db-after @app-db}}))))))))

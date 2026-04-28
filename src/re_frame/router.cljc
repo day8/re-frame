@@ -263,8 +263,8 @@
     (throw (ex-info "re-frame: you called \"dispatch\" without an event vector." {}))
     ;; Both helpers only do useful work when there is a parent context
     ;; to propagate FROM. `tag-with-parent-dispatch-id` reads
-    ;; `*current-dispatch-id*`, only bound by `events/handle` when
-    ;; tracing is enabled. `tag-with-fx-overrides` reads the
+    ;; `*current-dispatch-id*`, which `events/handle` sets to a real id
+    ;; only when tracing is enabled. `tag-with-fx-overrides` reads the
     ;; currently-handling event's `:re-frame/fx-overrides` meta, set
     ;; only by `dispatch-with`. Production hot path: tracing off + no
     ;; dispatch-with in use → both `cond->` clauses are false and
@@ -558,9 +558,9 @@
      ;; into `root-id` BEFORE the trace fires the cb. Children queued
      ;; via :fx [:dispatch ...] fire later via the router queue;
      ;; epoch-cb picks them up as they land and matches them by
-     ;; :parent-dispatch-id ∈ cascade-ids. With tracing off, the
-     ;; binding is inert (handle's trace-off branch doesn't read
-     ;; *dispatch-id-capture*) and root-id stays nil — the
+     ;; :parent-dispatch-id ∈ cascade-ids. With tracing off, `handle`
+     ;; leaves root-id nil because it only reads *dispatch-id-capture*
+     ;; when tracing is enabled; the
      ;; post-event-callback fallback path picks up events by ordering
      ;; instead.
      (binding [events/*dispatch-id-capture* root-id]
