@@ -58,6 +58,15 @@
                     :reagent/quiescent}]
       (is (empty? (set/difference emitted (set (keys trace/tag-schema))))))))
 
+(deftest tag-schema-entries-have-contract-shape
+  (testing "each tag-schema entry carries the documented keys"
+    (doseq [[op schema] trace/tag-schema]
+      (is (set/subset? #{:required :optional :doc} (set (keys schema)))
+          (str op " schema should expose required, optional, and doc"))
+      (is (set? (:required schema)) (str op " :required should be a set"))
+      (is (set? (:optional schema)) (str op " :optional should be a set"))
+      (is (string? (:doc schema)) (str op " :doc should be a string")))))
+
 (defmacro ^:private with-tracing-on
   "Flip `trace-enabled?` true for the body and restore on exit. The
    var is also reset by the fixture, but flipping it locally keeps
@@ -72,7 +81,7 @@
 
 (deftest finish-trace-end-and-duration-use-same-clock-read
   (testing "finished traces keep :end, :start, and :duration self-consistent"
-    (let [ticks (atom [100 125 999])]
+    (let [ticks (atom (concat [100 125] (repeat 125)))]
       (with-redefs [interop/now (fn []
                                   (let [n (first @ticks)]
                                     (swap! ticks rest)
@@ -108,6 +117,39 @@
          (finally
            (loggers/set-loggers! {:warn prev-warn})))
     @warns))
+
+(deftest set-validate-trace-flips-predicate
+  (testing "set-validate-trace! controls validate-trace?"
+    (trace/set-validate-trace! false)
+    (is (false? (trace/validate-trace?)))
+    (trace/set-validate-trace! true)
+    (is (true? (trace/validate-trace?)))))
+
+(deftest check-trace-against-schema-warning-paths
+  (testing "missing required tag keys warn"
+    (let [warns (capture-trace-warns
+                 #(trace/check-trace-against-schema
+                   {:id 1 :op-type :event :tags {}}))]
+      (is (= 1 (count warns)))
+      (is (re-find #"missing required tag key" (first warns)))
+      (is (re-find #":event" (first warns)))))
+
+  (testing "unknown tag keys warn"
+    (let [warns (capture-trace-warns
+                 #(trace/check-trace-against-schema
+                   {:id      2
+                    :op-type :event
+                    :tags    {:event [:ok]
+                              :totally-bogus 42}}))]
+      (is (= 1 (count warns)))
+      (is (re-find #"unknown tag key" (first warns)))
+      (is (re-find #":totally-bogus" (first warns)))))
+
+  (testing "unknown op-types stay unconstrained"
+    (let [warns (capture-trace-warns
+                 #(trace/check-trace-against-schema
+                   {:id 3 :op-type :third-party/whatever :tags {}}))]
+      (is (empty? warns)))))
 
 (deftest no-warns-on-event-and-event-handler
   (testing "set-validate-trace! true does not warn on the :event,
