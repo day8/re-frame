@@ -50,6 +50,17 @@
       (is (= 1 (count (filter #(= '(build-query) %) flat)))
           "subscribe expansion contains the user query expression once"))))
 
+(deftest subscribe-macroexpand-supports-dynv-arity
+  (testing "(rf.m/subscribe query-v dynv) targets the two-arity core subscribe call"
+    (let [expanded (macroexpand-1 '(re-frame.macros/subscribe [:foo] [dyn]))
+          flat     (tree-seq coll? seq expanded)]
+      (is (some #(= 're-frame.core/subscribe %) flat)
+          "expanded form targets re-frame.core/subscribe")
+      (is (some #(= '[dyn] %) flat)
+          "expanded form passes dynv through")
+      (is (some #(= :re-frame/source %) flat)
+          "expanded form still attaches source metadata to query-v"))))
+
 (deftest subscribe-attaches-source-meta-on-query-v
   (testing "rf.m/subscribe attaches {:file :line} as :re-frame/source on the query-v stored against the reaction"
     (rf/reg-sub :sub-test/echo (fn [db _] (:val db)))
@@ -68,6 +79,19 @@
           ":file points at this test file")
       (is (pos-int? (-> m :re-frame/source :line))
           ":line is a positive int from (:line (meta &form))"))))
+
+(deftest subscribe-dynv-arity-attaches-source-meta-on-query-v
+  (testing "rf.m/subscribe mirrors core's [query-v dynv] arity while meta-tagging query-v"
+    (rf/reg-sub :sub-test/dyn (fn [_db _ dynv] (first dynv)))
+    (let [dyn-arg (atom 42)
+          r       (rf.m/subscribe [:sub-test/dyn] [dyn-arg])
+          qv      (subs/query-v-for-reaction r)
+          m       (meta qv)]
+      (is (= 42 @r)
+          "dynv is passed through to re-frame.core/subscribe")
+      (is (= [:sub-test/dyn] qv))
+      (is (some? (:re-frame/source m))
+          "source metadata is attached to query-v for the dynv arity"))))
 
 (deftest subscribe-different-call-sites-have-different-line-numbers
   (testing "two adjacent rf.m/subscribe calls (different sub-ids to avoid cache reuse) capture distinct :line meta"

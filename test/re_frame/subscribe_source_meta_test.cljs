@@ -44,6 +44,20 @@
         (is (pos-int? (-> m :re-frame/source :line))
             ":line is a positive int from (:line (meta &form))")))))
 
+(deftest subscribe-dynv-arity-attaches-source-meta-on-query-v
+  (testing "rf.m/subscribe supports core's [query-v dynv] arity in CLJS dev mode"
+    (with-redefs [interop/debug-enabled? true]
+      (rf/reg-sub :sub-test/dyn (fn [_ _ dynv] (first dynv)))
+      (let [dyn-arg (atom 42)
+            r       (rf.m/subscribe [:sub-test/dyn] [dyn-arg])
+            qv      (subs/query-v-for-reaction r)
+            m       (meta qv)]
+        (is (= 42 @r)
+            "dynv is passed through to re-frame.core/subscribe")
+        (is (= [:sub-test/dyn] qv))
+        (is (some? (:re-frame/source m))
+            "source metadata is attached to query-v for the dynv arity")))))
+
 (deftest subscribe-different-call-sites-have-different-line-numbers
   (testing "two rf.m/subscribe calls with different query ids capture distinct line metadata"
     (with-redefs [interop/debug-enabled? true]

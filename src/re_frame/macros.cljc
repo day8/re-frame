@@ -74,23 +74,24 @@
 ;; public macros are 1-line delegates.
 
 #?(:clj
-(defn- -source-meta-call
-  "Emit the macroexpansion form for a single-arg call to `target-sym`,
-   wrapping the user-supplied value `v` with `:re-frame/source` meta in
-   DEBUG builds and passing it through bare in non-DEBUG builds. The
-   user expression is bound once so both branches reuse the same value
-   without re-evaluating side-effects.
+   (defn- -source-meta-call
+     "Emit the macroexpansion form for a call to `target-sym`, wrapping
+      the first user-supplied value `v` with `:re-frame/source` meta in
+      DEBUG builds and passing it through bare in non-DEBUG builds. The
+      first user expression is bound once so both branches reuse the same
+      value without re-evaluating side-effects. Any extra args are passed
+      through unchanged after that first value.
 
    `target-sym` is the fully-qualified `re-frame.core/...` symbol;
    `form`/`env` are the calling macro's `&form` / `&env`. `(:file env)`
    is preferred over `*file*` so CLJS expansion picks up the call-site
    file from `&env` rather than the macros.cljc compile context."
-  [target-sym v form env]
-  (let [src-meta {:file (or (:file env) *file*) :line (:line (meta form))}]
-    `(let [v# ~v]
-       (if re-frame.interop/debug-enabled?
-         (~target-sym (vary-meta v# assoc :re-frame/source ~src-meta))
-         (~target-sym v#))))))
+     [target-sym v form env & args]
+     (let [src-meta {:file (or (:file env) *file*) :line (:line (meta form))}]
+       `(let [v# ~v]
+          (if re-frame.interop/debug-enabled?
+            (~target-sym (vary-meta v# assoc :re-frame/source ~src-meta) ~@args)
+            (~target-sym v# ~@args))))))
 
 (defmacro dispatch
   "Like `re-frame.core/dispatch` but in DEBUG builds attaches
@@ -131,10 +132,16 @@
    Recover the meta'd query-v via `re-frame.subs/query-v-for-reaction`
    on the returned reaction, or read the `:input-query-vs` tag on
    `:sub/run` traces (downstream consumers see the meta'd vectors
-   without any new emission)."
-  {:arglists '([query-v])}
-  [query-v]
-  (-source-meta-call 're-frame.core/subscribe query-v &form &env))
+   without any new emission).
+
+   Supports the same arities as `re-frame.core/subscribe`, including
+   the historical `[query-v dynv]` form. Source metadata is attached
+   to `query-v`; `dynv` is passed through unchanged."
+  {:arglists '([query-v] [query-v dynv])}
+  ([query-v]
+   (-source-meta-call 're-frame.core/subscribe query-v &form &env))
+  ([query-v dynv]
+   (-source-meta-call 're-frame.core/subscribe query-v &form &env dynv)))
 
 ;; -- registration macros -----------------------------------------------------
 ;;
