@@ -15,7 +15,7 @@
 ;; De-duplicate subscriptions. If two or more equal subscriptions
 ;; are concurrently active, we want only one handler running.
 ;; Two subscriptions are "equal" if their query vectors test "=".
-(def query->reaction (atom {}))
+(defonce query->reaction (atom {}))
 
 (defn clear-subscription-cache!
   "calls `on-dispose` for each cached item,
@@ -56,7 +56,7 @@
 ;; flag mid-session can't leak entries that landed while it was on);
 ;; see "Why did X re-render?" recipes in re-frame-pair
 ;; docs/inspirations doc.
-(def ^:private reaction-id->query-v (atom {}))
+(defonce ^:private reaction-id->query-v (atom {}))
 
 ;; Reverse lookup keyed by the reaction object itself. Powers
 ;; `query-v-for-reaction`: tools holding a reaction (e.g. devtools
@@ -72,7 +72,7 @@
 ;; under debug. The dispose-side dissoc remains unconditional so
 ;; flipping the flag mid-session (CLJ tests use with-redefs) can't
 ;; strand entries that landed while it was on.
-(def ^:private reaction->query-v (atom {}))
+(defonce ^:private reaction->query-v (atom {}))
 
 (defn cache-and-return
   "cache the reaction r"

@@ -12,7 +12,7 @@
 ;; This atom contains a register of all handlers.
 ;; Contains a two layer map, keyed first by `kind` (of handler), and then `id` of handler.
 ;; Leaf nodes are handlers.
-(def kind->id->handler  (atom {}))
+(defonce kind->id->handler  (atom {}))
 
 (defn get-handler
 

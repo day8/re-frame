@@ -9,7 +9,7 @@
             #?(:clj [net.cgrand.macrovich :as macros])
             #?(:cljs [goog.functions])))
 
-(def id (atom 0))
+(defonce id (atom 0))
 (def ^:dynamic *current-trace* nil)
 
 (defn reset-tracing! []
@@ -132,7 +132,7 @@
     :optional #{}
     :doc "End-of-`dispatch-sync` marker."}})
 
-(def ^:private validate-trace?-flag (atom false))
+(defonce ^:private validate-trace?-flag (atom false))
 
 (defn validate-trace?
   "True iff the runtime should validate that emitted trace `:tags`
@@ -192,7 +192,7 @@
   []
   trace-enabled?)
 
-(def trace-cbs (atom {}))
+(defonce trace-cbs (atom {}))
 (defonce traces (atom []))
 (defonce next-delivery (atom 0))
 
@@ -250,7 +250,7 @@
 ;; — keeping the two decoupled is what lets register-epoch-cb ship
 ;; without depending on async-settle infrastructure.
 
-(def epoch-cbs (atom {}))
+(defonce epoch-cbs (atom {}))
 
 (defn register-epoch-cb
   "Register a callback `f` keyed on `key` that will receive a
