@@ -151,6 +151,30 @@
 ;; boot, so the runtime cost matters less than for dispatch/subscribe,
 ;; but the gate keeps the symmetry and lets builds that flip
 ;; `goog.DEBUG=false` shed the `-decorate-handler-meta!` call entirely.
+;;
+;; The three reg-event-XX macros share their expansion shape — only
+;; the target symbol and the trailing arguments differ — so
+;; `-reg-event-call` builds the form once and the public macros are
+;; 1-line delegates per arity. `reg-sub` and `reg-fx` keep their own
+;; bodies because their handler-kind tag (`:sub` / `:fx`) and call
+;; shape differ from the event family.
+
+#?(:clj
+(defn- -reg-event-call
+  "Emit the macroexpansion form for a reg-event-XX macro that captures
+   call-site source metadata on the registered interceptor chain in
+   DEBUG builds. `target-sym` is the fully-qualified
+   `re-frame.core/reg-event-XX` symbol; `id` is the registration id;
+   `args` is the vector of trailing user-supplied args to splice into
+   the call (handler, or interceptors + handler). `form` / `env` are
+   the calling macro's `&form` / `&env`."
+  [target-sym id args form env]
+  (let [src-meta {:file (or (:file env) *file*) :line (:line (meta form))}]
+    `(if re-frame.interop/debug-enabled?
+       (let [r# (~target-sym ~id ~@args)]
+         (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
+         r#)
+       (~target-sym ~id ~@args)))))
 
 (defmacro reg-event-db
   "Like `re-frame.core/reg-event-db` but in DEBUG builds attaches
@@ -164,19 +188,9 @@
    `re-frame.core/reg-event-db` instead."
   {:arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-db ~id ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-db ~id ~handler))))
+   (-reg-event-call 're-frame.core/reg-event-db id [handler] &form &env))
   ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-db ~id ~interceptors ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-db ~id ~interceptors ~handler)))))
+   (-reg-event-call 're-frame.core/reg-event-db id [interceptors handler] &form &env)))
 
 (defmacro reg-event-fx
   "Like `re-frame.core/reg-event-fx` but attaches call-site source
@@ -184,19 +198,9 @@
    `reg-event-db` for the rationale and DCE behaviour."
   {:arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-fx ~id ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-fx ~id ~handler))))
+   (-reg-event-call 're-frame.core/reg-event-fx id [handler] &form &env))
   ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-fx ~id ~interceptors ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-fx ~id ~interceptors ~handler)))))
+   (-reg-event-call 're-frame.core/reg-event-fx id [interceptors handler] &form &env)))
 
 (defmacro reg-event-ctx
   "Like `re-frame.core/reg-event-ctx` but attaches call-site source
@@ -204,19 +208,9 @@
    `reg-event-db` for the rationale and DCE behaviour."
   {:arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-ctx ~id ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-ctx ~id ~handler))))
+   (-reg-event-call 're-frame.core/reg-event-ctx id [handler] &form &env))
   ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-ctx ~id ~interceptors ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-ctx ~id ~interceptors ~handler)))))
+   (-reg-event-call 're-frame.core/reg-event-ctx id [interceptors handler] &form &env)))
 
 (defmacro reg-sub
   "Like `re-frame.core/reg-sub` but in DEBUG builds attaches

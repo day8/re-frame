@@ -179,6 +179,20 @@
 
 ;; -- Events ------------------------------------------------------------------
 
+;; The three `reg-event-XX` defns share a fixed interceptor chain and
+;; differ only in the trailing handler shape — db / fx / ctx. The
+;; chain lives in `-reg-event` and each public defn delegates with the
+;; matching `XX-handler->interceptor` constructor.
+
+(defn- -reg-event
+  [id interceptors handler->interceptor handler]
+  (events/register id [cofx/inject-db
+                       fx/do-fx
+                       flow/interceptor
+                       std-interceptors/inject-global-interceptors
+                       interceptors
+                       (handler->interceptor handler)]))
+
 (defn reg-event-db
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
   an `interceptors` chain:
@@ -211,12 +225,7 @@
   ([id handler]
    (reg-event-db id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db
-                        fx/do-fx
-                        flow/interceptor
-                        std-interceptors/inject-global-interceptors
-                        interceptors
-                        (db-handler->interceptor handler)])))
+   (-reg-event id interceptors db-handler->interceptor handler)))
 
 (defn reg-event-fx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
@@ -250,12 +259,7 @@
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db
-                        fx/do-fx
-                        flow/interceptor
-                        std-interceptors/inject-global-interceptors
-                        interceptors
-                        (fx-handler->interceptor handler)])))
+   (-reg-event id interceptors fx-handler->interceptor handler)))
 
 (defn reg-event-ctx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
@@ -286,12 +290,7 @@
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db
-                        fx/do-fx
-                        flow/interceptor
-                        std-interceptors/inject-global-interceptors
-                        interceptors
-                        (ctx-handler->interceptor handler)])))
+   (-reg-event id interceptors ctx-handler->interceptor handler)))
 
 (defn clear-event
   "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`).
