@@ -111,7 +111,10 @@
 
 (defn ns->markdown
   [m]
-  (format "%s# %s\n\n" markdown-styles (:name m)))
+  (let [name-str (format "%s# %s\n\n" markdown-styles (:name m))]
+    (if-let [doc (:doc m)]
+      (str name-str doc "\n\n")
+      name-str)))
 
 (defn arglist->markdown
   [arglist]

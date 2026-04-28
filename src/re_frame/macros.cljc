@@ -128,7 +128,8 @@
 
    See also: `dispatch-sync` and `subscribe` in this namespace for
    the other DEBUG source-meta call-site macros."
-  {:arglists '([event-v])}
+  {:arglists '([event-v])
+   :api-docs/heading "Dispatching Events"}
   [event-v]
   (-source-meta-call 're-frame.core/dispatch event-v &form &env))
 
@@ -139,7 +140,8 @@
 
    See also: `dispatch` and `subscribe` in this namespace for the
    other DEBUG source-meta call-site macros."
-  {:arglists '([event-v])}
+  {:arglists '([event-v])
+   :api-docs/heading "Dispatching Events"}
   [event-v]
   (-source-meta-call 're-frame.core/dispatch-sync event-v &form &env))
 
@@ -166,7 +168,8 @@
 
    See also: `dispatch` and `dispatch-sync` in this namespace for the
    event-dispatch source-meta call-site macros."
-  {:arglists '([query-v] [query-v dynv])}
+  {:arglists '([query-v] [query-v dynv])
+   :api-docs/heading "Subscriptions"}
   ([query-v]
    (-source-meta-call 're-frame.core/subscribe query-v &form &env))
   ([query-v dynv]
@@ -222,7 +225,8 @@
    Macro — cannot be used in value position. For
    `(map reg-event-db ...)` or `(apply reg-event-db ...)` use
    `re-frame.core/reg-event-db` instead."
-  {:arglists '([id handler] [id interceptors handler])}
+  {:arglists '([id handler] [id interceptors handler])
+   :api-docs/heading "Event Handlers"}
   ([id handler]
    (-reg-event-call 're-frame.core/reg-event-db id [handler] &form &env))
   ([id interceptors handler]
@@ -232,7 +236,8 @@
   "Like `re-frame.core/reg-event-fx` but attaches call-site source
    meta on the registered interceptor chain in DEBUG builds. See
    `reg-event-db` for the rationale and DCE behaviour."
-  {:arglists '([id handler] [id interceptors handler])}
+  {:arglists '([id handler] [id interceptors handler])
+   :api-docs/heading "Event Handlers"}
   ([id handler]
    (-reg-event-call 're-frame.core/reg-event-fx id [handler] &form &env))
   ([id interceptors handler]
@@ -242,7 +247,8 @@
   "Like `re-frame.core/reg-event-ctx` but attaches call-site source
    meta on the registered interceptor chain in DEBUG builds. See
    `reg-event-db` for the rationale and DCE behaviour."
-  {:arglists '([id handler] [id interceptors handler])}
+  {:arglists '([id handler] [id interceptors handler])
+   :api-docs/heading "Event Handlers"}
   ([id handler]
    (-reg-event-call 're-frame.core/reg-event-ctx id [handler] &form &env))
   ([id interceptors handler]
@@ -261,7 +267,8 @@
 
    See also: `reg-event-db` and `reg-fx` in this namespace for the
    sibling registration source-meta macros."
-  {:arglists '([query-id & args])}
+  {:arglists '([query-id & args])
+   :api-docs/heading "Subscriptions"}
   [query-id & args]
   (let [src-meta (-source-meta &form &env)]
     `(if re-frame.interop/debug-enabled?
@@ -279,7 +286,8 @@
 
    See also: `reg-event-db` and `reg-sub` in this namespace for the
    sibling registration source-meta macros."
-  {:arglists '([id handler])}
+  {:arglists '([id handler])
+   :api-docs/heading "Effect Handlers"}
   [id handler]
   (let [src-meta (-source-meta &form &env)]
     `(if re-frame.interop/debug-enabled?
