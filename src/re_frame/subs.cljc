@@ -65,7 +65,13 @@
 ;; `reaction-id->query-v` (keyed by reagent-id, used internally for
 ;; trace tags) because reagent-id is hash-derived on both runtimes
 ;; and not guaranteed collision-free; a public lookup needs object
-;; identity to be reliable.
+;; identity to be reliable. Insert is gated on
+;; `re-frame.interop/debug-enabled?` so :advanced CLJS production
+;; builds (where goog.DEBUG=false) elide the swap! entirely — the
+;; lookup's only callers are devtools, which by definition run
+;; under debug. The dispose-side dissoc remains unconditional so
+;; flipping the flag mid-session (CLJ tests use with-redefs) can't
+;; strand entries that landed while it was on.
 (def ^:private reaction->query-v (atom {}))
 
 (defn cache-and-return
@@ -93,7 +99,8 @@
                              (assoc query-cache k r)))
     (when (trace/is-trace-enabled?)
       (swap! reaction-id->query-v assoc rid query-v))
-    (swap! reaction->query-v assoc r query-v)
+    (when debug-enabled?
+      (swap! reaction->query-v assoc r query-v))
     (trace/merge-trace! {:tags {:reaction rid}})
     r)) ;; return the actual reaction
 
@@ -111,7 +118,12 @@
 
    Useful for devtools and diagnostic recipes that hold a reaction
    value and need to recover its provenance — \"which sub produced
-   this?\" — without walking trace history."
+   this?\" — without walking trace history.
+
+   In :advanced CLJS production builds (`goog.DEBUG=false`) the
+   backing reverse map is never populated, so this fn always returns
+   nil. Devtools that call it run under debug, where the map IS
+   populated. CLJ remains hardcoded debug-on."
   [reaction]
   (get @reaction->query-v reaction))
 

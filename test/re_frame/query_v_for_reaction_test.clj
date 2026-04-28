@@ -7,10 +7,11 @@
    by reaction object identity (not reagent-id) because reagent-id is
    hash-derived on both runtimes; a public lookup that must never
    conflate two distinct reactions needs identity-based keying."
-  (:require [clojure.test  :refer [deftest is testing use-fixtures]]
-            [re-frame.core :as rf]
-            [re-frame.subs :as subs]
-            [re-frame.db   :as db]))
+  (:require [clojure.test    :refer [deftest is testing use-fixtures]]
+            [re-frame.core   :as rf]
+            [re-frame.interop :as interop]
+            [re-frame.subs   :as subs]
+            [re-frame.db     :as db]))
 
 (defn fixture-clear-subs
   [f]
@@ -72,3 +73,54 @@
       (is (= (rf/query-v-for-reaction r)
              (subs/query-v-for-reaction r))
           "core re-export and subs fn agree"))))
+
+(deftest cache-and-return-skips-reverse-map-write-when-debug-disabled
+  (testing "cache-and-return MUST NOT swap! into reaction->query-v when
+            debug-enabled? is false — that reverse map exists ONLY to
+            back the public devtools lookup `query-v-for-reaction`,
+            which has no caller in :advanced CLJS production
+            (goog.DEBUG=false). Populating it on every subscribe was
+            paying a CAS-per-call cost AND growing a map across the
+            session for data nothing reads."
+    (rf/reg-sub :qvfr/echo (fn [db _] (:n db)))
+    (reset! db/app-db {:n 1})
+    (with-redefs [interop/debug-enabled? false]
+      (let [rev @#'subs/reaction->query-v]
+        (is (empty? @rev)
+            "fixture-clear-subs restored a fresh subs cache; the
+             reverse map starts empty")
+        (let [r (rf/subscribe [:qvfr/echo])]
+          (is (empty? @rev)
+              "debug off → cache-and-return skipped the reaction->query-v
+               assoc; no entry leaked into the reverse map")
+          (is (nil? (rf/query-v-for-reaction r))
+              "with the gate active, the public lookup returns nil even
+               for a reaction that subscribe just produced — devtools
+               aren't expected to run in production"))))
+    (testing "and the gate flips back on"
+      ;; Clear the subs cache so the next subscribe re-runs
+      ;; cache-and-return rather than returning the still-cached
+      ;; reaction the inner with-redefs left behind.
+      (rf/clear-subscription-cache!)
+      (let [r (rf/subscribe [:qvfr/echo])]
+        (is (= [:qvfr/echo] (rf/query-v-for-reaction r))
+            "debug on (default) → cache-and-return DID swap! into the
+             reverse map; confirms the gate isn't trivially always-off")))))
+
+(deftest dispose-cleans-up-reverse-map-even-when-debug-flips-off
+  (testing "the on-dispose dissoc on reaction->query-v MUST stay
+            unconditional — entries that landed while debug-enabled? was
+            true (CLJ default, dev REPL, with-redefs in tests) must be
+            removed regardless of the flag's current value, otherwise
+            flipping the flag mid-session strands entries permanently"
+    (rf/reg-sub :qvfr/echo (fn [db _] (:n db)))
+    (reset! db/app-db {:n 1})
+    (let [r   (rf/subscribe [:qvfr/echo])
+          rev @#'subs/reaction->query-v]
+      (is (= [:qvfr/echo] (get @rev r))
+          "subscribed under debug-enabled? true → entry present")
+      (with-redefs [interop/debug-enabled? false]
+        (rf/clear-subscription-cache!))
+      (is (nil? (get @rev r))
+          "clear-subscription-cache! invoked dispose; the dissoc ran
+           even though debug-enabled? was false at dispose time"))))
