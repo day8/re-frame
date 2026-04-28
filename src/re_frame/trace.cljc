@@ -22,8 +22,8 @@
 ;; self-labels as "Alpha quality". This var is the doc-only
 ;; contract — the canonical answer to "what keys can I rely on?".
 ;;
-;; Doc-only by default. With `validate-trace?` true (a runtime atom
-;; flag, opt-in for dev), `finish-trace` will assert that emitted
+;; Doc-only by default. With trace validation enabled (opt-in for
+;; dev), `finish-trace` will assert that emitted
 ;; tags conform — required keys present, no unknown keys without
 ;; explicit allowance. Production builds leave the flag false; the
 ;; whole machinery is gated on `(is-trace-enabled?)` which itself
@@ -143,7 +143,8 @@
     :optional #{}
     :doc "Reagent render queue is idle — emitted by re-frame-10x's batching patch."}})
 
-(defonce ^:private validate-trace?-flag (atom false))
+#?(:cljs (goog-define validate-trace-enabled? false)
+   :clj  (def ^boolean validate-trace-enabled? false))
 
 (defn validate-trace?
   "True iff the runtime should validate that emitted trace `:tags`
@@ -153,14 +154,15 @@
    `is-trace-enabled?`, but validation adds a per-trace map-walk
    that's not free)."
   []
-  @validate-trace?-flag)
+  validate-trace-enabled?)
 
 (defn set-validate-trace!
   "Enable / disable trace-tag validation. When true, every
    `finish-trace` checks `:tags` against `tag-schema` and warns via
    `console :warn` on missing required keys or unknown keys."
   [enabled?]
-  (reset! validate-trace?-flag (boolean enabled?)))
+  #?(:cljs (set! validate-trace-enabled? (boolean enabled?))
+     :clj  (alter-var-root #'validate-trace-enabled? (constantly (boolean enabled?)))))
 
 (defn check-trace-against-schema
   "Walk a finished trace map and warn about missing/unknown tag
@@ -426,7 +428,7 @@
              finished# (assoc ~trace
                               :duration duration#
                               :end end#)]
-         (when (validate-trace?)
+         (when validate-trace-enabled?
            (check-trace-against-schema finished#))
          (swap! traces conj finished#)
          (run-tracing-callbacks! end#))))
