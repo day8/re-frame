@@ -26,6 +26,7 @@ docs/**/*.pdf
 docs/**/*.mobi
 docs/api-re-frame.alpha.md
 docs/api-re-frame.core.md
+docs/api-re-frame.macros.md
 build/
 *~
 /package.json

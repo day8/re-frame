@@ -11,6 +11,64 @@ Event handlers are quite central to a re-frame app.  Only event handlers
 can update `app-db` to "step" an application "forward" from one state
 to the next.
 
+## Programmatic Diagnostics
+
+Most application debugging starts with the tools above, but devtools and
+diagnostic code often need stable data rather than formatted console output.
+
+`re-frame.macros` is an opt-in mirror of `re-frame.core` for callers that
+want source provenance. Alias it instead of `re-frame.core` in a dev build:
+
+```clj
+(ns my.app.events
+  (:require [re-frame.macros :as rf]))
+```
+
+The macro versions of `dispatch`, `dispatch-sync`, and `subscribe` attach
+call-site `{:file :line}` data as `:re-frame/source` metadata on event
+vectors and query vectors. The registration macros (`reg-event-db`,
+`reg-event-fx`, `reg-event-ctx`, `reg-sub`, and `reg-fx`) attach the same
+metadata to the registered handler. This answers questions like "why did
+this event fire?", "which view asked for this subscription?", and "where
+was this handler registered?" without relying on stack traces.
+
+Trace consumers should treat `re-frame.trace/tag-schema` as the contract for
+trace `:tags`. It lists the required and optional tags for each `:op-type`,
+including dispatch correlation tags like `:dispatch-id`,
+`:parent-dispatch-id`, the pre-interceptor `:event/original`, and
+subscription dependency tags such as `:input-query-vs`. Turn on
+`set-validate-trace!` in development or CI to warn when emitted traces drift
+from that schema.
+
+`register-trace-cb` receives raw trace batches. `register-epoch-cb` is the
+higher-level callback for tooling that wants one assembled record per event
+dispatch, with child traces grouped by dispatch lineage.
+
+For subscriptions, `live-query-vs` returns the current cache inventory: all
+currently-live query vectors. `query-v-for-reaction` is the reverse lookup
+for one reaction. Together they cover both directions of the
+cache-to-reaction relationship without making tools walk internal cache-key
+shapes.
+
+## Dry-Run Dispatch
+
+`dispatch-with` and `dispatch-sync-with` run an event with selected effect
+handlers replaced for that dispatch and its synchronous `:fx [:dispatch ...]`
+cascade. This is useful at the REPL and in tests when you want to exercise a
+real event graph while stubbing effects such as `:http-xhrio`, navigation, or
+local storage:
+
+```clj
+(re-frame.core/dispatch-with
+  [:user/save {:id 42}]
+  {:http-xhrio (fn [request]
+                 (js/console.log "stubbed request" request))})
+```
+
+The override map is carried on event metadata under `:re-frame/fx-overrides`
+and is consumed by re-frame's effect dispatch machinery. Normal app code does
+not need to read that metadata directly.
+
 
 ## The `debug` Interceptor
 
