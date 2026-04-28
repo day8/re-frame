@@ -1,8 +1,7 @@
 (ns re-frame.reagent-id-test
   "JVM-only tests that `re-frame.interop/reagent-id` produces a per-instance
-   id (not a single global constant), so the trace machinery that keys on
-   reagent-id — chiefly `re-frame.subs/reaction-id->query-v` driving the
-   :input-query-vs trace tag — can distinguish two live reactions.
+   id (not a single global constant), so trace tags that identify
+   input signals can distinguish two live reactions.
 
    Runs CLJ-side under cognitect.test-runner."
   (:require [clojure.test     :refer [deftest is testing use-fixtures]]
@@ -25,7 +24,7 @@
           b (interop/ratom 2)]
       (is (not= (interop/reagent-id a) (interop/reagent-id b))
           "object identity → distinct ids; if these collide the
-           reaction-id->query-v reverse map collapses on JVM"))))
+           :input-signals trace tag cannot distinguish JVM reactions"))))
 
 (deftest reagent-id-is-stable-per-instance
   (testing "calling reagent-id twice on the same value returns the same id"
@@ -34,56 +33,52 @@
           "stability is required for cache-and-return / on-dispose to
            map an insert and its later removal to the same key"))))
 
-(deftest reaction-id->query-v-distinguishes-live-subs
+(deftest trace-reverse-map-distinguishes-live-subs
   (testing "two live subscriptions register distinct entries in the
-            internal reaction-id->query-v map (the table backing the
-            :input-query-vs trace tag).
+            object-keyed reverse map used by the :input-query-vs trace
+            tag, even when debug tooling is disabled.
 
             Trace flag flipped on for the duration: cache-and-return
-            gates the reverse-map assoc on `(trace/is-trace-enabled?)`
-            so production builds don't pay the swap! cost. With trace
-            off the map stays empty by design — see
-            `cache-and-return-skips-reaction-id-reverse-map-when-tracing-off`
-            in trace_zero_cost_test."
+            gates the reverse-map assoc on `(or debug-enabled?
+            (trace/is-trace-enabled?))` so production builds don't pay
+            the swap! cost when neither consumer is present."
     (rf/reg-sub :rid/echo (fn [db [_ x]] [(:n db) x]))
     (reset! db/app-db {:n 1})
     (let [before trace/trace-enabled?]
       (alter-var-root #'trace/trace-enabled? (constantly true))
       (try
-        (let [r1 (rf/subscribe [:rid/echo :a])
-              r2 (rf/subscribe [:rid/echo :b])
-              id1 (interop/reagent-id r1)
-              id2 (interop/reagent-id r2)
-              rev @#'subs/reaction-id->query-v]
-          (is (not= id1 id2)
-              "the two subscribe-produced reactions must have distinct ids")
-          (is (= [:rid/echo :a] (get @rev id1))
-              "first reaction's id maps to its own query-v")
-          (is (= [:rid/echo :b] (get @rev id2))
-              "second reaction's id maps to its own query-v — pre-fix this
-               was overwritten because every JVM reaction shared id 'rx-clj'"))
+        (with-redefs [interop/debug-enabled? false]
+          (let [r1 (rf/subscribe [:rid/echo :a])
+                r2 (rf/subscribe [:rid/echo :b])
+                rev @#'subs/reaction->query-v]
+            (is (not (identical? r1 r2))
+                "the two subscribe-produced reactions are distinct objects")
+            (is (= [:rid/echo :a] (get @rev r1))
+                "first reaction object maps to its own query-v")
+            (is (= [:rid/echo :b] (get @rev r2))
+                "second reaction object maps to its own query-v")))
         (finally
           (alter-var-root #'trace/trace-enabled? (constantly before)))))))
 
-(deftest disposed-reaction-drops-from-reaction-id-reverse-map
+(deftest disposed-reaction-drops-from-trace-reverse-map
   (testing "after dispose, the reaction's entry is removed from
-            reaction-id->query-v — without this the trace-only reverse
-            map would grow unbounded across the app's lifetime even
-            with tracing enabled"
+            the reverse map — without this the trace-populated lookup
+            would grow unbounded across the app's lifetime even with
+            debug tooling disabled"
     (rf/reg-sub :rid/leaf (fn [db _] (:n db)))
     (reset! db/app-db {:n 1})
     (let [before trace/trace-enabled?]
       (alter-var-root #'trace/trace-enabled? (constantly true))
       (try
-        (let [r   (rf/subscribe [:rid/leaf])
-              id  (interop/reagent-id r)
-              rev @#'subs/reaction-id->query-v]
-          (is (= [:rid/leaf] (get @rev id))
-              "subscribed → entry present in reaction-id->query-v")
-          (rf/clear-subscription-cache!)
-          (is (nil? (get @rev id))
-              "clear-subscription-cache! invokes on-dispose which
-               dissocs the entry"))
+        (with-redefs [interop/debug-enabled? false]
+          (let [r   (rf/subscribe [:rid/leaf])
+                rev @#'subs/reaction->query-v]
+            (is (= [:rid/leaf] (get @rev r))
+                "subscribed → entry present in reaction->query-v")
+            (rf/clear-subscription-cache!)
+            (is (nil? (get @rev r))
+                "clear-subscription-cache! invokes on-dispose which
+                 dissocs the entry")))
         (finally
           (alter-var-root #'trace/trace-enabled? (constantly before)))))))
 

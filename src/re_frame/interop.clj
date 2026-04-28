@@ -119,11 +119,10 @@
 
 (defn reagent-id
   "A stable per-instance id for a reactive value, used as a trace tag
-  and as a key in `re-frame.subs/reaction-id->query-v`. Mirrors the
-  CLJS implementation, which prefixes a type tag onto a hash; on JVM
-  there is no Reagent, so we use `System/identityHashCode` — stable
-  for the lifetime of the object, with the same hash-collision floor
-  as the CLJS path."
+  for reactive values. Mirrors the CLJS implementation, which prefixes
+  a type tag onto a hash; on JVM there is no Reagent, so we use
+  `System/identityHashCode` — stable for the lifetime of the object,
+  with the same hash-collision floor as the CLJS path."
   [reactive-val]
   (str "rx-clj-" (System/identityHashCode reactive-val)))
 

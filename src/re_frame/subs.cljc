@@ -43,36 +43,33 @@
     :re-frame/lifecycle :reactive}
    dynv])
 
-;; Reverse lookup powering :input-query-vs on
-;; :sub/run traces. `query->reaction` is keyed by cache-key (which
-;; embeds query-v); going the other way (reagent-id → query-v) was
-;; previously not possible without scanning the whole map. Keeping
-;; this parallel atom lets `deref-input-signals` emit the query-vs
-;; of input signals at zero per-sub-run cost (one O(1) lookup per
-;; signal). Sync'd alongside `query->reaction` in cache-and-return
-;; (insert, gated on `(trace/is-trace-enabled?)` so the swap! is
-;; elided in production builds where the data is never read) and
-;; the on-dispose cb (remove, unconditional so flipping the trace
-;; flag mid-session can't leak entries that landed while it was on);
-;; see "Why did X re-render?" recipes in re-frame-pair
-;; docs/inspirations doc.
-(defonce ^:private reaction-id->query-v (atom {}))
-
 ;; Reverse lookup keyed by the reaction object itself. Powers
-;; `query-v-for-reaction`: tools holding a reaction (e.g. devtools
-;; surfacing a reaction's value) can recover the query-v that
-;; produced it without walking trace history. Distinct from
-;; `reaction-id->query-v` (keyed by reagent-id, used internally for
-;; trace tags) because reagent-id is hash-derived on both runtimes
-;; and not guaranteed collision-free; a public lookup needs object
-;; identity to be reliable. Insert is gated on
-;; `re-frame.interop/debug-enabled?` so :advanced CLJS production
-;; builds (where goog.DEBUG=false) elide the swap! entirely — the
-;; lookup's only callers are devtools, which by definition run
-;; under debug. The dispose-side dissoc remains unconditional so
-;; flipping the flag mid-session (CLJ tests use with-redefs) can't
-;; strand entries that landed while it was on.
+;; `query-v-for-reaction` and :input-query-vs on :sub/run traces.
+;; Object identity avoids reagent-id hash collisions, while the
+;; insert gate keeps production builds that have neither debug
+;; tooling nor tracing enabled from paying the swap! cost. The
+;; dispose-side dissoc remains unconditional so flipping either flag
+;; mid-session (CLJ tests use with-redefs) can't strand entries that
+;; landed while it was on.
 (defonce ^:private reaction->query-v (atom {}))
+
+(defn- remember-query-v?
+  []
+  (or debug-enabled?
+      (trace/is-trace-enabled?)))
+
+(defn- remember-reaction-query-v!
+  [reaction query-v]
+  (when (remember-query-v?)
+    (swap! reaction->query-v assoc reaction query-v)))
+
+(defn- forget-reaction-query-v!
+  [reaction]
+  (swap! reaction->query-v dissoc reaction))
+
+(defn- reaction-query-v
+  [reaction]
+  (get @reaction->query-v reaction))
 
 (defn cache-and-return
   "cache the reaction r"
@@ -89,18 +86,14 @@
                                    (if (and (contains? query-cache k) (identical? r (get query-cache k)))
                                      (dissoc query-cache k)
                                      query-cache)))
-                          (swap! reaction-id->query-v dissoc rid)
-                          (swap! reaction->query-v dissoc r)))
+                          (forget-reaction-query-v! r)))
     ;; cache this reaction, so it can be used to deduplicate other, later "=" subscriptions
     (swap! query->reaction (fn [query-cache]
                              (when debug-enabled?
                                (when (contains? query-cache k)
                                  (console :warn "re-frame: Adding a new subscription to the cache while there is an existing subscription in the cache" k)))
                              (assoc query-cache k r)))
-    (when (trace/is-trace-enabled?)
-      (swap! reaction-id->query-v assoc rid query-v))
-    (when debug-enabled?
-      (swap! reaction->query-v assoc r query-v))
+    (remember-reaction-query-v! r query-v)
     (trace/merge-trace! {:tags {:reaction rid}})
     r)) ;; return the actual reaction
 
@@ -120,12 +113,12 @@
    value and need to recover its provenance — \"which sub produced
    this?\" — without walking trace history.
 
-   In :advanced CLJS production builds (`goog.DEBUG=false`) the
+   In :advanced CLJS production builds with tracing disabled, the
    backing reverse map is never populated, so this fn always returns
    nil. Devtools that call it run under debug, where the map IS
    populated. CLJ remains hardcoded debug-on."
   [reaction]
-  (get @reaction->query-v reaction))
+  (reaction-query-v reaction))
 
 (defn live-query-vs
   "Returns a sequence of all currently-live query-vectors — one entry
@@ -254,21 +247,21 @@
       :else (console :error "re-frame: in the reg-sub for" query-id ", the input-signals function returns:" signals))
     ;; Emit :input-query-vs alongside :input-signals.
     ;; :input-signals is the reagent-id of each input (cheap, opaque);
-    ;; :input-query-vs is the query-v of each (expensive to recover
-    ;; without `reaction-id->query-v` — cache-and-return keeps that
-    ;; map in sync). Powers "why did X re-render?" recipes without
-    ;; downstream tooling reverse-engineering the dep graph from
-    ;; :sub/run execution order.
+    ;; :input-query-vs is the query-v of each. `cache-and-return`
+    ;; keeps the object-keyed reverse lookup in sync so trace
+    ;; consumers get one O(1) lookup per input without downstream
+    ;; tooling reverse-engineering the dep graph from :sub/run
+    ;; execution order.
     ;;
     ;; Gated on `(trace/is-trace-enabled?)` so production builds with
     ;; tracing off pay zero per-sub-run cost. The `merge-trace!` macro
     ;; itself short-circuits on the same flag, but the surrounding
     ;; `let` would still allocate the input-ids seq and deref
-    ;; `reaction-id->query-v` once per sub-run. Subs re-run on every
+    ;; `reaction->query-v` once per sub-run. Subs re-run on every
     ;; transitive deref change, so this is the hot loop.
     (when (trace/is-trace-enabled?)
       (let [input-ids (doall (to-seq (map-signals reagent-id signals)))
-            input-qvs (mapv #(get @reaction-id->query-v %) input-ids)]
+            input-qvs (mapv reaction-query-v (to-seq (map-signals identity signals)))]
         (trace/merge-trace! {:tags {:input-signals  input-ids
                                     :input-query-vs input-qvs}})))
     dereffed-signals))

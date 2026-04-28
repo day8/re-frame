@@ -11,12 +11,18 @@
             [re-frame.core   :as rf]
             [re-frame.interop :as interop]
             [re-frame.subs   :as subs]
-            [re-frame.db     :as db]))
+            [re-frame.db     :as db]
+            [re-frame.trace  :as trace]))
 
 (defn fixture-clear-subs
   [f]
-  (let [restore (rf/make-restore-fn)]
-    (try (f) (finally (restore)))))
+  (let [restore (rf/make-restore-fn)
+        before  trace/trace-enabled?]
+    (try
+      (f)
+      (finally
+        (alter-var-root #'trace/trace-enabled? (constantly before))
+        (restore)))))
 
 (use-fixtures :each fixture-clear-subs)
 
@@ -74,16 +80,17 @@
              (subs/query-v-for-reaction r))
           "core re-export and subs fn agree"))))
 
-(deftest cache-and-return-skips-reverse-map-write-when-debug-disabled
+(deftest cache-and-return-skips-reverse-map-write-when-debug-and-trace-disabled
   (testing "cache-and-return MUST NOT swap! into reaction->query-v when
-            debug-enabled? is false — that reverse map exists ONLY to
-            back the public devtools lookup `query-v-for-reaction`,
-            which has no caller in :advanced CLJS production
-            (goog.DEBUG=false). Populating it on every subscribe was
-            paying a CAS-per-call cost AND growing a map across the
-            session for data nothing reads."
+            debug-enabled? and tracing are false — that reverse map
+            backs the public devtools lookup `query-v-for-reaction` and
+            the trace-only :input-query-vs tag. In :advanced CLJS
+            production with both consumers off, populating it on every
+            subscribe would pay a CAS-per-call cost AND grow a map
+            across the session for data nothing reads."
     (rf/reg-sub :qvfr/echo (fn [db _] (:n db)))
     (reset! db/app-db {:n 1})
+    (alter-var-root #'trace/trace-enabled? (constantly false))
     (with-redefs [interop/debug-enabled? false]
       (let [rev @#'subs/reaction->query-v]
         (is (empty? @rev)

@@ -18,6 +18,7 @@
             [re-frame.db     :as db]
             [re-frame.events :as events]
             [re-frame.fx     :as fx]
+            [re-frame.interop :as interop]
             [re-frame.router :as router]
             [re-frame.subs   :as subs]
             [re-frame.trace  :as trace]))
@@ -160,34 +161,37 @@
            confirms the gate flips back on (test isn't trivially
            always-false)."))))
 
-(deftest cache-and-return-skips-reaction-id-reverse-map-when-tracing-off
-  (testing "cache-and-return MUST NOT swap! into reaction-id->query-v
-            when tracing is disabled — that reverse map is read only
-            by deref-input-signals (also gated on is-trace-enabled?),
-            so populating it in production is wasted work AND the map
-            grows unbounded in apps that never enable tracing"
+(deftest cache-and-return-skips-reaction-reverse-map-when-unobserved
+  (testing "cache-and-return MUST NOT swap! into reaction->query-v
+            when tracing and debug tooling are both disabled — that
+            reverse map is read only by deref-input-signals under
+            tracing and by query-v-for-reaction under debug tooling, so
+            populating it when neither consumer is present is wasted
+            work AND the map grows unbounded in apps that never enable
+            either path"
     (rf/reg-sub :trace-zero/leaf (fn [db _] (:n db)))
     (reset! db/app-db {:n 1})
     (alter-var-root #'trace/trace-enabled? (constantly false))
-    (let [rev @#'subs/reaction-id->query-v]
-      (is (empty? @rev)
-          "fixture-clean-state restored a fresh subs cache; the reverse
-           map starts empty")
-      (rf/subscribe [:trace-zero/leaf])
-      (is (empty? @rev)
-          "trace off → cache-and-return skipped the reaction-id->query-v
-           assoc; no entry leaked into the reverse map")
+    (with-redefs [interop/debug-enabled? false]
+      (let [rev @#'subs/reaction->query-v]
+        (is (empty? @rev)
+            "fixture-clean-state restored a fresh subs cache; the reverse
+             map starts empty")
+        (rf/subscribe [:trace-zero/leaf])
+        (is (empty? @rev)
+            "trace/debug off → cache-and-return skipped the reaction->query-v
+             assoc; no entry leaked into the reverse map")
 
-      (with-tracing-on
-        (rf/reg-sub :trace-zero/leaf-on (fn [db _] (:n db)))
-        (rf/subscribe [:trace-zero/leaf-on])
-        (is (some #{[:trace-zero/leaf-on]} (vals @rev))
-            "trace on → cache-and-return DID swap! into the reverse map;
-             confirms the gate flips back on (the test isn't trivially
-             always-empty)")))))
+        (with-tracing-on
+          (rf/reg-sub :trace-zero/leaf-on (fn [db _] (:n db)))
+          (let [r (rf/subscribe [:trace-zero/leaf-on])]
+            (is (= [:trace-zero/leaf-on] (get @rev r))
+                "trace on → cache-and-return DID swap! into the reverse map;
+                 confirms the gate flips back on (the test isn't trivially
+                 always-empty)")))))))
 
 (deftest deref-input-signals-skips-input-query-vs-work-when-tracing-off
-  (testing "deref-input-signals MUST NOT walk reaction-id->query-v when
+  (testing "deref-input-signals MUST NOT walk reaction->query-v when
             tracing is disabled — subs re-run on every transitive deref
             change, so even a single atom deref + mapv per call shows
             up in hot graphs"
