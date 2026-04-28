@@ -108,7 +108,7 @@
       (is (= {} (:app-db/before e)))
       (is (= {:n 1} (:app-db/after e)))
       (is (= [{:id :coeffects} {:id :db-handler}] (:interceptors e))
-          "Q2 default — interceptor records, not just ids"))))
+          "interceptor records, not just ids"))))
 
 (deftest assemble-epochs-event-original-divergence
   (testing ":event/original surfaces on the epoch independently of :event —
@@ -284,15 +284,14 @@
                (done))))
          delivery-wait-ms)))))
 
-(defn- js-settle-result->clj [raw]
-  (js->clj raw :keywordize-keys true))
-
 (defn- clear-dispatch-and-settle-events! []
   (doseq [event-id [:dispatch-settle/par
                     :dispatch-settle/chi
                     :dispatch-settle/par-two
                     :dispatch-settle/chi-a
                     :dispatch-settle/chi-b
+                    :dispatch-settle/override-root
+                    :dispatch-settle/override-child
                     :dispatch-settle/par-filter
                     :dispatch-settle/chi-filter
                     :dispatch-settle/other]]
@@ -321,16 +320,17 @@
                 (is (fn? (.-then p))
                     "the returned JS Promise exposes .then")
                 (.then p
-                       (fn [raw]
-                         (let [result   (js-settle-result->clj raw)
-                               root     (:root-epoch result)
+                       (fn [result]
+                         (is (map? result)
+                             "CLJS resolves to a Clojure map (no js->clj needed)")
+                         (let [root     (:root-epoch result)
                                cascaded (:cascaded-epochs result)
                                child    (first cascaded)]
                            (is (true? (:ok? result)))
-                           (is (= ["par"] (:event root))
-                               "keyword-fn converted the event keyword to its name")
+                           (is (= [:dispatch-settle/par] (:event root))
+                               "the resolved map preserves the original keyword event vector")
                            (is (= 1 (count cascaded)))
-                           (is (= ["chi"] (:event child)))
+                           (is (= [:dispatch-settle/chi] (:event child)))
                            (is (= (:dispatch-id root) (:parent-dispatch-id child))
                                "the child epoch is attributed to the root dispatch-id"))
                          (clear-dispatch-and-settle-events!)))))
@@ -348,13 +348,12 @@
               (rf/reg-event-db :dispatch-settle/chi-b
                                (fn [db _] (assoc db :chi-b true)))
               (.then (router/dispatch-and-settle [:dispatch-settle/par-two] opts)
-                     (fn [raw]
-                       (let [result   (js-settle-result->clj raw)
-                             root     (:root-epoch result)
+                     (fn [result]
+                       (let [root     (:root-epoch result)
                              cascaded (:cascaded-epochs result)]
                          (is (true? (:ok? result)))
-                         (is (= ["par-two"] (:event root)))
-                         (is (= #{["chi-a"] ["chi-b"]}
+                         (is (= [:dispatch-settle/par-two] (:event root)))
+                         (is (= #{[:dispatch-settle/chi-a] [:dispatch-settle/chi-b]}
                                 (set (map :event cascaded))))
                          (is (every? #(= (:dispatch-id root) (:parent-dispatch-id %))
                                      cascaded)
@@ -375,14 +374,13 @@
               (let [p (router/dispatch-and-settle [:dispatch-settle/par-filter] opts)]
                 (rf/dispatch [:dispatch-settle/other])
                 (.then p
-                       (fn [raw]
-                         (let [result          (js-settle-result->clj raw)
-                               cascaded-events (set (map :event (:cascaded-epochs result)))]
+                       (fn [result]
+                         (let [cascaded-events (set (map :event (:cascaded-epochs result)))]
                            (is (true? (:ok? result)))
-                           (is (= ["par-filter"] (-> result :root-epoch :event)))
-                           (is (= #{["chi-filter"]} cascaded-events)
+                           (is (= [:dispatch-settle/par-filter] (-> result :root-epoch :event)))
+                           (is (= #{[:dispatch-settle/chi-filter]} cascaded-events)
                                "only the child with matching parent-dispatch-id is reported")
-                           (is (not (contains? cascaded-events ["other"]))
+                           (is (not (contains? cascaded-events [:dispatch-settle/other]))
                                "unrelated in-flight dispatch is excluded from cascaded-epochs"))
                          (clear-dispatch-and-settle-events!)))))]
         (-> (single-level)
@@ -396,6 +394,83 @@
                       (clear-dispatch-and-settle-events!)
                       (set! trace/trace-enabled? false)
                       (done))))))))
+
+(deftest dispatch-and-settle-applies-fx-overrides
+  (testing "dispatch-and-settle can override fx handlers for the root and its cascade"
+    (async done
+      (let [seen     (atom [])
+            fx-id    :dispatch-settle/spy-fx
+            cleanup! (fn []
+                       (clear-dispatch-and-settle-events!)
+                       (rf/clear-fx fx-id)
+                       (set! trace/trace-enabled? false))]
+        (clear-dispatch-and-settle-events!)
+        (set! trace/trace-enabled? true)
+        (rf/reg-fx fx-id
+                   (fn [value]
+                     (swap! seen conj [:registered value])))
+        (rf/reg-event-fx :dispatch-settle/override-root
+                         (fn [_ _]
+                           {:fx [[fx-id :root]
+                                 [:dispatch [:dispatch-settle/override-child]]]}))
+        (rf/reg-event-fx :dispatch-settle/override-child
+                         (fn [_ _]
+                           {fx-id :child}))
+        (-> (rf/dispatch-and-settle
+             [:dispatch-settle/override-root]
+             {:timeout-ms       1000
+              :settle-window-ms delivery-wait-ms
+              :overrides        {fx-id (fn [value]
+                                         (swap! seen conj [:override value]))}})
+            (.then
+             (fn [result]
+               (let [cascaded-events (set (map :event (:cascaded-epochs result)))]
+                 (is (true? (:ok? result)))
+                 (is (= [:dispatch-settle/override-root] (-> result :root-epoch :event)))
+                 (is (= #{[:dispatch-settle/override-child]} cascaded-events)
+                     "the child event is still captured as part of the settled cascade")
+                 (is (= [[:override :root] [:override :child]] @seen)
+                     "the override handles root and cascaded fx; the registered handler is bypassed"))
+               (cleanup!)
+               (done)))
+            (.catch
+             (fn [err]
+               (is false (str "dispatch-and-settle-applies-fx-overrides failed: " err))
+               (cleanup!)
+               (done))))))))
+
+(deftest dispatch-and-settle-resolves-with-clojure-data
+  (testing "the CLJS Promise resolves to a Clojure map — namespaced
+            keywords (event keys, :app-db/before, :event/original)
+            survive the resolve without going through clj->js"
+    (async done
+      (let [opts {:timeout-ms 1000 :settle-window-ms delivery-wait-ms}]
+        (clear-dispatch-and-settle-events!)
+        (set! trace/trace-enabled? true)
+        (rf/reg-event-db :dispatch-settle/par
+                         (fn [db _] (assoc db :touched true)))
+        (-> (router/dispatch-and-settle [:dispatch-settle/par] opts)
+            (.then
+             (fn [result]
+               (is (map? result)
+                   "the resolved value is a Clojure map, not a JS object")
+               (is (true? (:ok? result))
+                   ":ok? is the Clojure boolean — keyword key survived")
+               (is (= [:dispatch-settle/par]
+                      (get-in result [:root-epoch :event]))
+                   "the namespaced event keyword is preserved end-to-end")
+               (is (some? (get-in result [:root-epoch :app-db/before]))
+                   "namespaced keys like :app-db/before resolve, not collide
+                    with :event/before under (clj->js v :keyword-fn name)")
+               (clear-dispatch-and-settle-events!)
+               (set! trace/trace-enabled? false)
+               (done)))
+            (.catch
+             (fn [err]
+               (is false (str "dispatch-and-settle-resolves-with-clojure-data failed: " err))
+               (clear-dispatch-and-settle-events!)
+               (set! trace/trace-enabled? false)
+               (done))))))))
 
 (deftest register-epoch-cb-warns-when-tracing-disabled
   (testing "register-epoch-cb warns instead of registering when tracing is disabled"

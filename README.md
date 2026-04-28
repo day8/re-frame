@@ -44,6 +44,14 @@ In re-frame, events are causal, and views are purely reactive.
 
 The re-frame documentation is [available here](https://day8.github.io/re-frame/).
 
+### Programmatic Diagnostics (1.4.6+)
+
+The documentation includes a
+[Debugging & Instrumentation](https://day8.github.io/re-frame/Debugging/#programmatic-diagnostics)
+guide for devtools and diagnostic code: source-meta macros, trace tag
+schema validation, per-dispatch epoch callbacks, dry-run dispatch with
+effect overrides, and subscription cache lookups.
+
 ### Source-meta opt-in
 
 `re-frame.core` is the stable function API — `reg-event-db` /
@@ -78,4 +86,3 @@ For full dependency information, see the [Clojars page](https://clojars.org/re-f
 ## Licence
 
 re-frame is [MIT licenced](license.txt)
-

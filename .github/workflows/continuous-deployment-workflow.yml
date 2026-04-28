@@ -67,7 +67,11 @@ jobs:
           npm install
           npm run release
 
-      - run: bb test :chrome-path '"${{ steps.setup-chrome.outputs.chrome-path }}"'
+      - name: Test (JVM — CLJ test namespaces)
+        run: bb test-jvm
+
+      - name: Test (CLJS — browser target via Chrome)
+        run: bb test :chrome-path '"${{ steps.setup-chrome.outputs.chrome-path }}"'
 
       - name: Slack notification
         uses: homoluctus/slatify@61c6b12d2ae226db04062ff9b43d9679e2d53236 # v2.0.1

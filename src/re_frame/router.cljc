@@ -1,9 +1,8 @@
 (ns re-frame.router
   (:require [re-frame.events  :as events :refer [handle]]
-            [re-frame.interop :as interop :refer [after-render empty-queue next-tick]]
+            [re-frame.interop :as interop :refer [after-render empty-queue new-uuid next-tick]]
             [re-frame.loggers :refer [console]]
-            [re-frame.trace   :as trace :include-macros true])
-  #?(:clj (:import [java.util UUID])))
+            [re-frame.trace   :as trace :include-macros true]))
 
 ;; -- Router Loop ------------------------------------------------------------
 ;;
@@ -180,7 +179,7 @@
         ;; relationships are carried explicitly on event metadata.
         (binding [events/*handling* nil
                   events/*current-dispatch-id* nil
-                  events/*dispatch-id-capture* nil
+                  events/*on-dispatch-id* nil
                   trace/*current-trace* nil]
           (handle event-v))
         (set! queue (pop queue))
@@ -245,10 +244,24 @@
 ;; (and re-frame already forbids dispatch-sync from within an event
 ;; handler anyway, so the parent-chain across dispatch-sync is
 ;; structurally a non-issue).
+(defn- can-carry-meta? [x]
+  #?(:clj  (instance? clojure.lang.IObj x)
+     :cljs (satisfies? IWithMeta x)))
+
+(defn- inherit-event-meta
+  ([event k v]
+   (inherit-event-meta event k v true))
+  ([event k v overwrite?]
+   (if (or (nil? v)
+           (and (not overwrite?) (some-> event meta k))
+           (not (can-carry-meta? event)))
+     event
+     (vary-meta event assoc k v))))
+
 (defn- tag-with-parent-dispatch-id [event]
-  (if-let [parent-id events/*current-dispatch-id*]
-    (vary-meta event assoc :re-frame/parent-dispatch-id parent-id)
-    event))
+  (inherit-event-meta event
+                      :re-frame/parent-dispatch-id
+                      events/*current-dispatch-id*))
 
 ;; Fx-overrides cascade propagation. When a child is
 ;; dispatched from inside a handler whose root carried
@@ -259,11 +272,10 @@
 ;; through. Idempotent — if the child already has overrides set
 ;; (multi-level dispatch-with), we keep the existing one.
 (defn- tag-with-fx-overrides [event]
-  (if (some-> event meta :re-frame/fx-overrides)
-    event
-    (if-let [overrides (some-> events/*handling* meta :re-frame/fx-overrides)]
-      (vary-meta event assoc :re-frame/fx-overrides overrides)
-      event)))
+  (inherit-event-meta event
+                      :re-frame/fx-overrides
+                      (some-> events/*handling* meta :re-frame/fx-overrides)
+                      false))
 
 (defn dispatch
   [event]
@@ -314,13 +326,18 @@
 ;;                              ; cascade epoch landed before resolving)
 ;;       :include-cascaded? bool ; default true — emit :cascaded-epochs
 ;;                               ; (children fired via :fx [:dispatch ...])
+;;       :overrides map         ; fx-id -> stub-fn, as in dispatch-with;
+;;                              ; inherited by the synchronous cascade
 ;;
 ;; Resolves to:
 ;;   {:ok? true :root-epoch <epoch> :cascaded-epochs [<epoch> ...]}
 ;;   {:ok? false :reason :timeout :event ev :captured-epochs [...]}
 ;;
 ;; CLJS returns a JS Promise; CLJ returns a `clojure.core/promise`
-;; (deref-able). Avoids a core.async dep on either platform.
+;; (deref-able). Avoids a core.async dep on either platform. The
+;; resolved value is a Clojure map on both platforms — JS Promises
+;; carry opaque values, so CLJS callers receive the same map as CLJ
+;; callers without a lossy js->clj conversion.
 ;;
 ;; Settles when the synchronous cascade quietens — the root event
 ;; plus every descendant whose `:parent-dispatch-id` chains back to
@@ -356,15 +373,16 @@
 ;;   `:settle-window-ms` before re-firing a child :dispatch.
 ;;   Bump the window for those cases.
 
-(defn- new-uuid []
-  #?(:cljs (random-uuid)
-     :clj  (UUID/randomUUID)))
-
 (defn- mk-deferred []
   ;; Cross-platform deferred: returns
   ;;   {:value <promise/atom>      ; what we hand back to the caller
   ;;    :resolve! (fn [v] ...)     ; idempotent, single-shot}
-  ;; CLJS uses a JS Promise (resolve! captured from the executor).
+  ;; CLJS uses a JS Promise (resolve! captured from the executor); the
+  ;; resolved value is the raw Clojure map — JS Promises carry opaque
+  ;; values fine, and re-frame's CLJS callers want Clojure data without
+  ;; a lossy js->clj round-trip (clj->js's :keyword-fn name strips
+  ;; namespaces, collapsing keys like :app-db/before and :event/before
+  ;; into the same string).
   ;; CLJ uses clojure.core/promise (deliver is idempotent under guard).
   #?(:cljs
      (let [resolve-fn (volatile! nil)
@@ -374,7 +392,7 @@
        {:value     p
         :resolve!  (fn [v]
                      (when (compare-and-set! done? false true)
-                       (@resolve-fn (clj->js v :keyword-fn name))))})
+                       (@resolve-fn v)))})
      :clj
      (let [p (promise)]
        {:value    p
@@ -452,29 +470,44 @@
   {:cascade-ids      #{}
    :seen-ids         #{}
    :cascade-epochs   []
-   :pending-children {}})
+   :pending-children {}
+   :unmatched-epochs []})
 
-(defn- accept-trace-epoch [root-id changed? state epoch]
+(defn- trace-epoch-accepted? [root-id state epoch]
   (let [id        (:dispatch-id epoch)
         parent-id (:parent-dispatch-id epoch)]
-    (if (and (not (contains? (:seen-ids state) id))
-             (or (= root-id id)
-                 (contains? (:cascade-ids state) parent-id)))
-      (let [expected (count (immediate-dispatch-events (:effects epoch)))]
-        (reset! changed? true)
-        (cond-> (-> state
-                    (update :seen-ids conj id)
-                    (update :pending-children decrement-pending-child parent-id)
-                    (update :cascade-epochs conj epoch))
-          (pos? expected) (update-in [:pending-children id] (fnil + 0) expected)
-          true            (update :cascade-ids conj id)))
-      state)))
+    (and (not (contains? (:seen-ids state) id))
+         (or (= root-id id)
+             (contains? (:cascade-ids state) parent-id)))))
+
+(defn- accept-trace-epoch [state epoch]
+  (let [id        (:dispatch-id epoch)
+        parent-id (:parent-dispatch-id epoch)
+        expected  (count (immediate-dispatch-events (:effects epoch)))]
+    (cond-> (-> state
+                (update :seen-ids conj id)
+                (update :pending-children decrement-pending-child parent-id)
+                (update :cascade-epochs conj epoch))
+      (pos? expected) (update-in [:pending-children id] (fnil + 0) expected)
+      true            (update :cascade-ids conj id))))
+
+(defn- process-trace-epochs [root-id changed? state epochs]
+  (loop [state (update state :unmatched-epochs into epochs)]
+    (let [{accepted true pending false}
+          (group-by #(trace-epoch-accepted? root-id state %)
+                    (:unmatched-epochs state))]
+      (if (seq accepted)
+        (do
+          (reset! changed? true)
+          (recur (assoc (reduce accept-trace-epoch state accepted)
+                        :unmatched-epochs (vec pending))))
+        (assoc state :unmatched-epochs (vec pending))))))
 
 (deftype TraceTracker [cb-key root-id state]
   ICascadeTracker
   (-register! [_ on-cascade]
     ;; Match by dispatch-id only: (a) :dispatch-id == root-id (root, set
-    ;; inside `handle` via *dispatch-id-capture* before any cb fires), or
+    ;; inside `handle` via *on-dispatch-id* before any cb fires), or
     ;; (b) :parent-dispatch-id ∈ cascade-ids (already-matched ancestor).
     ;; No event-vector fallback: when two callers dispatch the same vector,
     ;; vector equality is ambiguous and would mis-attribute one caller's
@@ -483,11 +516,7 @@
                              (fn [epochs]
                                (let [changed? (atom false)]
                                  (swap! state
-                                        (fn [s]
-                                          (reduce (fn [s e]
-                                                    (accept-trace-epoch @root-id changed? s e))
-                                                  s
-                                                  epochs)))
+                                        #(process-trace-epochs @root-id changed? % epochs))
                                  (when @changed?
                                    (on-cascade))))))
   (-unregister! [_]
@@ -554,9 +583,14 @@
    `:fx [:dispatch ...]` children. See the long comment above for
    shape, semantics, and limitations."
   ([event] (dispatch-and-settle event {}))
-  ([event {:keys [timeout-ms settle-window-ms include-cascaded?]
-           :or   {timeout-ms 5000 settle-window-ms 100 include-cascaded? true}}]
-   (let [{:keys [value resolve!]} (mk-deferred)
+  ([event opts]
+   (let [opts (or opts {})
+         {:keys [timeout-ms settle-window-ms include-cascaded?]
+          :or   {timeout-ms 5000 settle-window-ms 100 include-cascaded? true}} opts
+         dispatch-event (if (contains? opts :overrides)
+                          (vary-meta event assoc :re-frame/fx-overrides (:overrides opts))
+                          event)
+         {:keys [value resolve!]} (mk-deferred)
          root-id        (atom nil)
          tracker        (mk-tracker root-id)
          settle-tick    (atom 0)            ;; bumped on each cascade signal
@@ -618,18 +652,18 @@
                           :event           event
                           :captured-epochs (-captured tracker)}))
               timeout-ms))
-     ;; Dispatch the root synchronously, binding `*dispatch-id-capture*`
-     ;; so `handle` writes the freshly-allocated dispatch-id directly
+     ;; Dispatch the root synchronously, binding `*on-dispatch-id*`
+     ;; so `handle` publishes the freshly-allocated dispatch-id directly
      ;; into `root-id` BEFORE the trace fires the cb. Children queued
      ;; via :fx [:dispatch ...] fire later via the router queue;
      ;; epoch-cb picks them up as they land and matches them by
      ;; :parent-dispatch-id ∈ cascade-ids. With tracing off, `handle`
-     ;; leaves root-id nil because it only reads *dispatch-id-capture*
+     ;; leaves root-id nil because it only reads *on-dispatch-id*
      ;; when tracing is enabled; the
      ;; post-event-callback fallback path picks up events by ordering
      ;; instead.
-     (binding [events/*dispatch-id-capture* root-id]
-       (dispatch-sync event))
+     (binding [events/*on-dispatch-id* #(reset! root-id %)]
+       (dispatch-sync dispatch-event))
      (-after-root-dispatched! tracker)
      ;; Even with no children queued, schedule an initial settle
      ;; check so the root-only case resolves promptly.

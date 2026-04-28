@@ -1,5 +1,6 @@
 (ns re-frame.interop
-  (:import [java.util.concurrent Executor Executors ScheduledExecutorService ThreadFactory TimeUnit]))
+  (:import [java.util UUID]
+           [java.util.concurrent Executor Executors ScheduledExecutorService ThreadFactory TimeUnit]))
 
 ;; The purpose of this file is to provide JVM-runnable implementations of the
 ;; CLJS equivalents in interop.cljs.
@@ -22,7 +23,12 @@
 (defn on-load
   [listener]) ;; no-op
 
-(defonce ^:private executor (Executors/newSingleThreadExecutor))
+(defonce ^:private executor
+  (Executors/newSingleThreadExecutor
+   (reify ThreadFactory
+     (newThread [_ r]
+       (doto (Thread. r "re-frame-next-tick")
+         (.setDaemon true))))))
 
 (defonce ^:private on-dispose-callbacks (atom {}))
 
@@ -36,6 +42,9 @@
 (def after-render next-tick)
 
 (def debug-enabled? true)
+
+(defn new-uuid []
+  (UUID/randomUUID))
 
 (defn ratom [x]
   (atom x))

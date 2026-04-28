@@ -21,4 +21,5 @@
            :target     :browser
            :build-hooks
            [(ns-to-markdown/hook {"src/re_frame/core.cljc"  "docs/api-re-frame.core.md"
+                                  "src/re_frame/macros.cljc" "docs/api-re-frame.macros.md"
                                   "src/re_frame/alpha.cljc" "docs/api-re-frame.alpha.md"})]}}}

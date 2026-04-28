@@ -30,6 +30,7 @@
                                                            fx-handler->interceptor
                                                            ctx-handler->interceptor]]
    [re-frame.flow.alpha       :as flow]
+   [re-frame.trace            :as trace]
    [re-frame.utils            :as utils]
    [clojure.set               :as set]))
 
@@ -50,6 +51,10 @@
 
       
       (dispatch [:order \"pizza\" {:supreme 2 :meatlovers 1 :veg 1}])
+
+  See also: `dispatch-with` for per-dispatch fx substitution,
+  `dispatch-and-settle` for awaiting a dispatch cascade, and
+  `re-frame.macros/dispatch` for DEBUG call-site source metadata.
   "
   {:api-docs/heading "Dispatching Events"}
   [event]
@@ -78,6 +83,10 @@
 
       
       (dispatch-sync [:sing :falsetto \"piano accordion\"])
+
+  See also: `dispatch-sync-with` for synchronous fx substitution,
+  and `re-frame.macros/dispatch-sync` for DEBUG call-site source
+  metadata.
   "
   {:api-docs/heading "Dispatching Events"}
   [event]
@@ -127,8 +136,13 @@
 (defn dispatch-sync-with
   "Like `dispatch-with`, but processes the event synchronously
    (matching the difference between `dispatch` and
-   `dispatch-sync`). See `dispatch-with` for the override
-   semantics + cascade behaviour."
+   `dispatch-sync`). Overrides apply to the event and any
+   `:fx [:dispatch ...]` cascade it starts.
+
+       (dispatch-sync-with [:user/login {:email \"...\"}]
+                           {:http-xhrio (fn [req] ...)})
+
+   See `dispatch-with` for the full override semantics."
   {:api-docs/heading "Dispatching Events"}
   [event overrides]
   (router/dispatch-sync (vary-meta event assoc :re-frame/fx-overrides overrides)))
@@ -143,6 +157,8 @@
      {:ok? false :reason :timeout :event ev :captured-epochs [...]}
 
    CLJS returns a JS Promise; CLJ returns a `clojure.core/promise`.
+   In both cases the resolved value is a Clojure map — CLJS callers
+   should NOT `js->clj` it.
 
    `opts` (all optional):
      :timeout-ms        int  ; default 5000 — overall budget
@@ -151,6 +167,8 @@
                              ;                settled
      :include-cascaded? bool ; default true — include child epochs
                              ;                fired via :fx [:dispatch ...]
+     :overrides         map  ; fx-id -> stub-fn, as in dispatch-with;
+                             ; inherited by the synchronous cascade
 
    USAGE
 
@@ -159,7 +177,11 @@
          (.then (fn [result] (...))))
 
      ;; CLJ — deref the promise (blocks until resolved)
-     @(dispatch-and-settle [:cart/checkout])
+     (deref (dispatch-and-settle [:cart/checkout]))
+
+     ;; Override selected fx handlers while awaiting the cascade
+     (deref (dispatch-and-settle [:cart/checkout]
+                                  {:overrides {:http-xhrio stub-success}}))
 
    IMPLEMENTATION
 
@@ -172,6 +194,20 @@
   ([event opts] (router/dispatch-and-settle event opts)))
 
 ;; -- Events ------------------------------------------------------------------
+
+;; The three `reg-event-XX` defns share a fixed interceptor chain and
+;; differ only in the trailing handler shape — db / fx / ctx. The
+;; chain lives in `-reg-event` and each public defn delegates with the
+;; matching `XX-handler->interceptor` constructor.
+
+(defn- -reg-event
+  [id interceptors handler->interceptor handler]
+  (events/register id [cofx/inject-db
+                       fx/do-fx
+                       flow/interceptor
+                       std-interceptors/inject-global-interceptors
+                       interceptors
+                       (handler->interceptor handler)]))
 
 (defn reg-event-db
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
@@ -200,17 +236,15 @@
           (-> db
             (dissoc arg1)
             (update :key + arg2))))   ;; return updated db
+
+  See also: `re-frame.macros/reg-event-db` for DEBUG call-site source
+  metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
   ([id handler]
    (reg-event-db id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db
-                        fx/do-fx
-                        flow/interceptor
-                        std-interceptors/inject-global-interceptors
-                        interceptors
-                        (db-handler->interceptor handler)])))
+   (-reg-event id interceptors db-handler->interceptor handler)))
 
 (defn reg-event-fx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
@@ -239,17 +273,15 @@
         (fn [{:keys [db] :as cofx} [_ arg1 arg2]] ;; destructure both arguments
           {:db (assoc db :some-key arg1)          ;; return a map of effects
            :fx [[:dispatch [:some-event arg2]]]}))
+
+  See also: `re-frame.macros/reg-event-fx` for DEBUG call-site source
+  metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
   ([id handler]
    (reg-event-fx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db
-                        fx/do-fx
-                        flow/interceptor
-                        std-interceptors/inject-global-interceptors
-                        interceptors
-                        (fx-handler->interceptor handler)])))
+   (-reg-event id interceptors fx-handler->interceptor handler)))
 
 (defn reg-event-ctx
   "Register the given event `handler` (function) for the given `id`. Optionally, provide
@@ -275,17 +307,15 @@
                              function3)
                 effects  (select-keys result [:db :fx])]
              (assoc context :effects effects))))
+
+  See also: `re-frame.macros/reg-event-ctx` for DEBUG call-site source
+  metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
   ([id handler]
    (reg-event-ctx id nil handler))
   ([id interceptors handler]
-   (events/register id [cofx/inject-db
-                        fx/do-fx
-                        flow/interceptor
-                        std-interceptors/inject-global-interceptors
-                        interceptors
-                        (ctx-handler->interceptor handler)])))
+   (-reg-event id interceptors ctx-handler->interceptor handler)))
 
 (defn clear-event
   "Unregisters event handlers (presumably registered previously via the use of `reg-event-db` or `reg-event-fx`).
@@ -549,7 +579,8 @@
   For further understanding, read the tutorials, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs.
 
-  See also: `subscribe`
+  See also: `subscribe`, and `re-frame.macros/reg-sub` for DEBUG
+  call-site source metadata on registered subscription handlers.
   "
   {:api-docs/heading "Subscriptions"}
   [query-id & args]
@@ -613,7 +644,9 @@
   Two, or more, concurrent subscriptions for the same query will
   source reactive updates from the one executing handler.
 
-  See also: `reg-sub`
+  See also: `reg-sub`, `re-frame.macros/subscribe` for DEBUG
+  call-site source metadata, and `query-v-for-reaction` for recovering
+  the query vector from a held reaction.
   "
   {:api-docs/heading "Subscriptions"}
   ([query]
@@ -711,6 +744,9 @@
 
   then the `handler` `fn` we registered previously, using `reg-fx`, will be
   called with an argument of `[1 2]`.
+
+  See also: `re-frame.macros/reg-fx` for DEBUG call-site source
+  metadata on registered effect handlers.
   "
   {:api-docs/heading "Effect Handlers"}
   [id handler]
@@ -1266,6 +1302,40 @@
   {:api-docs/heading "Logging"}
   [level & args]
   (apply loggers/console level args))
+
+;; -- tracing ----------------------------------------------------------------
+
+(def ^{:api-docs/heading "Tracing"} tag-schema
+  "Schema for `:tags` of every op-type re-frame emits."
+  trace/tag-schema)
+
+(def ^{:api-docs/heading "Tracing"} validate-trace?
+  "True iff runtime trace-tag validation is enabled."
+  trace/validate-trace?)
+
+(def ^{:api-docs/heading "Tracing"} set-validate-trace!
+  "Enable or disable runtime trace-tag validation."
+  trace/set-validate-trace!)
+
+(def ^{:api-docs/heading "Tracing"} register-trace-cb
+  "Register a callback that receives each batch of finished traces."
+  trace/register-trace-cb)
+
+(def ^{:api-docs/heading "Tracing"} remove-trace-cb
+  "Remove a trace callback by key."
+  trace/remove-trace-cb)
+
+(def ^{:api-docs/heading "Tracing"} register-epoch-cb
+  "Register a callback that receives assembled epoch records."
+  trace/register-epoch-cb)
+
+(def ^{:api-docs/heading "Tracing"} remove-epoch-cb
+  "Remove an epoch callback by key."
+  trace/remove-epoch-cb)
+
+(def ^{:api-docs/heading "Tracing"} assemble-epochs
+  "Partition a finished trace batch into event epoch records."
+  trace/assemble-epochs)
 
 ;; -- unit testing ------------------------------------------------------------
 

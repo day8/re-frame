@@ -122,6 +122,60 @@
             (trace/remove-epoch-cb cb-key)))))))
 
 ;; ---------------------------------------------------------------------------
+;; :input-query-vs — subscription input provenance
+;; ---------------------------------------------------------------------------
+
+(defn- capture-traces [f]
+  (let [received (atom [])
+        cb-key   (UUID/randomUUID)]
+    (try
+      (trace/register-trace-cb cb-key (fn [batch] (swap! received into batch)))
+      (f)
+      @received
+      (finally
+        (trace/remove-trace-cb cb-key)))))
+
+(deftest sub-run-trace-emits-input-query-vs
+  (testing "a single-input subscription emits the input subscription query-v"
+    (with-tracing-on
+      (rf/reg-sub :input-qvs/leaf (fn [db _] (:leaf db)))
+      (rf/reg-sub :input-qvs/derived
+                  (fn [_ _] (rf/subscribe [:input-qvs/leaf]))
+                  (fn [leaf _] leaf))
+      (let [traces  (capture-traces #(deref (rf/subscribe [:input-qvs/derived])))
+            sub-run (first (filter #(and (= :sub/run (:op-type %))
+                                         (= [:input-qvs/derived]
+                                            (-> % :tags :query-v)))
+                                   traces))]
+        (is (= [[:input-qvs/leaf]]
+               (-> sub-run :tags :input-query-vs)))
+        (is (= (count (-> sub-run :tags :input-signals))
+               (count (-> sub-run :tags :input-query-vs)))
+            ":input-query-vs stays aligned with :input-signals"))))
+
+  (testing "multi-input subscriptions preserve input order"
+    (with-tracing-on
+      (rf/reg-sub :input-qvs/a (fn [db _] (:a db)))
+      (rf/reg-sub :input-qvs/b (fn [db _] (:b db)))
+      (rf/reg-sub :input-qvs/c (fn [db _] (:c db)))
+      (rf/reg-sub :input-qvs/multi
+                  (fn [_ _]
+                    [(rf/subscribe [:input-qvs/a])
+                     (rf/subscribe [:input-qvs/b])
+                     (rf/subscribe [:input-qvs/c])])
+                  (fn [values _] values))
+      (let [traces  (capture-traces #(deref (rf/subscribe [:input-qvs/multi])))
+            sub-run (first (filter #(and (= :sub/run (:op-type %))
+                                         (= [:input-qvs/multi]
+                                            (-> % :tags :query-v)))
+                                   traces))]
+        (is (= [[:input-qvs/a] [:input-qvs/b] [:input-qvs/c]]
+               (-> sub-run :tags :input-query-vs)))
+        (is (= (count (-> sub-run :tags :input-signals))
+               (count (-> sub-run :tags :input-query-vs)))
+            ":input-query-vs stays aligned with :input-signals")))))
+
+;; ---------------------------------------------------------------------------
 ;; dispatch-and-settle — end-to-end {:ok? true} branch on JVM
 ;; ---------------------------------------------------------------------------
 
@@ -162,9 +216,9 @@
                            (reset! child-ran? true)
                            db))
         (let [p           (router/dispatch-and-settle [:trace-cascade/parent]
-                                                      {:timeout-ms       2000
-                                                       :settle-window-ms 1000})
-              result      (deref p 3000 ::timed-out)
+                                                      {:timeout-ms       5000
+                                                       :settle-window-ms 250})
+              result      (deref p 6000 ::timed-out)
               root-id     (-> result :root-epoch :dispatch-id)
               child-epoch (first (:cascaded-epochs result))]
           (is (not= ::timed-out result))
@@ -175,6 +229,72 @@
           (is (= root-id (:parent-dispatch-id child-epoch))
               "the child remains attributed to the dispatch-sync root")
           (is (true? @child-ran?)))))))
+
+(deftest dispatch-and-settle-timeout-result-on-jvm
+  (testing "the overall timeout can win and returns the documented timeout shape"
+    (with-tracing-on
+      (rf/reg-event-db :trace-timeout/slow
+                       (fn [db _]
+                         (Thread/sleep 30)
+                         (assoc db :slow true)))
+      (let [p      (router/dispatch-and-settle [:trace-timeout/slow]
+                                               {:timeout-ms       1
+                                                :settle-window-ms 250})
+            result (deref p 1000 ::timed-out)]
+        (is (not= ::timed-out result))
+        (is (= {:ok? false
+                :reason :timeout
+                :event [:trace-timeout/slow]}
+               (select-keys result [:ok? :reason :event])))
+        (is (vector? (:captured-epochs result)))))))
+
+(deftest dispatch-and-settle-can-omit-cascaded-epochs-on-jvm
+  (testing ":include-cascaded? false elides the cascaded epoch key"
+    (with-tracing-on
+      (rf/reg-event-fx :trace-cascade-filter/parent
+                       (fn [_ _]
+                         {:fx [[:dispatch [:trace-cascade-filter/child]]]}))
+      (rf/reg-event-db :trace-cascade-filter/child
+                       (fn [db _] (assoc db :child true)))
+      (let [p      (router/dispatch-and-settle
+                    [:trace-cascade-filter/parent]
+                    {:timeout-ms        2000
+                     :settle-window-ms  100
+                     :include-cascaded? false})
+            result (deref p 3000 ::timed-out)]
+        (is (not= ::timed-out result))
+        (is (true? (:ok? result)))
+        (is (= [:trace-cascade-filter/parent] (-> result :root-epoch :event)))
+        (is (not (contains? result :cascaded-epochs)))))))
+
+(deftest dispatch-and-settle-captures-multi-level-cascade-on-jvm
+  (testing "descendant events are captured recursively through parent dispatch ids"
+    (with-tracing-on
+      (rf/reg-event-fx :trace-multilevel/parent
+                       (fn [_ _]
+                         {:fx [[:dispatch [:trace-multilevel/child]]]}))
+      (rf/reg-event-fx :trace-multilevel/child
+                       (fn [_ _]
+                         {:fx [[:dispatch [:trace-multilevel/grandchild]]]}))
+      (rf/reg-event-db :trace-multilevel/grandchild
+                       (fn [db _] (assoc db :grandchild true)))
+      (let [p          (router/dispatch-and-settle
+                        [:trace-multilevel/parent]
+                        {:timeout-ms       2000
+                         :settle-window-ms 100})
+            result     (deref p 3000 ::timed-out)
+            cascaded   (:cascaded-epochs result)
+            by-event   (into {} (map (juxt :event identity) cascaded))
+            child      (get by-event [:trace-multilevel/child])
+            grandchild (get by-event [:trace-multilevel/grandchild])]
+        (is (not= ::timed-out result))
+        (is (true? (:ok? result)))
+        (is (= #{[:trace-multilevel/child] [:trace-multilevel/grandchild]}
+               (set (map :event cascaded))))
+        (is (= (-> result :root-epoch :dispatch-id)
+               (:parent-dispatch-id child)))
+        (is (= (:dispatch-id child)
+               (:parent-dispatch-id grandchild)))))))
 
 (deftest dispatch-and-settle-waits-for-declared-fx-dispatch-children-on-jvm
   (testing "trace-on dispatch-and-settle does not resolve from the
@@ -384,6 +504,17 @@
       (is (nil? (rf/dispatch-sync-with [:core-public/override-smoke] {}))
           "dispatch-sync-with is callable through re-frame.core and matches dispatch-sync's nil return"))))
 
+(deftest core-tracing-re-exports-match-source-of-truth
+  (testing "the public tracing APIs are reachable from re-frame.core"
+    (is (= trace/tag-schema rf/tag-schema))
+    (is (identical? trace/validate-trace? rf/validate-trace?))
+    (is (identical? trace/set-validate-trace! rf/set-validate-trace!))
+    (is (identical? trace/register-trace-cb rf/register-trace-cb))
+    (is (identical? trace/remove-trace-cb rf/remove-trace-cb))
+    (is (identical? trace/register-epoch-cb rf/register-epoch-cb))
+    (is (identical? trace/remove-epoch-cb rf/remove-epoch-cb))
+    (is (identical? trace/assemble-epochs rf/assemble-epochs))))
+
 ;; ---------------------------------------------------------------------------
 ;; re-frame.alpha public re-exports
 ;; ---------------------------------------------------------------------------
@@ -428,13 +559,13 @@
       (is (empty? (:cascaded-epochs result))))))
 
 ;; ---------------------------------------------------------------------------
-;; *dispatch-id-capture* — deterministic root-id capture
+;; *on-dispatch-id* — deterministic root-id capture
 ;; ---------------------------------------------------------------------------
 
-(deftest dispatch-id-capture-receives-handle-allocated-id
-  (testing "binding `events/*dispatch-id-capture*` to an atom causes
-            `handle` to reset! that atom with the freshly-allocated
-            dispatch-id BEFORE the trace fires. This is the hook
+(deftest on-dispatch-id-receives-handle-allocated-id
+  (testing "binding `events/*on-dispatch-id*` to a callback causes
+            `handle` to call it with the freshly-allocated dispatch-id
+            BEFORE the trace fires. This is the hook
             dispatch-and-settle uses to identify the root of its
             cascade WITHOUT relying on event-vector equality.
 
@@ -456,7 +587,7 @@
                                                         (= [:capture-test/touch]
                                                            (-> t :tags :event)))]
                                        (swap! seen-tags conj (:tags t)))))
-          (binding [events/*dispatch-id-capture* captured]
+          (binding [events/*on-dispatch-id* #(reset! captured %)]
             (rf/dispatch-sync [:capture-test/touch]))
           (is (uuid? @captured)
               "the captured value is the UUID handle allocated for this dispatch")
@@ -467,7 +598,7 @@
           (testing "two consecutive captures yield distinct ids — proves the hook
                     fires per-dispatch, not once-and-cached"
             (let [captured-2 (atom nil)]
-              (binding [events/*dispatch-id-capture* captured-2]
+              (binding [events/*on-dispatch-id* #(reset! captured-2 %)]
                 (rf/dispatch-sync [:capture-test/touch]))
               (is (uuid? @captured-2))
               (is (not= @captured @captured-2))))
@@ -475,7 +606,7 @@
             (trace/remove-trace-cb cb-key)))))))
 
 ;; ---------------------------------------------------------------------------
-;; dispatch-and-settle — concurrent same-vector regression (rf-6q6)
+;; dispatch-and-settle — concurrent same-vector regression
 ;; ---------------------------------------------------------------------------
 
 (deftest dispatch-and-settle-distinguishes-concurrent-same-vector

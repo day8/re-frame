@@ -65,6 +65,54 @@
             [re-frame.interop]
             [re-frame.registrar]))
 
+;; -- dispatch / dispatch-sync / subscribe ------------------------------------
+;;
+;; All three forward a single user-supplied vector to a `re-frame.core` fn
+;; and, in DEBUG builds, attach a `{:file :line}` `:re-frame/source` meta
+;; first. The shape is identical across the three; only the target fn
+;; differs — so `-source-meta-call` builds the expansion form and the
+;; public macros are 1-line delegates.
+
+#?(:clj
+   (defn- -source-meta
+     "Return call-site source metadata for a macro invocation.
+
+      In CLJS builds, shadow-cljs does not reliably populate `:file`
+      in `&env`, while the reader does attach `:file` and `:line` to
+      the invocation form. Prefer form metadata for both fields, then
+      fall back to `&env` / `*file*` for macro-generated forms that
+      lack reader metadata."
+     [form env]
+     (let [form-meta (meta form)]
+       {:file (or (:file form-meta) (:file env) *file*)
+        :line (:line form-meta)})))
+
+#?(:clj
+   (defn- -source-meta-call
+     "Emit the macroexpansion form for a call to `target-sym`, wrapping
+      the first user-supplied value `v` with `:re-frame/source` meta in
+      DEBUG builds and passing it through bare in non-DEBUG builds. The
+      first user expression is bound once so both branches reuse the same
+      value without re-evaluating side-effects. Any extra args are passed
+      through unchanged after that first value.
+
+   `target-sym` is the fully-qualified `re-frame.core/...` symbol;
+   `form`/`env` are the calling macro's `&form` / `&env`. `:file` and
+   `:line` both come from `(meta form)` — that's the metadata the
+   CLJS reader attaches to the macro-invocation form when reading
+   from a source file (mirrors `re-com.core/at`, which has captured
+   call-site file/line in CLJS this way for years). `:file env` is
+   tried as a secondary fallback in case form-meta is missing (e.g.
+   macro called from inside another macro's expansion); `*file*` is
+   the JVM-side last-resort, useful only when the CLJS reader didn't
+   reach this form (rare)."
+     [target-sym v form env & args]
+     (let [src-meta (-source-meta form env)]
+       `(let [v# ~v]
+          (if re-frame.interop/debug-enabled?
+            (~target-sym (vary-meta v# assoc :re-frame/source ~src-meta) ~@args)
+            (~target-sym v# ~@args))))))
+
 (defmacro dispatch
   "Like `re-frame.core/dispatch` but in DEBUG builds attaches
    `{:file :line}` on the event vector as `:re-frame/source`
@@ -76,28 +124,24 @@
    the existing trace's `:event` tag.
 
    The macro uses standard `vary-meta` so any user-supplied event
-   metadata survives the merge."
+   metadata survives the merge.
+
+   See also: `dispatch-sync` and `subscribe` in this namespace for
+   the other DEBUG source-meta call-site macros."
   {:arglists '([event-v])}
   [event-v]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(let [ev# ~event-v]
-       (if re-frame.interop/debug-enabled?
-         (re-frame.core/dispatch
-           (vary-meta ev# assoc :re-frame/source ~src-meta))
-         (re-frame.core/dispatch ev#)))))
+  (-source-meta-call 're-frame.core/dispatch event-v &form &env))
 
 (defmacro dispatch-sync
   "Like `re-frame.core/dispatch-sync` but attaches call-site source
    meta in DEBUG builds. See `dispatch` for the rationale and DCE
-   behaviour."
+   behaviour.
+
+   See also: `dispatch` and `subscribe` in this namespace for the
+   other DEBUG source-meta call-site macros."
   {:arglists '([event-v])}
   [event-v]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(let [ev# ~event-v]
-       (if re-frame.interop/debug-enabled?
-         (re-frame.core/dispatch-sync
-           (vary-meta ev# assoc :re-frame/source ~src-meta))
-         (re-frame.core/dispatch-sync ev#)))))
+  (-source-meta-call 're-frame.core/dispatch-sync event-v &form &env))
 
 (defmacro subscribe
   "Like `re-frame.core/subscribe` but in DEBUG builds attaches
@@ -114,15 +158,19 @@
    Recover the meta'd query-v via `re-frame.subs/query-v-for-reaction`
    on the returned reaction, or read the `:input-query-vs` tag on
    `:sub/run` traces (downstream consumers see the meta'd vectors
-   without any new emission)."
-  {:arglists '([query-v])}
-  [query-v]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-    `(let [qv# ~query-v]
-       (if re-frame.interop/debug-enabled?
-         (re-frame.core/subscribe
-           (vary-meta qv# assoc :re-frame/source ~src-meta))
-         (re-frame.core/subscribe qv#)))))
+   without any new emission).
+
+   Supports the same arities as `re-frame.core/subscribe`, including
+   the historical `[query-v dynv]` form. Source metadata is attached
+   to `query-v`; `dynv` is passed through unchanged.
+
+   See also: `dispatch` and `dispatch-sync` in this namespace for the
+   event-dispatch source-meta call-site macros."
+  {:arglists '([query-v] [query-v dynv])}
+  ([query-v]
+   (-source-meta-call 're-frame.core/subscribe query-v &form &env))
+  ([query-v dynv]
+   (-source-meta-call 're-frame.core/subscribe query-v &form &env dynv)))
 
 ;; -- registration macros -----------------------------------------------------
 ;;
@@ -139,6 +187,30 @@
 ;; boot, so the runtime cost matters less than for dispatch/subscribe,
 ;; but the gate keeps the symmetry and lets builds that flip
 ;; `goog.DEBUG=false` shed the `-decorate-handler-meta!` call entirely.
+;;
+;; The three reg-event-XX macros share their expansion shape — only
+;; the target symbol and the trailing arguments differ — so
+;; `-reg-event-call` builds the form once and the public macros are
+;; 1-line delegates per arity. `reg-sub` and `reg-fx` keep their own
+;; bodies because their handler-kind tag (`:sub` / `:fx`) and call
+;; shape differ from the event family.
+
+#?(:clj
+(defn- -reg-event-call
+  "Emit the macroexpansion form for a reg-event-XX macro that captures
+   call-site source metadata on the registered interceptor chain in
+   DEBUG builds. `target-sym` is the fully-qualified
+   `re-frame.core/reg-event-XX` symbol; `id` is the registration id;
+   `args` is the vector of trailing user-supplied args to splice into
+   the call (handler, or interceptors + handler). `form` / `env` are
+   the calling macro's `&form` / `&env`."
+  [target-sym id args form env]
+  (let [src-meta (-source-meta form env)]
+    `(if re-frame.interop/debug-enabled?
+       (let [r# (~target-sym ~id ~@args)]
+         (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
+         r#)
+       (~target-sym ~id ~@args)))))
 
 (defmacro reg-event-db
   "Like `re-frame.core/reg-event-db` but in DEBUG builds attaches
@@ -152,19 +224,9 @@
    `re-frame.core/reg-event-db` instead."
   {:arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-db ~id ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-db ~id ~handler))))
+   (-reg-event-call 're-frame.core/reg-event-db id [handler] &form &env))
   ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-db ~id ~interceptors ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-db ~id ~interceptors ~handler)))))
+   (-reg-event-call 're-frame.core/reg-event-db id [interceptors handler] &form &env)))
 
 (defmacro reg-event-fx
   "Like `re-frame.core/reg-event-fx` but attaches call-site source
@@ -172,19 +234,9 @@
    `reg-event-db` for the rationale and DCE behaviour."
   {:arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-fx ~id ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-fx ~id ~handler))))
+   (-reg-event-call 're-frame.core/reg-event-fx id [handler] &form &env))
   ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-fx ~id ~interceptors ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-fx ~id ~interceptors ~handler)))))
+   (-reg-event-call 're-frame.core/reg-event-fx id [interceptors handler] &form &env)))
 
 (defmacro reg-event-ctx
   "Like `re-frame.core/reg-event-ctx` but attaches call-site source
@@ -192,19 +244,9 @@
    `reg-event-db` for the rationale and DCE behaviour."
   {:arglists '([id handler] [id interceptors handler])}
   ([id handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-ctx ~id ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-ctx ~id ~handler))))
+   (-reg-event-call 're-frame.core/reg-event-ctx id [handler] &form &env))
   ([id interceptors handler]
-   (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
-     `(if re-frame.interop/debug-enabled?
-        (let [r# (re-frame.core/reg-event-ctx ~id ~interceptors ~handler)]
-          (re-frame.registrar/-decorate-handler-meta! :event ~id ~src-meta)
-          r#)
-        (re-frame.core/reg-event-ctx ~id ~interceptors ~handler)))))
+   (-reg-event-call 're-frame.core/reg-event-ctx id [interceptors handler] &form &env)))
 
 (defmacro reg-sub
   "Like `re-frame.core/reg-sub` but in DEBUG builds attaches
@@ -215,10 +257,13 @@
 
    Variadic — supports the same `:<-` / `:->` / `:=>` sugar pairs as
    `re-frame.core/reg-sub`. Macro, so `(apply reg-sub ...)` won't
-   compile; use `re-frame.core/reg-sub` for that."
+   compile; use `re-frame.core/reg-sub` for that.
+
+   See also: `reg-event-db` and `reg-fx` in this namespace for the
+   sibling registration source-meta macros."
   {:arglists '([query-id & args])}
   [query-id & args]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+  (let [src-meta (-source-meta &form &env)]
     `(if re-frame.interop/debug-enabled?
        (let [r# (re-frame.core/reg-sub ~query-id ~@args)]
          (re-frame.registrar/-decorate-handler-meta! :sub ~query-id ~src-meta)
@@ -230,10 +275,13 @@
    `{:file :line}` as metadata on the registered effect handler so
    `(meta (re-frame.registrar/get-handler :fx id))` returns the
    call-site location. Production CLJS builds emit a bare
-   `re-frame.core/reg-fx` call after Closure DCE."
+   `re-frame.core/reg-fx` call after Closure DCE.
+
+   See also: `reg-event-db` and `reg-sub` in this namespace for the
+   sibling registration source-meta macros."
   {:arglists '([id handler])}
   [id handler]
-  (let [src-meta {:file (or (:file &env) *file*) :line (:line (meta &form))}]
+  (let [src-meta (-source-meta &form &env)]
     `(if re-frame.interop/debug-enabled?
        (let [r# (re-frame.core/reg-fx ~id ~handler)]
          (re-frame.registrar/-decorate-handler-meta! :fx ~id ~src-meta)
