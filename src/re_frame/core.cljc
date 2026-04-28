@@ -1,4 +1,6 @@
 (ns re-frame.core
+  "re-frame's primary public API. For programmatic / tooling / agent
+   consumption see `re-frame.tooling`."
   ;; Self-require-macros so CLJS callers using
   ;;   (:require [re-frame.core :as rf])
   ;; pick up the reg-* defmacros below alongside the runtime fns —

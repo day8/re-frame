@@ -104,6 +104,8 @@ nav:
     - Builtin Effects: api-builtin-effects.md
     - re-frame.core: api-re-frame.core.md
     - re-frame.alpha: api-re-frame.alpha.md
+  - Tooling:
+    - re-frame.tooling: Tooling.md
   - Releases:
     - 2026: releases/2026.md
     - 2024: releases/2024.md
