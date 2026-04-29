@@ -1,6 +1,6 @@
 {:cljdoc.doc/tree [["README" {:file "README.md"}]]
  :cljdoc.api/namespaces [re-frame.core
-                         re-frame.macros
+                         re-frame.core-instrumented
                          re-frame.trace
                          re-frame.tooling
                          re-frame.alpha]}

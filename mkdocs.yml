@@ -102,7 +102,7 @@ nav:
     - Overview: api-intro.md
     - Builtin Effects: api-builtin-effects.md
     - re-frame.core: api-re-frame.core.md
-    - re-frame.macros: api-re-frame.macros.md
+    - re-frame.core-instrumented: api-re-frame.core-instrumented.md
     - re-frame.alpha: api-re-frame.alpha.md
     - re-frame.tooling: api-re-frame.tooling.md
   - Releases:

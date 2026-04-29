@@ -1,6 +1,6 @@
 (ns re-frame.dispatch-source-meta-test
-  "Tests that the `re-frame.macros/dispatch` and
-   `re-frame.macros/dispatch-sync` macros capture the call-site
+  "Tests that the `re-frame.core-instrumented/dispatch` and
+   `re-frame.core-instrumented/dispatch-sync` macros capture the call-site
    `{:file :line}` at macro-expansion time and attach it as
    `:re-frame/source` metadata on the event vector.
 
@@ -10,7 +10,7 @@
    meta-wrap branch is always exercised."
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [re-frame.core :as rf]
-            [re-frame.macros :as rf.m]
+            [re-frame.core-instrumented :as rf.m]
             [re-frame.registrar :as registrar]))
 
 (defn fixture-clear-test-handlers
@@ -30,7 +30,7 @@
 
 (deftest dispatch-macroexpand-emits-debug-gate
   (testing "(macroexpand-1 '(rf.m/dispatch [:foo])) emits an `if` on debug-enabled? wrapping a vary-meta call"
-    (let [expanded (macroexpand-1 '(re-frame.macros/dispatch [:foo 42]))
+    (let [expanded (macroexpand-1 '(re-frame.core-instrumented/dispatch [:foo 42]))
           flat     (tree-seq coll? seq expanded)]
       (is (some #(= 'if %) flat)
           "expanded form contains an `if` (the DCE-friendly debug gate)")
@@ -43,8 +43,8 @@
 
 (deftest dispatch-macroexpand-binds-user-event-expression-once
   (testing "dispatch macros bind the user event expression once, then reuse it in both debug-gate branches"
-    (doseq [[label form] {"dispatch"      '(re-frame.macros/dispatch (build-event))
-                          "dispatch-sync" '(re-frame.macros/dispatch-sync (build-event))}]
+    (doseq [[label form] {"dispatch"      '(re-frame.core-instrumented/dispatch (build-event))
+                          "dispatch-sync" '(re-frame.core-instrumented/dispatch-sync (build-event))}]
       (let [expanded (macroexpand-1 form)
             flat     (tree-seq coll? seq expanded)]
         (is (= 1 (count (filter #(= '(build-event) %) flat)))
@@ -118,8 +118,8 @@
 
 (deftest dispatch-and-dispatch-sync-emit-distinct-target-fns
   (testing "rf.m/dispatch expands to re-frame.core/dispatch, dispatch-sync to re-frame.core/dispatch-sync"
-    (let [d-flat  (tree-seq coll? seq (macroexpand-1 '(re-frame.macros/dispatch [:foo])))
-          ds-flat (tree-seq coll? seq (macroexpand-1 '(re-frame.macros/dispatch-sync [:foo])))]
+    (let [d-flat  (tree-seq coll? seq (macroexpand-1 '(re-frame.core-instrumented/dispatch [:foo])))
+          ds-flat (tree-seq coll? seq (macroexpand-1 '(re-frame.core-instrumented/dispatch-sync [:foo])))]
       (is (some #(= 're-frame.core/dispatch %) d-flat)
           "dispatch macro targets re-frame.core/dispatch")
       (is (some #(= 're-frame.core/dispatch-sync %) ds-flat)

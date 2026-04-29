@@ -1,11 +1,11 @@
 (ns re-frame.subscribe-source-meta-test
-  "CLJS coverage for re-frame.macros/subscribe source metadata and the
+  "CLJS coverage for re-frame.core-instrumented/subscribe source metadata and the
    production no-op branch."
   (:require [cljs.test :refer-macros [deftest is testing use-fixtures]]
             [re-frame.core :as rf]
             [re-frame.db :as db]
             [re-frame.interop :as interop]
-            [re-frame.macros :as rf.m]
+            [re-frame.core-instrumented :as rf.m]
             [re-frame.subs :as subs]
             [re-frame.trace :as trace]))
 

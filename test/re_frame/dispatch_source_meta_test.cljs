@@ -1,11 +1,11 @@
 (ns re-frame.dispatch-source-meta-test
-  "CLJS coverage for re-frame.macros/dispatch and dispatch-sync source
+  "CLJS coverage for re-frame.core-instrumented/dispatch and dispatch-sync source
    metadata. These tests exercise both the dev branch and a
    goog.DEBUG=false-equivalent runtime branch via interop/debug-enabled?."
   (:require [cljs.test :refer-macros [async deftest is testing use-fixtures]]
             [re-frame.core :as rf]
             [re-frame.interop :as interop :refer [set-timeout!]]
-            [re-frame.macros :as rf.m]))
+            [re-frame.core-instrumented :as rf.m]))
 
 (defn fixture-re-frame
   []

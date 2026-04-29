@@ -6,7 +6,7 @@
    `(partial reg-fx ...)` work as written.
 
    For call-site `{:file :line}` source-metadata capture in dev /
-   devtools, see `re-frame.macros` — drop-in macro replacements for
+   devtools, see `re-frame.core-instrumented` — drop-in macro replacements for
    `dispatch` / `dispatch-sync` / `subscribe` and the reg-* family
    that emit calls to this namespace's functions plus a
    meta-attach. Migration is alias-only.
@@ -54,7 +54,7 @@
 
   See also: `dispatch-with` for per-dispatch fx substitution,
   `dispatch-and-settle` for awaiting a dispatch cascade, and
-  `re-frame.macros/dispatch` for DEBUG call-site source metadata.
+  `re-frame.core-instrumented/dispatch` for DEBUG call-site source metadata.
   "
   {:api-docs/heading "Dispatching Events"}
   [event]
@@ -85,7 +85,7 @@
       (dispatch-sync [:sing :falsetto \"piano accordion\"])
 
   See also: `dispatch-sync-with` for synchronous fx substitution,
-  and `re-frame.macros/dispatch-sync` for DEBUG call-site source
+  and `re-frame.core-instrumented/dispatch-sync` for DEBUG call-site source
   metadata.
   "
   {:api-docs/heading "Dispatching Events"}
@@ -237,7 +237,7 @@
             (dissoc arg1)
             (update :key + arg2))))   ;; return updated db
 
-  See also: `re-frame.macros/reg-event-db` for DEBUG call-site source
+  See also: `re-frame.core-instrumented/reg-event-db` for DEBUG call-site source
   metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
@@ -274,7 +274,7 @@
           {:db (assoc db :some-key arg1)          ;; return a map of effects
            :fx [[:dispatch [:some-event arg2]]]}))
 
-  See also: `re-frame.macros/reg-event-fx` for DEBUG call-site source
+  See also: `re-frame.core-instrumented/reg-event-fx` for DEBUG call-site source
   metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
@@ -308,7 +308,7 @@
                 effects  (select-keys result [:db :fx])]
              (assoc context :effects effects))))
 
-  See also: `re-frame.macros/reg-event-ctx` for DEBUG call-site source
+  See also: `re-frame.core-instrumented/reg-event-ctx` for DEBUG call-site source
   metadata on registered handlers.
   "
   {:api-docs/heading "Event Handlers"}
@@ -579,7 +579,7 @@
   For further understanding, read the tutorials, and look at the detailed comments in
   /examples/todomvc/src/subs.cljs.
 
-  See also: `subscribe`, and `re-frame.macros/reg-sub` for DEBUG
+  See also: `subscribe`, and `re-frame.core-instrumented/reg-sub` for DEBUG
   call-site source metadata on registered subscription handlers.
   "
   {:api-docs/heading "Subscriptions"}
@@ -644,7 +644,7 @@
   Two, or more, concurrent subscriptions for the same query will
   source reactive updates from the one executing handler.
 
-  See also: `reg-sub`, `re-frame.macros/subscribe` for DEBUG
+  See also: `reg-sub`, `re-frame.core-instrumented/subscribe` for DEBUG
   call-site source metadata, and `query-v-for-reaction` for recovering
   the query vector from a held reaction.
   "
@@ -745,7 +745,7 @@
   then the `handler` `fn` we registered previously, using `reg-fx`, will be
   called with an argument of `[1 2]`.
 
-  See also: `re-frame.macros/reg-fx` for DEBUG call-site source
+  See also: `re-frame.core-instrumented/reg-fx` for DEBUG call-site source
   metadata on registered effect handlers.
   "
   {:api-docs/heading "Effect Handlers"}

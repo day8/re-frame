@@ -4,7 +4,7 @@
    higher-order use (`apply`, `map`) works, and no source-meta is
    attached.
 
-   Source-meta capture is opt-in via `re-frame.macros`, which targets
+   Source-meta capture is opt-in via `re-frame.core-instrumented`, which targets
    `re-frame.core` (alpha has its own interceptor chain that the core
    macros don't reach). Alpha consumers needing source-meta should
    wire an alpha-specific macro layer downstream — out of scope for

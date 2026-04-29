@@ -1,5 +1,5 @@
 (ns re-frame.subscribe-source-meta-test
-  "Tests that the `re-frame.macros/subscribe` macro captures the
+  "Tests that the `re-frame.core-instrumented/subscribe` macro captures the
    call-site `{:file :line}` at macro-expansion time and attaches it
    as `:re-frame/source` metadata on the query vector before the
    subscribe lookup. The reaction's stored query-v carries the meta
@@ -15,7 +15,7 @@
    meta-wrap branch is always exercised."
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [re-frame.core :as rf]
-            [re-frame.macros :as rf.m]
+            [re-frame.core-instrumented :as rf.m]
             [re-frame.subs :as subs]
             [re-frame.db :as db]))
 
@@ -30,7 +30,7 @@
 
 (deftest subscribe-macroexpand-emits-debug-gate
   (testing "(macroexpand-1 '(rf.m/subscribe [:foo])) emits the if/debug-enabled? wrapping a vary-meta call"
-    (let [expanded (macroexpand-1 '(re-frame.macros/subscribe [:foo 42]))
+    (let [expanded (macroexpand-1 '(re-frame.core-instrumented/subscribe [:foo 42]))
           flat     (tree-seq coll? seq expanded)]
       (is (some #(= 'if %) flat)
           "expanded form contains an `if` (the DCE-friendly debug gate)")
@@ -45,14 +45,14 @@
 
 (deftest subscribe-macroexpand-binds-user-query-expression-once
   (testing "subscribe binds the user query expression once, then reuses it in both debug-gate branches"
-    (let [expanded (macroexpand-1 '(re-frame.macros/subscribe (build-query)))
+    (let [expanded (macroexpand-1 '(re-frame.core-instrumented/subscribe (build-query)))
           flat     (tree-seq coll? seq expanded)]
       (is (= 1 (count (filter #(= '(build-query) %) flat)))
           "subscribe expansion contains the user query expression once"))))
 
 (deftest subscribe-macroexpand-supports-dynv-arity
   (testing "(rf.m/subscribe query-v dynv) targets the two-arity core subscribe call"
-    (let [expanded (macroexpand-1 '(re-frame.macros/subscribe [:foo] [dyn]))
+    (let [expanded (macroexpand-1 '(re-frame.core-instrumented/subscribe [:foo] [dyn]))
           flat     (tree-seq coll? seq expanded)]
       (is (some #(= 're-frame.core/subscribe %) flat)
           "expanded form targets re-frame.core/subscribe")

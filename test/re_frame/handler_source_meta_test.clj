@@ -1,5 +1,5 @@
 (ns re-frame.handler-source-meta-test
-  "Tests that the `re-frame.macros` reg-event-db / reg-event-fx /
+  "Tests that the `re-frame.core-instrumented` reg-event-db / reg-event-fx /
    reg-event-ctx / reg-sub / reg-fx macros attach `{:file :line}`
    source meta to the registered handler so
    `(meta (re-frame.registrar/get-handler kind id))` returns the
@@ -9,14 +9,14 @@
    `re-frame.core` — those stay `defn`s (so callers can use them in
    value position via `apply` / `map` / `partial`), and don't
    capture source meta. Source-meta is the opt-in delta you get by
-   aliasing to `re-frame.macros` instead of `re-frame.core`.
+   aliasing to `re-frame.core-instrumented` instead of `re-frame.core`.
 
    These run CLJ-side under cognitect.test-runner — the meta-attach
    path is identical between CLJ and CLJS, and the test runner
    doesn't require Chrome."
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [re-frame.core :as rf]
-            [re-frame.macros :as rf.m]
+            [re-frame.core-instrumented :as rf.m]
             [re-frame.db :as db]
             [re-frame.registrar :as registrar]
             [re-frame.subs :as subs]))
@@ -161,11 +161,11 @@
 ;; -- macros opt-in: source-meta capture ---------------------------------------
 
 (deftest macros-reg-event-db-attaches-source-meta
-  (testing "(meta (get-handler :event id)) returns {:file :line} after re-frame.macros/reg-event-db"
+  (testing "(meta (get-handler :event id)) returns {:file :line} after re-frame.core-instrumented/reg-event-db"
     (rf.m/reg-event-db :test-meta/db-handler (fn [db _] db))
     (let [m (meta (registrar/get-handler :event :test-meta/db-handler))]
       (is (some? m)
-          "registered handler carries metadata after re-frame.macros/reg-event-db")
+          "registered handler carries metadata after re-frame.core-instrumented/reg-event-db")
       (is (string? (:file m))
           ":file is a string from *file* at expansion time")
       (is (re-find #"handler_source_meta_test\.clj$" (:file m))
@@ -174,7 +174,7 @@
           ":line is a positive int from (:line (meta &form))"))))
 
 (deftest macros-reg-event-fx-attaches-source-meta
-  (testing "(meta (get-handler :event id)) returns {:file :line} after re-frame.macros/reg-event-fx"
+  (testing "(meta (get-handler :event id)) returns {:file :line} after re-frame.core-instrumented/reg-event-fx"
     (rf.m/reg-event-fx :test-meta/fx-handler (fn [_ _] {}))
     (let [m (meta (registrar/get-handler :event :test-meta/fx-handler))]
       (is (some? m))
@@ -182,14 +182,14 @@
       (is (pos-int? (:line m))))))
 
 (deftest macros-reg-event-ctx-attaches-source-meta
-  (testing "(meta (get-handler :event id)) returns {:file :line} after re-frame.macros/reg-event-ctx"
+  (testing "(meta (get-handler :event id)) returns {:file :line} after re-frame.core-instrumented/reg-event-ctx"
     (rf.m/reg-event-ctx :test-meta/ctx-handler identity)
     (let [m (meta (registrar/get-handler :event :test-meta/ctx-handler))]
       (is (some? m))
       (is (re-find #"handler_source_meta_test\.clj$" (:file m))))))
 
 (deftest macros-reg-sub-attaches-source-meta
-  (testing "(meta (get-handler :sub id)) returns {:file :line} after re-frame.macros/reg-sub"
+  (testing "(meta (get-handler :sub id)) returns {:file :line} after re-frame.core-instrumented/reg-sub"
     (rf.m/reg-sub :test-meta/sub-handler (fn [db _] (:n db)))
     (let [m (meta (registrar/get-handler :sub :test-meta/sub-handler))]
       (is (some? m))
@@ -197,7 +197,7 @@
       (is (pos-int? (:line m))))))
 
 (deftest macros-reg-fx-attaches-source-meta
-  (testing "(meta (get-handler :fx id)) returns {:file :line} after re-frame.macros/reg-fx"
+  (testing "(meta (get-handler :fx id)) returns {:file :line} after re-frame.core-instrumented/reg-fx"
     (rf.m/reg-fx :test-meta/fx-effect (fn [_] nil))
     (let [m (meta (registrar/get-handler :fx :test-meta/fx-effect))]
       (is (some? m))
@@ -205,7 +205,7 @@
       (is (pos-int? (:line m))))))
 
 (deftest macros-different-call-sites-have-different-line-numbers
-  (testing "two re-frame.macros/reg-event-db calls in this test get distinct :line meta"
+  (testing "two re-frame.core-instrumented/reg-event-db calls in this test get distinct :line meta"
     (rf.m/reg-event-db :test-meta/site-a (fn [db _] db))
     (rf.m/reg-event-db :test-meta/site-b (fn [db _] db))
     (let [a (:line (meta (registrar/get-handler :event :test-meta/site-a)))
@@ -242,11 +242,11 @@
 (deftest macros-reg-stars-are-macros
   (testing "macroexpand-1 reveals the if-on-debug-enabled? + decorate-handler-meta! shape"
     (doseq [[form expected-kind expected-fn]
-            [['(re-frame.macros/reg-event-db  :foo identity) :event 're-frame.core/reg-event-db]
-             ['(re-frame.macros/reg-event-fx  :foo identity) :event 're-frame.core/reg-event-fx]
-             ['(re-frame.macros/reg-event-ctx :foo identity) :event 're-frame.core/reg-event-ctx]
-             ['(re-frame.macros/reg-sub       :foo identity) :sub   're-frame.core/reg-sub]
-             ['(re-frame.macros/reg-fx        :foo identity) :fx    're-frame.core/reg-fx]]]
+            [['(re-frame.core-instrumented/reg-event-db  :foo identity) :event 're-frame.core/reg-event-db]
+             ['(re-frame.core-instrumented/reg-event-fx  :foo identity) :event 're-frame.core/reg-event-fx]
+             ['(re-frame.core-instrumented/reg-event-ctx :foo identity) :event 're-frame.core/reg-event-ctx]
+             ['(re-frame.core-instrumented/reg-sub       :foo identity) :sub   're-frame.core/reg-sub]
+             ['(re-frame.core-instrumented/reg-fx        :foo identity) :fx    're-frame.core/reg-fx]]]
       (let [expanded (macroexpand-1 form)
             flat     (tree-seq coll? seq expanded)]
         (is (some #(= 'if %) flat)
@@ -288,14 +288,14 @@
 (deftest macros-source-meta-prefers-form-meta-over-star-file
   (testing "form-meta :file wins over (:file &env) and *file* — required
             for CLJS under shadow-cljs where the latter two are useless"
-    (doseq [form ['(re-frame.macros/reg-event-db :test-meta/site (fn [d _] d))
-                  '(re-frame.macros/reg-event-fx :test-meta/site (fn [_ _] {}))
-                  '(re-frame.macros/reg-event-ctx :test-meta/site identity)
-                  '(re-frame.macros/reg-sub       :test-meta/site (fn [d _] d))
-                  '(re-frame.macros/reg-fx        :test-meta/site (fn [_] nil))
-                  '(re-frame.macros/dispatch      [:test-meta/site])
-                  '(re-frame.macros/dispatch-sync [:test-meta/site])
-                  '(re-frame.macros/subscribe     [:test-meta/site])]]
+    (doseq [form ['(re-frame.core-instrumented/reg-event-db :test-meta/site (fn [d _] d))
+                  '(re-frame.core-instrumented/reg-event-fx :test-meta/site (fn [_ _] {}))
+                  '(re-frame.core-instrumented/reg-event-ctx :test-meta/site identity)
+                  '(re-frame.core-instrumented/reg-sub       :test-meta/site (fn [d _] d))
+                  '(re-frame.core-instrumented/reg-fx        :test-meta/site (fn [_] nil))
+                  '(re-frame.core-instrumented/dispatch      [:test-meta/site])
+                  '(re-frame.core-instrumented/dispatch-sync [:test-meta/site])
+                  '(re-frame.core-instrumented/subscribe     [:test-meta/site])]]
       (let [tagged   (with-meta form {:file "src/app/synthetic.cljs" :line 99})
             expanded (macroexpand-1 tagged)
             src-meta (find-source-meta-map expanded)]
@@ -307,8 +307,8 @@
             (str form " captures :line from form-meta")))))
 
   (testing "form-meta drives the emitted literal for every source-meta macro"
-    (let [files (->> ['(re-frame.macros/reg-event-db :test-meta/a (fn [d _] d))
-                      '(re-frame.macros/reg-event-db :test-meta/b (fn [d _] d))]
+    (let [files (->> ['(re-frame.core-instrumented/reg-event-db :test-meta/a (fn [d _] d))
+                      '(re-frame.core-instrumented/reg-event-db :test-meta/b (fn [d _] d))]
                      (map-indexed
                       (fn [i form]
                         (-> form

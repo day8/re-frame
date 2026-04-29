@@ -16,12 +16,12 @@ to the next.
 Most application debugging starts with the tools above, but devtools and
 diagnostic code often need stable data rather than formatted console output.
 
-`re-frame.macros` is an opt-in mirror of `re-frame.core` for callers that
+`re-frame.core-instrumented` is an opt-in mirror of `re-frame.core` for callers that
 want source provenance. Alias it instead of `re-frame.core` in a dev build:
 
 ```clj
 (ns my.app.events
-  (:require [re-frame.macros :as rf]))
+  (:require [re-frame.core-instrumented :as rf]))
 ```
 
 The macro versions of `dispatch`, `dispatch-sync`, and `subscribe` attach

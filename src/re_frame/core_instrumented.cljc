@@ -1,4 +1,4 @@
-(ns re-frame.macros
+(ns re-frame.core-instrumented
   "Opt-in mirror of `re-frame.core` that captures the call-site
    `{:file :line}` at macro-expansion time and attaches it as
    `:re-frame/source` metadata — for 'why did this event fire?' /
@@ -14,7 +14,7 @@
 
        ;; macro API — same call shape, source-meta on dispatches
        ;; and registrations, every other core symbol still resolves
-       (:require [re-frame.macros :as rf])
+       (:require [re-frame.core-instrumented :as rf])
 
    Source-meta capturing macros (a CLJS production build with
    `goog.DEBUG=false` Closure-DCEs each one to a bare
@@ -51,7 +51,7 @@
    higher-order-safe surface. The `def` re-exports CAN be used in
    value position (they're vars holding the same fn value as
    `re-frame.core/...`)."
-  #?(:cljs (:require-macros [re-frame.macros]))
+  #?(:cljs (:require-macros [re-frame.core-instrumented]))
   (:require [re-frame.core]
             [re-frame.interop]
             [re-frame.registrar]))
@@ -310,7 +310,7 @@
 ;; -- pure passthroughs (no source-meta needed) -------------------------------
 ;;
 ;; Every other public re-frame.core symbol is re-exported here as a `def`
-;; so the alias swap from re-frame.core → re-frame.macros covers a
+;; so the alias swap from re-frame.core → re-frame.core-instrumented covers a
 ;; real-world re-frame app. These have no user-handler bodies to capture
 ;; (they're either bookkeeping fns, interceptor-builders whose results
 ;; flow through reg-event-* macros that DO capture, or config-style

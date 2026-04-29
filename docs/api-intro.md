@@ -3,7 +3,7 @@
 The re-frame API consists of: 
 
   - the namespace `re-frame.core` — the stable, value-position-safe function API. All registration entry points (`reg-event-*`, `reg-sub`, `reg-fx`, `reg-cofx`) and dispatch / subscribe are `defn`s, so `(map reg-event-db ...)`, `(apply reg-sub ...)`, `(partial reg-fx ...)` work as written.
-  - the namespace `re-frame.macros` — opt-in macro mirror with the same call shape, plus call-site `{:file :line}` source-meta captured at macro-expansion time. Use this in dev / devtools when you want handler provenance on the registered values; switch back to `re-frame.core` for production builds where you need higher-order use.
+  - the namespace `re-frame.core-instrumented` — opt-in macro mirror with the same call shape, plus call-site `{:file :line}` source-meta captured at macro-expansion time. Use this in dev / devtools when you want handler provenance on the registered values; switch back to `re-frame.core` for production builds where you need higher-order use.
   - a set of built-in effects
 
 In the navigation to the left, you'll see a link to both. 
@@ -83,13 +83,13 @@ See [Debugging & Instrumentation](Debugging.md) and
 
 ## Source-meta Macros
 
-`re-frame.macros` is an opt-in macro mirror for diagnostics that need
+`re-frame.core-instrumented` is an opt-in macro mirror for diagnostics that need
 call-site `{:file :line}` metadata on dispatched events, subscription
 queries, or registered handlers:
 
 ```clj
 (ns my-app.some-namespace
-  (:require [re-frame.macros :as rf]))
+  (:require [re-frame.core-instrumented :as rf]))
 ```
 
 The macros have the same call shape as their `re-frame.core` counterparts

@@ -1,10 +1,10 @@
 (ns re-frame.handler-source-meta-test
-  "CLJS coverage for source metadata on the re-frame.macros reg-* API."
+  "CLJS coverage for source metadata on the re-frame.core-instrumented reg-* API."
   (:require [cljs.test :refer-macros [deftest is testing use-fixtures]]
             [re-frame.core :as rf]
             [re-frame.db :as db]
             [re-frame.interop :as interop]
-            [re-frame.macros :as rf.m]
+            [re-frame.core-instrumented :as rf.m]
             [re-frame.registrar :as registrar]))
 
 (defn fixture-re-frame
@@ -54,7 +54,7 @@
           "map registers each subscription id with its computation function"))))
 
 (deftest macros-reg-event-db-attaches-source-meta
-  (testing "re-frame.macros/reg-event-db attaches source metadata to the registered event chain"
+  (testing "re-frame.core-instrumented/reg-event-db attaches source metadata to the registered event chain"
     (with-redefs [interop/debug-enabled? true]
       (rf.m/reg-event-db :test-meta/db-handler (fn [d _] d)))
     (let [m (meta (registrar/get-handler :event :test-meta/db-handler))]
@@ -68,7 +68,7 @@
           ":line is a positive int from (:line (meta &form))"))))
 
 (deftest macros-reg-event-fx-attaches-source-meta
-  (testing "re-frame.macros/reg-event-fx attaches source metadata"
+  (testing "re-frame.core-instrumented/reg-event-fx attaches source metadata"
     (with-redefs [interop/debug-enabled? true]
       (rf.m/reg-event-fx :test-meta/fx-handler (fn [_ _] {})))
     (let [m (meta (registrar/get-handler :event :test-meta/fx-handler))]
@@ -77,7 +77,7 @@
       (is (pos-int? (:line m))))))
 
 (deftest macros-reg-event-ctx-attaches-source-meta
-  (testing "re-frame.macros/reg-event-ctx attaches source metadata"
+  (testing "re-frame.core-instrumented/reg-event-ctx attaches source metadata"
     (with-redefs [interop/debug-enabled? true]
       (rf.m/reg-event-ctx :test-meta/ctx-handler identity))
     (let [m (meta (registrar/get-handler :event :test-meta/ctx-handler))]
@@ -86,7 +86,7 @@
       (is (pos-int? (:line m))))))
 
 (deftest macros-reg-sub-attaches-source-meta
-  (testing "re-frame.macros/reg-sub attaches source metadata"
+  (testing "re-frame.core-instrumented/reg-sub attaches source metadata"
     (with-redefs [interop/debug-enabled? true]
       (rf.m/reg-sub :test-meta/sub-handler (fn [d _] (:n d))))
     (let [m (meta (registrar/get-handler :sub :test-meta/sub-handler))]
@@ -95,7 +95,7 @@
       (is (pos-int? (:line m))))))
 
 (deftest macros-reg-fx-attaches-source-meta
-  (testing "re-frame.macros/reg-fx attaches source metadata"
+  (testing "re-frame.core-instrumented/reg-fx attaches source metadata"
     (with-redefs [interop/debug-enabled? true]
       (rf.m/reg-fx :test-meta/fx-effect (fn [_] nil)))
     (let [m (meta (registrar/get-handler :fx :test-meta/fx-effect))]
@@ -104,7 +104,7 @@
       (is (pos-int? (:line m))))))
 
 (deftest macros-different-call-sites-have-different-line-numbers
-  (testing "two re-frame.macros/reg-event-db calls get distinct line metadata"
+  (testing "two re-frame.core-instrumented/reg-event-db calls get distinct line metadata"
     (with-redefs [interop/debug-enabled? true]
       (rf.m/reg-event-db :test-meta/site-a (fn [d _] d))
       (rf.m/reg-event-db :test-meta/site-b (fn [d _] d)))

@@ -127,7 +127,7 @@
    The sequence is a snapshot of the cache at call time; it does not
    update reactively. Query-vectors carry any metadata that was on
    them at subscription time (e.g. `:re-frame/source` from the
-   `re-frame.macros/subscribe` macro).
+   `re-frame.core-instrumented/subscribe` macro).
 
    Useful for devtools and diagnostic tools that need to enumerate
    what is currently subscribed without walking internal cache

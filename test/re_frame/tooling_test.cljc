@@ -1,7 +1,7 @@
 (ns re-frame.tooling-test
   "Smoke + structural tests for `re-frame.tooling`.
 
-   Two angles, mirroring `re-frame.macros-standalone-require-test`:
+   Two angles, mirroring `re-frame.core-instrumented-standalone-require-test`:
 
    1. Behavioural: every re-export at `re-frame.tooling/X` equals (and,
       where it is a stateful container, is `identical?` to) the source-
