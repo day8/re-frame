@@ -1,49 +1,25 @@
 (ns re-frame.alpha-instrumented
-  "Opt-in mirror of `re-frame.alpha` that captures the call-site
-   `{:file :line}` at macro-expansion time and attaches it as
-   `:re-frame/source` metadata — same pattern as
-   `re-frame.core-instrumented`, mirroring `re-frame.alpha` instead of
-   `re-frame.core`.
+  "A mirror of [`re-frame.alpha`](api-re-frame.alpha.md): every public
+   symbol from `alpha` is available here with the same call shape, and
+   the dispatch and registration entry points alpha re-exports from
+   `core` are wrapped as macros that instrument the call site for
+   tooling such as [`re-frame-10x`](https://github.com/day8/re-frame-10x)
+   and [`re-frame-pair`](https://github.com/day8/re-frame-pair).
 
-   Every public `re-frame.alpha` symbol re-exports here so migration
-   is alias-only:
+   Migration is alias-only:
 
-       ;; alpha function API — no source-meta
-       (:require [re-frame.alpha :as rf])
+       ;; alpha function API
+       (:require [re-frame.alpha              :as rf])
 
-       ;; alpha macro API — same call shape, source-meta on dispatches
-       ;; and registrations, every other alpha symbol still resolves
+       ;; instrumented mirror — same call shape
        (:require [re-frame.alpha-instrumented :as rf])
 
-   Source-meta capturing macros (a CLJS production build with
-   `goog.DEBUG=false` Closure-DCEs each one to a bare
-   `re-frame.alpha/...` call — zero allocation overhead):
+   See `re-frame.alpha` for the documentation of each symbol — this
+   namespace mirrors that contract verbatim.
 
-   - dispatch, dispatch-sync, dispatch-with, dispatch-sync-with,
-     dispatch-and-settle, subscribe — `vary-meta` on the event /
-     query vector.
-   - reg-event-db / -fx / -ctx, reg-sub, reg-sub-raw, reg-fx,
-     reg-cofx, reg-event-error-handler — meta is attached to the
-     *registered* value via `re-frame.registrar/-decorate-handler-meta!`
-     under the appropriate handler kind.
-
-   These cover the entire 'Legacy Compatibility' section of
-   `re-frame.alpha` — i.e. the names that route through to the same
-   core machinery `re-frame.core-instrumented` already instruments,
-   but accessed through the alpha namespace alias.
-
-   Alpha-specific surfaces (`reg`, `sub`, `reg-flow`) are passed
-   through as functions for now, not macros. Instrumenting them
-   needs alpha's eventual stable shape — `reg`'s kind/id/args
-   dispatch and `sub`'s reactive-context contract are still in flux,
-   and locking in a macro contract before alpha stabilises would
-   force a future breaking change. Re-evaluate when alpha graduates.
-
-   Macros cannot be used in value position. If you need
-   `(map reg-event-db ...)` / `(apply reg-sub ...)` / `(partial
-   reg-fx ...)`, use `re-frame.alpha` directly. The `def` re-exports
-   CAN be used in value position (they're vars holding the same fn
-   value as `re-frame.alpha/...`)."
+   Alpha-specific surfaces (`reg`, `sub`, `reg-flow`) pass through as
+   functions for now. Instrumenting them is deferred until alpha
+   stabilises so a macro contract isn't locked in prematurely."
   #?(:cljs (:require-macros [re-frame.alpha-instrumented]))
   (:require [re-frame.alpha]
             [re-frame.interop]

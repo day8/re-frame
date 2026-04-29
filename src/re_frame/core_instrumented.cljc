@@ -1,56 +1,21 @@
 (ns re-frame.core-instrumented
-  "Opt-in mirror of `re-frame.core` that captures the call-site
-   `{:file :line}` at macro-expansion time and attaches it as
-   `:re-frame/source` metadata — for 'why did this event fire?' /
-   'which view asked for this sub?' / 'where was this handler
-   registered?' diagnostics that don't depend on stack traces or
-   source maps.
+  "A mirror of [`re-frame.core`](api-re-frame.core.md): every public
+   symbol from `core` is available here with the same call shape, and
+   a handful of them — the dispatch and registration entry points —
+   are wrapped as macros that instrument the call site for tooling
+   such as [`re-frame-10x`](https://github.com/day8/re-frame-10x) and
+   [`re-frame-pair`](https://github.com/day8/re-frame-pair).
 
-   Also passes through every other public `re-frame.core` symbol so
-   migration is alias-only:
+   Migration is alias-only:
 
-       ;; function API — no source-meta
-       (:require [re-frame.core   :as rf])
+       ;; plain function API
+       (:require [re-frame.core              :as rf])
 
-       ;; macro API — same call shape, source-meta on dispatches
-       ;; and registrations, every other core symbol still resolves
+       ;; instrumented mirror — same call shape
        (:require [re-frame.core-instrumented :as rf])
 
-   Source-meta capturing macros (a CLJS production build with
-   `goog.DEBUG=false` Closure-DCEs each one to a bare
-   `re-frame.core/...` call — zero allocation overhead):
-
-   - dispatch, dispatch-sync, dispatch-with, dispatch-sync-with,
-     dispatch-and-settle — `vary-meta` on the event vector
-     (`(:re-frame/source (meta event))` in handlers).
-   - subscribe — `vary-meta` on the query vector before lookup;
-     recover via `(re-frame.subs/query-v-for-reaction r)`. Cache
-     identity is unaffected (vector equality ignores meta).
-   - reg-event-db / -fx / -ctx, reg-sub, reg-sub-raw, reg-fx,
-     reg-cofx, reg-event-error-handler — meta is attached to the
-     *registered* value, so
-     `(meta (re-frame.registrar/get-handler kind id))` returns
-     `{:file :line}`. The mechanics live in
-     `re-frame.registrar/-decorate-handler-meta!`.
-
-   Trace consumers (re-frame-10x, re-frame-pair, custom devtools)
-   see the dispatch/subscribe meta automatically because the
-   `:event` and `:query-v` / `:input-query-vs` trace tags ARE the
-   dispatched / subscribed vectors — `(-> trace :tags :event meta
-   :re-frame/source)` works without any new emission machinery.
-
-   Every other public `re-frame.core` symbol (interceptor builders,
-   clear-* fns, trace-cb registration, app-db utilities, etc.) is
-   re-exported here as a `def` so the alias swap covers a real-world
-   re-frame app — the rest of the surface doesn't need source-meta
-   so it passes through unchanged.
-
-   Macros cannot be used in value position. If you need
-   `(map reg-event-db ...)` / `(apply reg-sub ...)` / `(partial
-   reg-fx ...)`, keep using `re-frame.core` — it remains the
-   higher-order-safe surface. The `def` re-exports CAN be used in
-   value position (they're vars holding the same fn value as
-   `re-frame.core/...`)."
+   See `re-frame.core` for the documentation of each symbol — this
+   namespace mirrors that contract verbatim."
   #?(:cljs (:require-macros [re-frame.core-instrumented]))
   (:require [re-frame.core]
             [re-frame.interop]

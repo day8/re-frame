@@ -21,5 +21,5 @@
    code can read both libraries with the same global-path lookup
    (`goog.global.<lib>.config.version`).")
 
-#?(:clj  (def version "1.4.6")
-   :cljs (goog-define version "1.4.6"))
+#?(:clj  (def version "1.4.7")
+   :cljs (goog-define version "1.4.7"))
