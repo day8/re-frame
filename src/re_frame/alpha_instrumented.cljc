@@ -1,25 +1,28 @@
 (ns re-frame.alpha-instrumented
-  "A mirror of [`re-frame.alpha`](api-re-frame.alpha.md): every public
-   symbol from `alpha` is available here with the same call shape, and
-   the dispatch and registration entry points alpha re-exports from
-   `core` are wrapped as macros that instrument the call site for
-   tooling such as [`re-frame-10x`](https://github.com/day8/re-frame-10x)
-   and [`re-frame-pair`](https://github.com/day8/re-frame-pair).
+  "A mirror of [`re-frame.alpha`](api-re-frame.alpha.md).
 
-   Migration is alias-only:
+The alpha-side twin of
+[`re-frame.core-instrumented`](api-re-frame.core-instrumented.md):
+every public symbol from `alpha` is available here with the same call
+shape, so adopting it is just an alias swap:
 
-       ;; alpha function API
-       (:require [re-frame.alpha              :as rf])
+```clojure
+;; before
+(:require [re-frame.alpha              :as rf])
 
-       ;; instrumented mirror — same call shape
-       (:require [re-frame.alpha-instrumented :as rf])
+;; after — same calls, same code
+(:require [re-frame.alpha-instrumented :as rf])
+```
 
-   See `re-frame.alpha` for the documentation of each symbol — this
-   namespace mirrors that contract verbatim.
+What changes: the dispatch and registration entry points that `alpha`
+re-exports from `core` are wrapped so that tooling like
+[re-frame-10x](https://github.com/day8/re-frame-10x) and
+[re-frame-pair](https://github.com/day8/re-frame-pair) can show you
+which file and line each call came from.
 
-   Alpha-specific surfaces (`reg`, `sub`, `reg-flow`) pass through as
-   functions for now. Instrumenting them is deferred until alpha
-   stabilises so a macro contract isn't locked in prematurely."
+The alpha-only surface (`reg`, `sub`, `reg-flow`) passes through
+unwrapped for now; instrumentation there is deferred until the alpha
+API stabilises."
   #?(:cljs (:require-macros [re-frame.alpha-instrumented]))
   (:require [re-frame.alpha]
             [re-frame.interop]
@@ -222,62 +225,53 @@
 ;; Every other public re-frame.alpha symbol is re-exported here as a `def`
 ;; so the alias swap from re-frame.alpha → re-frame.alpha-instrumented covers
 ;; a real-world re-frame app.
+;;
+;; The :api-docs/heading metadata mirrors re-frame.alpha so the generated
+;; api-re-frame.alpha-instrumented.md groups vars under the same sections
+;; as api-re-frame.alpha.md. Legacy core-mirror passthroughs are tagged
+;; :api-docs/hide to match alpha's curation — users who want the full
+;; legacy surface should reach for re-frame.core-instrumented.
 
 ;; Alpha-specific (instrumentation deferred — see ns docstring)
-(def reg re-frame.alpha/reg)
-(def sub re-frame.alpha/sub)
-(def reg-flow re-frame.alpha/reg-flow)
-(def clear-flow re-frame.alpha/clear-flow)
-(def get-flow re-frame.alpha/get-flow)
-(def flow<- re-frame.alpha/flow<-)
+(def ^{:api-docs/heading "Registration"} reg        re-frame.alpha/reg)
+(def ^{:api-docs/heading "Subscription"} sub        re-frame.alpha/sub)
+(def ^{:api-docs/heading "Flows"}        reg-flow   re-frame.alpha/reg-flow)
+(def ^{:api-docs/heading "Flows"}        clear-flow re-frame.alpha/clear-flow)
+(def ^{:api-docs/heading "Flows"}        get-flow   re-frame.alpha/get-flow)
+(def ^{:api-docs/heading "Flows"}        flow<-     re-frame.alpha/flow<-)
 
-;; Dispatch / app-db plumbing not covered by source-meta macros above
-(def add-post-event-callback re-frame.alpha/add-post-event-callback)
-(def remove-post-event-callback re-frame.alpha/remove-post-event-callback)
-(def make-restore-fn re-frame.alpha/make-restore-fn)
-(def purge-event-queue re-frame.alpha/purge-event-queue)
-(def enqueue re-frame.alpha/enqueue)
-
-;; Clear / unregister
-(def clear-event re-frame.alpha/clear-event)
-(def clear-sub re-frame.alpha/clear-sub)
-(def clear-fx re-frame.alpha/clear-fx)
-(def clear-cofx re-frame.alpha/clear-cofx)
-(def clear-subscription-cache! re-frame.alpha/clear-subscription-cache!)
-(def clear-global-interceptor re-frame.alpha/clear-global-interceptor)
-
-;; Sub-cache accessors (used by tooling)
-(def query-v-for-reaction re-frame.alpha/query-v-for-reaction)
-(def live-query-vs re-frame.alpha/live-query-vs)
-
-;; Coeffect / effect map accessors
-(def get-coeffect re-frame.alpha/get-coeffect)
-(def assoc-coeffect re-frame.alpha/assoc-coeffect)
-(def get-effect re-frame.alpha/get-effect)
-(def assoc-effect re-frame.alpha/assoc-effect)
-
-;; Interceptor builders + standard interceptors
-(def ->interceptor re-frame.alpha/->interceptor)
-(def inject-cofx re-frame.alpha/inject-cofx)
-(def path re-frame.alpha/path)
-(def enrich re-frame.alpha/enrich)
-(def after re-frame.alpha/after)
-(def on-changes re-frame.alpha/on-changes)
-(def debug re-frame.alpha/debug)
-(def unwrap re-frame.alpha/unwrap)
-(def trim-v re-frame.alpha/trim-v)
-
-;; Global interceptors
-(def reg-global-interceptor re-frame.alpha/reg-global-interceptor)
-
-;; Logging
-(def set-loggers! re-frame.alpha/set-loggers!)
-(def console re-frame.alpha/console)
-
-;; Diagnostics
-(def version re-frame.alpha/version)
-
-;; Deprecated legacy aliases — kept so the alias swap doesn't bite
-;; codebases that still use them.
-(def register-handler re-frame.alpha/register-handler)
-(def register-sub re-frame.alpha/register-sub)
+;; Legacy core-mirror passthroughs — hidden to match re-frame.alpha's
+;; curation. The alpha API is a curated alternative to core; users who
+;; need the full legacy surface should reach for re-frame.core-instrumented.
+(def ^:api-docs/hide add-post-event-callback    re-frame.alpha/add-post-event-callback)
+(def ^:api-docs/hide remove-post-event-callback re-frame.alpha/remove-post-event-callback)
+(def ^:api-docs/hide make-restore-fn            re-frame.alpha/make-restore-fn)
+(def ^:api-docs/hide purge-event-queue          re-frame.alpha/purge-event-queue)
+(def ^:api-docs/hide enqueue                    re-frame.alpha/enqueue)
+(def ^:api-docs/hide clear-event                re-frame.alpha/clear-event)
+(def ^:api-docs/hide clear-sub                  re-frame.alpha/clear-sub)
+(def ^:api-docs/hide clear-fx                   re-frame.alpha/clear-fx)
+(def ^:api-docs/hide clear-cofx                 re-frame.alpha/clear-cofx)
+(def ^:api-docs/hide clear-subscription-cache!  re-frame.alpha/clear-subscription-cache!)
+(def ^:api-docs/hide clear-global-interceptor   re-frame.alpha/clear-global-interceptor)
+(def ^:api-docs/hide query-v-for-reaction       re-frame.alpha/query-v-for-reaction)
+(def ^:api-docs/hide live-query-vs              re-frame.alpha/live-query-vs)
+(def ^:api-docs/hide get-coeffect               re-frame.alpha/get-coeffect)
+(def ^:api-docs/hide assoc-coeffect             re-frame.alpha/assoc-coeffect)
+(def ^:api-docs/hide get-effect                 re-frame.alpha/get-effect)
+(def ^:api-docs/hide assoc-effect               re-frame.alpha/assoc-effect)
+(def ^:api-docs/hide ->interceptor              re-frame.alpha/->interceptor)
+(def ^:api-docs/hide inject-cofx                re-frame.alpha/inject-cofx)
+(def ^:api-docs/hide path                       re-frame.alpha/path)
+(def ^:api-docs/hide enrich                     re-frame.alpha/enrich)
+(def ^:api-docs/hide after                      re-frame.alpha/after)
+(def ^:api-docs/hide on-changes                 re-frame.alpha/on-changes)
+(def ^:api-docs/hide debug                      re-frame.alpha/debug)
+(def ^:api-docs/hide unwrap                     re-frame.alpha/unwrap)
+(def ^:api-docs/hide trim-v                     re-frame.alpha/trim-v)
+(def ^:api-docs/hide reg-global-interceptor     re-frame.alpha/reg-global-interceptor)
+(def ^:api-docs/hide set-loggers!               re-frame.alpha/set-loggers!)
+(def ^:api-docs/hide console                    re-frame.alpha/console)
+(def ^:api-docs/hide version                    re-frame.alpha/version)
+(def ^:api-docs/hide register-handler           re-frame.alpha/register-handler)
+(def ^:api-docs/hide register-sub               re-frame.alpha/register-sub)

@@ -104,6 +104,7 @@ nav:
     - re-frame.core: api-re-frame.core.md
     - re-frame.core-instrumented: api-re-frame.core-instrumented.md
     - re-frame.alpha: api-re-frame.alpha.md
+    - re-frame.alpha-instrumented: api-re-frame.alpha-instrumented.md
     - re-frame.tooling: api-re-frame.tooling.md
   - Releases:
     - 2026: releases/2026.md

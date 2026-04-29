@@ -65,8 +65,9 @@ jobs:
         working-directory: docs
         run: |
           mv api-re-frame.alpha.md js
+          mv api-re-frame.alpha-instrumented.md js
           mv api-re-frame.core.md js
-          mv api-re-frame.macros.md js
+          mv api-re-frame.core-instrumented.md js
           tar Jcf re-frame-docs-app.tar.xz js
 
       - name: Upload re-frame-docs App Artifact
@@ -99,8 +100,9 @@ jobs:
         run: |
           tar Jxf re-frame-docs-app.tar.xz
           mv js/api-re-frame.alpha.md api-re-frame.alpha.md
+          mv js/api-re-frame.alpha-instrumented.md api-re-frame.alpha-instrumented.md
           mv js/api-re-frame.core.md api-re-frame.core.md
-          mv js/api-re-frame.macros.md api-re-frame.macros.md
+          mv js/api-re-frame.core-instrumented.md api-re-frame.core-instrumented.md
 
       - name: Build MkDocs Documentation
         run: mkdocs build

@@ -1,21 +1,25 @@
 (ns re-frame.core-instrumented
-  "A mirror of [`re-frame.core`](api-re-frame.core.md): every public
-   symbol from `core` is available here with the same call shape, and
-   a handful of them — the dispatch and registration entry points —
-   are wrapped as macros that instrument the call site for tooling
-   such as [`re-frame-10x`](https://github.com/day8/re-frame-10x) and
-   [`re-frame-pair`](https://github.com/day8/re-frame-pair).
+  "A mirror of [`re-frame.core`](api-re-frame.core.md).
 
-   Migration is alias-only:
+This namespace exposes every public symbol from `core` with the same
+call shape, so adopting it is just an alias swap:
 
-       ;; plain function API
-       (:require [re-frame.core              :as rf])
+```clojure
+;; before
+(:require [re-frame.core              :as rf])
 
-       ;; instrumented mirror — same call shape
-       (:require [re-frame.core-instrumented :as rf])
+;; after — same calls, same code
+(:require [re-frame.core-instrumented :as rf])
+```
 
-   See `re-frame.core` for the documentation of each symbol — this
-   namespace mirrors that contract verbatim."
+What changes: the entry points you reach for most often (`dispatch`,
+`subscribe`, `reg-event-db`, …) are wrapped so that tooling like
+[re-frame-10x](https://github.com/day8/re-frame-10x) and
+[re-frame-pair](https://github.com/day8/re-frame-pair) can show you
+which file and line each call came from.
+
+See [`re-frame.core`](api-re-frame.core.md) for the documentation of
+each symbol — this namespace mirrors its contract."
   #?(:cljs (:require-macros [re-frame.core-instrumented]))
   (:require [re-frame.core]
             [re-frame.interop]
@@ -253,7 +257,7 @@
    call-site location. Production CLJS builds emit a bare
    `re-frame.core/reg-cofx` call after Closure DCE."
   {:arglists '([id handler])
-   :api-docs/heading "Coeffect Handlers"}
+   :api-docs/heading "Coeffects"}
   [id handler]
   (-reg-decorated-call 're-frame.core/reg-cofx :cofx id [id handler] &form &env))
 
@@ -283,67 +287,71 @@
 ;; `(map clear-event ...)` / `(swap! foo update :int conj path)` work
 ;; against the re-export the same as against the original.
 
-;; Dispatch / app-db plumbing not covered by source-meta macros above
-(def add-post-event-callback re-frame.core/add-post-event-callback)
-(def remove-post-event-callback re-frame.core/remove-post-event-callback)
-(def make-restore-fn re-frame.core/make-restore-fn)
-(def purge-event-queue re-frame.core/purge-event-queue)
-(def enqueue re-frame.core/enqueue)
+;; The :api-docs/heading metadata mirrors re-frame.core so the generated
+;; api-re-frame.core-instrumented.md page groups vars under the same
+;; section headings as api-re-frame.core.md.
 
-;; Clear / unregister
-(def clear-event re-frame.core/clear-event)
-(def clear-sub re-frame.core/clear-sub)
-(def clear-fx re-frame.core/clear-fx)
-(def clear-cofx re-frame.core/clear-cofx)
-(def clear-subscription-cache! re-frame.core/clear-subscription-cache!)
-(def clear-global-interceptor re-frame.core/clear-global-interceptor)
+;; Dispatch / app-db plumbing not covered by source-meta macros above
+(def ^{:api-docs/heading "Miscellaneous"}      add-post-event-callback    re-frame.core/add-post-event-callback)
+(def ^{:api-docs/heading "Miscellaneous"}      remove-post-event-callback re-frame.core/remove-post-event-callback)
+(def ^{:api-docs/heading "Miscellaneous"}      make-restore-fn            re-frame.core/make-restore-fn)
+(def ^{:api-docs/heading "Miscellaneous"}      purge-event-queue          re-frame.core/purge-event-queue)
+(def ^{:api-docs/heading "Writing Interceptors"} enqueue                  re-frame.core/enqueue)
+
+;; Clear / unregister — sit with the kind they unregister.
+(def ^{:api-docs/heading "Event Handlers"}      clear-event                re-frame.core/clear-event)
+(def ^{:api-docs/heading "Subscriptions"}       clear-sub                  re-frame.core/clear-sub)
+(def ^{:api-docs/heading "Effect Handlers"}     clear-fx                   re-frame.core/clear-fx)
+(def ^{:api-docs/heading "Coeffects"}           clear-cofx                 re-frame.core/clear-cofx)
+(def ^{:api-docs/heading "Subscriptions"}       clear-subscription-cache!  re-frame.core/clear-subscription-cache!)
+(def ^{:api-docs/heading "Global Interceptors"} clear-global-interceptor   re-frame.core/clear-global-interceptor)
 
 ;; Sub-cache accessors (used by tooling)
-(def query-v-for-reaction re-frame.core/query-v-for-reaction)
-(def live-query-vs re-frame.core/live-query-vs)
+(def ^{:api-docs/heading "Subscriptions"} query-v-for-reaction re-frame.core/query-v-for-reaction)
+(def ^{:api-docs/heading "Subscriptions"} live-query-vs        re-frame.core/live-query-vs)
 
 ;; Coeffect / effect map accessors
-(def get-coeffect re-frame.core/get-coeffect)
-(def assoc-coeffect re-frame.core/assoc-coeffect)
-(def get-effect re-frame.core/get-effect)
-(def assoc-effect re-frame.core/assoc-effect)
+(def ^{:api-docs/heading "Writing Interceptors"} get-coeffect   re-frame.core/get-coeffect)
+(def ^{:api-docs/heading "Writing Interceptors"} assoc-coeffect re-frame.core/assoc-coeffect)
+(def ^{:api-docs/heading "Writing Interceptors"} get-effect     re-frame.core/get-effect)
+(def ^{:api-docs/heading "Writing Interceptors"} assoc-effect   re-frame.core/assoc-effect)
 
 ;; Interceptor builders + standard interceptors
-(def ->interceptor re-frame.core/->interceptor)
-(def inject-cofx re-frame.core/inject-cofx)
-(def path re-frame.core/path)
-(def enrich re-frame.core/enrich)
-(def after re-frame.core/after)
-(def on-changes re-frame.core/on-changes)
-(def debug re-frame.core/debug)
-(def unwrap re-frame.core/unwrap)
-(def trim-v re-frame.core/trim-v)
+(def ^{:api-docs/heading "Writing Interceptors"} ->interceptor re-frame.core/->interceptor)
+(def ^{:api-docs/heading "Coeffects"}            inject-cofx   re-frame.core/inject-cofx)
+(def ^{:api-docs/heading "Interceptors"}         path          re-frame.core/path)
+(def ^{:api-docs/heading "Interceptors"}         enrich        re-frame.core/enrich)
+(def ^{:api-docs/heading "Interceptors"}         after         re-frame.core/after)
+(def ^{:api-docs/heading "Interceptors"}         on-changes    re-frame.core/on-changes)
+(def ^{:api-docs/heading "Interceptors"}         debug         re-frame.core/debug)
+(def ^{:api-docs/heading "Interceptors"}         unwrap        re-frame.core/unwrap)
+(def ^{:api-docs/heading "Interceptors"}         trim-v        re-frame.core/trim-v)
 
 ;; Global interceptors — registrar uses settings, not the kind/id
 ;; decoration mechanism, so this passes through as a fn rather than a
 ;; source-meta macro. clear-global-interceptor sits with the other
 ;; clear-* exports above.
-(def reg-global-interceptor re-frame.core/reg-global-interceptor)
+(def ^{:api-docs/heading "Global Interceptors"} reg-global-interceptor re-frame.core/reg-global-interceptor)
 
 ;; Logging
-(def set-loggers! re-frame.core/set-loggers!)
-(def console re-frame.core/console)
+(def ^{:api-docs/heading "Logging"} set-loggers! re-frame.core/set-loggers!)
+(def ^{:api-docs/heading "Logging"} console      re-frame.core/console)
 
 ;; Trace contract
-(def tag-schema re-frame.core/tag-schema)
-(def validate-trace? re-frame.core/validate-trace?)
-(def set-validate-trace! re-frame.core/set-validate-trace!)
-(def register-trace-cb re-frame.core/register-trace-cb)
-(def remove-trace-cb re-frame.core/remove-trace-cb)
-(def register-epoch-cb re-frame.core/register-epoch-cb)
-(def remove-epoch-cb re-frame.core/remove-epoch-cb)
-(def assemble-epochs re-frame.core/assemble-epochs)
+(def ^{:api-docs/heading "Tracing"} tag-schema          re-frame.core/tag-schema)
+(def ^{:api-docs/heading "Tracing"} validate-trace?     re-frame.core/validate-trace?)
+(def ^{:api-docs/heading "Tracing"} set-validate-trace! re-frame.core/set-validate-trace!)
+(def ^{:api-docs/heading "Tracing"} register-trace-cb   re-frame.core/register-trace-cb)
+(def ^{:api-docs/heading "Tracing"} remove-trace-cb     re-frame.core/remove-trace-cb)
+(def ^{:api-docs/heading "Tracing"} register-epoch-cb   re-frame.core/register-epoch-cb)
+(def ^{:api-docs/heading "Tracing"} remove-epoch-cb     re-frame.core/remove-epoch-cb)
+(def ^{:api-docs/heading "Tracing"} assemble-epochs     re-frame.core/assemble-epochs)
 
 ;; Diagnostics
-(def version re-frame.core/version)
+(def ^{:api-docs/heading "Miscellaneous"} version re-frame.core/version)
 
 ;; Deprecated legacy aliases — kept so the alias swap doesn't bite
 ;; codebases that still use them. Users will see re-frame.core's own
 ;; deprecation notices the same as if they imported them directly.
-(def register-handler re-frame.core/register-handler)
-(def register-sub re-frame.core/register-sub)
+(def ^{:api-docs/heading "Deprecated"} register-handler re-frame.core/register-handler)
+(def ^{:api-docs/heading "Deprecated"} register-sub     re-frame.core/register-sub)

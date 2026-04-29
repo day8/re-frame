@@ -20,6 +20,7 @@
            :output-dir "docs/js"
            :target     :browser
            :build-hooks
-           [(ns-to-markdown/hook {"src/re_frame/core.cljc"  "docs/api-re-frame.core.md"
-                                  "src/re_frame/macros.cljc" "docs/api-re-frame.macros.md"
-                                  "src/re_frame/alpha.cljc" "docs/api-re-frame.alpha.md"})]}}}
+           [(ns-to-markdown/hook {"src/re_frame/core.cljc"               "docs/api-re-frame.core.md"
+                                  "src/re_frame/core_instrumented.cljc"  "docs/api-re-frame.core-instrumented.md"
+                                  "src/re_frame/alpha.cljc"              "docs/api-re-frame.alpha.md"
+                                  "src/re_frame/alpha_instrumented.cljc" "docs/api-re-frame.alpha-instrumented.md"})]}}}
