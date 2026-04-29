@@ -23,7 +23,9 @@ which file and line each call came from.
 The alpha-only surface (`reg`, `sub`, `reg-flow`) passes through
 unwrapped for now; instrumentation there is deferred until the alpha
 API stabilises."
-  #?(:cljs (:require-macros [re-frame.alpha-instrumented]))
+  #?(:cljs (:require-macros [re-frame.alpha-instrumented]
+                             [re-frame.instrumented-macros :refer [defalias]]))
+  #?(:clj  (:require [re-frame.instrumented-macros :refer [defalias]]))
   (:require [re-frame.alpha]
             [re-frame.interop]
             [re-frame.registrar]))
@@ -233,12 +235,12 @@ API stabilises."
 ;; legacy surface should reach for re-frame.core-instrumented.
 
 ;; Alpha-specific (instrumentation deferred — see ns docstring)
-(def ^{:api-docs/heading "Registration"} reg        re-frame.alpha/reg)
-(def ^{:api-docs/heading "Subscription"} sub        re-frame.alpha/sub)
-(def ^{:api-docs/heading "Flows"}        reg-flow   re-frame.alpha/reg-flow)
-(def ^{:api-docs/heading "Flows"}        clear-flow re-frame.alpha/clear-flow)
-(def ^{:api-docs/heading "Flows"}        get-flow   re-frame.alpha/get-flow)
-(def ^{:api-docs/heading "Flows"}        flow<-     re-frame.alpha/flow<-)
+(defalias reg        re-frame.alpha/reg        "Registration")
+(defalias sub        re-frame.alpha/sub        "Subscription")
+(defalias reg-flow   re-frame.alpha/reg-flow   "Flows")
+(defalias clear-flow re-frame.alpha/clear-flow "Flows")
+(defalias get-flow   re-frame.alpha/get-flow   "Flows")
+(defalias flow<-     re-frame.alpha/flow<-     "Flows")
 
 ;; Legacy core-mirror passthroughs — hidden to match re-frame.alpha's
 ;; curation. The alpha API is a curated alternative to core; users who

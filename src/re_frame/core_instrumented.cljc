@@ -20,7 +20,9 @@ which file and line each call came from.
 
 See [`re-frame.core`](api-re-frame.core.md) for the documentation of
 each symbol — this namespace mirrors its contract."
-  #?(:cljs (:require-macros [re-frame.core-instrumented]))
+  #?(:cljs (:require-macros [re-frame.core-instrumented]
+                             [re-frame.instrumented-macros :refer [defalias]]))
+  #?(:clj  (:require [re-frame.instrumented-macros :refer [defalias]]))
   (:require [re-frame.core]
             [re-frame.interop]
             [re-frame.registrar]))
@@ -287,71 +289,72 @@ each symbol — this namespace mirrors its contract."
 ;; `(map clear-event ...)` / `(swap! foo update :int conj path)` work
 ;; against the re-export the same as against the original.
 
-;; The :api-docs/heading metadata mirrors re-frame.core so the generated
-;; api-re-frame.core-instrumented.md page groups vars under the same
-;; section headings as api-re-frame.core.md.
+;; `defalias` copies each target var's :doc and :arglists into the local
+;; def's metadata so the generated api-re-frame.core-instrumented.md
+;; page renders the same documentation as api-re-frame.core.md. Heading
+;; tags mirror re-frame.core's groupings.
 
 ;; Dispatch / app-db plumbing not covered by source-meta macros above
-(def ^{:api-docs/heading "Miscellaneous"}      add-post-event-callback    re-frame.core/add-post-event-callback)
-(def ^{:api-docs/heading "Miscellaneous"}      remove-post-event-callback re-frame.core/remove-post-event-callback)
-(def ^{:api-docs/heading "Miscellaneous"}      make-restore-fn            re-frame.core/make-restore-fn)
-(def ^{:api-docs/heading "Miscellaneous"}      purge-event-queue          re-frame.core/purge-event-queue)
-(def ^{:api-docs/heading "Writing Interceptors"} enqueue                  re-frame.core/enqueue)
+(defalias add-post-event-callback    re-frame.core/add-post-event-callback    "Miscellaneous")
+(defalias remove-post-event-callback re-frame.core/remove-post-event-callback "Miscellaneous")
+(defalias make-restore-fn            re-frame.core/make-restore-fn            "Miscellaneous")
+(defalias purge-event-queue          re-frame.core/purge-event-queue          "Miscellaneous")
+(defalias enqueue                    re-frame.core/enqueue                    "Writing Interceptors")
 
 ;; Clear / unregister — sit with the kind they unregister.
-(def ^{:api-docs/heading "Event Handlers"}      clear-event                re-frame.core/clear-event)
-(def ^{:api-docs/heading "Subscriptions"}       clear-sub                  re-frame.core/clear-sub)
-(def ^{:api-docs/heading "Effect Handlers"}     clear-fx                   re-frame.core/clear-fx)
-(def ^{:api-docs/heading "Coeffects"}           clear-cofx                 re-frame.core/clear-cofx)
-(def ^{:api-docs/heading "Subscriptions"}       clear-subscription-cache!  re-frame.core/clear-subscription-cache!)
-(def ^{:api-docs/heading "Global Interceptors"} clear-global-interceptor   re-frame.core/clear-global-interceptor)
+(defalias clear-event               re-frame.core/clear-event                "Event Handlers")
+(defalias clear-sub                 re-frame.core/clear-sub                  "Subscriptions")
+(defalias clear-fx                  re-frame.core/clear-fx                   "Effect Handlers")
+(defalias clear-cofx                re-frame.core/clear-cofx                 "Coeffects")
+(defalias clear-subscription-cache! re-frame.core/clear-subscription-cache!  "Subscriptions")
+(defalias clear-global-interceptor  re-frame.core/clear-global-interceptor   "Global Interceptors")
 
 ;; Sub-cache accessors (used by tooling)
-(def ^{:api-docs/heading "Subscriptions"} query-v-for-reaction re-frame.core/query-v-for-reaction)
-(def ^{:api-docs/heading "Subscriptions"} live-query-vs        re-frame.core/live-query-vs)
+(defalias query-v-for-reaction re-frame.core/query-v-for-reaction "Subscriptions")
+(defalias live-query-vs        re-frame.core/live-query-vs        "Subscriptions")
 
 ;; Coeffect / effect map accessors
-(def ^{:api-docs/heading "Writing Interceptors"} get-coeffect   re-frame.core/get-coeffect)
-(def ^{:api-docs/heading "Writing Interceptors"} assoc-coeffect re-frame.core/assoc-coeffect)
-(def ^{:api-docs/heading "Writing Interceptors"} get-effect     re-frame.core/get-effect)
-(def ^{:api-docs/heading "Writing Interceptors"} assoc-effect   re-frame.core/assoc-effect)
+(defalias get-coeffect   re-frame.core/get-coeffect   "Writing Interceptors")
+(defalias assoc-coeffect re-frame.core/assoc-coeffect "Writing Interceptors")
+(defalias get-effect     re-frame.core/get-effect     "Writing Interceptors")
+(defalias assoc-effect   re-frame.core/assoc-effect   "Writing Interceptors")
 
 ;; Interceptor builders + standard interceptors
-(def ^{:api-docs/heading "Writing Interceptors"} ->interceptor re-frame.core/->interceptor)
-(def ^{:api-docs/heading "Coeffects"}            inject-cofx   re-frame.core/inject-cofx)
-(def ^{:api-docs/heading "Interceptors"}         path          re-frame.core/path)
-(def ^{:api-docs/heading "Interceptors"}         enrich        re-frame.core/enrich)
-(def ^{:api-docs/heading "Interceptors"}         after         re-frame.core/after)
-(def ^{:api-docs/heading "Interceptors"}         on-changes    re-frame.core/on-changes)
-(def ^{:api-docs/heading "Interceptors"}         debug         re-frame.core/debug)
-(def ^{:api-docs/heading "Interceptors"}         unwrap        re-frame.core/unwrap)
-(def ^{:api-docs/heading "Interceptors"}         trim-v        re-frame.core/trim-v)
+(defalias ->interceptor re-frame.core/->interceptor "Writing Interceptors")
+(defalias inject-cofx   re-frame.core/inject-cofx   "Coeffects")
+(defalias path          re-frame.core/path          "Interceptors")
+(defalias enrich        re-frame.core/enrich        "Interceptors")
+(defalias after         re-frame.core/after         "Interceptors")
+(defalias on-changes    re-frame.core/on-changes    "Interceptors")
+(defalias debug         re-frame.core/debug         "Interceptors")
+(defalias unwrap        re-frame.core/unwrap        "Interceptors")
+(defalias trim-v        re-frame.core/trim-v        "Interceptors")
 
 ;; Global interceptors — registrar uses settings, not the kind/id
 ;; decoration mechanism, so this passes through as a fn rather than a
 ;; source-meta macro. clear-global-interceptor sits with the other
 ;; clear-* exports above.
-(def ^{:api-docs/heading "Global Interceptors"} reg-global-interceptor re-frame.core/reg-global-interceptor)
+(defalias reg-global-interceptor re-frame.core/reg-global-interceptor "Global Interceptors")
 
 ;; Logging
-(def ^{:api-docs/heading "Logging"} set-loggers! re-frame.core/set-loggers!)
-(def ^{:api-docs/heading "Logging"} console      re-frame.core/console)
+(defalias set-loggers! re-frame.core/set-loggers! "Logging")
+(defalias console      re-frame.core/console      "Logging")
 
 ;; Trace contract
-(def ^{:api-docs/heading "Tracing"} tag-schema          re-frame.core/tag-schema)
-(def ^{:api-docs/heading "Tracing"} validate-trace?     re-frame.core/validate-trace?)
-(def ^{:api-docs/heading "Tracing"} set-validate-trace! re-frame.core/set-validate-trace!)
-(def ^{:api-docs/heading "Tracing"} register-trace-cb   re-frame.core/register-trace-cb)
-(def ^{:api-docs/heading "Tracing"} remove-trace-cb     re-frame.core/remove-trace-cb)
-(def ^{:api-docs/heading "Tracing"} register-epoch-cb   re-frame.core/register-epoch-cb)
-(def ^{:api-docs/heading "Tracing"} remove-epoch-cb     re-frame.core/remove-epoch-cb)
-(def ^{:api-docs/heading "Tracing"} assemble-epochs     re-frame.core/assemble-epochs)
+(defalias tag-schema          re-frame.core/tag-schema          "Tracing")
+(defalias validate-trace?     re-frame.core/validate-trace?     "Tracing")
+(defalias set-validate-trace! re-frame.core/set-validate-trace! "Tracing")
+(defalias register-trace-cb   re-frame.core/register-trace-cb   "Tracing")
+(defalias remove-trace-cb     re-frame.core/remove-trace-cb     "Tracing")
+(defalias register-epoch-cb   re-frame.core/register-epoch-cb   "Tracing")
+(defalias remove-epoch-cb     re-frame.core/remove-epoch-cb     "Tracing")
+(defalias assemble-epochs     re-frame.core/assemble-epochs     "Tracing")
 
 ;; Diagnostics
-(def ^{:api-docs/heading "Miscellaneous"} version re-frame.core/version)
+(defalias version re-frame.core/version "Miscellaneous")
 
 ;; Deprecated legacy aliases — kept so the alias swap doesn't bite
 ;; codebases that still use them. Users will see re-frame.core's own
 ;; deprecation notices the same as if they imported them directly.
-(def ^{:api-docs/heading "Deprecated"} register-handler re-frame.core/register-handler)
-(def ^{:api-docs/heading "Deprecated"} register-sub     re-frame.core/register-sub)
+(defalias register-handler re-frame.core/register-handler "Deprecated")
+(defalias register-sub     re-frame.core/register-sub     "Deprecated")
