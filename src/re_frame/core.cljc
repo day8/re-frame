@@ -1,18 +1,9 @@
 (ns re-frame.core
-  "re-frame's primary public API. Stable function surface — every
-   registration entry point (`reg-event-db` / `-fx` / `-ctx`,
-   `reg-sub`, `reg-fx`, `reg-cofx`, ...) is a `defn`, so values like
-   `(map reg-event-db ...)`, `(apply reg-sub ...)` and
-   `(partial reg-fx ...)` work as written.
-
-   For call-site `{:file :line}` source-metadata capture in dev /
-   devtools, see `re-frame.core-instrumented` — drop-in macro replacements for
-   `dispatch` / `dispatch-sync` / `subscribe` and the reg-* family
-   that emit calls to this namespace's functions plus a
-   meta-attach. Migration is alias-only.
-
-   For programmatic / tooling / agent consumption see
-   `re-frame.tooling`."
+  "re-frame's primary public API. 
+  
+  It is probably better that you use the mirror namespace `re-frame.core-instrumented` 
+  because it wraps key functions in macros which provide debug/AI tooling with source code coordinates
+  of call sites."
   (:require
    [re-frame.config           :as config]
    [re-frame.events           :as events]
