@@ -81,7 +81,7 @@ jobs:
       - re-frame-docs-app
     runs-on: ubuntu-24.04
     container:
-      image: "squidfunk/mkdocs-material:5.5.9"
+      image: "squidfunk/mkdocs-material:9"
     steps:
       - name: Checkout Current Branch
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4

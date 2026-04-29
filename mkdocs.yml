@@ -22,11 +22,10 @@ theme:
     text: IBM Plex Sans
     code: Source Code Pro
   features:
-    - tabs
+    - navigation.tabs
+    - navigation.footer
     - content.code.annotate
     - content.code.copy
-  hljs_languages:
-    - clojure
 
 extra:
   social:
