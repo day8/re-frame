@@ -58,14 +58,20 @@
         (binding [*ns* sandbox]
           (refer 'clojure.core)
           (eval '(require '[re-frame.macros]))
-          (doseq [form '[(re-frame.macros/dispatch-sync [:macros-standalone-test/noop])
-                         (re-frame.macros/dispatch      [:macros-standalone-test/noop])
-                         (re-frame.macros/subscribe     [:macros-standalone-test/noop])
-                         (re-frame.macros/reg-event-db  :macros-standalone-test/db   (fn [db _] db))
-                         (re-frame.macros/reg-event-fx  :macros-standalone-test/fx   (fn [_ _] {}))
-                         (re-frame.macros/reg-event-ctx :macros-standalone-test/ctx  identity)
-                         (re-frame.macros/reg-sub       :macros-standalone-test/sub  (fn [d _] d))
-                         (re-frame.macros/reg-fx        :macros-standalone-test/fxh  (fn [_] nil))]]
+          (doseq [form '[(re-frame.macros/dispatch-sync           [:macros-standalone-test/noop])
+                         (re-frame.macros/dispatch                [:macros-standalone-test/noop])
+                         (re-frame.macros/dispatch-with           [:macros-standalone-test/noop] {})
+                         (re-frame.macros/dispatch-sync-with      [:macros-standalone-test/noop] {})
+                         (re-frame.macros/dispatch-and-settle     [:macros-standalone-test/noop])
+                         (re-frame.macros/subscribe               [:macros-standalone-test/noop])
+                         (re-frame.macros/reg-event-db            :macros-standalone-test/db   (fn [db _] db))
+                         (re-frame.macros/reg-event-fx            :macros-standalone-test/fx   (fn [_ _] {}))
+                         (re-frame.macros/reg-event-ctx           :macros-standalone-test/ctx  identity)
+                         (re-frame.macros/reg-event-error-handler (fn [_ _] nil))
+                         (re-frame.macros/reg-sub                 :macros-standalone-test/sub  (fn [d _] d))
+                         (re-frame.macros/reg-sub-raw             :macros-standalone-test/sub-raw (fn [_db _qv] (re-frame.interop/make-reaction (constantly nil))))
+                         (re-frame.macros/reg-fx                  :macros-standalone-test/fxh  (fn [_] nil))
+                         (re-frame.macros/reg-cofx                :macros-standalone-test/cofxh (fn [c] c))]]
             (try
               (eval form)
               (catch Exception e
@@ -75,3 +81,33 @@
           (remove-ns (.name sandbox))))
       (is @ok
           "all macros expand+eval cleanly in an ns whose only require is re-frame.macros — proves :require [re-frame.core] [re-frame.interop] [re-frame.registrar] is loading them transitively"))))
+
+(deftest passthrough-defs-resolve
+  (testing "the def re-exports of re-frame.core symbols all resolve and point at the same value as re-frame.core"
+    ;; Pin each passthrough symbol so a future cleanup that removes
+    ;; one is caught immediately. Pairs the macro coverage above —
+    ;; together they make the alias swap (re-frame.core →
+    ;; re-frame.macros) safe across the full public surface of an app.
+    (require 're-frame.core 're-frame.macros)
+    (doseq [sym '[add-post-event-callback remove-post-event-callback
+                  make-restore-fn purge-event-queue enqueue
+                  clear-event clear-sub clear-fx clear-cofx
+                  clear-subscription-cache! clear-global-interceptor
+                  query-v-for-reaction live-query-vs
+                  get-coeffect assoc-coeffect get-effect assoc-effect
+                  ->interceptor inject-cofx
+                  path enrich after on-changes
+                  debug unwrap trim-v
+                  reg-global-interceptor
+                  set-loggers! console
+                  tag-schema validate-trace? set-validate-trace!
+                  register-trace-cb remove-trace-cb
+                  register-epoch-cb remove-epoch-cb assemble-epochs
+                  version
+                  register-handler register-sub]]
+      (let [core-var   (resolve (symbol "re-frame.core"   (name sym)))
+            macros-var (resolve (symbol "re-frame.macros" (name sym)))]
+        (is (some? macros-var)
+            (str "re-frame.macros/" sym " must resolve"))
+        (is (= @core-var @macros-var)
+            (str "re-frame.macros/" sym " must hold the same value as re-frame.core/" sym))))))
