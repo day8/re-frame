@@ -134,9 +134,9 @@ jobs:
       # on the re-frame website. We do not use draft or prerelease features as we always want
       # the latest release to show in the right hand column of the project page regardless
       # of if it is a stable release.
-      #
-      # IMPORTANT: The release year is hard-coded and must be updated in this file once per year for the moment.
-      # Unfortunately I could not find a way to inject the year using the GitHub Actions ${{ expr }} syntax.
+      - name: Compute changelog year
+        run: echo "RELEASE_YEAR=$(date -u +%Y)" >> "$GITHUB_ENV"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         env:
@@ -144,7 +144,7 @@ jobs:
         with:
           name: ${{ github.ref_name }}
           body: |
-            [Changelog](http://day8.github.io/re-frame/releases/2025/)
+            [Changelog](https://day8.github.io/re-frame/releases/${{ env.RELEASE_YEAR }}/)
           draft: false
           prerelease: false
 
