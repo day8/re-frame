@@ -19,4 +19,5 @@ Each EP proceeds through the following stages:
   - [EP 003 - Reusable Components Via context](003-ReusableComponents.md) - Placeholder
   - [EP 004 - View Registration](004-ViewRegistration.md) - Placeholder
   - [EP 005 - State Machines](005-StateMachines.md) - Placeholder
+  - [re-frame2 document set](re-frame2/README.md) - Drafting
   
