@@ -61,7 +61,7 @@ effect overrides, and subscription cache lookups.
 written.
 
 For call-site `{:file :line}` metadata in dev / devtools, alias
-`re-frame.macros` instead. Same call shape, source-meta captured at
+`re-frame.core-instrumented` instead. Same call shape, source-meta captured at
 expansion time and DCE'd in production CLJS:
 
 ```clojure
@@ -69,7 +69,7 @@ expansion time and DCE'd in production CLJS:
 (:require [re-frame.core   :as rf])
 
 ;; macro API — same call shape, source-meta captured
-(:require [re-frame.macros :as rf])
+(:require [re-frame.core-instrumented :as rf])
 ```
 
 
